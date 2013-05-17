@@ -43,6 +43,9 @@ class taoQtiTest_models_classes_TestModel
     public function __construct() {
     }
     
+    public function onTestModelSet( core_kernel_classes_Resource $test) {
+    }
+    
     /**
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::getAuthoring()
