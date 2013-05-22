@@ -41,6 +41,9 @@ return array(
 		'rdf' => array(
 			dirname(__FILE__). '/models/ontology/qtitest.rdf'
 		),
+		'php'	=> array(
+			dirname(__FILE__).'/scripts/install/addQtiTestFolder.php',
+		)
 	),
 	'constants' => array(
 		# actions directory
