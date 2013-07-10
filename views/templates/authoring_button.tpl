@@ -11,7 +11,7 @@ $(function(){
 	require(['require', 'jquery'], function(req, $) {
 		$('#authoringButton').click(function(e) {
 			//e.preventDefault();
-			uri = '<?=_url('index', 'Authoring', 'taoQtiTest', array('uri' => get_data('processUri')))?>';
+			uri = '<?=_url('index', 'Authoring', 'taoQtiTest', array('uri' => get_data('uri')))?>';
 			helpers.openTab('<?=get_data('label')?>', uri);
 		});
 	});

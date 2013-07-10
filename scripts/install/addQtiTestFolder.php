@@ -29,4 +29,4 @@ $dataPath = $extension->getDir(). 'data' . DIRECTORY_SEPARATOR;
 $source = tao_models_classes_FileSourceService::singleton()->addLocalSource('QTI test datasource', $dataPath);
 $directory = new core_kernel_file_File($source->createFile(''));
 
-taoQtiTest_models_classes_TestModel::setQtiTestDirectory($directory);
+$service = taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestDirectory($directory);

@@ -46,43 +46,29 @@ class taoQtiTest_models_classes_TestModel
     
     /**
      * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::onTestModelSet()
+     * @see taoTests_models_classes_TestModel::prepareContent()
      */
     public function prepareContent( core_kernel_classes_Resource $test, $items = array()) {
-    	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
-				PROPERTY_FILE_FILESYSTEM,
-				PROPERTY_FILE_FILEPATH
-			));
-		$repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
-		$path = (string)current($props[PROPERTY_FILE_FILEPATH]);
-		$file = $repository->createFile(md5($test->getUri()).'.xml', $path);
-		$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-		$emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
-		$file->setContent($emptyTestXml);
-		common_Logger::i('Created '.$file->getAbsolutePath());
-		$test->setPropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
+        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+        $service->setItems($test, $items);
     }
     
     /**
      * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::onTestModelSet()
+     * @see taoTests_models_classes_TestModel::deleteContent()
      */
     public function deleteContent( core_kernel_classes_Resource $test) {
-    	$content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-    	if (!is_null($content)) {
-			$file = new core_kernel_file_File($content);
-    		if(file_exists($file->getAbsolutePath())){
-	        	if (!@unlink($file->getAbsolutePath())){
-	        		throw new common_exception_Error('Unable to remove the file '.$file->getAbsolutePath());
-	        	}
-    		}
-			$file->delete();
-			$test->removePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
-    	}
+        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+        $service->deleteContent($test);
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see taoTests_models_classes_TestModel::getItems()
+     */
     public function getItems( core_kernel_classes_Resource $test) {
-    	return array();
+    	$service = taoQtiTest_models_classes_QtiTestService::singleton();
+        $service->getItems($test);
     }
 
     /**
@@ -98,7 +84,7 @@ class taoQtiTest_models_classes_TestModel
      * @see taoTests_models_classes_TestModel::getAuthoring()
      */
     public function getAuthoring( core_kernel_classes_Resource $test) {
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     	$widget = new Renderer($ext->getConstant('DIR_VIEWS').'templates'.DIRECTORY_SEPARATOR.'authoring_button.tpl');
 		$widget->setData('uri', $test->getUri());
 		$widget->setData('label', __('Authoring %s', $test->getLabel()));

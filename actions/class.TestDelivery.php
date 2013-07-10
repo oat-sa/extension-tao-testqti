@@ -14,19 +14,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013 (original work) Open Assessment Techonologies SA (under the project TAO-PRODUCT);
- *               
+ * Copyright (c) 2007-2010 (original work) Public Research Centre Henri Tudor & University of Luxembourg) (under the project TAO-QUAL);
+ *               2008-2010 (update and modification) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
+ *               2009-2012 (update and modification) Public Research Centre Henri Tudor (under the project TAO-SUSTAIN & TAO-DEV);
  * 
  */
-?>
-<?php
-/*
- * @author CRP Henri Tudor - TAO Team - {@link http://www.tao.lu}
+
+/**
+ * Author an QTI test
+ *
+ * @author Joel Bout, <joel@taotesting.com>
+ * @package taoQtiTest
+ * @subpackage actions
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
-require_once dirname(__FILE__). '/../tao/includes/class.Bootstrap.php';
+class taoQtiTest_actions_TestDelivery extends tao_actions_CommonModule {
 
-$bootStrap = new BootStrap('taoQtiTest');
-$bootStrap->start();
-$bootStrap->dispatch();
-?>
+	public function index()
+	{
+		echo 'this is the delivery';
+	}
+}
