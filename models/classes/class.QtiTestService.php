@@ -1,4 +1,12 @@
 <?php
+
+require_once dirname(__FILE__) . '/../../lib/qtism/qtism.php';
+
+use qtism\data\storage\xml\XmlAssessmentItemDocument;
+use qtism\data\AssessmentItemRef;
+use qtism\data\SectionPartCollection;
+use qtism\data\storage\xml\XmlAssessmentTestDocument;
+
 /*  
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,23 +43,85 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     // --- ATTRIBUTES ---
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
     
+    /**
+     * Get the items that are part of a given $test.
+     * 
+     * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
+     * @return array An array of core_kernel_classes_Resource objects.
+     */
     public function getItems( core_kernel_classes_Resource $test) {
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        // get the items
-        return array();
-    }
-
-    public function setItems( core_kernel_classes_Resource $test, $items) {
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-    	if (!is_null($file)) {
+    	$file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+    	
+    	if (is_null($file)) {
     	    $file = $this->createContent($test);
     	}
-    	// set the items
-    	common_Logger::w('Should set '.count($items).' items to test but not implemented');
-    	return false;
+		else {
+			$file = new core_kernel_classes_File($file);
+		}
+        
+    	$doc = new XmlAssessmentTestDocument('2.1');
+    	$doc->load($file->getAbsolutePath());
+    	
+    	$parts = $doc->getTestParts();
+    	$mainPart = $parts[0];
+    	
+    	$sections = $mainPart->getAssessmentSections();
+    	$section = $sections[0];
+    	
+    	$itemArray = array();
+    	foreach ($section->getSectionParts() as $itemRef) {
+    		$itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
+    	}
+    	
+    	return $itemArray;
+    }
+
+    /**
+     * Set the items that are part of a given $test.
+     * 
+     * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
+     * @param array $items
+     * @return boolean
+     */
+    public function setItems( core_kernel_classes_Resource $test, array $items) {
+        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+       
+    	if (is_null($file)) {
+    	    $file = $this->createContent($test);
+    	}
+		else {
+			$file = new core_kernel_classes_File($file);
+		}
+    	
+    	$doc = new XmlAssessmentTestDocument('2.1');
+    	$doc->load($file->getAbsolutePath());
+    	
+    	$parts = $doc->getTestParts();
+    	$mainPart = $parts[0];
+    	 
+    	$sections = $mainPart->getAssessmentSections();
+    	$section = $sections[0];
+    	
+    	$itemExt = common_ext_ExtensionsManager::singleton()->getExtensionById('taoItems');
+    	$itemContentProperty = new core_kernel_classes_Property($itemExt->getConstant('TAO_ITEM_CONTENT_PROPERTY'));
+    	$itemRefs = new SectionPartCollection();
+    	
+    	foreach ($items as $itemResource) {
+    		$itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
+    		$itemContent = new core_kernel_classes_File($itemContent);
+    		
+    		$itemDoc = new XmlAssessmentItemDocument();
+    		$itemDoc->load($itemContent->getAbsolutePath());
+    		
+    		$itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
+    	}
+    	
+    	$section->setSectionParts($itemRefs);
+    	$doc->save($file->getAbsolutePath());
     }
     
     private function createContent( core_kernel_classes_Resource $test) {
+    	common_Logger::i('CREATE CONTENT');
     	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
 				PROPERTY_FILE_FILESYSTEM,
 				PROPERTY_FILE_FILEPATH
