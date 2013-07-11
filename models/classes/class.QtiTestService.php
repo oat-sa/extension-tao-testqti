@@ -57,10 +57,9 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         
     	$doc = new XmlAssessmentTestDocument('2.1');
     	$doc->load($file->getAbsolutePath());
-    	$section = $doc->getComponentByIdentifier('assessmentSectionId');
     	
     	$itemArray = array();
-    	foreach ($section->getSectionParts() as $itemRef) {
+    	foreach ($doc->getComponentsByClassName('assessmentItemRef') as $itemRef) {
     		$itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
     	}
     	
