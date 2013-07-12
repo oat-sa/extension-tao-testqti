@@ -83,6 +83,7 @@ class taoQtiTest_actions_Authoring extends tao_actions_CommonModule {
 	            $items[] = new core_kernel_classes_Resource(tao_helpers_Uri::decode($value));
 	        }
 	    }
+	    
 	    $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 	    $success = $qtiTestService->setItems($test, $items);
 	    

@@ -1,4 +1,6 @@
 <?php
+
+
 /*
  * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -21,6 +23,7 @@
 
 require_once dirname(__FILE__) . '/../../lib/qtism/qtism.php';
 
+use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlAssessmentItemDocument;
 use qtism\data\AssessmentItemRef;
 use qtism\data\SectionPartCollection;
@@ -72,37 +75,63 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
      * @param array $items
      * @return boolean
+     * @throws StorageException If an error occurs while serializing/unserializing QTI-XML content. 
      */
     public function setItems( core_kernel_classes_Resource $test, array $items) {
         $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-       
-    	if (is_null($file)) {
-    	    $file = $this->createContent($test);
-    	}
-		else {
-			$file = new core_kernel_classes_File($file);
+       	$file = (is_null($file)) ? $this->createContent($test) : new core_kernel_classes_File($file); 
+    	
+		try {
+			$doc = new XmlAssessmentTestDocument('2.1');
+			$testPath = $file->getAbsolutePath();
+			
+			try {
+				$doc->load($testPath);
+			}
+			catch (StorageException $e) {
+				$msg = "An error occured while loading QTI-XML test file '${testPath}'.";
+				throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 3);
+			}
+			
+			$section = $doc->getComponentByIdentifier('assessmentSectionId');
+			 
+			$itemExt = common_ext_ExtensionsManager::singleton()->getExtensionById('taoItems');
+			$itemContentProperty = new core_kernel_classes_Property($itemExt->getConstant('TAO_ITEM_CONTENT_PROPERTY'));
+			$itemRefs = new SectionPartCollection();
+			 
+			foreach ($items as $itemResource) {
+				$itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
+				$itemContent = new core_kernel_classes_File($itemContent);
+			
+				$itemDoc = new XmlAssessmentItemDocument();
+				
+				try {
+					$itemDoc->load($itemContent->getAbsolutePath());
+				}
+				catch (StorageException $e) {
+					$itemUri = $itemResource->getUri();
+					$msg = "An error occured while reading QTI-XML item '${itemUri}'.";
+					throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
+				}
+			
+				$itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
+				$section->setSectionParts($itemRefs);
+			}
+			
+			try {
+				$doc->save($testPath);
+			}
+			catch (StorageException $e) {
+				$msg = "An error occured while writing QTI-XML test '${testPath}'.";
+				throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 2);
+			}
 		}
-    	
-    	$doc = new XmlAssessmentTestDocument('2.1');
-    	$doc->load($file->getAbsolutePath());
-    	$section = $doc->getComponentByIdentifier('assessmentSectionId');
-    	
-    	$itemExt = common_ext_ExtensionsManager::singleton()->getExtensionById('taoItems');
-    	$itemContentProperty = new core_kernel_classes_Property($itemExt->getConstant('TAO_ITEM_CONTENT_PROPERTY'));
-    	$itemRefs = new SectionPartCollection();
-    	
-    	foreach ($items as $itemResource) {
-    		$itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
-    		$itemContent = new core_kernel_classes_File($itemContent);
-    		
-    		$itemDoc = new XmlAssessmentItemDocument();
-    		$itemDoc->load($itemContent->getAbsolutePath());
-    		
-    		$itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
+    	catch (StorageException $e) {
+    		$msg = "An error occured while dealing with the QTI-XML test.";
+    		throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 0);
     	}
     	
-    	$section->setSectionParts($itemRefs);
-    	$doc->save($file->getAbsolutePath());
+    	return true;
     }
     
     private function createContent( core_kernel_classes_Resource $test) {
