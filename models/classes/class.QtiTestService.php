@@ -95,8 +95,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 			
 			$section = $doc->getComponentByIdentifier('assessmentSectionId');
 			 
-			$itemExt = common_ext_ExtensionsManager::singleton()->getExtensionById('taoItems');
-			$itemContentProperty = new core_kernel_classes_Property($itemExt->getConstant('TAO_ITEM_CONTENT_PROPERTY'));
+			$itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
 			$itemRefs = new SectionPartCollection();
 			 
 			foreach ($items as $itemResource) {
