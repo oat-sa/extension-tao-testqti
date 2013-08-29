@@ -91,6 +91,22 @@ class taoQtiTest_models_classes_TestModel
     	return $widget->render();
     }
     
+    public function compile( core_kernel_classes_Resource $test, $destinationFolder) {
+        
+        // the magic happens here
+        
+		
+		$service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
+		$param = new tao_models_classes_service_ConstantParameter(
+		    new core_kernel_classes_Resource('Your magic parameter'),
+		    $processClone->getUri()
+        );
+		$service->addInParameter($param);
+		// another parameter
+		
+		return $service;
+    }
+    
     public static function setQtiTestDirectory(core_kernel_file_File $folder) {
     	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());

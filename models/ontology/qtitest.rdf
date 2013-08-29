@@ -18,7 +18,7 @@
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassSupportServices"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI test runner]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[runs a QTI 2.1 test]]></rdfs:comment>
-    <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/TestDelivery/index?testUri=^testUri&deliveryUri=^deliveryUri&]]></wf:PropertySupportServicesUrl>
+    <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/TestRunner/index?testUri=^testUri&deliveryUri=^deliveryUri&]]></wf:PropertySupportServicesUrl>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamDeliveryUri"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamTestUri"/>
   </rdf:Description>
