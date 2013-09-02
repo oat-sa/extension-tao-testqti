@@ -91,6 +91,10 @@ class taoQtiTest_models_classes_TestModel
     	return $widget->render();
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see taoTests_models_classes_TestModel::compile()
+     */
     public function compile( core_kernel_classes_Resource $test, $destinationFolder) {
         
         // the magic happens here

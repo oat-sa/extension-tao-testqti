@@ -55,7 +55,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     	    $file = $this->createContent($test);
     	}
 		else {
-			$file = new core_kernel_classes_File($file);
+			$file = new core_kernel_file_File($file);
 		}
         
     	$doc = new XmlAssessmentTestDocument('2.1');
@@ -79,7 +79,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      */
     public function setItems( core_kernel_classes_Resource $test, array $items) {
         $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-       	$file = (is_null($file)) ? $this->createContent($test) : new core_kernel_classes_File($file); 
+       	$file = (is_null($file)) ? $this->createContent($test) : new core_kernel_file_File($file); 
     	
 		try {
 			$doc = new XmlAssessmentTestDocument('2.1');
@@ -100,7 +100,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 			 
 			foreach ($items as $itemResource) {
 				$itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
-				$itemContent = new core_kernel_classes_File($itemContent);
+				$itemContent = new core_kernel_file_File($itemContent);
 			
 				$itemDoc = new XmlAssessmentItemDocument();
 				
