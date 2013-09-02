@@ -121,6 +121,10 @@ class taoQtiTest_models_classes_TestModel
         }
 		return new core_kernel_file_File($uri);
 	}
+	
+	public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
+	    
+	}
 }
 
 ?>

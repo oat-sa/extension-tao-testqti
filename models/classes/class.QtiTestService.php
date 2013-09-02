@@ -110,6 +110,11 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 				catch (StorageException $e) {
 					$itemUri = $itemResource->getUri();
 					$msg = "An error occured while reading QTI-XML item '${itemUri}'.";
+					
+					if (is_null($e->getPrevious()) !== true) {
+					    $msg .= ": " . $e->getPrevious()->getMessage();
+					}
+					
 					throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
 				}
 			
