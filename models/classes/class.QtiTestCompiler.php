@@ -73,8 +73,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
-            $itemService = $this->getItemRunnerService($itemToCompile, $destinationDirectory);
-            $assessmentItemRef->setHref($itemService->serializeToString());
+            $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
+            $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
+            $assessmentItemRef->setHref(tao_models_classes_service_ServiceCallHelper::getBaseUrl($itemService->getServiceDefinition()) . '?ItemPath=' . urlencode($inputValues['itemPath']));
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         
