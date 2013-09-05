@@ -61,9 +61,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
         
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
-                        // Test Definition URI
-                        new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION),
-                        $test->getUri()
+            // Test Definition URI
+            new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION),
+            $test->getUri()
                         
         );
         $service->addInParameter($param);
@@ -75,7 +75,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
             $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-            $assessmentItemRef->setHref(tao_models_classes_service_ServiceCallHelper::getBaseUrl($itemService->getServiceDefinition()) . '?ItemPath=' . urlencode($inputValues['itemPath']));
+            $url = tao_models_classes_service_ServiceCallHelper::getBaseUrl($itemService->getServiceDefinition());
+            $assessmentItemRef->setHref($url . '?ItemPath=' . urlencode($inputValues['itemPath']));
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         
