@@ -21,15 +21,20 @@
 
 
 /**
- * Author an QTI test
+ * Runs a QTI Test.
  *
  * @author Joel Bout, <joel@taotesting.com>
+ * @author Jérôme Bogaerts, <jerome@taotesting.com>
  * @package taoQtiTest
  * @subpackage actions
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_CommonModule {
 
+    /**
+     * Main action of the TestRunner module.
+     * 
+     */
 	public function index()
 	{
 		echo 'this is the delivery';

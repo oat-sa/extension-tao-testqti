@@ -39,10 +39,15 @@ return array(
 	),
 	'install' => array(
 		'rdf' => array(
-			dirname(__FILE__). '/models/ontology/qtitest.rdf'
+			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
+		    dirname(__FILE__) . '/models/ontology/taoQtiTestRunner.rdf',
+		    dirname(__FILE__) . '/models/ontology/aclrole.rdf'
 		),
+	    'checks' => array(
+	        array('type' => 'CheckFileSystemComponent', 'value' => array('id' => 'fs_taoQtiTest_data_testdata', 'location' => 'taoQtiTest/data/testdata', 'rights' => 'rw')),
+	    ),
 		'php'	=> array(
-			dirname(__FILE__).'/scripts/install/addQtiTestFolder.php',
+			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		)
 	),
 	'constants' => array(

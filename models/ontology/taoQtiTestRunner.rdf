@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<rdf:RDF 
+	xml:base="http://www.tao.lu/Ontologies/TAOTest.rdf#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+	xmlns:wf="http://www.tao.lu/middleware/wfEngine.rdf#"
+>
+  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition">
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Definition]]></rdfs:label>
+    <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Definition Uri]]></rdfs:comment>
+    <wf:PropertyFormalParametersName><![CDATA[QtiTestDefinition]]></wf:PropertyFormalParametersName>
+  </rdf:Description>
+</rdf:RDF>

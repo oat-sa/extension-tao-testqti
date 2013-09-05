@@ -1,5 +1,6 @@
 <?php
-/*  
+
+/**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
@@ -14,8 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2008-2010 (original work) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
- *               2009-2012 (update and modification) Public Research Centre Henri Tudor (under the project TAO-SUSTAIN & TAO-DEV);
+ * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *               
  * 
  */
 
@@ -93,20 +94,15 @@ class taoQtiTest_models_classes_TestModel
     }
     
     /**
-     * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::compile()
+     * Compile a QTI $test into $destinationDirectory.
+     * 
      */
     public function compile( core_kernel_classes_Resource $test, core_kernel_file_File $destinationDirectory) {
         
         // the magic happens here
+        $qtiTestCompiler = taoQtiTest_models_classes_QtiTestCompiler::singleton();
+        $service = $qtiTestCompiler->compile($test, $destinationDirectory);
         
-		
-		$service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
-		$param = new tao_models_classes_service_ConstantParameter(
-		    new core_kernel_classes_Resource('Your magic parameter'),
-		    "unicorns"
-        );
-		$service->addInParameter($param);
 		// another parameter
 		
 		return $service;

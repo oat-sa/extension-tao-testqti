@@ -19,5 +19,6 @@
  * 
  */
 $todefine = array(
-    'INSTANCE_QTITEST_TESTRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner'
+    'INSTANCE_QTITEST_TESTRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner',
+    'INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION' => 'http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition'
 );
