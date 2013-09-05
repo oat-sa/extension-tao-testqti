@@ -42,6 +42,7 @@ class taoQtiTest_models_classes_TestModel
      * can be instanciated
      */
     public function __construct() {
+        common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
     
     /**
@@ -103,7 +104,7 @@ class taoQtiTest_models_classes_TestModel
 		$service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
 		$param = new tao_models_classes_service_ConstantParameter(
 		    new core_kernel_classes_Resource('Your magic parameter'),
-		    $processClone->getUri()
+		    "unicorns"
         );
 		$service->addInParameter($param);
 		// another parameter
