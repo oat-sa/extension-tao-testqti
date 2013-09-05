@@ -95,7 +95,7 @@ class taoQtiTest_models_classes_TestModel
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::compile()
      */
-    public function compile( core_kernel_classes_Resource $test, $destinationFolder) {
+    public function compile( core_kernel_classes_Resource $test, core_kernel_file_File $destinationDirectory) {
         
         // the magic happens here
         
