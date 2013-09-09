@@ -97,11 +97,11 @@ class taoQtiTest_models_classes_TestModel
      * Compile a QTI $test into $destinationDirectory.
      * 
      */
-    public function compile( core_kernel_classes_Resource $test, core_kernel_file_File $destinationDirectory) {
+    public function compile( core_kernel_classes_Resource $test, core_kernel_file_File $destinationDirectory, core_kernel_classes_Resource $resultServer) {
         
         // the magic happens here
         $qtiTestCompiler = taoQtiTest_models_classes_QtiTestCompiler::singleton();
-        $service = $qtiTestCompiler->compile($test, $destinationDirectory);
+        $service = $qtiTestCompiler->compile($test, $destinationDirectory, $resultServer);
         
 		// another parameter
 		
