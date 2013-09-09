@@ -59,15 +59,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
         $compiledDoc = XmlCompactAssessmentTestDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
         common_Logger::t("QTI Test XML document successfuly transformed in a compact version.");
         
-        $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
-        $param = new tao_models_classes_service_ConstantParameter(
-            // Test Definition URI
-            new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION),
-            $test->getUri()
-                        
-        );
-        $service->addInParameter($param);
-        
         // 2. Compile the items of the test.
         $iterator = new QtiComponentIterator($compiledDoc, array('assessmentItemRef'));
         foreach ($iterator as $assessmentItemRef) {
@@ -75,14 +66,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
             $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-            $url = tao_models_classes_service_ServiceCallHelper::getBaseUrl($itemService->getServiceDefinition());
-            $assessmentItemRef->setHref($url . '?ItemPath=' . urlencode($inputValues['itemPath']));
+            $assessmentItemRef->setHref($inputValues['itemUri'] . '-' . $inputValues['itemPath']);
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         
         $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.xml';
         $compiledDoc->save($compiledDocPath);
         common_Logger::t("QTI Test successfuly compiled.");
+        
+        // 3. Build the service call.
+        $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
+        $param = new tao_models_classes_service_ConstantParameter(
+                        // Test Definition URI
+                        new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION),
+                        $compiledDocPath
+        
+        );
+        $service->addInParameter($param);
         
         return $service;
     }

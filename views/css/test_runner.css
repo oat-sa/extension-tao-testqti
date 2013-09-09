@@ -1,0 +1,10 @@
+#qti-test-runner {
+	font-family:Verdana, Arial, sans-serif;
+	font-size: 12px;
+}
+
+#qti-item {
+	width: 100%;
+	display: block;
+	overflow: hidden;
+}
