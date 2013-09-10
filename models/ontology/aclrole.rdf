@@ -6,7 +6,8 @@
 	xmlns:funcacl="http://www.tao.lu/Ontologies/taoFuncACL.rdf#"
 >
 	<rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole">
-		<funcacl:grantAccessModule rdf:resource="http://www.tao.lu/Ontologies/taoFuncACL.rdf#m_taoQtiTest_TestRunner" />
+		<funcacl:grantAccessModule rdf:resource="http://www.tao.lu/Ontologies/taoFuncACL.rdf#m_taoQtiTest_TestRunner"/>
+		<funcacl:grantAccessModule rdf:resource="http://www.tao.lu/Ontologies/taoFuncACL.rdf#m_taoQtiTest_ItemRunner"/>
 	</rdf:Description>
 
 </rdf:RDF>

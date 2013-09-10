@@ -14,6 +14,9 @@ $(document).ready(function () {
 	}
 	
 	serviceApi.loadInto($frame[0]);
+	serviceApi.finish = function () {
+		
+	};
 });
 
 function autoResize(frame, frequence) {

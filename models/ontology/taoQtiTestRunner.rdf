@@ -11,4 +11,23 @@
     <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Definition Uri]]></rdfs:comment>
     <wf:PropertyFormalParametersName><![CDATA[QtiTestDefinition]]></wf:PropertyFormalParametersName>
   </rdf:Description>
+  
+  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId">
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Parent Service Call ID]]></rdfs:label>
+    <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Parent Service Call ID]]></rdfs:comment>
+    <wf:PropertyFormalParametersName><![CDATA[QtiTestParentServiceCallId]]></wf:PropertyFormalParametersName>
+  </rdf:Description>
+  
+  <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner">
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassSupportServices"/>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Item Runner]]></rdfs:label>
+    <rdfs:comment xml:lang="en-US"><![CDATA[Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts]]></rdfs:comment>
+    <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/ItemRunner/index?itemPath=^itemPath&resultServer=^resultServer]]></wf:PropertySupportServicesUrl>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemPath"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemUri"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamResultserver"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition"/>
+  </rdf:Description>
 </rdf:RDF>

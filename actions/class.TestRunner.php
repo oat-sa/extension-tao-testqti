@@ -164,7 +164,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 	
 	public function storeItemVariableSet() {
+	    $this->beforeAction();
 	    
+	    
+	    
+	    $this->afterAction();
 	}
 	
 	/**
@@ -282,7 +286,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    // retrive itemUri & itemPath. 
 	    $parts = explode('-', $href);
 	    
-	    $definition =  new core_kernel_classes_Resource(INSTANCE_SERVICE_ITEMRUNNER);
+	    $definition =  new core_kernel_classes_Resource(INSTANCE_QTITEST_ITEMRUNNERSERVICE);
 	    $serviceCall = new tao_models_classes_service_ServiceCall($definition);
 	    
 	    $uriResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMURI);
@@ -297,6 +301,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $resultServerUri = $ext->getConfig(QTITEST_RESULT_SERVER_CONFIG_KEY);
 	    $resultServerParam = new tao_models_classes_service_ConstantParameter($resultServerResource, $resultServerUri);
 	    $serviceCall->addInParameter($resultServerParam);
+	    
+	    $parentServiceCallIdResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID);
+	    $parentServiceCallIdParam = new tao_models_classes_service_ConstantParameter($parentServiceCallIdResource, $this->getServiceCallId());
+	    $serviceCall->addInParameter($parentServiceCallIdParam);
+	    
+	    $testDefinitionResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION);
+	    $testDefinitionParam = new tao_models_classes_service_ConstantParameter($testDefinitionResource, $this->getRequestParameter('QtiTestDefinition'));
+	    $serviceCall->addInParameter($testDefinitionParam);
 	    
 	    return $serviceCall;
 	}
