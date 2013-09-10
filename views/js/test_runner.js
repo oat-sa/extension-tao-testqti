@@ -1,12 +1,27 @@
 $(document).ready(function () {
 	var $frame = $('#qti-item');
-	serviceApi.loadInto($frame[0]);
 	
-	setInterval(function() {
-		$frame.height($frame.contents().height());
-	}, 10);
+	if (jQuery.browser.msie) {
+		$frame[0].onreadystatechange = function(){	
+			if(this.readyState == 'complete'){
+				autoResize($frame[0], 10);
+			}
+		};
+	} else {		
+		$frame[0].onload = function(){
+			autoResize($frame[0], 10);
+		};
+	}
+	
+	serviceApi.loadInto($frame[0]);
 });
 
+function autoResize(frame, frequence) {
+	$frame = $(frame);
+	setInterval(function() {
+		$frame.height($frame.contents().height());
+	}, frequence);
+}
 
 /**
  * Get the URL to call the item to be presented to the candidate.
