@@ -97,9 +97,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
      */
     protected function getItemRunnerService(core_kernel_classes_Resource $item, core_kernel_file_File $destinationDirectory)
     {   
-        $itemCompiler = taoItems_models_classes_ItemCompiler::singleton();
-        common_Logger::i("Compiling item '" . $item->getUri() . "'.");
-        return $itemCompiler->compileItem($item, $destinationDirectory, $resultServer);
+        $itemDirectory = $this->createSubDirectory($destinationDirectory, $item);
+        
+        $compiler = taoItems_models_classes_ItemsService::singleton()->getCompiler($item);
+        $callService = $compiler->compile($itemDirectory);
+        return $callService;
     }
     
 }
