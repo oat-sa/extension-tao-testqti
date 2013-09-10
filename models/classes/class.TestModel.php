@@ -70,7 +70,7 @@ class taoQtiTest_models_classes_TestModel
      */
     public function getItems( core_kernel_classes_Resource $test) {
     	$service = taoQtiTest_models_classes_QtiTestService::singleton();
-        $service->getItems($test);
+        return $service->getItems($test);
     }
 
     /**

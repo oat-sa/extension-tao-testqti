@@ -90,6 +90,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
     
     
     /**
+     * Get the service call for $item.
      * 
      * @param core_kernel_classes_Resource $item
      * @param core_kernel_file_File $destinationDirectory
