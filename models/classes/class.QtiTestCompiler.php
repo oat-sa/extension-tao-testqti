@@ -33,18 +33,17 @@ require_once dirname(__FILE__) . '/../../lib/qtism/qtism.php';
  * @package taoQtiTest
  * @subpackage models_classes
  */
-class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_Compiler
+class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compiler
 {
     /**
      * Compile a QTI Test and the related QTI Items.
      * 
-     * @param core_kernel_classes_Resource $test The QTI Test to be compiled.
      * @param core_kernel_file_File $destinationDirectory The directory where the compiled files must be put.
-     * @param core_kernel_classes_Resource $resultServer
      * @return tao_models_classes_service_ServiceCall
      */
-    public function compile(core_kernel_classes_Resource $test, core_kernel_file_File $destinationDirectory, core_kernel_classes_Resource $resultServer) {
+    public function compile(core_kernel_file_File $destinationDirectory) {
         
+        $test = $this->getResource();
         common_Logger::i('Compiling QTI test ' . $test->getLabel().' and the related QTI Items');
         
         // 1. Compile the test definition itself.
@@ -65,7 +64,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
-            $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory, $resultServer);
+            $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
             $assessmentItemRef->setHref($inputValues['itemUri'] . '-' . $inputValues['itemPath']);
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
@@ -94,10 +93,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoItems_models_classes_
      * 
      * @param core_kernel_classes_Resource $item
      * @param core_kernel_file_File $destinationDirectory
-     * @param core_kernel_classes_Resource $resultServer
      * @return tao_models_classes_service_ServiceCall
      */
-    protected function getItemRunnerService(core_kernel_classes_Resource $item, core_kernel_file_File $destinationDirectory, core_kernel_classes_Resource $resultServer)
+    protected function getItemRunnerService(core_kernel_classes_Resource $item, core_kernel_file_File $destinationDirectory)
     {   
         $itemCompiler = taoItems_models_classes_ItemCompiler::singleton();
         common_Logger::i("Compiling item '" . $item->getUri() . "'.");
