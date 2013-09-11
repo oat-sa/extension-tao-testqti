@@ -90,7 +90,6 @@ class taoQtiTest_helpers_VariableFiller {
      * @throws InvalidArgumentException If $clientSideValue does not fit with the baseType of $variableName.
      */
     public function fill($variableName, $clientSideValue) {
-        
         $variable = null;
         
         $outcomeDeclarations = $this->getItemRef()->getOutcomeDeclarations();
@@ -108,6 +107,8 @@ class taoQtiTest_helpers_VariableFiller {
             $msg = "No variable declaration '${variableName}' found in '${itemId}'.";
             throw new OutOfBoundsException($msg);
         }
+        
+        common_Logger::d("Filling variable '" . $variable->getIdentifier() . "'.");
         
         if (is_array($clientSideValue) === false) {
             $clientSideValue = array($clientSideValue);
@@ -151,6 +152,7 @@ class taoQtiTest_helpers_VariableFiller {
      * @throws InvalidArgumentException If $baseType is unknown.
      */
     protected static function transform($baseType, $value) {
+        
         switch ($baseType) {
             case BaseType::BOOLEAN:
                 return ($value === 'true') ? true : false;

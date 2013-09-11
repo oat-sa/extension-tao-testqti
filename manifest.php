@@ -33,7 +33,7 @@ return array(
 	'description' => 'the TAO QTI test implementation',
 	'version' => '2.5',
 	'author' => 'Open Assessment Technologies',
-	'dependencies' => array('taoTests', 'taoQTI'),
+	'dependencies' => array('taoTests', 'taoQTI', 'taoResultServer'),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
 	),

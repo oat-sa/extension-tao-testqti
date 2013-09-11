@@ -175,9 +175,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    $this->beforeAction();
 	    
+	    // --- Deal with provided responses.
+	    $responses = new State();
 	    if ($this->hasRequestParameter('responseVariables')) {
 	        
-	        $responses = new State();
+	        
 	        
 	        // Transform the values from the client-side in a QtiSm form.
 	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
@@ -187,9 +189,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	                $responses->setVariable($var);
 	            }
 	        }
-	        
-	        $this->getTestSession()->endAttempt($responses);
 	    }
+	    
+	    $this->getTestSession()->endAttempt($responses);
 	    
 	    $this->afterAction();
 	}

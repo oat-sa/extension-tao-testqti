@@ -20,11 +20,15 @@
 
 require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
 
+use qtism\common\enums\BaseType;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\Route;
+use qtism\runtime\common\OutcomeVariable;
+use qtism\data\ExtendedAssessmentItemRef;
+use qtism\common\enums\Cardinality;
 
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     
@@ -71,10 +75,38 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         
         common_Logger::d("Ending attempt for item '" . $this->getCurrentAssessmentItemRef()->getIdentifier() . "." . $this->getCurrentAssessmentItemRefOccurence() .  "'.");
         
+        $item = $this->getCurrentAssessmentItemRef();
+        $occurence = $this->getCurrentAssessmentItemRefOccurence();
+        
         try {
             parent::endAttempt($responses);
             
-            // @todo send results to the Result Server.
+            // Get the item session we just responsed and send to the
+            // result server.
+            $itemSession = $this->getItemSession($item, $occurence);
+            
+            foreach ($itemSession->getKeys() as $identifier) {
+                common_Logger::d("Examination of variable '${identifier}'");
+                $variable = $itemSession->getVariable($identifier);
+                
+                $itemIdentifier = $item->getIdentifier();
+                
+                if ($variable instanceof OutcomeVariable) {
+                    $value = $variable->getValue();
+                    
+                    $resultVariable = new taoResultServer_models_classes_OutcomeVariable();
+                    $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
+                    $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
+                    $resultVariable->setValue((gettype($value) === 'object') ? $value->__toString() : $value);
+                    
+                    common_Logger::d("Sending variable '${identifier}' to result server.");
+                    $itemUri = self::getItemRefUri($item);
+                    $this->getResultServer()->storeItemVariable($this->getSessionId(), $itemUri, $resultVariable, "${item}.${occurence}");
+                }
+                else {
+                    
+                }
+            }
         }
         catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
@@ -91,5 +123,16 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $msg = "An error occured while transmitting results to the result server for item '${itemId}.${itemOccurence}'.";
             throw new tao_helpers_TestSessionException($msg, tao_helpers_TestSessionException::RESULT_ERROR, $e);
         }
+    }
+    
+    /**
+     * Get the TAO URI of an item from an ExtendedAssessmentItemRef object.
+     * 
+     * @param ExtendedAssessmentItemRef $itemRef
+     * @return string A URI.
+     */
+    protected static function getItemRefUri(ExtendedAssessmentItemRef $itemRef) {
+        $parts = explode('-', $itemRef->getHref());
+        return $parts[0];
     }
 }
