@@ -28,6 +28,12 @@ use qtism\data\Document;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 
+/**
+ * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
+ * 
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
+ *
+ */
 class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
 
    /**

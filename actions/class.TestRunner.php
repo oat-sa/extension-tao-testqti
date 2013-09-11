@@ -23,6 +23,7 @@ require_once(dirname(__FILE__) . '/../lib/qtism/qtism.php');
 
 use qtism\data\AssessmentTest;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
+use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\storage\common\AbstractStorage;
@@ -130,16 +131,18 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $testSession->beginTestSession();
         }
         
-        // Log current [itemId].[occurence].
-        common_Logger::d("Current Route Item is '" . $testSession->getCurrentAssessmentItemRef()->getIdentifier() . "." . $testSession->getCurrentAssessmentItemRefOccurence() . "'");
-        
-        // --- If the item session is not in INTERACTING state, begin new attempt.
-        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
-            $this->beginAttempt();
-        }
-        
-        // --- Init javascript API.
-        $this->buildServiceApi();
+        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+            // Log current [itemId].[occurence].
+            common_Logger::d("Current Route Item is '" . $testSession->getCurrentAssessmentItemRef()->getIdentifier() . "." . $testSession->getCurrentAssessmentItemRefOccurence() . "'");
+            
+            // --- If the item session is not in INTERACTING state, begin new attempt.
+            if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
+                $this->beginAttempt();
+            }
+            
+            // --- Init javascript API.
+            $this->buildServiceApi();
+        }  
     }
     
     protected function afterAction() {
@@ -154,19 +157,34 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	{
 	    $this->beforeAction();
 	    
-	    // Prepare the AssessmentTestContext for the client.
-	    // The built data is availabe with get_data('assessmentTestContext').
-	    $this->buildAssessmentTestContext();
-	    
+        // Prepare the AssessmentTestContext for the client.
+        // The built data is availabe with get_data('assessmentTestContext').
+        $this->buildAssessmentTestContext();
+	    	    
 	    $this->setView('test_runner.tpl');
 	    
 	    $this->afterAction();
 	}
 	
 	public function storeItemVariableSet() {
+	    
 	    $this->beforeAction();
 	    
-	    
+	    if ($this->hasRequestParameter('responseVariables')) {
+	        
+	        $responses = new State();
+	        
+	        // Transform the values from the client-side in a QtiSm form.
+	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
+	            if (empty($val) === false) {
+	                $filler = new taoQtiTest_helpers_VariableFiller($this->getTestSession()->getCurrentAssessmentItemRef());
+	                $var = $filler->fill($id, $val);
+	                $responses->setVariable($var);
+	            }
+	        }
+	        
+	        $this->getTestSession()->endAttempt($responses);
+	    }
 	    
 	    $this->afterAction();
 	}
@@ -250,17 +268,25 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    // The state of the test session.
 	    $context['state'] = $session->getState();
 	    
-	    // The navigation mode.
-	    $context['navigationMode'] = $session->getCurrentNavigationMode();
+	    // Default values for the test session context.
+	    $context['navigationMode'] = null;
+	    $context['submissionMode'] = null;
+	    $context['remainingAttempts'] = 0;
+	    $context['isAdaptive'] = false;
 	    
-	    // The submission mode.
-	    $context['submissionMode'] = $session->getCurrentSubmissionMode();
-	    
-	    // The number of remaining attempts for the current item.
-	    $context['remainingAttempts'] = $session->getCurrentRemainingAttempts();
-	    
-	    // Whether the current item is adaptive.
-	    $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
+	    if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
+	        // The navigation mode.
+	        $context['navigationMode'] = $session->getCurrentNavigationMode();
+	         
+	        // The submission mode.
+	        $context['submissionMode'] = $session->getCurrentSubmissionMode();
+	         
+	        // The number of remaining attempts for the current item.
+	        $context['remainingAttempts'] = $session->getCurrentRemainingAttempts();
+	         
+	        // Whether the current item is adaptive.
+	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
+	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
 	}
@@ -319,9 +345,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @return string A service call id composed of the identifier of the item and its occurence number in the route.
 	 */
 	protected function buildServiceCallId() {
-	    $itemId = $this->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
-	    $occurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
-	    return "${itemId}.${occurence}";
+	    $testSession = $this->getTestSession();
+	    $sessionId = $testSession->getSessionId();
+	    $itemId = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
+	    $occurence = $testSession->getCurrentAssessmentItemRefOccurence();
+	    return "${sessionId}.${itemId}.${occurence}";
 	}
 	
 	/**
@@ -331,6 +359,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	protected function buildServiceApi() {
 	    $serviceCall = $this->getItemServiceCall();
 	    $serviceCallId = $this->buildServiceCallId();
-	    $this->setData('serviceApi', tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $serviceCallId));
+	    $this->setData('itemServiceApi', tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $serviceCallId));
 	}
 }

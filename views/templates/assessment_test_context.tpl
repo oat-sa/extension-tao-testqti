@@ -1,4 +1,6 @@
 <script type="text/javascript">
 var assessmentTestContext = <?php echo json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS); ?>;
-var serviceApi = <?=get_data('serviceApi')?>;
+<? if (has_data('itemServiceApi')): ?>
+var itemServiceApi = <?=get_data('itemServiceApi')?>;
+<? endif; ?>
 </script>
