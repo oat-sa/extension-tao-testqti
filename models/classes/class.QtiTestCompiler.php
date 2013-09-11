@@ -66,7 +66,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
             $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-            $assessmentItemRef->setHref($inputValues['itemUri'] . '-' . $inputValues['itemPath']);
+            $assessmentItemRef->setHref($inputValues['itemUri'] . '-' . $inputValues['itemPath'] . '-' . $this->getResource()->getUri());
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         

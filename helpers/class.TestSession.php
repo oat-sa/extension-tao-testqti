@@ -78,6 +78,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         
         $item = $this->getCurrentAssessmentItemRef();
         $occurence = $this->getCurrentAssessmentItemRefOccurence();
+        $sessionId = $this->getSessionId();
         
         try {
             parent::endAttempt($responses);
@@ -103,7 +104,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                     
                     common_Logger::d("Sending  Outcome Variable '${identifier}' to result server.");
                     $itemUri = self::getItemRefUri($item);
-                    $this->getResultServer()->storeItemVariable($this->getSessionId(), $itemUri, $resultVariable, "${item}.${occurence}");
+                    $testUri = self::getTestDefinitionUri($item);
+                    $this->getResultServer()->storeItemVariable($testUri, $itemUri, $resultVariable, "${sessionId}.${item}.${occurence}");
                 }
                 else if ($variable instanceof ResponseVariable) {
                     // ResponseVariable.
@@ -118,7 +120,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                     
                     common_Logger::d("Sending Response Variable '${identifier}' to result server.");
                     $itemUri = self::getItemRefUri($item);
-                    $this->getResultServer()->storeItemVariable($this->getSessionId(), $itemUri, $resultVariable, "${item}.${occurence}");
+                    $testUri = self::getTestDefinitionUri($item);
+                    $this->getResultServer()->storeItemVariable($testUri, $itemUri, $resultVariable, "${sessionId}.${item}.${occurence}");
                 }
             }
         }
@@ -148,5 +151,16 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     protected static function getItemRefUri(ExtendedAssessmentItemRef $itemRef) {
         $parts = explode('-', $itemRef->getHref());
         return $parts[0];
+    }
+    
+    /**
+     * Get the TAO Uri of the Test Definition from an ExtendedAssessmentItemRef object.
+     * 
+     * @param ExtendedAssessmentItemRef $itemRef
+     * @return string A URI.
+     */
+    protected static function getTestDefinitionUri(ExtendedAssessmentItemRef $itemRef) {
+        $parts = explode('-', $itemRef->getHref());
+        return $parts[2];
     }
 }
