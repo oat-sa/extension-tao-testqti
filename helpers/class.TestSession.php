@@ -27,6 +27,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\Route;
 use qtism\runtime\common\OutcomeVariable;
+use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
 
@@ -95,16 +96,29 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                     $value = $variable->getValue();
                     
                     $resultVariable = new taoResultServer_models_classes_OutcomeVariable();
+                    $resultVariable->setIdentifier($identifier);
                     $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
                     $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
                     $resultVariable->setValue((gettype($value) === 'object') ? $value->__toString() : $value);
                     
-                    common_Logger::d("Sending variable '${identifier}' to result server.");
+                    common_Logger::d("Sending  Outcome Variable '${identifier}' to result server.");
                     $itemUri = self::getItemRefUri($item);
                     $this->getResultServer()->storeItemVariable($this->getSessionId(), $itemUri, $resultVariable, "${item}.${occurence}");
                 }
-                else {
+                else if ($variable instanceof ResponseVariable) {
+                    // ResponseVariable.
+                    $value = $variable->getValue();
                     
+                    $resultVariable = new taoResultServer_models_classes_ResponseVariable();
+                    $resultVariable->setIdentifier($identifier);
+                    $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
+                    $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
+                    $resultVariable->setCandidateResponse((gettype($value) === 'object') ? $value->__toString() : $value);
+                    $resultVariable->setCorrectResponse($variable->isCorrect());
+                    
+                    common_Logger::d("Sending Response Variable '${identifier}' to result server.");
+                    $itemUri = self::getItemRefUri($item);
+                    $this->getResultServer()->storeItemVariable($this->getSessionId(), $itemUri, $resultVariable, "${item}.${occurence}");
                 }
             }
         }
