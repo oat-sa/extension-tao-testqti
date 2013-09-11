@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,11 +16,11 @@
  *
  * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
- *
  */
 
 require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
 
+use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\runtime\storage\binary\BinaryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\data\Document;
@@ -43,8 +42,8 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
     */
    private $serviceModule = null; 
     
-   public function __construct(AssessmentTest $assessmentTest, tao_actions_ServiceModule $serviceModule) {
-       parent::__construct($assessmentTest);
+   public function __construct(AbstractAssessmentTestSessionFactory $factory, tao_actions_ServiceModule $serviceModule) {
+       parent::__construct($factory);
        $this->setServiceModule($serviceModule);
    }
    

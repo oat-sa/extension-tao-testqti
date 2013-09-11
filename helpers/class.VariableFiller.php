@@ -157,17 +157,17 @@ class taoQtiTest_helpers_VariableFiller {
             break;
             
             case BaseType::DIRECTED_PAIR:
-                common_Logger("Value '" . $value[0] . "," . $value[1] . "' transformed into directedPair.");
+                common_Logger::d("Value '" . $value[0] . "," . $value[1] . "' transformed into directedPair.");
                 return new DirectedPair($value[0], $value[1]);
             break;
             
             case BaseType::PAIR:
-                common_Logger("Value '" . $value[0] . "," . $value[1] . "' transformed into pair.");
+                common_Logger::d("Value '" . $value[0] . "," . $value[1] . "' transformed into pair.");
                 return new Pair($value[0], $value[1]);
             break;
             
             case BaseType::STRING:
-                common_Logger("Value '${value}' transformed into string.");
+                common_Logger::d("Value '${value}' transformed into string.");
                 return $value;
             break;
             
@@ -187,7 +187,7 @@ class taoQtiTest_helpers_VariableFiller {
             break;
             
             case BaseType::POINT:
-                common_Logger("Value '" . $value[0] . "," . $value[1] . "' transformed into point.");
+                common_Logger::d("Value '" . $value[0] . "," . $value[1] . "' transformed into point.");
                 return new Point(intval($value[0]), intval($value[1]));
             break;
             

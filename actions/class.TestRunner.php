@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +23,7 @@
 
 require_once(dirname(__FILE__) . '/../lib/qtism/qtism.php');
 
+use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
 use qtism\runtime\common\State;
@@ -117,7 +120,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function __construct() {
         parent::__construct();
         $this->retrieveTestDefinition();
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($this->getTestDefinition(), $this));
+        $testSessionFactory = new AssessmentTestSessionFactory($this->getTestDefinition());
+        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory, $this));
         $this->retrieveTestSession();
     }
     
