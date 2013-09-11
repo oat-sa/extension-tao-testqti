@@ -120,7 +120,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function __construct() {
         parent::__construct();
         $this->retrieveTestDefinition();
-        $testSessionFactory = new AssessmentTestSessionFactory($this->getTestDefinition());
+        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer);
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory, $this));
         $this->retrieveTestSession();
     }
