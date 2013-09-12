@@ -183,8 +183,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
 	            if (empty($val) === false) {
 	                $filler = new taoQtiCommon_helpers_VariableFiller($this->getTestSession()->getCurrentAssessmentItemRef());
-	                $var = $filler->fill($id, $val);
-	                $responses->setVariable($var);
+	                
+	                try {
+	                    $var = $filler->fill($id, $val);
+	                    $responses->setVariable($var);
+	                }
+	                catch (OutOfRangeException $e) {
+	                    // The value could not be transformed, ignore it.
+	                    // format the logger message.
+	                    common_Logger::d("Could not convert client-side value for variable '${id}'.");
+	                }
 	            }
 	        }
 	    }
@@ -327,11 +335,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $pathResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMPATH);
 	    $pathParam = new tao_models_classes_service_ConstantParameter($pathResource, $parts[1]);
 	    $serviceCall->addInParameter($pathParam);
-	    
-	    $resultServerResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_RESULTSERVER);
-	    $resultServerUri = $ext->getConfig(QTITEST_RESULT_SERVER_CONFIG_KEY);
-	    $resultServerParam = new tao_models_classes_service_ConstantParameter($resultServerResource, $resultServerUri);
-	    $serviceCall->addInParameter($resultServerParam);
 	    
 	    $parentServiceCallIdResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID);
 	    $parentServiceCallIdParam = new tao_models_classes_service_ConstantParameter($parentServiceCallIdResource, $this->getServiceCallId());
