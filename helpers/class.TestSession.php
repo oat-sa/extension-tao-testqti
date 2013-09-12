@@ -84,48 +84,17 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
+            $resultTransmitter = new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer());
             
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::d("Examination of variable '${identifier}'");
+                
                 $variable = $itemSession->getVariable($identifier);
+                $itemUri = self::getItemRefUri($item);
+                $testUri = self::getTestDefinitionUri($item);
+                $transmissionId = "${sessionId}.${item}.${occurence}";
                 
-                $itemIdentifier = $item->getIdentifier();
-                
-                if ($variable instanceof OutcomeVariable) {
-                    $value = $variable->getValue();
-                    
-                    $resultVariable = new taoResultServer_models_classes_OutcomeVariable();
-                    $resultVariable->setIdentifier($identifier);
-                    $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
-                    $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
-                    $resultVariable->setValue((gettype($value) === 'object') ? $value->__toString() : $value);
-                    
-                    common_Logger::d("Sending  Outcome Variable '${identifier}' to result server.");
-                    $itemUri = self::getItemRefUri($item);
-                    $testUri = self::getTestDefinitionUri($item);
-                    $this->getResultServer()->storeItemVariable($testUri, $itemUri, $resultVariable, "${sessionId}.${item}.${occurence}");
-                }
-                else if ($variable instanceof ResponseVariable) {
-                    // ResponseVariable.
-                    $value = $variable->getValue();
-                    
-                    $resultVariable = new taoResultServer_models_classes_ResponseVariable();
-                    $resultVariable->setIdentifier($identifier);
-                    $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
-                    $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
-                    $resultVariable->setCandidateResponse((gettype($value) === 'object') ? $value->__toString() : $value);
-                    
-                    // The fact that the response is correct must not be sent for built-in
-                    // response variables 'duration' and 'numAttempts'.
-                    if (!in_array($identifier, array('duration', 'numAttempts'))) {
-                        $resultVariable->setCorrectResponse($variable->isCorrect());
-                    }
-                    
-                    common_Logger::d("Sending Response Variable '${identifier}' to result server.");
-                    $itemUri = self::getItemRefUri($item);
-                    $testUri = self::getTestDefinitionUri($item);
-                    $this->getResultServer()->storeItemVariable($testUri, $itemUri, $resultVariable, "${sessionId}.${item}.${occurence}");
-                }
+                $resultTransmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
             }
         }
         catch (AssessmentTestSessionException $e) {
