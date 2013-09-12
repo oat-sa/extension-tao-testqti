@@ -18,8 +18,6 @@
  *
  */
 
-require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
-
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\runtime\storage\binary\BinaryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;

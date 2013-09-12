@@ -18,8 +18,6 @@
  *
  */
 
-require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
-
 use qtism\common\enums\BaseType;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;

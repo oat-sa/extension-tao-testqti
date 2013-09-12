@@ -23,8 +23,6 @@ use qtism\common\ResolutionException;
  *
  */
 
-require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
-
 /**
  * The ItemResolver class implements the logic to resolve TAO Item URIs to
  * paths to the related QTI-XML files.

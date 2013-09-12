@@ -21,8 +21,6 @@
  * 
  */
 
-require_once(dirname(__FILE__) . '/../lib/qtism/qtism.php');
-
 use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;

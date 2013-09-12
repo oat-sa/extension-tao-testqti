@@ -20,8 +20,6 @@
  *
  */
 
-require_once dirname(__FILE__) . '/../lib/qtism/qtism.php';
-
 use qtism\common\datatypes\Point;
 use qtism\runtime\common\MultipleContainer;
 use qtism\runtime\common\OrderedContainer;

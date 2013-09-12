@@ -1,6 +1,4 @@
 <?php
-use qtism\data\QtiComponentIterator;
-
 /**  
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +18,10 @@ use qtism\data\QtiComponentIterator;
  * 
  */
 
+use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
 use qtism\data\storage\xml\XmlAssessmentTestDocument;
 
-require_once dirname(__FILE__) . '/../../lib/qtism/qtism.php';
 
 /**
  * Compiles a QTI Test and related QTI Items.
