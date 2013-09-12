@@ -6,9 +6,13 @@ var testRunnerConstants = {
 	'TEST_STATE_CLOSED': 4
 };
 
+$(document).ready(function () {
+	$frame = $('#qti-item');
+	registerAutoResize();
+});
+
 function onServiceApiReady(serviceApi) {
-	$(document).ready(function () {
-		
+
 		// If the assessment test session is in CLOSED state,
 		// we give the control to the delivery engine by calling
 		// finish.
@@ -16,26 +20,11 @@ function onServiceApiReady(serviceApi) {
 			serviceApi.finish();
 		}
 		else {
-			var $frame = $('#qti-item');
-			
-			if (jQuery.browser.msie) {
-				$frame[0].onreadystatechange = function(){	
-					if(this.readyState == 'complete'){
-						autoResize($frame[0], 10);
-					}
-				};
-			} else {		
-				$frame[0].onload = function(){
-					autoResize($frame[0], 10);
-				};
-			}
-			
 			itemServiceApi.loadInto($frame[0]);
 			itemServiceApi.onFinish(function () {
 				location.reload(true);
 			});
 		}
-	});
 }
 
 function autoResize(frame, frequence) {
@@ -43,4 +32,20 @@ function autoResize(frame, frequence) {
 	setInterval(function() {
 		$frame.height($frame.contents().height());
 	}, frequence);
+}
+
+function registerAutoResize() {
+	var $frame = $('#qti-item');
+	
+	if (jQuery.browser.msie) {
+		$frame[0].onreadystatechange = function(){	
+			if(this.readyState == 'complete'){
+				autoResize($frame[0], 10);
+			}
+		};
+	} else {		
+		$frame[0].onload = function(){
+			autoResize($frame[0], 10);
+		};
+	}
 }

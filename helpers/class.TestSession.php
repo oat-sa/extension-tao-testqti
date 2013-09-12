@@ -116,7 +116,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                     $resultVariable->setBaseType(BaseType::getNameByConstant($variable->getBaseType()));
                     $resultVariable->setCardinality(Cardinality::getNameByConstant($variable->getCardinality()));
                     $resultVariable->setCandidateResponse((gettype($value) === 'object') ? $value->__toString() : $value);
-                    $resultVariable->setCorrectResponse($variable->isCorrect());
+                    
+                    // The fact that the response is correct must not be sent for built-in
+                    // response variables 'duration' and 'numAttempts'.
+                    if (!in_array($identifier, array('duration', 'numAttempts'))) {
+                        $resultVariable->setCorrectResponse($variable->isCorrect());
+                    }
                     
                     common_Logger::d("Sending Response Variable '${identifier}' to result server.");
                     $itemUri = self::getItemRefUri($item);
