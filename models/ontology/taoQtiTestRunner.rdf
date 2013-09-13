@@ -12,6 +12,13 @@
     <wf:PropertyFormalParametersName><![CDATA[QtiTestDefinition]]></wf:PropertyFormalParametersName>
   </rdf:Description>
   
+  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestCompilation">
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Compilation]]></rdfs:label>
+    <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Compilation Uri]]></rdfs:comment>
+    <wf:PropertyFormalParametersName><![CDATA[QtiTestCompilation]]></wf:PropertyFormalParametersName>
+  </rdf:Description>
+  
   <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId">
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Parent Service Call ID]]></rdfs:label>
@@ -28,5 +35,6 @@
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemUri"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestCompilation"/>
   </rdf:Description>
 </rdf:RDF>

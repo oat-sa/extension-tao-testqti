@@ -64,23 +64,33 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
             $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-            $assessmentItemRef->setHref($inputValues['itemUri'] . '-' . $inputValues['itemPath'] . '-' . $this->getResource()->getUri());
-            common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
+            $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
+            common_Logger::d("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         
         $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.xml';
         $compiledDoc->save($compiledDocPath);
-        common_Logger::t("QTI Test successfuly compiled.");
+        
+        $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.xml', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);
+        common_Logger::d("QTI Item Compilation file registered at '" . $compiledFile->getAbsolutePath() . '".');
         
         // 3. Build the service call.
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
-                        // Test Definition URI
+                        // Test Definition URI passed to the QtiTestRunner service.
                         new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION),
-                        $compiledDocPath
-        
+                        $test
         );
         $service->addInParameter($param);
+        
+        $param = new tao_models_classes_service_ConstantParameter(
+                        // Test Compilation URI passed to the QtiTestRunner service.
+                        new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION),
+                        $compiledFile
+        );
+        $service->addInParameter($param);
+        
+        common_Logger::t("QTI Test successfuly compiled.");
         
         return $service;
     }

@@ -5,7 +5,8 @@ class taoQtiTest_actions_ItemRunner extends taoItems_actions_ItemRunner {
     protected function getResultServerApi() {
         $parentCallId = $this->getRequestParameter('QtiTestParentServiceCallId');
         $testDefinition = $this->getRequestParameter('QtiTestDefinition');
-        return "new ResultServerApi('" . _url('', 'TestRunner','taoQtiTest') . "', '" . $parentCallId . "', '" . $testDefinition . "')";
+        $testCompilation = $this->getRequestParameter('QtiTestCompilation');
+        return "new ResultServerApi('" . _url('', 'TestRunner','taoQtiTest') . "', '" . $parentCallId . "', '" . $testDefinition . "', '" . $testCompilation . "')";
     }
     
     protected function getResultServerApiPath() {

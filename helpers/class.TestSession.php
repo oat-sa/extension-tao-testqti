@@ -39,6 +39,12 @@ use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
 
+/**
+ * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
+ * 
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
+ *
+ */
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     
     /**
@@ -55,11 +61,27 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     private $resultTransmitter;
     
-    public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer) {
+    /**
+     * The TAO Resource describing the test.
+     * 
+     * @var core_kernel_classes_Resource
+     */
+    private $test;
+    
+    /**
+     * Create a new TAO QTI Test Session.
+     * 
+     * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
+     * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
+     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The Result Server where Item and Test Results must be sent to.
+     * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
+     */
+    public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
         parent::__construct($assessmentTest, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT));
+        $this->setTest($test);
     }
     
     /**
@@ -99,6 +121,24 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     /**
+     * Set the TAO Resource describing the test in database.
+     * 
+     * @param core_kernel_classes_Resource $test A Resource from the database describing a TAO test.
+     */
+    protected function setTest(core_kernel_classes_Resource $test) {
+        $this->test = $test;
+    }
+    
+    /**
+     * Get the TAO Resource describing the test in database.
+     * 
+     * @return core_kernel_classes_Resource A Resource from the database describing a TAO test.
+     */
+    public function getTest() {
+        return $this->test;
+    }
+    
+    /**
 	 * End an attempt for the current item in the route. If the current navigation mode
 	 * is LINEAR, the TestSession moves automatically to the next step in the route or
 	 * the end of the session if the responded item is the last one.
@@ -108,7 +148,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
 	 * @throws AssessmentItemSessionException
 	 */
     public function endAttempt(State $responses) {
-        
         common_Logger::d("Ending attempt for item '" . $this->getCurrentAssessmentItemRef()->getIdentifier() . "." . $this->getCurrentAssessmentItemRefOccurence() .  "'.");
         
         $item = $this->getCurrentAssessmentItemRef();
@@ -161,7 +200,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                 $this['LtiOutcome'] = $finalLtiOutcomeValue;
                 
                 $ltiOutcomeVariable = $this->getVariable('LtiOutcome');
-                $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId());
+                $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId(), $this->getTest()->getUri());
             }
             catch (ProcessingException $e) {
                 $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -181,7 +220,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @return string A URI.
      */
     protected static function getItemRefUri(ExtendedAssessmentItemRef $itemRef) {
-        $parts = explode('-', $itemRef->getHref());
+        $parts = explode('|', $itemRef->getHref());
         return $parts[0];
     }
     
@@ -192,7 +231,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @return string A URI.
      */
     protected static function getTestDefinitionUri(ExtendedAssessmentItemRef $itemRef) {
-        $parts = explode('-', $itemRef->getHref());
+        $parts = explode('|', $itemRef->getHref());
         return $parts[2];
     }
     

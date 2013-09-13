@@ -55,6 +55,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     private $testDefinition = null;
     
     /**
+     * The TAO Resource describing the test to be run.
+     * 
+     * @var core_kernel_classes_Resource
+     */
+    private $testResource = null;
+    
+    /**
      * The current AbstractStorage object.
      * 
      * @var AbstractStorage
@@ -114,12 +121,31 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	protected function setStorage(AbstractStorage $storage) {
 	    $this->storage = $storage;
 	}
+	
+	/**
+	 * Get the TAO Resource describing the test to be run.
+	 * 
+	 * @return core_kernel_classes_Resource A TAO Resource in database.
+	 */
+	protected function getTestResource() {
+	    return $this->testResource;
+	}
+	
+	/**
+	 * Set the TAO Resource describing the test to be run.
+	 * 
+	 * @param core_kernel_classes_Resource $testResource A TAO Resource in database.
+	 */
+	protected function setTestResource(core_kernel_classes_Resource $testResource) {
+	    $this->testResource = $testResource;
+	}
     
     public function __construct() {
         parent::__construct();
+        $this->retrieveTestResource();
         $this->retrieveTestDefinition();
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer);
+        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $this->getTestResource());
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory, $this));
         $this->retrieveTestSession();
     }
@@ -169,6 +195,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction();
 	}
 	
+	/**
+	 * Action called when a QTI Item embedded in a QTI Test submit responses.
+	 * 
+	 */
 	public function storeItemVariableSet() {
 	    
 	    $this->beforeAction();
@@ -176,9 +206,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    // --- Deal with provided responses.
 	    $responses = new State();
 	    if ($this->hasRequestParameter('responseVariables')) {
-	        
-	        
-	        
+
 	        // Transform the values from the client-side in a QtiSm form.
 	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
 	            if (empty($val) === false) {
@@ -197,7 +225,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        }
 	    }
 	    
-	    $this->getTestSession()->endAttempt($responses);
+	    if (count($responses) > 0) {
+	        // Responses provided, 'endAttempt' launched on the item session lifecycle.
+	        common_Logger::d('Responses sent from the client-side. The Response Processing will take place.');
+	        $this->getTestSession()->endAttempt($responses);
+	    }
+	    else {
+	        // No responses provided, same as skipping the item.
+	        common_Logger::d("No responses sent from the client-side. The item is then skipped.");
+	        $this->getTestSession()->skip();
+	    }
 	    
 	    $this->afterAction();
 	}
@@ -209,7 +246,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @return AssessmentTest The AssessmentTest object the current test session is built from.
 	 */
 	protected function retrieveTestDefinition() {
-	    $testFilePath = $this->getRequestParameter('QtiTestDefinition');
+	    $compilationResource = new core_kernel_file_File($this->getRequestParameter('QtiTestCompilation'));
+	    $testFilePath = $compilationResource->getAbsolutePath();
 	    
 	    common_Logger::d("Loading QTI-XML file at '${testFilePath}'.");
 	    $doc = new XmlCompactAssessmentTestDocument();
@@ -236,6 +274,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        common_Logger::d("Retrieving QTI Assessment Test Session '${sessionId}'");
 	        $this->setTestSession($qtiStorage->retrieve($sessionId));
 	    }
+	}
+	
+	/**
+	 * Retrieve the TAO Resource describing the test to be run.
+	 * 
+	 * @return core_kernel_classes_Resource A TAO Test Resource in database.
+	 */
+	protected function retrieveTestResource() {
+	    $this->setTestResource(new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition')));
 	}
 	
 	/**
@@ -323,7 +370,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
 	    
 	    // retrive itemUri & itemPath. 
-	    $parts = explode('-', $href);
+	    $parts = explode('|', $href);
 	    
 	    $definition =  new core_kernel_classes_Resource(INSTANCE_QTITEST_ITEMRUNNERSERVICE);
 	    $serviceCall = new tao_models_classes_service_ServiceCall($definition);
@@ -344,6 +391,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $testDefinitionParam = new tao_models_classes_service_ConstantParameter($testDefinitionResource, $this->getRequestParameter('QtiTestDefinition'));
 	    $serviceCall->addInParameter($testDefinitionParam);
 	    
+	    $testCompilationResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION);
+	    $testCompilationParam = new tao_models_classes_service_ConstantParameter($testCompilationResource, $this->getRequestParameter('QtiTestCompilation'));
+	    $serviceCall->addInParameter($testCompilationParam);
+	    
 	    return $serviceCall;
 	}
 	
@@ -362,7 +413,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	
 	/**
 	 * Build the serviceApi call for the current item and store
-	 * it in the request parameters with key 'serviceApi'.
+	 * it in the request parameters with key 'itemServiceApi'.
 	 */
 	protected function buildServiceApi() {
 	    $serviceCall = $this->getItemServiceCall();

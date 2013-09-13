@@ -1,8 +1,4 @@
 <?php
-
-use qtism\data\storage\FileResolver;
-use qtism\common\ResolutionException;
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +18,9 @@ use qtism\common\ResolutionException;
  *
  *
  */
+
+use qtism\data\storage\FileResolver;
+use qtism\common\ResolutionException;
 
 /**
  * The ItemResolver class implements the logic to resolve TAO Item URIs to

@@ -21,6 +21,12 @@
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
 
+/**
+ * A TAO specific implementation of QtiSm's AbstractAssessmentTestSessionFactory.
+ * 
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
+ *
+ */
 class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessionFactory {
    
     /**
@@ -30,9 +36,24 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
      */
     private $resultServer;
     
-    public function __construct(AssessmentTest $assessmentTest, taoResultServer_models_classes_ResultServerStateFull $resultServer) {
+    /**
+     * The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     * 
+     * @var core_kernel_classes_Resource
+     */
+    private $test;
+    
+    /**
+     * Create a new TestSessionFactory.
+     * 
+     * @param AssessmentTest $assessmentTest The QtiSm QTI AssessmentTest definition of the AssessmentTestSession to be built.
+     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
+     * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     */
+    public function __construct(AssessmentTest $assessmentTest, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
         parent::__construct($assessmentTest);
         $this->setResultServer($resultServer);
+        $this->setTest($test);
     }
     
     /**
@@ -54,6 +75,24 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     }
     
     /**
+     * Set the TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     * 
+     * @param core_kernel_classes_Resource $test A TAO Test Resource.
+     */
+    public function setTest(core_kernel_classes_Resource $test) {
+        $this->test = $test;
+    }
+    
+    /**
+     * Get the TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     * 
+     * @return core_kernel_classes_Resource A TAO Resource.
+     */
+    public function getTest() {
+        return $this->test;
+    }
+    
+    /**
      * Create a tao_helpers_TestSession with the content of the factory.
      * 
      * @return taoQtiTest_helpers_TestSession
@@ -61,6 +100,11 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     public function createAssessmentTestSession() {
         parent::createAssessmentTestSession();
         
-        return new taoQtiTest_helpers_TestSession($this->getAssessmentTest(), $this->getRoute(), $this->getResultServer());
+        return new taoQtiTest_helpers_TestSession(
+            $this->getAssessmentTest(),
+            $this->getRoute(),
+            $this->getResultServer(),
+            $this->getTest()
+        );
     }
 }
