@@ -5,21 +5,21 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
 	xmlns:wf="http://www.tao.lu/middleware/wfEngine.rdf#"
 >
-  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition">
+  <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition">
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Definition]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Definition Uri]]></rdfs:comment>
     <wf:PropertyFormalParametersName><![CDATA[QtiTestDefinition]]></wf:PropertyFormalParametersName>
   </rdf:Description>
   
-  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestCompilation">
+  <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation">
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Compilation]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Compilation Uri]]></rdfs:comment>
     <wf:PropertyFormalParametersName><![CDATA[QtiTestCompilation]]></wf:PropertyFormalParametersName>
   </rdf:Description>
   
-  <rdf:Description rdf:about="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId">
+  <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId">
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassFormalParameters"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Parent Service Call ID]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[QTI Test Parent Service Call ID]]></rdfs:comment>
@@ -33,8 +33,8 @@
     <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/ItemRunner/index?itemPath=^itemPath]]></wf:PropertySupportServicesUrl>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemPath"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemUri"/>
-    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestParentServiceCallId"/>
-    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestDefinition"/>
-    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#FormalParamQtiTestCompilation"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition"/>
+    <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation"/>
   </rdf:Description>
 </rdf:RDF>
