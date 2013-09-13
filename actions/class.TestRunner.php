@@ -225,16 +225,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        }
 	    }
 	    
-	    if (count($responses) > 0) {
-	        // Responses provided, 'endAttempt' launched on the item session lifecycle.
-	        common_Logger::d('Responses sent from the client-side. The Response Processing will take place.');
-	        $this->getTestSession()->endAttempt($responses);
-	    }
-	    else {
-	        // No responses provided, same as skipping the item.
-	        common_Logger::d("No responses sent from the client-side. The item is then skipped.");
-	        $this->getTestSession()->skip();
-	    }
+	    common_Logger::d('Responses sent from the client-side. The Response Processing will take place.');
+	    $this->getTestSession()->endAttempt($responses);
 	    
 	    $this->afterAction();
 	}
