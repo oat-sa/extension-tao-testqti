@@ -18,6 +18,16 @@
  *
  */
 
+use qtism\runtime\common\ProcessingException;
+use qtism\runtime\processing\OutcomeProcessingEngine;
+use qtism\data\rules\OutcomeRuleCollection;
+use qtism\data\processing\OutcomeProcessing;
+use qtism\data\rules\SetOutcomeValue;
+use qtism\runtime\expressions\operators\DivideProcessor;
+use qtism\data\expressions\ExpressionCollection;
+use qtism\data\expressions\operators\Divide;
+use qtism\data\expressions\NumberPresented;
+use qtism\data\expressions\NumberCorrect;
 use qtism\common\enums\BaseType;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
@@ -38,9 +48,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     private $resultServer;
     
+    /**
+     * The ResultTransmitter object to be used to transmit test results.
+     * 
+     * @var taoQtiCommon_helpers_ResultTransmitter
+     */
+    private $resultTransmitter;
+    
     public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer) {
         parent::__construct($assessmentTest, $route);
         $this->setResultServer($resultServer);
+        $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
+        $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT));
     }
     
     /**
@@ -48,7 +67,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * 
      * @param taoResultServer_models_classes_ResultServerStateFull $resultServer
      */
-    public function setResultServer(taoResultServer_models_classes_ResultServerStateFull $resultServer) {
+    protected function setResultServer(taoResultServer_models_classes_ResultServerStateFull $resultServer) {
         $this->resultServer = $resultServer;
     }
     
@@ -57,8 +76,26 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * 
      * @return taoResultServer_models_classes_ResultServerStateFull
      */
-    public function getResultServer() {
+    protected function getResultServer() {
         return $this->resultServer;
+    }
+    
+    /**
+     * Set the ResultTransmitter object to be used to transmit test results.
+     * 
+     * @param taoQtiCommon_helpers_ResultTransmitter $resultTransmitter
+     */
+    protected function setResultTransmitter(taoQtiCommon_helpers_ResultTransmitter $resultTransmitter) {
+        $this->resultTransmitter = $resultTransmitter;
+    }
+    
+    /**
+     * Get the ResultTransmitter object to be used to transmit test results.
+     * 
+     * @return taoQtiCommon_helpers_ResultTransmitter
+     */
+    protected function getResultTransmitter() {
+        return $this->resultTransmitter;
     }
     
     /**
@@ -84,7 +121,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
-            $resultTransmitter = new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer());
+            $resultTransmitter = $this->getResultTransmitter();
             
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::d("Examination of variable '${identifier}'");
@@ -99,18 +136,41 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         }
         catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
-            $itemId = $this->getCurrentAssessmentItemRef()->getIdentifier();
-            $itemOccurence = $this->getCurrentAssessmentItemRefOccurence();
-            $msg = "An error occured while ending the attempt on item '${itemId}.${itemOccurence}'";
-            throw new tao_helpers_TestSessionException($msg, $e->getCode(), $e);
+            $msg = "An error occured while ending the attempt.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, $e->getCode(), $e);
         }
         catch (Exception $e) {
             // Error with Result Server.
-            $itemId = $this->getCurrentAssessmentItemRef()->getIdentifier();
-            $itemOccurence = $this->getCurrentAssessmentItemRefOccurence();
-            
-            $msg = "An error occured while transmitting results to the result server for item '${itemId}.${itemOccurence}'.";
+            $msg = "An error occured while transmitting results to the result server.";
             throw new tao_helpers_TestSessionException($msg, tao_helpers_TestSessionException::RESULT_ERROR, $e);
+        }
+    }
+    
+    protected function outcomeProcessing() {
+        try {
+            parent::outcomeProcessing();
+            
+            // Compute the LtiOutcome variable for LTI support.
+            $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
+            
+            try {
+                $outcomeProcessingEngine->process();
+                
+                // if numberPresented returned 0, division by 0 -> null.
+                $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
+                $this['LtiOutcome'] = $finalLtiOutcomeValue;
+                
+                $ltiOutcomeVariable = $this->getVariable('LtiOutcome');
+                $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId());
+            }
+            catch (ProcessingException $e) {
+                $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
+                throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::OUTCOME_PROCESSING_ERROR, $e);
+            }
+        }
+        catch (AssessmentTestSessionException $e) {
+            $msg = "An error occured during test-level outcome processing.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::OUTCOME_PROCESSING_ERROR, $e);
         }
     }
     
@@ -134,5 +194,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     protected static function getTestDefinitionUri(ExtendedAssessmentItemRef $itemRef) {
         $parts = explode('-', $itemRef->getHref());
         return $parts[2];
+    }
+    
+    /**
+     * Build the OutcomeProcessing object representing the set of QTI instructions
+     * to be performed to compute the LtiOutcome variable value.
+     * 
+     * @return OutcomeProcessing A QTI Data Model OutcomeProcessing object.
+     */
+    protected static function buildLtiOutcomeProcessing() {
+        $numberCorrect = new NumberCorrect();
+        $numberPresented = new NumberPresented();
+        $divide = new Divide(new ExpressionCollection(array($numberCorrect, $numberPresented)));
+        $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
+        return new OutcomeProcessing(new OutcomeRuleCollection(array($outcomeRule)));
     }
 }
