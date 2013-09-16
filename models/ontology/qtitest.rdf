@@ -9,8 +9,8 @@
  
   <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel">
     <rdf:type rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#TestModel"/>
-    <rdfs:label xml:lang="en-US"><![CDATA[QTI]]></rdfs:label>
-    <rdfs:comment xml:lang="en-US"><![CDATA[QTI 2.1 Test Model]]></rdfs:comment>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI 2.1 Test Driver]]></rdfs:label>
+    <rdfs:comment xml:lang="en-US"><![CDATA[Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests]]></rdfs:comment>
     <test:TestModelImplementation><![CDATA[taoQtiTest_models_classes_TestModel]]></test:TestModelImplementation>
   </rdf:Description>
   
