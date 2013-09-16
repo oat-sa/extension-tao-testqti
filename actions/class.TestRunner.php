@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +26,7 @@ use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\storage\common\AbstractStorage;
+use qtism\data\SubmissionMode;
 
 /**
  * Runs a QTI Test.
@@ -225,8 +224,22 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        }
 	    }
 	    
+	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
+	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
+	    $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
+	    
 	    common_Logger::d('Responses sent from the client-side. The Response Processing will take place.');
 	    $this->getTestSession()->endAttempt($responses);
+	    
+	    // Return the item session state to the client side.
+	    $stateOutput = new taoQtiCommon_helpers_StateOutput();
+	    $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+	    
+	    foreach ($itemSession->getAllVariables() as $var) {
+	        $stateOutput->addVariable($var);
+	    }
+	    
+	    echo json_encode(array('success' => true, 'displayFeedback' => $displayFeedback, 'itemSession' => $stateOutput->getOutput()));
 	    
 	    $this->afterAction();
 	}
