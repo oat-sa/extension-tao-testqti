@@ -40,7 +40,7 @@ return array(
 	'install' => array(
 		'rdf' => array(
 			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-		    dirname(__FILE__) . '/models/ontology/taoQtiTestRunner.rdf',
+		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
 		    dirname(__FILE__) . '/models/ontology/aclrole.rdf'
 		),
 	    'checks' => array(
