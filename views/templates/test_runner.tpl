@@ -9,5 +9,5 @@
 
 <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
 <div id="qti-test-runner">
-	<iframe id="qti-item" frameborder="0"/>
+	<iframe id="qti-item" frameborder="0" style="overflow:hidden;display:none;"/>
 </div>

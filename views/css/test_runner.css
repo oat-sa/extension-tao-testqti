@@ -5,6 +5,6 @@
 
 #qti-item {
 	width: 100%;
-	display: block;
+	display: none;
 	overflow: hidden;
 }

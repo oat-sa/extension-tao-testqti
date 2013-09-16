@@ -40,11 +40,13 @@ function registerAutoResize() {
 	if (jQuery.browser.msie) {
 		$frame[0].onreadystatechange = function(){	
 			if(this.readyState == 'complete'){
+				$frame.css('display', 'block');
 				autoResize($frame[0], 10);
 			}
 		};
 	} else {		
 		$frame[0].onload = function(){
+			$frame.css('display', 'block');
 			autoResize($frame[0], 10);
 		};
 	}
