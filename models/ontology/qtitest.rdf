@@ -29,7 +29,7 @@
   </rdf:Description>
   
   <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner">
-    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassSupportServices"/>
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassDeliveryServices"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI test runner]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[runs a QTI 2.1 test]]></rdfs:comment>
     <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/TestRunner/index?QtiTestDefinition=^QtiTestDefinition&QtiTestCompilation=^QtiTestCompilation]]></wf:PropertySupportServicesUrl>

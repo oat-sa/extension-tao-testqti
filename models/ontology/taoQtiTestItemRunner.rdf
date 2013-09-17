@@ -13,7 +13,7 @@
   </rdf:Description>
   
   <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner">
-    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassSupportServices"/>
+    <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassDeliveryServices"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Item Runner]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts]]></rdfs:comment>
     <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/ItemRunner/index?itemPath=^itemPath]]></wf:PropertySupportServicesUrl>
