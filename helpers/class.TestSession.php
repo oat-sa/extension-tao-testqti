@@ -181,10 +181,16 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         catch (Exception $e) {
             // Error with Result Server.
             $msg = "An error occured while transmitting results to the result server.";
-            throw new tao_helpers_TestSessionException($msg, tao_helpers_TestSessionException::RESULT_ERROR, $e);
+            throw new taoQtiCommon_helpers_ResultTransmissionException($msg, tao_helpers_TestSessionException::RESULT_ERROR, $e);
         }
     }
     
+    /**
+     * Overriding the AssessmentTestSession::outcomeProcessing method in order to
+     * transmit the results to the Result Server.
+     * 
+     * @throws taoQtiTest_helpers_TestSessionException If an error occurs during the outcome processing.
+     */
     protected function outcomeProcessing() {
         try {
             parent::outcomeProcessing();
