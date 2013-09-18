@@ -195,6 +195,35 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 	
 	/**
+	 * Move forward in the Assessment Test Session flow.
+	 * 
+	 */
+	public function moveForward() {
+	    $this->beforeAction();
+	    $context = $this->buildAssessmentTestContext();
+	    
+	    if ($this->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
+	        $newItemUrl = BASE_URL . 'ItemRunner/index?';
+	        $serviceCall = $this->getItemServiceCall();
+	        $inputParams = tao_models_classes_service_ServiceCallHelper::getInputValues($serviceCall, array());
+	         
+	        $newItemUrl.= 'itemUri=' . urlencode($inputParams['itemUri']);
+	        $newItemUrl.= '&itemPath=' . urlencode($inputParams['itemPath']);
+	        $newItemUrl.= '&QtiTestParentServiceCallId=' . urlencode($inputParams['QtiTestParentServiceCallId']);
+	        $newItemUrl.= '&QtiTestDefinition=' . urlencode($inputParams['QtiTestDefinition']);
+	        $newItemUrl.= '&QtiTestCompilation=' . urlencode($inputParams['QtiTestCompilation']);
+	        $newItemUrl.= '&standalone=true';
+	        $newItemUrl.= '&serviceCallId=' . $this->buildServiceCallId();
+	         
+	        $context['newItemUrl'] = $newItemUrl;
+	    }
+	    
+	    echo json_encode($context);
+	    
+	    $this->afterAction();
+	}
+	
+	/**
 	 * Action called when a QTI Item embedded in a QTI Test submit responses.
 	 * 
 	 */
@@ -325,6 +354,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	/**
 	 * Builds an associative array which describes the current AssessmentTestContext and set
 	 * into the request data for a later use.
+	 * 
+	 * @return array The built AssessmentTestContext.
 	 */
 	protected function buildAssessmentTestContext() {
 	    $session = $this->getTestSession();
@@ -351,9 +382,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	         
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
+	        
+	        // The URL to be called to move forward in the Assessment Test Session.
+	        $context['moveForwardUrl'] = BASE_URL . 'TestRunner/moveForward';
+	        $context['moveForwardUrl'].= '?QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
+	        $context['moveForwardUrl'].= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
+	        $context['moveForwardUrl'].= '&standalone=' . urlencode($this->getRequestParameter('standalone'));
+	        $context['moveForwardUrl'].= '&serviceCallId=' . urlencode($this->getRequestParameter('serviceCallId'));
+	        
+	        $context['serviceApiCall'] = $this->buildServiceApi();
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
+	    return $context;
 	}
 	
 	/**
@@ -423,6 +464,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	protected function buildServiceApi() {
 	    $serviceCall = $this->getItemServiceCall();
 	    $serviceCallId = $this->buildServiceCallId();
-	    $this->setData('itemServiceApi', tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $serviceCallId));
+	    $call = tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $serviceCallId);
+	    $this->setData('itemServiceApi', $call);
+	    return $call;
 	}
 }

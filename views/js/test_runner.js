@@ -6,48 +6,69 @@ var testRunnerConstants = {
 	'TEST_STATE_CLOSED': 4
 };
 
-$(document).ready(function () {
-	$frame = $('#qti-item');
-	registerAutoResize();
+$(document).ready(function() {
+	registerAutoResize(document.getElementById('qti-item'));
 });
 
 function onServiceApiReady(serviceApi) {
-
-		// If the assessment test session is in CLOSED state,
-		// we give the control to the delivery engine by calling
-		// finish.
-		if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
-			serviceApi.finish();
-		}
-		else {
-			itemServiceApi.loadInto($frame[0]);
-			itemServiceApi.onFinish(function () {
-				location.reload(true);
-			});
-		}
+	// If the assessment test session is in CLOSED state,
+	// we give the control to the delivery engine by calling
+	// finish.
+	if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
+		serviceApi.finish();
+	}
+	else {
+		$itemFrame = $('#qti-item');
+		itemServiceApi.loadInto($itemFrame[0]);
+		itemServiceApi.onFinish(function () {
+			moveForward();
+		});
+	}
 }
+
+function moveForward() {
+	$.ajax({
+		url: assessmentTestContext.moveForwardUrl,
+		cache: false,
+		async: true,
+		dataType: 'json',
+		success: function(data, testStatus, jqXhr) {
+			if (data.state == testRunnerConstants.TEST_STATE_CLOSED) {
+				serviceApi.finish();
+			}
+			else {
+				$itemFrame = $('#qti-item');
+				itemServiceApi = eval(data.serviceApiCall);
+				itemServiceApi.loadInto($itemFrame[0]);
+				itemServiceApi.onFinish(function() {
+					moveForward();
+				});
+			}
+		}
+	});
+}
+
 
 function autoResize(frame, frequence) {
 	$frame = $(frame);
 	setInterval(function() {
-		$frame.height($frame.contents().height());
+		var newHeight = $frame.contents().find('html').height();
+		$frame.height(newHeight);
+		$('body, html').height(newHeight);
 	}, frequence);
 }
 
-function registerAutoResize() {
-	var $frame = $('#qti-item');
-	
+function registerAutoResize(frame) {
+	frame = document.getElementById('qti-item');
 	if (jQuery.browser.msie) {
-		$frame[0].onreadystatechange = function(){	
+		frame.onreadystatechange = function(){	
 			if(this.readyState == 'complete'){
-				$frame.css('display', 'block');
-				autoResize($frame[0], 10);
+				autoResize(frame, 10);
 			}
 		};
 	} else {		
-		$frame[0].onload = function(){
-			$frame.css('display', 'block');
-			autoResize($frame[0], 10);
+		frame.onload = function(){
+			autoResize(frame, 10);
 		};
 	}
 }

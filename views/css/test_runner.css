@@ -1,3 +1,8 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
 #qti-test-runner {
 	font-family:Verdana, Arial, sans-serif;
 	font-size: 12px;
@@ -5,6 +10,5 @@
 
 #qti-item {
 	width: 100%;
-	display: none;
 	overflow: hidden;
 }
