@@ -38,6 +38,7 @@
 <script type="text/javascript">
 var sequence = <?=get_data('relatedItems')?>;
 var labels = <?=get_data('allItems')?>;
+var qtiItemModel = '<?=get_data('qtiItemModel')?>';
 
 	$(function(){
 		function buildItemList(id, items, labels){
@@ -54,7 +55,7 @@ var labels = <?=get_data('allItems')?>;
 
 		require(['require', 'jquery', 'generis.tree.select'], function(req, $, GenerisTreeSelectClass) {
 
-			new GenerisTreeSelectClass('#item-tree', root_url + 'tao/GenerisTree/getData',{
+			new GenerisTreeSelectClass('#item-tree', root_url + 'taoTests/Tests/getItems',{
 				actionId: 'item',
 				saveUrl: '<?=get_data('saveUrl')?>',
 				paginate:	10,
@@ -76,12 +77,13 @@ var labels = <?=get_data('allItems')?>;
 				checkedNodes : sequence,
 				serverParameters: {
 					openNodes: <?=json_encode(get_data('itemOpenNodes'))?>,
-					rootNode: <?=json_encode(get_data('itemRootNode'))?>
+					rootNode: <?=json_encode(get_data('itemRootNode'))?>,
+                                        itemModel : qtiItemModel
 				},
 				callback: {
 					checkPaginate: function(NODE, TREE_OBJ) {
-						//Check the unchecked that must be checked... olè!
-						this.check(sequence);
+                                            //Check the unchecked that must be checked... olè!
+                                            this.check(sequence);
 					}
 				}
 			});
