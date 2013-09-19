@@ -10,6 +10,8 @@ $(document).ready(function() {
 	registerAutoResize(document.getElementById('qti-item'));
 });
 
+var autoResizeId;
+
 function onServiceApiReady(serviceApi) {
 	// If the assessment test session is in CLOSED state,
 	// we give the control to the delivery engine by calling
@@ -38,6 +40,11 @@ function moveForward() {
 			}
 			else {
 				$itemFrame = $('#qti-item');
+				$itemFrame.remove();
+				$('#qti-test-runner').append('<iframe id="qti-item" frameborder="0" style="overflow:hidden;"/>');
+				$itemFrame = $('#qti-item');
+				registerAutoResize($itemFrame[0]);
+				
 				itemServiceApi = eval(data.serviceApiCall);
 				itemServiceApi.loadInto($itemFrame[0]);
 				itemServiceApi.onFinish(function() {
@@ -51,15 +58,18 @@ function moveForward() {
 
 function autoResize(frame, frequence) {
 	$frame = $(frame);
-	setInterval(function() {
-		var newHeight = $frame.contents().find('html').height();
-		$frame.height(newHeight);
-		$('body, html').height(newHeight);
+	autoResizeId = setInterval(function() {
+		$frame.height($frame.contents().height());
 	}, frequence);
 }
 
 function registerAutoResize(frame) {
+	if (typeof autoResizeId !== 'undefined') {
+		clearInterval(autoResizeId);
+	}
+	
 	frame = document.getElementById('qti-item');
+	
 	if (jQuery.browser.msie) {
 		frame.onreadystatechange = function(){	
 			if(this.readyState == 'complete'){
