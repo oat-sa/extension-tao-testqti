@@ -38,7 +38,7 @@ class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionExcep
     const RESULT_ERROR = 10;
     
     /**
-     * Create a new tao_helpers_TestSessionException object.
+     * Create a new taoQtiTest_helpers_TestSessionException object.
      *
      * @param string $message A human-readable message describing the error.
      * @param integer $code A code to enable client-code to identify the error programatically.
