@@ -199,11 +199,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function moveForward() {
 	    $this->beforeAction();
-	    $this->getTestSession()->moveNext();
+	    
+	    $testSession = $this->getTestSession();
+	    $testSession->moveNext();
 	    
 	    $context = $this->buildAssessmentTestContext();
 	    
-	    if ($this->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
+	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+	        
+	        // --- If the item session is not in INTERACTING state, begin new attempt.
+	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
+	            $this->beginAttempt();
+	        }
+	        
 	        $newItemUrl = BASE_URL . 'ItemRunner/index?';
 	        $serviceCall = $this->getItemServiceCall();
 	        $inputParams = tao_models_classes_service_ServiceCallHelper::getInputValues($serviceCall, array());
