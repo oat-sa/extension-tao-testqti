@@ -12,7 +12,7 @@
     @subject http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
     @predicate http://www.w3.org/2000/01/rdf-schema#label
     -->
-    <rdfs:label xml:lang="en-US"><![CDATA[qti]]></rdfs:label>
+    <rdfs:label xml:lang="en-US"><![CDATA[QTI 2.1 Test Driver]]></rdfs:label>
     <!--
     @sourceLanguage EN
     @targetLanguage en-US
