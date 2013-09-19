@@ -21,6 +21,7 @@ function onServiceApiReady(serviceApi) {
 	}
 	else {
 		$itemFrame = $('#qti-item');
+		itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
 		itemServiceApi.loadInto($itemFrame[0]);
 		itemServiceApi.onFinish(function () {
 			moveForward();
@@ -34,8 +35,8 @@ function moveForward() {
 		cache: false,
 		async: true,
 		dataType: 'json',
-		success: function(data, testStatus, jqXhr) {
-			if (data.state == testRunnerConstants.TEST_STATE_CLOSED) {
+		success: function(assessmentTestContext, testStatus, jqXhr) {
+			if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
 				serviceApi.finish();
 			}
 			else {
@@ -45,7 +46,7 @@ function moveForward() {
 				$itemFrame = $('#qti-item');
 				registerAutoResize($itemFrame[0]);
 				
-				itemServiceApi = eval(data.serviceApiCall);
+				itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
 				itemServiceApi.loadInto($itemFrame[0]);
 				itemServiceApi.onFinish(function() {
 					moveForward();

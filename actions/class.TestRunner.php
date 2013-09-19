@@ -167,9 +167,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
                 $this->beginAttempt();
             }
-            
-            // --- Init javascript API.
-            $this->buildServiceApi();
         }  
     }
     
@@ -216,11 +213,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $serviceCall = $this->getItemServiceCall();
 	        $inputParams = tao_models_classes_service_ServiceCallHelper::getInputValues($serviceCall, array());
 	         
-	        $newItemUrl.= 'itemUri=' . urlencode($inputParams['itemUri']);
-	        $newItemUrl.= '&itemPath=' . urlencode($inputParams['itemPath']);
-	        $newItemUrl.= '&QtiTestParentServiceCallId=' . urlencode($inputParams['QtiTestParentServiceCallId']);
-	        $newItemUrl.= '&QtiTestDefinition=' . urlencode($inputParams['QtiTestDefinition']);
-	        $newItemUrl.= '&QtiTestCompilation=' . urlencode($inputParams['QtiTestCompilation']);
+	        $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
+	        $parts = explode('|', $href);
+	        
+	        $newItemUrl.= 'itemUri=' . urlencode($parts[0]);
+	        $newItemUrl.= '&itemPath=' . urlencode($parts[1]);
+	        $newItemUrl.= '&QtiTestParentServiceCallId=' . urlencode($this->getServiceCallId());
+	        $newItemUrl.= '&QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
+	        $newItemUrl.= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
 	        $newItemUrl.= '&standalone=true';
 	        $newItemUrl.= '&serviceCallId=' . $this->buildServiceCallId();
 	         
@@ -399,7 +399,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $context['moveForwardUrl'].= '&standalone=' . urlencode($this->getRequestParameter('standalone'));
 	        $context['moveForwardUrl'].= '&serviceCallId=' . urlencode($this->getRequestParameter('serviceCallId'));
 	        
-	        $context['serviceApiCall'] = $this->buildServiceApi();
+	        $context['itemServiceApiCall'] = $this->buildServiceApi();
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
@@ -421,7 +421,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @return tao_models_classes_service_ServiceCall A ServiceCall object.
 	 */
 	protected function getItemServiceCall() {
-	    $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 	    $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
 	    
 	    // retrive itemUri & itemPath. 
