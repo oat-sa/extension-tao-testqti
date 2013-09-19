@@ -41,7 +41,7 @@ function moveForward() {
 			else {
 				$itemFrame = $('#qti-item');
 				$itemFrame.remove();
-				$('#qti-test-runner').append('<iframe id="qti-item" frameborder="0" style="overflow:hidden;"/>');
+				$('#runner').append('<iframe id="qti-item" frameborder="0" style="overflow:hidden;"/>');
 				$itemFrame = $('#qti-item');
 				registerAutoResize($itemFrame[0]);
 				
