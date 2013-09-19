@@ -184,7 +184,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function index()
 	{
 	    $this->beforeAction();
-	    
         // Prepare the AssessmentTestContext for the client.
         // The built data is availabe with get_data('assessmentTestContext').
         $this->buildAssessmentTestContext();
@@ -200,6 +199,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function moveForward() {
 	    $this->beforeAction();
+	    $this->getTestSession()->moveNext();
+	    
 	    $context = $this->buildAssessmentTestContext();
 	    
 	    if ($this->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
@@ -325,7 +326,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @throws RuntimeException If no assessment test session has started yet.
 	 */
 	protected function persistTestSession() {
-	    
+	
 	    $storage = $this->getStorage();
 	    common_Logger::d("Persisting Assessment Test Session.");
 	    try {

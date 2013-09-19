@@ -95,16 +95,22 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     /**
      * Create a tao_helpers_TestSession with the content of the factory.
      * 
+     * When creating the AssessmentTestSession object, the AssessmentTestSession::setAutoForward
+     * method will be called with false.
+     * 
      * @return taoQtiTest_helpers_TestSession
      */
     public function createAssessmentTestSession() {
         parent::createAssessmentTestSession();
         
-        return new taoQtiTest_helpers_TestSession(
+        $session = new taoQtiTest_helpers_TestSession(
             $this->getAssessmentTest(),
             $this->getRoute(),
             $this->getResultServer(),
             $this->getTest()
         );
+        
+        $session->setAutoForward(false);
+        return $session;
     }
 }
