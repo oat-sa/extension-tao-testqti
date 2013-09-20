@@ -69,11 +69,8 @@ class taoQtiTest_actions_Authoring extends tao_actions_CommonModule {
             foreach($testOptions as $key => $value){
                 if($value instanceof qtism\common\datatypes\Duration){
                     $testOptions[$key] = $this->durationToTime($value);
-                } else if(is_bool($value)){
-                    $testOptions[$key] = ($value) ? 'true' : 'false';
-                }
+                } 
             }
-          
 
             $this->setData('uri', $test->getUri());
             $this->setData('allItems', json_encode($allItems));
@@ -136,7 +133,7 @@ class taoQtiTest_actions_Authoring extends tao_actions_CommonModule {
                 $timeTokens = explode(':', $time);
                 $duration .= intval($timeTokens[0]).'H'
                             .intval($timeTokens[1]).'M'
-                            .intval($timeTokens[0]).'S';
+                            .intval($timeTokens[2]).'S';
             } else {
                 $duration .= '0S';
             }

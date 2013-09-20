@@ -56,14 +56,14 @@
                         <label class="form_desc"><?=__('Allow Late Submission')?></label>
                         <div class="form_radlst">
                             <input type="radio" id="allow-late-submission-true" name="allow-late-submission" value="true" 
-                                   <?if (get_data('option_allow-late-submission') === false):?>
+                                   <?if (get_data('option_allow-late-submission')):?>
                                    checked="checked"
                                    <?endif;?>
                             />
                             <label class="elt_desc" for="allow-late-submission-true"><?=__('Yes')?></label>
                             <br />
                             <input type="radio" id="allow-late-submission-false" name="allow-late-submission" value="false" 
-                                   <?if (get_data('option_allow-late-submission') === false  || !has_data('option_allow-late-submission')):?>
+                                   <?if ( !get_data('option_allow-late-submission')  || !has_data('option_allow-late-submission')):?>
                                    checked="checked"
                                    <?endif;?>
                             />
