@@ -52,7 +52,7 @@ class taoQtiTest_models_classes_TestModel
      */
     public function prepareContent( core_kernel_classes_Resource $test, $items = array()) {
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
-        $service->setItems($test, $items);
+        $service->saveQtiTest($test, $items);
     }
     
     /**
