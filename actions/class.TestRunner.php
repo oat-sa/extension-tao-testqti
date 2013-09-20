@@ -209,22 +209,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	            $this->beginAttempt();
 	        }
 	        
-	        $newItemUrl = BASE_URL . 'ItemRunner/index?';
-	        $serviceCall = $this->getItemServiceCall();
-	        $inputParams = tao_models_classes_service_ServiceCallHelper::getInputValues($serviceCall, array());
-	         
-	        $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
-	        $parts = explode('|', $href);
-	        
-	        $newItemUrl.= 'itemUri=' . urlencode($parts[0]);
-	        $newItemUrl.= '&itemPath=' . urlencode($parts[1]);
-	        $newItemUrl.= '&QtiTestParentServiceCallId=' . urlencode($this->getServiceCallId());
-	        $newItemUrl.= '&QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
-	        $newItemUrl.= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
-	        $newItemUrl.= '&standalone=true';
-	        $newItemUrl.= '&serviceCallId=' . $this->buildServiceCallId();
-	         
-	        $context['newItemUrl'] = $newItemUrl;
+	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
 	    }
 	    
 	    echo json_encode($context);
@@ -392,13 +377,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
 	        
-	        // The URL to be called to move forward in the Assessment Test Session.
-	        $context['moveForwardUrl'] = BASE_URL . 'TestRunner/moveForward';
-	        $context['moveForwardUrl'].= '?QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
-	        $context['moveForwardUrl'].= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
-	        $context['moveForwardUrl'].= '&standalone=' . urlencode($this->getRequestParameter('standalone'));
-	        $context['moveForwardUrl'].= '&serviceCallId=' . urlencode($this->getRequestParameter('serviceCallId'));
+	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip.
+	        $context['moveForwardUrl'] = $this->buildActionCallUrl('moveForward');
+	        $context['moveBackwardUrl'] = $this->buildActionCallUrl('moveBackward');
+	        $context['skipUrl'] = $this->buildActionCallUrl('skip');
 	        
+	        // The places in the test session where the candidate is allowed to jump to.
+	        $context['jumps'] = $this->buildPossibleJumps();
+	        
+	        // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
 	        $context['itemServiceApiCall'] = $this->buildServiceApi();
 	    }
 	    
@@ -475,5 +462,48 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $call = tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $serviceCallId);
 	    $this->setData('itemServiceApi', $call);
 	    return $call;
+	}
+	
+	protected function buildCurrentItemSrc() {
+	    $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
+	    $parts = explode('|', $href);
+	     
+	    return $this->buildItemSrc($parts[0], $parts[1]);
+	}
+	
+	protected function buildItemSrc($itemUri, $itemPath) {
+	    $src = BASE_URL . 'ItemRunner/index?';
+	    $src .= 'itemUri=' . urlencode($itemUri);
+	    $src.= '&itemPath=' . urlencode($itemPath);
+	    $src.= '&QtiTestParentServiceCallId=' . urlencode($this->getServiceCallId());
+	    $src.= '&QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
+	    $src.= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
+	    $src.= '&standalone=true';
+	    $src.= '&serviceCallId=' . $this->buildServiceCallId();
+	    
+	    return $src;
+	}
+	
+	protected function buildActionCallUrl($action) {
+	    $url = BASE_URL . "TestRunner/${action}";
+	    $url.= '?QtiTestDefinition=' . urlencode($this->getRequestParameter('QtiTestDefinition'));
+	    $url.= '&QtiTestCompilation=' . urlencode($this->getRequestParameter('QtiTestCompilation'));
+	    $url.= '&standalone=' . urlencode($this->getRequestParameter('standalone'));
+	    $url.= '&serviceCallId=' . urlencode($this->getRequestParameter('serviceCallId'));
+	    return $url;
+	}
+	
+	protected function buildPossibleJumps() {
+	    $jumps = array();
+	    
+	    foreach ($this->getTestSession()->getPossibleJumps() as $jumpObject) {
+	        $jump = array();
+	        $jump['assessmentItemRefIdentifier'] = $jumpObject->getAssessmentItemRef()->getIdentifier();
+	        $jump['assessmentItemRefOccurence'] = $jumpObject->getOccurence();
+	        
+	        $jumps[] = $jump;
+	    }
+	    
+	    return $jumps;
 	}
 }
