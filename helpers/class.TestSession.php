@@ -38,6 +38,7 @@ use qtism\runtime\common\OutcomeVariable;
 use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
+use qtism\runtime\tests\AssessmentItemSession;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -138,84 +139,69 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         return $this->test;
     }
     
-    /**
-	 * End an attempt for the current item in the route. If the current navigation mode
-	 * is LINEAR, the TestSession moves automatically to the next step in the route or
-	 * the end of the session if the responded item is the last one.
-	 * 
-	 * @param State $responses The collection of ResponseVariable objects that are considered to be the candidate responses for the current item.
-	 * @throws taoQtiTest_helpers_TestSessionException
-	 * @throws AssessmentItemSessionException
-	 */
-    public function endAttempt(State $responses) {
-        common_Logger::d("Ending attempt for item '" . $this->getCurrentAssessmentItemRef()->getIdentifier() . "." . $this->getCurrentAssessmentItemRefOccurence() .  "'.");
-        
+    protected function submitItemResults(AssessmentItemSession $itemSession) {
         $item = $this->getCurrentAssessmentItemRef();
         $occurence = $this->getCurrentAssessmentItemRefOccurence();
         $sessionId = $this->getSessionId();
         
+        common_Logger::d("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
+        
         try {
-            parent::endAttempt($responses);
-            
+        
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
             $resultTransmitter = $this->getResultTransmitter();
-            
+        
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::d("Examination of variable '${identifier}'");
-                
+        
                 $variable = $itemSession->getVariable($identifier);
                 $itemUri = self::getItemRefUri($item);
                 $testUri = self::getTestDefinitionUri($item);
                 $transmissionId = "${sessionId}.${item}.${occurence}";
-                
+        
                 $resultTransmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
             }
         }
         catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
-            $msg = "An error occured while ending the attempt.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, $e->getCode(), $e);
+            $msg = "An error occured while ending the attempt item '" . $item->getIdentifier() . "." . $occurence .  "'.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
-        catch (Exception $e) {
+        catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             // Error with Result Server.
-            $msg = "An error occured while transmitting results to the result server.";
-            throw new taoQtiCommon_helpers_ResultTransmissionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_ERROR, $e);
+            $msg = "An error occured while transmitting item results for item '" . $item->getIdentifier() . "." . $occurence .  "'.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }
     
-    /**
-     * Overriding the AssessmentTestSession::outcomeProcessing method in order to
-     * transmit the results to the Result Server.
-     * 
-     * @throws taoQtiTest_helpers_TestSessionException If an error occurs during the outcome processing.
-     */
     protected function outcomeProcessing() {
         try {
-            parent::outcomeProcessing();
             
             // Compute the LtiOutcome variable for LTI support.
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
+            $outcomeProcessingEngine->process();
+    
+            // if numberPresented returned 0, division by 0 -> null.
+            $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
+            $this['LtiOutcome'] = $finalLtiOutcomeValue;
+    
+            $ltiOutcomeVariable = $this->getVariable('LtiOutcome');
+            $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId(), $this->getTest()->getUri());
             
-            try {
-                $outcomeProcessingEngine->process();
-                
-                // if numberPresented returned 0, division by 0 -> null.
-                $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
-                $this['LtiOutcome'] = $finalLtiOutcomeValue;
-                
-                $ltiOutcomeVariable = $this->getVariable('LtiOutcome');
-                $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId(), $this->getTest()->getUri());
-            }
-            catch (ProcessingException $e) {
-                $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
-                throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::OUTCOME_PROCESSING_ERROR, $e);
-            }
+        }
+        catch (ProcessingException $e) {
+            $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+        }
+        catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
+            $msg = "An error occured during test-level outcome results transmission.";
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
         catch (AssessmentTestSessionException $e) {
             $msg = "An error occured during test-level outcome processing.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::OUTCOME_PROCESSING_ERROR, $e);
+            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }
     

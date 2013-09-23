@@ -30,14 +30,6 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionException {
     
     /**
-     * The error code to be used when the Result Server
-     * returns an error.
-     * 
-     * @var integer
-     */
-    const RESULT_ERROR = 10;
-    
-    /**
      * Create a new taoQtiTest_helpers_TestSessionException object.
      *
      * @param string $message A human-readable message describing the error.
