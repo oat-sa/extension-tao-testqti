@@ -42,13 +42,12 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                     saveUrl: self.options.saveUrl,
                     checkedNodes : sequence,
                     paginate:	10,
+                    
                     saveCallback: function (data){
                         var attr, newSequence = [];
-                        sequence = [];
                         for (attr in data) {
-                            if (/^instance_/.test(attr) && $.inArray(data[attr], sequence) === -1 && attr !== undefined) {
-                                newSequence[parseInt(attr.replace('instance_', ''), 10)] = 'item_'+ data[attr];
-                                sequence[parseInt(attr.replace('instance_', ''), 10)] =  data[attr];
+                            if (/^instance_/.test(attr)) {
+                                newSequence[parseInt(attr.replace('instance_', ''), 10)] = data[attr];
                             }
                         }
                         self.updateItemSequence(newSequence);
@@ -60,6 +59,8 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                             this.check(sequence);
                         }
                     }
+            }, {
+                opened : treeOptions.defaultOpenedNodes || []
             });
         },
         
@@ -95,7 +96,7 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
         
         save: function(){
             var self = this;
-            var sequence = this.options.sequence;
+            var sequence = this.getItemSequence();
             var toSend = {};
             var formInput;
             var index = 0;
@@ -125,9 +126,24 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
         },
         
+        getItemSequence : function(){
+            var sequence = [];
+            this._$itemSequence.find('li').each(function(index, elt){
+                sequence.push($(elt).attr('id'));
+            });
+            
+            //sync
+            this.options.sequence = sequence;
+            
+            return sequence;
+        },
+        
         updateItemSequence : function(sequence){
             var $info = this._$itemSequence.prev('.elt-info');
             this._$itemSequence.html(this._itemListHtml(sequence));
+            
+            //sync
+            this.options.sequence = sequence;
             
             if (this._$itemSequence.find('li').length){
                 $info.show();
@@ -145,7 +161,7 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                 index = parseInt(i, 10) + 1;
                 html += "<li class='ui-state-default' id='" + itemId + "' >";
                 html += "<span class='ui-icon ui-icon-arrowthick-2-n-s' /><span class='ui-icon ui-icon-grip-dotted-vertical' />";
-                html += index + ". " + this.options.labels[itemId];
+                html += index + ". " + this.options.labels['item_' + itemId];
                 html += "</li>";
             }
             return html;

@@ -127,6 +127,7 @@
         saveUrl : '<?=get_data('saveUrl')?>',
         itemsTree: {
             itemsUrl : '<?=get_data('itemsUrl')?>',
+            defaultOpenedNodes : <?=get_data('defaultOpenedNodes')?>,
             serverParameters : {
                 itemOpenNodes : <?=json_encode(get_data('itemOpenNodes'))?>,
                 itemRootNode : <?=json_encode(get_data('itemRootNode'))?>,
