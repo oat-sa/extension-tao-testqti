@@ -13,16 +13,16 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
     
     var QtiTestAuthoring = {
         
-        _$itemSequence : $("#item-sequence"),
-        
         init : function($container, options){
             var self = this;
             this.options = $.extend({}, defaults, options);
             this._$container = $container;
             
+            this._initElements();
+            
             this._setUpItemsTree();
             this._setUpItemSequence();
-            this._setUpFormWidgets();
+            this._setUpTimeLimits();
             
             $("#saver-action-item-sequence").click(function(e){
                 e.preventDefault();
@@ -30,6 +30,12 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
             
             this._$container.trigger('create.qtitestauthoring');
+        },
+                
+        _initElements : function(){
+            this._$itemSequence = $("#item-sequence", this._$container);
+            this._$orderingInfo = this._$itemSequence.prev('.elt-info');
+            this._$shuffleInput = $("input[name='shuffle']", this._$container);
         },
                 
         _setUpItemsTree : function(){
@@ -42,7 +48,7 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                     saveUrl: self.options.saveUrl,
                     checkedNodes : sequence,
                     paginate:	10,
-                    
+                    serverParameters: treeOptions.serverParameters,
                     saveCallback: function (data){
                         var attr, newSequence = [];
                         for (attr in data) {
@@ -52,21 +58,19 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                         }
                         self.updateItemSequence(newSequence);
                     },
-                    serverParameters: treeOptions.serverParameters,
                     callback: {
                         checkPaginate: function(NODE, TREE_OBJ) {
                             //Check the unchecked that must be checked... olè!
                             this.check(sequence);
                         }
                     }
-            }, {
-                opened : treeOptions.defaultOpenedNodes || []
             });
         },
         
         _setUpItemSequence : function(){
             var self = this;
-            var sequence = this.options.sequence;
+            var $items = this._$itemSequence.find('li');
+            
             this._$itemSequence.sortable({
                 axis: 'y',
                 opacity: 0.6,
@@ -75,23 +79,57 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                 update: function(){
                     var newSequence = $(this).sortable('toArray');
                     var i = 0;
-                    sequence = [];
                     for (i = 0; i < newSequence.length; i++) {
-                        sequence[i] = newSequence[i].replace('item_', '');
+                        newSequence[i] = newSequence[i].replace('item_', '');
                     }
                     self.updateItemSequence(newSequence);
                 }
             });
+            
+            $items.on('mousedown', function(){
+                $(this).css('cursor', 'move');
+            }).on('mouseup', function(){
+		$(this).css('cursor', 'pointer');
+            });
+            
+            this._$shuffleInput.click(function(){
+                if(self._isShuffling()){
+                    self._$itemSequence.sortable('disable');
+                    $items.find('.ui-icon').hide();
+                    $items.off('mousedown mouseup');
+                } else {
+                    self._$itemSequence.sortable('enable');
+                    $items.find('.ui-icon').show();
+                    $items.on('mousedown', function(){
+                        $(this).css('cursor', 'move');
+                    }).on('mouseup', function(){
+                        $(this).css('cursor', 'pointer');
+                    });
+                }
+                self._toggleOrderingInfo();
+            });
         },
         
-        _setUpFormWidgets : function(){
+        _toggleOrderingInfo : function(){
+            if (this._$itemSequence.find('li').length > 0 && !this._isShuffling()){
+                this._$orderingInfo.show();
+            } else {
+                this._$orderingInfo.hide();
+            }
+        },
+                
+        _isShuffling : function(){
+            return this._$shuffleInput.is(':checked');
+        },
+        
+        _setUpTimeLimits : function(){
             $('.time').timepicker({
-                            timeFormat: 'HH:mm:ss',
-                            showHour: true,
-                            showMinute : true,
-                            showSecond : true,
-                            showButtonPanel: false
-                        });
+                timeFormat: 'HH:mm:ss',
+                showHour: true,
+                showMinute : true,
+                showSecond : true,
+                showButtonPanel: false
+            });
         },
         
         save: function(){
@@ -129,7 +167,7 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
         getItemSequence : function(){
             var sequence = [];
             this._$itemSequence.find('li').each(function(index, elt){
-                sequence.push($(elt).attr('id'));
+                sequence.push($(elt).attr('id').replace('item_', ''));
             });
             
             //sync
@@ -139,19 +177,13 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
         },
         
         updateItemSequence : function(sequence){
-            var $info = this._$itemSequence.prev('.elt-info');
             this._$itemSequence.html(this._itemListHtml(sequence));
             
             //sync
             this.options.sequence = sequence;
+            this._toggleOrderingInfo();
             
-            if (this._$itemSequence.find('li').length){
-                $info.show();
-            } else {
-                $info.hide();
-            }
-            
-            this._$container.trigger('itemsupdate.qtitestauthoring');
+            this._$container.trigger('itemsupdate.qtitestauthoring', [sequence]);
         },
                 
         _itemListHtml : function(items){

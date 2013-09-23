@@ -30,16 +30,26 @@
                 <fieldset>
                     <legend><?=__('Items sequence')?></legend>
                     <div id="item-list">
-                        <span class="elt-info" <?php if (!count(get_data('itemSequence'))) echo ' style="display:none"' ?>><?=__('Drag and drop the items to order them')?></span>
-                        <ul id="item-sequence" class="sortable-list">
-                        <?foreach(get_data('itemSequence') as $index => $item):?>
-                                <li class="ui-state-default" id="item_<?=$item['uri']?>" >
-                                        <span class='ui-icon ui-icon-arrowthick-2-n-s' ></span>
-                                        <span class="ui-icon ui-icon-grip-dotted-vertical" ></span>
-                                        <?=$index+1?>. <?=$item['label']?>
-                                </li>
-                        <?endforeach?>
-                        </ul>
+                        <div>
+                            <label class="form_desc"><?=__('Shuffle')?></label>
+                            <input type="checkbox" name="shuffle" value="true" 
+                            <?if(get_data('option_shuffle')):?>
+                                checked="checked"
+                            <?endif?>
+                            />
+                        </div>
+                        <div>
+                            <span class="elt-info" <?php if (!count(get_data('itemSequence'))) echo ' style="display:none"' ?>><?=__('Drag and drop the items to order them')?></span>
+                            <ul id="item-sequence" class="sortable-list">
+                            <?foreach(get_data('itemSequence') as $index => $item):?>
+                                    <li class="ui-state-default" id="item_<?=$item['uri']?>" >
+                                            <span class='ui-icon ui-icon-arrowthick-2-n-s' ></span>
+                                            <span class="ui-icon ui-icon-grip-dotted-vertical" ></span>
+                                            <?=$index+1?>. <?=$item['label']?>
+                                    </li>
+                            <?endforeach?>
+                            </ul>
+                        </div>
                     </div>
                 </fieldset>
                 <fieldset>
@@ -127,10 +137,9 @@
         saveUrl : '<?=get_data('saveUrl')?>',
         itemsTree: {
             itemsUrl : '<?=get_data('itemsUrl')?>',
-            defaultOpenedNodes : <?=get_data('defaultOpenedNodes')?>,
             serverParameters : {
-                itemOpenNodes : <?=json_encode(get_data('itemOpenNodes'))?>,
-                itemRootNode : <?=json_encode(get_data('itemRootNode'))?>,
+                openNodes : <?=json_encode(get_data('openNodes'))?>,
+                rootNode : <?=json_encode(get_data('rootNode'))?>,
                 itemModel : '<?=get_data('qtiItemModel')?>'
             }
         }

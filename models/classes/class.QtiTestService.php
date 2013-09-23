@@ -29,6 +29,8 @@ use qtism\data\SubmissionMode;
 use qtism\data\TimeLimits;
 use qtism\data\TestPart;
 use qtism\common\datatypes\Duration;
+use qtism\data\rules\Ordering;
+
 /**
  * the QTI TestModel service
  *
@@ -83,7 +85,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             
             $testPart = $doc->getComponentByIdentifier('testPartId');
             
-            if($testPart != null && $testPart instanceof TestPart){
+            if($testPart != null){
                 
                 $options['navigation-mode'] = NavigationMode::getNameByConstant($testPart->getNavigationMode());
                 $options['submission-mode'] = SubmissionMode::getNameByConstant($testPart->getSubmissionMode());
@@ -94,6 +96,12 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     $options['max-time'] = $timeLimits->getMaxTime();
                     $options['allow-late-submission'] = $timeLimits->doesAllowLateSubmission();
                 }
+            }
+            
+            $section = $doc->getComponentByIdentifier('assessmentSectionId');
+            if($section != null){
+                $ordering = $section->getOrdering();
+                $options['shuffle'] = ($ordering != null && $ordering->getShuffle() === true);
             }
         }
     	return $options;
@@ -123,8 +131,37 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     $msg = "An error occured while loading QTI-XML test file '${testPath}'.";
                     throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 3);
             }
+            
+            $section = $doc->getComponentByIdentifier('assessmentSectionId');
 
-           //manage testPart options
+            $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
+            $itemRefs = new SectionPartCollection();
+
+            foreach ($items as $itemResource) {
+                $itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
+                $itemContent = new core_kernel_file_File($itemContent);
+
+                $itemDoc = new XmlAssessmentItemDocument();
+
+                try {
+                        $itemDoc->load($itemContent->getAbsolutePath());
+                }
+                catch (StorageException $e) {
+                        $itemUri = $itemResource->getUri();
+                        $msg = "An error occured while reading QTI-XML item '${itemUri}'.";
+
+                        if (is_null($e->getPrevious()) !== true) {
+                            $msg .= ": " . $e->getPrevious()->getMessage();
+                        }
+
+                        throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
+                }
+
+                $itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
+                $section->setSectionParts($itemRefs);
+            }
+
+           //manage testPart/section options
            if(isset($testOptions) && !empty($testOptions)){
 
                $testPart = $doc->getComponentByIdentifier('testPartId');
@@ -145,6 +182,14 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                             $testPart->setSubmissionMode($submissionMode);
                         }
                     }
+                    
+                    $ordering = new Ordering();
+                    if(isset($testOptions['shuffle']) && ($testOptions['shuffle'] == 'true' || $testOptions['shuffle'] === true)){
+                        $ordering->setShuffle(true);
+                    } else {
+                        $ordering->setShuffle(false);
+                    }
+                    $section->setOrdering($ordering);
 
                     if( !empty($testOptions['min-time']) 
                         || !(empty($testOptions['max-time'])) 
@@ -159,35 +204,6 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     }
                 }
            }
-
-            $section = $doc->getComponentByIdentifier('assessmentSectionId');
-
-            $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
-            $itemRefs = new SectionPartCollection();
-
-            foreach ($items as $itemResource) {
-                    $itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
-                    $itemContent = new core_kernel_file_File($itemContent);
-
-                    $itemDoc = new XmlAssessmentItemDocument();
-
-                    try {
-                            $itemDoc->load($itemContent->getAbsolutePath());
-                    }
-                    catch (StorageException $e) {
-                            $itemUri = $itemResource->getUri();
-                            $msg = "An error occured while reading QTI-XML item '${itemUri}'.";
-
-                            if (is_null($e->getPrevious()) !== true) {
-                                $msg .= ": " . $e->getPrevious()->getMessage();
-                            }
-
-                            throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
-                    }
-
-                    $itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
-                    $section->setSectionParts($itemRefs);
-            }
 
             try {
                     $doc->save($testPath);
