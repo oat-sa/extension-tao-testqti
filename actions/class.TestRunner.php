@@ -437,6 +437,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $context['moveBackwardUrl'] = $this->buildActionCallUrl('moveBackward');
 	        $context['skipUrl'] = $this->buildActionCallUrl('skip');
 	        
+	        // If the candidate is allowed to move backward e.g. first item of the test.
+	        $context['canMoveBackward'] = $session->canMoveBackward();
+	        common_Logger::i(var_export($context['canMoveBackward'], true));
+	        
 	        // The places in the test session where the candidate is allowed to jump to.
 	        $context['jumps'] = $this->buildPossibleJumps();
 	        

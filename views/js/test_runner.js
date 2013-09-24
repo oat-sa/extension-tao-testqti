@@ -10,7 +10,7 @@ var testRunnerConstants = {
 
 $(document).ready(function() {
 	registerAutoResize(document.getElementById('qti-item'));
-	updateNavigation();
+	updateNavigation(assessmentTestContext);
 	
 	$('#skip').bind('click', skip);
 	$('#move-forward').bind('click', moveForward);
@@ -36,54 +36,124 @@ function onServiceApiReady(serviceApi) {
 	}
 }
 
+function beforeTransition(callback) {
+	
+	$testRunner = $('#runner');
+	$testRunner.css('height', '300px');
+	
+	$('#qti-item').css('display', 'none');
+	
+	overlay();
+	loading();
+	
+	// Wait at least 500ms for a better user experience.
+	setTimeout(callback, 500);
+}
+
+function afterTransition() {
+	overlay();
+	loading();
+}
+
+function overlay() {
+	var $overlay = $('#qti-overlay');
+	
+	if ($overlay.length > 0) {
+		$overlay.remove();
+	}
+	else {
+		$('<div id="qti-overlay"></div>').appendTo(document.body);
+	}
+}
+
+function loading() {
+	var $loading = $('#qti-loading');
+	
+	if ($loading.length > 0) {
+		$loading.remove();
+	}
+	else {
+		$loading = $('<div id="qti-loading"></div>').appendTo(document.body);
+		var opts = {
+			lines: 11, // The number of lines to draw
+			length: 21, // The length of each line
+			width: 8, // The line thickness
+			radius: 36, // The radius of the inner circle
+			corners: 1, // Corner roundness (0..1)
+			rotate: 0, // The rotation offset
+			direction: 1, // 1: clockwise, -1: counterclockwise
+			color: '#888', // #rgb or #rrggbb or array of colors
+			speed: 1.5, // Rounds per second
+			trail: 60, // Afterglow percentage
+			shadow: false, // Whether to render a shadow
+			hwaccel: false, // Whether to use hardware acceleration
+			className: 'spinner', // The CSS class to assign to the spinner
+			zIndex: 2e9, // The z-index (defaults to 2000000000)
+			top: 'auto', // Top position relative to parent in px
+			left: 'auto' // Left position relative to parent in px
+		};
+		var spinner = new Spinner(opts).spin($loading[0]);
+	}
+}
+
 function moveForward() {
-	$.ajax({
-		url: assessmentTestContext.moveForwardUrl,
-		cache: false,
-		async: true,
-		dataType: 'json',
-		success: function(assessmentTestContext, textStatus, jqXhr) {
-			if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
-				serviceApi.finish();
+	beforeTransition(function() {
+		$.ajax({
+			url: assessmentTestContext.moveForwardUrl,
+			cache: false,
+			async: true,
+			dataType: 'json',
+			success: function(assessmentTestContext, textStatus, jqXhr) {
+				if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
+					serviceApi.finish();
+				}
+				else {
+					updateTestRunner(assessmentTestContext);
+					afterTransition();
+				}
 			}
-			else {
-				updateTestRunner(assessmentTestContext);
-			}
-		}
+		});
 	});
+	
 }
 
 function moveBackward() {
-	$.ajax({
-		url: assessmentTestContext.moveBackwardUrl,
-		cache: false,
-		async: true,
-		dataType: 'json',
-		success: function(assessmentTestContext, textStatus, jqXhr) {
-			if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
-				serviceApi.finish();
+	beforeTransition(function() {
+		$.ajax({
+			url: assessmentTestContext.moveBackwardUrl,
+			cache: false,
+			async: true,
+			dataType: 'json',
+			success: function(assessmentTestContext, textStatus, jqXhr) {
+				if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
+					serviceApi.finish();
+				}
+				else {
+					updateTestRunner(assessmentTestContext);
+					afterTransition();
+				}
 			}
-			else {
-				updateTestRunner(assessmentTestContext);
-			}
-		}
+		});
 	});
 }
 
 function skip() {
-	$.ajax({
-		url: assessmentTestContext.skipUrl,
-		cache: false,
-		async: true,
-		dataType: 'json',
-		success: function(assessmentTestContext, textStatus, jqXhr) {
-			if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
-				serviceApi.finish();
+	beforeTransition(function() {
+		$.ajax({
+			url: assessmentTestContext.skipUrl,
+			cache: false,
+			async: true,
+			dataType: 'json',
+			success: function(assessmentTestContext, textStatus, jqXhr) {
+				if (assessmentTestContext.state == testRunnerConstants.TEST_STATE_CLOSED) {
+					serviceApi.finish();
+				}
+				else {
+					updateTestRunner(assessmentTestContext);
+					afterTransition();
+				}
 			}
-			else {
-				updateTestRunner(assessmentTestContext);
-			}
-		}
+		});
 	});
 }
 
@@ -117,10 +187,14 @@ function registerAutoResize(frame) {
 }
 
 function updateTestRunner(assessmentTestContext) {
-	updateNavigation();
-	
 	$itemFrame = $('#qti-item');
 	$itemFrame.remove();
+	
+	$runner = $('#runner');
+	$runner.css('height', 'auto');
+	
+	updateNavigation(assessmentTestContext);
+	
 	$('#runner').append('<iframe id="qti-item" frameborder="0" scrolling="no"/>');
 	$itemFrame = $('#qti-item');
 	registerAutoResize($itemFrame[0]);
@@ -132,7 +206,7 @@ function updateTestRunner(assessmentTestContext) {
 	});
 }
 
-function updateNavigation() {
+function updateNavigation(assessmentTestContext) {
 	
 	if (assessmentTestContext.navigationMode == testRunnerConstants.TEST_NAVIGATION_LINEAR) {
 		$('#move-forward, #move-backward').css('display', 'none');
@@ -140,7 +214,8 @@ function updateNavigation() {
 	}
 	
 	if (assessmentTestContext.navigationMode == testRunnerConstants.TEST_NAVIGATION_NONLINEAR) {
-		$('#move-forward, #move-backward').css('display', 'inline');
+		$('#move-forward').css('display', 'inline');
+		$('#move-backward').css('display', (assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
 		$('#skip').css('display', 'none');
 	}
 }
