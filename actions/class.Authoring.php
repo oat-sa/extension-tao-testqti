@@ -149,7 +149,7 @@ class taoQtiTest_actions_Authoring extends tao_actions_CommonModule {
          */
         private function durationToTime(qtism\common\datatypes\Duration $duration){
             $time = '';
-            if(!is_null($duration)){
+            if(!is_null($duration) && $duration->getSeconds(true) > 0){
                 $hours = ($duration->getHours() > 10) ? $duration->getHours() : '0'.$duration->getHours();
                 $minutes = ($duration->getMinutes() > 10) ? $duration->getMinutes() : '0'.$duration->getMinutes();
                 $seconds = ($duration->getSeconds() > 10) ? $duration->getSeconds() : '0'.$duration->getSeconds();
