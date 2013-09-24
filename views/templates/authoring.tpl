@@ -55,11 +55,11 @@
                 <fieldset>
                     <legend><?=__('Time limits')?></legend>
                     <div>
-                        <label class="form_desc"><?=__('Minimum Time')?></label>
+                        <label class="form_desc"><?=__('Minimum Test Duration')?></label>
                         <input type="text" name="min-time" class="time" value="<?=get_data('option_min-time')?>" />
                     </div>
                     <div>
-                        <label class="form_desc"><?=__('Maximum Time')?></label>
+                        <label class="form_desc"><?=__('Maximum Test Duration')?></label>
                         <input type="text" name="max-time" class="time" value="<?=get_data('option_max-time')?>" />
                     </div>
                     <div>

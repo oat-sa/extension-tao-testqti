@@ -1,9 +1,9 @@
 define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, GenerisTreeSelectClass){
     
-    //just to define the options
+    //define the default options
     var defaults =  {
-        sequence : [],
-        labels : [],
+        sequence : [],          //todo check if we really need sequence and labels...
+        labels : [],    
         saveUrl : '',
         itemsTree: {
             itemsUrl : '',
@@ -11,8 +11,22 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
         }
     };
     
+    /**
+     * QtiTestAuthoring user interaction component
+     * @type {Object}
+     */
     var QtiTestAuthoring = {
         
+        /**
+         * Initialize the  component
+         * @param {jQueryElement} $container - the jQuery element that contains the authoring component (all events are bound to it)
+         * @param {Object} [options] - override the default options
+         * @param {Array} [options.sequence] - the default item sequence URIs
+         * @param {Object} [options.labels] - the labels of the items as uri : label
+         * @param {String} [option.saveUrl] - where to post the test data
+         * @param {String} [option.itemsTree.itemsUrl] - the url where the item tree will retrieve items data 
+         * @param {Object} [option.itemsTree.serverParameters] - additionnal parameters for the tree retrieving
+         */
         init : function($container, options){
             var self = this;
             this.options = $.extend({}, defaults, options);
@@ -29,15 +43,26 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                 self.save();
             });
             
+            /**
+             * @event QtiTestAuthoring#create
+             */
             this._$container.trigger('create.qtitestauthoring');
         },
                 
+        /**
+         * Initialize the jQuery elements
+         * @private
+         */
         _initElements : function(){
             this._$itemSequence = $("#item-sequence", this._$container);
             this._$orderingInfo = this._$itemSequence.prev('.elt-info');
             this._$shuffleInput = $("input[name='shuffle']", this._$container);
         },
                 
+        /**
+         * Set up tte items tree
+         * @private
+         */
         _setUpItemsTree : function(){
             var self = this;
             var treeOptions = this.options.itemsTree;
@@ -67,6 +92,10 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
         },
         
+        /**
+         * Set up tte items sequence
+         * @private
+         */
         _setUpItemSequence : function(){
             var self = this;
             var $items = this._$itemSequence.find('li');
@@ -110,6 +139,10 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
         },
         
+        /**
+         * Show/hide the info box on the sequence ordering widget
+         * @private
+         */
         _toggleOrderingInfo : function(){
             if (this._$itemSequence.find('li').length > 0 && !this._isShuffling()){
                 this._$orderingInfo.show();
@@ -117,11 +150,20 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                 this._$orderingInfo.hide();
             }
         },
-                
+          
+        /**
+         * Check if the shuffle option is checked 
+         * @private
+         * @returns {Boolean} true if checked
+         */
         _isShuffling : function(){
             return this._$shuffleInput.is(':checked');
         },
         
+         /**
+         * Set up the time limits widgets
+         * @private
+         */
         _setUpTimeLimits : function(){
             $('.time').timepicker({
                 timeFormat: 'HH:mm:ss',
@@ -132,6 +174,9 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
         },
         
+        /**
+         * Save the test
+         */
         save: function(){
             var self = this;
             var sequence = this.getItemSequence();
@@ -150,12 +195,18 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             
             toSend.classUri = $("input[name=classUri]").val();
             
+            //do a server call
             $.ajax({
                 url: self.options.saveUrl,
                 type: "POST",
                 data: toSend,
                 dataType: 'json',
                 success: function(response){
+                    
+                    /**
+                     * @event QtiTestAuthoring#saved
+                     * @param {boolea} saved - if the data are saved 
+                     */
                     self._$container.trigger('saved.qtitestauthoring', [response.saved]);
                 },
                 complete: function(){
@@ -164,6 +215,10 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             });
         },
         
+        /**
+         * Get the item sequence from the widget
+         * @returns {Array} the items' uris
+         */
         getItemSequence : function(){
             var sequence = [];
             this._$itemSequence.find('li').each(function(index, elt){
@@ -176,6 +231,10 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             return sequence;
         },
         
+        /**
+         * Update the test's items 
+         * @param {Array} sequence - the new item sequence
+         */
         updateItemSequence : function(sequence){
             this._$itemSequence.html(this._itemListHtml(sequence));
             
@@ -183,9 +242,18 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
             this.options.sequence = sequence;
             this._toggleOrderingInfo();
             
+           /**
+            * @event QtiTestAuthoring#itemsupdate
+            * @param {Array} sequence - the new items sequence
+            */
             this._$container.trigger('itemsupdate.qtitestauthoring', [sequence]);
         },
                 
+        /**
+         * Build the HTML list for the item sequence widget
+         * @param {Array} items - the items' uris
+         * @returns {String} the html
+         */
         _itemListHtml : function(items){
             var html = '', itemId, i, index = 0;
             for (i in items) {
@@ -200,6 +268,7 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
         }
     };
     
+    //expose the component
     return QtiTestAuthoring;
 });
 

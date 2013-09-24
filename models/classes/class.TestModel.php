@@ -110,11 +110,11 @@ class taoQtiTest_models_classes_TestModel
         	throw new common_Exception('No default repository defined for uploaded files storage.');
         }
 		return new core_kernel_file_File($uri);
-	}
-	
-	public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
-	    
-	}
+    }
+
+    public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
+        
+    }
 }
 
 ?>
