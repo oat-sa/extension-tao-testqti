@@ -12,3 +12,7 @@ body {
 	width: 100%;
 	overflow: hidden;
 }
+
+.qti-navigation {
+	display:none;
+}

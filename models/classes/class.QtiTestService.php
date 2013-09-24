@@ -194,7 +194,9 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     if( !empty($testOptions['min-time']) 
                         || !(empty($testOptions['max-time'])) 
                         || !(empty($testOptions['allow-late-submission'])) ){
-
+                        
+                        common_Logger::i(var_export($testOptions, true));
+                        
                         $timeLimits = new TimeLimits(
                             !empty($testOptions['min-time']) ? new Duration($testOptions['min-time']) : null,
                             !empty($testOptions['max-time']) ? new Duration($testOptions['max-time']) : null,

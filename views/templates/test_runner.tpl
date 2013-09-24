@@ -8,5 +8,8 @@
 
 <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
 <div id="runner">
+	<button id="move-backward" class="qti-navigation">Previous</button>
+	<button id="move-forward" class="qti-navigation">Next</button>
+	<button id="skip" class="qti-navigation"/>Skip</button>
 	<iframe id="qti-item" frameborder="0" scrolling="no"/>
 </div>

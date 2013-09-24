@@ -218,6 +218,61 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 	
 	/**
+	 * Move backward in the Assessment Test Session flow.
+	 *
+	 */
+	public function moveBackward() {
+	    $this->beforeAction();
+	     
+	    $testSession = $this->getTestSession();
+	    $testSession->moveBack();
+	     
+	    $context = $this->buildAssessmentTestContext();
+	     
+	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+	         
+	        // --- If the item session is not in INTERACTING state, begin new attempt.
+	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
+	            $this->beginAttempt();
+	        }
+	         
+	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
+	    }
+	     
+	    echo json_encode($context);
+	     
+	    $this->afterAction();
+	}
+	
+	/**
+	 * Skip the current item in the Assessment Test Session flow.
+	 * 
+	 */
+	public function skip() {
+	    $this->beforeAction();
+	    
+	    $testSession = $this->getTestSession();
+	    $testSession->skip();
+	    $testSession->moveNext();
+	    
+	    $context = $this->buildAssessmentTestContext();
+	    
+	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+	         
+	        // --- If the item session is not in INTERACTING state, begin new attempt.
+	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
+	            $this->beginAttempt();
+	        }
+	         
+	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
+	    }
+	     
+	    echo json_encode($context);
+	    
+	    $this->afterAction();
+	}
+	
+	/**
 	 * Action called when a QTI Item embedded in a QTI Test submit responses.
 	 * 
 	 */
