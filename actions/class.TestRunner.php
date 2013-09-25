@@ -68,6 +68,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     private $storage = null;
     
     /**
+     * Whether an attempt has begun during the request.
+     * 
+     * @var boolean
+     */
+    private $attemptBegun = false;
+    
+    /**
      * Get the current assessment test session.
      * 
      * @return AssessmentTestSession An AssessmentTestSession object.
@@ -164,7 +171,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             common_Logger::d("Current Route Item is '" . $testSession->getCurrentAssessmentItemRef()->getIdentifier() . "." . $testSession->getCurrentAssessmentItemRefOccurence() . "'");
             
             // --- If the item session is not in INTERACTING state, begin new attempt.
-            if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
+            if (!$testSession->isCurrentAssessmentItemInteracting() && ($testSession->getCurrentRemainingAttempts() > 0 || $testSession->getCurrentRemainingAttempts() === -1)) {
                 $this->beginAttempt();
             }
         }  
@@ -195,19 +202,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * 
 	 */
 	public function moveForward() {
-	    $this->beforeAction();
-	    
+
 	    $testSession = $this->getTestSession();
 	    $testSession->moveNext();
+	    
+	    $this->beforeAction();
 	    
 	    $context = $this->buildAssessmentTestContext();
 	    
 	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
-	        
-	        // --- If the item session is not in INTERACTING state, begin new attempt.
-	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
-	            $this->beginAttempt();
-	        }
 	        
 	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
 	    }
@@ -222,20 +225,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 *
 	 */
 	public function moveBackward() {
-	    $this->beforeAction();
 	     
 	    $testSession = $this->getTestSession();
 	    $testSession->moveBack();
+	    
+	    $this->beforeAction();
 	     
 	    $context = $this->buildAssessmentTestContext();
 	     
 	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
-	         
-	        // --- If the item session is not in INTERACTING state, begin new attempt.
-	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
-	            $this->beginAttempt();
-	        }
-	         
 	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
 	    }
 	     
@@ -249,21 +247,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * 
 	 */
 	public function skip() {
-	    $this->beforeAction();
-	    
+
 	    $testSession = $this->getTestSession();
 	    $testSession->skip();
 	    $testSession->moveNext();
 	    
+	    $this->beforeAction();
+	    
 	    $context = $this->buildAssessmentTestContext();
 	    
 	    if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
-	         
-	        // --- If the item session is not in INTERACTING state, begin new attempt.
-	        if (!$testSession->isCurrentAssessmentItemInteracting() && $testSession->getCurrentRemainingAttempts() > 0) {
-	            $this->beginAttempt();
-	        }
-	         
 	        $context['newItemUrl'] = $this->buildCurrentItemSrc();
 	    }
 	     
@@ -418,6 +411,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $context['submissionMode'] = null;
 	    $context['remainingAttempts'] = 0;
 	    $context['isAdaptive'] = false;
+	    $context['allowedToAttempt'] = false;
 	    
 	    if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
 	        // The navigation mode.
@@ -428,7 +422,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	         
 	        // The number of remaining attempts for the current item.
 	        $context['remainingAttempts'] = $session->getCurrentRemainingAttempts();
-	         
+	        
+	        // If an attempt was begun during the request.
+	        $context['attemptBegun'] = $this->attemptBegun;
+	             
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
 	        
@@ -439,7 +436,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // If the candidate is allowed to move backward e.g. first item of the test.
 	        $context['canMoveBackward'] = $session->canMoveBackward();
-	        common_Logger::i(var_export($context['canMoveBackward'], true));
 	        
 	        // The places in the test session where the candidate is allowed to jump to.
 	        $context['jumps'] = $this->buildPossibleJumps();
@@ -457,8 +453,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * 
 	 */
 	protected function beginAttempt() {
-	    common_Logger::d("Beginning attempt for item " . $this->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier() . "." . $this->getTestSession()->getCurrentAssessmentItemRefOccurence());
+	    common_Logger::i("Beginning attempt for item " . $this->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier() . "." . $this->getTestSession()->getCurrentAssessmentItemRefOccurence());
 	    $this->getTestSession()->beginAttempt();
+	    $this->attemptBegun = true;
 	}
 	
 	/**

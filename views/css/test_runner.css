@@ -11,6 +11,7 @@ body {
 #qti-item {
 	width: 100%;
 	overflow: hidden;
+	display: none;
 }
 
 .qti-navigation {

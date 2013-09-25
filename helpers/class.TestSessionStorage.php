@@ -70,10 +70,17 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $getStateMethod->setAccessible(true);
        $data = $getStateMethod->invoke($this->getServiceModule());
        
-       // Read 23 chars (the session ID) in order to position the file pointer correctly.
-       $stream = new BinaryStream((empty($data) === true) ? '' : $data);
+       // Read 28 chars (the session ID) in order to position the file pointer correctly
+       // if something is inside the state dat.
+       $stateEmpty = (empty($data) === true);
+       $stream = new BinaryStream(($stateEmpty === true) ? '' : $data);
        $stream->open();
-       $stream->read(28);
+       
+       if ($stateEmpty === false) {
+           // Consume additional sessionID.
+           $stream->read(28);
+       }
+       
        $stream->close();
        return $stream;
    }

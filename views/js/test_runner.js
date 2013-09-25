@@ -27,12 +27,7 @@ function onServiceApiReady(serviceApi) {
 		serviceApi.finish();
 	}
 	else {
-		$itemFrame = $('#qti-item');
-		itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
-		itemServiceApi.loadInto($itemFrame[0]);
-		itemServiceApi.onFinish(function () {
-			moveForward();
-		});
+		updateTestRunner(assessmentTestContext);
 	}
 }
 
@@ -199,11 +194,19 @@ function updateTestRunner(assessmentTestContext) {
 	$itemFrame = $('#qti-item');
 	registerAutoResize($itemFrame[0]);
 	
-	itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
-	itemServiceApi.loadInto($itemFrame[0]);
-	itemServiceApi.onFinish(function() {
-		moveForward();
-	});
+	if (assessmentTestContext.attemptBegun == true || assessmentTestContext.remainingAttempts == -1) {
+		
+		itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
+		itemServiceApi.loadInto($itemFrame[0]);
+		$itemFrame.css('display', 'block');
+		itemServiceApi.onFinish(function() {
+			moveForward();
+		});
+	}
+	else {
+		console.log('no more attempts!');
+	}
+	
 }
 
 function updateNavigation(assessmentTestContext) {
