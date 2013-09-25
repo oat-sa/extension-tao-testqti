@@ -40,7 +40,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
     */
    private $serviceModule = null; 
     
-   public function __construct(AbstractAssessmentTestSessionFactory $factory, tao_actions_ServiceModule $serviceModule) {
+   public function __construct(AbstractAssessmentTestSessionFactory $factory, taoQtiTest_actions_TestRunner $serviceModule) {
        parent::__construct($factory);
        $this->setServiceModule($serviceModule);
    }
@@ -48,7 +48,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    /**
     * Get the ServiceModule object which provides an access to the TAO Delivery Storage.
     * 
-    * @return tao_actions_ServiceModule
+    * @return taoQtiTest_actions_TestRunner
     */
    protected function getServiceModule() {
        return $this->serviceModule;
@@ -57,9 +57,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    /**
     * Set the ServiceModule object which provides an access to the TAO Delivery Storage.
     * 
-    * @param tao_actions_ServiceModule $serviceModule
+    * @param taoQtiTest_actions_TestRunner $serviceModule
     */
-   protected function setServiceModule(tao_actions_ServiceModule $serviceModule) {
+   protected function setServiceModule(taoQtiTest_actions_TestRunner $serviceModule) {
        $this->serviceModule = $serviceModule;
    }
     
@@ -71,14 +71,17 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $data = $getStateMethod->invoke($this->getServiceModule());
        
        // Read 28 chars (the session ID) in order to position the file pointer correctly
-       // if something is inside the state dat.
+       // if something is inside the state data.
        $stateEmpty = (empty($data) === true);
        $stream = new BinaryStream(($stateEmpty === true) ? '' : $data);
        $stream->open();
        
        if ($stateEmpty === false) {
-           // Consume additional sessionID.
+           // Consume additional sessionID (plain string).
            $stream->read(28);
+           
+           // Consume additional error (short signed integer).
+           $stream->read(2);
        }
        
        $stream->close();
@@ -87,8 +90,11 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    
    protected function persistStream(AssessmentTestSession $assessmentTestSession, BinaryStream $stream) {
        $reflectionObject = new ReflectionObject($this->getServiceModule());
-       $getStateMethod = $reflectionObject->getMethod('setState');
-       $getStateMethod->setAccessible(true);
-       $getStateMethod->invoke($this->getServiceModule(), $assessmentTestSession->getSessionId() . $stream->getBinary());
+       $setStateMethod = $reflectionObject->getMethod('setState');
+       $getCurrentErrorMethod = $reflectionObject->getMethod('getCurrentError');
+       $setStateMethod->setAccessible(true);
+       $getCurrentErrorMethod->setAccessible(true);
+       $data =  $assessmentTestSession->getSessionId() . pack('s', $getCurrentErrorMethod->invoke($this->getServiceModule())) . $stream->getBinary();
+       $setStateMethod->invoke($this->getServiceModule(), $data);
    }
 }

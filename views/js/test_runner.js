@@ -204,7 +204,7 @@ function updateTestRunner(assessmentTestContext) {
 		});
 	}
 	else {
-		console.log('no more attempts!');
+		
 	}
 	
 }

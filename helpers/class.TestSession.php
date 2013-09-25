@@ -140,7 +140,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     protected function submitItemResults(AssessmentItemSession $itemSession) {
-        $item = $this->getCurrentAssessmentItemRef();
+        $item = $itemSession->getAssessmentItem();
         $occurence = $this->getCurrentAssessmentItemRefOccurence();
         $sessionId = $this->getSessionId();
         
