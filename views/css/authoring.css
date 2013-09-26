@@ -4,3 +4,6 @@
     min-width:250px;
     margin: 3px;
 }
+#qti-test-container xhtml-form{
+    padding-bottom: 0;
+}
