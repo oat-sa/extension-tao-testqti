@@ -228,7 +228,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Do the required stuff
         // --- If the session has just been instantiated, begin the test session.
         $testSession = $this->getTestSession();
-        $testSession->updateDuration();
         
         if ($testSession->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
@@ -257,9 +256,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
 	public function index()
 	{
-	    $this->beforeAction();
 	    $testSession = $this->getTestSession();
-	    
+	    $testSession->updateDuration();
+	    $this->beforeAction();
+
 	    try {
 	        // Maybe the current testPart max time is reached.
 	        $testSession->checkTimeLimits();
@@ -284,8 +284,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function moveForward() {
 	    
+	    $testSession = $this->getTestSession();
+	    $testSession->updateDuration();
+	    
 	    try {
-	        $testSession = $this->getTestSession();
+	        
 	        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
 	            $testSession->moveNext();
 	        }	        
@@ -314,11 +317,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 *
 	 */
 	public function moveBackward() {
-
+	    
+	    $testSession = $this->getTestSession();
+	    $testSession->updateDuration();
+	    
 	    try {
-	        $testSession = $this->getTestSession();
 	        $testSession->moveBack();
-	        
 	        $this->beforeAction();
 	    }
 	    catch (AssessmentTestSessionException $e) {
@@ -344,8 +348,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function skip() {
 
+	    $testSession = $this->getTestSession();
+	    $testSession->updateDuration();
+	    
 	    try {
-	        $testSession = $this->getTestSession();
 	        $testSession->skip();
 	        $testSession->moveNext();
 	         
@@ -373,6 +379,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function storeItemVariableSet() {
 	    
+	    $this->getTestSession()->updateDuration();
 	    $this->beforeAction();
 	    
 	    // --- Deal with provided responses.

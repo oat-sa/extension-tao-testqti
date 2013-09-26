@@ -184,6 +184,7 @@ function registerAutoResize(frame) {
 }
 
 function updateTestRunner(assessmentTestContext) {
+	
 	$itemFrame = $('#qti-item');
 	$itemFrame.remove();
 	
