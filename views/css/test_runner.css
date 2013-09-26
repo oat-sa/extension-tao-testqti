@@ -49,6 +49,7 @@ body {
 	-webkit-border-radius: 4px;
 	-khtml-border-radius: 4px;
 	border-radius: 4px;
+	padding: 3px;
 }
 
 #qti-info.info {
@@ -61,4 +62,17 @@ body {
 	font-weight: bold;
 	padding: 3px 3px 3px 25px;
 	margin: 20px 100px;
+}
+
+#qti-timer {
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	border-radius: 4px;
+	padding: 3px;
+	background-color: #f3f3f3;
+	border: 1px solid #333;
+	margin: 20px 100px;
+	font-weight: bold;
+	color: #333;
 }

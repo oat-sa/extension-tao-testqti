@@ -20,6 +20,8 @@ $(document).ready(function() {
 });
 
 var autoResizeId;
+var timerId;
+var currentTime = 0;
 
 function onServiceApiReady(serviceApi) {
 	// If the assessment test session is in CLOSED state,
@@ -193,6 +195,7 @@ function updateTestRunner(assessmentTestContext) {
 	
 	updateNavigation(assessmentTestContext);
 	updateInformation(assessmentTestContext);
+	updateTimer(assessmentTestContext);
 	
 	$('#runner').append('<iframe id="qti-item" frameborder="0" scrolling="no"/>');
 	$itemFrame = $('#qti-item');
@@ -219,6 +222,34 @@ function updateInformation(assessmentTestContext) {
 	}
 }
 
+function updateTimer(assessmentTestContext) {
+	
+	if (typeof timerId !== 'undefined') {
+		clearInterval(timerId);
+	}
+	
+	$('#qti-timer').remove();
+	
+	if (assessmentTestContext.testPartRemainingTime !== null) {
+		$('<div id="qti-timer">' + formatTime(assessmentTestContext.testPartRemainingTime) + '</div>').insertAfter('#qti-actions');
+		
+		// Set up a timer and update it.
+		currentTime = assessmentTestContext.testPartRemainingTime;
+		timerId = setInterval(function() {
+			currentTime--;
+			
+			if (currentTime <= 0) {
+				currentTime = 0;
+				clearInterval(timerId);
+				$('#qti-item').css('display', 'none');
+				serviceApi.finish();
+			}
+			
+			$('#qti-timer').html(formatTime(currentTime));
+		}, 1000);
+	}
+}
+
 function updateNavigation(assessmentTestContext) {
 	
 	if (assessmentTestContext.navigationMode == testRunnerConstants.TEST_NAVIGATION_LINEAR) {
@@ -232,3 +263,18 @@ function updateNavigation(assessmentTestContext) {
 		$('#skip').css('display', 'none');
 	}
 }
+
+function formatTime(totalSeconds) {
+    var sec_num = totalSeconds;
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0" + hours;}
+    if (minutes < 10) {minutes = "0" + minutes;}
+    if (seconds < 10) {seconds = "0" + seconds;}
+    
+    var time    = hours + ':' + minutes + ':' + seconds;
+    
+    return "\u00b1 " + time;
+};
