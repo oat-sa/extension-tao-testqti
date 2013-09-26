@@ -5,7 +5,9 @@ var testRunnerConstants = {
 	'TEST_STATE_SUSPENDED': 3,
 	'TEST_STATE_CLOSED': 4,
 	'TEST_NAVIGATION_LINEAR': 0,
-	'TEST_NAVIGATION_NONLINEAR': 1
+	'TEST_NAVIGATION_NONLINEAR': 1,
+	'TEST_ITEM_STATE_INTERACTING': 1
+	
 };
 
 $(document).ready(function() {
@@ -194,7 +196,7 @@ function updateTestRunner(assessmentTestContext) {
 	$itemFrame = $('#qti-item');
 	registerAutoResize($itemFrame[0]);
 	
-	if (assessmentTestContext.attemptBegun == true || assessmentTestContext.remainingAttempts == -1) {
+	if (assessmentTestContext.itemSessionState == testRunnerConstants.TEST_ITEM_STATE_INTERACTING) {
 		
 		itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
 		itemServiceApi.loadInto($itemFrame[0]);

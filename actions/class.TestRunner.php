@@ -245,8 +245,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 $this->beginAttempt();
             }
         }  
-        
-        common_Logger::i(var_export(count($testSession->getPendingResponses()), true));
     }
     
     protected function afterAction() {
@@ -324,6 +322,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->beforeAction();
 	    }
 	    catch (AssessmentTestSessionException $e) {
+	        common_Logger::i($e->getMessage());
 	        $this->registerAssessmentTestSessionException($e);
 	        $testSession->moveNextTestPart();
 	    }
@@ -542,6 +541,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // If an attempt was begun during the request.
 	        $context['attemptBegun'] = $this->hasAttemptBegun();
+	        
+	        // The state of the current AssessmentTestSession.
+	        $context['itemSessionState'] = $session->getCurrentAssessmentItemSession()->getState();
 	             
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
