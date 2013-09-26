@@ -69,8 +69,11 @@ body {
 	-webkit-border-radius: 4px;
 	-khtml-border-radius: 4px;
 	border-radius: 4px;
-	padding: 3px;
+	padding: 3px 3px 3px 25px;
 	background-color: #f3f3f3;
+	background-image: url(../img/time.png);
+	background-repeat: no-repeat;
+	background-position: 2px 2px;
 	border: 1px solid #333;
 	margin: 20px 100px;
 	font-weight: bold;
