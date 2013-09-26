@@ -38,7 +38,7 @@ function beforeTransition(callback) {
 	$testRunner = $('#runner');
 	$testRunner.css('height', '300px');
 	
-	$('#qti-item').css('display', 'none');
+	$('#qti-item, #qti-info').css('display', 'none');
 	
 	overlay();
 	loading();
@@ -192,10 +192,12 @@ function updateTestRunner(assessmentTestContext) {
 	$runner.css('height', 'auto');
 	
 	updateNavigation(assessmentTestContext);
+	updateInformation(assessmentTestContext);
 	
 	$('#runner').append('<iframe id="qti-item" frameborder="0" scrolling="no"/>');
 	$itemFrame = $('#qti-item');
 	registerAutoResize($itemFrame[0]);
+	
 	
 	if (assessmentTestContext.itemSessionState == testRunnerConstants.TEST_ITEM_STATE_INTERACTING) {
 		
@@ -206,10 +208,15 @@ function updateTestRunner(assessmentTestContext) {
 			moveForward();
 		});
 	}
-	else {
-		
+}
+
+function updateInformation(assessmentTestContext) {
+	if (assessmentTestContext.info == null) {
+		$('#qti-info').remove();
 	}
-	
+	else {
+		$('<div id="qti-info" class="info">' + assessmentTestContext.info + '</div>').insertAfter('#qti-actions');
+	}
 }
 
 function updateNavigation(assessmentTestContext) {

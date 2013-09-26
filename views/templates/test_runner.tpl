@@ -13,9 +13,11 @@
 	</head>
 	<body>
 		<div id="runner">
-			<button id="move-backward" class="qti-navigation">Previous</button>
-			<button id="move-forward" class="qti-navigation">Next</button>
-			<button id="skip" class="qti-navigation"/>Skip</button>
+			<div id="qti-actions">
+				<button id="move-backward" class="qti-navigation">Previous</button>
+				<button id="move-forward" class="qti-navigation">Next</button>
+				<button id="skip" class="qti-navigation"/>Skip</button>
+			</div>
 			<iframe id="qti-item" frameborder="0" scrolling="no"></iframe>
 		</div>
 	</body>

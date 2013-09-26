@@ -1,6 +1,4 @@
 <?php
-use qtism\runtime\tests\AssessmentTestSessionException;
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +19,8 @@ use qtism\runtime\tests\AssessmentTestSessionException;
  * 
  */
 
+use qtism\runtime\tests\AssessmentItemSessionState;
+use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
@@ -248,6 +248,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     
     protected function afterAction() {
         $this->persistTestSession();
+    }
+    
+    protected function information() {
+        $testSession = $this->getTestSession();
+        
+        $info = null;
+        
+        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+            
+            $itemSession = $testSession->getCurrentAssessmentItemSession();
+            
+            // Not interacting, there is no more attempts possible.
+            if ($itemSession->getState() !== AssessmentItemSessionState::INTERACTING) {
+                $info = sprintf(__('No more attempts allowed for item "%s".'), $itemSession->getAssessmentItem()->getIdentifier());
+            }
+        }
+        
+        return $info;
     }
     
     /**
@@ -565,6 +583,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // The places in the test session where the candidate is allowed to jump to.
 	        $context['jumps'] = $this->buildPossibleJumps();
+	        
+	        // Display information.
+	        $context['info'] = $this->information();
 	        
 	        // Timings.
 	        if (($remainingTimeTestPart = $session->getRemainingTimeTestPart()) !== null) {

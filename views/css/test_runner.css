@@ -6,6 +6,7 @@ body {
 #runner {
 	font-family:Verdana, Arial, sans-serif;
 	font-size: 12px;
+	overflow:auto;
 }
 
 #qti-item {
@@ -41,4 +42,23 @@ body {
     left: 50%;
     margin-top: -150px;
     margin-left: -150px;
+}
+
+#qti-info {
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	border-radius: 4px;
+}
+
+#qti-info.info {
+	background-color: #f5fcff;
+	background-image: url(../img/information.png);
+	background-repeat: no-repeat;
+	background-position: 2px 2px;
+	border: 1px solid #005b7d;
+	color: #0c6485;
+	font-weight: bold;
+	padding: 3px 3px 3px 25px;
+	margin: 20px 100px;
 }
