@@ -123,7 +123,41 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an error occurs during the import process.
      */
     public function importTestContent(core_kernel_classes_Resource $testResource, XmlAssessmentTestDocument $testDefinition, array $itemMapping) {
-        throw new common_exception_NotImplemented("Not implemented yet.");
+        $assessmentItemRefs = $test->getComponentsByClassName('assessmentItemRef');
+        $assessmentItemRefsCount = count($assessmentItemRefs);
+        $itemMappingCount = count($itemMapping);
+        
+        if ($assessmentItemRefsCount === 0) {
+            $msg = "The QTI Test to be imported does not contain any item.";
+            throw new taoQtiTest_models_classes_QtiTestServiceException($msg);
+        }
+        else if ($assessmentItemRefsCount !== $itemMappingCount) {
+            $msg = "The item mapping count does not corresponds to the number of items referenced by the QTI Test.";
+            throw new taoQtiTest_models_classes_QtiTestServiceException($msg);
+        }
+        
+        foreach ($assessmentItemRefs as $itemRef) {
+            $itemRefIdentifier = $itemRef->getIdentifier();
+            
+            if (isset($itemMapping[$itemRefIdentifier]) === false) {
+                $msg = "No mapping found for assessmentItemRef '${itemRefIdentifier}'.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException($msg);
+            }
+            
+            $itemRef->setHref($itemMapping[$itemRefIdentifier]);
+        }
+        
+        // Bind the newly created test content to the Test Resource in database.
+        $testContent = $this->createContent($testResource);
+        $testPath = $testContent->getAbsolutePath();
+        
+        try {
+            $testDefinition->save($testPath);
+        }
+        catch (StorageException $e) {
+            $msg = "An error occured while saving the new test content of '${testPath}'.";
+            throw new taoQtiTest_models_classes_QtiTestServiceException($msg);
+        }
     }
 
     /**
