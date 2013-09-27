@@ -116,7 +116,65 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      */
     public function importTest(core_kernel_classes_Resource $testResource, $file) {
         $report = new common_report_Report();
-        $report->add(new common_report_ErrorElement(__("Not implemented yet.")));
+        
+        $qtiPackageParser = new taoQtiCommon_models_classes_PackageParser($file);
+        $qtiPackageParser->validate();
+        
+        if($qtiPackageParser->isValid()){
+            //extract the package
+            $folder = $qtiPackageParser->extract();
+            if(!is_dir($folder)){
+                throw new taoQTI_models_classes_QTI_exception_ExtractException();
+            }
+            
+            //load and validate the manifest
+            $qtiManifestParser = new taoQtiCommon_models_classes_ManifestParser($folder.'/imsmanifest.xml');
+            $qtiManifestParser->validate();
+            if ($qtiManifestParser->isValid()) {
+                $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
+                if (empty($tests)) {
+                    $report->add(new common_report_ErrorElement(__('No test found in package')));
+                } elseif (count($tests) > 1) {
+                    $report->add(new common_report_ErrorElement(__('Found more than one test in package')));
+                } else {
+                    $testQtiResource = current($tests);
+                    // import items
+                    $itemService = taoQTI_models_classes_QTI_ImportService::singleton();
+                    $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+                    $itemMap = array();
+                    foreach($qtiManifestParser->getResources() as $qtiResource){
+                        if (taoQTI_models_classes_QTI_Resource::isAllowed($qtiResource->getType())) {
+                            try{
+                                $qtiFile = $folder.DIRECTORY_SEPARATOR.$qtiResource->getItemFile();
+                                $rdfItem = $itemService->importQTIFile($qtiFile, $itemClass);
+                                $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
+                                                            
+                                foreach($qtiResource->getAuxiliaryFiles() as $auxResource){
+                                    // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
+                                    $auxPath = $folder.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
+                                    $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
+                                    $destPath = $itemPath.$relPath;
+                                    tao_helpers_File::copy($auxPath, $destPath, true);
+                                }
+                                $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
+                            }catch(taoQTI_models_classes_QTI_ParsingException $e){
+                            
+                            }catch(Exception $e){
+                                // an error occured during a specific item
+                                // skip to next
+                            }
+                        }
+                    }
+                    $testDefinition = new XmlAssessmentTestDocument();
+                    $testDefinition->load($folder.DIRECTORY_SEPARATOR.$testQtiResource->getItemFile());
+                    $this->importTestContent($testResource, $testDefinition, $itemMap);
+                }
+            } else {
+                $report->add($qtiManifestParser->getReport());
+            }
+        } else {
+            $report->add($qtiPackageParser->getReport());
+        }
         return $report;
     }
     
