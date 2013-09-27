@@ -184,7 +184,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * 
      * The $itemMapping argument makes the implementation of this method able to know
      * what are the items that were imported. The $itemMapping is an associative array
-     * where keys are the assessmentItemRef's identifiers and the values are the URIs of
+     * where keys are the assessmentItemRef's identifiers and the values are the core_kernel_classes_Resources of
      * the items that are now stored in the system.
      *
      * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
@@ -194,7 +194,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an error occurs during the import process.
      */
     public function importTestContent(core_kernel_classes_Resource $testResource, XmlAssessmentTestDocument $testDefinition, array $itemMapping) {
-        $assessmentItemRefs = $test->getComponentsByClassName('assessmentItemRef');
+        $assessmentItemRefs = $testDefinition->getComponentsByClassName('assessmentItemRef');
         $assessmentItemRefsCount = count($assessmentItemRefs);
         $itemMappingCount = count($itemMapping);
         
@@ -215,7 +215,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg);
             }
             
-            $itemRef->setHref($itemMapping[$itemRefIdentifier]);
+            $itemRef->setHref($itemMapping[$itemRefIdentifier]->getUri());
         }
         
         // Bind the newly created test content to the Test Resource in database.
@@ -362,7 +362,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
         $file->setContent($emptyTestXml);
         common_Logger::i('Created '.$file->getAbsolutePath());
-        $test->setPropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
+        $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
         return $file;
     }
     
