@@ -106,6 +106,19 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         }
     	return $options;
     }
+
+    /**
+     * 
+     * @param core_kernel_classes_Resource $testResource
+     * @param unknown $file
+     * @return common_report_Report
+     * @throws common_exception_NotImplemented
+     */
+    public function importTest(core_kernel_classes_Resource $testResource, $file) {
+        $report = new common_report_Report();
+        $report->add(new common_report_ErrorElement(__("Not implemented yet.")));
+        return $report;
+    }
     
     /**
      * Finalize the QTI Test import by importing its XML definition into the system, after
