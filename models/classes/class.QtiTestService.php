@@ -116,11 +116,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * where keys are the assessmentItemRef's identifiers and the values are the URIs of
      * the items that are now stored in the system.
      *
-     * @param XmlAssessmentTestDocument $test An XmlAssessmentTestDocument object.
+     * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
+     * @param XmlAssessmentTestDocument $testDefinition An XmlAssessmentTestDocument object.
      * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
+     * @return core_kernel_file_File The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an error occurs during the import process.
      */
-    public function importTest(XmlAssessmentTestDocument $test, array $itemMapping) {
+    public function importTestContent(core_kernel_classes_Resource $testResource, XmlAssessmentTestDocument $testDefinition, array $itemMapping) {
         throw new common_exception_NotImplemented("Not implemented yet.");
     }
 
