@@ -106,6 +106,23 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         }
     	return $options;
     }
+    
+    /**
+     * Finalize the QTI Test import by importing its XML definition into the system, after
+     * the QTI Items composing the test were also imported.
+     * 
+     * The $itemMapping argument makes the implementation of this method able to know
+     * what are the items that were imported. The $itemMapping is an associative array
+     * where keys are the assessmentItemRef's identifiers and the values are the URIs of
+     * the items that are now stored in the system.
+     *
+     * @param XmlAssessmentTestDocument $test An XmlAssessmentTestDocument object.
+     * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If an error occurs during the import process.
+     */
+    public function importTest(XmlAssessmentTestDocument $test, array $itemMapping) {
+        throw new common_exception_NotImplemented("Not implemented yet.");
+    }
 
     /**
      * Save the QTI test : set the items sequence and some options.
