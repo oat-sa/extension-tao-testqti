@@ -114,7 +114,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @return common_report_Report
      * @throws common_exception_NotImplemented
      */
-    public function importTest(core_kernel_classes_Resource $testResource, $file) {
+    public function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass) {
         $report = new common_report_Report();
         
         $qtiPackageParser = new taoQtiCommon_models_classes_PackageParser($file);
@@ -140,7 +140,6 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     $testQtiResource = current($tests);
                     // import items
                     $itemService = taoQTI_models_classes_QTI_ImportService::singleton();
-                    $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
                     $itemMap = array();
                     foreach($qtiManifestParser->getResources() as $qtiResource){
                         if (taoQTI_models_classes_QTI_Resource::isAllowed($qtiResource->getType())) {

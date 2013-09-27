@@ -54,7 +54,9 @@ class taoQtiTest_actions_Import extends tao_actions_CommonModule {
 	            $fileInfo = $myForm->getValue('source');
 	            $uploadedFile = $fileInfo['uploaded_file'];
 	            
-	            $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile);
+	            $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+	            $subClass = $itemClass->createSubClass($test->getLabel());
+	            $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
 	            if ($report->containsSuccess()) {
 	                $this->setData('message', __('Content saved'));
 	            }
@@ -68,5 +70,4 @@ class taoQtiTest_actions_Import extends tao_actions_CommonModule {
 	    $this->setData('myForm', $myForm->render());
 	    $this->setView('form.tpl');
 	}
-	
 }
