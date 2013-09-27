@@ -37,7 +37,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
      * Compile a QTI Test and the related QTI Items.
      * 
      * @param core_kernel_file_File $destinationDirectory The directory where the compiled files must be put.
-     * @return tao_models_classes_service_ServiceCall
+     * @return tao_models_classes_service_ServiceCall A ServiceCall object that represent the way to call the newly compiled test.
+     * @throws tao_models_classes_CompilationFailedException If an error occurs during the compilation.
      */
     public function compile(core_kernel_file_File $destinationDirectory) {
         
@@ -59,13 +60,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         
         // 2. Compile the items of the test.
         $iterator = new QtiComponentIterator($compiledDoc, array('assessmentItemRef'));
+        $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
             $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
             $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
             $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
+            $itemCount++;
+            
             common_Logger::d("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
+        }
+        
+        if ($itemCount === 0) {
+            $msg = "Cannot compile a QTI Test without any QTI Items.";
+            throw new tao_models_classes_CompilationFailedException($msg);
         }
         
         $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.xml';
