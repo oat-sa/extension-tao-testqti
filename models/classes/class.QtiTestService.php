@@ -259,7 +259,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 
             $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
             $itemRefs = new SectionPartCollection();
-
+            $itemRefIdentifiers = array();
             foreach ($items as $itemResource) {
                 $itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
                 $itemContent = new core_kernel_file_File($itemContent);
@@ -279,8 +279,18 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 
                         throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
                 }
+                
+                $itemRefIdentifier = $itemDoc->getIdentifier();
 
-                $itemRefs[] = new AssessmentItemRef($itemDoc->getIdentifier(), $itemResource->getUri());
+                //enable more than one reference
+                if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
+                        $itemRefIdentifiers[$itemRefIdentifier] += 1;
+                        $itemRefIdentifier .= '-'. $itemRefIdentifiers[$itemRefIdentifier];
+                } else {
+                    $itemRefIdentifiers[$itemRefIdentifier] = 0;
+                }
+                
+                $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
                 $section->setSectionParts($itemRefs);
             }
 
