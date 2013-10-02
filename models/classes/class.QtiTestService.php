@@ -291,8 +291,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 }
                 
                 $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
-                $section->setSectionParts($itemRefs);
             }
+            $section->setSectionParts($itemRefs);
 
            //manage testPart/section options
            if(isset($testOptions) && !empty($testOptions)){
