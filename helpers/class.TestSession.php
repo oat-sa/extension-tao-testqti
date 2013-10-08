@@ -139,9 +139,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         return $this->test;
     }
     
-    protected function submitItemResults(AssessmentItemSession $itemSession) {
+    protected function submitItemResults(AssessmentItemSession $itemSession, $occurence = 0) {
         $item = $itemSession->getAssessmentItem();
-        $occurence = $this->getCurrentAssessmentItemRefOccurence();
+        $occurence = $occurence;
         $sessionId = $this->getSessionId();
         
         common_Logger::d("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
