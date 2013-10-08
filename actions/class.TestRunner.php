@@ -308,6 +308,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    try {
 	        
 	        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+	            
+	            /*
+	             * If the current item session is still interacting, we close it (by skipping) in order to not 
+	             * have multiple attempts running at the same time (inconsistent state).
+	             * 
+	             * For the moment, we prefer to skip the attempt in order to not give the opportunity to the
+	             * test taker to think about it on another screen and come back later to answer without running
+	             * out of time.
+	             */
+	            $currentItemSession = $testSession->getCurrentAssessmentItemSession();
+	            if ($currentItemSession->getState() === AssessmentItemSessionState::INTERACTING) {
+	               $testSession->skip();
+	            }
+	            
 	            $testSession->moveNext();
 	        }	        
 	        
@@ -340,6 +354,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $testSession->updateDuration();
 	    
 	    try {
+	        /*
+	         * If the current item session is still interacting, we close it (by skipping) in order to not
+	        * have multiple attempts running at the same time (inconsistent state).
+	        *
+	        * For the moment, we prefer to skip the attempt in order to not give the opportunity to the
+	        * test taker to think about it on another screen and come back later to answer without running
+	        * out of time.
+	        */
+	        $currentItemSession = $testSession->getCurrentAssessmentItemSession();
+	        if ($currentItemSession->getState() === AssessmentItemSessionState::INTERACTING) {
+	            $testSession->skip();
+	        }
+	        
 	        $testSession->moveBack();
 	        $this->beforeAction();
 	    }
