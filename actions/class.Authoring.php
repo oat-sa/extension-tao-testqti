@@ -87,7 +87,7 @@ class taoQtiTest_actions_Authoring extends tao_actions_CommonModule {
             $this->setData('rootNode', TAO_ITEM_CLASS);
             $this->setData('openNodes', $openNodes);
             $this->setData('saveUrl', _url('saveItems'));
-            $this->setData('itemsUrl', _url('getItems', 'Tests', 'taoTests'));
+            $this->setData('itemsUrl', _url('getItems', 'Tests', 'taoQtiTest'));
             $this->setData('qtiItemModel', tao_helpers_Uri::encode(TAO_ITEM_MODEL_QTI));
             
             $this->setView('authoring.tpl');
