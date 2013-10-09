@@ -21,7 +21,7 @@
 
 
 /**
- * The QtiTestLibraryException is thrown when an error occurs
+ * The QtiTestServiceException is thrown when an error occurs
  * at the QtiTestService level, in order to report an appropriate
  * Exception to the client side.
  * 
@@ -40,7 +40,7 @@
 class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements common_exception_UserReadableException {
 	
 	/**
-	 * Create a new QtiTestLibraryException.
+	 * Create a new QtiTestServiceException object.
 	 * 
 	 * @param string $message A technical infiormation message.
 	 * @param integer $code A code to explicitely identify the nature of the error.

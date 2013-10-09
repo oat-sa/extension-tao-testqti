@@ -74,7 +74,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         
         if ($itemCount === 0) {
             $msg = "Cannot compile a QTI Test without any QTI Items.";
-            throw new tao_models_classes_CompilationFailedException($msg);
+            $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::NO_ITEMS;
+            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($message, $test, $code);
         }
         
         $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.xml';
