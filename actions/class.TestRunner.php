@@ -1,5 +1,4 @@
 <?php
-use qtism\runtime\tests\AssessmentItemSession;
 
 /**
  * This program is free software; you can redistribute it and/or
@@ -21,6 +20,7 @@ use qtism\runtime\tests\AssessmentItemSession;
  * 
  */
 
+use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionFactory;
