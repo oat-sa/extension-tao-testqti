@@ -98,7 +98,6 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
          */
         _setUpItemSequence : function(){
             var self = this;
-            var $items = this._$itemSequence.find('li');
             
             this._$itemSequence.sortable({
                 axis: 'y',
@@ -115,28 +114,33 @@ define(['jquery', 'generis.tree.select', 'jquery.timePicker'], function($, Gener
                 }
             });
             
-            $items.on('mousedown', function(){
-                $(this).css('cursor', 'move');
-            }).on('mouseup', function(){
-		$(this).css('cursor', 'pointer');
-            });
-            
             this._$shuffleInput.click(function(){
-                if(self._isShuffling()){
-                    self._$itemSequence.sortable('disable');
-                    $items.find('.ui-icon').hide();
-                    $items.off('mousedown mouseup');
-                } else {
-                    self._$itemSequence.sortable('enable');
-                    $items.find('.ui-icon').show();
-                    $items.on('mousedown', function(){
-                        $(this).css('cursor', 'move');
-                    }).on('mouseup', function(){
-                        $(this).css('cursor', 'pointer');
-                    });
-                }
-                self._toggleOrderingInfo();
+                self._toggleOrdering();
             });
+            self._toggleOrdering();
+        },
+        
+        /**
+         * Enable/disable ordering
+         * @private
+         */
+        _toggleOrdering : function(){
+            var $items = this._$itemSequence.find('li');
+            if(this._isShuffling()){
+                this._$itemSequence.sortable('disable');
+                $items.css('padding-left', '4px')
+                        .off('mousedown mouseup')
+                        .find('.ui-icon').hide();
+            } else {
+                this._$itemSequence.sortable('enable');
+                $items.on('mousedown', function(){
+                    $(this).css('cursor', 'move');
+                }).on('mouseup', function(){
+                    $(this).css('cursor', 'pointer');
+                }).css('padding-left', '25px')
+                  .find('.ui-icon').show();
+            }
+            this._toggleOrderingInfo();
         },
         
         /**
