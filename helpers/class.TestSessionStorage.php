@@ -19,7 +19,7 @@
  */
 
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
-use qtism\runtime\storage\binary\BinaryStream;
+use qtism\common\storage\BinaryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\data\Document;
 use qtism\data\AssessmentTest;

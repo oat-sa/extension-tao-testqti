@@ -18,6 +18,7 @@
  * 
  */
 
+use qtism\data\storage\php\PhpAssessmentTestDocument;
 use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
 use qtism\data\storage\xml\XmlAssessmentTestDocument;
@@ -78,11 +79,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($message, $test, $code);
         }
         
-        $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.xml';
-        $compiledDoc->save($compiledDocPath);
+        $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.php';
+        $phpCompiledDoc = new PhpAssessmentTestDocument('2.1');
+        $phpCompiledDoc->getPhpDocument()->setDocumentComponent($compiledDoc);
+        $phpCompiledDoc->save($compiledDocPath);
         
-        $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.xml', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);
-        common_Logger::d("QTI Item Compilation file registered at '" . $compiledFile->getAbsolutePath() . '".');
+        $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.php', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);
+        common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledFile->getAbsolutePath() . '".');
         
         // 3. Build the service call.
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));

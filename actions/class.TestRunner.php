@@ -20,12 +20,12 @@
  * 
  */
 
+use qtism\data\storage\php\PhpAssessmentTestDocument;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
-use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -501,8 +501,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $compilationResource = new core_kernel_file_File($this->getRequestParameter('QtiTestCompilation'));
 	    $testFilePath = $compilationResource->getAbsolutePath();
 	    
-	    common_Logger::d("Loading QTI-XML file at '${testFilePath}'.");
-	    $doc = new XmlCompactAssessmentTestDocument();
+	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
+	    $doc = new PhpAssessmentTestDocument();
 	    $doc->load($testFilePath);
 	    
 	    $this->setTestDefinition($doc);
