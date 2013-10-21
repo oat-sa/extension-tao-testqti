@@ -21,7 +21,6 @@
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\common\storage\BinaryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
-use qtism\data\Document;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 
@@ -63,7 +62,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $this->serviceModule = $serviceModule;
    }
     
-   protected function getRetrievalStream(Document $assessmentTest, $sessionId) {
+   protected function getRetrievalStream(AssessmentTest $assessmentTest, $sessionId) {
     
        $reflectionObject = new ReflectionObject($this->getServiceModule());
        $getStateMethod = $reflectionObject->getMethod('getState');

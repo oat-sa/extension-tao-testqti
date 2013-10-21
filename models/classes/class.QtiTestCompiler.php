@@ -1,4 +1,5 @@
 <?php
+
 /**  
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,11 +19,10 @@
  * 
  */
 
-use qtism\data\storage\php\PhpAssessmentTestDocument;
+use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponentIterator;
-use qtism\data\storage\xml\XmlCompactAssessmentTestDocument;
-use qtism\data\storage\xml\XmlAssessmentTestDocument;
-
+use qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\xml\XmlCompactDocument;
 
 /**
  * Compiles a QTI Test and related QTI Items.
@@ -52,15 +52,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         $itemResolver = new taoQtiTest_helpers_ItemResolver('');
         
         $testContentPath = $testContent->getAbsolutePath();
-        $originalDoc = new XmlAssessmentTestDocument('2.1');
+        $originalDoc = new XmlDocument('2.1');
         $originalDoc->load($testContentPath);
         common_Logger::t("QTI Test XML document located at '${testContentPath}' successfully loaded.");
         
-        $compiledDoc = XmlCompactAssessmentTestDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
+        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
         common_Logger::t("QTI Test XML document successfuly transformed in a compact version.");
         
         // 2. Compile the items of the test.
-        $iterator = new QtiComponentIterator($compiledDoc, array('assessmentItemRef'));
+        $iterator = new QtiComponentIterator($compiledDoc->getDocumentComponent(), array('assessmentItemRef'));
         $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
@@ -80,8 +80,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         }
         
         $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.php';
-        $phpCompiledDoc = new PhpAssessmentTestDocument('2.1');
-        $phpCompiledDoc->getPhpDocument()->setDocumentComponent($compiledDoc);
+        $phpCompiledDoc = new PhpDocument('2.1');
+        $phpCompiledDoc->setDocumentComponent($compiledDoc->getDocumentComponent());
         $phpCompiledDoc->save($compiledDocPath);
         
         $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.php', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);

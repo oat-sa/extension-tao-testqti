@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -20,7 +21,7 @@
 */
 
 use qtism\data\storage\StorageException;
-use qtism\data\storage\xml\XmlAssessmentItemDocument;
+use qtism\data\storage\xml\XmlDocument;
 use qtism\data\AssessmentItemRef;
 use qtism\data\SectionPartCollection;
 use qtism\data\storage\xml\XmlAssessmentTestDocument;
@@ -59,11 +60,11 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             $file = new core_kernel_file_File($file);
         }
         
-    	$doc = new XmlAssessmentTestDocument('2.1');
+    	$doc = new XmlDocument('2.1');
     	$doc->load($file->getAbsolutePath());
         
     	$itemArray = array();
-    	foreach ($doc->getComponentsByClassName('assessmentItemRef') as $itemRef) {
+    	foreach ($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef) {
     		$itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
     	}
     	
@@ -80,10 +81,10 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
     	if (!is_null($file)) {
             $file = new core_kernel_file_File($file);
-            $doc = new XmlAssessmentTestDocument('2.1');
+            $doc = new XmlDocument('2.1');
             $doc->load($file->getAbsolutePath(), true);
             
-            $testPart = $doc->getComponentByIdentifier('testPartId');
+            $testPart = $doc->getDocumentComponent()->getComponentByIdentifier('testPartId');
             
             if($testPart != null){
                 
@@ -98,7 +99,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 }
             }
             
-            $section = $doc->getComponentByIdentifier('assessmentSectionId');
+            $section = $doc->getDocumentComponent()->getComponentByIdentifier('assessmentSectionId');
             if($section != null){
                 $ordering = $section->getOrdering();
                 $options['shuffle'] = ($ordering != null && $ordering->getShuffle() === true);
@@ -164,7 +165,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                             }
                         }
                     }
-                    $testDefinition = new XmlAssessmentTestDocument();
+                    $testDefinition = new XmlDocument();
                     $testDefinition->load($folder.DIRECTORY_SEPARATOR.$testQtiResource->getItemFile());
                     $this->importTestContent($testResource, $testDefinition, $itemMap);
                 }
@@ -187,13 +188,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * the items that are now stored in the system.
      *
      * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
-     * @param XmlAssessmentTestDocument $testDefinition An XmlAssessmentTestDocument object.
+     * @param XmlDocument $testDefinition An XmlAssessmentTestDocument object.
      * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
      * @return core_kernel_file_File The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an error occurs during the import process.
      */
-    public function importTestContent(core_kernel_classes_Resource $testResource, XmlAssessmentTestDocument $testDefinition, array $itemMapping) {
-        $assessmentItemRefs = $testDefinition->getComponentsByClassName('assessmentItemRef');
+    public function importTestContent(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, array $itemMapping) {
+        $assessmentItemRefs = $testDefinition->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $assessmentItemRefsCount = count($assessmentItemRefs);
         $itemMappingCount = count($itemMapping);
         
@@ -244,7 +245,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
        	$file = (is_null($file)) ? $this->createContent($test) : new core_kernel_file_File($file); 
     	
         try {
-            $doc = new XmlAssessmentTestDocument('2.1');
+            $doc = new XmlDocument('2.1');
             $testPath = $file->getAbsolutePath();
 
             try {
@@ -255,7 +256,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 3);
             }
             
-            $section = $doc->getComponentByIdentifier('assessmentSectionId');
+            $section = $doc->getDocumentComponent()->getComponentByIdentifier('assessmentSectionId');
 
             $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
             $itemRefs = new SectionPartCollection();
@@ -264,7 +265,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 $itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
                 $itemContent = new core_kernel_file_File($itemContent);
 
-                $itemDoc = new XmlAssessmentItemDocument();
+                $itemDoc = new XmlDocument();
 
                 try {
                         $itemDoc->load($itemContent->getAbsolutePath());
@@ -280,7 +281,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                         throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
                 }
                 
-                $itemRefIdentifier = $itemDoc->getIdentifier();
+                $itemRefIdentifier = $itemDoc->getDocumentComponent()->getIdentifier();
 
                 //enable more than one reference
                 if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
@@ -297,7 +298,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
            //manage testPart/section options
            if(isset($testOptions) && !empty($testOptions)){
 
-               $testPart = $doc->getComponentByIdentifier('testPartId');
+               $testPart = $doc->getDocumentComponent()->getComponentByIdentifier('testPartId');
                 if($testPart != null && $testPart instanceof TestPart){
 
                     //set the navigationMode option
