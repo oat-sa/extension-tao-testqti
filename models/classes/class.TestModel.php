@@ -112,8 +112,20 @@ class taoQtiTest_models_classes_TestModel
 		return new core_kernel_file_File($uri);
     }
 
+    /**
+     * Clone a QTI Test Resource.
+     * 
+     * @param core_kernel_classes_Resource $source The resource to be cloned.
+     * @param core_kernel_classes_Resource $destination An existing resource to be filled as the clone of $source.
+     */
     public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
+        $contentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
+        $existingFile = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
+        $existingContent = $existingFile->getFileContent();
         
+        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+        $newFile = $service->createContent($destination);
+        $newFile->setContent($existingContent);
     }
 }
 

@@ -359,7 +359,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         return $this->saveQtiTest($test, $items);
     }
     
-    private function createContent( core_kernel_classes_Resource $test) {
+    public function createContent( core_kernel_classes_Resource $test) {
     	common_Logger::i('CREATE CONTENT');
     	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
 				PROPERTY_FILE_FILESYSTEM,
