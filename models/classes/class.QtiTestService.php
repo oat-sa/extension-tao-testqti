@@ -258,17 +258,15 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             
             $section = $doc->getDocumentComponent()->getComponentByIdentifier('assessmentSectionId');
 
-            $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
             $itemRefs = new SectionPartCollection();
             $itemRefIdentifiers = array();
             foreach ($items as $itemResource) {
-                $itemContent = $itemResource->getUniquePropertyValue($itemContentProperty);
-                $itemContent = new core_kernel_file_File($itemContent);
 
                 $itemDoc = new XmlDocument();
-
+                // should contain language reference
+                $content = taoItems_models_classes_ItemsService::singleton()->getItemContent($itemResource);
                 try {
-                        $itemDoc->load($itemContent->getAbsolutePath());
+                    $itemDoc->loadFromString($content);
                 }
                 catch (StorageException $e) {
                         $itemUri = $itemResource->getUri();
