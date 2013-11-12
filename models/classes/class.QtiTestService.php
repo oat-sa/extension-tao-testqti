@@ -264,9 +264,9 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 
                 $itemDoc = new XmlDocument();
                 // should contain language reference
-                $content = taoItems_models_classes_ItemsService::singleton()->getItemContent($itemResource);
+                $itemFile = taoQTI_helpers_QtiFile::getQtiFilePath($itemResource);
                 try {
-                    $itemDoc->loadFromString($content);
+                    $itemDoc->load($itemFile);
                 }
                 catch (StorageException $e) {
                         $itemUri = $itemResource->getUri();

@@ -50,12 +50,7 @@ class taoQtiTest_helpers_ItemResolver extends FileResolver {
         // The item is retrieved from the database.
         // We can try to reach the QTI-XML file by detecting
         // where it is supposed to be located.
-        $itemContentPropertyUri = TAO_ITEM_CONTENT_PROPERTY;
-        $itemContentProperty = new core_kernel_classes_Property($itemContentPropertyUri);
-        $itemLocation = $taoItem->getUniquePropertyValue($itemContentProperty);
-        $itemLocation = new core_kernel_file_File($itemLocation->getUri());
-        
-        return $itemLocation->getAbsolutePath();
+        return taoQTI_helpers_QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
     }
     
 }
