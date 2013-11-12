@@ -157,7 +157,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                                     tao_helpers_File::copy($auxPath, $destPath, true);
                                 }
                                 $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
-                            }catch(taoQTI_models_classes_QTI_ParsingException $e){
+                            }catch(taoQTI_models_classes_QTI_exception_ParsingException $e){
                             
                             }catch(Exception $e){
                                 // an error occured during a specific item
