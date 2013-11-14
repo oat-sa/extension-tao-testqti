@@ -40,7 +40,7 @@ function beforeTransition(callback) {
 	$testRunner = $('#runner');
 	$testRunner.css('height', '300px');
 	
-	$('#qti-item, #qti-info').css('display', 'none');
+	$('#qti-item, #qti-info, #qti-rubrics, #qti-timer').css('display', 'none');
 	
 	overlay();
 	loading();
@@ -196,6 +196,7 @@ function updateTestRunner(assessmentTestContext) {
 	updateNavigation(assessmentTestContext);
 	updateInformation(assessmentTestContext);
 	updateTimer(assessmentTestContext);
+	updateRubrics(assessmentTestContext);
 	
 	$('#runner').append('<iframe id="qti-item" frameborder="0" scrolling="no"/>');
 	$itemFrame = $('#qti-item');
@@ -247,6 +248,20 @@ function updateTimer(assessmentTestContext) {
 			
 			$('#qti-timer').html(formatTime(currentTime));
 		}, 1000);
+	}
+}
+
+function updateRubrics(assessmentTestContext) {
+	$('#qti-rubrics').remove();
+	
+	if (assessmentTestContext.rubrics.length > 0) {
+		$rubrics = $('<div id="qti-rubrics"></div>');
+		
+		for (i = 0; i < assessmentTestContext.rubrics.length; i++) {
+			$rubrics.append(assessmentTestContext.rubrics[i]);
+		}
+		
+		$rubrics.insertAfter('#qti-actions');
 	}
 }
 

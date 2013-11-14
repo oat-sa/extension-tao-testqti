@@ -92,6 +92,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     private $currentError = -1;
     
     /**
+     * The compilation directory.
+     * 
+     * @var string
+     */
+    private $compilationDirectory;
+    
+    /**
      * Get the current assessment test session.
      * 
      * @return AssessmentTestSession An AssessmentTestSession object.
@@ -213,6 +220,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function getCurrentError() {
 	    return $this->currentError;
+	}
+	
+	/**
+	 * Set the path to the directory where the test is compiled.
+	 * 
+	 * @param string $compilationDirectory An absolute path.
+	 */
+	protected function setCompilationDirectory($compilationDirectory) {
+	    $this->compilationDirectory = $compilationDirectory;
+	}
+	
+	/**
+	 * Get the path to the directory where the test is compiled.
+	 * 
+	 * @return string
+	 */
+	protected function getCompilationDirectory() {
+	    return $this->compilationDirectory;
 	}
 	
     public function __construct() {
@@ -493,7 +518,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	
 	/**
 	 * Retrieve the Test Definition the test session is built
-	 * from as an AssessmentTest object.
+	 * from as an AssessmentTest object. This method
+	 * also retrieves the compilation directory.
 	 * 
 	 * @return AssessmentTest The AssessmentTest object the current test session is built from.
 	 */
@@ -506,6 +532,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $doc->load($testFilePath);
 	    
 	    $this->setTestDefinition($doc->getDocumentComponent());
+	    
+	    // Retrieve the compilation directory.
+	    $pathinfo = pathinfo($testFilePath);
+	    $this->setCompilationDirectory($pathinfo['dirname'] . DIRECTORY_SEPARATOR);
 	}
 	
 	/**
@@ -632,6 +662,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
 	        $context['itemServiceApiCall'] = $this->buildServiceApi();
+	        
+	        // Rubric Blocks.
+	        $rubrics = array();
+	        common_Logger::i($this->compilationDirectory);
+	        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
+	            $rubrics[] = file_get_contents($this->getCompilationDirectory() . $rubric->getHref());
+	        }
+	        
+	        $context['rubrics'] = $rubrics;
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);

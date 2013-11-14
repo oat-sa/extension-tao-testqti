@@ -19,6 +19,7 @@
  * 
  */
 
+use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
 use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
@@ -79,15 +80,50 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($message, $test, $code);
         }
         
-        $compiledDocPath = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR . 'compact-test.php';
+        // First save as XML in order to explode the rubricBlocks.
+        $compiledDocDir = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR;
+        $xmlCompactPath = $compiledDocDir . 'compact-test.xml';
+        $compiledDoc->setExplodeRubricBlocks(true);
+        $compiledDoc->save($xmlCompactPath);
+        unlink($xmlCompactPath);
+        
+        $compiledDocPath = $compiledDocDir . 'compact-test.php';
         $phpCompiledDoc = new PhpDocument('2.1');
         $phpCompiledDoc->setDocumentComponent($compiledDoc->getDocumentComponent());
-        $phpCompiledDoc->save($compiledDocPath);
+        
+        // 3. Compile rubricBlocks and serialize on disk.
+        $rootComponent = $phpCompiledDoc->getDocumentComponent();
+        $rubricBlockRefs = $rootComponent->getComponentsByClassName('rubricBlockRef');
+        $renderingEngine = new XhtmlRenderingEngine();
+        
+        foreach ($rubricBlockRefs as $rubric) {
+            common_Logger::d("Loading rubricBlock '" . $rubric->getHref() . "'...");
+            
+            $rubricDoc = new XmlDocument();
+            $rubricDoc->load($compiledDocDir . $rubric->getHref());
+            
+            common_Logger::d("rubricBlock '" . $rubric->getHref() . "' successfully loaded.");
+            
+            
+            common_Logger::d("Rendering rubricBlock '" . $rubric->getHref() . "'...");
+            
+            $pathinfo = pathinfo($rubric->getHref());
+            $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
+            $domRendering = $renderingEngine->render($rubricDoc->getDocumentComponent());
+            $domRendering->formatOutput = true;
+            $domRendering->saveHTMLFile($renderingFile);
+            
+            common_Logger::d("rubricBlockRef '" . $rubric->getHref() . "' successfully rendered.");
+            
+            unlink($compiledDocDir . $rubric->getHref());
+            $rubric->setHref('./' . $pathinfo['filename'] . '.php');
+        }
         
         $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.php', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);
+        $phpCompiledDoc->save($compiledDocPath);
         common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledFile->getAbsolutePath() . '".');
         
-        // 3. Build the service call.
+        // 4. Build the service call.
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Definition URI passed to the QtiTestRunner service.
@@ -103,7 +139,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         );
         $service->addInParameter($param);
         
-        common_Logger::t("QTI Test successfuly compiled.");
+        common_Logger::d("QTI Test successfuly compiled.");
         
         return $service;
     }

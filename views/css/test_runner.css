@@ -79,3 +79,8 @@ body {
 	font-weight: bold;
 	color: #333;
 }
+
+#qti-rubrics {
+	width: 755px;
+	margin: 0 auto;
+}
