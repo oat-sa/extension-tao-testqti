@@ -32,16 +32,6 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
              this.syncLabels();
          }
          
-         this._$sectionContainer.find('textarea').each(function(){
-             var $elt = $(this);
-             
-             $elt.ckeditor();
-             $elt.siblings('.hide-rubricblock').on('click', function(){
-                 //todo
-                 $elt.trigger('change');
-            });
-         });
-
          //make the sections sortable
          this.createSectionsSortable();
 
@@ -59,6 +49,17 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
         //this.createSectionDraggable($section);
         
         this.udpateItemsNumber($section);
+        
+        
+        $('#' + $section.attr('id') + '-back').find('textarea').each(function(){
+             var $elt = $(this);
+             
+             $elt.ckeditor();
+             $elt.siblings('.hide-rubricblock').on('click', function(){
+                 //todo
+                 $elt.trigger('change');
+            });
+         });
     },
     
     createAdder : function (){
@@ -93,7 +94,7 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
                 }
             }).on('add.adder', function(e, target, added){
                 //set up section once added
-                self.setUpSection($(added));
+                self.setUpSection($(added).filter('.section'));
             });
     },
     

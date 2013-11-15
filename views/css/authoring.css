@@ -1,9 +1,0 @@
-#qti-test-container fieldset{
-    float:left;
-    min-height:160px;
-    min-width:250px;
-    margin: 3px;
-}
-#qti-test-container xhtml-form{
-    padding-bottom: 0;
-}
