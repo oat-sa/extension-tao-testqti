@@ -1,11 +1,6 @@
-body {
-	margin: 0;
-	padding: 0;
-}
+@import url("qti_base.css");
 
 #runner {
-	font-family:Verdana, Arial, sans-serif;
-	font-size: 12px;
 	overflow:auto;
 }
 
