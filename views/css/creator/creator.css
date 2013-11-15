@@ -1,0 +1,233 @@
+/*
+    Document   : variables
+    Created on : 8 nov. 2013, 13:54:51
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Stylesheet of the QTI Test creator
+*/
+/*
+    Document   : variables
+    Created on : 8 oct. 2013, 16:04:51
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Variables used to change the theme (as far as possible)
+*/
+/*
+    Document   : base
+    Created on : 8 oct. 2013, 11:16:34
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+    Provides mixins and base style (link colors, etc.)
+    
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/*
+ * Mixins
+ */
+/*
+ * Base Style
+ */
+/* line 87, ../../sass/cards/_base.scss */
+.card {
+  font-size: 1em;
+  color: #333333;
+  background-color: white;
+}
+/* line 77, ../../sass/cards/_base.scss */
+.card ::-moz-focus-inner, .card :active, .card :focus, .card ::-moz-focus-inner {
+  outline: none;
+  -moz-outline-style: none;
+}
+
+/* line 96, ../../sass/cards/_base.scss */
+.card a {
+  color: #333333;
+  text-decoration: none;
+  font-size: 1em;
+}
+/* line 100, ../../sass/cards/_base.scss */
+.card a:hover {
+  color: #d00239;
+}
+
+/* line 105, ../../sass/cards/_base.scss */
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: solid 1px #eeeeee;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/* line 77, ../../sass/cards/_base.scss */
+.actions ::-moz-focus-inner, .actions :active, .actions :focus, .actions ::-moz-focus-inner {
+  outline: none;
+  -moz-outline-style: none;
+}
+
+/* line 21, ../../sass/creator/creator.scss */
+#items .listbox {
+  margin-top: .5em;
+}
+
+/* line 26, ../../sass/creator/creator.scss */
+#test-creator #test-properties, #test-creator #items {
+  width: 25%;
+}
+/* line 30, ../../sass/creator/creator.scss */
+#test-creator #items > .toggler {
+  vertical-align: middle;
+}
+/* line 34, ../../sass/creator/creator.scss */
+#test-creator #test-sections {
+  width: 46%;
+}
+/* line 37, ../../sass/creator/creator.scss */
+#test-creator #test-sections .option-toggler:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -192px -112px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 42, ../../sass/creator/creator.scss */
+#test-creator #test-sections .show-rubricblock:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -32px -96px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 47, ../../sass/creator/creator.scss */
+#test-creator #test-sections .hide-rubricblock:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_ffffff_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -64px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 52, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section, #test-creator #test-sections .section-back {
+  position: relative;
+  margin: .4em .2em;
+  border: dashed 1px #ccc;
+  background-color: #fff;
+  padding: .5em;
+  z-index: 0;
+  cursor: inherit;
+  width: 100%;
+  min-height: 300px;
+}
+/* line 62, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section:before, #test-creator #test-sections .section-back:before {
+  background: none;
+  content: inherit;
+}
+/* line 67, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section {
+  /*            .ref-into {
+                  right: 2.5em;
+                  cursor: move;
+                  &:before{
+                      @include jui-icon( (-48px), (-80px) );
+                  }
+              }
+              .mv-into {
+                  right: 4.5em;
+                  cursor: move;
+                  &:before{
+                       @include jui-icon( (-32px), (-80px) );
+                  }
+              }*/
+}
+/* line 70, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section h2 {
+  margin: 0;
+}
+/* line 74, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .closer, #test-creator #test-sections .section .ref-into, #test-creator #test-sections .section .mv-into, #test-creator #test-sections .section .sort {
+  position: absolute;
+  top: .5em;
+}
+/* line 79, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .closer {
+  right: .5em;
+}
+/* line 96, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .sort {
+  right: 2.5em;
+  cursor: move;
+}
+/* line 100, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .sort:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -128px -48px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 105, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul {
+  min-height: 150px;
+  position: relative;
+  z-index: 0;
+  padding-right: 3em;
+  margin-top: .5em;
+}
+/* line 113, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul li .title {
+  margin-left: 1.7em;
+}
+/* line 116, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul li .label {
+  border-radius: 3px;
+  right: inherit;
+  top: .2em;
+}
+/* line 121, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul li .button-group {
+  top: .2em;
+}
+/* line 124, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul li .closer {
+  top: .2em;
+}
+/* line 128, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section > ul li.section-ref {
+  background-color: #ccc;
+}
+/* line 134, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .shuffle {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_ffffff_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -80px -80px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 137, ../../sass/creator/creator.scss */
+#test-creator #test-sections .section .fix {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_ffffff_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -144px -144px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}

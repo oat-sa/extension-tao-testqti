@@ -21,92 +21,166 @@
  */
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
-use qtism\data\AssessmentItemRef;
-use qtism\data\SectionPartCollection;
-use qtism\data\storage\xml\XmlAssessmentTestDocument;
-use qtism\data\NavigationMode;
-use qtism\data\SubmissionMode;
-use qtism\data\TimeLimits;
-use qtism\data\TestPart;
-use qtism\common\datatypes\Duration;
-use qtism\data\rules\Ordering;
+use qtism\data\QtiComponentCollection;
 
 /**
  * the QTI TestModel service
  *
  * @access public
  * @author Joel Bout, <joel.bout@tudor.lu>
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
  * @subpackage models_classes
  */
-class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Service
-{
+class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Service {
 
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
 
+    /**
+     * Get the QTI Test document formated in JSON.
+     * 
+     * @param core_kernel_classes_Resource $test
+     * @return string the json
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    public function getJsonTest(core_kernel_classes_Resource $test){
+        
+        $doc = $this->getDoc($test);
+        $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+        return $converter->toJson();
+    }
+    
+    /**
+     * Save the json formated test into the test resource.
+     * 
+     * @param core_kernel_classes_Resource $test
+     * @param string $json
+     * @return boolean true if saved
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    public function saveJsonTest(core_kernel_classes_Resource $test, $json){
+        $saved = false;
+        
+        if(!empty($json)){
+            $doc = $this->getDoc($test);
+            
+            $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+            $converter->fromJson($json);
+            
+            $saved = $this->saveDoc($test, $doc);
+        }
+        return $saved;
+    }
+    
+    public function fromJson($json){
+        $doc = new XmlDocument('2.1');
+        $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+        $converter->fromJson($json);
+        return $doc;
+    }
+    
     /**
      * Get the items that are part of a given $test.
      * 
      * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
      * @return array An array of core_kernel_classes_Resource objects.
      */
-    public function getItems(core_kernel_classes_Resource $test){
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-
-        if(is_null($file)){
-            $file = $this->createContent($test);
-        }else{
-            $file = new core_kernel_file_File($file);
+    public function getItems( core_kernel_classes_Resource $test ) {
+    	return $this->getDocItems($this->getDoc($test));
+    }
+    
+    /**
+     * Assign items to a test and save it.
+     * @param core_kernel_classes_Resource $test
+     * @param array $items
+     * @return boolean true if set
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    public function setItems(core_kernel_classes_Resource $test, array $items){
+        
+        $doc = $this->getDoc($test);
+        $bound = $this->setItemsToDoc($doc, $items);
+        
+        if($this->saveDoc($test, $doc)){
+            return $bound == count($items);
         }
-
-        $doc = new XmlDocument('2.1');
-        $doc->load($file->getAbsolutePath());
-
-        $itemArray = array();
-        foreach($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef){
-            $itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
+        
+        return false;
+    }
+    
+      /**
+     * Save the QTI test : set the items sequence and some options.
+     * 
+     * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
+     * @param array $items the items sequence
+     * @param array $options the test's options
+     * @return boolean if nothing goes wrong
+     * @throws StorageException If an error occurs while serializing/unserializing QTI-XML content. 
+     */
+    public function save( core_kernel_classes_Resource $test, array $items) {
+    	
+        try {
+            $doc = $this->getDoc($test);
+            
+            $this->setItemsToDoc($doc, $items);
+            $saved  = $this->saveDoc($test, $doc);
         }
-
-        return $itemArray;
+    	catch (StorageException $e) {
+    		throw new taoQtiTest_models_classes_QtiTestServiceException(
+                        "An error occured while dealing with the QTI-XML test: ".$e->getMessage(), 
+                        taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+                   );
+    	}
+    	
+    	return $saved;
     }
 
     /**
-     * Get the options of a QTI Test. 
-     * @param core_kernel_classes_Resource $test A Resource describing the QTI Test.
-     * @return array of key/value options
+     * Get an identifier for a component of $qtiType.
+     * This identifier must be unique across the whole document.
+     * 
+     * @param XmlDocument $doc
+     * @param type $qtiType the type name
+     * @return the identifier
      */
-    public function getQtiTestOptions(core_kernel_classes_Resource $test){
-        $options = array();
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        if(!is_null($file)){
-            $file = new core_kernel_file_File($file);
-            $doc = new XmlDocument('2.1');
-            $doc->load($file->getAbsolutePath(), true);
-
-            $testPart = $doc->getDocumentComponent()->getComponentByIdentifier('testPartId');
-
-            if($testPart != null){
-
-                $options['navigation-mode'] = NavigationMode::getNameByConstant($testPart->getNavigationMode());
-                $options['submission-mode'] = SubmissionMode::getNameByConstant($testPart->getSubmissionMode());
-
-                $timeLimits = $testPart->getTimeLimits();
-                if($timeLimits != null){
-                    $options['min-time'] = $timeLimits->getMinTime();
-                    $options['max-time'] = $timeLimits->getMaxTime();
-                    $options['allow-late-submission'] = $timeLimits->doesAllowLateSubmission();
-                }
-            }
-
-            $section = $doc->getDocumentComponent()->getComponentByIdentifier('assessmentSectionId');
-            if($section != null){
-                $ordering = $section->getOrdering();
-                $options['shuffle'] = ($ordering != null && $ordering->getShuffle() === true);
+    public function getIdentifierFor(XmlDocument $doc, $qtiType){
+        $components = $doc->getDocumentComponent()->getIdentifiableComponents();
+        $i = 1;
+        do {
+            $identifier = $this->generateIdentifier($doc, $qtiType, $i);
+            $i++;
+        } while(!$this->isIdentifierUnique($components, $identifier));
+        
+        return $identifier;
+    }
+    
+    /**
+     * Check whether an identifier is unique against a list of components
+     * @param QtiComponentCollection $components
+     * @param type $identifier
+     * @return boolean
+     */
+    private function isIdentifierUnique(QtiComponentCollection $components, $identifier){
+        foreach($components as $component){
+            if($component->getIdentifier() == $identifier){
+                return false;
             }
         }
-        return $options;
+        return true;
     }
-
+    
+    /**
+     * Generate an identifier from a qti type, using the syntax "qtitype-index"
+     * @param \qtism\data\storage\xml\XmlDocument $doc
+     * @param type $qtiType
+     * @param type $offset
+     * @return the identifier
+     */
+    private function generateIdentifier(XmlDocument $doc, $qtiType, $offset = 1){
+        $typeList = $doc->getDocumentComponent()->getComponentsByClassName($qtiType);
+        return $qtiType . '-' . (count($typeList) + $offset);
+    }
+    
     /**
      * 
      * @param core_kernel_classes_Resource $testResource
@@ -232,170 +306,234 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         
         return $testContent;
     }
+    
+    /**
+     * Get the file from a test
+     * @param core_kernel_classes_Resource $test
+     * @return null
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    private function getTestFile(core_kernel_classes_Resource $test){
+        
+        if(is_null($test)){
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    'The selected test is null', 
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+               );
+        }
+            
+        $testModel = $test->getOnePropertyValue(new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL));
+        if(is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    'The selected test is not a QTI test', 
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+               );
+        }
+        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        if(!is_null($file)){
+            return new core_kernel_classes_File($file);
+        }
+        return null;
+    }
+    
+    /**
+     * Get the QTI reprensentation of a test content.
+     * 
+     * @param core_kernel_classes_Resource $test the test to get the content from
+     * @param type $validate enable validation
+     * @return \qtism\data\storage\xml\XmlAssessmentTestDocument the QTI representation from the test content
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    private function getDoc(core_kernel_classes_Resource $test) {
+        
+        $doc = new XmlDocument('2.1');
+        
+        if(!is_null($test)){
+            
+            $file = $this->getTestFile($test);
+            if (is_null($file)) {
+                $file = $this->createContent($test);
+            } else {
+                $file = new core_kernel_file_File($file);
+            }
+            $testPath = $file->getAbsolutePath();
+            try {
+                $doc->load($testPath);
+            } catch (StorageException $e) {
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                        "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
+                        taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+                    );
+            }
+        }
+        return $doc;
+    }
+    
+        /**
+     * Get the items from a QTI test document.
+     * @param \qtism\data\storage\xml\XmlDocument $doc
+     * @return \core_kernel_classes_Resource
+     */
+    private function getDocItems( XmlDocument $doc ){
+        $itemArray = array();
+    	foreach ($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef) {
+            $itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
+    	}
+    	return $itemArray;
+    }
+    
+    /**
+     * Assign items to a QTI test.
+     * @param \qtism\data\storage\xml\XmlAssessmentTestDocument $doc
+     * @param array $items
+     * @return type
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    private function setItemsToDoc( XmlDocument $doc, array $items, $sectionIndex = 0){
+        
+        $sections = $doc->getDocumentComponent()->getComponentsByClassName('assessmentSection');
+        if(!isset($sections[$sectionIndex])){
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                        'No section found in test at index : ' . $sectionIndex, 
+                        taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+                    );
+        }
+        $section = $sections[$sectionIndex];
+        
+        $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
+        $itemRefs = new SectionPartCollection();
+        $itemRefIdentifiers = array();
+        foreach ($items as $itemResource) {
+            $itemContent = new core_kernel_file_File($itemResource->getUniquePropertyValue($itemContentProperty));
+
+            $itemDoc = new XmlAssessmentItemDocument();
+
+            try {
+                $itemDoc->load($itemContent->getAbsolutePath());
+            }
+            catch (StorageException $e) {
+                $msg = "An error occured while reading QTI-XML item '".$itemResource->getUri()."'.";
+
+                if (is_null($e->getPrevious()) !== true) {
+                    $msg .= ": " . $e->getPrevious()->getMessage();
+                }
+            $itemRefIdentifiers = array();
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                        $msg, 
+                        taoQtiTest_models_classes_QtiTestServiceException::ITEM_READ_ERROR
+                    );
+            }
+            $itemRefIdentifier = $itemDoc->getIdentifier();
+
+            //enable more than one reference
+            if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
+                    $itemRefIdentifiers[$itemRefIdentifier] += 1;
+                    $itemRefIdentifier .= '-'. $itemRefIdentifiers[$itemRefIdentifier];
+            } else {
+                $itemRefIdentifiers[$itemRefIdentifier] = 0;
+            }
+            $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
+
+        }
+        $section->setSectionParts($itemRefs);
+            
+           
+        
+        return count($itemRefs);
+    }
+    
+    /**
+     * Save the content of test from a QTI Document
+     * @param core_kernel_classes_Resource $test
+     * @param \qtism\data\storage\xml\XmlDocument $doc
+     * @return boolean true if saved
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    private function saveDoc( core_kernel_classes_Resource $test, XmlDocument $doc){
+        $saved = false;
+        
+        if(!is_null($test) && !is_null($doc)){
+            $file = $this->getTestFile($test);
+            if (!is_null($file)) {
+                $testPath = $file->getAbsolutePath();
+                try {
+                    $doc->save($testPath);
+                    $saved = true;
+                } catch (StorageException $e) {
+                    throw new taoQtiTest_models_classes_QtiTestServiceException(
+                        "An error occured while writing QTI-XML test '${testPath}': ".$e->getMessage(), 
+                         taoQtiTest_models_classes_QtiTestServiceException::ITEM_WRITE_ERROR
+                    );
+                }
+            }
+        }
+        return $saved;
+    }
 
     /**
-     * Save the QTI test : set the items sequence and some options.
-     * 
-     * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
-     * @param array $items the items sequence
-     * @param array $options the test's options
-     * @return boolean if nothing goes wrong
-     * @throws StorageException If an error occurs while serializing/unserializing QTI-XML content. 
+     * Create the defautl content of a QTI test.
+     * @param core_kernel_classes_Resource $test
+     * @return core_kernel_classes_File the content file
      */
-    public function saveQtiTest(core_kernel_classes_Resource $test, array $items, array $testOptions = array()){
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        $file = (is_null($file)) ? $this->createContent($test) : new core_kernel_file_File($file);
-
-        try{
-            $doc = new XmlDocument('2.1');
-            $testPath = $file->getAbsolutePath();
-
-            try{
-                $doc->load($testPath);
-            }catch(StorageException $e){
-                $msg = "An error occured while loading QTI-XML test file '${testPath}'.";
-                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 3);
-            }
-
-            $section = $doc->getDocumentComponent()->getComponentByIdentifier('assessmentSectionId');
-
-            $itemRefs = new SectionPartCollection();
-            $itemRefIdentifiers = array();
-            foreach($items as $itemResource){
-
-                $itemDoc = new XmlDocument();
-                // should contain language reference
-                $itemFile = taoQTI_helpers_QtiFile::getQtiFilePath($itemResource);
-                try{
-                    $itemDoc->load($itemFile);
-                }catch(StorageException $e){
-                    $itemUri = $itemResource->getUri();
-                    $msg = "An error occured while reading QTI-XML item '${itemUri}'.";
-
-                    if(is_null($e->getPrevious()) !== true){
-                        $msg .= ": ".$e->getPrevious()->getMessage();
-                    }
-
-                    throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 1);
-                }
-
-                $itemRefIdentifier = $itemDoc->getDocumentComponent()->getIdentifier();
-
-                //enable more than one reference
-                if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
-                    $itemRefIdentifiers[$itemRefIdentifier] += 1;
-                    $itemRefIdentifier .= '-'.$itemRefIdentifiers[$itemRefIdentifier];
-                }else{
-                    $itemRefIdentifiers[$itemRefIdentifier] = 0;
-                }
-
-                $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
-            }
-            $section->setSectionParts($itemRefs);
-
-            //manage testPart/section options
-            if(isset($testOptions) && !empty($testOptions)){
-
-                $testPart = $doc->getDocumentComponent()->getComponentByIdentifier('testPartId');
-                if($testPart != null && $testPart instanceof TestPart){
-
-                    //set the navigationMode option
-                    if(isset($testOptions['navigation-mode'])){
-                        $navigationMode = NavigationMode::getConstantByName($testOptions['navigation-mode']);
-                        if($navigationMode !== false){
-                            $testPart->setNavigationMode($navigationMode);
-                        }
-                    }
-
-                    //set the submissionMode option
-                    if(isset($testOptions['submission-mode'])){
-                        $submissionMode = SubmissionMode::getConstantByName($testOptions['submission-mode']);
-                        if($submissionMode !== false){
-                            $testPart->setSubmissionMode($submissionMode);
-                        }
-                    }
-
-                    $ordering = new Ordering();
-                    if(isset($testOptions['shuffle']) && ($testOptions['shuffle'] == 'true' || $testOptions['shuffle'] === true)){
-                        $ordering->setShuffle(true);
-                    }else{
-                        $ordering->setShuffle(false);
-                    }
-                    $section->setOrdering($ordering);
-
-                    if(!empty($testOptions['min-time']) || !(empty($testOptions['max-time'])) || !(empty($testOptions['allow-late-submission']))){
-
-                        $timeLimits = new TimeLimits(
-                                !empty($testOptions['min-time']) ? new Duration($testOptions['min-time']) : null, !empty($testOptions['max-time']) ? new Duration($testOptions['max-time']) : null, !empty($testOptions['allow-late-submission']) ? ($testOptions['allow-late-submission'] == 'true') : false
-                        );
-                        $testPart->setTimeLimits($timeLimits);
-                    }
-                }
-            }
-
-            try{
-                $doc->save($testPath);
-            }catch(StorageException $e){
-                $msg = "An error occured while writing QTI-XML test '${testPath}'.";
-                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 2);
-            }
-        }catch(StorageException $e){
-            $msg = "An error occured while dealing with the QTI-XML test.";
-            throw new taoQtiTest_models_classes_QtiTestServiceException($msg, 0);
-        }
-
-        return true;
-    }
-
-    public function setItems(core_kernel_classes_Resource $test, array $items){
-        return $this->saveQtiTest($test, $items);
-    }
-
-    public function createContent(core_kernel_classes_Resource $test){
-        common_Logger::i('CREATE CONTENT');
-        $props = self::getQtiTestDirectory()->getPropertiesValues(array(
-            PROPERTY_FILE_FILESYSTEM,
-            PROPERTY_FILE_FILEPATH
-        ));
+    private function createContent( core_kernel_classes_Resource $test) {
+    	common_Logger::i('CREATE CONTENT');
+    	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
+				PROPERTY_FILE_FILESYSTEM,
+				PROPERTY_FILE_FILEPATH
+			));
         $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
         $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
         $file = $repository->createFile(md5($test->getUri()).'.xml', $path);
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
         $file->setContent($emptyTestXml);
+        
         common_Logger::i('Created '.$file->getAbsolutePath());
         $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
         return $file;
     }
-
-    public function deleteContent(core_kernel_classes_Resource $test){
+    
+    /**
+     * Delete the content of a QTI test
+     * @param core_kernel_classes_Resource $test
+     * @throws common_exception_Error
+     */
+    public function deleteContent( core_kernel_classes_Resource $test) {
         $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        if(!is_null($content)){
+        if (!is_null($content)) {
             $file = new core_kernel_file_File($content);
-            if(file_exists($file->getAbsolutePath())){
-                if(!@unlink($file->getAbsolutePath())){
-                    throw new common_exception_Error('Unable to remove the file '.$file->getAbsolutePath());
+            if (file_exists($file->getAbsolutePath())) {
+                if (!@unlink($file->getAbsolutePath())) {
+                    throw new common_exception_Error('Unable to remove the file ' . $file->getAbsolutePath());
                 }
             }
             $file->delete();
             $test->removePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
         }
     }
-
-    public function setQtiTestDirectory(core_kernel_file_File $folder){
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
+    
+    /**
+     * Set the directory where the tests' contents are stored.
+     * @param core_kernel_file_File $folder
+     */
+    public function setQtiTestDirectory(core_kernel_file_File $folder) {
+    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
     }
-
-    public function getQtiTestDirectory(){
-
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    
+    /**
+     * Get the directory where the tests' contents are stored.
+     * @return \core_kernel_file_File
+     * @throws common_Exception
+     */
+    public function getQtiTestDirectory() {
+    	
+    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $uri = $ext->getConfig(self::CONFIG_QTITEST_FOLDER);
-        if(empty($uri)){
+        if (empty($uri)) {
             throw new common_Exception('No default repository defined for uploaded files storage.');
         }
         return new core_kernel_file_File($uri);
     }
-
 }
 ?>

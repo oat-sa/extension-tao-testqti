@@ -1,0 +1,754 @@
+/*
+    Document   : cards
+    Created on : 9 oct. 2013, 10:58:45
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Aggregate all the cards styles
+
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/*
+    Document   : variables
+    Created on : 8 oct. 2013, 16:04:51
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Variables used to change the theme (as far as possible)
+*/
+/*
+    Document   : base
+    Created on : 8 oct. 2013, 11:16:34
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+    Provides mixins and base style (link colors, etc.)
+    
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/*
+ * Mixins
+ */
+/*
+ * Base Style
+ */
+/* line 87, ../../sass/cards/_base.scss */
+.card {
+  font-size: 1em;
+  color: #333333;
+  background-color: white;
+}
+/* line 77, ../../sass/cards/_base.scss */
+.card ::-moz-focus-inner, .card :active, .card :focus, .card ::-moz-focus-inner {
+  outline: none;
+  -moz-outline-style: none;
+}
+
+/* line 96, ../../sass/cards/_base.scss */
+.card a {
+  color: #333333;
+  text-decoration: none;
+  font-size: 1em;
+}
+/* line 100, ../../sass/cards/_base.scss */
+.card a:hover {
+  color: #d00239;
+}
+
+/* line 105, ../../sass/cards/_base.scss */
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: solid 1px #eeeeee;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/* line 77, ../../sass/cards/_base.scss */
+.actions ::-moz-focus-inner, .actions :active, .actions :focus, .actions ::-moz-focus-inner {
+  outline: none;
+  -moz-outline-style: none;
+}
+
+/*
+    Document   : layout
+    Created on : 8 oct. 2013, 16:17:01
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Layout stylesheet
+*/
+/* line 9, ../../sass/cards/_layout.scss */
+.nav {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0.5% 1% 0.5% 0.5%;
+}
+
+/* line 14, ../../sass/cards/_layout.scss */
+.card {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  min-width: 250px;
+  color: #333;
+  width: 32%;
+  margin: 0 0.5%;
+}
+/* line 24, ../../sass/cards/_layout.scss */
+.card > h1 {
+  background-color: #eee;
+  border: solid 1px #eee;
+  padding: .5em;
+  color: #d00239;
+  font-size: 1em;
+  font-weight: bolder;
+  display: block;
+  position: relative;
+}
+/* line 35, ../../sass/cards/_layout.scss */
+.card .content {
+  position: relative;
+  border: solid 1px #eee;
+  padding: .5em 2em .5em .5em;
+  margin-top: .5em;
+  min-height: 200px;
+}
+/* line 42, ../../sass/cards/_layout.scss */
+.card .content > div {
+  margin: .1em 0;
+}
+/* line 46, ../../sass/cards/_layout.scss */
+.card .content > .help {
+  position: absolute;
+  top: .5em;
+  right: 0;
+  background-color: #d00239;
+  color: #fff;
+  margin-right: -10px;
+  padding: .2em .4em;
+  min-width: 18px;
+  text-align: center;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  box-shadow: 0 2px 4px #888;
+  z-index: 600;
+}
+/* line 61, ../../sass/cards/_layout.scss */
+.card .content > .help:after {
+  border-color: #666666 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #666666;
+  border-style: solid;
+  border-width: 3px 5px;
+  content: " ";
+  height: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 0;
+}
+/* line 73, ../../sass/cards/_layout.scss */
+.card .content > .help a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+/* line 79, ../../sass/cards/_layout.scss */
+.card .content > .help span {
+  display: none;
+}
+
+/*
+    Document   : components
+    Created on : 8 oct. 2013, 11:16:52
+    Author     : Bertrand Chevrier <bertrand@taotesting.com>
+    Description:
+        Contains style related to components
+*/
+/* line 9, ../../sass/cards/_components.scss */
+.card {
+  /* Labels */
+  /* States */
+  /*
+   * Forms and actions
+   */
+  /* Form layout */
+  /* Inputs */
+  /* search input */
+  /*
+   * Components
+   */
+  /* ListBox  */
+  /* toggler */
+  /* Adder */
+  /* Disabler */
+  /* Closer */
+  /* Incrementer */
+  /* InPlacer */
+  /* Flipper */
+}
+/* line 12, ../../sass/cards/_components.scss */
+.card .label {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 1px 1px 5px #cccccc;
+  -moz-box-shadow: 1px 1px 5px #cccccc;
+  box-shadow: 1px 1px 5px #cccccc;
+  padding: 0;
+  display: inline-block;
+  border: 1px solid #666;
+  background-color: #666;
+  color: #fff;
+  padding: .3em .4em;
+}
+/* line 21, ../../sass/cards/_components.scss */
+.card .label.small {
+  font-size: .9em;
+  padding: .2em .3em;
+}
+/* line 28, ../../sass/cards/_components.scss */
+.card .active {
+  border: dashed 1px #d00239 !important;
+}
+/* line 31, ../../sass/cards/_components.scss */
+.card .valid {
+  border: dashed 1px #009933 !important;
+}
+/* line 34, ../../sass/cards/_components.scss */
+.card .placeholder {
+  border: dashed 1px #333 !important;
+  min-height: 2em;
+}
+/* line 38, ../../sass/cards/_components.scss */
+.card .ui-draggable {
+  cursor: move;
+}
+/* line 40, ../../sass/cards/_components.scss */
+.card .ui-draggable:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -224px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 44, ../../sass/cards/_components.scss */
+.card .ui-sortable > * {
+  cursor: move;
+}
+/* line 46, ../../sass/cards/_components.scss */
+.card .ui-sortable > *:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -128px -48px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 57, ../../sass/cards/_components.scss */
+.card .form-group {
+  padding: .5em;
+}
+/* line 60, ../../sass/cards/_components.scss */
+.card .form-group > label {
+  width: 30%;
+  float: left;
+}
+/* line 65, ../../sass/cards/_components.scss */
+.card .form-group > div {
+  margin-left: 30%;
+}
+/* line 69, ../../sass/cards/_components.scss */
+.card .form-group > label.after {
+  float: none;
+}
+/* line 73, ../../sass/cards/_components.scss */
+.card .form-group .form-info {
+  font-size: .9em;
+  color: #555;
+}
+/* line 80, ../../sass/cards/_components.scss */
+.card input[type=text], .card textarea, .card button, .card .btn {
+  color: #333333;
+  background-color: white;
+  font-size: 1em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 3px 3px;
+  -moz-border-radius: 3px / 3px;
+  border-radius: 3px / 3px;
+  border: solid 1px #ccc;
+  height: 1.8em;
+  vertical-align: top;
+  margin: 0;
+  padding: .1em;
+  width: 150px;
+}
+/* line 91, ../../sass/cards/_components.scss */
+.card input[type=text].micro, .card textarea.micro, .card button.micro, .card .btn.micro {
+  width: 75px;
+}
+/* line 94, ../../sass/cards/_components.scss */
+.card input[type=text].small, .card textarea.small, .card button.small, .card .btn.small {
+  width: 100px;
+}
+/* line 97, ../../sass/cards/_components.scss */
+.card input[type=text].big, .card textarea.big, .card button.big, .card .btn.big {
+  width: 200px;
+}
+/* line 100, ../../sass/cards/_components.scss */
+.card input[type=text]:active, .card textarea:active, .card button:active, .card .btn:active {
+  -webkit-box-shadow: 1px 1px 5px #666666;
+  -moz-box-shadow: 1px 1px 5px #666666;
+  box-shadow: 1px 1px 5px #666666;
+}
+/* line 103, ../../sass/cards/_components.scss */
+.card input[type=text]:focus, .card textarea:focus, .card button:focus, .card .btn:focus {
+  border: solid 1px #666;
+}
+/* line 106, ../../sass/cards/_components.scss */
+.card input[type=text]:disabled, .card textarea:disabled, .card button:disabled, .card .btn:disabled {
+  background-color: #eee;
+}
+/* line 110, ../../sass/cards/_components.scss */
+.card button {
+  color: white;
+  background-color: #d00239;
+  font-size: 1em;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 1.1em;
+  border: none;
+  padding: .4em .6em;
+  cursor: pointer;
+}
+/* line 35, ../../sass/cards/_base.scss */
+.card button a {
+  color: white;
+  font-weight: bold;
+}
+/* line 119, ../../sass/cards/_components.scss */
+.card textarea {
+  height: 10em;
+  width: 300px;
+}
+/* line 122, ../../sass/cards/_components.scss */
+.card textarea.micro {
+  width: 150px;
+}
+/* line 125, ../../sass/cards/_components.scss */
+.card textarea.small {
+  width: 200px;
+}
+/* line 128, ../../sass/cards/_components.scss */
+.card textarea.big {
+  width: 500px;
+}
+/* line 155, ../../sass/cards/_components.scss */
+.card input[type=text] {
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+/* line 137, ../../sass/cards/_components.scss */
+.card input[type=text] ~ .ctrl {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border: solid 1px #ccc;
+  border-left-width: 0;
+  width: 24px;
+  height: 1.8em;
+  padding: .1em;
+  cursor: pointer;
+  background-color: #eee;
+}
+/* line 149, ../../sass/cards/_components.scss */
+.card input[type=text] ~ .ctrl:focus {
+  border: solid 1px #666;
+}
+/* line 161, ../../sass/cards/_components.scss */
+.card input[type=text].search {
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+/* line 137, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border: solid 1px #ccc;
+  border-left-width: 0;
+  width: 24px;
+  height: 1.8em;
+  padding: .1em;
+  cursor: pointer;
+  background-color: #eee;
+}
+/* line 149, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl:focus {
+  border: solid 1px #666;
+}
+/* line 164, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl {
+  background-image: url("../../../../tao/views/img/search_disabled.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* line 179, ../../sass/cards/_components.scss */
+.card ul.listbox {
+  margin: .1em 0;
+  padding: 0;
+  list-style-type: none;
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 186, ../../sass/cards/_components.scss */
+.card ul.listbox > li {
+  white-space: no-wrap;
+  position: relative;
+  min-width: 75%;
+  border: solid 1px #cccccc;
+  border-bottom-width: 0;
+  vertical-align: top;
+  margin: 0;
+  padding: .2em 2em .2em .2em;
+  background-color: #fafafa;
+  height: 1.8em;
+}
+/* line 198, ../../sass/cards/_components.scss */
+.card ul.listbox > li > .label {
+  position: absolute;
+  right: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+/* line 205, ../../sass/cards/_components.scss */
+.card ul.listbox > li > [data-button-group] {
+  position: absolute;
+  right: 2em;
+}
+/* line 210, ../../sass/cards/_components.scss */
+.card ul.listbox > li:first-child {
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+}
+/* line 214, ../../sass/cards/_components.scss */
+.card ul.listbox > li:last-child {
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-width: 1px;
+}
+/* line 219, ../../sass/cards/_components.scss */
+.card ul.listbox > li.placeholder {
+  background: none;
+  margin: .5em;
+  opacity: 0.6;
+}
+/* line 230, ../../sass/cards/_components.scss */
+.card .toggler:hover {
+  color: #d00239;
+}
+/* line 234, ../../sass/cards/_components.scss */
+.card .toggler:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px 0;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 238, ../../sass/cards/_components.scss */
+.card .toggler.opened:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 244, ../../sass/cards/_components.scss */
+.card .toggled {
+  display: none;
+}
+/* line 250, ../../sass/cards/_components.scss */
+.card .adder:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -16px -128px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 253, ../../sass/cards/_components.scss */
+.card .adder:hover:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -32px -128px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 260, ../../sass/cards/_components.scss */
+.card .disabled {
+  color: #999;
+}
+/* line 263, ../../sass/cards/_components.scss */
+.card input.disabled {
+  background-color: #ccc;
+}
+/* line 269, ../../sass/cards/_components.scss */
+.card .closer:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -32px -192px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 274, ../../sass/cards/_components.scss */
+.card [data-button-group] {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 1px 1px 5px #cccccc;
+  -moz-box-shadow: 1px 1px 5px #cccccc;
+  box-shadow: 1px 1px 5px #cccccc;
+  padding: 0;
+  display: inline-block;
+  border: 1px solid #666;
+  background-color: #666;
+  color: #fff;
+}
+/* line 282, ../../sass/cards/_components.scss */
+.card [data-button-group] > a {
+  float: left;
+  border: none;
+  margin: 0;
+  cursor: pointer;
+  padding: .2em .4em;
+  border-width: 0 !important;
+  border-right: solid 1px #999;
+}
+/* line 291, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.icon {
+  vertical-align: bottom;
+  width: 16px;
+  height: 16px;
+  padding: .1em;
+}
+/* line 298, ../../sass/cards/_components.scss */
+.card [data-button-group] > a:last-child {
+  border-right-width: 0;
+}
+/* line 301, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.active {
+  background-color: #e90240;
+  opatcity: 0.6;
+}
+/* line 311, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer {
+  width: 30px;
+  text-align: right;
+}
+/* line 314, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl {
+  display: inline-block;
+  margin: 0;
+  padding-left: 4px;
+}
+/* line 318, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a {
+  width: 16px;
+}
+/* line 320, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc {
+  margin-top: -3px;
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 323, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:hover {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 331, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec {
+  margin-top: -2px;
+  margin-left: -1px;
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 335, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:hover {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 348, ../../sass/cards/_components.scss */
+.card [data-in-place], .card .inplace {
+  cursor: pointer;
+}
+/* line 350, ../../sass/cards/_components.scss */
+.card [data-in-place] input, .card .inplace input {
+  cursor: auto;
+}
+/* line 356, ../../sass/cards/_components.scss */
+.card .flip {
+  overflow: hidden;
+}
+/* line 359, ../../sass/cards/_components.scss */
+.card .flip-back {
+  background-color: #ddd !important;
+  display: none;
+}
+
+/* Actions bar */
+/* line 367, ../../sass/cards/_components.scss */
+.nav {
+  position: relative;
+}
+/* line 371, ../../sass/cards/_components.scss */
+.nav h1, .nav h2, .nav h3, .nav h4, .nav h5 {
+  margin: 0;
+  display: inline-block;
+}
+/* line 376, ../../sass/cards/_components.scss */
+.nav .actions {
+  margin: 0;
+  position: absolute;
+  top: 0;
+}
+/* line 381, ../../sass/cards/_components.scss */
+.nav .actions.right {
+  right: 0;
+}
+/* line 385, ../../sass/cards/_components.scss */
+.nav .actions > button {
+  color: white;
+  background-color: #d00239;
+  font-size: 1em;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 1.1em;
+  border: none;
+  padding: .4em .6em;
+  cursor: pointer;
+}
+/* line 35, ../../sass/cards/_base.scss */
+.nav .actions > button a {
+  color: white;
+  font-weight: bold;
+}

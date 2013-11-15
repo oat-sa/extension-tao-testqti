@@ -13,17 +13,18 @@
 </div>
 <script type="text/javascript">
 $(function(){
-	require(['require', 'jquery'], function(req, $) {
+
+	require(['jquery'], function($) {
 		
 		$('#authoringButton').click(function(e) {
-			//e.preventDefault();
-			uri = '<?=_url('index', 'Authoring', 'taoQtiTest', array('uri' => get_data('uri')))?>';
+			e.preventDefault();
+			var uri = '<?=_url('index', 'Creator', 'taoQtiTest', array('uri' => get_data('uri')))?>';
 			helpers.openTab('<?=__('Authoring %s', get_data('label'))?>', uri);
 		});
 		
 		$('#importAction').click(function(e) {
-			//e.preventDefault();
-			uri = '<?=_url('index', 'Import', 'taoQtiTest', array('uri' => get_data('uri')))?>';
+			e.preventDefault();
+			var uri = '<?=_url('index', 'Import', 'taoQtiTest', array('uri' => get_data('uri')))?>';
 			helpers.openTab('<?=__('Import into %s', get_data('label'))?>', uri);
 		});
     });

@@ -52,7 +52,7 @@ class taoQtiTest_models_classes_TestModel
      */
     public function prepareContent( core_kernel_classes_Resource $test, $items = array()) {
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
-        $service->saveQtiTest($test, $items);
+        $service->save($test, $items);
     }
     
     /**
@@ -122,7 +122,6 @@ class taoQtiTest_models_classes_TestModel
         $contentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
         $existingFile = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
         $existingContent = $existingFile->getFileContent();
-        
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
         $newFile = $service->createContent($destination);
         $newFile->setContent($existingContent);

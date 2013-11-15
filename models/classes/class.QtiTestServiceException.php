@@ -39,6 +39,11 @@
  */
 class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements common_exception_UserReadableException {
 	
+        const TEST_WRITE_ERROR = 0;
+        const ITEM_READ_ERROR = 1;
+        const ITEM_WRITE_ERROR = 2;
+        const TEST_READ_ERROR = 3;
+        
 	/**
 	 * Create a new QtiTestServiceException object.
 	 * 
@@ -56,18 +61,16 @@ class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception
 	 */
 	public function getUserMessage() {
 		switch ($this->getCode()) {
+                        case 3:
+				return __("The QTI test could not be retrieved correctly.");
+				break;
+                        case 2:
+				return __("An item involved in the test cannot be written.");
+				break;
 			case 1:
 				return __("An item involved in the test cannot be read or is not QTI compliant.");
 				break;
-					
-			case 2:
-				return __("An item involved in the test cannot be written.");
-				break;
-					
-			case 3:
-				return __("The QTI test could not be retrieved correctly.");
-				break;
-					
+                        case 0:		
 			default:
 				return __("The QTI-XML test could not be written correctly.");
 				break;
