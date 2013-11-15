@@ -79,3 +79,38 @@
 	width: 755px;
 	margin: 0 auto;
 }
+
+#qti-comment {
+    display: none;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    z-index: 9999;
+    width: 300px;
+    text-align: right;
+}
+
+#qti-comment > textarea {
+    display: block;
+    height: 80px;
+    resize: none;
+    width: 294px;
+    padding: 2px;
+    margin: 3px  0 10px 0;
+    -moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-khtml-border-radius: 2px;
+	border-radius: 2px;
+	border: 1px solid #999;
+}
+
+#qti-comment-send {
+    margin:0 0 0 5px;
+}
+
+#comment {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

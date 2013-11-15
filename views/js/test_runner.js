@@ -13,10 +13,15 @@ var testRunnerConstants = {
 $(document).ready(function() {
 	registerAutoResize(document.getElementById('qti-item'));
 	updateNavigation(assessmentTestContext);
+	updateTools(assessmentTestContext);
 	
 	$('#skip').bind('click', skip);
 	$('#move-forward').bind('click', moveForward);
 	$('#move-backward').bind('click', moveBackward);
+	$('#comment').bind('click', comment);
+	$('#qti-comment-cancel').bind('click', closeComment);
+	$('#qti-comment-send').bind('click', storeComment);
+	$('#qti-comment > textarea').bind('focus', emptyComment);
 });
 
 var autoResizeId;
@@ -156,6 +161,33 @@ function skip() {
 	});
 }
 
+function comment() {
+	$('#comment').css('display', 'none');
+	$('#qti-comment').css('display', 'block');
+}
+
+function closeComment() {
+	$('#qti-comment').css('display', 'none');
+	$('#comment').css('display', 'inline');
+}
+
+function emptyComment() {
+	$('#qti-comment > textarea').val('');
+}
+
+function storeComment() {
+	
+	$.ajax({
+		url: assessmentTestContext.commentUrl,
+		cache: false,
+		async: true,
+		type: 'POST',
+		data: { comment: $('#qti-comment > textarea').val() },
+		success: function(assessmentTestContext, textStatus, jqXhr) {
+			closeComment();
+		}
+	})
+}
 
 function autoResize(frame, frequence) {
 	$frame = $(frame);
@@ -197,6 +229,7 @@ function updateTestRunner(assessmentTestContext) {
 	updateInformation(assessmentTestContext);
 	updateTimer(assessmentTestContext);
 	updateRubrics(assessmentTestContext);
+	updateTools(assessmentTestContext);
 	
 	$('#runner').append('<iframe id="qti-item" frameborder="0" scrolling="no"/>');
 	$itemFrame = $('#qti-item');
@@ -220,6 +253,15 @@ function updateInformation(assessmentTestContext) {
 	}
 	else {
 		$('<div id="qti-info" class="info">' + assessmentTestContext.info + '</div>').insertAfter('#qti-actions');
+	}
+}
+
+function updateTools(assessmentTestContext) {
+	if (assessmentTestContext['allowComment'] == true) {
+		$('#comment').css('display', 'inline');
+	}
+	else {
+		$('#comment').css('display', 'none');
 	}
 }
 

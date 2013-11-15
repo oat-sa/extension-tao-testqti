@@ -51,7 +51,7 @@ table {
 	Open Assessment Technologies additional CSS rules
 	on basis of Eric A. and Kathryn S. Meyer's work.
 */
-html, body {
+html, body, textarea {
     font-family: Verdana,Arial,sans-serif;
     font-size: 14px;
 }

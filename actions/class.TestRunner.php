@@ -27,6 +27,9 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
+use qtism\runtime\common\ResponseVariable;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSessionException;
@@ -516,6 +519,26 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction();
 	}
 	
+	public function comment() {
+	    $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+	    $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultServer);
+	    
+	    // prepare transmission Id for result server.
+	    $item = $this->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+	    $occurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
+	    $sessionId = $this->getSessionId();
+	    $transmissionId = "${sessionId}.${item}.${occurence}";
+	    
+	    // retrieve comment's intrinsic value.
+	    $comment = $this->getRequestParameter('comment');
+	    
+	    // build variable and send it.
+	    $itemUri = $this->getCurrentItemUri();
+	    $testUri = $this->getTestSession()->getTest()->getUri();
+	    $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, $comment);
+	    $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+	}
+	
 	/**
 	 * Retrieve the Test Definition the test session is built
 	 * from as an AssessmentTest object. This method
@@ -640,10 +663,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
 	        
-	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip.
+	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
 	        $context['moveForwardUrl'] = $this->buildActionCallUrl('moveForward');
 	        $context['moveBackwardUrl'] = $this->buildActionCallUrl('moveBackward');
 	        $context['skipUrl'] = $this->buildActionCallUrl('skip');
+	        $context['commentUrl'] = $this->buildActionCallUrl('comment');
 	        
 	        // If the candidate is allowed to move backward e.g. first item of the test.
 	        $context['canMoveBackward'] = $session->canMoveBackward();
@@ -671,6 +695,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        }
 	        
 	        $context['rubrics'] = $rubrics;
+	        
+	        // Comment allowed?
+	        $context['allowComment'] = $this->doesAllowComment();
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
@@ -754,6 +781,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $parts = explode('|', $href);
 	     
 	    return $this->buildItemSrc($parts[0], $parts[1]);
+	}
+	
+	protected function getCurrentItemUri() {
+	    $href = $this->getTestSession()->getCurrentAssessmentItemRef()->getHref();
+	    $parts = explode('|', $href);
+	
+	    return $parts[0];
+	}
+	
+	protected function doesAllowComment() {
+	    $doesAllowComment = false;
+	    
+	    $routeItem = $this->getTestSession()->getRoute()->current();
+	    $routeControl = $routeItem->getItemSessionControl();
+	    
+	    if (empty($routeControl) === false) {
+	        return $routeControl->getItemSessionControl()->doesAllowComment();
+	    }
 	}
 	
 	protected function buildItemSrc($itemUri, $itemPath) {
