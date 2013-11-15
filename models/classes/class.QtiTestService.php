@@ -22,6 +22,7 @@
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponentCollection;
+use qtism\data\SectionPartCollection;
 
 /**
  * the QTI TestModel service
