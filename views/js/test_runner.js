@@ -261,6 +261,13 @@ function updateRubrics(assessmentTestContext) {
 			$rubrics.append(assessmentTestContext.rubrics[i]);
 		}
 		
+		// modify the <a> tags in order to be sure it
+		// opens in another window.
+		$rubrics.find('a').bind('click keypress', function() {
+			window.open(this.href);
+			return false;
+		});
+		
 		$rubrics.insertAfter('#qti-actions');
 	}
 }
