@@ -1,142 +1,150 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO v2.6-alpha\n"
-"PO-Revision-Date: 2013-10-14T16:48:52\n"
-"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"PO-Revision-Date: 2013-11-12 13:02-0000\n"
+"Last-Translator: Paulo Amorim <paulo@amorims.com>\n"
 "MIME-Version: 1.0\n"
 "Language: pt-PT\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.5.7\n"
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "Pacote de teste QTI"
 
 msgid "Add the source file"
-msgstr ""
+msgstr "Adicionar ficheiro fonte"
 
 msgid "Allow Late Submission"
-msgstr ""
+msgstr "Permitir sub-meter tardio"
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
 msgstr ""
+"Um item envolvido no teste não pode ser lido ou não está em conformidade com "
+"QTI"
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "Um item envolvido no teste não pode ser escrito"
 
 msgid "An unknown error occured while compiled QTI test '%s'."
-msgstr ""
+msgstr "Um erro desconhecido ocorreu quando compilava teste QTI  '%s'."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "Um erro desconhecido ocorreu quando compilava teste QTI  '%s'."
 
 msgid "Author QTI test"
-msgstr ""
+msgstr "Autor do teste QTI"
 
 msgid "Authoring %s', get_data('label"
-msgstr ""
+msgstr "Autor %s', get_data('label"
 
 msgid "Available Items"
-msgstr ""
+msgstr "Items disponíveis"
 
 msgid "Content saved"
-msgstr ""
+msgstr "Conteúdo Guardado"
 
 msgid "Drag and drop the items to order them"
-msgstr ""
+msgstr "Arraste os items para a ordenar"
 
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "Erro durante a importação do ficheiro"
 
 msgid "Found more than one test in package"
-msgstr ""
+msgstr "Encontrado mais de um teste no pacote"
 
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 msgid "Import Content"
-msgstr ""
+msgstr "Importar conteúdo"
 
 msgid "Import into %s', get_data('label"
-msgstr ""
+msgstr "Importar para %s', get_data('label"
 
 msgid "Import QTI test"
-msgstr ""
+msgstr "Importar teste QTI"
 
 msgid "Individual"
-msgstr ""
+msgstr "Individual"
 
 msgid "Items sequence"
-msgstr ""
+msgstr "Sequência de items"
 
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 msgid "Maximum Test Duration"
-msgstr ""
+msgstr "Duração máxima do teste"
 
 msgid "Minimum Test Duration"
-msgstr ""
+msgstr "Duração mínima do teste"
 
 msgid "Navigation mode"
-msgstr ""
+msgstr "Modo de navegação"
 
 msgid "No"
-msgstr ""
+msgstr "NO"
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "Não tem mais tentativas para o item '%s'"
 
 msgid "No test found in package"
-msgstr ""
+msgstr "Não foi encontrado nenhum teste no pacote"
 
 msgid "Non Linear"
-msgstr ""
+msgstr "Não linear"
 
 msgid "QTI Test: %s', get_data('label"
-msgstr ""
+msgstr "Teste QTI: %s', get_data('label"
 
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 msgid "Select the items composing the test."
-msgstr ""
+msgstr "Seleccione os items que compõe o teste"
 
 msgid "Sequence saved successfully"
-msgstr ""
+msgstr "Sequência guardada com sucesso"
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Baralhar"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Simultâneo"
 
 msgid "Submission and Navigation"
-msgstr ""
+msgstr "Submeter e navegar"
 
 msgid "Submission mode"
-msgstr ""
+msgstr "Modo de submissão"
 
 msgid "Test"
-msgstr ""
+msgstr "Teste"
 
-msgid "The QTI test '%s' to be compiled must contain at least 1 QTI item. None found."
+msgid ""
+"The QTI test '%s' to be compiled must contain at least 1 QTI item. None "
+"found."
 msgstr ""
+"O teste QTI '%s' a ser compilado deve conter pelo menos um item de QTI. "
+"Nenhum foi encontrado."
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "O teste QTI não pode ser carregado correctamente."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "O teste QTI-XML não pode ser escrito correctamente."
 
 msgid "Time limits"
-msgstr ""
+msgstr "Tempo limite"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "Envie um pacote de testes QTI."
 
 msgid "Yes"
-msgstr ""
-
+msgstr "Sim"
