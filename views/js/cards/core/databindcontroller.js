@@ -1,4 +1,4 @@
-define(['jquery', 'lodash', 'cards/core/databinder'], function($, _, DataBinder){
+    define(['jquery', 'lodash', 'cards/core/databinder'], function($, _, DataBinder){
     'use strict';
     
     return {
@@ -11,7 +11,7 @@ define(['jquery', 'lodash', 'cards/core/databinder'], function($, _, DataBinder)
             });
             
             if(options.get){
-                control.get = function get(cb){
+                control.get = function get(cb, errBack){
                     $.getJSON(options.get).done(function(data){
                         if(data){
                             model = data;
@@ -25,7 +25,7 @@ define(['jquery', 'lodash', 'cards/core/databinder'], function($, _, DataBinder)
                 };
             }
             if(options.save){
-                control.save = function save(cb){
+                control.save = function save(cb, errBack){
                     var allowSave = true;
                     if(typeof options.beforeSave === 'function'){
                         allowSave = !!options.beforeSave(model);
@@ -37,7 +37,11 @@ define(['jquery', 'lodash', 'cards/core/databinder'], function($, _, DataBinder)
                                     cb(data);
                                 }
                             }
-                        }, 'json');
+                        }, 'json').fail(function(){
+                           if(typeof errBack === 'function'){
+                               errBack();
+                           }
+                        });
                     }
                     return this;
                 };

@@ -42,6 +42,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
             return json_encode($this->componentToArray($this->doc->getDocumentComponent()));
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
+            common_Logger::d($re->getTraceAsString());
             throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to covert QTI Test to json: ' . $re->getMessage() );
         }
     }

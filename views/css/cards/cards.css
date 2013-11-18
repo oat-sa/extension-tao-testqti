@@ -170,12 +170,6 @@ hr {
   /* Labels */
   /* States */
   /*
-   * Forms and actions
-   */
-  /* Form layout */
-  /* Inputs */
-  /* search input */
-  /*
    * Components
    */
   /* ListBox  */
@@ -252,30 +246,325 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 57, ../../sass/cards/_components.scss */
-.card .form-group {
+/* line 59, ../../sass/cards/_components.scss */
+.card ul.listbox {
+  margin: .1em 0;
+  padding: 0;
+  list-style-type: none;
+  display: block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 66, ../../sass/cards/_components.scss */
+.card ul.listbox > li {
+  white-space: no-wrap;
+  position: relative;
+  min-width: 75%;
+  border: solid 1px #cccccc;
+  border-bottom-width: 0;
+  vertical-align: top;
+  margin: 0;
+  padding: .2em 2em .2em .2em;
+  background-color: #fafafa;
+  height: 1.8em;
+}
+/* line 78, ../../sass/cards/_components.scss */
+.card ul.listbox > li > .label {
+  position: absolute;
+  right: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+/* line 85, ../../sass/cards/_components.scss */
+.card ul.listbox > li > [data-button-group] {
+  position: absolute;
+  right: 2em;
+}
+/* line 90, ../../sass/cards/_components.scss */
+.card ul.listbox > li:first-child {
+  -moz-border-radius-topleft: 3px;
+  -webkit-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -webkit-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+}
+/* line 94, ../../sass/cards/_components.scss */
+.card ul.listbox > li:last-child {
+  -moz-border-radius-bottomleft: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-width: 1px;
+}
+/* line 99, ../../sass/cards/_components.scss */
+.card ul.listbox > li.placeholder {
+  background: none;
+  margin: .5em;
+  opacity: 0.6;
+}
+/* line 110, ../../sass/cards/_components.scss */
+.card .toggler:hover {
+  color: #d00239;
+}
+/* line 114, ../../sass/cards/_components.scss */
+.card .toggler:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px 0;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 118, ../../sass/cards/_components.scss */
+.card .toggler.opened:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 124, ../../sass/cards/_components.scss */
+.card .toggled {
+  display: none;
+}
+/* line 130, ../../sass/cards/_components.scss */
+.card .adder:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -16px -128px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 133, ../../sass/cards/_components.scss */
+.card .adder:hover:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -32px -128px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 140, ../../sass/cards/_components.scss */
+.card .disabled {
+  color: #999;
+}
+/* line 143, ../../sass/cards/_components.scss */
+.card input.disabled {
+  background-color: #ccc;
+}
+/* line 149, ../../sass/cards/_components.scss */
+.card .closer:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -32px -192px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 154, ../../sass/cards/_components.scss */
+.card [data-button-group] {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 1px 1px 5px #cccccc;
+  -moz-box-shadow: 1px 1px 5px #cccccc;
+  box-shadow: 1px 1px 5px #cccccc;
+  padding: 0;
+  display: inline-block;
+  border: 1px solid #666;
+  background-color: #666;
+  color: #fff;
+}
+/* line 162, ../../sass/cards/_components.scss */
+.card [data-button-group] > a {
+  float: left;
+  border: none;
+  margin: 0;
+  cursor: pointer;
+  padding: .2em .4em;
+  border-width: 0 !important;
+  border-right: solid 1px #999;
+}
+/* line 171, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.icon {
+  vertical-align: bottom;
+  width: 16px;
+  height: 16px;
+  padding: .1em;
+}
+/* line 178, ../../sass/cards/_components.scss */
+.card [data-button-group] > a:last-child {
+  border-right-width: 0;
+}
+/* line 181, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.active {
+  background-color: #e90240;
+  opatcity: 0.6;
+}
+/* line 191, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer {
+  width: 30px;
+  text-align: right;
+}
+/* line 194, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl {
+  display: inline-block;
+  margin: 0;
+  padding-left: 4px;
+}
+/* line 198, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a {
+  width: 16px;
+}
+/* line 200, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc {
+  margin-top: -3px;
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 203, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:hover {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 211, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec {
+  margin-top: -2px;
+  margin-left: -1px;
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 215, ../../sass/cards/_components.scss */
+.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:hover {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px -16px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: block;
+  height: 12px;
+}
+/* line 228, ../../sass/cards/_components.scss */
+.card [data-in-place], .card .inplace {
+  cursor: pointer;
+}
+/* line 230, ../../sass/cards/_components.scss */
+.card [data-in-place] input, .card .inplace input {
+  cursor: auto;
+}
+/* line 233, ../../sass/cards/_components.scss */
+.card [data-in-place]:hover, .card .inplace:hover {
+  color: #d00239;
+}
+/* line 239, ../../sass/cards/_components.scss */
+.card .flip {
+  overflow: hidden;
+}
+/* line 242, ../../sass/cards/_components.scss */
+.card .flip-back {
+  background-color: #ddd !important;
+  display: none;
+}
+
+/* Actions bar */
+/* line 250, ../../sass/cards/_components.scss */
+.nav {
+  position: relative;
+}
+/* line 254, ../../sass/cards/_components.scss */
+.nav h1, .nav h2, .nav h3, .nav h4, .nav h5 {
+  margin: 0;
+  display: inline-block;
+}
+/* line 259, ../../sass/cards/_components.scss */
+.nav .actions {
+  margin: 0;
+  position: absolute;
+  top: 0;
+}
+/* line 264, ../../sass/cards/_components.scss */
+.nav .actions.right {
+  right: 0;
+}
+
+/*
+ * Forms and actions
+ */
+/* line 274, ../../sass/cards/_components.scss */
+.card, .nav {
+  /* Form layout */
+  /* Inputs */
+  /* search input */
+}
+/* line 277, ../../sass/cards/_components.scss */
+.card .form-group, .nav .form-group {
   padding: .5em;
 }
-/* line 60, ../../sass/cards/_components.scss */
-.card .form-group > label {
+/* line 280, ../../sass/cards/_components.scss */
+.card .form-group > label, .nav .form-group > label {
   width: 30%;
   float: left;
 }
-/* line 65, ../../sass/cards/_components.scss */
-.card .form-group > div {
+/* line 285, ../../sass/cards/_components.scss */
+.card .form-group > div, .nav .form-group > div {
   margin-left: 30%;
 }
-/* line 69, ../../sass/cards/_components.scss */
-.card .form-group > label.after {
+/* line 289, ../../sass/cards/_components.scss */
+.card .form-group > label.after, .nav .form-group > label.after {
   float: none;
 }
-/* line 73, ../../sass/cards/_components.scss */
-.card .form-group .form-info {
+/* line 293, ../../sass/cards/_components.scss */
+.card .form-group .form-info, .nav .form-group .form-info {
   font-size: .9em;
   color: #555;
 }
-/* line 80, ../../sass/cards/_components.scss */
-.card input[type=text], .card textarea, .card button, .card .btn {
+/* line 300, ../../sass/cards/_components.scss */
+.card input[type=text], .card textarea, .nav input[type=text], .nav textarea {
   color: #333333;
   background-color: white;
   font-size: 1em;
@@ -292,71 +581,96 @@ hr {
   padding: .1em;
   width: 150px;
 }
-/* line 91, ../../sass/cards/_components.scss */
-.card input[type=text].micro, .card textarea.micro, .card button.micro, .card .btn.micro {
+/* line 311, ../../sass/cards/_components.scss */
+.card input[type=text].micro, .card textarea.micro, .nav input[type=text].micro, .nav textarea.micro {
   width: 75px;
 }
-/* line 94, ../../sass/cards/_components.scss */
-.card input[type=text].small, .card textarea.small, .card button.small, .card .btn.small {
+/* line 314, ../../sass/cards/_components.scss */
+.card input[type=text].small, .card textarea.small, .nav input[type=text].small, .nav textarea.small {
   width: 100px;
 }
-/* line 97, ../../sass/cards/_components.scss */
-.card input[type=text].big, .card textarea.big, .card button.big, .card .btn.big {
+/* line 317, ../../sass/cards/_components.scss */
+.card input[type=text].big, .card textarea.big, .nav input[type=text].big, .nav textarea.big {
   width: 200px;
 }
-/* line 100, ../../sass/cards/_components.scss */
-.card input[type=text]:active, .card textarea:active, .card button:active, .card .btn:active {
+/* line 320, ../../sass/cards/_components.scss */
+.card input[type=text]:active, .card textarea:active, .nav input[type=text]:active, .nav textarea:active {
   -webkit-box-shadow: 1px 1px 5px #666666;
   -moz-box-shadow: 1px 1px 5px #666666;
   box-shadow: 1px 1px 5px #666666;
 }
-/* line 103, ../../sass/cards/_components.scss */
-.card input[type=text]:focus, .card textarea:focus, .card button:focus, .card .btn:focus {
+/* line 323, ../../sass/cards/_components.scss */
+.card input[type=text]:focus, .card textarea:focus, .nav input[type=text]:focus, .nav textarea:focus {
   border: solid 1px #666;
 }
-/* line 106, ../../sass/cards/_components.scss */
-.card input[type=text]:disabled, .card textarea:disabled, .card button:disabled, .card .btn:disabled {
+/* line 326, ../../sass/cards/_components.scss */
+.card input[type=text]:disabled, .card textarea:disabled, .nav input[type=text]:disabled, .nav textarea:disabled {
   background-color: #eee;
 }
-/* line 110, ../../sass/cards/_components.scss */
-.card button {
+/* line 331, ../../sass/cards/_components.scss */
+.card button, .nav button {
   color: white;
   background-color: #d00239;
   font-size: 1em;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 3px 3px;
+  -moz-border-radius: 3px / 3px;
+  border-radius: 3px / 3px;
   font-size: 1.1em;
-  border: none;
+  border: solid 1px #d00239;
   padding: .4em .6em;
   cursor: pointer;
 }
 /* line 35, ../../sass/cards/_base.scss */
-.card button a {
+.card button a, .nav button a {
   color: white;
   font-weight: bold;
 }
-/* line 119, ../../sass/cards/_components.scss */
-.card textarea {
+/* line 340, ../../sass/cards/_components.scss */
+.card button.micro, .nav button.micro {
+  font-size: .8em;
+  padding: .1em .2em;
+}
+/* line 344, ../../sass/cards/_components.scss */
+.card button.small, .nav button.small {
+  font-size: .9em;
+  padding: .2em .3em;
+}
+/* line 348, ../../sass/cards/_components.scss */
+.card button.big, .nav button.big {
+  font-size: 1.2em;
+  padding: .5em .75em;
+}
+/* line 352, ../../sass/cards/_components.scss */
+.card button:active, .card button:focus, .card button:hover, .nav button:active, .nav button:focus, .nav button:hover {
+  border: solid 1px #520116;
+}
+/* line 355, ../../sass/cards/_components.scss */
+.card button:disabled, .nav button:disabled {
+  background-color: #fd5481;
+  cursor: inherit;
+}
+/* line 361, ../../sass/cards/_components.scss */
+.card textarea, .nav textarea {
   height: 10em;
   width: 300px;
 }
-/* line 122, ../../sass/cards/_components.scss */
-.card textarea.micro {
+/* line 364, ../../sass/cards/_components.scss */
+.card textarea.micro, .nav textarea.micro {
   width: 150px;
 }
-/* line 125, ../../sass/cards/_components.scss */
-.card textarea.small {
+/* line 367, ../../sass/cards/_components.scss */
+.card textarea.small, .nav textarea.small {
   width: 200px;
 }
-/* line 128, ../../sass/cards/_components.scss */
-.card textarea.big {
+/* line 370, ../../sass/cards/_components.scss */
+.card textarea.big, .nav textarea.big {
   width: 500px;
 }
-/* line 155, ../../sass/cards/_components.scss */
-.card input[type=text] {
+/* line 397, ../../sass/cards/_components.scss */
+.card input[type=text], .nav input[type=text] {
   -moz-border-radius-topleft: 3px;
   -webkit-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
@@ -370,8 +684,8 @@ hr {
   -webkit-border-bottom-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-/* line 137, ../../sass/cards/_components.scss */
-.card input[type=text] ~ .ctrl {
+/* line 379, ../../sass/cards/_components.scss */
+.card input[type=text] ~ .ctrl, .nav input[type=text] ~ .ctrl {
   display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -396,12 +710,12 @@ hr {
   cursor: pointer;
   background-color: #eee;
 }
-/* line 149, ../../sass/cards/_components.scss */
-.card input[type=text] ~ .ctrl:focus {
+/* line 391, ../../sass/cards/_components.scss */
+.card input[type=text] ~ .ctrl:focus, .nav input[type=text] ~ .ctrl:focus {
   border: solid 1px #666;
 }
-/* line 161, ../../sass/cards/_components.scss */
-.card input[type=text].search {
+/* line 403, ../../sass/cards/_components.scss */
+.card input[type=text].search, .nav input[type=text].search {
   -moz-border-radius-topleft: 3px;
   -webkit-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
@@ -415,8 +729,8 @@ hr {
   -webkit-border-bottom-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-/* line 137, ../../sass/cards/_components.scss */
-.card input[type=text].search ~ .ctrl {
+/* line 379, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl, .nav input[type=text].search ~ .ctrl {
   display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -441,314 +755,13 @@ hr {
   cursor: pointer;
   background-color: #eee;
 }
-/* line 149, ../../sass/cards/_components.scss */
-.card input[type=text].search ~ .ctrl:focus {
+/* line 391, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl:focus, .nav input[type=text].search ~ .ctrl:focus {
   border: solid 1px #666;
 }
-/* line 164, ../../sass/cards/_components.scss */
-.card input[type=text].search ~ .ctrl {
+/* line 406, ../../sass/cards/_components.scss */
+.card input[type=text].search ~ .ctrl, .nav input[type=text].search ~ .ctrl {
   background-image: url("../../../../tao/views/img/search_disabled.png");
   background-repeat: no-repeat;
   background-position: center;
-}
-/* line 179, ../../sass/cards/_components.scss */
-.card ul.listbox {
-  margin: .1em 0;
-  padding: 0;
-  list-style-type: none;
-  display: block;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-/* line 186, ../../sass/cards/_components.scss */
-.card ul.listbox > li {
-  white-space: no-wrap;
-  position: relative;
-  min-width: 75%;
-  border: solid 1px #cccccc;
-  border-bottom-width: 0;
-  vertical-align: top;
-  margin: 0;
-  padding: .2em 2em .2em .2em;
-  background-color: #fafafa;
-  height: 1.8em;
-}
-/* line 198, ../../sass/cards/_components.scss */
-.card ul.listbox > li > .label {
-  position: absolute;
-  right: 0;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
-}
-/* line 205, ../../sass/cards/_components.scss */
-.card ul.listbox > li > [data-button-group] {
-  position: absolute;
-  right: 2em;
-}
-/* line 210, ../../sass/cards/_components.scss */
-.card ul.listbox > li:first-child {
-  -moz-border-radius-topleft: 3px;
-  -webkit-border-top-left-radius: 3px;
-  border-top-left-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  -webkit-border-top-right-radius: 3px;
-  border-top-right-radius: 3px;
-}
-/* line 214, ../../sass/cards/_components.scss */
-.card ul.listbox > li:last-child {
-  -moz-border-radius-bottomleft: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  -moz-border-radius-bottomright: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-width: 1px;
-}
-/* line 219, ../../sass/cards/_components.scss */
-.card ul.listbox > li.placeholder {
-  background: none;
-  margin: .5em;
-  opacity: 0.6;
-}
-/* line 230, ../../sass/cards/_components.scss */
-.card .toggler:hover {
-  color: #d00239;
-}
-/* line 234, ../../sass/cards/_components.scss */
-.card .toggler:before {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -64px 0;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-}
-/* line 238, ../../sass/cards/_components.scss */
-.card .toggler.opened:before {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-}
-/* line 244, ../../sass/cards/_components.scss */
-.card .toggled {
-  display: none;
-}
-/* line 250, ../../sass/cards/_components.scss */
-.card .adder:before {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -16px -128px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-}
-/* line 253, ../../sass/cards/_components.scss */
-.card .adder:hover:before {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -32px -128px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-}
-/* line 260, ../../sass/cards/_components.scss */
-.card .disabled {
-  color: #999;
-}
-/* line 263, ../../sass/cards/_components.scss */
-.card input.disabled {
-  background-color: #ccc;
-}
-/* line 269, ../../sass/cards/_components.scss */
-.card .closer:before {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -32px -192px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-}
-/* line 274, ../../sass/cards/_components.scss */
-.card [data-button-group] {
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: 1px 1px 5px #cccccc;
-  -moz-box-shadow: 1px 1px 5px #cccccc;
-  box-shadow: 1px 1px 5px #cccccc;
-  padding: 0;
-  display: inline-block;
-  border: 1px solid #666;
-  background-color: #666;
-  color: #fff;
-}
-/* line 282, ../../sass/cards/_components.scss */
-.card [data-button-group] > a {
-  float: left;
-  border: none;
-  margin: 0;
-  cursor: pointer;
-  padding: .2em .4em;
-  border-width: 0 !important;
-  border-right: solid 1px #999;
-}
-/* line 291, ../../sass/cards/_components.scss */
-.card [data-button-group] > a.icon {
-  vertical-align: bottom;
-  width: 16px;
-  height: 16px;
-  padding: .1em;
-}
-/* line 298, ../../sass/cards/_components.scss */
-.card [data-button-group] > a:last-child {
-  border-right-width: 0;
-}
-/* line 301, ../../sass/cards/_components.scss */
-.card [data-button-group] > a.active {
-  background-color: #e90240;
-  opatcity: 0.6;
-}
-/* line 311, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer {
-  width: 30px;
-  text-align: right;
-}
-/* line 314, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl {
-  display: inline-block;
-  margin: 0;
-  padding-left: 4px;
-}
-/* line 318, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a {
-  width: 16px;
-}
-/* line 320, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc {
-  margin-top: -3px;
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: 0 -16px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  display: block;
-  height: 12px;
-}
-/* line 323, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:hover {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: 0 -16px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  display: block;
-  height: 12px;
-}
-/* line 331, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec {
-  margin-top: -2px;
-  margin-left: -1px;
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -64px -16px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  display: block;
-  height: 12px;
-}
-/* line 335, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:hover {
-  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
-  display: inline-block;
-  vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: -64px -16px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  display: block;
-  height: 12px;
-}
-/* line 348, ../../sass/cards/_components.scss */
-.card [data-in-place], .card .inplace {
-  cursor: pointer;
-}
-/* line 350, ../../sass/cards/_components.scss */
-.card [data-in-place] input, .card .inplace input {
-  cursor: auto;
-}
-/* line 356, ../../sass/cards/_components.scss */
-.card .flip {
-  overflow: hidden;
-}
-/* line 359, ../../sass/cards/_components.scss */
-.card .flip-back {
-  background-color: #ddd !important;
-  display: none;
-}
-
-/* Actions bar */
-/* line 367, ../../sass/cards/_components.scss */
-.nav {
-  position: relative;
-}
-/* line 371, ../../sass/cards/_components.scss */
-.nav h1, .nav h2, .nav h3, .nav h4, .nav h5 {
-  margin: 0;
-  display: inline-block;
-}
-/* line 376, ../../sass/cards/_components.scss */
-.nav .actions {
-  margin: 0;
-  position: absolute;
-  top: 0;
-}
-/* line 381, ../../sass/cards/_components.scss */
-.nav .actions.right {
-  right: 0;
-}
-/* line 385, ../../sass/cards/_components.scss */
-.nav .actions > button {
-  color: white;
-  background-color: #d00239;
-  font-size: 1em;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  font-size: 1.1em;
-  border: none;
-  padding: .4em .6em;
-  cursor: pointer;
-}
-/* line 35, ../../sass/cards/_base.scss */
-.nav .actions > button a {
-  color: white;
-  font-weight: bold;
 }

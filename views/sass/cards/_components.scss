@@ -50,126 +50,6 @@
 
 
 /*
- * Forms and actions
- */
-
-    /* Form layout */
-    .form-group{
-        padding: .5em;
-
-        > label {
-            width: 30%;
-            float: left;
-        }
-
-        > div {
-            margin-left: 30%;
-        }
-
-        > label.after{
-            float: none;
-        }
-
-        .form-info{
-            font-size:.9em;
-            color:#555;
-        }
-    }
-
-    /* Inputs */
-     input[type=text], textarea, button, .btn{
-        @include baseFont;
-        @include box-sizing(border-box);
-        @include rounded;
-        border: solid 1px #ccc;
-        height:1.8em;
-        vertical-align: top;
-        margin:0;
-        padding:.1em;
-        width:150px;
-        
-        &.micro{
-            width:75px;
-        }
-        &.small{
-            width:100px;
-        }
-        &.big{
-            width:200px;
-        }
-        &:active{
-             @include shadow(#666, 1px, 1px);
-        }
-        &:focus{
-            border: solid 1px #666;
-        }
-        &:disabled{
-            background-color: #eee;
-        }
-    }
-    button{
-        @include invFont;
-        @include border-radius($radius);
-        font-size: 1.1em;
-        border: none;
-        padding: .4em .6em;
-        cursor: pointer;
-    }
-    
-    textarea{
-        height:10em;
-        width: 300px;
-        &.micro{
-            width:150px;
-        }
-        &.small{
-            width:200px;
-        }
-        &.big{
-            width:500px;
-        }
-    }
-    
-    @mixin appendBox {
-        @include border-left-radius($radius);
-        @include border-right-radius(0);
-
-        & ~ .ctrl {
-            display: inline-block;
-            @include box-sizing(border-box);
-            @include border-left-radius(0);
-            @include border-right-radius($radius);
-            border: solid 1px #ccc;
-            border-left-width:0;
-            width: 24px;
-            height: 1.8em;
-            padding:.1em;
-            cursor: pointer;
-            background-color: #eee;
-            &:focus {
-                border: solid 1px #666;
-            }
-        }
-    }
-    
-    input[type=text]{
-        @include appendBox;
-    }
-
-
-/* search input */
-    input[type=text].search {
-        @include appendBox;
-        
-        & ~ .ctrl {
-            background-image: url('../../../../tao/views/img/search_disabled.png');
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-    }
-
-
-/*
  * Components
  */
 
@@ -350,6 +230,9 @@
         input {
             cursor: auto;
         }
+        &:hover {
+            color: $altFontColor;
+        }
     }
     
     /* Flipper */
@@ -381,14 +264,150 @@
         &.right {
             right: 0;
         }
-        
-        > button{
-            @include invFont;
-            @include border-radius($radius);
-            font-size: 1.1em;
-            border: none;
-            padding: .4em .6em;
-            cursor: pointer;
+    }
+}
+
+/*
+ * Forms and actions
+ */
+
+.card, .nav {
+
+    /* Form layout */
+    .form-group{
+        padding: .5em;
+
+        > label {
+            width: 30%;
+            float: left;
+        }
+
+        > div {
+            margin-left: 30%;
+        }
+
+        > label.after{
+            float: none;
+        }
+
+        .form-info{
+            font-size:.9em;
+            color:#555;
         }
     }
+
+    /* Inputs */
+     input[type=text], textarea{
+        @include baseFont;
+        @include box-sizing(border-box);
+        @include rounded;
+        border: solid 1px #ccc;
+        height:1.8em;
+        vertical-align: top;
+        margin:0;
+        padding:.1em;
+        width:150px;
+        
+        &.micro{
+            width:75px;
+        }
+        &.small{
+            width:100px;
+        }
+        &.big{
+            width:200px;
+        }
+        &:active{
+             @include shadow(#666, 1px, 1px);
+        }
+        &:focus{
+            border: solid 1px #666;
+        }
+        &:disabled{
+            background-color: #eee;
+        }
+    }
+    
+    button{
+        @include invFont;
+        @include box-sizing(border-box);
+        @include rounded;
+        font-size: 1.1em;
+        border: solid 1px $altColor;
+        padding: .4em .6em;
+        cursor: pointer;
+        
+        &.micro{
+            font-size: .8em;
+            padding: .1em .2em;
+        }
+        &.small{
+            font-size: .9em;
+            padding: .2em .3em;
+        }
+        &.big{
+            font-size: 1.2em;
+            padding: .5em .75em;
+        }
+        &:active, &:focus, &:hover{
+            border: solid 1px darken($altColor, 25%);
+        }
+        &:disabled{
+            background-color: lighten($altColor, 25%);
+            cursor: inherit;
+        }
+    }
+    
+    textarea{
+        height:10em;
+        width: 300px;
+        &.micro{
+            width:150px;
+        }
+        &.small{
+            width:200px;
+        }
+        &.big{
+            width:500px;
+        }
+    }
+    
+    @mixin appendBox {
+        @include border-left-radius($radius);
+        @include border-right-radius(0);
+
+        & ~ .ctrl {
+            display: inline-block;
+            @include box-sizing(border-box);
+            @include border-left-radius(0);
+            @include border-right-radius($radius);
+            border: solid 1px #ccc;
+            border-left-width:0;
+            width: 24px;
+            height: 1.8em;
+            padding:.1em;
+            cursor: pointer;
+            background-color: #eee;
+            &:focus {
+                border: solid 1px #666;
+            }
+        }
+    }
+    
+    input[type=text]{
+        @include appendBox;
+    }
+
+
+/* search input */
+    input[type=text].search {
+        @include appendBox;
+        
+        & ~ .ctrl {
+            background-image: url('../../../../tao/views/img/search_disabled.png');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    }
+    
 }

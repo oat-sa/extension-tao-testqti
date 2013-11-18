@@ -8,7 +8,7 @@
         <h1 data-bind="title"></h1><h2>&nbsp;&gt;&nbsp;<?=__('Author Content')?></h2>
         
         <div class="actions right">
-             <button id='saver'><?=__('Save')?></button>
+             <button id='saver' class="big"><?=__('Save')?></button>
         </div>
     </div>
     

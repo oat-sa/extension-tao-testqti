@@ -59,9 +59,6 @@ function($, _, cards, DataBindController, ItemView, SectionView){
                     
                     //ensure the qti-type is present
                     //todo check how to ensure that within the data binding
-                    
-                    console.log(model);
-                    
                     (function addMissingQtiType (collection) {
                         _.forEach(collection, function(value, key){
                             if(_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')){
@@ -72,23 +69,6 @@ function($, _, cards, DataBindController, ItemView, SectionView){
                             }
                         });
                     }(model) ); //immediately invoke 
-                    console.log(model);
-                    
-//                    var i, j, section;11
-//                    if(model.testParts[0].assessmentSections){
-//                        for (i in model.testParts[0].assessmentSections){
-//                            section = model.testParts[0].assessmentSections[i];
-//                            if(section.rubricBlocks){
-//                                for(j in section.rubricBlocks){
-//                                    section.rubricBlocks[j]['qti-type'] = 'rubricBlock';
-//                                    section.rubricBlocks[j]['views'] = [1];
-//                                }
-//                            }
-//                        }
-//                    }
-//                    if(model.testParts[0].timeLimits){
-//                        model.testParts[0].timeLimits['qti-type'] = 'timeLimits';
-//                    }
                     return true;
                 }
             });
@@ -105,9 +85,12 @@ function($, _, cards, DataBindController, ItemView, SectionView){
             $('#saver').click(function(event){
                 event.preventDefault();
                 $('#saver').attr('disabled', true);
+                
                 binder.save(function(){
                     $('#saver').attr('disabled', false);
                     helpers.createInfoMessage('Saved');
+                }, function(){
+                    $('#saver').attr('disabled', false);
                 });
             });
         },
