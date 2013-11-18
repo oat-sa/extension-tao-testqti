@@ -6,11 +6,12 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
     _sectionTmpl : Handlebars.compile($('#section-template').html()),
     _itemRefTmpl : Handlebars.compile($('#item-ref-template').html()),
     _sectionRefTmpl : Handlebars.compile($('#section-ref-template').html()),
-    _$sectionContainer : $('#sections'),
     
     setUp: function(options){
 
          var self = this;
+         
+         this._$sectionContainer = $('#sections');
 
          this.labels = options.labels || [];
          this.getIdentifier = options.getIdentifier;
@@ -218,20 +219,26 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
         });
     },
     
-    updateItemPosition : function ($section, $item, position){
+    updateItemPosition : function ($section, $item, position, currentPosiion){
         var self = this;
         var size = $section.find('li').length;
         var $relativeItem;
         var before = false;
-        if(position >= 0){
+        var relativeItemPosition;
+        if(position >= 0 && position !== currentPosiion){
             if(position <= 1){
-                $relativeItem = $section.find('li:nth-child(1)');
+                relativeItemPosition = 1;
                 before = true;
             } else if (position >= size) {
-                 $relativeItem = $section.find('li:last-child');
+                 relativeItemPosition = size;
             } else {
-                $relativeItem = $section.find('li:nth-child(' + (position - 1) + ')');
+                if( (position - 1) === currentPosiion){
+                     relativeItemPosition = position + 1;
+                } else {
+                     relativeItemPosition = position - 1;
+                }
             }
+            $relativeItem = $section.find('li:nth-child(' + relativeItemPosition + ')');
             if($relativeItem.length > 0){
                 if(before === true) {
                     $item.insertBefore($relativeItem);
@@ -260,7 +267,11 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
          $(document)
             .on('leave.inplacer', '.section li .label', function(event, value){
                 var $this = $(this);
-                self.updateItemPosition($this.parents('.section'),  $this.parent('li'), parseInt(value, 10) );
+                var $item = $this.parent('li');
+                var currentPos = parseInt($item.data('bind-index'), 10) + 1;
+                value = parseInt(value, 10);
+                    
+                self.updateItemPosition($this.parents('.section'), $item,  value, currentPos );
             })
             .on('close.closer', '.section li .closer', function(event, $closed){
                 $closed.addClass('selectable');

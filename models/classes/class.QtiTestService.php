@@ -485,8 +485,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
         $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
         $file = $repository->createFile(md5($test->getUri()).'.xml', $path);
+        
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
+        
+        //set the test label as title
+        $emptyTestXml = str_replace('testTitle', $test->getLabel(), $emptyTestXml);
+        
         $file->setContent($emptyTestXml);
         
         common_Logger::i('Created '.$file->getAbsolutePath());

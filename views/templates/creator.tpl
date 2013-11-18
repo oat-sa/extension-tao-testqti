@@ -27,7 +27,7 @@
                     <label ><?=__('Submission')?></label>
 
                     <div >
-                        <input type="radio" id="submission-mode-individual" name="submission-mode" value="0" data-bind="testParts.0.submissionMode" data-bind-encoder="number"  />
+                        <input type="radio" id="submission-mode-individual" name="submission-mode" value="0" data-bind="testParts.0.submissionMode" data-bind-encoder="number" checked="checked" />
                         <label for="submission-mode-individual"><?=__('Individual')?></label>
                         <span class='form-info'>(<?=__('Item one by one')?>)</span>
                         <br />
@@ -42,7 +42,7 @@
                 <div  class='form-group'>
                     <label for="navigation-mode" ><?=__('Navigation')?></label>
                     <div>
-                        <input type="radio" id="navigation-mode-linear" name="navigation-mode" value="0"  data-bind="testParts.0.navigationMode" data-bind-encoder="number" />
+                        <input type="radio" id="navigation-mode-linear" name="navigation-mode" value="0"  data-bind="testParts.0.navigationMode" data-bind-encoder="number"  checked="checked"  />
                         <label for="navigation-mode-linear"><?=__('Linear')?></label>
                         <br />
                         <input type="radio" id="navigation-mode-nonlinear" name="navigation-mode" value="1" data-disable='#min-time' />
@@ -52,11 +52,6 @@
                 </div>
 
                 <hr />
-
-                <div class='form-group'>
-                    <input type="checkbox" id="time-constraint" name="time-constraint" />
-                    <label for="time-constraint" class='after'><?=__('Time constraint')?></label>
-                </div>
 
                 <div id="min-time" class='form-group'>
                     <label><?=__('Min Duration')?></label>
@@ -155,7 +150,7 @@
                 <div  class='form-group'>
                     <label ><?=__('Items selection')?></label>
                     <div>
-                        <input type="radio" id="{{identifier}}-selection-all"  name="{{identifier}}-selection" data-toggle="#{{identifier}}-ordering" value="0" data-bind="selection.select" data-bind-encoder="number" />
+                        <input type="radio" id="{{identifier}}-selection-all"  name="{{identifier}}-selection" data-toggle="#{{identifier}}-ordering" value="0" data-bind="selection.select" data-bind-encoder="number" checked="checked"  />
                         <label for="selection-all"><?=__('Display all items')?></label>
                         <br />
                         <input type="radio" id="{{identifier}}-selection-rand" name="{{identifier}}-selection" data-toggle=".randomized" value="1" />
@@ -197,9 +192,9 @@
     <li id='{{identifier}}' data-uri='{{href}}' class='item-ref'>
         <span class='label small' data-in-place='#{{identifier}}-order' data-width='10px'>{{index}}</span>
         <span class='title'>{{label}}</span>
-        <div class='button-group toggled' data-button-group='toggle'>
-           <a href='#' class='icon shuffle active'></a>
-           <a href='#' class='icon fix'></a>
+        <div class='button-group toggled' data-button-group='toggle' data-bind='fixed' data-bind-encoder='boolean'>
+           <a href='#' class='icon shuffle active' data-bind-value='false'></a>
+           <a href='#' class='icon fix' data-bind-value='true'></a>
        </div>
        <a href="#" class='closer' data-close=':parent' title="<?=__('Remove item from section')?>"></a>
     </li>

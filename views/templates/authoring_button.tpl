@@ -19,12 +19,19 @@ $(function(){
 		$('#authoringButton').click(function(e) {
 			e.preventDefault();
 			var uri = '<?=_url('index', 'Creator', 'taoQtiTest', array('uri' => get_data('uri')))?>';
+                        if($("div#tabs ul.ui-tabs-nav li a").length > 1){
+                             helpers.closeTab(1);
+                        }
 			helpers.openTab('<?=__('Authoring %s', get_data('label'))?>', uri);
 		});
 		
 		$('#importAction').click(function(e) {
 			e.preventDefault();
 			var uri = '<?=_url('index', 'Import', 'taoQtiTest', array('uri' => get_data('uri')))?>';
+                        if($("div#tabs ul.ui-tabs-nav li a").length > 1){
+                             helpers.closeTab(1);
+                        }
+                       
 			helpers.openTab('<?=__('Import into %s', get_data('label'))?>', uri);
 		});
     });

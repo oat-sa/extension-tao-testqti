@@ -3,8 +3,6 @@ define(
 function($, _, cards, DataBindController, ItemView, SectionView){
     'use strict';
     
-    var $container = $('#test-creator');
-    
     function loadItems(url, search, cb){
         $.getJSON(url, {pattern : search}, function(data){
             if(data){
@@ -39,16 +37,14 @@ function($, _, cards, DataBindController, ItemView, SectionView){
         
          start : function(options){
             var self = this;
+            var $container = $('#test-creator');
+             
             var labels = options.labels || [];
             this.routes = options.routes || {};
             
             cards.start($container);
             
             this.updateItems();
-            
-//            $container.on('change.binder', function(e, model){
-//                console.log(model);
-//            });
             
             var binderOptions = _.merge(this.routes, {
                 filters : {
@@ -61,20 +57,38 @@ function($, _, cards, DataBindController, ItemView, SectionView){
                 },
                 beforeSave : function(model){
                     
-                    //ensure the qti-type is present for rubricBlocks
+                    //ensure the qti-type is present
                     //todo check how to ensure that within the data binding
-                    var i, j, section;
-                    if(model.testParts[0].assessmentSections){
-                        for (i in model.testParts[0].assessmentSections){
-                            section = model.testParts[0].assessmentSections[i];
-                            if(section.rubricBlocks){
-                                for(j in section.rubricBlocks){
-                                    section.rubricBlocks[j]['qti-type'] = 'rubricBlock';
-                                    section.rubricBlocks[j]['views'] = [1];
-                                }
+                    
+                    console.log(model);
+                    
+                    (function addMissingQtiType (collection) {
+                        _.forEach(collection, function(value, key){
+                            if(_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')){
+                                value['qti-type'] = key;
                             }
-                        }
-                    }
+                            if(_.isObject(value) || _.isArray(value)){
+                                addMissingQtiType(value);
+                            }
+                        });
+                    }(model) ); //immediately invoke 
+                    console.log(model);
+                    
+//                    var i, j, section;11
+//                    if(model.testParts[0].assessmentSections){
+//                        for (i in model.testParts[0].assessmentSections){
+//                            section = model.testParts[0].assessmentSections[i];
+//                            if(section.rubricBlocks){
+//                                for(j in section.rubricBlocks){
+//                                    section.rubricBlocks[j]['qti-type'] = 'rubricBlock';
+//                                    section.rubricBlocks[j]['views'] = [1];
+//                                }
+//                            }
+//                        }
+//                    }
+//                    if(model.testParts[0].timeLimits){
+//                        model.testParts[0].timeLimits['qti-type'] = 'timeLimits';
+//                    }
                     return true;
                 }
             });

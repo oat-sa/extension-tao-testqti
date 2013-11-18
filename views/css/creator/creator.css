@@ -150,25 +150,25 @@ hr {
                   }
               }*/
 }
-/* line 70, ../../sass/creator/creator.scss */
+/* line 69, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section h2 {
   margin: 0;
 }
-/* line 74, ../../sass/creator/creator.scss */
+/* line 73, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section .closer, #test-creator #test-sections .section .ref-into, #test-creator #test-sections .section .mv-into, #test-creator #test-sections .section .sort {
   position: absolute;
   top: .5em;
 }
-/* line 79, ../../sass/creator/creator.scss */
+/* line 78, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section .closer {
-  right: .5em;
+  right: 1em;
 }
-/* line 96, ../../sass/creator/creator.scss */
+/* line 95, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section .sort {
   right: 2.5em;
   cursor: move;
 }
-/* line 100, ../../sass/creator/creator.scss */
+/* line 99, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section .sort:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
@@ -179,7 +179,7 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 105, ../../sass/creator/creator.scss */
+/* line 104, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul {
   min-height: 150px;
   position: relative;
@@ -187,23 +187,24 @@ hr {
   padding-right: 3em;
   margin-top: .5em;
 }
-/* line 113, ../../sass/creator/creator.scss */
+/* line 112, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul li .title {
   margin-left: 1.7em;
 }
-/* line 116, ../../sass/creator/creator.scss */
+/* line 115, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul li .label {
   border-radius: 3px;
   right: inherit;
   top: .2em;
 }
-/* line 121, ../../sass/creator/creator.scss */
+/* line 120, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul li .button-group {
   top: .2em;
 }
-/* line 124, ../../sass/creator/creator.scss */
+/* line 123, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul li .closer {
   top: .2em;
+  right: .5em;
 }
 /* line 128, ../../sass/creator/creator.scss */
 #test-creator #test-sections .section > ul li.section-ref {

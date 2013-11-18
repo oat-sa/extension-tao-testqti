@@ -55,6 +55,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
             $this->arrayToComponent(json_decode($json, true));
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
+            common_Logger::d($re->getTraceAsString());
             throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to create QTI Test from json: ' . $re->getMessage() );
         }
     }
@@ -189,47 +190,50 @@ class taoQtiTest_models_classes_QtiTestConverter {
             
             $compName = $this->lookupClass($testArray['qti-type']);
 
-            $reflector = new ReflectionClass($compName);
-            $component = $this->createInstance($reflector, $testArray);
+            if(!empty($compName)){
+               
+                $reflector = new ReflectionClass($compName);
+                $component = $this->createInstance($reflector, $testArray);
 
-            $properties = array();
-            foreach($this->getProperties($reflector) as $property){
-                $properties[$property->getName()] = $property;
-            }
+                $properties = array();
+                foreach($this->getProperties($reflector) as $property){
+                    $properties[$property->getName()] = $property;
+                }
 
-            foreach($testArray as $key => $value){
-                
-                if(array_key_exists($key, $properties)){
-                    
-                     $class = $this->getPropertyClass($component, $properties[$key]);
-                    
-                    if(is_array($value) && array_key_exists('qti-type', $value)){
-                        
-                        $this->arrayToComponent($value, $component, true);
+                foreach($testArray as $key => $value){
 
+                    if(array_key_exists($key, $properties)){
+
+                         $class = $this->getPropertyClass($component, $properties[$key]);
+
+                        if(is_array($value) && array_key_exists('qti-type', $value)){
+
+                            $this->arrayToComponent($value, $component, true);
+
+                        } else {
+                            $assignableValue = $this->componentValue($value, $class);
+                            if(!is_null($assignableValue)){
+                                $this->setValue($component, $properties[$key], $assignableValue);
+                            }
+                        }
+                    }
+                }
+
+                if($attach){
+                    if(is_null($parent)){
+                        $this->doc->setDocumentComponent($component);
                     } else {
-                        $assignableValue = $this->componentValue($value, $class);
-                        if(!is_null($assignableValue)){
-                            $this->setValue($component, $properties[$key], $assignableValue);
+                        $parentReflector = new ReflectionClass($parent);
+                        foreach($this->getProperties($parentReflector) as $property){
+                            if($property->getName() == $testArray['qti-type']){
+                                $this->setValue($parent, $property, $component);
+                                break;
+                            }
                         }
                     }
-                }
+                } 
+                return $component;
             }
-
-            if($attach){
-                if(is_null($parent)){
-                    $this->doc->setDocumentComponent($component);
-                } else {
-                    $parentReflector = new ReflectionClass($parent);
-                    foreach($this->getProperties($parentReflector) as $property){
-                        if($property->getName() == $testArray['qti-type']){
-                            $this->setValue($parent, $property, $component);
-                            break;
-                        }
-                    }
-                }
-            } 
-            return $component;
         }
     }
     
@@ -257,7 +261,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
      * @return \qtism\data\QtiComponentCollection|null
      */
     private function createComponentCollection(ReflectionClass $class, $values){
-        $collection = $class->newInstanceWithoutConstructor();
+        $collection = $class->newInstance();
         if($collection instanceof QtiComponentCollection){
             foreach($values as $value){
                 $collection->attach($this->arrayToComponent($value, null, false));
@@ -299,6 +303,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
                 } else {
                    $hint = $this->getHint($docComment, $name);
                     switch($hint){
+                        case 'int' : $arguments[] = 0; break;
                         case 'integer' : $arguments[] = 0; break;
                         case 'boolean' : $arguments[] = false; break;
                         case 'string' : $arguments[] = ''; break;

@@ -260,7 +260,7 @@ function($, _, Handlebars, Encoders, Filters){
              self._listenUpdates($node, path, model);
              self._listenAdds($node, path, model);
              
-              $node.data('bound', path);
+             $node.data('bound', path);
         }
     };
     
@@ -422,7 +422,19 @@ function($, _, Handlebars, Encoders, Filters){
             if ($node.is(':text, textarea')) {
                 $node.val(value);
             } else if ($node.is(':radio, :checkbox')) {
-                $node.prop('checked', ($node.val() === value));
+                toBind($node).each(function(){
+                    var $elt = $(this);
+                    $elt.prop('checked', $elt.val() === value);
+                });
+            } else if ($node.hasClass('button-group')) {
+                $node.find('[data-bind-value]').each(function(){
+                    var $elt = $(this);
+                    if($elt.data('bind-value') + '' === value){
+                        $elt.addClass('active');
+                    } else {
+                        $elt.removeClass('active');
+                    }
+                });
             } else {
                 $node.text(value);
             }
@@ -443,6 +455,13 @@ function($, _, Handlebars, Encoders, Filters){
             value = $node.val();
         } else if ($node.is(':radio, :checkbox')) {
             value = toBind($node).filter(':checked').val();
+        } else if ($node.hasClass('button-group')) {
+            $node.find('[data-bind-value]').each(function(){
+                var $elt = $(this);
+                if($elt.hasClass('active')){
+                    value = $elt.data('bind-value') + '';
+                }  
+            });
         } else {
             value = $node.text();
         }

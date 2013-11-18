@@ -106,7 +106,8 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             * The target has been toggled. 
             * @event BtnGrouper#toggle.btngrouper
             */
-            $elt.trigger('toggle.' + ns);
+            $elt.trigger('toggle.' + ns)
+                    .trigger('change');
        },
                
        /**
