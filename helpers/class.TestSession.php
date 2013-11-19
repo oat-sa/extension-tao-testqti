@@ -140,6 +140,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     protected function submitItemResults(AssessmentItemSession $itemSession, $occurence = 0) {
+        parent::submitItemResults($itemSession, $occurence);
+        
         $item = $itemSession->getAssessmentItem();
         $occurence = $occurence;
         $sessionId = $this->getSessionId();
@@ -186,9 +188,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             // if numberPresented returned 0, division by 0 -> null.
             $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
             $this['LtiOutcome'] = $finalLtiOutcomeValue;
-    
-            $ltiOutcomeVariable = $this->getVariable('LtiOutcome');
-            $this->getResultTransmitter()->transmitTestVariable($ltiOutcomeVariable, $this->getSessionId(), $this->getTest()->getUri());
             
         }
         catch (ProcessingException $e) {
@@ -202,6 +201,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         catch (AssessmentTestSessionException $e) {
             $msg = "An error occured during test-level outcome processing.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+        }
+    }
+    
+    protected function submitTestResults() {
+        foreach ($this->getAllVariables() as $var) {
+            $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $this->getTest()->getUri());
         }
     }
     
