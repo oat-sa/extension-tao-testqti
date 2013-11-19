@@ -196,6 +196,23 @@ define(['jquery', 'cards/core/databinder'], function($, DataBinder){
         strictEqual($sectionParts.find('li').length, 2, 'only filtered values has been assigned');
     });
     
+    test('Rm binding', function(){
+        expect(5);
+        
+        var $container = $('#container-6');
+        ok($container.length === 1, 'Test the fixture is available');
+        
+        new DataBinder($container, model).bind();
+        
+        equal(model.title, 'testTitle', 'The title attribute is present');
+        $container.find('input:first-child').trigger('change');
+        ok(model.title === undefined, 'The title attribute has been removed');
+        
+        equal(model.testParts[0].assessmentSections[0].sectionParts.length, 4, 'The section parts contains 4 elements');
+        $container.find('input:last-child').trigger('change');
+        equal(model.testParts[0].assessmentSections[0].sectionParts.length, 3, 'A section parts has been remvoved');
+    });
+    
 });
 
 

@@ -19,9 +19,12 @@
  * 
  */
 
-
 /**
+ * QTI Test Converter Exception
  * 
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * 
+ * @access public
  * @package taoQtiTest
  * @subpackage models_classes
  */

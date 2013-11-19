@@ -51,6 +51,16 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
         
         this.udpateItemsNumber($section);
         
+        var sectionId = $section.attr('id');
+        
+        //section properties behavior
+        $('#' + sectionId + '-selection-rand').on('change', function(){
+            if($(this).prop('checked') === true){
+                 //trigger the bindings when the selection sub form is opened
+                 $('#' + sectionId + '-select').trigger('change');
+                 $('#' + sectionId + '-with-replacement').trigger('change');
+            }
+        });
         
         $('#' + $section.attr('id') + '-back').find('textarea').each(function(){
              var $elt = $(this);

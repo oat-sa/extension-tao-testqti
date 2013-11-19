@@ -264,6 +264,27 @@ function($, _, Handlebars, Encoders, Filters){
         }
     };
     
+     /**
+     * Assign value and listen for change on a particular node.
+     * @memberOf DataBinder
+     * @private
+     * @param {jQueryElement} $node - the elements to bind 
+     * @param {string} path - the path to the model value to bind
+     * @param {Object} model - the model bound
+     * @param {boolean} [domFirst = false] - if the node content must be assigned to the model value first
+     */
+    DataBinder.prototype._bindRmNode = function _bindRmNode($node, path, model, domFirst) {
+        if(!$node.data('bound')){
+            this._listenUpdates($node, path, model);
+            
+            if(domFirst === true){
+                  $node.trigger('change');
+            }
+            
+            $node.data('bound', path);
+        }
+    };
+    
     /**
      * Listen for updates on a particular node. (listening the 'change' event)
      * @memberOf DataBinder
@@ -281,21 +302,50 @@ function($, _, Handlebars, Encoders, Filters){
             e.stopPropagation();
             
             if($node.is('[data-bind-each]')){
+                
+                 //sort the model, sync the indexes and rebind the content
                  order(model, path, $node);
                  resyncIndexes(model, path, $node);
                  
                  $node.data('bind-each', path);
                  self._rebind($node);
                  
+                 /**
+                  * The model has been sorted
+                  * @event DataBinder#order.binder
+                  * @param {Object} model - the up to date model
+                  */
                  self.$container.trigger('order.binder', [self.model]);
-            } else {
-                update(model, path, self._getNodeValue($node));
+                 
+            } 
+            else if($node.is('[data-bind-rm]')){
+                
+                //remove the model element if the node value is true
+                var value = self._getNodeValue($node);
+                if(value === true){
+                    remove(model, path);
+                }
                 
                 /**
-                * The model has been updated
-                * @event DataBinder#update.binder
-                * @param {Object} model - the up to date model
-                */
+                 * The model has been updated
+                 * @event DataBinder#update.binder
+                 * @param {Object} model - the up to date model
+                 */
+                self.$container.trigger('delete.binder', [self.model]);
+                
+            } else {
+                
+                //update the model with the node value
+                update(model, path, self._getNodeValue($node));
+                
+                //if we remove an element of an array, we need to resync indexes and bindings
+                self._resyncIndexOnceRm($node, path);
+                
+                /**
+                 * The model has been updated
+                 * @event DataBinder#update.binder
+                 * @param {Object} model - the up to date model
+                 */
                 self.$container.trigger('change.binder', [self.model]);
             }
 
@@ -329,22 +379,8 @@ function($, _, Handlebars, Encoders, Filters){
 
             remove(model, path);
             
-            if ($node.is('[data-bind-index]')) {
-                var removedIndex = parseInt($node.data('bind-index'), 10);
-                var $parentNode = $node.parent('[data-bind-each]');
-                var parentPath = path.replace(/\.[0-9]+$/, '');
-
-                resyncIndexes(self.model, parentPath);
-
-                //we need to rebind after sync because the path are not valid anymore
-                $parentNode.children('[data-bind-index]').filter(':gt(' + removedIndex + ')').each(function() {
-                    var $item = $(this);
-                    var newIndex = parseInt($item.data('bind-index'), 10) - 1;
-                    //we also update the indexes
-                    $item.attr('data-bind-index', newIndex)
-                            .data('bind-index', newIndex + '');
-                });
-            }
+            //if we remove an element of an array, we need to resync indexes and bindings
+            self._resyncIndexOnceRm($node, path);
 
             /**
              * An property of the model is removed
@@ -376,6 +412,7 @@ function($, _, Handlebars, Encoders, Filters){
             
             var size = $node.children('[data-bind-index]').length;
             $node.children().not('[data-bind-index]').each(function(){
+                
                 //got the inserted node
                 var $newNode = $(this);
                 var realPath = path + '.' + size;
@@ -403,10 +440,38 @@ function($, _, Handlebars, Encoders, Filters){
         });
     };
     
-        /**
+    /**
+     * 
+     * @memberOf DataBinder
+     * @private
+     * @param {jQueryElement} $node - the elements to bind 
+     * @param {string} path - the path to the model value to bind
+     */
+    DataBinder.prototype._resyncIndexOnceRm = function _resyncIndexOnceRm($node, path){
+        var self = this;
+         if ($node.is('[data-bind-index]')) {
+                var removedIndex = parseInt($node.data('bind-index'), 10);
+                var $parentNode = $node.parent('[data-bind-each]');
+                var parentPath = path.replace(/\.[0-9]+$/, '');
+
+                resyncIndexes(self.model, parentPath);
+
+                //we need to rebind after sync because the path are not valid anymore
+                $parentNode.children('[data-bind-index]').filter(':gt(' + removedIndex + ')').each(function() {
+                    var $item = $(this);
+                    var newIndex = parseInt($item.data('bind-index'), 10) - 1;
+                    //we also update the indexes
+                    $item.attr('data-bind-index', newIndex)
+                            .data('bind-index', newIndex + '');
+                });
+            }
+    };
+    
+    /**
      * Set the value into a node.
      * If an encoder is defined in the node, the encode method is called.
-     * 
+     * @memberOf DataBinder
+     * @private
      * @param {jQueryElement} $node - the node that accept the value
      * @param {string|boolean|number} value - the value to set
      */
@@ -451,7 +516,7 @@ function($, _, Handlebars, Encoders, Filters){
      */
     DataBinder.prototype._getNodeValue = function _getNodeValue($node) {
         var value;
-        if ($node.is(':text, textarea')) {
+        if ($node.is(':text, :hidden, textarea')) {
             value = $node.val();
         } else if ($node.is(':radio, :checkbox')) {
             value = toBind($node).filter(':checked').val();
@@ -485,27 +550,42 @@ function($, _, Handlebars, Encoders, Filters){
      */
     DataBinder.prototype.bind = function bind($elt, model, prefix, domFirst) {
         var self = this;
-        
-        $elt = $elt || self.$container;
-        model = model || self.model;
+        $elt = $elt || this.$container;
+        model = model || this.model;
         prefix = prefix || '';
         domFirst = domFirst || false;
         
+        /**
+         * Find dataAttrName 
+         * @param {type} $elt
+         * @param {type} dataAttrName
+         */
+        var bindElements = function bindElements($elt, dataAttrName, binding){
+            var selector = '[data-' + dataAttrName + ']';
+            $elt.find(selector).andSelf().filter(selector).each(function(){
+                var $node = $(this);
+                var path = prefix + $node.data(dataAttrName);
+                self[binding]($node, path, model, domFirst);
+            });
+        };
+        
         //Array binding
-        $elt.find('[data-bind-each]').andSelf().filter('[data-bind-each]').each(function(){
-             var $node = $(this);
-             var path = prefix + $node.data('bind-each');
-             self._bindArrayNode($node, path, model, domFirst);
-         });
+        bindElements($elt, 'bind-each', '_bindArrayNode');
+        
+        //Remove binding, if bound value === true, then path is removed from the model
+        bindElements($elt, 'bind-rm', '_bindRmNode');
          
-         //simpple binding (the container can also bound something in addition to children) 
-        $elt.find('[data-bind]').andSelf().filter('[data-bind]').each(function() {
-            var $node = $(this);
-            var path = prefix + $node.data('bind');
-            self._bindNode($node, path, model, domFirst);
-        });
+         //simple binding (the container can also bound something in addition to children) 
+        bindElements($elt, 'bind', '_bindNode');
     };
     
+    /**
+     * Rebind, after ordering for instance.
+     * @memberOf DataBinder
+     * @private
+     * @param {jQueryElement} $elt - the container of the elements to bind (also itself boundable)
+     * @param {string} [prefix = ''] - a prefix into the model path, used internally on rebound
+     */
      DataBinder.prototype._rebind = function _rebind($elt, prefix){
          
         var self = this;

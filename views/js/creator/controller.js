@@ -46,6 +46,10 @@ function($, _, cards, DataBindController, ItemView, SectionView){
             
             this.updateItems();
             
+            $container.on('change.binder', function(e, model){
+                console.log(model);
+            });
+            
             var binderOptions = _.merge(this.routes, {
                 filters : {
                     'isItemRef' : function(value){

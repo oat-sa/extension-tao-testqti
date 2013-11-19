@@ -150,17 +150,17 @@
                 <div  class='form-group'>
                     <label ><?=__('Items selection')?></label>
                     <div>
-                        <input type="radio" id="{{identifier}}-selection-all"  name="{{identifier}}-selection" data-toggle="#{{identifier}}-ordering" value="0" data-bind="selection.select" data-bind-encoder="number" checked="checked"  />
+                        <input type="radio" id="{{identifier}}-selection-all"  name="{{identifier}}-selection" value="true" data-bind-rm="selection" data-bind-encoder="boolean" checked="checked"  />
                         <label for="selection-all"><?=__('Display all items')?></label>
                         <br />
-                        <input type="radio" id="{{identifier}}-selection-rand" name="{{identifier}}-selection" data-toggle=".randomized" value="1" />
+                        <input type="radio" id="{{identifier}}-selection-rand" name="{{identifier}}-selection" data-toggle=".randomized" value="false" />
                         <label for="selection-rand"><?=__('Select items randomly')?></label>
                         <div class='form-group randomized toggled'>
                             <label for="select" ><?=__('Number of items to be displayed')?></label>
-                            <input type="text" name="{{identifier}}-select" data-increment="1" data-min="1" data-bind="selection.select" data-bind-encoder="number" />
+                            <input type="text" id="{{identifier}}-select"  name="{{identifier}}-select" data-increment="1" data-min="1" data-bind="selection.select" data-bind-encoder="number" />
                         </div>
                         <div class='form-group randomized toggled'>
-                            <input type="checkbox" name="{{identifier}}-with-replacement" value="true" data-bind="selection.withReplacement" data-bind-encoder="boolean" />
+                            <input type="checkbox" id="{{identifier}}-with-replacement" name="{{identifier}}-with-replacement" value="true" data-bind="selection.withReplacement" data-bind-encoder="boolean" />
                             <label for="with-replacement" class='after'><?=__('Allow multiple selection for an item')?></label>
                         </div>
                     </div>
