@@ -67,10 +67,14 @@ define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], 
              
              $elt.ckeditor();
              $elt.siblings('.hide-rubricblock').on('click', function(){
-                 //todo
-                 $elt.trigger('change');
+                 if($.trim($elt.val()) === ''){
+                    $elt.siblings('input[data-bind-rm]').trigger('change');
+                } else {
+                    $elt.siblings('input[data-bind]').trigger('change');
+                    $elt.trigger('change');
+                }
             });
-         });
+        });
     },
     
     createAdder : function (){

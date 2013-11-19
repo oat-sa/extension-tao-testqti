@@ -22,6 +22,8 @@ use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
 use qtism\common\datatypes\Duration;
 use qtism\common\collections\IntegerCollection;
+use qtism\data\ViewCollection;
+use qtism\data\View;
 
 /**
  * This class helps you to convert a QTITest from the qtism library.
@@ -282,6 +284,12 @@ class taoQtiTest_models_classes_QtiTestConverter {
      */
     private function createComponentCollection(ReflectionClass $class, $values){
         $collection = $class->newInstance();
+        if($collection instanceof ViewCollection){
+            foreach($values as $value){
+                $collection[] = View::getConstantByName($value);
+            }
+            return $collection;
+        }
         if($collection instanceof QtiComponentCollection){
             foreach($values as $value){
                 $collection->attach($this->arrayToComponent($value, null, false));
@@ -300,11 +308,15 @@ class taoQtiTest_models_classes_QtiTestConverter {
     /**
      * Call the constructor with the required parameters of a QtiComponent.
      * @param ReflectionClass $class
-     * @param type $properties
+     * @param array|string $properties
      * @return the QtiComponent's instance
      */
     private function createInstance(ReflectionClass $class, $properties){
         $arguments = array();
+        if($class->implementsInterface('qtism\common\enums\Enumeration') && is_string($properties)){
+            $enum = $class->newInstance();
+            return $enum->getConstantByName($properties);
+        }
         $constructor = $class->getConstructor();
         if(is_null($constructor)){
             return $class->newInstance();
@@ -315,9 +327,9 @@ class taoQtiTest_models_classes_QtiTestConverter {
                 $name = $parameter->getName();
                 $paramClass = $parameter->getClass();
                 if(!is_null($paramClass)){
-                    
-                    $collection = $this->createComponentCollection(new ReflectionClass($paramClass->name), $properties[$name]);
-                    $arguments[] = $collection;
+                    if(is_array($properties[$name])){
+                        $arguments[] = $this->createComponentCollection(new ReflectionClass($paramClass->name), $properties[$name]);
+                    }
                 } else if(array_key_exists($name, $properties)){
                     $arguments[] = $properties[$name];
                 } else {

@@ -63,12 +63,20 @@ function($, _, cards, DataBindController, ItemView, SectionView){
                     
                     //ensure the qti-type is present
                     //todo check how to ensure that within the data binding
-                    (function addMissingQtiType (collection) {
+                    (function addMissingQtiType (collection, parentType) {
                         _.forEach(collection, function(value, key){
                             if(_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')){
-                                value['qti-type'] = key;
+                                if(_.isNumber(key)){
+                                    if(parentType){
+                                        value['qti-type'] =  parentType;
+                                    }
+                                } else {
+                                    value['qti-type'] = key;
+                                }
                             }
-                            if(_.isObject(value) || _.isArray(value)){
+                            if (_.isArray(value)){
+                                 addMissingQtiType(value, key.replace(/s$/, ''));
+                            } else if(_.isObject(value)){
                                 addMissingQtiType(value);
                             }
                         });

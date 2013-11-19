@@ -1,3 +1,5 @@
+//todo move outside of cards, qti test related
+
 define(['jquery', 'lodash'], function($, _){
     
    var getAttributes = function getAttributes(object){
