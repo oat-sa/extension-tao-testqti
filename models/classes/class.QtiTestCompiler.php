@@ -97,6 +97,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         $renderingEngine = new XhtmlRenderingEngine();
         
         foreach ($rubricBlockRefs as $rubric) {
+            // loading...
             common_Logger::d("Loading rubricBlock '" . $rubric->getHref() . "'...");
             
             $rubricDoc = new XmlDocument();
@@ -104,7 +105,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             
             common_Logger::d("rubricBlock '" . $rubric->getHref() . "' successfully loaded.");
             
-            
+            // rendering...
             common_Logger::d("Rendering rubricBlock '" . $rubric->getHref() . "'...");
             
             $pathinfo = pathinfo($rubric->getHref());
