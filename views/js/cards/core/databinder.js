@@ -346,7 +346,7 @@ function($, _, Handlebars, Encoders, Filters){
                  * @event DataBinder#update.binder
                  * @param {Object} model - the up to date model
                  */
-                self.$container.trigger('change.binder', [self.model]);
+                self.$container.trigger('update.binder', [self.model]);
             }
 
             
@@ -356,8 +356,6 @@ function($, _, Handlebars, Encoders, Filters){
              * @param {Object} model - the up to date model
              */
              self.$container.trigger('change.binder', [self.model]);
-
-            
         });
     };
     

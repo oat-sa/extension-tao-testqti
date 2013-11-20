@@ -46,12 +46,13 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
            
             return this.each(function() {
                 var $elt = $(this);
-                var $ctrl;
+                var $ctrl, currentValue;
                 
                 //basic type checking
                 if(!$elt.is('input[type="text"]')){
                     $.error('The incrementer plugin applies only on input element of type text');
                 } else {
+                    currentValue = parseInt($elt.val(), 10);
                     $elt.data(dataNs, options)                      //add data to the element
                         .addClass(options.incrementerClass)         //add the css class
                         .after(                                     //set up controls
@@ -65,17 +66,24 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
                             } else if(e.which === 40){               //down
                                 self._dec($elt);
                             }
+                            this.select();
                         })
                         .on('keyup', function(){                   
                            $elt.val($elt.val().replace(/[\D]/g, ''));       //allow only digits
+                           this.select();
+                        })
+                        .on('focus', function(){
+                            this.select();
                         });
                     
                     //set up the default value if needed
-                    if(!_.isNumber($elt.val()) || parseInt($elt.val(), 10) < options.min || parseInt($elt.val(), 10) > options.max) {
-                        $elt.val(options.min);
+                    if(_.isNaN(currentValue) 
+                            || (options.min !== null && currentValue < options.min) 
+                            || (options.max !== null && currentValue > options.max) ) {
+                        $elt.val(options.min || 0);
                     } 
                         
-                    $ctrl = $elt.siblings('.' + options.incrementerCtrlClass);
+                    $ctrl = $elt.next('.' + options.incrementerCtrlClass);
                     
                     $ctrl.find('.inc').click(function(e){
                         e.preventDefault();
@@ -107,7 +115,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
            var current = parseInt($elt.val(), 10);
            var value = current + options.step;
            
-           if(options.max === null || (options.max && value <= options.max)){
+           if(options.max === null || (_.isNumber(options.max) && value <= options.max)){
                 $elt.val(value);
             
                /**
@@ -131,14 +139,15 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
            var current = parseInt($elt.val(), 10);
            var value = current - options.step;
            
-           if(options.min === null ||  (options.min && value >= options.min)){
+           if(options.min === null ||  (_.isNumber(options.min) && value >= options.min)){
                 $elt.val(value);
             
                /**
                 * The target has been toggled. 
                 * @event Incrementer#decrement.incrementer
                 */
-                $elt.trigger('decrement.' + ns, [value]);
+                $elt.trigger('decrement.' + ns, [value])
+                        .trigger('change');
            } 
        },
                
@@ -152,7 +161,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
        destroy : function(){
             this.each(function() {
                 var $elt = $(this);
-                var options = $elt.data(dataNs);ctrl
+                var options = $elt.data(dataNs);
                 $elt.off('keyup keydown')
                     .siblings('.' + options.incrementerCtrlClass).remove();
                 

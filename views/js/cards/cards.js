@@ -6,8 +6,9 @@ define([
     'cards/incrementer', 
     'cards/inplacer', 
     'cards/btngrouper', 
-    'cards/flipper'
-], function(toggler, disabler, adder, closer, incrementer, inplacer, btngrouper, flipper) {
+    'cards/flipper',
+    'cards/durationer'
+], function(toggler, disabler, adder, closer, incrementer, inplacer, btngrouper, flipper, durationer) {
     
     return {
         start : function($container){
@@ -19,6 +20,7 @@ define([
             incrementer($container);
             inplacer($container);
             flipper($container);
+            durationer($container);
         }
     };
 });

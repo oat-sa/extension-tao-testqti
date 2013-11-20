@@ -47,7 +47,9 @@ function($, _, cards, DataBindController, ItemView, SectionView){
             this.updateItems();
             
             $container.on('change.binder', function(e, model){
-                console.log(model);
+                if(e.namespace === 'binder'){
+                    console.log(model);
+                }
             });
             
             var binderOptions = _.merge(this.routes, {

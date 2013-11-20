@@ -193,14 +193,14 @@
         text-align: right;        
         & ~ .incrementer-ctrl{
             display: inline-block;
-            margin: 0;
+            margin: 0 .5em 0 0;
             padding-left: 4px;
             > a {
                 width: 16px;
                 &.inc {
                     margin-top: -3px;
                     @include jui-icon(0, (-16px), grey);
-                    &:hover{
+                    &:hover, &:focus, &:active{
                         @include jui-icon( 0, (-16px));
                         display: block;
                         height: 12px;
@@ -212,7 +212,7 @@
                      margin-top: -2px;
                      margin-left: -1px;
                      @include jui-icon( (-64px), (-16px), grey);
-                     &:hover{
+                     &:hover, &:focus, &:active{
                         @include jui-icon( (-64px), (-16px));
                         display: block;
                         height: 12px;
@@ -243,7 +243,6 @@
         background-color: #ddd !important;
         display: none;
     }
-
 }
 
 /* Actions bar */
@@ -309,19 +308,22 @@
         width:150px;
         
         &.micro{
-            width:75px;
+            width:30px;
+        }
+        &.mini{
+            width:60px;
         }
         &.small{
-            width:100px;
+            width:90px;
         }
         &.big{
             width:200px;
         }
         &:active{
-             @include shadow(#666, 1px, 1px);
+             @include shadow(#999, 1px, 1px);
         }
         &:focus{
-            border: solid 1px #666;
+            border: solid 1px #999;
         }
         &:disabled{
             background-color: #eee;
@@ -362,13 +364,20 @@
         height:10em;
         width: 300px;
         &.micro{
+            width:75px;
+            height:2em;
+        }
+        &.mini{
             width:150px;
+            height:4em;
         }
         &.small{
             width:200px;
+            height:8em;
         }
         &.big{
             width:500px;
+            height:15em;
         }
     }
     
@@ -409,5 +418,4 @@
             background-position: center;
         }
     }
-    
 }

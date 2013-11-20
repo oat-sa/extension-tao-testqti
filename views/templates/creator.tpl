@@ -55,12 +55,12 @@
 
                 <div id="min-time" class='form-group'>
                     <label><?=__('Min Duration')?></label>
-                    <input type="text" name="min-time" class="time small" value="00:00:00" data-bind="testParts.0.timeLimits.minTime" data-bind-encoder="time" />
+                    <input type="text" name="min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="testParts.0.timeLimits.minTime" data-bind-encoder="time" />
                 </div>
 
                 <div class='form-group'>
                     <label><?=__('Max Duration')?></label>
-                    <input type="text" name="max-time" class="time small" value="00:00:00" data-bind="testParts.0.timeLimits.maxTime" data-bind-encoder="time" />
+                    <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="testParts.0.timeLimits.maxTime" data-bind-encoder="time" />
                 </div>
 
                 <div class='form-group'>
