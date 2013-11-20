@@ -63,17 +63,25 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
                        .on('keydown', function(e){  
                             if(e.which === 38){                      //up
                                 self._inc($elt);
+                                this.select();
                             } else if(e.which === 40){               //down
                                 self._dec($elt);
+                                this.select();
                             }
-                            this.select();
                         })
                         .on('keyup', function(){                   
                            $elt.val($elt.val().replace(/[\D]/g, ''));       //allow only digits
-                           this.select();
                         })
                         .on('focus', function(){
                             this.select();
+                        })
+                        .on('disable', function(){
+                            $ctrl.find('.inc,.dec').prop('disabled', true)
+                                                    .addClass('disabled');
+                        })
+                        .on('enable', function(){
+                            $ctrl.find('.inc,.dec').prop('disabled', false)
+                                                    .removeClass('disabled');
                         });
                     
                     //set up the default value if needed
@@ -87,11 +95,15 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
                     
                     $ctrl.find('.inc').click(function(e){
                         e.preventDefault();
-                        self._inc($elt);
+                        if(!$(this).prop('disabled')){
+                            self._inc($elt);
+                        }
                     });
                      $ctrl.find('.dec').click(function(e){
                         e.preventDefault();
-                        self._dec($elt);
+                        if(!$(this).prop('disabled')){
+                            self._dec($elt);
+                        }
                     });
                  
                     /**

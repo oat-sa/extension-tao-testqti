@@ -87,7 +87,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
            var options = $elt.data(dataNs);
            var $target = options.target;
            $target.removeClass(options.disabledClass)
-                .find(':input').removeAttr('disabled');
+                .find(':input').prop('disabled', false);
         
            /**
             * The target has been enabled
@@ -95,6 +95,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
             * @param {jQueryElement} $target - the enabled target
             */
            $elt.trigger('enable.' + ns, [$target]);
+           $target.find(':input').andSelf().trigger('enable');
        },
                
        /**
@@ -123,7 +124,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
             var options = $elt.data(dataNs);
             var $target = options.target;
             $target.addClass(options.disabledClass)
-                 .find(':input').attr('disabled', 'disabled');
+                 .find(':input').prop('disabled', true);
          
             /**
             * The target has been disabled
@@ -131,6 +132,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
             * @param {jQueryElement} $target - the enabled target
             */
             $elt.trigger('disable.' + ns, [$target]);
+            $target.find(':input').andSelf().trigger('disable');
        },
                
        /**

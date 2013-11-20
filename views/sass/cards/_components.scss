@@ -138,10 +138,12 @@
 
 /* Disabler */
     .disabled{
-        color:#999;
+        
     }
-    input.disabled{
-        background-color:#ccc;
+    .disabled, *:disabled{
+        cursor: default;
+        background-color: #ccc;
+        color: #666;
     }
     
 /* Closer */
@@ -205,6 +207,10 @@
                         display: block;
                         height: 12px;
                     }
+                    &.disabled{
+                        background-color: transparent !important;
+                        opacity: 0.5;
+                     }
                     display: block;
                     height: 12px;
                 }
@@ -216,6 +222,10 @@
                         @include jui-icon( (-64px), (-16px));
                         display: block;
                         height: 12px;
+                     }
+                     &.disabled{
+                        background-color: transparent  !important;
+                        opacity: 0.5;
                      }
                      display: block;
                      height: 12px;
