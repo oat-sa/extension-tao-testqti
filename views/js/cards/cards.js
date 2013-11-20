@@ -1,13 +1,13 @@
 define([
-    'cards/toggler', 
-    'cards/disabler', 
-    'cards/adder', 
-    'cards/closer', 
-    'cards/incrementer', 
-    'cards/inplacer', 
-    'cards/btngrouper', 
-    'cards/flipper',
-    'cards/durationer'
+    'cards/ui/toggler', 
+    'cards/ui/disabler', 
+    'cards/ui/adder', 
+    'cards/ui/closer', 
+    'cards/ui/incrementer', 
+    'cards/ui/inplacer', 
+    'cards/ui/btngrouper', 
+    'cards/ui/flipper',
+    'cards/ui/durationer'
 ], function(toggler, disabler, adder, closer, incrementer, inplacer, btngrouper, flipper, durationer) {
     
     return {

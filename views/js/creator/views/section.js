@@ -1,4 +1,4 @@
-define(['jquery', 'handlebars', 'cards/incrementer', 'uri', 'ckeditor-jquery'], function($, Handlebars, incrementer, uri){
+define(['jquery', 'handlebars', 'cards/ui/incrementer', 'uri', 'ckeditor-jquery'], function($, Handlebars, incrementer, uri){
     'use strict';
    
    var SectionView = {

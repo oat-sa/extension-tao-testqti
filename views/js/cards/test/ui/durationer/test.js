@@ -1,11 +1,7 @@
-define(['jquery', 'cards/durationer', 'cards/cards'], function($, Durationer, cards){
+define(['jquery', 'cards/ui/durationer', 'cards/cards'], function($, Durationer, cards){
     
     
-    module('Durationer Stand Alone Plugin Test', {
-        setup: function() {
-           
-        }
-    });
+    module('Durationer Stand Alone Test');
    
     test('plugin', function(){
        expect(1);

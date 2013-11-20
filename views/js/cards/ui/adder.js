@@ -12,6 +12,7 @@ function($, _, Handlebars, Pluginifier, DataAttrHandler){
    var ns = 'adder';
    var dataNs = 'cards.' + ns;
    
+   //positions available must match jquery function {position}To (ie. appendTo)
    var positions = ['append', 'prepend'];
    
    var defaults = {
@@ -40,14 +41,14 @@ function($, _, Handlebars, Pluginifier, DataAttrHandler){
         * @returns {object} the data to be bound to the template
         */
        templateData : function(dataCallback){
+           
+           /**
+            * This callback is used to populate template data
+            * @callback dataCallback
+            * @params {object} data - the data to be bound to the template
+            */
            dataCallback({});
        }
-       
-       /**
-        * This callback is used to populate template data
-        * @callback dataCallback
-        * @params {object} data - the data to be bound to the template
-        */
    };
    
    /** 
@@ -99,22 +100,25 @@ function($, _, Handlebars, Pluginifier, DataAttrHandler){
             return this.each(function() {
                 var $elt = $(this);
                 
-                //add data to the element
-                $elt.data(dataNs, options);
+                if(!$elt.data(dataNs)){
                 
-                 //bind an event to trigger the addition
-                if(options.bindEvent !== false){
-                    $elt.on(options.bindEvent, function(e){
-                        e.preventDefault();
-                        Adder._add($elt);
-                     });
+                    //add data to the element
+                    $elt.data(dataNs, options);
+
+                     //bind an event to trigger the addition
+                    if(options.bindEvent !== false){
+                        $elt.on(options.bindEvent, function(e){
+                            e.preventDefault();
+                            Adder._add($elt);
+                         });
+                    }
+
+                    /**
+                     * The plugin have been created.
+                     * @event Adder#create.adder
+                     */
+                    $elt.trigger('create.' + ns);
                 }
-                
-                /**
-                 * The plugin have been created.
-                 * @event Adder#create.adder
-                 */
-                $elt.trigger('create.' + ns);
             });
        },
        
@@ -187,6 +191,7 @@ function($, _, Handlebars, Pluginifier, DataAttrHandler){
                 if(options.bindEvent !== false){
                     $elt.off(options.bindEvent);
                 }
+                $elt.removeData(dataNs);
                 
                 /**
                  * The plugin have been destroyed.
