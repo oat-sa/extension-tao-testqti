@@ -892,10 +892,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	            
 	        break;
 	        
-	        case AssessmentTestSessionException::MISSING_RESPONSES:
-	            
-	        break;
-	        
 	        case AssessmentTestSessionException::NAVIGATION_MODE_VIOLATION:
 	            
 	        break;
