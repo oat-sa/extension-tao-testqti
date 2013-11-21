@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Cards Test - htmlstr's encoder </title>
+        <title>Cards Test - Closer UI Component</title>
         <link rel="stylesheet" type="text/css" href="../../../../../../../tao/views/js/qunit/qunit.css">
         <script type="text/javascript" src="../../../../../../../tao/views/js/require-jquery.js"></script>
         <script type="text/javascript" src="../../../../../../../tao/views/js/qunit/qunit.js"></script>
@@ -17,7 +17,7 @@
             require([taobase_www + 'js/config/config'], function(){
                 
                 //load the test
-                require(['cards/test/core/encoder/htmlstr/test'], function(){
+                require(['cards/test/ui/closer/test'], function(){
                     
                     //Tests loaded, run tests
                     QUnit.start();
@@ -27,6 +27,22 @@
     </head>
     <body>
         <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
+        <div id="qunit-fixture">
+            
+            <div id="container-1">
+                <div class="content">
+                    <p>foo</p>
+                </div>
+                <a  class="closer" href="#" >add</a>
+            </div>
+            
+            <div id="container-2">
+                <div class="c2-content">
+                    <p>foo</p>
+                </div>
+                <a  class="closer" data-close='#c2-content' href="#" >add</a>
+            </div>
+            
+        </div>
     </body>
 </html>

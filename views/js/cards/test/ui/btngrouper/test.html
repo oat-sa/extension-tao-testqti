@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Cards Test - htmlstr's encoder </title>
+        <title>Cards Test - Button Grouper UI Component</title>
         <link rel="stylesheet" type="text/css" href="../../../../../../../tao/views/js/qunit/qunit.css">
         <script type="text/javascript" src="../../../../../../../tao/views/js/require-jquery.js"></script>
         <script type="text/javascript" src="../../../../../../../tao/views/js/qunit/qunit.js"></script>
@@ -17,7 +17,7 @@
             require([taobase_www + 'js/config/config'], function(){
                 
                 //load the test
-                require(['cards/test/core/encoder/htmlstr/test'], function(){
+                require(['cards/test/ui/btngrouper/test'], function(){
                     
                     //Tests loaded, run tests
                     QUnit.start();
@@ -27,6 +27,19 @@
     </head>
     <body>
         <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
+        <div id="qunit-fixture">
+            
+            <div class='button-group' data-button-group='toggle'>
+                <a href='#' class=' active'>Y</a>
+                <a href='#'>N</a>
+            </div>
+                
+            <div class='button-group' data-button-group='switch'>
+                <a href='#' class='active'>B</a>
+                <a href='#'>I</a>
+                <a href='#'>U</a>
+            </div>
+            
+        </div>
     </body>
 </html>

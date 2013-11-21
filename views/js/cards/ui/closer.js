@@ -126,6 +126,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
                 if(options.bindEvent !== false){
                     $elt.off(options.bindEvent);
                 }
+                $elt.removeData(dataNs);
                 
                 /**
                  * The plugin have been destroyed.

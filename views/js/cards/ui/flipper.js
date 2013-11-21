@@ -210,7 +210,7 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
                 
                 if($elt.data('unflip')){
                     options.unflip = $($elt.data('unflip'));
-                }
+                } 
                 
             } else {
                 $.error('Define either data-flip-back or data-flip-front, please!');

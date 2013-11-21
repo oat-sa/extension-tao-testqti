@@ -96,11 +96,14 @@ define(['jquery', 'lodash'], function($, _){
             var $elt = $(e.target);
             
             if($elt.is(selector)){
+                var $target, $outer;
+                
                 if (self.options.inner){
+                    $outer = $elt;
                     $elt = $elt.parents('[data-' + attrName + ']');
                 }
                 
-                var $target =  (self.options.useTarget === true) ? getTarget(attrName, $elt) : undefined;
+                $target =  (self.options.useTarget === true) ? getTarget(attrName, $elt) : (self.options.inner ? $outer : undefined);
 
                 //check if the plugin is already bound to the element
                 if(!$elt.data(self.options.namespace)){
@@ -124,7 +127,10 @@ define(['jquery', 'lodash'], function($, _){
                 //call the method bound to this event
                 if(typeof self.callPluginMethod === 'function'){
                     self.callPluginMethod($elt, $target);
-                }
+                } /*else {
+                    //if there is no action to call we top listening (init plugin only)
+                    $(document).off(self.options.listenerEvent, selector);
+                }*/
 
                 if(shouldPreventDefault($elt)){
                     e.preventDefault();

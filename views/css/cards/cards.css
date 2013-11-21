@@ -37,7 +37,7 @@
 }
 /* line 77, ../../sass/cards/_base.scss */
 .card ::-moz-focus-inner, .card :active, .card :focus, .card ::-moz-focus-inner {
-  outline: none;
+  outline: 0;
   -moz-outline-style: none;
 }
 
@@ -64,7 +64,7 @@ hr {
 
 /* line 77, ../../sass/cards/_base.scss */
 .actions ::-moz-focus-inner, .actions :active, .actions :focus, .actions ::-moz-focus-inner {
-  outline: none;
+  outline: 0;
   -moz-outline-style: none;
 }
 
@@ -81,9 +81,25 @@ hr {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   margin: 0.5% 1% 0.5% 0.5%;
+  position: relative;
+}
+/* line 14, ../../sass/cards/_layout.scss */
+.nav h1, .nav h2, .nav h3, .nav h4, .nav h5 {
+  margin: 0;
+  display: inline-block;
+}
+/* line 19, ../../sass/cards/_layout.scss */
+.nav .actions {
+  margin: 0;
+  position: absolute;
+  top: 0;
+}
+/* line 24, ../../sass/cards/_layout.scss */
+.nav .actions.right {
+  right: 0;
 }
 
-/* line 14, ../../sass/cards/_layout.scss */
+/* line 30, ../../sass/cards/_layout.scss */
 .card {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -91,12 +107,11 @@ hr {
   display: inline-block;
   vertical-align: top;
   position: relative;
-  min-width: 250px;
   color: #333;
-  width: 32%;
   margin: 0 0.5%;
+  /* Form layout */
 }
-/* line 24, ../../sass/cards/_layout.scss */
+/* line 38, ../../sass/cards/_layout.scss */
 .card > h1 {
   background-color: #eee;
   border: solid 1px #eee;
@@ -107,7 +122,7 @@ hr {
   display: block;
   position: relative;
 }
-/* line 35, ../../sass/cards/_layout.scss */
+/* line 49, ../../sass/cards/_layout.scss */
 .card .content {
   position: relative;
   border: solid 1px #eee;
@@ -115,11 +130,11 @@ hr {
   margin-top: .5em;
   min-height: 200px;
 }
-/* line 42, ../../sass/cards/_layout.scss */
+/* line 56, ../../sass/cards/_layout.scss */
 .card .content > div {
   margin: .1em 0;
 }
-/* line 46, ../../sass/cards/_layout.scss */
+/* line 60, ../../sass/cards/_layout.scss */
 .card .content > .help {
   position: absolute;
   top: .5em;
@@ -135,7 +150,7 @@ hr {
   box-shadow: 0 2px 4px #888;
   z-index: 600;
 }
-/* line 61, ../../sass/cards/_layout.scss */
+/* line 75, ../../sass/cards/_layout.scss */
 .card .content > .help:after {
   border-color: #666666 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #666666;
   border-style: solid;
@@ -147,15 +162,37 @@ hr {
   top: 100%;
   width: 0;
 }
-/* line 73, ../../sass/cards/_layout.scss */
+/* line 87, ../../sass/cards/_layout.scss */
 .card .content > .help a {
   color: #fff;
   text-decoration: none;
   font-weight: bold;
 }
-/* line 79, ../../sass/cards/_layout.scss */
+/* line 93, ../../sass/cards/_layout.scss */
 .card .content > .help span {
   display: none;
+}
+/* line 101, ../../sass/cards/_layout.scss */
+.card .form-group {
+  padding: .5em;
+}
+/* line 104, ../../sass/cards/_layout.scss */
+.card .form-group > label {
+  width: 30%;
+  float: left;
+}
+/* line 109, ../../sass/cards/_layout.scss */
+.card .form-group > div {
+  margin-left: 30%;
+}
+/* line 113, ../../sass/cards/_layout.scss */
+.card .form-group > label.after {
+  float: none;
+}
+/* line 117, ../../sass/cards/_layout.scss */
+.card .form-group .form-info {
+  font-size: .9em;
+  color: #555;
 }
 
 /*
@@ -166,23 +203,24 @@ hr {
         Contains style related to components
 */
 /* line 9, ../../sass/cards/_components.scss */
-.card {
+.card, .nav {
   /* Labels */
   /* States */
-  /*
-   * Components
-   */
   /* ListBox  */
   /* toggler */
   /* Adder */
   /* Disabler */
   /* Closer */
   /* Incrementer */
-  /* InPlacer */
   /* Flipper */
+  /* Inputs */
+  /* search input */
+  /* Buttons */
+  /* drop menu */
+  /* InPlacer */
 }
 /* line 12, ../../sass/cards/_components.scss */
-.card .label {
+.card .label, .nav .label {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   -ms-border-radius: 3px;
@@ -199,29 +237,29 @@ hr {
   padding: .3em .4em;
 }
 /* line 21, ../../sass/cards/_components.scss */
-.card .label.small {
+.card .label.small, .nav .label.small {
   font-size: .9em;
   padding: .2em .3em;
 }
 /* line 28, ../../sass/cards/_components.scss */
-.card .active {
+.card .active, .nav .active {
   border: dashed 1px #d00239 !important;
 }
 /* line 31, ../../sass/cards/_components.scss */
-.card .valid {
+.card .valid, .nav .valid {
   border: dashed 1px #009933 !important;
 }
 /* line 34, ../../sass/cards/_components.scss */
-.card .placeholder {
+.card .placeholder, .nav .placeholder {
   border: dashed 1px #333 !important;
   min-height: 2em;
 }
 /* line 38, ../../sass/cards/_components.scss */
-.card .ui-draggable {
+.card .ui-draggable, .nav .ui-draggable {
   cursor: move;
 }
 /* line 40, ../../sass/cards/_components.scss */
-.card .ui-draggable:before {
+.card .ui-draggable:before, .nav .ui-draggable:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -232,11 +270,11 @@ hr {
   content: ' ';
 }
 /* line 44, ../../sass/cards/_components.scss */
-.card .ui-sortable > * {
+.card .ui-sortable > *, .nav .ui-sortable > * {
   cursor: move;
 }
 /* line 46, ../../sass/cards/_components.scss */
-.card .ui-sortable > *:before {
+.card .ui-sortable > *:before, .nav .ui-sortable > *:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -246,8 +284,8 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 59, ../../sass/cards/_components.scss */
-.card ul.listbox {
+/* line 53, ../../sass/cards/_components.scss */
+.card ul.listbox, .nav ul.listbox {
   margin: .1em 0;
   padding: 0;
   list-style-type: none;
@@ -256,8 +294,8 @@ hr {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-/* line 66, ../../sass/cards/_components.scss */
-.card ul.listbox > li {
+/* line 60, ../../sass/cards/_components.scss */
+.card ul.listbox > li, .nav ul.listbox > li {
   white-space: no-wrap;
   position: relative;
   min-width: 75%;
@@ -269,20 +307,20 @@ hr {
   background-color: #fafafa;
   height: 1.8em;
 }
-/* line 78, ../../sass/cards/_components.scss */
-.card ul.listbox > li > .label {
+/* line 72, ../../sass/cards/_components.scss */
+.card ul.listbox > li > .label, .nav ul.listbox > li > .label {
   position: absolute;
   right: 0;
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
-/* line 85, ../../sass/cards/_components.scss */
-.card ul.listbox > li > [data-button-group] {
+/* line 79, ../../sass/cards/_components.scss */
+.card ul.listbox > li > [data-button-group], .nav ul.listbox > li > [data-button-group] {
   position: absolute;
   right: 2em;
 }
-/* line 90, ../../sass/cards/_components.scss */
-.card ul.listbox > li:first-child {
+/* line 84, ../../sass/cards/_components.scss */
+.card ul.listbox > li:first-child, .nav ul.listbox > li:first-child {
   -moz-border-radius-topleft: 3px;
   -webkit-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
@@ -290,8 +328,8 @@ hr {
   -webkit-border-top-right-radius: 3px;
   border-top-right-radius: 3px;
 }
-/* line 94, ../../sass/cards/_components.scss */
-.card ul.listbox > li:last-child {
+/* line 88, ../../sass/cards/_components.scss */
+.card ul.listbox > li:last-child, .nav ul.listbox > li:last-child {
   -moz-border-radius-bottomleft: 3px;
   -webkit-border-bottom-left-radius: 3px;
   border-bottom-left-radius: 3px;
@@ -300,18 +338,18 @@ hr {
   border-bottom-right-radius: 3px;
   border-bottom-width: 1px;
 }
-/* line 99, ../../sass/cards/_components.scss */
-.card ul.listbox > li.placeholder {
+/* line 93, ../../sass/cards/_components.scss */
+.card ul.listbox > li.placeholder, .nav ul.listbox > li.placeholder {
   background: none;
   margin: .5em;
   opacity: 0.6;
 }
-/* line 110, ../../sass/cards/_components.scss */
-.card .toggler:hover {
+/* line 104, ../../sass/cards/_components.scss */
+.card .toggler:hover, .nav .toggler:hover {
   color: #d00239;
 }
-/* line 114, ../../sass/cards/_components.scss */
-.card .toggler:before {
+/* line 108, ../../sass/cards/_components.scss */
+.card .toggler:after, .nav .toggler:after {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -321,8 +359,8 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 118, ../../sass/cards/_components.scss */
-.card .toggler.opened:before {
+/* line 112, ../../sass/cards/_components.scss */
+.card .toggler.opened:after, .nav .toggler.opened:after {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -332,12 +370,12 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 124, ../../sass/cards/_components.scss */
-.card .toggled {
+/* line 118, ../../sass/cards/_components.scss */
+.card .toggled, .nav .toggled {
   display: none;
 }
-/* line 130, ../../sass/cards/_components.scss */
-.card .adder:before {
+/* line 124, ../../sass/cards/_components.scss */
+.card .adder:before, .nav .adder:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -347,8 +385,8 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 133, ../../sass/cards/_components.scss */
-.card .adder:hover:before {
+/* line 127, ../../sass/cards/_components.scss */
+.card .adder:hover:before, .nav .adder:hover:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -358,14 +396,14 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 143, ../../sass/cards/_components.scss */
-.card .disabled, .card *:disabled {
+/* line 137, ../../sass/cards/_components.scss */
+.card .disabled, .card *:disabled, .nav .disabled, .nav *:disabled {
   cursor: default;
   background-color: #ccc;
   color: #666;
 }
-/* line 151, ../../sass/cards/_components.scss */
-.card .closer:before {
+/* line 145, ../../sass/cards/_components.scss */
+.card .closer:before, .nav .closer:before {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -375,8 +413,8 @@ hr {
   height: 16px;
   content: ' ';
 }
-/* line 156, ../../sass/cards/_components.scss */
-.card [data-button-group] {
+/* line 150, ../../sass/cards/_components.scss */
+.card [data-button-group], .nav [data-button-group] {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   -ms-border-radius: 3px;
@@ -391,8 +429,8 @@ hr {
   background-color: #666;
   color: #fff;
 }
-/* line 164, ../../sass/cards/_components.scss */
-.card [data-button-group] > a {
+/* line 158, ../../sass/cards/_components.scss */
+.card [data-button-group] > a, .nav [data-button-group] > a {
   float: left;
   border: none;
   margin: 0;
@@ -400,40 +438,41 @@ hr {
   padding: .2em .4em;
   border-width: 0 !important;
   border-right: solid 1px #999;
+  color: #fff;
 }
-/* line 173, ../../sass/cards/_components.scss */
-.card [data-button-group] > a.icon {
+/* line 167, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.icon, .nav [data-button-group] > a.icon {
   vertical-align: bottom;
   width: 16px;
   height: 16px;
   padding: .1em;
 }
-/* line 180, ../../sass/cards/_components.scss */
-.card [data-button-group] > a:last-child {
+/* line 174, ../../sass/cards/_components.scss */
+.card [data-button-group] > a:last-child, .nav [data-button-group] > a:last-child {
   border-right-width: 0;
 }
-/* line 183, ../../sass/cards/_components.scss */
-.card [data-button-group] > a.active {
+/* line 177, ../../sass/cards/_components.scss */
+.card [data-button-group] > a.active, .nav [data-button-group] > a.active {
   background-color: #e90240;
   opatcity: 0.6;
 }
-/* line 193, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer {
+/* line 187, ../../sass/cards/_components.scss */
+.card input.incrementer, .nav input.incrementer {
   width: 30px;
   text-align: right;
 }
-/* line 196, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl {
+/* line 190, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl, .nav input.incrementer ~ .incrementer-ctrl {
   display: inline-block;
   margin: 0 .5em 0 0;
   padding-left: 4px;
 }
-/* line 200, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a {
+/* line 194, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a, .nav input.incrementer ~ .incrementer-ctrl > a {
   width: 16px;
 }
-/* line 202, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc {
+/* line 196, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.inc, .nav input.incrementer ~ .incrementer-ctrl > a.inc {
   margin-top: -3px;
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
   display: inline-block;
@@ -446,8 +485,8 @@ hr {
   display: block;
   height: 12px;
 }
-/* line 205, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:hover, .card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:focus, .card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc:active {
+/* line 199, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.inc:hover, .card input.incrementer ~ .incrementer-ctrl > a.inc:focus, .card input.incrementer ~ .incrementer-ctrl > a.inc:active, .nav input.incrementer ~ .incrementer-ctrl > a.inc:hover, .nav input.incrementer ~ .incrementer-ctrl > a.inc:focus, .nav input.incrementer ~ .incrementer-ctrl > a.inc:active {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -459,13 +498,13 @@ hr {
   display: block;
   height: 12px;
 }
-/* line 210, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.inc.disabled {
+/* line 204, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.inc.disabled, .nav input.incrementer ~ .incrementer-ctrl > a.inc.disabled {
   background-color: transparent !important;
   opacity: 0.5;
 }
-/* line 217, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec {
+/* line 211, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.dec, .nav input.incrementer ~ .incrementer-ctrl > a.dec {
   margin-top: -2px;
   margin-left: -1px;
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
@@ -479,8 +518,8 @@ hr {
   display: block;
   height: 12px;
 }
-/* line 221, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:hover, .card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:focus, .card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec:active {
+/* line 215, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.dec:hover, .card input.incrementer ~ .incrementer-ctrl > a.dec:focus, .card input.incrementer ~ .incrementer-ctrl > a.dec:active, .nav input.incrementer ~ .incrementer-ctrl > a.dec:hover, .nav input.incrementer ~ .incrementer-ctrl > a.dec:focus, .nav input.incrementer ~ .incrementer-ctrl > a.dec:active {
   background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_cd0a0a_256x240.png");
   display: inline-block;
   vertical-align: middle;
@@ -492,86 +531,21 @@ hr {
   display: block;
   height: 12px;
 }
-/* line 226, ../../sass/cards/_components.scss */
-.card input[type="text"].incrementer ~ .incrementer-ctrl > a.dec.disabled {
+/* line 220, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .incrementer-ctrl > a.dec.disabled, .nav input.incrementer ~ .incrementer-ctrl > a.dec.disabled {
   background-color: transparent  !important;
   opacity: 0.5;
 }
-/* line 238, ../../sass/cards/_components.scss */
-.card [data-in-place], .card .inplace {
-  cursor: pointer;
-}
-/* line 240, ../../sass/cards/_components.scss */
-.card [data-in-place] input, .card .inplace input {
-  cursor: auto;
-}
-/* line 243, ../../sass/cards/_components.scss */
-.card [data-in-place]:hover, .card .inplace:hover {
-  color: #d00239;
-}
-/* line 249, ../../sass/cards/_components.scss */
-.card .flip {
+/* line 232, ../../sass/cards/_components.scss */
+.card .flip, .nav .flip {
   overflow: hidden;
 }
-/* line 252, ../../sass/cards/_components.scss */
-.card .flip-back {
+/* line 235, ../../sass/cards/_components.scss */
+.card .flip-back, .nav .flip-back {
   background-color: #ddd !important;
   display: none;
 }
-
-/* Actions bar */
-/* line 259, ../../sass/cards/_components.scss */
-.nav {
-  position: relative;
-}
-/* line 263, ../../sass/cards/_components.scss */
-.nav h1, .nav h2, .nav h3, .nav h4, .nav h5 {
-  margin: 0;
-  display: inline-block;
-}
-/* line 268, ../../sass/cards/_components.scss */
-.nav .actions {
-  margin: 0;
-  position: absolute;
-  top: 0;
-}
-/* line 273, ../../sass/cards/_components.scss */
-.nav .actions.right {
-  right: 0;
-}
-
-/*
- * Forms and actions
- */
-/* line 283, ../../sass/cards/_components.scss */
-.card, .nav {
-  /* Form layout */
-  /* Inputs */
-  /* search input */
-}
-/* line 286, ../../sass/cards/_components.scss */
-.card .form-group, .nav .form-group {
-  padding: .5em;
-}
-/* line 289, ../../sass/cards/_components.scss */
-.card .form-group > label, .nav .form-group > label {
-  width: 30%;
-  float: left;
-}
-/* line 294, ../../sass/cards/_components.scss */
-.card .form-group > div, .nav .form-group > div {
-  margin-left: 30%;
-}
-/* line 298, ../../sass/cards/_components.scss */
-.card .form-group > label.after, .nav .form-group > label.after {
-  float: none;
-}
-/* line 302, ../../sass/cards/_components.scss */
-.card .form-group .form-info, .nav .form-group .form-info {
-  font-size: .9em;
-  color: #555;
-}
-/* line 309, ../../sass/cards/_components.scss */
+/* line 242, ../../sass/cards/_components.scss */
 .card input[type=text], .card textarea, .nav input[type=text], .nav textarea {
   color: #333333;
   background-color: white;
@@ -589,40 +563,88 @@ hr {
   padding: .1em;
   width: 150px;
 }
-/* line 320, ../../sass/cards/_components.scss */
+/* line 253, ../../sass/cards/_components.scss */
 .card input[type=text].micro, .card textarea.micro, .nav input[type=text].micro, .nav textarea.micro {
   width: 30px;
 }
-/* line 323, ../../sass/cards/_components.scss */
+/* line 256, ../../sass/cards/_components.scss */
 .card input[type=text].mini, .card textarea.mini, .nav input[type=text].mini, .nav textarea.mini {
   width: 60px;
 }
-/* line 326, ../../sass/cards/_components.scss */
+/* line 259, ../../sass/cards/_components.scss */
 .card input[type=text].small, .card textarea.small, .nav input[type=text].small, .nav textarea.small {
   width: 90px;
 }
-/* line 329, ../../sass/cards/_components.scss */
+/* line 262, ../../sass/cards/_components.scss */
 .card input[type=text].big, .card textarea.big, .nav input[type=text].big, .nav textarea.big {
   width: 200px;
 }
-/* line 332, ../../sass/cards/_components.scss */
+/* line 265, ../../sass/cards/_components.scss */
 .card input[type=text]:active, .card textarea:active, .nav input[type=text]:active, .nav textarea:active {
   -webkit-box-shadow: 1px 1px 5px #999999;
   -moz-box-shadow: 1px 1px 5px #999999;
   box-shadow: 1px 1px 5px #999999;
 }
-/* line 335, ../../sass/cards/_components.scss */
+/* line 268, ../../sass/cards/_components.scss */
 .card input[type=text]:focus, .card textarea:focus, .nav input[type=text]:focus, .nav textarea:focus {
   border: solid 1px #999;
 }
-/* line 338, ../../sass/cards/_components.scss */
+/* line 271, ../../sass/cards/_components.scss */
 .card input[type=text]:disabled, .card textarea:disabled, .nav input[type=text]:disabled, .nav textarea:disabled {
   background-color: #eee;
 }
-/* line 343, ../../sass/cards/_components.scss */
-.card button, .nav button {
-  color: white;
-  background-color: #d00239;
+/* line 276, ../../sass/cards/_components.scss */
+.card textarea, .nav textarea {
+  height: 10em;
+  width: 300px;
+}
+/* line 279, ../../sass/cards/_components.scss */
+.card textarea.micro, .nav textarea.micro {
+  width: 75px;
+  height: 2em;
+}
+/* line 283, ../../sass/cards/_components.scss */
+.card textarea.mini, .nav textarea.mini {
+  width: 150px;
+  height: 4em;
+}
+/* line 287, ../../sass/cards/_components.scss */
+.card textarea.small, .nav textarea.small {
+  width: 200px;
+  height: 8em;
+}
+/* line 291, ../../sass/cards/_components.scss */
+.card textarea.big, .nav textarea.big {
+  width: 500px;
+  height: 15em;
+}
+/* line 297, ../../sass/cards/_components.scss */
+.card .dropdown, .nav .dropdown {
+  position: relative;
+  display: inline-block;
+}
+/* line 301, ../../sass/cards/_components.scss */
+.card .dropdown:after, .nav .dropdown:after {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -64px 0;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: absolute;
+  right: .4em;
+  top: .4em;
+  z-index: 200;
+}
+/* line 309, ../../sass/cards/_components.scss */
+.card .dropdown select, .nav .dropdown select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: #333333;
+  background-color: white;
   font-size: 1em;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -630,67 +652,52 @@ hr {
   -webkit-border-radius: 3px 3px;
   -moz-border-radius: 3px / 3px;
   border-radius: 3px / 3px;
-  font-size: 1.1em;
-  border: solid 1px #d00239;
-  padding: .4em .6em;
-  cursor: pointer;
-}
-/* line 35, ../../sass/cards/_base.scss */
-.card button a, .nav button a {
-  color: white;
-  font-weight: bold;
-}
-/* line 352, ../../sass/cards/_components.scss */
-.card button.micro, .nav button.micro {
-  font-size: .8em;
-  padding: .1em .2em;
-}
-/* line 356, ../../sass/cards/_components.scss */
-.card button.small, .nav button.small {
-  font-size: .9em;
-  padding: .2em .3em;
-}
-/* line 360, ../../sass/cards/_components.scss */
-.card button.big, .nav button.big {
-  font-size: 1.2em;
-  padding: .5em .75em;
-}
-/* line 364, ../../sass/cards/_components.scss */
-.card button:active, .card button:focus, .card button:hover, .nav button:active, .nav button:focus, .nav button:hover {
-  border: solid 1px #520116;
-}
-/* line 367, ../../sass/cards/_components.scss */
-.card button:disabled, .nav button:disabled {
-  background-color: #fd5481;
-  cursor: inherit;
-}
-/* line 373, ../../sass/cards/_components.scss */
-.card textarea, .nav textarea {
-  height: 10em;
-  width: 300px;
-}
-/* line 376, ../../sass/cards/_components.scss */
-.card textarea.micro, .nav textarea.micro {
-  width: 75px;
-  height: 2em;
-}
-/* line 380, ../../sass/cards/_components.scss */
-.card textarea.mini, .nav textarea.mini {
+  position: relative;
+  border: solid 1px #ccc;
+  height: 1.8em;
+  vertical-align: top;
+  margin: 0;
+  padding: .1em;
   width: 150px;
-  height: 4em;
+  background: transparent;
+  overflow: hidden;
+  text-indent: 0.01px;
+  text-overflow: '';
+  z-index: 400;
+  curosor: pointer;
 }
-/* line 384, ../../sass/cards/_components.scss */
-.card textarea.small, .nav textarea.small {
+/* line 329, ../../sass/cards/_components.scss */
+.card .dropdown select.micro, .nav .dropdown select.micro {
+  width: 30px;
+}
+/* line 332, ../../sass/cards/_components.scss */
+.card .dropdown select.mini, .nav .dropdown select.mini {
+  width: 60px;
+}
+/* line 335, ../../sass/cards/_components.scss */
+.card .dropdown select.small, .nav .dropdown select.small {
+  width: 90px;
+}
+/* line 338, ../../sass/cards/_components.scss */
+.card .dropdown select.big, .nav .dropdown select.big {
   width: 200px;
-  height: 8em;
 }
-/* line 388, ../../sass/cards/_components.scss */
-.card textarea.big, .nav textarea.big {
-  width: 500px;
-  height: 15em;
+/* line 341, ../../sass/cards/_components.scss */
+.card .dropdown select:active, .nav .dropdown select:active {
+  -webkit-box-shadow: 1px 1px 5px #999999;
+  -moz-box-shadow: 1px 1px 5px #999999;
+  box-shadow: 1px 1px 5px #999999;
 }
-/* line 416, ../../sass/cards/_components.scss */
-.card input[type=text], .nav input[type=text] {
+/* line 344, ../../sass/cards/_components.scss */
+.card .dropdown select:focus, .nav .dropdown select:focus {
+  border: solid 1px #999;
+}
+/* line 347, ../../sass/cards/_components.scss */
+.card .dropdown select:disabled, .nav .dropdown select:disabled {
+  background-color: #eee;
+}
+/* line 379, ../../sass/cards/_components.scss */
+.card input.incrementer, .card input[data-increment], .nav input.incrementer, .nav input[data-increment] {
   -moz-border-radius-topleft: 3px;
   -webkit-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
@@ -704,8 +711,8 @@ hr {
   -webkit-border-bottom-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-/* line 398, ../../sass/cards/_components.scss */
-.card input[type=text] ~ .ctrl, .nav input[type=text] ~ .ctrl {
+/* line 358, ../../sass/cards/_components.scss */
+.card input.incrementer ~ .ctrl, .card input[data-increment] ~ .ctrl, .nav input.incrementer ~ .ctrl, .nav input[data-increment] ~ .ctrl {
   display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -730,11 +737,17 @@ hr {
   cursor: pointer;
   background-color: #eee;
 }
-/* line 410, ../../sass/cards/_components.scss */
-.card input[type=text] ~ .ctrl:focus, .nav input[type=text] ~ .ctrl:focus {
-  border: solid 1px #666;
+/* line 371, ../../sass/cards/_components.scss */
+.card input.incrementer:focus + .ctrl, .card input[data-increment]:focus + .ctrl, .nav input.incrementer:focus + .ctrl, .nav input[data-increment]:focus + .ctrl {
+  border-color: #999;
 }
-/* line 422, ../../sass/cards/_components.scss */
+/* line 374, ../../sass/cards/_components.scss */
+.card input.incrementer:active + .ctrl, .card input[data-increment]:active + .ctrl, .nav input.incrementer:active + .ctrl, .nav input[data-increment]:active + .ctrl {
+  -webkit-box-shadow: 1px 1px 5px #999999;
+  -moz-box-shadow: 1px 1px 5px #999999;
+  box-shadow: 1px 1px 5px #999999;
+}
+/* line 385, ../../sass/cards/_components.scss */
 .card input[type=text].search, .nav input[type=text].search {
   -moz-border-radius-topleft: 3px;
   -webkit-border-top-left-radius: 3px;
@@ -749,7 +762,7 @@ hr {
   -webkit-border-bottom-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-/* line 398, ../../sass/cards/_components.scss */
+/* line 358, ../../sass/cards/_components.scss */
 .card input[type=text].search ~ .ctrl, .nav input[type=text].search ~ .ctrl {
   display: inline-block;
   -webkit-box-sizing: border-box;
@@ -775,13 +788,148 @@ hr {
   cursor: pointer;
   background-color: #eee;
 }
-/* line 410, ../../sass/cards/_components.scss */
-.card input[type=text].search ~ .ctrl:focus, .nav input[type=text].search ~ .ctrl:focus {
-  border: solid 1px #666;
+/* line 371, ../../sass/cards/_components.scss */
+.card input[type=text].search:focus + .ctrl, .nav input[type=text].search:focus + .ctrl {
+  border-color: #999;
+}
+/* line 374, ../../sass/cards/_components.scss */
+.card input[type=text].search:active + .ctrl, .nav input[type=text].search:active + .ctrl {
+  -webkit-box-shadow: 1px 1px 5px #999999;
+  -moz-box-shadow: 1px 1px 5px #999999;
+  box-shadow: 1px 1px 5px #999999;
+}
+/* line 388, ../../sass/cards/_components.scss */
+.card input[type=text].search + .ctrl:before, .nav input[type=text].search + .ctrl:before {
+  background-image: url("../../../../tao/views/css/custom-theme/images/ui-icons_888888_256x240.png");
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: -160px -112px;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+}
+/* line 394, ../../sass/cards/_components.scss */
+.card button, .nav button {
+  color: white;
+  background-color: #d00239;
+  font-size: 1em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 3px 3px;
+  -moz-border-radius: 3px / 3px;
+  border-radius: 3px / 3px;
+  font-size: 1.1em;
+  border: solid 3px #d00239;
+  padding: .3em .6em;
+  cursor: pointer;
+}
+/* line 35, ../../sass/cards/_base.scss */
+.card button a, .nav button a {
+  color: white;
+  font-weight: bold;
+}
+/* line 403, ../../sass/cards/_components.scss */
+.card button.micro, .nav button.micro {
+  font-size: .8em;
+  padding: .1em .2em;
+}
+/* line 407, ../../sass/cards/_components.scss */
+.card button.small, .nav button.small {
+  font-size: .9em;
+  padding: .2em .3em;
+}
+/* line 411, ../../sass/cards/_components.scss */
+.card button.big, .nav button.big {
+  font-size: 1.2em;
+  padding: .4em .8em;
+}
+/* line 415, ../../sass/cards/_components.scss */
+.card button:active, .card button:focus, .card button:hover, .nav button:active, .nav button:focus, .nav button:hover {
+  border: solid 3px #9d022b;
+}
+/* line 418, ../../sass/cards/_components.scss */
+.card button:disabled, .nav button:disabled {
+  background-color: #fd5481;
+  cursor: inherit;
 }
 /* line 425, ../../sass/cards/_components.scss */
-.card input[type=text].search ~ .ctrl, .nav input[type=text].search ~ .ctrl {
-  background-image: url("../../../../tao/views/img/search_disabled.png");
-  background-repeat: no-repeat;
-  background-position: center;
+.card .dropmenu, .nav .dropmenu {
+  position: absolute;
+}
+/* line 427, ../../sass/cards/_components.scss */
+.card .dropmenu.closed, .nav .dropmenu.closed {
+  display: none;
+}
+/* line 431, ../../sass/cards/_components.scss */
+.card .dropmenu ul, .nav .dropmenu ul {
+  list-style-type: none;
+  margin: 10px 0 0 0;
+  padding: 0;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
+  border: solid 1px #ccc;
+  z-index: 800;
+}
+/* line 438, ../../sass/cards/_components.scss */
+.card .dropmenu ul li, .nav .dropmenu ul li {
+  margin: 0;
+  padding: .6em;
+}
+/* line 441, ../../sass/cards/_components.scss */
+.card .dropmenu ul li.separator, .nav .dropmenu ul li.separator {
+  padding: 0;
+  margin: 0 .2em;
+  height: 1px;
+  background-color: #ccc;
+}
+/* line 447, ../../sass/cards/_components.scss */
+.card .dropmenu ul li:hover, .nav .dropmenu ul li:hover {
+  background-color: #eee;
+  color: #d00239;
+  cursor: pointer;
+}
+/* line 453, ../../sass/cards/_components.scss */
+.card .dropmenu ul:before, .nav .dropmenu ul:before {
+  position: absolute;
+  display: block;
+  content: '';
+  border-color: transparent transparent #ccc  transparent;
+  border-style: solid;
+  border-width: 8px;
+  height: 0;
+  width: 0;
+  left: 1em;
+  top: -6px;
+  z-index: 900;
+}
+/* line 466, ../../sass/cards/_components.scss */
+.card .dropmenu ul:after, .nav .dropmenu ul:after {
+  position: absolute;
+  display: block;
+  content: '';
+  border-color: transparent transparent #fff  transparent;
+  border-style: solid;
+  border-width: 8px;
+  height: 0;
+  width: 0;
+  left: 1em;
+  top: -5px;
+  z-index: 1000;
+}
+/* line 483, ../../sass/cards/_components.scss */
+.card [data-in-place], .card .inplace, .nav [data-in-place], .nav .inplace {
+  cursor: pointer;
+}
+/* line 485, ../../sass/cards/_components.scss */
+.card [data-in-place] input, .card .inplace input, .nav [data-in-place] input, .nav .inplace input {
+  cursor: auto;
+}
+/* line 488, ../../sass/cards/_components.scss */
+.card [data-in-place]:hover, .card .inplace:hover, .nav [data-in-place]:hover, .nav .inplace:hover {
+  color: #d00239;
 }

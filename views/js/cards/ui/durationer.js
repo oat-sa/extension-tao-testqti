@@ -1,7 +1,11 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @requires jquery
+ * @requires lodash
  * @requires cards/core/pluginifier
+ * @requires cards/core/dataattrhandler
+ * @require handlebars
+ * @requires moment
  */
 define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], function($, _, Pluginifier, Handlebars, moment){
    'use strict';
@@ -15,11 +19,18 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
        cssClass : 'micro'
    };
    
+   //the template used for each of the 3 part of the duration
    var fieldTmpl = Handlebars.compile(
         "<input type='text' id='{{id}}-{{type}}' data-duration-type='{{type}}' class='{{ctrlClass}} {{cssClass}}' value='{{value}}'/>"
     );
    
    /** 
+    * The Durationer component creates a widget to manage time duration using separate number inputs.
+    * This plugin applies on an text input with the result of the widget sync with it.
+    * Now only time is supported.
+    * 
+    * todo this plugin should support different widget like dropdowns... Now only the incrementer is implemented 
+    * 
     * @exports cards/durationer
     */
    var Durationer = {
@@ -37,6 +48,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
          * 
          * @constructor
          * @param {Object} [options] - the plugin options
+         * @param {string} [format = 'HH:mm:ss'] - the format of the duration value got from
          * @returns {jQueryElement} for chaining
          */
         init : function(options){
@@ -78,6 +90,14 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
             });
        },
        
+       /**
+        * Insert one of the duration control field, as an incrementer
+        * @private
+        * @param {jQueryElement} $elt - the plugin element
+        * @param {string} value - the current field value
+        * @param {string} type - which field to insert (hours, minutes or seconds)
+        * @returns {undefined}
+        */
        _insertField : function($elt, value, type){
             var data = _.merge($elt.data(dataNs), {
                 type : type,
@@ -92,6 +112,11 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
                 });
        },
        
+       /**
+        * Synchronize the value of the controls with the element
+        * @private
+        * @param {jQueryElement} $elt - the plugin element
+        */
        _sync : function($elt){
            var options = $elt.data(dataNs);
            var current = moment($elt.val(), options.format);
@@ -121,6 +146,9 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
             this.each(function() {
                 var $elt = $(this);
                 var options = $elt.data(dataNs);
+                
+                $elt.siblings('.' + options.ctrlClass).remove();
+                $elt.removeData(dataNs);
                 
                 /**
                  * The plugin have been destroyed.

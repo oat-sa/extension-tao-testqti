@@ -17,8 +17,8 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
        action : 'toggle'
    };
    
-   //to be extended
-   var availableActions = ['toggle'];
+   //todo add other behavior : on/off, multi
+   var availableActions = ['toggle', 'switch'];
    
    /** 
     * The BtnGrouper component, hepls you to manage a group of buttons
@@ -54,24 +54,40 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             return this.each(function() {
                 var $elt = $(this);
                 
-                //add data to the element
-                $elt.data(dataNs, options);
+                if(!$elt.data(dataNs)){
                 
-                //bind an event to trigger the action
-                if(options.bindEvent !== false){
-                    //the event is bound to the 
-                    $elt.on(options.bindEvent, options.innerElt, function(e){
-                        e.preventDefault();
-                        //execute the private method that corresponds to tha action
-                        BtnGrouper['_' + options.action]($(this));
-                     });
+                    //add data to the element
+                    $elt.data(dataNs, options);
+                    
+                    if(options.action === 'toggle'){
+                        //at the begining, one inner elt only should have the active class
+                        var $activeElt = $elt.find(options.innerElt + '.' + options.activeClass);
+                        if($activeElt.length === 0){
+                            $elt.find(options.innerElt + ':first').addClass(options.activeClass);
+                        } else if ($activeElt.length > 1) {
+                            $elt.find(options.innerElt+ '.' + options.activeClass).not(':first').removeClass(options.activeClass);
+                        }
+                    }
+
+                    //bind an event to trigger the action
+                    if(options.bindEvent !== false){
+                        //the event is bound to the 
+                        $elt.on(options.bindEvent, options.innerElt, function(e){
+                            e.preventDefault();
+                            //execute the private method that corresponds to tha action
+                            var action = '_' + options.action;
+                            if(typeof BtnGrouper[action] === 'function'){
+                                BtnGrouper[action]($elt, $(this));
+                            }
+                         });
+                    }
+
+                    /**
+                     * The plugin have been created.
+                     * @event BtnGrouper#create.btngrouper
+                     */
+                    $elt.trigger('create.' + ns);
                 }
-                
-                /**
-                 * The plugin have been created.
-                 * @event BtnGrouper#create.btngrouper
-                 */
-                $elt.trigger('create.' + ns);
             });
        },
        
@@ -109,6 +125,42 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             $elt.trigger('toggle.' + ns)
                     .trigger('change');
        },
+       
+       /**
+        * On/Off a button in the group .
+        * 
+        * Called the jQuery way once registered by the Pluginifier.
+        * @example $('selector').btngrouper('toggle');
+        * @public
+        * 
+        * @returns {jQueryElement} for chaining
+        */
+       'switch' : function($target){
+           return this.each(function() {
+                BtnGrouper._switch($(this), $target);
+           });
+       },
+               
+       /**
+        * Internal On/Off mechanism.
+        * 
+        * @private
+        * @param {jQueryElement} $elt - plugin's element 
+        * @param {jQueryElement} $target - the inner element to switch
+        * @fires BtnGrouper#toggle.btngrouper
+        */
+       _switch: function($elt, $target){
+            var options = $elt.data(dataNs);
+
+            $target.toggleClass(options.activeClass);
+        
+           /**
+            * The target has been toggled. 
+            * @event BtnGrouper#toggle.btngrouper
+            */
+            $elt.trigger('switch.' + ns)
+                    .trigger('change');
+       },
                
        /**
         * Destroy completely the plugin.
@@ -124,6 +176,7 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
                 if(options.bindEvent !== false){
                     $elt.off(options.bindEvent, options.innerElt);
                 }
+                $elt.removeData(dataNs);
                 
                 /**
                  * The plugin have been destroyed.
@@ -152,13 +205,15 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             listenerEvent: 'click',
             namespace: dataNs,
             useTarget: false
-        }).init(function($elt) {
+        }).init(function($elt, $target) {
+            $elt.on('create.' + ns, function(e){
+                if(e.namespace === ns){
+                    $elt.btngrouper($elt.data('button-group'), $target);
+                }
+            });
             $elt.btngrouper({
-                bindEvent: false,
                 action : $elt.data('button-group')
             });
-        }).trigger(function($elt) {
-            $elt.btngrouper($elt.data('button-group'));
         });
     };
 });

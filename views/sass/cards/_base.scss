@@ -75,7 +75,7 @@
 //removes dotted outline while focusing
 @mixin no-focus-outline{
     ::-moz-focus-inner, :active, :focus, ::-moz-focus-inner {
-        outline:none;
+        outline: 0;
         -moz-outline-style: none;
     }
 }

@@ -1,4 +1,4 @@
-define(['jquery', 'cards/ui/durationer', 'cards/cards'], function($, Durationer, cards){
+define(['jquery', 'cards/cards',  'cards/ui/durationer'], function($, cards, durationer){
     
     
     module('Durationer Stand Alone Test');
@@ -120,6 +120,29 @@ define(['jquery', 'cards/ui/durationer', 'cards/cards'], function($, Durationer,
             start();
         });
         $elt.durationer();
+    });
+    
+     module('Durationer Data Attr Test');
+     
+     asyncTest('initialization', function(){
+        expect(5);
+        
+        var $container = $('#container-3');
+        ok($container.length === 1, 'Test the fixture is available');
+        
+        var $elt = $(':text', $container);
+        ok($elt.length === 1, 'Test input is available');
+        
+        $elt.on('create.durationer', function(){
+            ok(typeof $elt.data('cards.durationer') === 'object');
+            var $controls = $container.find('.duration-ctrl');
+            equal($controls.length, 3, 'The plugins has created controls');
+            ok(typeof $controls.data('cards.incrementer') === 'object', 'The plugins has initialized incrementer on controls');
+            
+            start();
+        });
+       
+        durationer($container);
     });
 });
 

@@ -6,9 +6,9 @@
         Contains style related to components
 */
 
-.card {
+.card, .nav {
 
-    /* Labels */
+/* Labels */
     .label{
         @include border-radius($radius);
         @include shadow(#ccc, 1px, 1px);
@@ -24,7 +24,7 @@
         }
     }
 
-    /* States */
+/* States */
     .active{
         border: dashed 1px $altColor !important;
     }
@@ -48,12 +48,6 @@
         }
     }
 
-
-/*
- * Components
- */
-
- 
     
 /* ListBox  */
     ul.listbox {
@@ -111,11 +105,11 @@
             color: $altColor;
         }
 
-        &:before {
+        &:after {
             @include jui-icon( (-64px), 0);
         }
 
-        &.opened:before {
+        &.opened:after {
             @include jui-icon(0, 0);
         }
 
@@ -169,7 +163,7 @@
             padding:.2em .4em;
             border-width: 0 !important;
             border-right: solid 1px #999;
-            
+            color: #fff;
             &.icon {
                 vertical-align: bottom;
                 width: 16px;
@@ -188,9 +182,9 @@
         
     }
     
-    /* Incrementer */
+/* Incrementer */
     
-    input[type="text"].incrementer{
+    input.incrementer{
         width: 30px;
         text-align: right;        
         & ~ .incrementer-ctrl{
@@ -234,18 +228,7 @@
         }
     }
     
-    /* InPlacer */
-    [data-in-place], .inplace {
-        cursor: pointer;
-        input {
-            cursor: auto;
-        }
-        &:hover {
-            color: $altFontColor;
-        }
-    }
-    
-    /* Flipper */
+/* Flipper */
     .flip{
         overflow: hidden;
     }
@@ -253,59 +236,9 @@
         background-color: #ddd !important;
         display: none;
     }
-}
 
-/* Actions bar */
-.nav {
 
-    position: relative;
-    
-    h1, h2, h3, h4, h5 {
-        margin: 0;
-        display: inline-block;
-    }
-    
-    .actions {
-        margin: 0;
-        position: absolute;
-        top: 0;
-        
-        &.right {
-            right: 0;
-        }
-    }
-}
-
-/*
- * Forms and actions
- */
-
-.card, .nav {
-
-    /* Form layout */
-    .form-group{
-        padding: .5em;
-
-        > label {
-            width: 30%;
-            float: left;
-        }
-
-        > div {
-            margin-left: 30%;
-        }
-
-        > label.after{
-            float: none;
-        }
-
-        .form-info{
-            font-size:.9em;
-            color:#555;
-        }
-    }
-
-    /* Inputs */
+/* Inputs */
      input[type=text], textarea{
         @include baseFont;
         @include box-sizing(border-box);
@@ -340,36 +273,6 @@
         }
     }
     
-    button{
-        @include invFont;
-        @include box-sizing(border-box);
-        @include rounded;
-        font-size: 1.1em;
-        border: solid 1px $altColor;
-        padding: .4em .6em;
-        cursor: pointer;
-        
-        &.micro{
-            font-size: .8em;
-            padding: .1em .2em;
-        }
-        &.small{
-            font-size: .9em;
-            padding: .2em .3em;
-        }
-        &.big{
-            font-size: 1.2em;
-            padding: .5em .75em;
-        }
-        &:active, &:focus, &:hover{
-            border: solid 1px darken($altColor, 25%);
-        }
-        &:disabled{
-            background-color: lighten($altColor, 25%);
-            cursor: inherit;
-        }
-    }
-    
     textarea{
         height:10em;
         width: 300px;
@@ -391,6 +294,63 @@
         }
     }
     
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        
+        &:after{
+            @include jui-icon( (-64px), 0, grey);
+            position: absolute;
+            right: .4em;
+            top: .4em;
+            @include zindex(2);
+        }
+        
+        select {
+            @include appearance(none);
+            @include baseFont;
+            @include box-sizing(border-box);
+            @include rounded;
+
+            position: relative;
+            border: solid 1px #ccc;
+            height:1.8em;
+            vertical-align: top;
+            margin:0;
+            padding:.1em;
+            width:150px;
+            background: transparent;
+            overflow: hidden;
+            text-indent: 0.01px;
+            text-overflow: '';
+            @include zindex(4);
+            curosor: pointer;
+
+            &.micro{
+                width:30px;
+            }
+            &.mini{
+                width:60px;
+            }
+            &.small{
+                width:90px;
+            }
+            &.big{
+                width:200px;
+            }
+            &:active{
+                 @include shadow(#999, 1px, 1px);
+            }
+            &:focus{
+                border: solid 1px #999;
+            }
+            &:disabled{
+                background-color: #eee;
+            }
+        }
+    }
+    
+    //add a ctrl box next to an input
     @mixin appendBox {
         @include border-left-radius($radius);
         @include border-right-radius(0);
@@ -407,13 +367,16 @@
             padding:.1em;
             cursor: pointer;
             background-color: #eee;
-            &:focus {
-                border: solid 1px #666;
-            }
+        }
+        &:focus + .ctrl {
+             border-color: #999;
+        }
+        &:active + .ctrl {
+             @include shadow(#999, 1px, 1px);
         }
     }
     
-    input[type=text]{
+    input.incrementer, input[data-increment]{
         @include appendBox;
     }
 
@@ -422,10 +385,109 @@
     input[type=text].search {
         @include appendBox;
         
-        & ~ .ctrl {
-            background-image: url('../../../../tao/views/img/search_disabled.png');
-            background-repeat: no-repeat;
-            background-position: center;
+        & + .ctrl:before {
+            @include jui-icon( (-160px), (-112px), grey);
         }
     }
+    
+/* Buttons */
+    button{
+        @include invFont;
+        @include box-sizing(border-box);
+        @include rounded;
+        font-size: 1.1em;
+        border: solid 3px $altColor;
+        padding: .3em .6em;
+        cursor: pointer;
+        
+        &.micro{
+            font-size: .8em;
+            padding: .1em .2em;
+        }
+        &.small{
+            font-size: .9em;
+            padding: .2em .3em;
+        }
+        &.big{
+            font-size: 1.2em;
+            padding: .4em .8em;
+        }
+        &:active, &:focus, &:hover{
+            border: solid 3px darken($altColor, 10%);
+        }
+        &:disabled{
+            background-color: lighten($altColor, 25%);
+            cursor: inherit;
+        }
+    }
+    
+ /* drop menu */
+    .dropmenu{
+        position: absolute;
+        &.closed {
+            display: none;
+        }
+                          
+        ul {
+            list-style-type: none;
+            margin: 10px 0 0 0;
+            padding: 0;
+            @include border-radius(6px);
+            border: solid 1px #ccc;
+             @include zindex(8);
+            li {
+                margin: 0;
+                padding: .6em;
+                &.separator{
+                    padding: 0;
+                    margin: 0 .2em;
+                    height: 1px;
+                    background-color: #ccc;
+                }
+                &:hover {
+                    background-color: #eee;
+                    color: $altColor;
+                    cursor: pointer;
+                }
+            }
+            &:before{
+                position: absolute;
+                display: block;
+                content: '';  
+                border-color: transparent transparent #ccc  transparent;
+                border-style: solid;
+                border-width: 8px;
+                height:0;
+                width:0;
+                left:1em;
+                top: -6px;
+                @include zindex(9);
+            }  
+            &:after{
+                position: absolute;
+                display: block;
+                content: '';  
+                border-color: transparent transparent #fff  transparent;
+                border-style: solid;
+                border-width: 8px;
+                height:0;
+                width:0;
+                left: 1em;
+                top: -5px;
+                @include zindex(10);
+            }
+        }
+    }
+    
+/* InPlacer */
+    [data-in-place], .inplace {
+        cursor: pointer;
+        input {
+            cursor: auto;
+        }
+        &:hover {
+            color: $altFontColor;
+        }
+    }
+    
 }
