@@ -23,6 +23,7 @@ use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
+use qtism\data\AssessmentItemRef;
 
 /**
  * the QTI TestModel service.
@@ -371,7 +372,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * 
      * @param core_kernel_classes_Resource $test the test to get the content from
      * @param type $validate enable validation
-     * @return \qtism\data\storage\xml\XmlAssessmentTestDocument the QTI representation from the test content
+     * @return XmlDocument the QTI representation from the test content
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     private function getDoc(core_kernel_classes_Resource $test) {
@@ -414,7 +415,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     
     /**
      * Assign items to a QTI test.
-     * @param \qtism\data\storage\xml\XmlAssessmentTestDocument $doc
+     * @param XmlDocument $doc
      * @param array $items
      * @return type
      * @throws taoQtiTest_models_classes_QtiTestServiceException
@@ -436,7 +437,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         foreach ($items as $itemResource) {
             $itemContent = new core_kernel_file_File($itemResource->getUniquePropertyValue($itemContentProperty));
 
-            $itemDoc = new XmlAssessmentItemDocument();
+            $itemDoc = new XmlDocument();
 
             try {
                 $itemDoc->load($itemContent->getAbsolutePath());
@@ -453,7 +454,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                         taoQtiTest_models_classes_QtiTestServiceException::ITEM_READ_ERROR
                     );
             }
-            $itemRefIdentifier = $itemDoc->getIdentifier();
+            $itemRefIdentifier = $itemDoc->getDocumentComponent()->getIdentifier();
 
             //enable more than one reference
             if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
