@@ -81,6 +81,14 @@
                 right:2em;
             }
             
+            > .closer {
+                position: absolute;
+                right: .5em;
+            }
+            > .label + .closer {
+                right: 3em;
+            }
+            
             &:first-child {
                 @include border-top-radius($radius);
             }
@@ -424,6 +432,7 @@
  /* drop menu */
     .dropmenu{
         position: absolute;
+        @include zindex(8);
         &.closed {
             display: none;
         }
@@ -434,7 +443,7 @@
             padding: 0;
             @include border-radius(6px);
             border: solid 1px #ccc;
-             @include zindex(8);
+            background-color: #fff;
             li {
                 margin: 0;
                 padding: .6em;

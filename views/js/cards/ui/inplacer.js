@@ -4,7 +4,7 @@
  * @requires cards/core/pluginifier
  * @requires cards/core/dataattrhandler
  */
-define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], function($, Pluginifier, DataAttrHandler){
+define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], function($, _, Pluginifier, DataAttrHandler){
    'use strict';
    
    var ns = 'inplacer';
@@ -12,7 +12,11 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
    
    var defaults = {
        bindEvent   : 'click',
-       inplaceClass: 'inplace' 
+       inplaceClass: 'inplace',
+       mapping: {
+           textarea: ['p', 'div']
+           //input otherwise
+        }
    };
    
    /** 
@@ -138,11 +142,24 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             var options = $elt.data(dataNs);
             var $target = options.target;
             var text = $elt.text();
-            $elt.empty()
-                .append("<input type='text' value='" + text + "' />")
-                .children(':input')
-                .width(options.width || $elt.width())
-                .off('click')
+            var width = options.width || ($elt.width() + 'px');
+            var $editor;
+            if(_.contains(options.mapping.textarea, $elt.prop('tagName').toLowerCase())){
+                var height = options.height || ($elt.height() + 'px');
+                $editor = $elt.empty()
+                        .append("<textarea>" + text + "</textarea>")
+                        .children(':input')
+                        .width(width)
+                        .height(height);
+            } else {
+            
+                $editor = $elt.empty()
+                        .append("<input type='text' value='" + text + "' />")
+                        .children(':input')
+                        .width(width);
+            }
+            
+            $editor.off('click')
                 .change(function(e){
                     e.stopPropagation();    //the change evt is triggered on the top element on leaving
                 })
@@ -192,7 +209,7 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             var options = $elt.data(dataNs);
             var $target = options.target;
             
-            $elt.text($elt.children(':text').val()).children(':text').remove();
+            $elt.text($elt.children(':input').val()).children(':input').remove();
             
             
             this._sync($elt, $target);
