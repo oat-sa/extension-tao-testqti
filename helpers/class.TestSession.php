@@ -81,7 +81,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         parent::__construct($assessmentTest, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
-        $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT));
         $this->setTest($test);
     }
     
@@ -179,6 +178,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     protected function outcomeProcessing() {
+        parent::outcomeProcessing();
+        
         try {
             
             // Compute the LtiOutcome variable for LTI support.

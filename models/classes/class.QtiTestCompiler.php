@@ -24,6 +24,12 @@ use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
+use qtism\data\state\OutcomeDeclaration;
+use qtism\data\state\DefaultValue;
+use qtism\data\state\Value;
+use qtism\data\state\ValueCollection;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
 
 /**
  * Compiles a QTI Test and related QTI Items.
@@ -90,6 +96,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         $compiledDocPath = $compiledDocDir . 'compact-test.php';
         $phpCompiledDoc = new PhpDocument('2.1');
         $phpCompiledDoc->setDocumentComponent($compiledDoc->getDocumentComponent());
+        
+        // Add an LtiOutcome OutcomeDeclaration.
+        $outcomeDeclarations = $phpCompiledDoc->getDocumentComponent()->getOutcomeDeclarations();
+        $outcomeDeclarations[] = new OutcomeDeclaration('LtiOutcome', BaseType::FLOAT, Cardinality::SINGLE, new DefaultValue(new ValueCollection(array(new Value(0.0, BaseType::FLOAT)))));
         
         // 3. Compile rubricBlocks and serialize on disk.
         $rootComponent = $phpCompiledDoc->getDocumentComponent();
