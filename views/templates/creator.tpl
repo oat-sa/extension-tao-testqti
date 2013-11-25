@@ -46,7 +46,7 @@
                         <label for="navigation-mode-linear"><?=__('Linear')?></label>
                         <br />
                         <input type="radio" id="navigation-mode-nonlinear" name="navigation-mode" value="1" data-disable='#min-time' />
-                        <label for="navigation-mode-nonlinear"><?=__('Not Linear')?></label>
+                        <label for="navigation-mode-nonlinear"><?=__('Non Linear')?></label>
                         <span class='form-info'>(<?=__('Navigation between items allowed')?>)</span>
                     </div>
                 </div>
