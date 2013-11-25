@@ -1,6 +1,6 @@
 define(
-['lodash', 'cards/core/encoder/boolean', 'cards/core/encoder/number', 'cards/core/encoder/time', 'cards/core/encoder/htmlstr', 'cards/core/encoder/array'], 
-function(_, boolean, number, time, htmlstr, array){
+['lodash', 'cards/core/encoder/boolean', 'cards/core/encoder/number', 'cards/core/encoder/time', 'cards/core/encoder/array'], 
+function(_, boolean, number, time, array){
     
     var extractArgs = function extractArgs(name){
         var args = [];
@@ -25,7 +25,6 @@ function(_, boolean, number, time, htmlstr, array){
         number : number,
         time : time,
         boolean : boolean,
-        htmlstr : htmlstr,
         array : array,
         
         register : function(name, encode, decode){

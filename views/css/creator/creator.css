@@ -35,13 +35,13 @@
 }
 /* line 77, ../../sass/cards/_base.scss */
 .card ::-moz-focus-inner, .card :active, .card :focus, .card ::-moz-focus-inner {
-  outline: none;
+  outline: 0;
   -moz-outline-style: none;
 }
 
 /* line 96, ../../sass/cards/_base.scss */
 .card a {
-  color: #333333;
+  color: #666666;
   text-decoration: none;
   font-size: 1em;
 }
@@ -62,7 +62,7 @@ hr {
 
 /* line 77, ../../sass/cards/_base.scss */
 .actions ::-moz-focus-inner, .actions :active, .actions :focus, .actions ::-moz-focus-inner {
-  outline: none;
+  outline: 0;
   -moz-outline-style: none;
 }
 

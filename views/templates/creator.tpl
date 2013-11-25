@@ -179,7 +179,7 @@
         
     </div>
     <div class="section-back flip flip-back" id='{{identifier}}-back'>
-        <textarea data-bind="rubricBlocks.0.content" data-bind-encoder="htmlstr"></textarea>
+        <textarea data-bind="rubricBlocks.0.content" data-bind-encoder="dom2qti"></textarea>
         <input type="hidden" data-bind="rubricBlocks.0.views" value="candidate" data-bind-encoder="array( )" />
         <input type="hidden" data-bind-rm="rubricBlocks.0" value="true" data-bind-encoder="boolean" />
         <br />

@@ -520,7 +520,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
         
         //set the test label as title
-        $emptyTestXml = str_replace('testTitle', $test->getLabel(), $emptyTestXml);
+        $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
+        $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
         
         $file->setContent($emptyTestXml);
         

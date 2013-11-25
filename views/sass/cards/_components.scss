@@ -65,10 +65,10 @@
             border-bottom-width:0;
             vertical-align: top;
             margin: 0;
-            padding: .2em 2em .2em .2em;
+            padding: .3em 2em .3em .2em;
             background-color: #fafafa;
-            height:1.8em;
-
+            min-height: 1.5em; 
+            
             > .label{
                 position: absolute;
                 right:0;

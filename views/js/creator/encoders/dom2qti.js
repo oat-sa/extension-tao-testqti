@@ -1,7 +1,13 @@
-//todo move outside of cards, qti test related
-
+/**
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ */
 define(['jquery', 'lodash'], function($, _){
     
+   /**
+    * Get the list of objects attributes to encode
+    * @param {Object} object
+    * @returns {Array}
+    */
    var getAttributes = function getAttributes(object){
         return _.omit(object, [
            'qti-type',
@@ -12,8 +18,13 @@ define(['jquery', 'lodash'], function($, _){
         ]);
    };
    
-   var attrToStr = function attrToStr(attr){
-     return _.reduce(attr, function(acc, value, key){
+   /**
+    * Encode object's properties to xml/html string attributes
+    * @param {Object} attributes
+    * @returns {string}
+    */
+   var attrToStr = function attrToStr(attributes){
+     return _.reduce(attributes, function(acc, value, key){
          if(_.isNumber(value) || (_.isString(value) && !_.isEmpty(value)) ){
              return acc + ' ' + key + '="'+ value + '" ';
          }
@@ -21,9 +32,18 @@ define(['jquery', 'lodash'], function($, _){
      }, '');  
    };
     
-   return {
+   /**
+    * This encoder is used to transform DOM to JSON QTI and JSON QTI to DOM. 
+    * It works now for the rubricBlocks components.
+    * @exports creator/encoders/dom2qti
+    */
+   var Dom2QtiEncoder = {
        
-       //JSON object to DOM
+       /**
+        * Encode an object to a dom string
+        * @param {Object} modelValue
+        * @returns {string}
+        */
        encode : function(modelValue){
            var self = this;
            
@@ -45,7 +65,11 @@ define(['jquery', 'lodash'], function($, _){
            return modelValue;
        },
        
-       //DOM string to JSON
+       /**
+        * Decode a string that represents a DOM to a QTI formated object
+        * @param {string} nodeValue
+        * @returns {Array}
+        */
        decode : function(nodeValue){
            var self = this;
            var $nodeValue = (nodeValue instanceof jQuery) ? nodeValue : $(nodeValue);
@@ -83,6 +107,8 @@ define(['jquery', 'lodash'], function($, _){
            return result;
        }
    };
+   
+   return Dom2QtiEncoder;
 });
 
 

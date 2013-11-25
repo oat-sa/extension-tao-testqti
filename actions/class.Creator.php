@@ -49,7 +49,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             
             $this->setView('creator.tpl');
 	}
-	
+        
         /**
          * Get json's test content, the uri of the test must be provided in parameter 
          */
