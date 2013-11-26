@@ -42,7 +42,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier'], function($, _, Pluginifie
             var self = Incrementer;
             
             //get options using default
-            options = _.defaults(options, defaults);
+            options = _.defaults(options || {}, defaults);
            
             return this.each(function() {
                 var $elt = $(this);

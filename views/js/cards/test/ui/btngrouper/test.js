@@ -26,7 +26,7 @@ define(['jquery', 'cards/cards', 'cards/ui/btngrouper'], function($, cards, btng
     });
     
     asyncTest('Toggle', function(){
-        expect(4);
+        expect(6);
         
         var $fixture = $('#qunit-fixture');
         
@@ -34,12 +34,15 @@ define(['jquery', 'cards/cards', 'cards/ui/btngrouper'], function($, cards, btng
         ok($group.length === 1, 'The Group is available');
         
         $group.on('create.btngrouper', function(){
-            $group.find('a:first').trigger('click');
             equal($group.find('.active').length, 1, 'Only one element is active');
+            equal($group.btngrouper('value'), 'Y', 'The group value is Y');
+            
+            $group.find('a:first').trigger('click');
         });
         $group.on('toggle.btngrouper', function(){
             equal($group.find('.active').length, 1, 'Only one element is active');
             ok($group.find('a:last').hasClass('active'), 'The active element is toggled');
+            equal($group.btngrouper('value'), 'N', 'The group value is N');
             start();
         });
         $group.btngrouper({
@@ -48,7 +51,7 @@ define(['jquery', 'cards/cards', 'cards/ui/btngrouper'], function($, cards, btng
     });
     
     asyncTest('switch', function(){
-        expect(3);
+        expect(5);
         
         var $fixture = $('#qunit-fixture');
         
@@ -57,10 +60,12 @@ define(['jquery', 'cards/cards', 'cards/ui/btngrouper'], function($, cards, btng
         ok($group.find('a:first').hasClass('active'), 'The first element is active');
         
         $group.on('create.btngrouper', function(){
+            equal($group.btngrouper('value'), 'B', 'The group value is B');
             $group.find('a:first').trigger('click');
         });
         $group.on('switch.btngrouper', function(){
             equal($group.find('.active').length, 0, 'No more element are active');
+            equal($group.btngrouper('value'), [], 'No values');
             start();
         });
         $group.btngrouper({

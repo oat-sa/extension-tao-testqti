@@ -97,7 +97,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
            if(close){
                
                /**
-                 * The plugin have been closed/removed. 
+                 * The plugin is closing the target. 
                  * Those eventes are fired just before the removal 
                  * to be able to listen them 
                  * (if $elt is inside the closed elt for instance)
@@ -108,6 +108,12 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'cards/core/dataattrhandle
                $target.trigger('close');            //global event for consistensy
                
                $target.remove();
+               
+               /**
+                 * The target has been closed/removed. 
+                 * @event Closer#closed.closer
+                 */
+               $elt.trigger('closed.'+ ns);
            }
        },
                

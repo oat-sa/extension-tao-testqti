@@ -2,6 +2,11 @@ define(
 ['lodash', 'cards/core/encoder/boolean', 'cards/core/encoder/number', 'cards/core/encoder/time', 'cards/core/encoder/array'], 
 function(_, boolean, number, time, array){
     
+    /**
+     * Extract the argument in parenthesis from a function name:  "foo(a,b)" return [a,b]
+     * @param {string} name - the declaration : array(a,b)
+     * @returns {array} of extracted args 
+     */
     var extractArgs = function extractArgs(name){
         var args = [];
         var matches = []; 
@@ -14,6 +19,11 @@ function(_, boolean, number, time, array){
         return args;
     };
     
+    /**
+     * Extract the name from a function declaration:   "foo(a,b)" return foo
+     * @param {string} name - the declaration : foo(a,b)
+     * @returns {string} the name
+     */
     var extractName = function extractName(name){
         if(name.indexOf('(') > -1){
             return name.substr(0, name.indexOf('('));
@@ -21,6 +31,10 @@ function(_, boolean, number, time, array){
         return name;
     };
     
+   /** 
+    * Provides multi sources encoding decoding
+    * @exports cards/core/encoder/encoders
+    */
     var Encoders =  {
         number : number,
         time : time,

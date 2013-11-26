@@ -161,6 +161,25 @@ define(['jquery', 'cards/core/pluginifier', 'cards/core/dataattrhandler'], funct
             $elt.trigger('switch.' + ns)
                     .trigger('change');
        },
+       
+       /**
+        * Get the active(s) value(s)
+        * @returns {string|array} the text content of the active buttons
+        */
+       value : function(){
+           var value = [];
+           this.each(function(){
+               var $elt = $(this);
+               var options = $elt.data(dataNs);
+               var eltValue = $elt.find(options.innerElt).filter('.' + options.activeClass).text();
+               if($.isArray(eltValue)){
+                   value.concat(eltValue);
+               } else {
+                   value.push(eltValue);
+               }
+           });
+           return (value.length === 1) ? value[0]: value;
+       },
                
        /**
         * Destroy completely the plugin.

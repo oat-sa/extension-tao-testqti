@@ -1,132 +1,91 @@
-define(['jquery', 'cards/cards', 'cards/ui/adder'], function($, cards, adder){
+define(['jquery', 'cards/cards', 'cards/ui/closer'], function($, cards, closer){
     
     
-    module('Adder Stand Alone Test');
+    module('Closer Stand Alone Test');
    
     test('plugin', function(){
        expect(1);
-       ok(typeof $.fn.adder === 'function', 'The Adder plugin is registered');
+       ok(typeof $.fn.adder === 'function', 'The Closer plugin is registered');
     });
    
     asyncTest('Initialization', function(){
-        expect(5);
+        expect(4);
         
         var $container = $('#container-1');
         ok($container.length === 1, 'Test the fixture is available');
         
-        var $elt = $('.adder', $container);
-        ok($elt.length === 1, 'Adder link is available');
+        var $elt = $('.closer', $container);
+        ok($elt.length === 1, 'Closer link is available');
         
         var $target = $('.content', $container);
         ok($target.length === 1, 'Target is available');
         
-        var $tmpl = $('.tmpl', $container);
-        ok($tmpl.length === 1, 'Template is available');
-        
-        $elt.on('create.adder', function(){
-            ok(typeof $elt.data('cards.adder') === 'object', 'The element is runing the plugin');
+        $elt.on('create.closer', function(){
+            ok(typeof $elt.data('cards.closer') === 'object', 'The element is runing the plugin');
             start();
         });
-        $elt.adder({
+        $elt.closer({ 
             target : $target,
-            content : $tmpl
+            confirm : false
         });
     });
     
-    asyncTest('Template adding', function(){
-        expect(7);
+    asyncTest('Closing', function(){
+        expect(4);
         
         var $container = $('#container-1');
         ok($container.length === 1, 'Test the fixture is available');
         
-        var $elt = $('.adder', $container);
-        ok($elt.length === 1, 'Adder link is available');
+        var $elt = $('.closer', $container);
+        ok($elt.length === 1, 'Closer link is available');
         
         var $target = $('.content', $container);
         ok($target.length === 1, 'Target is available');
         
-        var $tmpl = $('.tmpl', $container);
-        ok($tmpl.length === 1, 'Template is available');
-        
-        $elt.on('create.adder', function(){
+        $elt.on('create.closer', function(){
             $elt.trigger('click');
         });
-         $elt.on('add.adder', function(){
-            var $p = $target.find('p');
-            ok($p.length === 1, 'Content is added');
-            
-            equal($p.attr('id'), 'foo', 'Template data inserted');
-            equal($p.text(), 'bar', 'Template data inserted');
+        
+         $elt.on('closed.closer', function(){
+            ok($('.content', $container).length === 0, 'Target doesn\'t exists anymore');
              
             start();
-         });
-        $elt.adder({
+        });
+        $elt.closer({ 
             target : $target,
-            content : $tmpl,
-            templateData : function(cb){
-                cb({
-                   id : 'foo',
-                   text : 'bar'
-                });
-            }
+            confirm : false
         });
     });
     
-    asyncTest('HTML adding', function(){
-        expect(5);
+    
+    module('Closer Data Attr Test');
+     
+     asyncTest('Initialization', function(){
+        expect(4);
+        
+        //prevent the confirm message to lock the test
+        window.confirm = function(){
+            return true;
+        };
         
         var $container = $('#container-2');
         ok($container.length === 1, 'Test the fixture is available');
         
-        var $elt = $('.adder', $container);
-        ok($elt.length === 1, 'Adder link is available');
+        var $elt = $('.closer', $container);
+        ok($elt.length === 1, 'Closer link is available');
         
-        var $target = $('.list2', $container);
+        var $target = $('.content', $container);
         ok($target.length === 1, 'Target is available');
         
-        var $content = $('.list1', $container);
-        ok($content.length === 1, 'DOM content is available');
-        
-        $elt.on('create.adder', function(){
-            $elt.trigger('click');
-            setTimeout(function(){
-                $elt.trigger('click');
-            }, 500);
-        });
-        var counter = 0;
-         $elt.on('add.adder', function(){
-            if(counter >= 1){
-                ok($target.find('li').length === 2, 'HTML content added 2 times');
-                start();
-            }
-            counter++;
-         });
-        $elt.adder({
-            target : $target,
-            content : $content
-        });
-    });
-    
-    module('Adder Data Attr Test');
-     
-     asyncTest('initialization', function(){
-        expect(3);
-        
-        var $container = $('#container-3');
-        ok($container.length === 1, 'Test the fixture is available');
-        
-        var $elt = $('.adder', $container);
-        ok($elt.length === 1, 'Test input is available');
-        
-        $elt.on('add.adder', function(){
-            ok($('#c3-list2').find('li').length === 1, 'Content added');
+        $elt.on('closed.closer', function(){
+            ok($('.content', $container).length === 0, 'Target doesn\'t exists anymore');
             start();
         });
-       
-        adder($container);
+        
+        closer($container);
         $elt.trigger('click');
     });
-    
+   
 });
 
 

@@ -133,8 +133,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
            $elt.trigger('update.' + ns)
                    .trigger('change');
        },
-      
-               
+       
        /**
         * Destroy completely the plugin.
         * 

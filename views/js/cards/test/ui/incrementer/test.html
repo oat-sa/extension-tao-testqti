@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Cards Test - Closer UI Component</title>
+        <title>Cards Test - Incrementer UI Component</title>
         <link rel="stylesheet" type="text/css" href="../../../../../../../tao/views/js/qunit/qunit.css">
         <script type="text/javascript" src="../../../../../../../tao/views/js/require-jquery.js"></script>
         <script type="text/javascript" src="../../../../../../../tao/views/js/qunit/qunit.js"></script>
@@ -17,7 +17,7 @@
             require([taobase_www + 'js/config/config'], function(){
                 
                 //load the test
-                require(['cards/test/ui/closer/test'], function(){
+                require(['cards/test/ui/incrementer/test'], function(){
                     
                     //Tests loaded, run tests
                     QUnit.start();
@@ -28,19 +28,12 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture">
-            
             <div id="container-1">
-                <div class="content">
-                    <p>foo</p>
-                </div>
-                <a  class="closer" href="#" >close</a>
+                <input type="text" name="number" value="0" />
             </div>
             
             <div id="container-2">
-                <div id="c2-content" class="content">
-                    <p>foo</p>
-                </div>
-                <a  class="closer" data-close='#c2-content' href="#" >close</a>
+                <input type="text" name="number" value="0" data-increment="5" data-min="0" data-max="10" />
             </div>
             
         </div>
