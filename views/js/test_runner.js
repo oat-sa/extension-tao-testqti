@@ -278,17 +278,32 @@ function updateTimer(assessmentTestContext) {
 		
 		// Set up a timer and update it.
 		currentTime = assessmentTestContext.testPartRemainingTime;
+		lastDate = new Date();
+		timeDiff = 0;
+		
 		timerId = setInterval(function() {
-			currentTime--;
+			
+			timeDiff += (new Date()).getTime() - lastDate.getTime();
+			
+			if (timeDiff >= 1000) {
+				seconds = timeDiff / 1000;
+				currentTime -= seconds;
+				timeDiff = 0;
+			}
+			
 			
 			if (currentTime <= 0) {
+				$('#qti-timer').html(formatTime(Math.round(currentTime)));
 				currentTime = 0;
 				clearInterval(timerId);
 				$('#qti-item').css('display', 'none');
 				serviceApi.finish();
 			}
+			else {
+				$('#qti-timer').html(formatTime(Math.round(currentTime)));
+				lastDate = new Date();
+			}
 			
-			$('#qti-timer').html(formatTime(currentTime));
 		}, 1000);
 	}
 }
