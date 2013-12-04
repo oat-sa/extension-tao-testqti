@@ -194,7 +194,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     public function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass){
         $report = new common_report_Report();
 
-        $qtiPackageParser = new taoQtiCommon_models_classes_PackageParser($file);
+        $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
         $qtiPackageParser->validate();
 
         if ($qtiPackageParser->isValid()){
@@ -206,7 +206,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             }
 
             //load and validate the manifest
-            $qtiManifestParser = new taoQtiCommon_models_classes_ManifestParser($folder.'/imsmanifest.xml');
+            $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder.'/imsmanifest.xml');
             $qtiManifestParser->validate();
             
             if ($qtiManifestParser->isValid() === true) {
