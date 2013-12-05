@@ -90,7 +90,7 @@ class QtiTestServiceTestCase extends UnitTestCase {
         $items = $this->service->getItems($this->test);
         $this->assertTrue(count($items) == 0);
         
-        $file = new core_kernel_classes_File(
+        $file = new core_kernel_file_File(
                 $this->test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP))
             );
         

@@ -362,7 +362,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         }
         $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
         if(!is_null($file)){
-            return new core_kernel_classes_File($file);
+            return new core_kernel_file_File($file);
         }
         return null;
     }
@@ -504,7 +504,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     /**
      * Create the defautl content of a QTI test.
      * @param core_kernel_classes_Resource $test
-     * @return core_kernel_classes_File the content file
+     * @return core_kernel_file_File the content file
      */
     private function createContent( core_kernel_classes_Resource $test) {
     	common_Logger::i('CREATE CONTENT');
