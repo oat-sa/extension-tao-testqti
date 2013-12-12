@@ -1,0 +1,214 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO v2.6-alpha\n"
+"PO-Revision-Date: 2013-12-12T08:14:05\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: ru-RU\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "A qti testpackage"
+msgstr ""
+
+msgid "Add a new section"
+msgstr ""
+
+msgid "Add the source file"
+msgstr ""
+
+msgid "All items at once"
+msgstr ""
+
+msgid "Allow multiple selection for an item"
+msgstr ""
+
+msgid "An item involved in the test cannot be read or is not QTI compliant."
+msgstr ""
+
+msgid "An item involved in the test cannot be written."
+msgstr ""
+
+msgid "An unknown error occured while compiled QTI test '%s'."
+msgstr ""
+
+msgid "An unknown error occured while compiling QTI test '%s'."
+msgstr ""
+
+msgid "Author Content"
+msgstr ""
+
+msgid "Author QTI test"
+msgstr ""
+
+msgid "Authoring %s', get_data('label"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Content saved"
+msgstr ""
+
+msgid "Display all items"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Drop items to a section, and manage them to build your test."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Error during file import"
+msgstr ""
+
+msgid "Fill the properties of the test."
+msgstr ""
+
+msgid "Found more than one test in package"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Import Content"
+msgstr ""
+
+msgid "Import into %s', get_data('label"
+msgstr ""
+
+msgid "Import QTI test"
+msgstr ""
+
+msgid "Individual"
+msgstr ""
+
+msgid "Item one by one"
+msgstr ""
+
+msgid "Items selection"
+msgstr ""
+
+msgid "Late submission allowed"
+msgstr ""
+
+msgid "Linear"
+msgstr ""
+
+msgid "Max Duration"
+msgstr ""
+
+msgid "Min Duration"
+msgstr ""
+
+msgid "Move items to sections (using drag &amp; drop)"
+msgstr ""
+
+msgid "Navigation"
+msgstr ""
+
+msgid "Navigation between items allowed"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "No item found for assessmentItemRef '%s'."
+msgstr ""
+
+msgid "No more attempts allowed for item \"%s\"."
+msgstr ""
+
+msgid "No test found in package"
+msgstr ""
+
+msgid "Non Linear"
+msgstr ""
+
+msgid "Number of items to be displayed"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "QTI Items"
+msgstr ""
+
+msgid "QTI Test: %s', get_data('label"
+msgstr ""
+
+msgid "Remove item from section"
+msgstr ""
+
+msgid "Remove section"
+msgstr ""
+
+msgid "Rubric block"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Section is identifiable by test takers"
+msgstr ""
+
+msgid "Section properties"
+msgstr ""
+
+msgid "Select items randomly"
+msgstr ""
+
+msgid "Shuffle"
+msgstr ""
+
+msgid "Simultaneous"
+msgstr ""
+
+msgid "Skip"
+msgstr ""
+
+msgid "Sort sections"
+msgstr ""
+
+msgid "Submission"
+msgstr ""
+
+msgid "Test Properties"
+msgstr ""
+
+msgid "Test successfully imported"
+msgstr ""
+
+msgid "Test's Sections"
+msgstr ""
+
+msgid "The number of items does not match with the number of items referenced by the QTI Test."
+msgstr ""
+
+msgid "The QTI test '%s' to be compiled must contain at least 1 QTI item. None found."
+msgstr ""
+
+msgid "The QTI test could not be retrieved correctly."
+msgstr ""
+
+msgid "The QTI Test to be imported does not contain any item."
+msgstr ""
+
+msgid "The QTI-XML test could not be written correctly."
+msgstr ""
+
+msgid "Upload a QTI 2.1 Test Package File"
+msgstr ""
+
+msgid "Visibility"
+msgstr ""
+
+msgid "Your comment..."
+msgstr ""
+
