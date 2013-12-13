@@ -92,11 +92,7 @@ class taoQtiTest_models_classes_TestModel
 		$widget->setData('label', $test->getLabel());
     	return $widget->render();
     }
-    
-    public function getcompiler(core_kernel_classes_Resource $test) {
-        return new taoQtiTest_models_classes_QtiTestCompiler($test);
-    }
-    
+
     public static function setQtiTestDirectory(core_kernel_file_File $folder) {
     	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
@@ -125,6 +121,10 @@ class taoQtiTest_models_classes_TestModel
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
         $newFile = $service->createContent($destination);
         $newFile->setContent($existingContent);
+    }
+    
+    public function getCompilerClass() {
+        return 'taoQtiTest_models_classes_QtiTestCompiler';
     }
 }
 

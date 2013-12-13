@@ -206,7 +206,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             }
 
             //load and validate the manifest
-            $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder.'/imsmanifest.xml');
+            $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder.'imsmanifest.xml');
             $qtiManifestParser->validate();
             
             if ($qtiManifestParser->isValid() === true) {
@@ -233,13 +233,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                         if (taoQTI_models_classes_QTI_Resource::isAssessmentItem($qtiResource->getType())){
                             
                             try {
-                                $qtiFile = $folder.DIRECTORY_SEPARATOR.$qtiResource->getFile();
+                                $qtiFile = $folder.$qtiResource->getFile();
                                 $rdfItem = $itemService->importQTIFile($qtiFile, $itemClass);
                                 $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
 
                                 foreach ($qtiResource->getAuxiliaryFiles() as $auxResource) {
                                     // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                    $auxPath = $folder.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
+                                    $auxPath = $folder.str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
                                     $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
                                     $destPath = $itemPath.$relPath;
                                     tao_helpers_File::copy($auxPath, $destPath, true);
@@ -260,7 +260,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 
                     // Second step is to take care of the test definition and the related media (auxiliary files).
                     $testDefinition = new XmlDocument();
-                    $testDefinition->load($folder.DIRECTORY_SEPARATOR.$testQtiResource->getFile());
+                    $testDefinition->load($folder.$testQtiResource->getFile());
                     $this->importTestContent($testResource, $testDefinition, $itemMap, $report);
                     
                     // The test is now successfuly imported.

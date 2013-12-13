@@ -39,7 +39,7 @@ use qtism\common\enums\Cardinality;
  * @package taoQtiTest
  * @subpackage models_classes
  */
-class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compiler
+class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler
 {
     /**
      * Compile a QTI Test and the related QTI Items.
@@ -48,7 +48,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
      * @return tao_models_classes_service_ServiceCall A ServiceCall object that represent the way to call the newly compiled test.
      * @throws tao_models_classes_CompilationFailedException If an error occurs during the compilation.
      */
-    public function compile(core_kernel_file_File $destinationDirectory) {
+    public function compile() {
         
         $test = $this->getResource();
         common_Logger::i('Compiling QTI test ' . $test->getLabel().' and the related QTI Items');
@@ -71,8 +71,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
-            $itemDirectory = $this->createSubDirectory($destinationDirectory, $itemToCompile);
-            $itemService = $this->getItemRunnerService($itemToCompile, $itemDirectory);
+            $itemService = $this->subCompile($itemToCompile);
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
             $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
             $itemCount++;
@@ -87,7 +86,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         }
         
         // First save as XML in order to explode the rubricBlocks.
-        $compiledDocDir = $destinationDirectory->getAbsolutePath() . DIRECTORY_SEPARATOR;
+        $destinationDirectory = $this->spawnPrivateDirectory(); 
+        $compiledDocDir = $destinationDirectory->getPath();
         $xmlCompactPath = $compiledDocDir . 'compact-test.xml';
         $compiledDoc->setExplodeRubricBlocks(true);
         $compiledDoc->save($xmlCompactPath);
@@ -130,9 +130,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
             $rubric->setHref('./' . $pathinfo['filename'] . '.php');
         }
         
-        $compiledFile = $destinationDirectory->getFileSystem()->createFile('compact-test.php', $destinationDirectory->getRelativePath() . DIRECTORY_SEPARATOR);
         $phpCompiledDoc->save($compiledDocPath);
-        common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledFile->getAbsolutePath() . '".');
+        common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledDocPath . '".');
         
         // 4. Build the service call.
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
@@ -146,7 +145,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Compilation URI passed to the QtiTestRunner service.
                         new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION),
-                        $compiledFile
+                        $destinationDirectory->getId()
         );
         $service->addInParameter($param);
         
@@ -154,22 +153,4 @@ class taoQtiTest_models_classes_QtiTestCompiler extends tao_models_classes_Compi
         
         return $service;
     }
-    
-    
-    /**
-     * Get the service call for $item.
-     * 
-     * @param core_kernel_classes_Resource $item
-     * @param core_kernel_file_File $destinationDirectory
-     * @return tao_models_classes_service_ServiceCall
-     */
-    protected function getItemRunnerService(core_kernel_classes_Resource $item, core_kernel_file_File $destinationDirectory)
-    {   
-        $itemDirectory = $this->createSubDirectory($destinationDirectory, $item);
-        
-        $compiler = taoItems_models_classes_ItemsService::singleton()->getCompiler($item);
-        $callService = $compiler->compile($itemDirectory);
-        return $callService;
-    }
-    
 }
