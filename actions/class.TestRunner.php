@@ -547,8 +547,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @return AssessmentTest The AssessmentTest object the current test session is built from.
 	 */
 	protected function retrieveTestDefinition() {
-	    $compilationResource = new core_kernel_file_File($this->getRequestParameter('QtiTestCompilation'));
-	    $testFilePath = $compilationResource->getAbsolutePath();
+	    
+	    $directory = $this->getDirectory($this->getRequestParameter('QtiTestCompilation')); 
+	    $testFilePath = $directory->getPath().'compact-test.php';
 	    
 	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
 	    $doc = new PhpDocument();
