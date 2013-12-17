@@ -9,134 +9,138 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "Un paquet test QTI"
 
 msgid "Add the source file"
-msgstr ""
+msgstr "Ajouter le fichier source"
 
 msgid "Allow Late Submission"
-msgstr ""
+msgstr "Permettre une soumission tardive"
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
 msgstr ""
+"Un item impliqué dans le test ne peut être lu ou n'est pas conforme à QTI."
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "Un item impliqué dans le test ne peut être écrit."
 
 msgid "An unknown error occured while compiled QTI test '%s'."
 msgstr ""
+"Une erreur inconnue s'est produite pendant la compilation du QTI test '%s'."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr ""
+"Une erreur inconnue s'est produite pendant la compilation du QTI test '%s'. "
 
 msgid "Author QTI test"
-msgstr ""
+msgstr "Auteur du test QTI"
 
 msgid "Authoring %s', get_data('label"
-msgstr ""
+msgstr "Édition de %s', get_data('label"
 
 msgid "Available Items"
-msgstr ""
+msgstr "Items disponibles"
 
 msgid "Content saved"
-msgstr ""
+msgstr "Contenu enregistré"
 
 msgid "Drag and drop the items to order them"
-msgstr ""
+msgstr "Glissez-déposez les items pour les ordonner."
 
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "Erreur pendant l'import du fichier."
 
 msgid "Found more than one test in package"
-msgstr ""
+msgstr "Trouvé plus d'un test dans le paquet."
 
 msgid "Import"
-msgstr ""
+msgstr "Importer"
 
 msgid "Import Content"
-msgstr ""
+msgstr "Importer le contenu"
 
 msgid "Import into %s', get_data('label"
-msgstr ""
+msgstr "Importer dans %s', get_data('label"
 
 msgid "Import QTI test"
-msgstr ""
+msgstr "Importer un test QTI"
 
 msgid "Individual"
-msgstr ""
+msgstr "Individuel"
 
 msgid "Items sequence"
-msgstr ""
+msgstr "Séquence des items"
 
 msgid "Linear"
-msgstr ""
+msgstr "Linéaire"
 
 msgid "Maximum Test Duration"
-msgstr ""
+msgstr "Durée maximale du test"
 
 msgid "Minimum Test Duration"
-msgstr ""
+msgstr "Durée minimale du test"
 
 msgid "Navigation mode"
-msgstr ""
+msgstr "Mode de navigation"
 
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "Une tentative sur l'item \"%s\" n'est plus permise."
 
 msgid "No test found in package"
-msgstr ""
+msgstr "Aucun test trouvé dans le paquet."
 
 msgid "Non Linear"
-msgstr ""
+msgstr "Non linéaire"
 
 msgid "QTI Test: %s', get_data('label"
-msgstr ""
+msgstr "QTI Test : %s', get_data('label"
 
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 msgid "Select the items composing the test."
-msgstr ""
+msgstr "Choisissez les items constituant le test."
 
 msgid "Sequence saved successfully"
-msgstr ""
+msgstr "Séquence enregistrée avec succès."
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Mélanger"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Simultané"
 
 msgid "Submission and Navigation"
-msgstr ""
+msgstr "Soumission et navigation"
 
 msgid "Submission mode"
-msgstr ""
+msgstr "Type de soumission"
 
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 msgid "The QTI test '%s' to be compiled must contain at least 1 QTI item. None found."
 msgstr ""
+"Le test QTI '%s' à compiler doit contenir au moins un Item QTI. Aucun n'a "
+"été trouvé."
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "Le test QTI n'a pu être récupéré correctement."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "Le test QTI-XML n'a pu être écrit correctement."
 
 msgid "Time limits"
-msgstr ""
+msgstr "Limites de temps"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "Envoyer un fichier paquet de test QTI 2.1"
 
 msgid "Yes"
-msgstr ""
-
+msgstr "Oui"
