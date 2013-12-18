@@ -336,6 +336,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // The built data is availabe with get_data('assessmentTestContext').
         $this->buildAssessmentTestContext();
 	    	    
+            $this->setData('client_config_url', $this->getClientConfigUrl());
 	    $this->setView('test_runner.tpl');
 	    
 	    $this->afterAction();

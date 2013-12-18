@@ -1,4 +1,4 @@
-define(['jquery', 'cards/core/encoder/htmlstr'], function($, HtmlStr){
+define(['jquery', 'taoQtiTest/creator/encoders/dom2qti'], function($, Dom2Qti){
     var domStr, model;
     module('DomObject encoder', {
         setup: function() {
@@ -128,9 +128,9 @@ define(['jquery', 'cards/core/encoder/htmlstr'], function($, HtmlStr){
     test('encode', function(){
         expect(2);
         
-        ok(typeof HtmlStr.encode === 'function');
+        ok(typeof Dom2Qti.encode === 'function');
         
-        var result = HtmlStr.encode(model);
+        var result = Dom2Qti.encode(model);
         
         var pattern = /\s/g;
         
@@ -140,9 +140,9 @@ define(['jquery', 'cards/core/encoder/htmlstr'], function($, HtmlStr){
     test('decode', function(){
         expect(2);
         
-        ok(typeof HtmlStr.decode === 'function');
+        ok(typeof Dom2Qti.decode === 'function');
         
-        var result = HtmlStr.decode(domStr.replace(/\s+/gm, ' '));
+        var result = Dom2Qti.decode(domStr.replace(/\s+/gm, ' '));
         
         deepEqual(result, [model]);
     });

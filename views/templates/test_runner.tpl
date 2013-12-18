@@ -3,13 +3,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>QTI 2.1 Test Driver</title>
-		<script type="text/javascript" src="<?= TAOBASE_WWW ?>js/jquery-1.8.0.min.js"/></script>
-		<script type="text/javascript" src="<?= TAOBASE_WWW ?>js/spin.min.js"/></script>
-		<script type="text/javascript" src="<?= TAOBASE_WWW ?>js/serviceApi/StateStorage.js"></script>
-		<script type="text/javascript" src="<?= TAOBASE_WWW ?>js/serviceApi/ServiceApi.js"></script>
-		<script type="text/javascript" src="<?= BASE_WWW ?>js/test_runner.js"></script>
-		<?php include(dirname(__FILE__) . '/assessment_test_context.tpl'); ?>
-		<link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
+                <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
+                <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
+                <script type="text/javascript">
+                (function(){
+                    require(['<?=get_data('client_config_url')?>'], function(){
+                        require(['taoQtiTest/controller/runtime/testRunner'], function(testRunner){
+                            testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
+                        });
+                    });
+                }());
+                </script>
 	</head>
 	<body>
 		<div id="runner">

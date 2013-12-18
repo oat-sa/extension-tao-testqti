@@ -23,6 +23,7 @@ define(['jquery', 'lodash', 'cards/core/pluginifier', 'handlebars', 'moment'], f
    var fieldTmpl = Handlebars.compile(
         "<input type='text' id='{{id}}-{{type}}' data-duration-type='{{type}}' class='{{ctrlClass}} {{cssClass}}' value='{{value}}'/>"
     );
+  
    
    /** 
     * The Durationer component creates a widget to manage time duration using separate number inputs.

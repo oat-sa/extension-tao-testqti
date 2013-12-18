@@ -4,8 +4,8 @@
 define(
 ['jquery', 'lodash','cards/cards', 'cards/core/databindcontroller', 
 'taoQtiTest/creator/views/item', 'taoQtiTest/creator/views/section',
-'taoQtiTest/creator/encoders/dom2qti'], 
-function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder){
+'taoQtiTest/creator/encoders/dom2qti', 'helpers'], 
+function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
     'use strict';
 
     /**
@@ -115,7 +115,7 @@ function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder)
             //Print data binder chandes for DEBUGGING ONLY
             $container.on('change.binder', function(e, model){
                 if(e.namespace === 'binder'){
-                    console.log(model);
+                  //  console.log(model);
                 }
             });
             
@@ -158,7 +158,8 @@ function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder)
                     $('#saver').attr('disabled', false);
                     helpers.createInfoMessage('Saved');
                 }, function(){
-         this.updateItems();           $('#saver').attr('disabled', false);
+                    this.updateItems();           
+                    $('#saver').attr('disabled', false);
                 });
             });
         }

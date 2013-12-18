@@ -3,11 +3,12 @@
     <head>
         <meta charset="utf-8">
         <title>Cards Test - htmlstr's encoder </title>
-        <link rel="stylesheet" type="text/css" href="../../../../../../../../tao/views/js/qunit/qunit.css">
-        <script type="text/javascript" src="../../../../../../../../tao/views/js/require-jquery.js"></script>
-        <script type="text/javascript" src="../../../../../../../../tao/views/js/qunit/qunit.js"></script>
+        <base href="../../../../../../../../tao/views/" />
+        <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
+        <script type="text/javascript" src="js/lib/require.js"></script>
+        <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script  type="text/javascript">
-            var taobase_www = '../../../../../../../../tao/views/';
+            var taobase_www = '../../../../../../../../../tao/views/';
             var base_lang = 'en';
             
             //don't start the test now
@@ -17,7 +18,7 @@
             require([taobase_www + 'js/config/config'], function(){
                 
                 //load the test
-                require(['cards/test/core/encoder/htmlstr/test'], function(){
+                require(['taoQtiTest/creator/test/dom2qti/test'], function(){
                     
                     //Tests loaded, run tests
                     QUnit.start();
