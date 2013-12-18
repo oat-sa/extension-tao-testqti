@@ -192,9 +192,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
                         });
                         
                         itemServiceApi.onFinish(function() {
-                            self.beforeTransition(function(){
-                                self.moveForward();
-                            });
+                        	self.moveForward();
                         });
                 }
         },
