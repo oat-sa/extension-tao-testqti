@@ -2,7 +2,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['module', 'jquery', 'lodash','cards/cards', 'cards/core/databindcontroller', 
+['module', 'jquery', 'lodash','cards', 'core/databindcontroller', 
 'taoQtiTest/controller/creator/views/item', 'taoQtiTest/controller/creator/views/section',
 'taoQtiTest/controller/creator/encoders/dom2qti', 'helpers'], 
 function(module, $, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){

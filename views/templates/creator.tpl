@@ -1,5 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_WWW ?>css/cards/cards.css" />
-<link rel="stylesheet" href="<?= BASE_WWW ?>css/creator/creator.css" />
+<link rel="stylesheet" href="<?= BASE_WWW ?>css/creator.css" />
 
 <div id="test-creator">
     

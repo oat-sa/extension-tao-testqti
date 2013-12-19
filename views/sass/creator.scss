@@ -15,10 +15,10 @@
 @import "compass/css3/box-shadow";
 
 //import files
-@import "../cards/variables.scss";
-@import "../cards/base.scss";
+@import "../../../tao/views/sass/variables";
+@import "../../../tao/views/sass/base";
 
-#items .listbox{
+#items .listbox {
     margin-top: .5em;
 }
 

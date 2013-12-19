@@ -2,7 +2,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['jquery', 'handlebars', 'cards/ui/incrementer', 'uri', 'ckeditor-jquery'], 
+['jquery', 'handlebars', 'ui/incrementer', 'uri', 'ckeditor-jquery'], 
 function($, Handlebars, incrementer, uri){
     'use strict';
    
