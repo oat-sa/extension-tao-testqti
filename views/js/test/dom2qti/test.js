@@ -1,4 +1,4 @@
-define(['jquery', 'taoQtiTest/creator/encoders/dom2qti'], function($, Dom2Qti){
+define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($, Dom2Qti){
     var domStr, model;
     module('DomObject encoder', {
         setup: function() {

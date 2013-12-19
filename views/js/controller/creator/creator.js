@@ -2,10 +2,10 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['jquery', 'lodash','cards/cards', 'cards/core/databindcontroller', 
-'taoQtiTest/creator/views/item', 'taoQtiTest/creator/views/section',
-'taoQtiTest/creator/encoders/dom2qti', 'helpers'], 
-function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
+['module', 'jquery', 'lodash','cards/cards', 'cards/core/databindcontroller', 
+'taoQtiTest/controller/creator/views/item', 'taoQtiTest/controller/creator/views/section',
+'taoQtiTest/controller/creator/encoders/dom2qti', 'helpers'], 
+function(module, $, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
     'use strict';
 
     /**
@@ -99,6 +99,9 @@ function($, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder,
           */
          start : function(options){
             var self = this;
+            
+            options = _.merge(module.config(), options || {});
+            
             var $container = $('#test-creator');
              
             var labels = options.labels || {};

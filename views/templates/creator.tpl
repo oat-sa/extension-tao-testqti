@@ -211,17 +211,17 @@
 </script>
 
 <script type="text/javascript">
-   var options = {
-        routes : {
-            get  : '<?=get_data('loadUrl')?>',
-            save  : '<?=get_data('saveUrl')?>',
-            items : '<?=get_data('itemsUrl')?>',
-            identifier : '<?=get_data('identifierUrl')?>'
-        },
-        labels : <?=get_data('labels')?>
-   };
-   
-   require(['taoQtiTest/creator/controller'], function(Controller){
-        Controller.start(options);
-   });
+requirejs.config({
+    config: {
+        'taoQtiTest/controller/creator/creator' : {
+            routes : {
+                get  : '<?=get_data('loadUrl')?>',
+                save  : '<?=get_data('saveUrl')?>',
+                items : '<?=get_data('itemsUrl')?>',
+                identifier : '<?=get_data('identifierUrl')?>'
+            },
+            labels : <?=get_data('labels')?>
+       }
+    }
+});
 </script>

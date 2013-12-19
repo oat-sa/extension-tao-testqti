@@ -11,14 +11,14 @@
             var taobase_www = '../../../../../../../../../tao/views/';
             var base_lang = 'en';
             
-            //don't start the test now
+             //don't start the test now
             QUnit.config.autostart = false;
             
             //load the config
-            require([taobase_www + 'js/config/config'], function(){
+            require(['/tao/ClientConfig/config'], function(){
                 
                 //load the test
-                require(['taoQtiTest/creator/test/dom2qti/test'], function(){
+                require(['taoQtiTest/test/dom2qti/test'], function(){
                     
                     //Tests loaded, run tests
                     QUnit.start();
