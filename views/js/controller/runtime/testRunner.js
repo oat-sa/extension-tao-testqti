@@ -144,7 +144,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
                         var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
                         var $itemFrame = $('#qti-item', $runner);
                         
-                        iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($('#qti-actions').height(), 10) );
+                        iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
                         itemServiceApi.loadInto($itemFrame[0], function(){
                             self.afterTransition();
                             $itemFrame.show();
