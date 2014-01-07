@@ -25,8 +25,8 @@
 			</div>
 			<div id="qti-comment">
 				<textarea ><?= __("Your comment..."); ?></textarea>
-				<button id="qti-comment-cancel">Cancel</button>
-			<button id="qti-comment-send">Send</button></div>
+				<button id="qti-comment-cancel"><?= __("Cancel"); ?></button>
+			<button id="qti-comment-send"><?= __("Send"); ?></button></div>
 			<iframe id="qti-item" frameborder="0" scrolling="no"></iframe>
 		</div>
 	</body>
