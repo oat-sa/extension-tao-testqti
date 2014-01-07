@@ -1,5 +1,5 @@
-define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'iframeResizer'], 
-    function($, Spinner, ServiceApi, StateStorage, iframeResizer){
+define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier'], 
+    function($, Spinner, ServiceApi, StateStorage, iframeResizer, iframeNotifier){
 
     var timerId;
     var currentTime = 0;
@@ -23,8 +23,8 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
 
                 $('#qti-item, #qti-info, #qti-rubrics, #qti-timer').css('display', 'none');
 
-                this.overlay();
-                this.loading();
+                //ask the top window to start the loader 
+                iframeNotifier.top('loading');
 
                 // Wait at least 500ms for a better user experience.
                 if(typeof callback === 'function'){
@@ -33,49 +33,8 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
         },
 
         afterTransition : function() {
-                this.overlay();
-                this.loading();
-        },
-
-        overlay : function() {
-                var $overlay = $('#qti-overlay');
-
-                if ($overlay.length > 0) {
-                        $overlay.remove();
-                }
-                else {
-                        $('<div id="qti-overlay"></div>').appendTo(document.body);
-                }
-        },
-
-        loading : function() {
-                var $loading = $('#qti-loading');
-
-                if ($loading.length > 0) {
-                        $loading.remove();
-                }
-                else {
-                        $loading = $('<div id="qti-loading"></div>').appendTo(document.body);
-                        var opts = {
-                                lines: 11, // The number of lines to draw
-                                length: 21, // The length of each line
-                                width: 8, // The line thickness
-                                radius: 36, // The radius of the inner circle
-                                corners: 1, // Corner roundness (0..1)
-                                rotate: 0, // The rotation offset
-                                direction: 1, // 1: clockwise, -1: counterclockwise
-                                color: '#888', // #rgb or #rrggbb or array of colors
-                                speed: 1.5, // Rounds per second
-                                trail: 60, // Afterglow percentage
-                                shadow: false, // Whether to render a shadow
-                                hwaccel: false, // Whether to use hardware acceleration
-                                className: 'spinner', // The CSS class to assign to the spinner
-                                zIndex: 2e9, // The z-index (defaults to 2000000000)
-                                top: 'auto', // Top position relative to parent in px
-                                left: 'auto' // Left position relative to parent in px
-                        };
-                        var spinner = new Spinner(opts).spin($loading[0]);
-                }
+             //ask the top window to stop the loader 
+             iframeNotifier.top('unloading');
         },
 
         moveForward: function() {
@@ -185,7 +144,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
                         var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
                         var $itemFrame = $('#qti-item', $runner);
                         
-                        iframeResizer.autoHeight($itemFrame, 'iframe');
+                        iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($('#qti-actions').height(), 10) );
                         itemServiceApi.loadInto($itemFrame[0], function(){
                             self.afterTransition();
                             $itemFrame.show();
@@ -354,7 +313,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
                            TestRunner.update(assessmentTestContext);
                    }
             };
-            window.parent.$(window.parent.document).trigger('serviceready');
+            iframeNotifier.parent('serviceready');
         }
     };
 });
