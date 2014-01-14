@@ -24,7 +24,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
                 $('#qti-item, #qti-info, #qti-rubrics, #qti-timer').css('display', 'none');
 
                 //ask the top window to start the loader 
-                iframeNotifier.top('loading');
+                iframeNotifier.parent('loading');
 
                 // Wait at least 500ms for a better user experience.
                 if(typeof callback === 'function'){
@@ -34,7 +34,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'i
 
         afterTransition : function() {
              //ask the top window to stop the loader 
-             iframeNotifier.top('unloading');
+             iframeNotifier.parent('unloading');
         },
 
         moveForward: function() {
