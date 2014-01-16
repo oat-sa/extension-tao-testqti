@@ -2,10 +2,10 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['module', 'jquery', 'lodash','cards', 'core/databindcontroller', 
+['module', 'jquery', 'lodash','ui', 'core/databindcontroller', 
 'taoQtiTest/controller/creator/views/item', 'taoQtiTest/controller/creator/views/section',
 'taoQtiTest/controller/creator/encoders/dom2qti', 'helpers'], 
-function(module, $, _, cards, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
+function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
     'use strict';
 
     /**
@@ -108,7 +108,7 @@ function(module, $, _, cards, DataBindController, ItemView, SectionView, Dom2Qti
             this.routes = options.routes || {};
 
             //boostrap the CARD's framework
-            cards.start($container);
+            ui.start($container);
             
             //set up the ItemView, give it a configured loadItems ref
             ItemView.setUp({

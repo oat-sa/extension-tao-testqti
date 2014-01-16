@@ -358,7 +358,7 @@ function($, Handlebars, incrementer, uri){
                  var $elt = $(this);
 
                  //set up the wysiwyg
-                 $elt.ckeditor();
+          //       $elt.ckeditor();
 
                  $elt.siblings('.hide-rubricblock').on('click', function(){
                      if($.trim($elt.val()) === ''){
