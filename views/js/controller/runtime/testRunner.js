@@ -1,5 +1,5 @@
-define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier'], 
-    function($, Spinner, ServiceApi, StateStorage, iframeResizer, iframeNotifier){
+define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier'], 
+    function($, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier){
 
     var timerId;
     var currentTime = 0;
