@@ -108,7 +108,7 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
             this.routes = options.routes || {};
 
             //boostrap the CARD's framework
-            ui.start($container);
+            ui.startEventComponents($container);
             
             //set up the ItemView, give it a configured loadItems ref
             ItemView.setUp({
