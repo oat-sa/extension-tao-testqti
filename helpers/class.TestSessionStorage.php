@@ -21,6 +21,7 @@
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\common\storage\BinaryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
+use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 
@@ -31,56 +32,68 @@ use qtism\runtime\tests\AssessmentTestSession;
  *
  */
 class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
-
+   
    /**
-    * The ServiceModule object which provides an access to the TAO Delivery Storage.
+    * The last recorded error.
     * 
-    * @var tao_actions_ServiceModule
+    * @var integer
     */
-   private $serviceModule = null; 
+   private $lastError = -1;
     
-   public function __construct(AbstractAssessmentTestSessionFactory $factory, taoQtiTest_actions_TestRunner $serviceModule) {
+   /**
+    * Create a new TestSessionStorage object.
+    * 
+    * @param AbstractAssessmentTestSessionFactory $factory The factory to be used by the storage to instantiate new AssessmentTestSession objects.
+    */
+   public function __construct(AbstractAssessmentTestSessionFactory $factory) {
        parent::__construct($factory);
-       $this->setServiceModule($serviceModule);
    }
    
    /**
-    * Get the ServiceModule object which provides an access to the TAO Delivery Storage.
+    * Get the last retrieved error. -1 means
+    * no error.
     * 
-    * @return taoQtiTest_actions_TestRunner
+    * @return integer
     */
-   protected function getServiceModule() {
-       return $this->serviceModule;
+   public function getLastError() {
+       return $this->lastError;
    }
    
    /**
-    * Set the ServiceModule object which provides an access to the TAO Delivery Storage.
+    * Set the last retrieved error. -1 means
+    * no error.
     * 
-    * @param taoQtiTest_actions_TestRunner $serviceModule
+    * @param integer $lastError
     */
-   protected function setServiceModule(taoQtiTest_actions_TestRunner $serviceModule) {
-       $this->serviceModule = $serviceModule;
+   public function setLastError($lastError) {
+       $this->lastError = $lastError;
    }
-    
+   
+   public function retrieve($sessionId) {
+       $this->setLastError(-1);
+       
+       return parent::retrieve($sessionId);
+   }
+   
    protected function getRetrievalStream(AssessmentTest $assessmentTest, $sessionId) {
     
-       $reflectionObject = new ReflectionObject($this->getServiceModule());
-       $getStateMethod = $reflectionObject->getMethod('getState');
-       $getStateMethod->setAccessible(true);
-       $data = $getStateMethod->invoke($this->getServiceModule());
+       $storageService = tao_models_classes_service_StateStorage::singleton();
+       $userUri = common_session_SessionManager::getSession()->getUserUri();
        
-       // Read 28 chars (the session ID) in order to position the file pointer correctly
-       // if something is inside the state data.
+       if (is_null($userUri) === true) {
+           $msg = "Could not retrieve current user URI.";
+           throw new StorageException($msg, StorageException::RETRIEVAL);
+       }
+
+       $data = $storageService->get($userUri, $sessionId);
+       
        $stateEmpty = (empty($data) === true);
        $stream = new BinaryStream(($stateEmpty === true) ? '' : $data);
        $stream->open();
        
        if ($stateEmpty === false) {
-           // Consume additional sessionID (plain string).
-           $stream->read(28);
-           
            // Consume additional error (short signed integer).
-           $stream->read(2);
+           $this->setLastError($stream->read(2));
        }
        
        $stream->close();
@@ -88,12 +101,28 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    }
    
    protected function persistStream(AssessmentTestSession $assessmentTestSession, BinaryStream $stream) {
-       $reflectionObject = new ReflectionObject($this->getServiceModule());
-       $setStateMethod = $reflectionObject->getMethod('setState');
-       $getCurrentErrorMethod = $reflectionObject->getMethod('getCurrentError');
-       $setStateMethod->setAccessible(true);
-       $getCurrentErrorMethod->setAccessible(true);
-       $data =  $assessmentTestSession->getSessionId() . pack('s', $getCurrentErrorMethod->invoke($this->getServiceModule())) . $stream->getBinary();
-       $setStateMethod->invoke($this->getServiceModule(), $data);
+       
+       $storageService = tao_models_classes_service_StateStorage::singleton();
+       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       
+       if (is_null($userUri) === true) {
+           $msg = "Could not retrieve current user URI.";
+           throw new StorageException($msg, StorageException::RETRIEVAL);
+       }
+       
+       $data = $this->getLastError() . $stream->getBinary();
+       $storageService->set($userUri, $assessmentTestSession->getSessionId(), $data);
+   }
+   
+   public function exists($sessionId) {
+       $storageService = tao_models_classes_service_StateStorage::singleton();
+       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       
+       if (is_null($userUri) === true) {
+           $msg = "Could not retrieve current user URI.";
+           throw new StorageException($msg, StorageException::RETRIEVAL);
+       }
+       
+       return $storageService->has($userUri, $sessionId);
    }
 }

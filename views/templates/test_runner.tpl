@@ -5,10 +5,23 @@
 		<title>QTI 2.1 Test Driver</title>
                 <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
                 <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
+                
+                <script type="text/x-mathjax-config">
+                	MathJax.Hub.Config({
+					  config: ["TeX-AMS-MML_HTMLorMML-full.js"],
+					  jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+					  extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+					  TeX: {
+					    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+					  }
+					});
+                </script>
+                <script type="text/javascript" src="http://taoplatform/taoQTI/views/js/mathjax/MathJax.js?delayStartupUntil=configured"></script>
                 <script type="text/javascript">
                 (function(){
                     require(['<?=get_data('client_config_url')?>'], function(){
                         require(['taoQtiTest/controller/runtime/testRunner'], function(testRunner){
+                        MathJax.Hub.Configured();
                             testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
                         });
                     });

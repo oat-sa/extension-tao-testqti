@@ -234,6 +234,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
                         });
 
                         $rubrics.insertAfter('#qti-actions');
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
                 }
         },
 
@@ -271,6 +272,20 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 
     return {
         start : function(assessmentTestContext){
+        	window.onServiceApiReady = function onServiceApiReady(serviceApi) {
+                TestRunner.serviceApi = serviceApi;
+
+               // If the assessment test session is in CLOSED state,
+               // we give the control to the delivery engine by calling
+               // finish.
+               if (assessmentTestContext.state === TestRunner.TEST_STATE_CLOSED) {
+                       serviceApi.finish();
+               }
+               else {
+                       TestRunner.update(assessmentTestContext);
+               }
+            };
+        	
             TestRunner.beforeTransition();
             
             TestRunner.assessmentTestContext = assessmentTestContext;
@@ -299,20 +314,6 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
                 TestRunner.emptyComment();
             });
 
-            window.onServiceApiReady = function onServiceApiReady(serviceApi) {
-                
-                    TestRunner.serviceApi = serviceApi;
-
-                   // If the assessment test session is in CLOSED state,
-                   // we give the control to the delivery engine by calling
-                   // finish.
-                   if (assessmentTestContext.state === TestRunner.TEST_STATE_CLOSED) {
-                           serviceApi.finish();
-                   }
-                   else {
-                           TestRunner.update(assessmentTestContext);
-                   }
-            };
             iframeNotifier.parent('serviceready');
         }
     };

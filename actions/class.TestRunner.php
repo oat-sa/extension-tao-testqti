@@ -25,13 +25,14 @@ use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionFactory;
+use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
 use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\runtime\tests\AssessmentTestSessionState;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
@@ -197,14 +198,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * @return integer
 	 */
 	protected function getPreviousError() {
-	    $state = $this->getState();
-	    if (empty($state)) {
-	        return -1;
-	    }
-	    else {
-	        $previousError = current(unpack('s', mb_substr($state, 28, 2, TAO_DEFAULT_ENCODING)));
-	        return $previousError;
-	    }
+	    return $this->getStorage()->getLastError();
 	}
 	
 	/**
@@ -249,7 +243,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->retrieveTestDefinition();
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
         $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $this->getTestResource());
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory, $this));
+        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory));
         $this->retrieveTestSession();
     }
     
@@ -370,7 +364,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->beforeAction();
 	    }
 	    catch (AssessmentTestSessionException $e) {
-	        common_Logger::i($e->getMessage());
 	        $this->registerAssessmentTestSessionException($e);
 	        $testSession->moveNextTestPart();
 	    }
@@ -410,7 +403,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->beforeAction();
 	    }
 	    catch (AssessmentTestSessionException $e) {
-	        common_Logger::i($e->getMessage());
 	        $this->registerAssessmentTestSessionException($e);
 	        $testSession->moveNextTestPart();
 	    }
@@ -527,7 +519,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    // prepare transmission Id for result server.
 	    $item = $this->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
 	    $occurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
-	    $sessionId = $this->getSessionId();
+	    $sessionId = $this->getServiceCallId();
 	    $transmissionId = "${sessionId}.${item}.${occurence}";
 	    
 	    // retrieve comment's intrinsic value.
@@ -549,8 +541,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function retrieveTestDefinition() {
 	    
-	    $directory = $this->getDirectory($this->getRequestParameter('QtiTestCompilation')); 
-	    $testFilePath = $directory->getPath().'compact-test.php';
+	    $directory = $this->getDirectory($this->getRequestParameter('QtiTestCompilation'));
+	    $dirPath = $directory->getPath();
+	    $testFilePath = $dirPath .'compact-test.php';
 	    
 	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
 	    $doc = new PhpDocument();
@@ -560,7 +553,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    // Retrieve the compilation directory.
 	    $pathinfo = pathinfo($testFilePath);
-	    $this->setCompilationDirectory($pathinfo['dirname'] . DIRECTORY_SEPARATOR);
+	    $this->setCompilationDirectory($dirPath);
 	}
 	
 	/**
@@ -570,15 +563,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function retrieveTestSession() {
 	    $qtiStorage = $this->getStorage();
-	    $state = $this->getState();
+	    $sessionId = $this->getServiceCallId();
 	    
-	    if (empty($state)) {
-	        common_Logger::d("Instantiating QTI Assessment Test Session");
-	        $this->setTestSession($qtiStorage->instantiate());
+	    if ($qtiStorage->exists($sessionId) === false) {
+	        common_Logger::i("Instantiating QTI Assessment Test Session");
+	        $this->setTestSession($qtiStorage->instantiate($sessionId));
 	    }
 	    else {
-	        $sessionId = $this->getSessionId();
-	        common_Logger::d("Retrieving QTI Assessment Test Session '${sessionId}'");
+	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'");
 	        $this->setTestSession($qtiStorage->retrieve($sessionId));
 	    }
 	}
@@ -599,30 +591,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function persistTestSession() {
 	
-	    $storage = $this->getStorage();
 	    common_Logger::d("Persisting Assessment Test Session.");
-	    try {
-	        $storage->persist($this->getTestSession());
-	    }
-	    catch (Exception $e) {
-	        throw $e->getPrevious();
-	    }
-	}
-	
-	/**
-	 * Get the unique identifier of the assessment test session.
-	 * 
-	 * @return string|false A 28 characters long unique ID or false if the session has not started yet.
-	 */
-	protected function getSessionId() {
-	    $state = $this->getState();
-	    if (empty($state)) {
-	        return false;
-	    }
-	    else {
-	        $sessionId = mb_substr($state, 0, 28, TAO_DEFAULT_ENCODING);
-	        return $sessionId;
-	    }
+	    $this->getStorage()->persist($this->getTestSession());
 	}
 	
 	/**
@@ -681,8 +651,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $context['info'] = $this->information();
 	        
 	        // Timings.
-	        if (($remainingTimeTestPart = $session->getRemainingTimeTestPart()) !== null) {
-	            $context['testPartRemainingTime'] = $session->getRemainingTimeTestPart()->getSeconds(true);
+	        $timeConstraints = $session->getTimeConstraints(AssessmentTestPlace::TEST_PART);
+	        if (($tc = $timeConstraints[0]->getMaximumRemainingTime()) !== false) {
+	            $context['testPartRemainingTime'] = $tc->getSeconds(true);
 	        }
 	        
 	        
@@ -760,7 +731,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function buildServiceCallId() {
 	    $testSession = $this->getTestSession();
-	    $sessionId = $testSession->getSessionId();
+	    $sessionId = $this->getServiceCallId();
 	    $itemId = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
 	    $occurence = $testSession->getCurrentAssessmentItemRefOccurence();
 	    return "${sessionId}.${itemId}.${occurence}";
