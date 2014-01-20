@@ -82,7 +82,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         if ($itemCount === 0) {
             $msg = "Cannot compile a QTI Test without any QTI Items.";
             $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::NO_ITEMS;
-            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($message, $test, $code);
+            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $test, $code);
         }
         
         // First save as XML in order to explode the rubricBlocks.
