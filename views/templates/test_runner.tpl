@@ -6,6 +6,13 @@
                 <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
                 <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
                 
+                <?
+                $ds = DIRECTORY_SEPARATOR;
+                $expectedMathJaxPath = ROOT_PATH . 'taoQTI' . $ds . 'views' . $ds . 'js' . $ds . 'mathjax' . $ds . 'MathJax.js';
+                $mathJax = is_readable($expectedMathJaxPath);
+                ?>
+                
+                <? if ($mathJax === true): ?>
                 <script type="text/x-mathjax-config">
                 	MathJax.Hub.Config({
 					  config: ["TeX-AMS-MML_HTMLorMML-full.js"],
@@ -17,12 +24,18 @@
 					});
                 </script>
                 <script type="text/javascript" src="http://taoplatform/taoQTI/views/js/mathjax/MathJax.js?delayStartupUntil=configured"></script>
+                <? endif; ?>
+                
                 <script type="text/javascript">
                 (function(){
                     require(['<?=get_data('client_config_url')?>'], function(){
                         require(['taoQtiTest/controller/runtime/testRunner'], function(testRunner){
-                        MathJax.Hub.Configured();
+                        
+                        	<? if ($mathJax === true): ?>
+                        	MathJax.Hub.Configured();
+                        	<? endif; ?>
                             testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
+                            
                         });
                     });
                 }());
