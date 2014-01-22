@@ -30,8 +30,9 @@ $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARA
 
 return array(
 	'name' => 'taoQtiTest',
-	'description' => 'the TAO QTI test implementation',
-	'version' => '2.5',
+	'description' => 'TAO QTI test implementation',
+    'license' => 'GPL-2.0',
+    'version' => '2.5',
 	'author' => 'Open Assessment Technologies',
 	'dependencies' => array('taoTests', 'taoQTI', 'taoQtiCommon'),
 	'models' => array(
