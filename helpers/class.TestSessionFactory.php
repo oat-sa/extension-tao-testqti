@@ -110,7 +110,6 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
             $this->getTest()
         );
         
-        $session->setAutoForward(false);
         return $session;
     }
 }
