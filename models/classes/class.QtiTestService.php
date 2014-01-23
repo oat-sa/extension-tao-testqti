@@ -192,7 +192,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @throws taoQTI_models_classes_QTI_exception_ExtractException If something wrong happens while unzipping.
      */
     public function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass){
-        $report = new common_report_Report();
+        $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
         $qtiPackageParser->validate();
@@ -244,7 +244,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                                     $destPath = $itemPath.$relPath;
                                     tao_helpers_File::copy($auxPath, $destPath, true);
                                 }
-                                
+                                $report->add(new common_report_Report(common_report_Report::TYPE_SUCCESS, __('Imported item %s', $rdfItem->getLabel()), $rdfItem));
                                 $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
                             }
                             catch (taoQTI_models_classes_QTI_exception_ParsingException $e) {
@@ -264,7 +264,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                     $this->importTestContent($testResource, $testDefinition, $itemMap, $report);
                     
                     // The test is now successfuly imported.
-                    $report->add(new common_report_SuccessElement(__('Test successfully imported')));
+                    $report->setMessage(__('Test successfully imported'));
+                    $report->setType(common_report_Report::TYPE_SUCCESS);
                 }
             }
             else {
