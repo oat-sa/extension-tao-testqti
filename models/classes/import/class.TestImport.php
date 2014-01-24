@@ -62,21 +62,13 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
 			
 			helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);	//the zip extraction is a long process that can exced the 30s timeout
 			
-			try {
 			    
-			    $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
-			     
-			    $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
-			    $subClass = $itemClass->createSubClass($test->getLabel());
-			    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
-			} catch (taoQTI_models_classes_QTI_exception_ExtractException $e) {
-			    $report = common_report_Report::createFailure(__('unable to extract archive content, please check your tmp dir'));
-			} catch (taoQTI_models_classes_QTI_exception_ParsingException $e) {
-                $report = common_report_Report::createFailure(__('Validation of the imported file has failed '.$e->getMessage()));
-				//$this->setData('importErrors', $qtiParser->getErrors());
-			} catch (common_Exception $e) {
-		        $report = common_report_Report::createFailure(__('An error occurs during the import'));
-			}
+		    $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
+		     
+		    $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+		    $subClass = $itemClass->createSubClass($test->getLabel());
+		    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
+		    
 			helpers_TimeOutHelper::reset();
 			tao_helpers_File::remove($uploadedFile);
 		} else {
