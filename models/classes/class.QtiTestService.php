@@ -214,14 +214,14 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 if (empty($tests) === true) {
                     // There are no test definition described by the imsmanifest.xml file.
                     $report->setType(common_report_Report::TYPE_WARNING);
-                    $report->setMessage('No Tests could be imported.');
-                    $report->add(common_report_Report::createFailure(__('No Test Definition found in the given IMS QTI Package.')));
+                    $report->setMessage(__('No Tests could be imported from the given IMS QTI Test Package.'));
+                    $report->add(common_report_Report::createFailure(__('No Test Definition found in the IMS Manifest file.')));
                 }
                 elseif (count($tests) > 1) {
                     // @todo support multiple tests in the same QTI Content Package.
                     $report->setType(common_report_Report::TYPE_WARNING);
-                    $report->setMessage('No Tests could be imported.');
-                    $report->add(common_report_Report::createFailure(__('Found more than one Test Definition in the given IMS QTI Package.')));
+                    $report->setMessage(__('No Tests could be imported.'));
+                    $report->add(common_report_Report::createFailure(__('More than one Test Definition found the IMS Manifest file.')));
                 }
                 else {
                     $testQtiResource = current($tests);
@@ -246,7 +246,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                                     $destPath = $itemPath.$relPath;
                                     tao_helpers_File::copy($auxPath, $destPath, true);
                                 }
-                                $report->add(new common_report_Report(common_report_Report::TYPE_SUCCESS, __('IMS QTI Item "%s" successfuly imported.', $rdfItem->getLabel()), $rdfItem));
+                                $report->add(new common_report_Report(common_report_Report::TYPE_SUCCESS, __('Item "%s" successfuly imported.', $rdfItem->getLabel()), $rdfItem));
                                 $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
                             }
                             catch (taoQTI_models_classes_QTI_exception_ParsingException $e) {
@@ -254,7 +254,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                             }
                             catch (Exception $e) {
                                 // Error while importing Item, skip to next.
-                                $report = common_report_Report::createFailure(__("An unexpected error occured while importing the IMS QTI Test Package. The system returned the following message:\n%s", $e->getMessage()));
+                                $report = common_report_Report::createFailure(__("An unexpected error occured while importing the Test Package. The system returned the following message:\n%s", $e->getMessage()));
                             }
                         }
                     }
@@ -266,10 +266,10 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                         $this->importTestContent($testResource, $testDefinition, $itemMap, $report);
                     }
                     catch (XmlStorageException $e) {
-                        $report = common_report_Report::createFailure(__("The IMS QTI Test Definition could not be imported. The system returned the following message:%s\n", $e->getMessage()));
+                        $report = common_report_Report::createFailure(__("The Test Definition could not be imported."));
                     }
                     catch (Exception $e) {
-                        $report = common_report_Report::createFailure(__("An unexpected error occured while finalizing the IMS QTI Test import. The system returned the following message:\n%s", $e->getMessage()));
+                        $report = common_report_Report::createFailure(__("An unexpected error occured while finalizing the Test import."));
                     }
                     
                     // The test is now successfuly imported.
@@ -317,17 +317,17 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $itemMappingCount = count($itemMapping);
 
         if ($assessmentItemRefsCount === 0) {
-            $report->add(common_report_Report::createFailure(__('The IMS QTI Test "%s" to be imported does not contain any item.', $testDefinition->getTitle())));
+            $report->add(common_report_Report::createFailure(__('The Test "%s" to be imported does not contain any Item.', $testDefinition->getTitle())));
         }
         else if ($assessmentItemRefsCount !== $itemMappingCount) {
-            $report->add(common_report_Report::createFailure(__("The number of discovered Items within the IMS QTI Test Package (%1\$d) does not match with the number of items referenced by the Test Defintion (%2\$d).", array($itemMappingCount, $assessmentItemRefsCount))));
+            $report->add(common_report_Report::createFailure(__("The number of Items referenced within the IMS Manifest file (%1\$d) does not match with the number of Items referenced by the Test Defintion (%2\$d).", array($itemMappingCount, $assessmentItemRefsCount))));
         }
 
         foreach ($assessmentItemRefs as $itemRef) {
             $itemRefIdentifier = $itemRef->getIdentifier();
 
             if (isset($itemMapping[$itemRefIdentifier]) === false) {
-                $report->add(common_report_Error::createFailure(sprintf(__('No Item found for assessmentItemRef "%s".'), $itemRefIdentifier)));
+                $report->add(common_report_Error::createFailure(sprintf(__('No Item found in the Package for the "assessmentItemRef" component with identifier "%s".'), $itemRefIdentifier)));
             }
 
             $itemRef->setHref($itemMapping[$itemRefIdentifier]->getUri());
