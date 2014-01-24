@@ -69,6 +69,16 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
 		    $subClass = $itemClass->createSubClass($test->getLabel());
 		    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
 		    
+		    // The test is now successfuly imported.
+		    if ($report->containsError() === true) {
+		        $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
+		        $report->setType(common_report_Report::TYPE_ERROR);
+		    }
+		    else {
+		        $report->setMessage(__('The IMS QTI Test Package was successfuly imported.'));
+		        $report->setType(common_report_Report::TYPE_SUCCESS);
+		    }
+		    
 			helpers_TimeOutHelper::reset();
 			tao_helpers_File::remove($uploadedFile);
 		} else {
