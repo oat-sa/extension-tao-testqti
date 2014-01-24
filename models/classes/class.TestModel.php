@@ -29,7 +29,7 @@
  * @subpackage models_classes
  */
 class taoQtiTest_models_classes_TestModel
-	implements taoTests_models_classes_TestModel, tao_models_classes_ImportProvider
+	implements taoTests_models_classes_TestModel, tao_models_classes_import_ImportProvider, tao_models_classes_export_ExportProvider
 {
     // --- ASSOCIATIONS ---
 
@@ -126,6 +126,12 @@ class taoQtiTest_models_classes_TestModel
     public function getImportHandlers() {
         return array(
             new taoQtiTest_models_classes_import_TestImport()
+        );
+    }
+    
+    public function getExportHandlers() {
+        return array(
+            new taoQtiTest_models_classes_export_TestExport()
         );
     }
     
