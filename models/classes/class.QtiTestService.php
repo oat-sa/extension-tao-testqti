@@ -301,6 +301,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 // Delete test definition.
                 common_Logger::i("Rollbacking test '" . $testResource->getLabel() . "...");
                 @$testService->deleteTest($testResource);
+                
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, "The imported resources were rollbacked."));
             }
             
             tao_helpers_File::deltree($folder);
@@ -335,7 +337,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $itemMappingCount = count($itemMapping);
 
         if ($assessmentItemRefsCount === 0) {
-            $report->add(common_report_Report::createFailure(__('The Test Definition "%s" to be imported does not contain any Item reference.', $testDefinition->getTitle())));
+            $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file does not contain any Item reference.', $testDefinition->getTitle())));
         }
 
         foreach ($assessmentItemRefs as $itemRef) {
@@ -357,7 +359,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             $testDefinition->save($testPath);
         }
         catch (StorageException $e) {
-            $report->add(common_report_Report::createFailure(__("An unexpected error occured while importing the Test Package.")));
+            $report->add(common_report_Report::createFailure(__("An unexpected error occured while importing the IMS QTI Test Package.")));
         }
         
         return $testDefinition;
