@@ -195,6 +195,11 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
         $qtiPackageParser->validate();
 
+        $itemImportService = taoQTI_models_classes_QTI_ImportService::singleton();
+        $itemService = taoItems_models_classes_ItemsService::singleton();
+        $testService = taoTests_models_classes_TestsService::singleton();
+        $itemMap = array();
+        
         if ($qtiPackageParser->isValid()) {
             //extract the package
             $folder = $qtiPackageParser->extract();
@@ -203,11 +208,6 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 throw new taoQTI_models_classes_QTI_exception_ExtractException();
             }
 
-            $itemImportService = taoQTI_models_classes_QTI_ImportService::singleton();
-            $itemService = taoItems_models_classes_ItemsService::singleton();
-            $testService = taoTests_models_classes_TestsService::singleton();
-            $itemMap = array();
-            
             //load and validate the manifest
             $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder.'imsmanifest.xml');
             $qtiManifestParser->validate();
@@ -285,30 +285,32 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 }
             }
             
-            if ($report->containsError() === true) {
-                // We consider a test as an atomic component, we then rollback it.
-                
-                // Delete all imported items.
-                foreach ($itemMap as $item) {
-                    common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
-                    @$itemService->deleteItem($item);
-                }
-                
-                // Delete the target Item RDFS Class.
-                common_Logger::i("Rollbacking Items target RDFS class '" . $itemClass->getLabel() . "'...");
-                $itemClass->delete();
-                
-                // Delete test definition.
-                common_Logger::i("Rollbacking test '" . $testResource->getLabel() . "...");
-                @$testService->deleteTest($testResource);
-                
-                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rollbacked.')));
-            }
-            
             tao_helpers_File::deltree($folder);
         }
         else {
             $report->add(common_report_Report::createFailure(__('The IMS QTI Test Package could not be extracted. The archive might be corrupted.')));
+        }
+        
+        if ($report->containsError() === true) {
+            // We consider a test as an atomic component, we then rollback it.
+        
+            // Delete all imported items.
+            foreach ($itemMap as $item) {
+                common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
+                @$itemService->deleteItem($item);
+            }
+        
+            // Delete the target Item RDFS Class.
+            common_Logger::i("Rollbacking Items target RDFS class '" . $itemClass->getLabel() . "'...");
+            $itemClass->delete();
+        
+            // Delete test definition.
+            common_Logger::i("Rollbacking test '" . $testResource->getLabel() . "...");
+            @$testService->deleteTest($testResource);
+        
+            if (count($itemMap) > 0) {
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rollbacked.')));
+            }
         }
         
         return $report;
