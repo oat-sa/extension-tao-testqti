@@ -200,7 +200,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             //extract the package
             $folder = $qtiPackageParser->extract();
             
-            if(!is_dir($folder)){
+            if(!is_dir($folder)) {
                 throw new taoQTI_models_classes_QTI_exception_ExtractException();
             }
 
@@ -233,7 +233,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                             
                             $itemReport = new common_report_Report(common_report_Report::TYPE_SUCCESS, '');
                             $qtiFile = $folder.$qtiResource->getFile();
-                            $rdfItem = $itemService->importQTIFile($qtiFile, $itemClass, true, null, $itemReport);
+                            $itemReport = $itemService->importQTIFile($qtiFile, $itemClass);
+                            $rdfItem = $itemReport->getData();
                             
                             if ($rdfItem) {
                                 $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
@@ -246,13 +247,15 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                                     tao_helpers_File::copy($auxPath, $destPath, true);
                                 }
                                 $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
+                                $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file imported successfully.', $qtiResource->getIdentifier()));
                             }
                             else {
                                 $itemReport->setType(common_report_Report::TYPE_ERROR);
-                                $itemReport->setMessage(__('Item with identifier "%s" in IMS Manifest could not be imported', $qtiResource->getIdentifier()));
-                                $report->add($itemReport);
+                                $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiResource->getIdentifier()));
                                 $itemError = ($itemError === false) ? true : $itemError;
                             }
+                            
+                            $report->add($itemReport);
                         }
                     }
                     
@@ -274,7 +277,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                                 $eStrs[] = __('QTI-XML error at line %1$d column %2$d "%3$s".', $libXmlError->line, $libXmlError->column, trim($libXmlError->message));
                             }
                         }
-                        $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The Test could not be imported because of malformed XML:\n%s", implode("\n", $eStrs))));
+                        $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The Test Definition referenced as \"%s\" in the IMS Manifest file could not be imported:\n%s", $testQtiResource->getIdentifier(), implode("\n", $eStrs))));
                     }
                 }
             }
