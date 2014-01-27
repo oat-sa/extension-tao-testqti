@@ -302,10 +302,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                 common_Logger::i("Rollbacking test '" . $testResource->getLabel() . "...");
                 @$testService->deleteTest($testResource);
                 
-                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, "The imported resources were rollbacked."));
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rollbacked.')));
             }
             
             tao_helpers_File::deltree($folder);
+        }
+        else {
+            $report->add(common_report_Report::createFailure(__('The IMS QTI Test Package could not be extracted. The archive might be corrupted.')));
         }
         
         return $report;

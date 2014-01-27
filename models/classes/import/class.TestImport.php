@@ -52,39 +52,44 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
      */
     public function import($class, $form) {
 		
-        $fileInfo = $form->getValue('source');
-        
-        if(isset($fileInfo['uploaded_file'])){
-			
-			$uploadedFile = $fileInfo['uploaded_file'];
-			
-//			$validate = count($form->getValue('disable_validation')) == 0 ? true : false;
-			
-			helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);	//the zip extraction is a long process that can exced the 30s timeout
-			
-			    
-		    $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
-		     
-		    $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
-		    $subClass = $itemClass->createSubClass($test->getLabel());
-		    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
-		    
-		    // The test is now successfuly imported.
-		    if ($report->containsError() === true) {
-		        $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
-		        $report->setType(common_report_Report::TYPE_ERROR);
-		    }
-		    else {
-		        $report->setMessage(__('The IMS QTI Test Package was successfuly imported.'));
-		        $report->setType(common_report_Report::TYPE_SUCCESS);
-		    }
-		    
-			helpers_TimeOutHelper::reset();
-			tao_helpers_File::remove($uploadedFile);
-		} else {
-		   throw new common_exception_Error('No source file for import');
-		}
-		return $report;
+        try {
+            $fileInfo = $form->getValue('source');
+            
+            if(isset($fileInfo['uploaded_file'])){
+                	
+                $uploadedFile = $fileInfo['uploaded_file'];
+                	
+                //			$validate = count($form->getValue('disable_validation')) == 0 ? true : false;
+                	
+                helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);	//the zip extraction is a long process that can exced the 30s timeout
+                	
+                 
+                $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
+                 
+                $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+                $subClass = $itemClass->createSubClass($test->getLabel());
+                $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
+            
+                // The test is now successfuly imported.
+                if ($report->containsError() === true) {
+                    $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
+                    $report->setType(common_report_Report::TYPE_ERROR);
+                }
+                else {
+                    $report->setMessage(__('The IMS QTI Test Package was successfuly imported.'));
+                    $report->setType(common_report_Report::TYPE_SUCCESS);
+                }
+            
+                helpers_TimeOutHelper::reset();
+                tao_helpers_File::remove($uploadedFile);
+            } else {
+                throw new common_exception_Error('No source file for import');
+            }
+            return $report;
+        }
+        catch (Exception $e) {
+            return common_report_Report::createFailure($e->getMessage);
+        }
     }
 
 }
