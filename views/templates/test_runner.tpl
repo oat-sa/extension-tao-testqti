@@ -23,7 +23,7 @@
 					  }
 					});
                 </script>
-                <script type="text/javascript" src="http://taoplatform/taoQTI/views/js/mathjax/MathJax.js?delayStartupUntil=configured"></script>
+                <script type="text/javascript" src="<?= TAOBASE_WWW ?>../../taoQTI/views/js/mathjax/MathJax.js?delayStartupUntil=configured"></script>
                 <? endif; ?>
                 
                 <script type="text/javascript">
