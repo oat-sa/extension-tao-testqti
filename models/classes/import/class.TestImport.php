@@ -65,7 +65,10 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
                 	
                  
                 $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
-                 
+                $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
+                $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
+                $test->setPropertyValue($modelProperty, $qtiTestModelResource);
+                
                 $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
                 $subClass = $itemClass->createSubClass($test->getLabel());
                 $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);

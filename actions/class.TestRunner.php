@@ -801,7 +801,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    foreach ($this->getTestSession()->getPossibleJumps() as $jumpObject) {
 	        $jump = array();
-	        $jump['identifier'] = $jumpObject->getAssessmentItemRef()->getIdentifier();
+	        $jump['identifier'] = $jumpObject->getTarget()->getAssessmentItemRef()->getIdentifier();
 	        $jump['occurence'] = $jumpObject->getOccurence();
 	        $jump['position'] = $jumpObject->getPosition();
 	        
