@@ -15,8 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2008-2010 (original work) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
- *               2009-2012 (update and modification) Public Research Centre Henri Tudor (under the project TAO-SUSTAIN & TAO-DEV);
+ * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 use qtism\data\storage\StorageException;
@@ -28,7 +27,7 @@ use qtism\data\AssessmentItemRef;
 /**
  * the QTI TestModel service.
  *
- * @author Joel Bout <jerome@taotesting.com>
+ * @author Joel Bout <joel@taotesting.com>
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jerome Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
@@ -36,6 +35,8 @@ use qtism\data\AssessmentItemRef;
  */
 class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Service {
 
+    const QTITEST_FILENAME = "tao-qtitest-testdefinition.xml";
+     
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
 
     /**
@@ -120,10 +121,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @throws StorageException If an error occurs while serializing/unserializing QTI-XML content. 
      */
     public function save( core_kernel_classes_Resource $test, array $items) {
-    	
         try {
             $doc = $this->getDoc($test);
-            
             $this->setItemsToDoc($doc, $items);
             $saved  = $this->saveDoc($test, $doc);
         }
@@ -361,10 +360,11 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $testPath = $testContent->getAbsolutePath();
 
         try {
-            $testDefinition->save($testPath);
+            $testDefinition->save($testPath . DIRECTORY_SEPARATOR . self::QTITEST_FILENAME);
         }
         catch (StorageException $e) {
             $report->add(common_report_Report::createFailure(__("An unexpected error occured while importing the IMS QTI Test Package.")));
+            return false;
         }
         
         return $testDefinition;
@@ -413,15 +413,17 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         
         if(!is_null($test)){
             
-            $file = $this->getTestFile($test);
-            if (is_null($file)) {
-                $file = $this->createContent($test);
+            $dir = $this->getTestFile($test);
+            if (is_null($dir)) {
+                $dir = $this->createContent($test);
             } else {
-                $file = new core_kernel_file_File($file);
+                $dir = new core_kernel_file_File($dir);
             }
-            $testPath = $file->getAbsolutePath();
+            
+            $testPath = $dir->getAbsolutePath();
             try {
-                $doc->load($testPath);
+                $filePath = $testPath . DIRECTORY_SEPARATOR . self::QTITEST_FILENAME;
+                $doc->load($filePath);
             } catch (StorageException $e) {
                 throw new taoQtiTest_models_classes_QtiTestServiceException(
                         "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
@@ -452,7 +454,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @return type
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function setItemsToDoc( XmlDocument $doc, array $items, $sectionIndex = 0){
+    private function setItemsToDoc( XmlDocument $doc, array $items, $sectionIndex = 0) {
         
         $sections = $doc->getDocumentComponent()->getComponentsByClassName('assessmentSection');
         if(!isset($sections[$sectionIndex])){
@@ -520,7 +522,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             if (!is_null($file)) {
                 $testPath = $file->getAbsolutePath();
                 try {
-                    $doc->save($testPath);
+                    $doc->save($testPath . DIRECTORY_SEPARATOR . self::QTITEST_FILENAME);
                     $saved = true;
                 } catch (StorageException $e) {
                     throw new taoQtiTest_models_classes_QtiTestServiceException(
@@ -535,31 +537,42 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
 
     /**
      * Create the defautl content of a QTI test.
+     * 
      * @param core_kernel_classes_Resource $test
      * @return core_kernel_file_File the content file
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
      */
-    private function createContent( core_kernel_classes_Resource $test) {
-    	common_Logger::i('CREATE CONTENT');
+    public function createContent( core_kernel_classes_Resource $test) {
+        
     	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
 				PROPERTY_FILE_FILESYSTEM,
 				PROPERTY_FILE_FILEPATH
 			));
+    	
         $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
         $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
-        $file = $repository->createFile(md5($test->getUri()).'.xml', $path);
+        
+        // $directory is the directory where test related resources will be stored.
+        $directoryPath = md5($test->getUri()) . DIRECTORY_SEPARATOR;
+        $directory = $repository->createFile('', $directoryPath);
+        mkdir($directory->getAbsolutePath(), 0770, true);
         
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $emptyTestXml = file_get_contents($ext->getDir().'models'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'qtiTest.xml');
+        $emptyTestXml = $this->getQtiTestTemplateFileAsString();
         
-        //set the test label as title
+        // Set the test label as title.
         $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
         $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
         
-        $file->setContent($emptyTestXml);
+        $filePath = $this->getQtiTestDirectory()->getAbsolutePath() . DIRECTORY_SEPARATOR . $directoryPath . self::QTITEST_FILENAME;
+        if (file_put_contents($filePath, $emptyTestXml) === false) {
+            $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
+            throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+        }
         
-        common_Logger::i('Created '.$file->getAbsolutePath());
-        $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
-        return $file;
+        common_Logger::i("Created QTI Test content at location '" . $directory->getAbsolutePath() . "'.");
+        $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
+        return $directory;
     }
     
     /**
@@ -571,9 +584,10 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
         if (!is_null($content)) {
             $file = new core_kernel_file_File($content);
-            if (file_exists($file->getAbsolutePath())) {
-                if (!@unlink($file->getAbsolutePath())) {
-                    throw new common_exception_Error('Unable to remove the file ' . $file->getAbsolutePath());
+            $path = $file->getAbsolutePath();
+            if (is_dir($path)) {
+                if (!tao_helpers_File::delTree($path)) {
+                    throw new common_exception_Error("Unable to remove test content directory located at '" . $file->getAbsolutePath() . "'.");
                 }
             }
             $file->delete();
@@ -592,7 +606,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
     
     /**
      * Get the directory where the tests' contents are stored.
-     * @return \core_kernel_file_File
+     * 
+     * @return core_kernel_file_File
      * @throws common_Exception
      */
     public function getQtiTestDirectory() {
@@ -603,6 +618,16 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             throw new common_Exception('No default repository defined for uploaded files storage.');
         }
         return new core_kernel_file_File($uri);
+    }
+    
+    /**
+     * Get the content of the QTI Test template file as an XML string.
+     * 
+     * @return string|boolean The QTI Test template file content or false if it could not be read.
+     */
+    public function getQtiTestTemplateFileAsString() {
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
 }
 ?>

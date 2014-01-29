@@ -59,10 +59,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
                 	
                 $uploadedFile = $fileInfo['uploaded_file'];
                 	
-                //			$validate = count($form->getValue('disable_validation')) == 0 ? true : false;
-                	
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);	//the zip extraction is a long process that can exced the 30s timeout
-                	
                  
                 $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
                 $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
@@ -91,7 +88,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             return $report;
         }
         catch (Exception $e) {
-            return common_report_Report::createFailure($e->getMessage);
+            return common_report_Report::createFailure($e->getMessage());
         }
     }
 

@@ -99,13 +99,8 @@ class taoQtiTest_models_classes_TestModel
     }
     
     public static function getQtiTestDirectory() {
-    	
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $uri = $ext->getConfig(self::CONFIG_QTITEST_FOLDER);
-        if (empty($uri)) {
-        	throw new common_Exception('No default repository defined for uploaded files storage.');
-        }
-		return new core_kernel_file_File($uri);
+    	$service = taoQtiTest_models_classes_QtiTestService::singleton();
+    	return $service->getQtiTestDirectory();
     }
 
     /**
@@ -116,11 +111,13 @@ class taoQtiTest_models_classes_TestModel
      */
     public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
         $contentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
-        $existingFile = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
-        $existingContent = $existingFile->getFileContent();
+        $existingDir = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
+        
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
-        $newFile = $service->createContent($destination);
-        $newFile->setContent($existingContent);
+        $dir = $service->createContent($destination);
+        
+        tao_helpers_File::remove($dir->getAbsolutePath() . DIRECTORY_SEPARATOR . taoQtiTest_models_classes_QtiTestService::QTITEST_FILENAME);
+        tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
     }
     
     public function getImportHandlers() {
