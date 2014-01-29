@@ -36,7 +36,8 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
      * @param {DataCallback} cb - with the id
      */
     function getIdentifier(url, model, type, cb){
-		addMissingQtiType(model);
+        
+        addMissingQtiType(model);
         var data = {
             model : JSON.stringify(model),
             'qti-type' : type
@@ -83,6 +84,43 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
     }
     
     /**
+     * Applies consolidation rules to the model
+     * @param {Object} model
+     * @returns {Object}
+     */
+    function consolidateModel(model){
+        if(model && model.testParts && _.isArray(model.testParts) && model.testParts[0]){
+            var testPart = model.testParts[0];
+            if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
+                 _.forEach(testPart.assessmentSections, function(assessmentSection, key) {
+                     
+                     //remove ordering is shuffle is false
+                     if(assessmentSection.ordering && 
+                             assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
+                         delete assessmentSection.ordering;
+                     }
+                     
+                     //remove selection if default values
+                     if(assessmentSection.selection && 
+                             assessmentSection.selection.select !== undefined && assessmentSection.selection.select === 1 &&
+                             assessmentSection.selection.withReplacement === undefined){
+                         delete assessmentSection.selection;
+                     }
+                     
+                     //remove rubrick blocks if empty
+                      if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks) &&
+                              (assessmentSection.rubricBlocks.length === 0 || 
+                              (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) ){
+                          
+                          delete assessmentSection.rubricBlocks;
+                      } 
+                 });
+            }
+        }
+        return model;
+    }
+    
+    /**
      * The test creator controller is the main entry point
      * and orchestrates data retrieval and view/components loading. 
      * @exports creator/controller
@@ -117,11 +155,11 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
             });
             
             //Print data binder chandes for DEBUGGING ONLY
-            $container.on('change.binder', function(e, model){
-                if(e.namespace === 'binder'){
-                  //  console.log(model);
-                }
-            });
+//            $container.on('change.binder', function(e, model){
+//                if(e.namespace === 'binder'){
+//                    console.log(model);
+//                }
+//            });
             
             //Data Binding options
             var binderOptions = _.merge(this.routes, {
@@ -139,6 +177,9 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
                 beforeSave : function(model){
                     //ensure the qti-type is present
                     addMissingQtiType(model); 
+                    
+                    //apply consolidation rules
+                    consolidateModel(model);
                     return true;
                 }
             });

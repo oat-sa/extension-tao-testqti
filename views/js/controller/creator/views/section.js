@@ -2,7 +2,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['jquery', 'handlebars', 'ui/incrementer', 'uri', 'ckeditor-jquery'], 
+['jquery', 'handlebars', 'ui/incrementer', 'uri', 'ckeditor-jquery', 'select2'], 
 function($, Handlebars, incrementer, uri){
     'use strict';
    
@@ -90,24 +90,17 @@ function($, Handlebars, incrementer, uri){
                 target: self._$sectionContainer,
                 content: self._sectionTmpl,
                 templateData : function(cb){
+                    
                     //data to pass to the template
                     var length = self._$sectionContainer.find('.section').length;
                     var sectionData = {
                         index : length,
                         title : 'Section ' + (length + 1),
+                        required : true,
                         'qti-type' : 'assessmentSection',
-                        ordering : {
-                            'qti-type' : 'ordering',
-                            'shuffle'  : false
-                        },
-                        rubricBlocks: [{
-                               rubricBlock : {
-                                   'qti-type' : 'rubricBlock',
-                                   content : [],
-                                   views : [1]
-                               }
-                        }]
+                        rubricBlocks: []
                     };
+                    
                     //ensure the section has a unique id
                     self.getIdentifier('assessmentSection', function(response){
                         if(response.identifier){
@@ -120,7 +113,7 @@ function($, Handlebars, incrementer, uri){
                 }
             }).on('add.adder', function(e, target, added){
                 //set up section once added
-                self.setUpSection($(added).filter('.section'));
+                self.setUpSection($(added).find('.section'));
             });
         },
 
@@ -132,7 +125,7 @@ function($, Handlebars, incrementer, uri){
                 containement : 'parent',
                 placeholder : 'placeholder',
                 handle : '.sort',
-                items: '> .section',
+                items: '> div',
                 zIndex: 800,
                 axis: 'y',
                 stop: function(){
@@ -340,11 +333,21 @@ function($, Handlebars, incrementer, uri){
          */
         setUpSectionProperties : function($section){
             var sectionId = $section.attr('id');
-            //trigger the bindings when the selection sub form is opened (it reset values)
-            $('#' + sectionId + '-selection-rand').on('change', function(){
+            var $select = $('#' + sectionId + '-select');
+            var $selectionRand =  $('#' + sectionId + '-selection-rand');
+            var $replacement = $('#' + sectionId + '-with-replacement');
+            
+            //init showing cannot be done using binding
+            if(parseInt($select.val(), 10) > 1){
+                $selectionRand.prop('checked', true);
+                $('.randomized', $section).removeClass('toggled');
+            }
+            
+             //trigger the bindings when the selection sub form is opened (it reset values)
+            $selectionRand.on('change', function(){
                 if($(this).prop('checked') === true){
-                     $('#' + sectionId + '-select').trigger('change');
-                     $('#' + sectionId + '-with-replacement').trigger('change');
+                     $select.trigger('change');
+                     $replacement.trigger('change');
                 }
             });
         },
@@ -355,11 +358,22 @@ function($, Handlebars, incrementer, uri){
          */
         setUpRubricBlocks : function($section){
             var sectionId = $section.attr('id');
-            $('#' + sectionId + '-back').find('textarea').each(function(){
+            var $sectionBack = $('#' + sectionId + '-back');
+            var $select = $('select', $sectionBack);
+            
+            $('textarea', $sectionBack).each(function(){
                  var $elt = $(this);
 
                  //set up the wysiwyg
-          //       $elt.ckeditor();
+                 $elt.ckeditor({'toolbarGroups' : [
+                    {name : 'basicstyles', groups : ['basicstyles']},
+                    {name : 'paragraph', groups : ['list', 'indent', 'blocks']},
+                    {name : 'styles'},
+                    {name : 'colors'},
+                    '/',
+                    {name : 'clipboard', groups : ['undo']},
+                    {name : 'editing'}
+                ]});
 
                  $elt.siblings('.hide-rubricblock').on('click', function(){
                      if($.trim($elt.val()) === ''){
@@ -371,6 +385,15 @@ function($, Handlebars, incrementer, uri){
                         $elt.trigger('change');
                     }
                 });
+            });
+            
+            
+            $select.select2({
+                width: '250px'
+            }).on("select2-removed", function(e) {
+               if($select.select2('val').length === 0){
+                    $select.select2('val', ['candidate']);
+               } 
             });
         }
     };

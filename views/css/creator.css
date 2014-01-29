@@ -232,3 +232,7 @@ hr {
   height: 16px;
   content: ' ';
 }
+
+#test-creator .cke_top {
+    float: none !important;
+}
