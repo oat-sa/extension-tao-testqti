@@ -14,6 +14,13 @@ include_once dirname(__FILE__) . '/../includes/raw_start.php';
  */
 class QtiTestConverterTest extends TaoPhpUnitTestRunner {
     
+//     "rubricBlocks" : [ { "content" : [  ],
+//                    "rubricBlock" : { "content" : [  ],
+//                        "qti-type" : "rubricBlock",
+//                        "views" : [ 1 ]
+//                      },
+//                    "views" : [ "" ]
+//                  } ],
     
     /**
      * Data provider 
@@ -22,95 +29,72 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner {
     public function dataProvider(){
         
         $testPath = dirname(__FILE__) . '/data/qtitest.xml';
-        $json = '
-{
-    "qti-type": "assessmentTest",
-    "identifier": "testId",
-    "title": "testTitle",
-    "toolName": "",
-    "toolVersion": "",
-    "outcomeDeclarations": [],
-    "testParts": [{
-        "qti-type": "testPart",
-        "identifier": "testPartId",
-        "navigationMode": 0,
-        "submissionMode": 0,
-        "preConditions": [],
-        "branchRules": [],
-        "timeLimits": {
-            "qti-type": "timeLimits",
-            "minTime": 10,
-            "maxTime": 3600,
-            "allowLateSubmission": false
-        },
-        "assessmentSections": [{
-            "qti-type": "assessmentSection",
-            "title": "assessmentSectionTitle",
-            "visible": false,
-            "keepTogether": true,
-            "ordering": {
-                "qti-type": "ordering",
-                "shuffle": true
+       $json = '{ "identifier" : "testId",
+  "outcomeDeclarations" : [  ],
+  "qti-type" : "assessmentTest",
+  "testFeedbacks" : [  ],
+  "testParts" : [ { "assessmentSections" : [ { "branchRules" : [  ],
+              "fixed" : false,
+              "identifier" : "assessmentSection-1",
+              "index" : 0,
+              "keepTogether" : true,
+              "preConditions" : [  ],
+              "qti-type" : "assessmentSection",
+              "required" : true,
+              "sectionParts" : [  ],
+              "title" : "Section+1",
+              "visible" : true
             },
-            "rubricBlocks": [],
-            "sectionParts": [{
-                "qti-type": "assessmentItemRef",
-                "href": "http:\/\/tao.localdomain\/bertao.rdf#i137968191265683",
-                "categories": {},
-                "variableMappings": {},
-                "weights": [],
-                "templateDefaults": {},
-                "identifier": "astronomy",
-                "required": false,
-                "fixed": false,
-                "preConditions": [],
-                "branchRules": []
-            }, {
-                "qti-type": "assessmentItemRef",
-                "href": "http:\/\/tao.localdomain\/bertao.rdf#i137968191389526",
-                "categories": {},
-                "variableMappings": {},
-                "weights": [],
-                "templateDefaults": {},
-                "identifier": "elections-in-the-united-states-2004",
-                "required": false,
-                "fixed": false,
-                "preConditions": [],
-                "branchRules": []
-            }, {
-                "qti-type": "assessmentItemRef",
-                "href": "http:\/\/tao.localdomain\/bertao.rdf#i137968191388459",
-                "categories": {},
-                "variableMappings": {},
-                "weights": [],
-                "templateDefaults": {},
-                "identifier": "periods-of-history",
-                "required": false,
-                "fixed": false,
-                "preConditions": [],
-                "branchRules": []
-            }, {
-                "qti-type": "assessmentItemRef",
-                "href": "http:\/\/tao.localdomain\/bertao.rdf#i1379681914588612",
-                "categories": {},
-                "variableMappings": {},
-                "weights": [],
-                "templateDefaults": {},
-                "identifier": "space-shuttle-30-years-of-adventure",
-                "required": false,
-                "fixed": false,
-                "preConditions": [],
-                "branchRules": []
-            }],
-            "identifier": "assessmentSectionId",
-            "required": false,
-            "fixed": false,
-            "preConditions": [],
-            "branchRules": []
-        }],
-        "testFeedbacks": []
-    }],
-    "testFeedbacks": []
+            { "identifier" : "assessmentSection-2",
+              "index" : 1,"testFeedbacks" : [  ],
+  "testParts" : [ { "assessmentSections" : [ { "branchRules" : [  ],
+              "fixed" : false,
+              "identifier" : "assessmentSection-1",
+              "index" : 0,
+              "keepTogether" : true,
+              "preConditions" : [  ],
+              "qti-type" : "assessmentSection",
+              "required" : true,
+              "sectionParts" : [  ],
+              "title" : "Section+1",
+              "visible" : true
+            },
+            { "identifier" : "assessmentSection-2",
+              "index" : 1,
+              "ordering" : { "qti-type" : "ordering",
+                  "shuffle" : false
+              "ordering" : { "qti-type" : "ordering",
+                  "shuffle" : false
+                },
+              "qti-type" : "assessmentSection",
+              "sectionParts" : [  ],
+              "selection" : { "select" : 1,
+                  "withReplacement" : false
+                },
+              "title" : "Section+2",
+              "visible" : true
+            }
+          ],
+        "branchRules" : [  ],
+        "identifier" : "testPart-1",
+        "itemSessionControl" : { "allowComment" : false,
+            "allowReview" : true,
+            "allowSkipping" : true,
+            "maxAttempts" : 0,
+            "qti-type" : "itemSessionControl",
+            "showFeedback" : false,
+            "showSolution" : false,
+            "validateResponses" : false
+          },
+        "navigationMode" : 0,
+        "preConditions" : [  ],
+        "qti-type" : "testPart",
+        "submissionMode" : 0,
+        "testFeedbacks" : [  ]
+      } ],
+  "title" : "Test+4",
+  "toolName" : "tao",
+  "toolVersion" : "2.6-alpha"
 }';
         
         return array(

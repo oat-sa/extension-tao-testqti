@@ -74,7 +74,10 @@ class taoQtiTest_models_classes_QtiTestConverter {
      */
     public function fromJson($json){
         try{
-            $this->arrayToComponent(json_decode($json, true));
+            $data = json_decode($json, true);
+            if(is_array($data)){
+                $this->arrayToComponent($data);
+            }
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());

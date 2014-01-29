@@ -36,6 +36,7 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
      * @param {DataCallback} cb - with the id
      */
     function getIdentifier(url, model, type, cb){
+		addMissingQtiType(model);
         var data = {
             model : JSON.stringify(model),
             'qti-type' : type
@@ -161,7 +162,6 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
                     $('#saver').attr('disabled', false);
                     helpers.createInfoMessage('Saved');
                 }, function(){
-                    this.updateItems();           
                     $('#saver').attr('disabled', false);
                 });
             });

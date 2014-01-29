@@ -97,7 +97,8 @@ function($, Handlebars, incrementer, uri){
                         title : 'Section ' + (length + 1),
                         'qti-type' : 'assessmentSection',
                         ordering : {
-                            'qti-type' : 'ordering'
+                            'qti-type' : 'ordering',
+                            'shuffle'  : false
                         },
                         rubricBlocks: [{
                                rubricBlock : {

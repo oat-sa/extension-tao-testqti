@@ -142,7 +142,7 @@
                 <div  class='form-group'>
                     <label ><?=__('Visibility')?></label>
                     <div>
-                        <input type="checkbox" name='{{identifier}}-visible' value='true' data-bind="visible" data-bind-encoder="boolean" />
+                        <input type="checkbox" name='{{identifier}}-visible' value='true' checked="checked" data-bind="visible" data-bind-encoder="boolean" />
                         <label for="visible"><?=__('Section is identifiable by test takers')?></label>
                     </div>
                 </div>
