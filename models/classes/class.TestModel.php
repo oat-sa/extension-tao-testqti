@@ -31,13 +31,9 @@
 class taoQtiTest_models_classes_TestModel
 	implements taoTests_models_classes_TestModel, tao_models_classes_import_ImportProvider, tao_models_classes_export_ExportProvider
 {
-    // --- ASSOCIATIONS ---
 
-
-    // --- ATTRIBUTES ---
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
 
-    // --- OPERATIONS ---
     /**
      * default constructor to ensure the implementation
      * can be instanciated
