@@ -252,9 +252,9 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                         
                                         foreach ($qtiResource->getAuxiliaryFiles() as $auxResource) {
                                             // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                            $auxPath = $folder.str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
+                                            $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
                                             $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
-                                            $destPath = $itemPath.$relPath;
+                                            $destPath = $itemPath . $relPath;
                                             tao_helpers_File::copy($auxPath, $destPath, true);
                                         }
                                         $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
@@ -281,8 +281,8 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
                             // Second step is to take care of the test definition and the related media (auxiliary files).
                             $testDefinition = new XmlDocument();
                             try {
-                                $testDefinition->load($folder . $testQtiResource->getFile(), true);
-                                $this->importTestContent($testResource, $testDefinition, $itemMap, $report);
+                                $testDefinition->load($folder . str_replace('/', DIRECTORY_SEPARATOR, $testQtiResource->getFile()), true);
+                                $this->importTestContent($testResource, $testDefinition, $testQtiResource, $itemMap, $report);
                             }
                             catch (StorageException $e) {
                                 $eStrs = array();
@@ -353,11 +353,13 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      *
      * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
      * @param XmlDocument $testDefinition An XmlAssessmentTestDocument object.
+     * @param taoQTI_models_classes_QTI_Resource $qtiResource The manifest resource describing the test to be imported.
      * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
      * @param common_report_Report $report A Report object to be filled during the import.
-     * @return core_kernel_file_File|false The newly created test content or false if the test content is invalid.
+     * @return core_kernel_file_File The newly created test content.
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If an unexpected runtime error occurs.
      */
-    protected function importTestContent(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, array $itemMapping, common_report_Report $report){
+    protected function importTestContent(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, taoQTI_models_classes_QTI_Resource $qtiResource, array $itemMapping, common_report_Report $report){
         
         $assessmentItemRefs = $testDefinition->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $assessmentItemRefsCount = count($assessmentItemRefs);
@@ -381,22 +383,42 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         // Bind the newly created test content to the Test Resource in database.
         $testContent = $this->createContent($testResource);
         $testPath = $testContent->getAbsolutePath();
-
+        
+        $ds = DIRECTORY_SEPARATOR;
+        $resourcePathinfo = pathinfo($qtiResource->getFile());
+        
+        if (!empty($resourcePathinfo['dirname']) && $resourcePathinfo['dirname'] !== '.') {
+            $breadCrumb = $testPath . $ds . str_replace('/', $ds, $resourcePathinfo['dirname']);
+            $finalPath = $breadCrumb . $ds . TAOQTITEST_FILENAME;
+            
+            if (!@mkdir(rtrim($breadCrumb, $ds), 0770, true)) {
+                throw new taoQtiTest_models_classes_QtiTestServiceException("An error occured while saving with the QTI-XML test.", taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+            }
+            
+            // Delete template test.xml file from the root.
+            @unlink($testPath . $ds . TAOQTITEST_FILENAME);
+        }
+        else {
+            // Overwrite template test.xml file.
+            $finalPath = $testPath . $ds . TAOQTITEST_FILENAME;
+        }
+        
         try {
-            $testDefinition->save($testPath . DIRECTORY_SEPARATOR . TAOQTITEST_FILENAME);
+            $testDefinition->save($finalPath);
         }
         catch (StorageException $e) {
-            $report->add(common_report_Report::createFailure(__("An unexpected error occured while importing the IMS QTI Test Package.")));
-            return false;
+            throw new taoQtiTest_models_classes_QtiTestServiceException("An error occured while saving with the QTI-XML test.", taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
         }
         
         return $testDefinition;
     }
     
     /**
-     * Get the file from a test
+     * Get the core_kernel_file_File object corresponding to the location
+     * of the test content (a directory!) on the file system.
+     * 
      * @param core_kernel_classes_Resource $test
-     * @return null
+     * @return null|core_kernel_file_File
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     private function getTestFile(core_kernel_classes_Resource $test){
@@ -430,7 +452,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
      * @return XmlDocument the QTI representation from the test content
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function getDoc(core_kernel_classes_Resource $test) {
+    public function getDoc(core_kernel_classes_Resource $test) {
         
         $doc = new XmlDocument('2.1');
         
@@ -445,9 +467,20 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             
             $testPath = $dir->getAbsolutePath();
             try {
-                $filePath = $testPath . DIRECTORY_SEPARATOR . TAOQTITEST_FILENAME;
+                // Search for the test.xml file in the test content directory.
+                $dirContent = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true, 'only' => tao_helpers_File::$FILE));
+                
+                if (count($dirContent) === 0) {
+                    throw new Exception('No QTI-XML test file found.');
+                }
+                else if (count($dirContent) > 1) {
+                    common_Logger::i(var_export($dirContent, true));
+                    throw new Exception('Multiple QTI-XML test file found.');
+                }
+                
+                $filePath = current($dirContent);
                 $doc->load($filePath);
-            } catch (StorageException $e) {
+            } catch (Exception $e) {
                 throw new taoQtiTest_models_classes_QtiTestServiceException(
                         "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
                         taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
@@ -457,7 +490,33 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
         return $doc;
     }
     
-        /**
+    /**
+     * Convenience method that extracts entries of a $path array that correspond
+     * to a given $fileName.
+     * 
+     * @param array $paths An array of strings representing absolute paths within a given directory.
+     * @return array $extractedPath The paths that meet the $fileName criterion.
+     */
+    private function filterTestContentDirectory(array $paths, $fileName) {
+        $returnValue = array();
+        
+        foreach ($paths as $path) {
+            $pathinfo = pathinfo($path);
+            $pattern = $pathinfo['filename'];
+            
+            if (!empty($pathinfo['extension'])) {
+                $pattern .= $pathinfo['extension'];
+            }
+            
+            if ($fileName === $pattern) {
+                $returnValue[] = $path;
+            }
+        }
+        
+        return $returnValue;
+    }
+    
+    /**
      * Get the items from a QTI test document.
      * @param \qtism\data\storage\xml\XmlDocument $doc
      * @return \core_kernel_classes_Resource

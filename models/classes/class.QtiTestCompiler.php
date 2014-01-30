@@ -50,7 +50,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     public function compile() {
         
+        $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $test = $this->getResource();
+        
         common_Logger::i('Compiling QTI test ' . $test->getLabel().' and the related QTI Items');
         
         // 1. Compile the test definition itself.
@@ -58,11 +60,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testContent = new core_kernel_file_File($test->getUniquePropertyValue($testContentProperty)->getUri());
         $itemResolver = new taoQtiTest_helpers_ItemResolver('');
         
-        $testContentPath = $testContent->getAbsolutePath();
-        $testFilePath = $testContentPath . DIRECTORY_SEPARATOR . TAOQTITEST_FILENAME;
-        $originalDoc = new XmlDocument('2.1');
-        $originalDoc->load($testFilePath);
-        common_Logger::t("QTI Test XML document located at '${testFilePath}' successfully loaded.");
+        $originalDoc = $testService->getDoc($test);
+        common_Logger::t("QTI Test XML document successfully loaded.");
         
         $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
         common_Logger::t("QTI Test XML document successfuly transformed in a compact version.");
