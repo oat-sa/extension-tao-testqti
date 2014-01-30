@@ -77,12 +77,12 @@
                  
                  <div class='form-group'>
                     <input type="checkbox" id="allow-comments" name="allow-comments" value="true" data-bind="testParts.0.itemSessionControl.allowComment" data-bind-encoder="boolean" />
-                    <label for="allow-late-submission" class='after'><?=__('Allow comments')?></label>
+                    <label for="allow-comments" class='after'><?=__('Allow comments')?></label>
                  </div>
                  
                  <div class='form-group'>
                     <input type="checkbox" id="allow-skipping" name="allow-skipping" value="true" data-bind="testParts.0.itemSessionControl.allowSkipping" data-bind-encoder="boolean" checked="checked" />
-                    <label for="allow-late-submission" class='after'><?=__('Allow skipping')?></label>
+                    <label for="allow-skipping" class='after'><?=__('Allow skipping')?></label>
                  </div>
             
             </form>
