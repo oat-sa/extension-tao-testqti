@@ -25,25 +25,54 @@
  * (item files and media files)
  *
  * @access public
- * @author Jerome Bogaerts, <jerome.bogaerts@tudor.lu>
- * @package taoQTI
- * @see http://www.imsglobal.org/question/qti_v2p0/imsqti_intgv2p0.html#section10003
- * @subpackage models_classes_QTI
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
+ * @author Joel Bout <joel@taotesting.com>
+ * @package taoQTITest
+ * @see http://www.imsglobal.org/question/qtiv2p1/imsqti_intgv2p1.html#section10005 IMS QTI: Packaging Tests
+ * @subpackage models_classes
  */
 class taoQtiTest_models_classes_ManifestParser
     extends taoQTI_models_classes_QTI_ManifestParser
 {
     private $resources = null;
     
-    public function getResources($filter = null) {
+    /**
+     * Flag to be used while getting resources
+     * by type.
+     * 
+     * @var integer
+     */
+    const FILTER_RESOURCE_TYPE = 0;
+    
+    /**
+     * Flag to be used while getting resources
+     * by identifier.
+     * 
+     * @var integer
+     */
+    const FILTER_RESOURCE_IDENTIFIER = 1;
+    
+    /**
+     * Get the resources contained within the manifest.
+     * 
+     * @param string|array $filter The resource types you want to obtain. An empty $filter will make the method return all the resources within the manifest.
+     * @param integer $target The critera to be used for filtering. ManifestParser::FILTER_RESOURCE_TYPE allows to filter by resource type, ManifestParser::FILTER_RESOURCE_IDENTIFIER allows to filter by resource identifier.
+     * @return array An array of taoQTI_models_classes_QTI_Resource objects matching $filter (if given).
+     */
+    public function getResources($filter = null, $target = self::FILTER_RESOURCE_TYPE) {
         $returnValue = array();
+        
         if (is_null($filter)) {
             $returnValue = $this->getAllResources();
-        } else {
+        }
+        else {
             $filter = is_array($filter) ? $filter : array($filter);
+            
             foreach ($this->getAllResources() as $resource) {
-                common_Logger::i($resource->getType().' '.implode(',', $filter));
-                if (in_array($resource->getType(), $filter)) {
+                
+                $stringTarget = ($target === self::FILTER_RESOURCE_TYPE) ? $resource->getType() : $resource->getIdentifier();
+                
+                if (in_array($stringTarget, $filter)) {
                     $returnValue[] = $resource;
                 }
             }
@@ -51,6 +80,11 @@ class taoQtiTest_models_classes_ManifestParser
         return $returnValue;
     }
     
+    /**
+     * Get all the resources contained within the manifest.
+     * 
+     * @return An array of taoQTI_models_classes_QTI_Resource objects.
+     */
     protected function getAllResources() {
         if ($this->resources == null) {
             $this->resources = $this->getResourcesFromManifest($this->getSimpleXMLElement());
@@ -58,40 +92,61 @@ class taoQtiTest_models_classes_ManifestParser
         return $this->resources;
     }
     
-    private function getResourcesFromManifest( SimpleXMLElement $source)
+    /**
+     * Get all the resources contained by the $source SimpleXMLElement.
+     * 
+     * @param SimpleXMLElement $source The SimpleXMLElement object you want to extract resources from.
+     * @throws common_exception_Error If $source does not correspond to a <manifest> element.
+     * @return array An array of taoQTI_models_classes_QTI_Resource objects.
+     */
+    private function getResourcesFromManifest(SimpleXMLElement $source)
     {
         $returnValue = array();
     
         //check of the root tag
-        if($source->getName() != 'manifest'){
-            throw new Exception("incorrect manifest root tag");
+        if ($source->getName() != 'manifest') {
+            throw new common_exception_Error("Incorrect manifest root tag '" . $source->getName() . "'.");
         }
         	
         $resourceNodes = $source->xpath("//*[name(.)='resource']");
-        foreach($resourceNodes as $resourceNode){
+        
+        foreach ($resourceNodes as $resourceNode) {
+            
             $type = (string) $resourceNode['type'];
             $id = (string) $resourceNode['identifier'];
             $href = (isset($resourceNode['href'])) ? (string) $resourceNode['href'] : '';
             	
+            $idRefs = array();
             $auxFiles = array();
             $xmlFiles = array();
-            foreach($resourceNode->file as $fileNode){
+            
+            // Retrieve Auxilliary files.
+            foreach ($resourceNode->file as $fileNode) {
                 $fileHref = (string) $fileNode['href'];
-                if(preg_match("/\.xml$/", $fileHref)){
-                    if(empty($href)){
+                
+                if (preg_match("/\.xml$/", $fileHref)){
+                    
+                    if (empty($href)) {
                         $xmlFiles[] = $fileHref;
                     }
                 }
-                else{
+                else {
                     $auxFiles[] = $fileHref;
                 }
             }
             	
-            if(count($xmlFiles) == 1 && empty($href)){
+            if (count($xmlFiles) == 1 && empty($href)) {
                 $href = $xmlFiles[0];
             }
+            
+            // Retrieve Dependencies.
+            foreach ($resourceNode->dependency as $dependencyNode) {
+                $idRefs[] = (string) $dependencyNode['identifierref'];
+            }
+            
             $resource = new taoQtiTest_models_classes_QtiResource($id, $type, $href);
             $resource->setAuxiliaryFiles($auxFiles);
+            $resource->setDependencies($idRefs);
             	
             $returnValue[] = $resource;
         }
@@ -100,30 +155,38 @@ class taoQtiTest_models_classes_ManifestParser
     }
     
     /**
+     * Get the root SimpleXMLElement object of the currently parsed manifest.
      * 
-     * @throws taoItems_models_classes_Import_ImportException
+     * @throws common_exception_Error
      * @return SimpleXMLElement
      */
     private function getSimpleXMLElement() {
-        switch($this->sourceType){
+        switch($this->sourceType) {
+            
         	case self::SOURCE_FILE:
         	    $xml = simplexml_load_file($this->source);
-        	    break;
+        	break;
+        	
         	case self::SOURCE_URL:
         	    $xmlContent = tao_helpers_Request::load($this->source, true);
         	    $xml = simplexml_load_string($xmlContent);
-        	    break;
+        	break;
+        	
         	case self::SOURCE_STRING:
         	    $xml = simplexml_load_string($this->source);
-        	    break;
+        	break;
+        	
         	default:
         	    throw new taoItems_models_classes_Import_ImportException('Invalid sourceType');
+        	    
         }
-        if($xml === false){
+        
+        if ($xml === false) {
             $this->addErrors(libxml_get_errors());
             libxml_clear_errors();
-            throw new taoItems_models_classes_Import_ImportException('Invalid XML');
+            throw new common_exception_Error('Invalid XML.');
         }
+        
         return $xml;
     }
 }

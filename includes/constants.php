@@ -19,10 +19,14 @@
  * 
  */
 $todefine = array(
+    // Ontology references.
     'INSTANCE_QTITEST_TESTRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner',
     'INSTANCE_QTITEST_ITEMRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner',
     'INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition',
     'INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation',
     'INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId',
-    'INSTANCE_TEST_MODEL_QTI' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel'
+    'INSTANCE_TEST_MODEL_QTI' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel',
+                
+    // Configuration.
+   'TAOQTITEST_FILENAME' => "tao-qtitest-testdefinition.xml"
 );
