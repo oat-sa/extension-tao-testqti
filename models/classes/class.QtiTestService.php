@@ -329,7 +329,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             @$testService->deleteTest($testResource);
         
             if (count($itemMap) > 0) {
-                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rollbacked.')));
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rolled back.')));
             }
             
             common_Logger::i("Successful Rollback");
