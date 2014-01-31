@@ -20,6 +20,7 @@
  */
 
 use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
+use qtism\runtime\rendering\css\CssScoper;
 use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
@@ -58,6 +59,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         // 1. Compile the test definition itself.
         $testContentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
         $testContent = new core_kernel_file_File($test->getUniquePropertyValue($testContentProperty)->getUri());
+        $testPath = $testContent->getAbsolutePath();
         $itemResolver = new taoQtiTest_helpers_ItemResolver('');
         
         $originalDoc = $testService->getDoc($test);
@@ -88,6 +90,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         // First save as XML in order to explode the rubricBlocks.
         $destinationDirectory = $this->spawnPrivateDirectory(); 
         $compiledDocDir = $destinationDirectory->getPath();
+        $publicDestinationDirectory = $this->spawnPublicDirectory();
+        $publicCompiledDocDir = $publicDestinationDirectory->getPath();
         $xmlCompactPath = $compiledDocDir . 'compact-test.xml';
         $compiledDoc->setExplodeRubricBlocks(true);
         $compiledDoc->save($xmlCompactPath);
@@ -101,13 +105,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $outcomeDeclarations = $phpCompiledDoc->getDocumentComponent()->getOutcomeDeclarations();
         $outcomeDeclarations[] = new OutcomeDeclaration('LtiOutcome', BaseType::FLOAT, Cardinality::SINGLE, new DefaultValue(new ValueCollection(array(new Value(0.0, BaseType::FLOAT)))));
         
-        // 3. Compile rubricBlocks and serialize on disk.
+        // 3. Copy the whole content of the Test Content folder into the compilation directory.
+        $subContent = tao_helpers_File::scandir($testPath, array('recursive' => false, 'absolute' => true));
+        foreach ($subContent as $subC) {
+            tao_helpers_File::copy($subC, $compiledDocDir . basename($subC));
+        }
+        
+        // 4. Compile rubricBlocks and serialize on disk.
         $rootComponent = $phpCompiledDoc->getDocumentComponent();
         $rubricBlockRefs = $rootComponent->getComponentsByClassName('rubricBlockRef');
         $renderingEngine = new XhtmlRenderingEngine();
+        $renderingEngine->setStylesheetPolicy(XhtmlRenderingEngine::STYLESHEET_SEPARATE);
+        $renderingEngine->setXmlBasePolicy(XhtmlRenderingEngine::XMLBASE_PROCESS);
+        $renderingEngine->setRootBase('tao://qti-directory');
+        $cssScoper = new CssScoper();
         
         foreach ($rubricBlockRefs as $rubric) {
-            // loading...
+            // -- loading...
             common_Logger::d("Loading rubricBlock '" . $rubric->getHref() . "'...");
             
             $rubricDoc = new XmlDocument();
@@ -115,15 +129,50 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             common_Logger::d("rubricBlock '" . $rubric->getHref() . "' successfully loaded.");
             
-            // rendering...
+            // -- rendering...
             common_Logger::d("Rendering rubricBlock '" . $rubric->getHref() . "'...");
             
             $pathinfo = pathinfo($rubric->getHref());
             $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
-            $domRendering = $renderingEngine->render($rubricDoc->getDocumentComponent());
-            $domRendering->formatOutput = true;
-            $domRendering->saveHTMLFile($renderingFile);
             
+            $domRendering->formatOutput = true;
+            $domRendering = $renderingEngine->render($rubricDoc->getDocumentComponent());
+            $mainStringRendering = $domRendering->saveXML($domRendering->documentElement);
+            
+            $rubricDocStylesheets = $rubricDoc->getDocumentComponent()->getStylesheets();
+            if (empty($rubricDocStylesheets) === false) {
+                // Prepend stylesheets rendering to the main rendering.
+                $styleRendering = $renderingEngine->getStylesheets();
+                $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
+                
+                foreach ($rubricDocStylesheets as $rubricDocStylesheet) {
+                    common_Logger::i($rubricDoc->getDocumentComponent()->getId() . ' - ' . $rubricDocStylesheet->getHref());
+                    $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricDocStylesheet->getHref());
+                    file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubricDoc->getDocumentComponent()->getId()));
+                }
+                
+                // Copy all the files referenced by the rubric block at the content model level into the public directory.
+                foreach ($rubricDoc->getDocumentComponent()->getComponentsByClassName(array('object', 'img', 'stylesheet')) as $contentComponent) {
+                    switch ($contentComponent->getQtiClassName()) {
+                        case 'object':
+                            $file = $contentComponent->getData();
+                        break;
+                        
+                        case 'img':
+                            $file = $contentComponent->getSrc();
+                        break;
+                        
+                        case 'stylesheet':
+                            $file = $contentComponent->getHref();
+                        break;
+                    }
+                    
+                    taoQtiTest_helpers_Utils::storeQtiResource($publicCompiledDocDir, $file, $compiledDocDir);
+                }
+            }
+            
+            $mainStringRendering = str_replace('tao://qti-directory/', '<?php echo $taoQtiBasePath; ?>', $mainStringRendering);
+            file_put_contents($renderingFile, $mainStringRendering);
             common_Logger::d("rubricBlockRef '" . $rubric->getHref() . "' successfully rendered.");
             
             unlink($compiledDocDir . $rubric->getHref());
@@ -132,8 +181,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         $phpCompiledDoc->save($compiledDocPath);
         common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledDocPath . '".');
-        
-        // 4. Build the service call.
+
+        // 5. Build the service call.
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(INSTANCE_QTITEST_TESTRUNNERSERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Definition URI passed to the QtiTestRunner service.
@@ -145,7 +194,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Compilation URI passed to the QtiTestRunner service.
                         new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION),
-                        $destinationDirectory->getId()
+                        $destinationDirectory->getId() . '|' . $publicDestinationDirectory->getId()
         );
         $service->addInParameter($param);
         

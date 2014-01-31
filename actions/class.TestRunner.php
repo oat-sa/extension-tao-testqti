@@ -541,8 +541,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	protected function retrieveTestDefinition() {
 	    
-	    $directory = $this->getDirectory($this->getRequestParameter('QtiTestCompilation'));
-	    $dirPath = $directory->getPath();
+	    $directories = array('private' => null, 'public' => null);
+	    $directoryIds = explode('|', $this->getRequestParameter('QtiTestCompilation'));
+	    
+	    $directories['private'] = $this->getDirectory($directoryIds[0]);
+	    $directories['public'] = $this->getDirectory($directoryIds[1]);
+	    
+	    $this->setCompilationDirectory($directories);
+	    
+	    $dirPath = $directories['private']->getPath();
 	    $testFilePath = $dirPath .'compact-test.php';
 	    
 	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
@@ -553,7 +560,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    // Retrieve the compilation directory.
 	    $pathinfo = pathinfo($testFilePath);
-	    $this->setCompilationDirectory($dirPath);
+	    
 	}
 	
 	/**
@@ -663,8 +670,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Rubric Blocks.
 	        $rubrics = array();
 	        common_Logger::i($this->compilationDirectory);
+	        
+	        
+	        $compilationDirs = $this->getCompilationDirectory();
+	        $taoQtiBasePath = $compilationDirs['public']->getPublicAccessUrl();
 	        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
-	            $rubrics[] = file_get_contents($this->getCompilationDirectory() . $rubric->getHref());
+	            ob_start();
+	            include($compilationDirs['private']->getPath() . $rubric->getHref());
+	            $rubrics[] = ob_get_clean();
 	        }
 	        
 	        $context['rubrics'] = $rubrics;
