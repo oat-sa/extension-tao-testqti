@@ -146,7 +146,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
                 
                 foreach ($rubricDocStylesheets as $rubricDocStylesheet) {
-                    common_Logger::i($rubricDoc->getDocumentComponent()->getId() . ' - ' . $rubricDocStylesheet->getHref());
                     $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricDocStylesheet->getHref());
                     file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubricDoc->getDocumentComponent()->getId()));
                 }
