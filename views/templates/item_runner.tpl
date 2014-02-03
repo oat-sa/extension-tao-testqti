@@ -4,13 +4,14 @@
             <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
             <script type="text/javascript">
             (function(){
-                require(['<?=get_data('client_config_url')?>'], function(){
+                var clientConfigUrl = '<?=get_data('client_config_url')?>';
+                require([clientConfigUrl], function(){
                     require(['taoItems/controller/runtime/itemRunner'], function(itemRunner){
                         itemRunner.start({
                             resultServer    : {
-                                endpoint : <?=json_encode(get_data('resultServerEndpoint'));?>,
+                                endpoint : <?=json_encode(get_data('resultServerEndpoint'))?>,
                                 module   : 'taoQtiTest/ResultServerApi',
-                                params   : <?=json_encode(get_data('resultServerParams'));?>
+                                params   : <?=json_encode(get_data('resultServerParams'))?>
                             },
                             itemService     : {
                                 module      : 'taoQTI/runtime/QtiItemServiceImpl',
@@ -18,8 +19,9 @@
                                     contentVariables: <?=json_encode(get_data('contentVariableElements'))?>
                                 }
                             },
-                            itemId          : <?=json_encode(get_data('itemId'));?>,
-                            itemPath        : <?=json_encode(get_data('itemPath'))?>
+                            itemId          : <?=json_encode(get_data('itemId'))?>,
+                            itemPath        : <?=json_encode(get_data('itemPath'))?>,
+                            clientConfigUrl : clientConfigUrl
                         });
                     });
                 });
