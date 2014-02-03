@@ -38,6 +38,7 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
     function getIdentifier(url, model, type, cb){
         
         addMissingQtiType(model);
+        consolidateModel(model);
         var data = {
             model : JSON.stringify(model),
             'qti-type' : type
@@ -103,17 +104,28 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
                      //remove selection if default values
                      if(assessmentSection.selection && 
                              assessmentSection.selection.select !== undefined && assessmentSection.selection.select === 1 &&
-                             assessmentSection.selection.withReplacement === undefined){
+                             (assessmentSection.selection.withReplacement === undefined ||  assessmentSection.selection.withReplacement === false )){
                          delete assessmentSection.selection;
                      }
                      
-                     //remove rubrick blocks if empty
-                      if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks) &&
-                              (assessmentSection.rubricBlocks.length === 0 || 
-                              (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) ){
-                          
-                          delete assessmentSection.rubricBlocks;
-                      } 
+
+                      if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
+
+                          //remove rubrick blocks if empty
+                          if (assessmentSection.rubricBlocks.length === 0 || 
+                                  (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
+                              
+                              delete assessmentSection.rubricBlocks;
+                          }
+                          //ensure the view attribute is present
+                          else if(assessmentSection.rubricBlocks.length > 0){
+                            _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
+                                    if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
+                                        rubricBlock.views = ['candidate'];
+                                    }
+                              });
+                          }
+                    }
                  });
             }
         }
