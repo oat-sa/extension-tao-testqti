@@ -33,7 +33,7 @@ use qtism\data\AssessmentItemRef;
  * @package taoQtiTest
  * @subpackage models_classes
  */
-class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Service {
+class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
      
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
 
@@ -424,7 +424,7 @@ class taoQtiTest_models_classes_QtiTestService extends tao_models_classes_Servic
             try {
                 taoQtiTest_helpers_Utils::storeQtiResource($testContent, $aux, $extractionFolder);
             }
-            catch (common_exception_Error $e) {
+            catch (common_Exception $e) {
                 $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The file "' . $aux . '" associated with the IMS QTI Test could not be imported.')));
             }
         }

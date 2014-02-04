@@ -19,7 +19,7 @@
  */
 
 /**
- * Miscellaneous utility methods for QtiTest extension.
+ * Miscellaneous utility methods for the QtiTest extension.
  * 
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
@@ -37,7 +37,8 @@ class taoQtiTest_helpers_Utils {
      * @param boolean $copy If set to false, the file will not be actually copied.
      * @param string $rename A new filename  e.g. 'file.css' to be used at storage time.
      * @return string The path were the file was copied/has to be copied (depending on the $copy argument).
-     * @throws common_exception_Error If the copy fails.
+     * @throws InvalidArgumentException If one of the above arguments is invalid.
+     * @throws common_Exception If the copy fails.
      */
     static public function storeQtiResource($testContent, $qtiResource, $origin, $copy = true, $rename = '') {
         if ($testContent instanceof core_kernel_file_File) {
@@ -48,7 +49,7 @@ class taoQtiTest_helpers_Utils {
         }
         else {
             common_Logger::i(get_class($testContent));
-            throw new common_exception_Error("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+            throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
         
         $ds = DIRECTORY_SEPARATOR;
@@ -61,9 +62,8 @@ class taoQtiTest_helpers_Utils {
             $filePath = $qtiResource;
         }
         else {
-            throw new common_exception_Error("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+            throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
-        
         
         $resourcePathinfo = pathinfo($filePath);
         
@@ -76,7 +76,7 @@ class taoQtiTest_helpers_Utils {
             $finalPath = $breadCrumb . $ds . $finalName;
             
             if (is_dir($breadCrumb) === false && @mkdir($breadCrumb, 0770, true) === false) {
-                throw new common_exception_Error("An error occured while creating the '${breadCrumb}' sub-directory where the QTI resource had to be copied.");
+                throw new common_Exception("An error occured while creating the '${breadCrumb}' sub-directory where the QTI resource had to be copied.");
             }
         }
         else {
@@ -92,7 +92,7 @@ class taoQtiTest_helpers_Utils {
             $sourcePath = $origin . $ds . str_replace('/', $ds, $filePath);
 
             if (tao_helpers_File::copy($sourcePath, $finalPath) === false) {
-                throw new common_exception_Error("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
+                throw new common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
             }
         }
         
@@ -100,11 +100,11 @@ class taoQtiTest_helpers_Utils {
     }
     
     /**
-     * Get the absolute path to a given $qtiResource that is already stored in TAO.
+     * Get the expected absolute path to a given $qtiResource that is already stored in TAO.
      * 
      * @param core_kernel_file_File|string $testContent The pointer to the TAO Test Content folder.
      * @param taoQTI_models_classes_QTI_Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the TAO Content Folder) path to the resource file.
-     * @throws common_exception_Error If an error occurs.
+     * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @return string The absolute path to $qtiResource.
      */
     static public function storedQtiResourcePath($testContent, $qtiResource) {
@@ -115,7 +115,7 @@ class taoQtiTest_helpers_Utils {
             $contentPath = $testContent;
         }
         else {
-            throw new common_exception_Error("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+            throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
         
         if ($qtiResource instanceof taoQti_models_classes_QTI_Resource) {
@@ -125,7 +125,7 @@ class taoQtiTest_helpers_Utils {
             $filePath = $qtiResource;
         }
         else {
-            throw new common_exception_Error("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+            throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
         
         $ds = DIRECTORY_SEPARATOR;
