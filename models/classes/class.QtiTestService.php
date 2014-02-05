@@ -286,8 +286,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // 1. Import test definition (i.e. the QTI-XML Test file).
                                 $testContent = $this->importTestDefinition($testResource, $testDefinition, $testQtiResource, $itemMap, $folder, $report);
                                 
-                                // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
-                                $this->importTestAuxiliaryFiles($testContent, $testQtiResource, $folder, $report);
+                                if ($testContent !== false) {
+                                    // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
+                                    $this->importTestAuxiliaryFiles($testContent, $testQtiResource, $folder, $report);
+                                }
                             }
                             catch (StorageException $e) {
                                 // Source of the exception = $testDefinition->load()
@@ -373,13 +375,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $itemMappingCount = count($itemMapping);
         
         if ($assessmentItemRefsCount === 0) {
-            $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file does not contain any Item reference.', $testDefinition->getTitle())));
+            $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file does not contain any Item reference.', $qtiResource->getIdentifier())));
         }
         
         foreach ($assessmentItemRefs as $itemRef) {
             $itemRefIdentifier = $itemRef->getIdentifier();
         
             if (isset($itemMapping[$itemRefIdentifier]) === false || !$itemMapping[$itemRefIdentifier] instanceof core_kernel_classes_Resource) {
+                $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file references an unknown Item in its definition.', $qtiResource->getIdentifier())));
                 return false;
             }
             else {
@@ -401,7 +404,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $testDefinition->save($finalPath);
         }
         catch (StorageException $e) {
-            throw new taoQtiTest_models_classes_QtiTestServiceException("An error occured while saving with the QTI-XML test.", taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+            throw new taoQtiTest_models_classes_QtiTestServiceException("An error occured while saving the QTI-XML test.", taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
         }
         
         return $testContent;
