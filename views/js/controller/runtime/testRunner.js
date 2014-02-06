@@ -95,13 +95,11 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
         },
 
         comment : function() {
-                $('#comment').css('display', 'none');
                 $('#qti-comment').css('display', 'block');
         },
 
         closeComment : function() {
                 $('#qti-comment').css('display', 'none');
-                $('#comment').css('display', 'inline');
         },
 
         emptyComment : function() {

@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>QTI 2.1 Test Driver</title>
+				<link rel="stylesheet" href="<?=TAOBASE_WWW?>css/tao-main-style.css"/>
                 <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
                 <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
                 
@@ -43,16 +44,14 @@
 	</head>
 	<body>
 		<div id="runner">
-			<div id="qti-actions">
-				<button id="move-backward" class="qti-navigation"><?= __("Previous"); ?></button>
-				<button id="move-forward" class="qti-navigation"><?= __("Next"); ?></button>
-				<button id="skip" class="qti-navigation"><?= __("Skip"); ?></button>
-				<button id="comment" class="qti-tool"><?= __("Comment"); ?></button>
+			<div id="qti-actions" class="tao-scope">
+				<button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button>
 			</div>
-			<div id="qti-comment">
-				<textarea ><?= __("Your comment..."); ?></textarea>
-				<button id="qti-comment-cancel"><?= __("Cancel"); ?></button>
-			<button id="qti-comment-send"><?= __("Send"); ?></button></div>
+			<div id="qti-comment" class="tao-scope">
+				<textarea><?= __("Your comment..."); ?></textarea>
+				<button id="qti-comment-cancel" class="btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
+				<button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
+			</div>
 			<iframe id="qti-item" frameborder="0" scrolling="no"></iframe>
 		</div>
 	</body>

@@ -26,6 +26,8 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
 use qtism\data\content\RubricBlockRef;
+use qtism\data\content\Stylesheet;
+use qtism\data\content\StylesheetCollection;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\state\DefaultValue;
 use qtism\data\state\Value;
@@ -335,6 +337,12 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         $subContent = tao_helpers_File::scandir($testPath, array('recursive' => false, 'absolute' => true));
         $privateDirPath = $this->getPrivateDirectory()->getPath();
+        
+        // Append the qti_base.css to copied files.
+        $ds = DIRECTORY_SEPARATOR;
+        $subContent[] = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds . 'views' . $ds . 'css' . $ds . 'qti_base.css';
+        
+        // Recursive copy of each root level resources.
         foreach ($subContent as $subC) {
             tao_helpers_File::copy($subC, $privateDirPath . basename($subC));
         }
@@ -390,20 +398,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $pathinfo = pathinfo($rubric->getHref());
         $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
         
+        $rubricDocStylesheets = $rubricDoc->getDocumentComponent()->getStylesheets();
+        $stylesheets = new StylesheetCollection(array(new Stylesheet('qti_base.css')));
+        // In any case, include the base QTI Stylesheet.
+        $stylesheets->merge($rubricDocStylesheets);
+        $rubricDoc->getDocumentComponent()->setStylesheets($stylesheets);
+        
         $domRendering = $renderingEngine->render($rubricDoc->getDocumentComponent());
         $domRendering->formatOutput = true;
         $mainStringRendering = $domRendering->saveXML($domRendering->documentElement);
         
-        $rubricDocStylesheets = $rubricDoc->getDocumentComponent()->getStylesheets();
-        if (empty($rubricDocStylesheets) === false) {
-            // Prepend stylesheets rendering to the main rendering.
-            $styleRendering = $renderingEngine->getStylesheets();
-            $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
-        
-            foreach ($rubricDocStylesheets as $rubricDocStylesheet) {
-                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricDocStylesheet->getHref());
-                file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubricDoc->getDocumentComponent()->getId()));
-            }
+        // Prepend stylesheets rendering to the main rendering.
+        $styleRendering = $renderingEngine->getStylesheets();
+        $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
+    
+        foreach ($stylesheets as $rubricDocStylesheet) {
+            $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricDocStylesheet->getHref());
+            file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubricDoc->getDocumentComponent()->getId()));
         }
         
         // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
