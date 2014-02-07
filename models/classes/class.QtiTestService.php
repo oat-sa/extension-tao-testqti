@@ -20,6 +20,7 @@
  */
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
@@ -293,13 +294,33 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             }
                             catch (StorageException $e) {
                                 // Source of the exception = $testDefinition->load()
+                                // What is the reason ?
+                                $finalErrorString = '';
                                 $eStrs = array();
                                 if (($libXmlErrors = $e->getErrors()) !== null) {
                                     foreach ($libXmlErrors as $libXmlError) {
                                         $eStrs[] = __('QTI-XML error at line %1$d column %2$d "%3$s".', $libXmlError->line, $libXmlError->column, trim($libXmlError->message));
                                     }
                                 }
-                                $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported:\n%s", $testQtiResource->getIdentifier(), implode("\n", $eStrs))));
+                                
+                                $finalErrorString = implode("\n", $eStrs);
+                                if (empty($finalErrorString) === true) {
+                                    // Not XML malformation related. No info from LibXmlErrors extracted.
+                                    if (($previous = $e->getPrevious()) != null) {
+                                        // Useful information could be found here.
+                                        $finalErrorString = $previous->getMessage();
+                                        
+                                        if ($previous instanceof UnmarshallingException) {
+                                            $domElement = $previous->getDOMElement();
+                                            $finalErrorString = __('IMS QTI Inconsistency at line %1d:', $domElement->getLineNo()) . ' ' . $previous->getMessage();
+                                        }
+                                    }
+                                    else {
+                                        $finalErrorString = __("Unknown IMS QTI error.");
+                                    }
+                                }
+                                
+                                $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported:\n%s", $testQtiResource->getIdentifier(), $finalErrorString)));
                             }
                         }
                         else {
