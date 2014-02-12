@@ -68,7 +68,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                                                'application/pdf',
                                                'application/x-font-woff',
                                                'application/vnd.ms-fontobject',
-                                               'application/x-font-ttf');
+                                               'application/x-font-ttf',
+                                               'image/svg+xml',
+                                               'image/svg+xml');
    
     /**
      * The public compilation directory.
@@ -234,11 +236,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $this->updateTestDefinition($assessmentTest);
             
             // 6. Compile rubricBlocks and serialize on disk.
-            $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
-            
-            foreach ($rubricBlockRefs as $rubric) {
-                $this->compileRubricBlock($rubric);
-            }
+            $this->compileRubricBlocks($assessmentTest);
             
             // 7. Compile the test definition into PHP source code and put it
             // into the private directory.
@@ -382,57 +380,73 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
     
     /**
-     * Compile a given RubricBlocRef's content into a separate rubric block PHP template.
+     * Compile the RubricBlocRefs' contents into a separate rubric block PHP template.
      * 
-     * @param RubricBlockRef $rubric
+     * @param AssessmentTest $assessmentTest The AssessmentTest object you want to compile the rubrickBlocks.
      */
-    protected function compileRubricBlock(RubricBlockRef $rubric) {
-        $cssScoper = $this->getCssScoper();
-        $renderingEngine = $this->getRenderingEngine();
-        $compiledDocDir = $this->getPrivateDirectory()->getPath();
-        $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
+    protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
+        $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         
-        // -- loading...
-        common_Logger::t("Loading rubricBlock '" . $rubric->getHref() . "'...");
-        
-        $rubricDoc = new XmlDocument();
-        $rubricDoc->load($compiledDocDir . $rubric->getHref());
-        
-        common_Logger::t("rubricBlock '" . $rubric->getHref() . "' successfully loaded.");
-        
-        // -- rendering...
-        common_Logger::t("Rendering rubricBlock '" . $rubric->getHref() . "'...");
-        
-        $pathinfo = pathinfo($rubric->getHref());
-        $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
-        
-        $rubricDocStylesheets = $rubricDoc->getDocumentComponent()->getStylesheets();
-        $stylesheets = new StylesheetCollection(array(new Stylesheet('qti_base.css')));
-        // In any case, include the base QTI Stylesheet.
-        $stylesheets->merge($rubricDocStylesheets);
-        $rubricDoc->getDocumentComponent()->setStylesheets($stylesheets);
-        
-        $domRendering = $renderingEngine->render($rubricDoc->getDocumentComponent());
-        $domRendering->formatOutput = true;
-        $mainStringRendering = $domRendering->saveXML($domRendering->documentElement);
-        
-        // Prepend stylesheets rendering to the main rendering.
-        $styleRendering = $renderingEngine->getStylesheets();
-        $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
-    
-        foreach ($stylesheets as $rubricDocStylesheet) {
-            $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricDocStylesheet->getHref());
-            file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubricDoc->getDocumentComponent()->getId()));
+        foreach ($rubricBlockRefs as $rubricRef) {
+            
+            $rubricRefHref = $rubricRef->getHref();
+            $cssScoper = $this->getCssScoper();
+            $renderingEngine = $this->getRenderingEngine();
+            $compiledDocDir = $this->getPrivateDirectory()->getPath();
+            $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
+            
+            // -- loading...
+            common_Logger::t("Loading rubricBlock '" . $rubricRefHref . "'...");
+            
+            $rubricDoc = new XmlDocument();
+            $rubricDoc->load($compiledDocDir . $rubricRefHref);
+            
+            common_Logger::t("rubricBlock '" . $rubricRefHref . "' successfully loaded.");
+            
+            // -- rendering...
+            common_Logger::t("Rendering rubricBlock '" . $rubricRefHref . "'...");
+            
+            $pathinfo = pathinfo($rubricRefHref);
+            $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
+            
+            $rubric = $rubricDoc->getDocumentComponent();
+            $rubricStylesheets = $rubric->getStylesheets();
+            $stylesheets = new StylesheetCollection(array(new Stylesheet('qti_base.css')));
+            // In any case, include the base QTI Stylesheet.
+            $stylesheets->merge($rubricStylesheets);
+            $rubric->setStylesheets($stylesheets);
+            
+            // If the rubricBlock has no id, give it a auto-generated one in order
+            // to be sure that CSS rescoping procedure works fine (it needs at least an id
+            // to target its scoping).
+            if ($rubric->hasId() === false) {
+                // Prepend 'tao' to the generated id because the CSS
+                // ident token must begin by -|[a-zA-Z]
+                $rubric->setId('tao' . uniqid());
+            }
+            
+            $domRendering = $renderingEngine->render($rubric);
+            $domRendering->formatOutput = true;
+            $mainStringRendering = $domRendering->saveXML($domRendering->documentElement);
+            
+            // Prepend stylesheets rendering to the main rendering.
+            $styleRendering = $renderingEngine->getStylesheets();
+            $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
+            
+            foreach ($stylesheets as $rubricStylesheet) {
+                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricStylesheet->getHref());
+                file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubric->getId()));
+            }
+            
+            // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
+            $mainStringRendering = str_replace('tao://qti-directory/', '<?php echo $taoQtiBasePath; ?>', $mainStringRendering);
+            file_put_contents($renderingFile, $mainStringRendering);
+            common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
+            
+            // -- Clean up old rubric block and reference the new rubric block template.
+            unlink($compiledDocDir . $rubricRefHref);
+            $rubricRef->setHref('./' . $pathinfo['filename'] . '.php');
         }
-        
-        // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
-        $mainStringRendering = str_replace('tao://qti-directory/', '<?php echo $taoQtiBasePath; ?>', $mainStringRendering);
-        file_put_contents($renderingFile, $mainStringRendering);
-        common_Logger::t("rubricBlockRef '" . $rubric->getHref() . "' successfully rendered.");
-        
-        // -- Clean up old rubric block and reference the new rubric block template.
-        unlink($compiledDocDir . $rubric->getHref());
-        $rubric->setHref('./' . $pathinfo['filename'] . '.php');
     }
     
     /**
