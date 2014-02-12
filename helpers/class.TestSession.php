@@ -189,7 +189,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function endTestSession() {
         parent::endTestSession();
         
-        common_Logger::i('ending test session.');
+        common_Logger::i('Ending test session.');
         try {
             // Compute the LtiOutcome variable for LTI support.
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
