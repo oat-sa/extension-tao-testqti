@@ -514,7 +514,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 
                 foreach ($files as $f) {
                     $pathinfo = pathinfo($f);
-                    common_Logger::i($pathinfo['filename']);
                     if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
                         $dirContent[] = $f;
                     }
