@@ -209,49 +209,57 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @param core_kernel_file_File $destinationDirectory The directory where the compiled files must be put.
      * @return tao_models_classes_service_ServiceCall A ServiceCall object that represent the way to call the newly compiled test.
-     * @throws tao_models_classes_CompilationFailedException If an error occurs during the compilation.
+     * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If an error occurs during the compilation.
      */
     public function compile() {
         
-        // 0. Initialize compilation (compilation directories, renderers, ...).
-        $this->initCompilation();
-        
-        // 1. Copy the resources composing the test into the private complilation directory.
-        $this->copyPrivateResources();
-        
-        // 2. Compact the test definition itself.
-        $compiledDoc = $this->compactTest();
-        
-        // 3. Compile the items of the test.
-        $this->compileItems($compiledDoc);
-        
-        // 4. Explode the rubric blocks in the test into rubric block refs.
-        $this->explodeRubricBlocks($compiledDoc);
-        
-        // 5. Update test definition with additional runtime info.
-        $assessmentTest = $compiledDoc->getDocumentComponent();
-        $this->updateTestDefinition($assessmentTest);
-        
-        // 6. Compile rubricBlocks and serialize on disk.
-        $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
-        
-        foreach ($rubricBlockRefs as $rubric) {
-            $this->compileRubricBlock($rubric);
+        try {
+            // 0. Initialize compilation (compilation directories, renderers, ...).
+            $this->initCompilation();
+            
+            // 1. Copy the resources composing the test into the private complilation directory.
+            $this->copyPrivateResources();
+            
+            // 2. Compact the test definition itself.
+            $compiledDoc = $this->compactTest();
+            
+            // 3. Compile the items of the test.
+            $this->compileItems($compiledDoc);
+            
+            // 4. Explode the rubric blocks in the test into rubric block refs.
+            $this->explodeRubricBlocks($compiledDoc);
+            
+            // 5. Update test definition with additional runtime info.
+            $assessmentTest = $compiledDoc->getDocumentComponent();
+            $this->updateTestDefinition($assessmentTest);
+            
+            // 6. Compile rubricBlocks and serialize on disk.
+            $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
+            
+            foreach ($rubricBlockRefs as $rubric) {
+                $this->compileRubricBlock($rubric);
+            }
+            
+            // 7. Compile the test definition into PHP source code and put it
+            // into the private directory.
+            $this->compileTest($assessmentTest);
+            
+            // 8. Copy the needed files into the public directory.
+            $this->copyPublicResources();
+            
+            // 9. Build the service call.
+            $serviceCall = $this->buildServiceCall();
+            
+            common_Logger::t("QTI Test successfuly compiled.");
+            
+            return $serviceCall;
         }
-        
-        // 7. Compile the test definition into PHP source code and put it
-        // into the private directory.
-        $this->compileTest($assessmentTest);
-
-        // 8. Copy the needed files into the public directory.
-        $this->copyPublicResources(); 
-        
-        // 9. Build the service call.
-        $serviceCall = $this->buildServiceCall();
-        
-        common_Logger::t("QTI Test successfuly compiled.");
-        
-        return $serviceCall;
+        catch (Exception $e) {
+            // All exception that were not catched in the compilation steps
+            // above have a last chance here.
+            $msg = "An unexpected error occured while compiling an IMS QTI Test.";
+            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), taoQtiTest_models_classes_QtiTestCompilationFailedException::UNKNOWN);
+        }
     }
     
     /**

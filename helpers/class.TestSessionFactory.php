@@ -19,6 +19,7 @@
  */
 
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
+use qtism\runtime\tests\TestResultsSubmission;
 use qtism\data\AssessmentTest;
 
 /**
@@ -109,6 +110,11 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
             $this->getResultServer(),
             $this->getTest()
         );
+        
+        // Test result submission mode = OUTCOME_PROCESSING, which mean
+        // outcome variable's values are sent to the result storage
+        // each time the reponse processing takes place.
+        $session->setTestResultsSubmission(TestResultsSubmission::OUTCOME_PROCESSING);
         
         return $session;
     }

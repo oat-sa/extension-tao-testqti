@@ -145,7 +145,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $occurence = $occurence;
         $sessionId = $this->getSessionId();
         
-        common_Logger::d("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
+        common_Logger::t("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
         
         try {
         
@@ -155,7 +155,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $resultTransmitter = $this->getResultTransmitter();
         
             foreach ($itemSession->getKeys() as $identifier) {
-                common_Logger::d("Examination of variable '${identifier}'");
+                common_Logger::t("Examination of variable '${identifier}'");
         
                 $variable = $itemSession->getVariable($identifier);
                 $itemUri = self::getItemRefUri($item);
@@ -177,19 +177,33 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         }
     }
     
-    protected function outcomeProcessing() {
-        parent::outcomeProcessing();
+    /**
+     * QTISM endTestSession method overriding.
+     * 
+     * It consists of including an additional processing when the test ends,
+     * in order to send the LtiOutcome 
+     * 
+     * @see http://www.imsglobal.org/lis/ Outcome Management Service
+     * @throws taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
+     */
+    public function endTestSession() {
+        parent::endTestSession();
         
+        common_Logger::i('ending test session.');
         try {
-            
             // Compute the LtiOutcome variable for LTI support.
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
             $outcomeProcessingEngine->process();
-    
+        
             // if numberPresented returned 0, division by 0 -> null.
             $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
             $this['LtiOutcome'] = $finalLtiOutcomeValue;
-            
+            $testUri = $this->getTest()->getUri();
+            $var = $this->getVariable('LtiOutcome');
+            $varIdentifier = $var->getIdentifier();
+        
+            common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
+            $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
         }
         catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -206,8 +220,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     protected function submitTestResults() {
+        $testUri = $this->getTest()->getUri();
+        $sessionId = $this->getSessionId();
+        
         foreach ($this->getAllVariables() as $var) {
-            $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $this->getTest()->getUri());
+            common_Logger::t("Submitting test result '" . $var->getIdentifier() . "' related to test '" . $testUri . "'.");
+            $this->getResultTransmitter()->transmitTestVariable($var, $sessionId, $testUri);
         }
     }
     
