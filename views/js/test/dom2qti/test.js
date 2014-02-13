@@ -1,8 +1,9 @@
 define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($, Dom2Qti){
-    var domStr, model;
+    var domStrs = [], models = [];
     module('DomObject encoder', {
         setup: function() {
-            domStr = '<div id="main-container" class="container">\
+            
+            domStrs[0] = '<div id="main-container" class="container">\
 		<h1>The F4U Corsair</h1>\
 		<img src="f4u-corsair.png" alt="A restored F4U-4 Corsair in Korean War-ear U.S. Marine Corps markings" longdesc="http://en.wikipedia.org/wiki/Vought_F4U_Corsair" height="400" width="300"/>\
 		<h2>Introduction</h2>\
@@ -17,7 +18,12 @@ define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($,
 			in the longest production run of any piston-engined fighter in U.S. history (1942–53).€\
 		</p>\
             </div>';
-            model = {
+            
+            domStrs[1] = '<p>paragraph 1</p>\
+            <p>paragraph 2</p>\
+            <p>paragraph 3</p>';
+            
+            models[0] = {
                 "qti-type": "div",
                 "xmlBase": "",
                 "id": "main-container",
@@ -122,6 +128,41 @@ define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($,
                         "label": ""
                     }]
                 };
+             models[1] = [{
+                "qti-type": "p",
+                "xmlBase": "",
+                "id": "",
+                "class": "",
+                "lang": "",
+                "label": "",
+                "content": [{
+                    "qti-type": "textRun",
+                    "xmlBase": "",
+                    "content": "paragraph 1"
+                }]}, {
+                "qti-type": "p",
+                "xmlBase": "",
+                "id": "",
+                "class": "",
+                "lang": "",
+                "label": "",
+                "content": [{
+                    "qti-type": "textRun",
+                    "xmlBase": "",
+                    "content": "paragraph 2"
+                }]}, {
+                "qti-type": "p",
+                "xmlBase": "",
+                "id": "",
+                "class": "",
+                "lang": "",
+                "label": "",
+                "content": [{
+                    "qti-type": "textRun",
+                    "xmlBase": "",
+                    "content": "paragraph 3"
+                }]
+            }];
         }
     });
    
@@ -130,11 +171,11 @@ define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($,
         
         ok(typeof Dom2Qti.encode === 'function');
         
-        var result = Dom2Qti.encode(model);
+        var result = Dom2Qti.encode(models[0]);
         
         var pattern = /\s/g;
         
-        equal(result.replace(pattern, ''), domStr.replace(pattern, ''));
+        equal(result.replace(pattern, ''), domStrs[0].replace(pattern, ''));
     });
     
     test('decode', function(){
@@ -142,9 +183,31 @@ define(['jquery', 'taoQtiTest/controller/creator/encoders/dom2qti'], function($,
         
         ok(typeof Dom2Qti.decode === 'function');
         
-        var result = Dom2Qti.decode(domStr.replace(/\s+/gm, ' '));
+        var result = Dom2Qti.decode(domStrs[0].replace(/\s+/gm, ' '));
         
-        deepEqual(result, [model]);
+        deepEqual(result, [models[0]]);
+    });
+    
+    test('encode multi roots', function(){
+        expect(2);
+        
+        ok(typeof Dom2Qti.encode === 'function');
+        
+        var result = Dom2Qti.encode(models[1]);
+        
+        var pattern = /\s/g;
+        
+        equal(result.replace(pattern, ''), domStrs[1].replace(pattern, ''));
+    });
+    
+    test('decode multi roots', function(){
+        expect(2);
+        
+        ok(typeof Dom2Qti.decode === 'function');
+        
+        var result = Dom2Qti.decode(domStrs[1].replace(/\s+/gm, ' '));
+        
+        deepEqual(result, models[1]);
     });
 });
 
