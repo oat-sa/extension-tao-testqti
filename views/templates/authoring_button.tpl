@@ -13,13 +13,15 @@
 <script type="text/javascript">
     require(['jquery', 'helpers'], function($, helpers) {
 
-            $('#authoringButton').click(function(e) {
-                    e.preventDefault();
-                    var uri = '<?=_url('index', 'Creator', 'taoQtiTest', array('uri' => get_data('uri')))?>';
-                    if($("div#tabs ul.ui-tabs-nav li a").length > 1){
-                         helpers.closeTab(1);
-                    }
-                    helpers.openTab('<?=__('Authoring %s', get_data('label'))?>', uri);
-            });
+        $('#authoringButton').one('click', function(e) {
+            e.preventDefault();
+            var uri = '<?=_url('index', 'Creator', 'taoQtiTest', array('uri' => get_data('uri')))?>';
+            if($("div#tabs ul.ui-tabs-nav li a").length > 1){
+                 helpers.closeTab(1);
+            }
+            setTimeout(function(){
+                helpers.openTab('<?=__('Authoring %s', get_data('label'))?>', uri);
+            }, 10);
+        });
 });
 </script>
