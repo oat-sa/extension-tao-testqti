@@ -28,6 +28,9 @@ $todefine = array(
     'INSTANCE_TEST_MODEL_QTI' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel',
                 
     // Configuration.
-   'TAOQTITEST_FILENAME' => "tao-qtitest-testdefinition.xml",
-   'TAOQTITEST_REMOTE_FOLDER' => "tao-qtitest-remote"
+   'TAOQTITEST_FILENAME' => 'tao-qtitest-testdefinition.xml',
+   'TAOQTITEST_REMOTE_FOLDER' => 'tao-qtitest-remote',
+   'TAOQTITEST_RENDERING_STATE_NAME' => 'taoQtiTestState',
+   'TAOQTITEST_BASE_PATH_NAME' => 'taoQtiBasePath',
+   'TAOQTITEST_PLACEHOLDER_BASE_URI' => 'tao://qti-directory'
 );

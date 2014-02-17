@@ -19,6 +19,7 @@
  */
 
 use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
+use qtism\runtime\rendering\markup\MarkupPostRenderer;
 use qtism\runtime\rendering\css\CssScoper;
 use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponentIterator;
@@ -35,6 +36,7 @@ use qtism\data\state\Value;
 use qtism\data\state\ValueCollection;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\common\utils\Url;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -93,6 +95,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @var XhtmlRenderingEngine
      */
     private $renderingEngine = null;
+    
+    /**
+     * The Post renderer to be used in template oriented rendering.
+     * 
+     * @var MarkupPostRenderer
+     */
+    private $markupPostRenderer = null;
     
     /**
      * The CSS Scoper will scope CSS files to their related rubric block.
@@ -156,6 +165,24 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
     
     /**
+     * Get the markup post renderer to be used after template oriented rendering.
+     * 
+     * @return MarkupPostRenderer
+     */
+    protected function getMarkupPostRenderer() {
+        return $this->markupPostRenderer;
+    }
+    
+    /**
+     * Set the markup post renderer to be used after template oriented rendering.
+     * 
+     * @param MarkupPostRenderer $markupPostRenderer
+     */
+    protected function setMarkupPostRenderer(MarkupPostRenderer $markupPostRenderer) {
+        $this->markupPostRenderer = $markupPostRenderer;
+    }
+    
+    /**
      * Get the CSS Scoper tool that will scope CSS files to their related rubric block.
      * 
      * @return CssScoper
@@ -190,11 +217,16 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $renderingEngine = new XhtmlRenderingEngine();
         $renderingEngine->setStylesheetPolicy(XhtmlRenderingEngine::STYLESHEET_SEPARATE);
         $renderingEngine->setXmlBasePolicy(XhtmlRenderingEngine::XMLBASE_PROCESS);
-        $renderingEngine->setRootBase('tao://qti-directory');
+        $renderingEngine->setFeedbackShowHidePolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
+        $renderingEngine->setStateName(TAOQTITEST_RENDERING_STATE_NAME);
+        $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI);
         $this->setRenderingEngine($renderingEngine);
         
         // Initialize CSS Scoper.
         $this->setCssScoper(new CssScoper());
+        
+        // Initialize Post Markup Renderer.
+        $this->setMarkupPostRenderer(new MarkupPostRenderer(true, true, true));
     }
     
     /**
@@ -393,6 +425,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $rubricRefHref = $rubricRef->getHref();
             $cssScoper = $this->getCssScoper();
             $renderingEngine = $this->getRenderingEngine();
+            $markupPostRenderer = $this->getMarkupPostRenderer();
             $compiledDocDir = $this->getPrivateDirectory()->getPath();
             $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
             
@@ -430,8 +463,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $this->copyRemoteResources($rubric);
             
             $domRendering = $renderingEngine->render($rubric);
-            $domRendering->formatOutput = true;
-            $mainStringRendering = $domRendering->saveXML($domRendering->documentElement);
+            $mainStringRendering = $markupPostRenderer->render($domRendering);
             
             // Prepend stylesheets rendering to the main rendering.
             $styleRendering = $renderingEngine->getStylesheets();
@@ -443,7 +475,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             }
             
             // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
-            $mainStringRendering = str_replace('tao://qti-directory/', '<?php echo $taoQtiBasePath; ?>', $mainStringRendering);
+            $mainStringRendering = str_replace(TAOQTITEST_PLACEHOLDER_BASE_URI, '<?php echo $' . TAOQTITEST_BASE_PATH_NAME . '; ?>', $mainStringRendering);
             file_put_contents($renderingFile, $mainStringRendering);
             common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
             
@@ -512,7 +544,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 break;
             }
             
-            if (!preg_match('@^' . ROOT_URL . '@', $url)) {
+            if (!preg_match('@^' . ROOT_URL . '@', $url) && !Url::isRelative($url)) {
                 $finalDestination = taoItems_helpers_Deployment::retrieveFile($url, $destination);
                 $pathinfo = pathinfo($finalDestination);
                 
@@ -531,7 +563,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 }
                 else {
                     $msg = "The remote resource referenced by '${url}' could not be retrieved.";
-                    throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, taoQtiTest_models_classes_QtiTestCompilationFailedException::REMOTE_RESOURCE);
+                    throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), taoQtiTest_models_classes_QtiTestCompilationFailedException::REMOTE_RESOURCE);
                 }
             }
         }

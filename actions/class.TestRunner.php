@@ -673,7 +673,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        
 	        $compilationDirs = $this->getCompilationDirectory();
-	        $taoQtiBasePath = $compilationDirs['public']->getPublicAccessUrl();
+	        
+	        // -- variables used in the included rubric block templates.
+	        // base path (base URI to be used for resource inclusion).
+	        $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
+	        $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
+	        
+	        // state name (the variable to access to get the state of the assessmentTestSession).
+	        $stateName = TAOQTITEST_RENDERING_STATE_NAME;
+	        $$stateName = $session;
+	        
 	        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
 	            ob_start();
 	            include($compilationDirs['private']->getPath() . $rubric->getHref());
