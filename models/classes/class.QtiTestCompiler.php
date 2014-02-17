@@ -486,6 +486,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * * img:src
      * 
      * @param AssessmentTest $assessmentTest An AssessmentTest object.
+     * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If a remote resource cannot be retrieved.
      */
     protected function copyRemoteResources(RubricBlock $rubricBlock) {
         
@@ -527,6 +528,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             $component->setSrc($newUrl);
                         break;
                     }
+                }
+                else {
+                    $msg = "The remote resource referenced by '${url}' could not be retrieved.";
+                    throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, taoQtiTest_models_classes_QtiTestCompilationFailedException::REMOTE_RESOURCE);
                 }
             }
         }

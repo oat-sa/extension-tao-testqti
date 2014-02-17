@@ -45,6 +45,14 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
     const NO_ITEMS = 1;
     
     /**
+     * Error code to use when a remote resource (e.g. image
+     * referenced with absolute URL) cannot be retrieved.
+     * 
+     * @var integer
+     */
+    const REMOTE_RESOURCE = 2;
+    
+    /**
      * The resource in database describing the test that failed
      * to be compiled.
      * 
@@ -100,6 +108,10 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
 			
 			case self::NO_ITEMS:
 		        return sprintf(__("The QTI test '%s' to be compiled must contain at least 1 QTI item. None found."), $testLabel);
+			break;
+			
+			case self::REMOTE_RESOURCE:
+			    return sprintf(__("A remote resource referenced in QTI test '%s' could not be retrieved.", $testLabel));
 			break;
 			
 			default:
