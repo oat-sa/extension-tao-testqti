@@ -705,7 +705,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // $directory is the directory where test related resources will be stored.
         $directoryPath = md5($test->getUri()) . DIRECTORY_SEPARATOR;
         $directory = $repository->createFile('', $directoryPath);
-        mkdir($directory->getAbsolutePath(), 0770, true);
+        $dirPath = $directory->getAbsolutePath();
+        
+        if (!file_exists($dirPath)) {
+            mkdir($directory->getAbsolutePath(), 0770, true);
+        }
         
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $emptyTestXml = $this->getQtiTestTemplateFileAsString();

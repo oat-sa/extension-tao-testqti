@@ -26,6 +26,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
 use qtism\data\content\RubricBlockRef;
+use qtism\data\content\RubricBlock;
 use qtism\data\content\Stylesheet;
 use qtism\data\content\StylesheetCollection;
 use qtism\data\state\OutcomeDeclaration;
@@ -238,12 +239,12 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 6. Compile rubricBlocks and serialize on disk.
             $this->compileRubricBlocks($assessmentTest);
             
-            // 7. Compile the test definition into PHP source code and put it
+            // 7. Copy the needed files into the public directory.
+            $this->copyPublicResources();
+            
+            // 8. Compile the test definition into PHP source code and put it
             // into the private directory.
             $this->compileTest($assessmentTest);
-            
-            // 8. Copy the needed files into the public directory.
-            $this->copyPublicResources();
             
             // 9. Build the service call.
             $serviceCall = $this->buildServiceCall();
@@ -416,7 +417,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $stylesheets->merge($rubricStylesheets);
             $rubric->setStylesheets($stylesheets);
             
-            // If the rubricBlock has no id, give it a auto-generated one in order
+            // -- If the rubricBlock has no id, give it a auto-generated one in order
             // to be sure that CSS rescoping procedure works fine (it needs at least an id
             // to target its scoping).
             if ($rubric->hasId() === false) {
@@ -424,6 +425,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 // ident token must begin by -|[a-zA-Z]
                 $rubric->setId('tao' . uniqid());
             }
+            
+            // -- Copy eventual remote resources of the rubricBlock.
+            $this->copyRemoteResources($rubric);
             
             $domRendering = $renderingEngine->render($rubric);
             $domRendering->formatOutput = true;
@@ -452,6 +456,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     /**
      * Copy the test resources (e.g. images) that will be availabe at delivery time
      * in the public compilation directory.
+     * 
      */
     protected function copyPublicResources() {
         
@@ -468,6 +473,61 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 
                 common_Logger::t("Copying public resource '${file}'...");
                 taoQtiTest_helpers_Utils::storeQtiResource($publicCompiledDocDir, $file, $compiledDocDir);
+            }
+        }
+    }
+    
+    /**
+     * Copy all remote resource (absolute URLs to another host) contained in a rubricBlock into a dedicated directory. Remote resources
+     * can be refereced by the following QTI classes/attributes:
+     * 
+     * * a:href
+     * * object:data
+     * * img:src
+     * 
+     * @param AssessmentTest $assessmentTest An AssessmentTest object.
+     */
+    protected function copyRemoteResources(RubricBlock $rubricBlock) {
+        
+        $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
+        $destination = $publicCompiledDocDir . TAOQTITEST_REMOTE_FOLDER . DIRECTORY_SEPARATOR;
+        
+        // If remote directory does not exist yet, create it.
+        if (file_exists($destination) === false) {
+            mkdir($destination, 0770, true);
+        }
+        
+        // Search for all class-attributes in QTI-XML that might reference a remote file.
+        $search = $rubricBlock->getComponentsByClassName(array('a', 'object', 'img'));
+        foreach ($search as $component) {
+            switch ($component->getQtiClassName()) {
+
+                case 'object':
+                    $url = $component->getData();
+                break;
+                
+                case 'img':
+                    $url = $component->getSrc();
+                break;
+            }
+            
+            if (!preg_match('@^' . ROOT_URL . '@', $url)) {
+                $finalDestination = taoItems_helpers_Deployment::retrieveFile($url, $destination);
+                $pathinfo = pathinfo($finalDestination);
+                
+                if ($finalDestination !== false) {
+                    $newUrl = TAOQTITEST_REMOTE_FOLDER . '/' . $pathinfo['basename'];
+                     
+                    switch ($component->getQtiClassName()) {
+                        case 'object':
+                            $component->setData($newUrl);
+                        break;
+                         
+                        case 'img':
+                            $component->setSrc($newUrl);
+                        break;
+                    }
+                }
             }
         }
     }
