@@ -192,18 +192,20 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         common_Logger::i('Ending test session.');
         try {
             // Compute the LtiOutcome variable for LTI support.
+            $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, 0.0));
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
             $outcomeProcessingEngine->process();
         
             // if numberPresented returned 0, division by 0 -> null.
             $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
-            $this['LtiOutcome'] = $finalLtiOutcomeValue;
             $testUri = $this->getTest()->getUri();
             $var = $this->getVariable('LtiOutcome');
             $varIdentifier = $var->getIdentifier();
         
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
+            
+            $this->unsetVariable('LtiOutcome');
         }
         catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -211,10 +213,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         }
         catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             $msg = "An error occured during test-level outcome results transmission.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
-        }
-        catch (AssessmentTestSessionException $e) {
-            $msg = "An error occured during test-level outcome processing.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }

@@ -166,8 +166,16 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
         updateTools : function updateTools() {
                 if (this.assessmentTestContext['allowComment'] === true) {
                         $('#comment').css('display', 'inline');
-                } else {
+                } 
+                else {
                         $('#comment').css('display', 'none');
+                }
+                
+                if (this.assessmentTestContext['allowSkipping'] === true) {
+                	$('#skip').css('display', 'inline');
+                }
+                else {
+                	$('#skip').css('display', 'none');
                 }
         },
 

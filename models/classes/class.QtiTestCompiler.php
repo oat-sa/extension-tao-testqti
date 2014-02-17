@@ -363,8 +363,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $assessmentTest
      */
     protected function updateTestDefinition(AssessmentTest $assessmentTest) {
-        $outcomeDeclarations = $assessmentTest->getOutcomeDeclarations();
-        $outcomeDeclarations[] = new OutcomeDeclaration('LtiOutcome', BaseType::FLOAT, Cardinality::SINGLE, new DefaultValue(new ValueCollection(array(new Value(0.0, BaseType::FLOAT)))));
+        return;
     }
     
     /**

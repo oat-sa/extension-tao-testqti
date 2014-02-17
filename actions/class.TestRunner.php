@@ -36,6 +36,7 @@ use qtism\common\enums\Cardinality;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
+use qtism\data\NavigationMode;
 
 /**
  * Runs a QTI Test.
@@ -323,7 +324,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        $this->registerAssessmentTestSessionException($e);
-	        $testSession->moveNextTestPart();
+	        $testSession->moveNext();
 	    }
 	    
         // Prepare the AssessmentTestContext for the client.
@@ -365,7 +366,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        $this->registerAssessmentTestSessionException($e);
-	        $testSession->moveNextTestPart();
+	        $testSession->moveNext();
 	    }
 	    
 	    $context = $this->buildAssessmentTestContext();
@@ -404,7 +405,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        $this->registerAssessmentTestSessionException($e);
-	        $testSession->moveNextTestPart();
+	        $testSession->moveNext();
 	    }
 	     
 	    $context = $this->buildAssessmentTestContext();
@@ -435,7 +436,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        $this->registerAssessmentTestSessionException($e);
-	        $testSession->moveNextTestPart();
+	        $testSession->moveNext();
 	    }
 	    
 	    $context = $this->buildAssessmentTestContext();
@@ -503,7 +504,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->registerAssessmentTestSessionException($e);
 	        
 	        if ($e->getCode() === AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW) {
-	            $this->getTestSession()->moveNextTestPart();
+	            $this->getTestSession()->moveNext();
 	        }
 	    }
 	    
@@ -693,6 +694,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // Comment allowed?
 	        $context['allowComment'] = $this->doesAllowComment();
+	        
+	        // Skipping allowed?
+	        $context['allowSkipping'] = $this->doesAllowSkipping();
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
@@ -792,8 +796,23 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $routeControl = $routeItem->getItemSessionControl();
 	    
 	    if (empty($routeControl) === false) {
-	        return $routeControl->getItemSessionControl()->doesAllowComment();
+	        $doesAllowComment = $routeControl->getItemSessionControl()->doesAllowComment();
 	    }
+	    
+	    return $doesAllowComment;
+	}
+	
+	protected function doesAllowSkipping() {
+	    $doesAllowSkipping = false;
+	    
+	    $routeItem = $this->getTestSession()->getRoute()->current();
+	    $routeControl = $routeItem->getItemSessionControl();
+	    
+	    if (empty($routeControl) === false) {
+	        $doesAllowSkipping = $routeControl->getItemSessionControl()->doesAllowSkipping();
+	    }
+	    
+	    return $doesAllowSkipping && $this->getTestSession()->getCurrentNavigationMode() === NavigationMode::LINEAR;
 	}
 	
 	protected function buildItemSrc($itemUri, $itemPath) {
