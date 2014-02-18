@@ -218,8 +218,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $renderingEngine->setStylesheetPolicy(XhtmlRenderingEngine::STYLESHEET_SEPARATE);
         $renderingEngine->setXmlBasePolicy(XhtmlRenderingEngine::XMLBASE_PROCESS);
         $renderingEngine->setFeedbackShowHidePolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
+        $renderingEngine->setViewPolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
         $renderingEngine->setStateName(TAOQTITEST_RENDERING_STATE_NAME);
         $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI);
+        $renderingEngine->setViewsName(TAOQTITEST_VIEWS_NAME);
         $this->setRenderingEngine($renderingEngine);
         
         // Initialize CSS Scoper.

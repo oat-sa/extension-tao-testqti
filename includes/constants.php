@@ -32,5 +32,6 @@ $todefine = array(
    'TAOQTITEST_REMOTE_FOLDER' => 'tao-qtitest-remote',
    'TAOQTITEST_RENDERING_STATE_NAME' => 'taoQtiTestState',
    'TAOQTITEST_BASE_PATH_NAME' => 'taoQtiBasePath',
-   'TAOQTITEST_PLACEHOLDER_BASE_URI' => 'tao://qti-directory'
+   'TAOQTITEST_PLACEHOLDER_BASE_URI' => 'tao://qti-directory',
+   'TAOQTITEST_VIEWS_NAME' => 'taoQtiViews'
 );

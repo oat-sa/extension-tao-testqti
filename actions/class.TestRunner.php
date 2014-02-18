@@ -37,6 +37,7 @@ use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
+use qtism\data\View;
 
 /**
  * Runs a QTI Test.
@@ -683,6 +684,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // state name (the variable to access to get the state of the assessmentTestSession).
 	        $stateName = TAOQTITEST_RENDERING_STATE_NAME;
 	        $$stateName = $session;
+	        
+	        // views name (the variable to be accessed for the visibility of rubric blocks).
+	        $viewsName = TAOQTITEST_VIEWS_NAME;
+	        $$viewsName = array(View::CANDIDATE);
 	        
 	        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
 	            ob_start();
