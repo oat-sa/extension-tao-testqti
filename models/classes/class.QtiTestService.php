@@ -37,6 +37,8 @@ use qtism\data\AssessmentItemRef;
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
      
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
+    
+    const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
 
     /**
      * Get the QTI Test document formated in JSON.
@@ -781,6 +783,33 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             throw new common_Exception('No default repository defined for uploaded files storage.');
         }
         return new core_kernel_file_File($uri);
+    }
+    
+    /**
+     * Set the acceptable latency time (applied on qti:timeLimits->minTime, qti:timeLimits:maxTime).
+     *
+     * @param string $duration An ISO 8601 Duration.
+     * @see http://www.php.net/manual/en/dateinterval.construct.php PHP's interval_spec format (based on ISO 8601).
+     */
+    public function setQtiTestAcceptableLatency($duration) {
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext->setConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY, $duration);
+    }
+    
+    /**
+     * Get the acceptable latency time (applied on qti:timeLimits->minTime, qti:timeLimits->maxTime).
+     * 
+     * @throws common_Exception If no value can be found as the acceptable latency in the extension's configuration file.
+     * @return string An ISO 8601 Duration.
+     * @see http://www.php.net/manual/en/dateinterval.construct.php PHP's interval_spec format (based on ISO 8601).
+     */
+    public function getQtiTestAcceptableLatency() {
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $latency = $ext->getConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY);
+        if (empty($latency)) {
+            throw new common_Exception('No default acceptable latency defined.');
+        }
+        return $latency;
     }
     
     /**

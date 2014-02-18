@@ -47,7 +47,8 @@ return array(
 	        array('type' => 'CheckFileSystemComponent', 'value' => array('id' => 'fs_taoQtiTest_data_testdata', 'location' => 'taoQtiTest/data/testdata', 'rights' => 'rw')),
 	    ),
 		'php'	=> array(
-			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php'
+			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
+		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
 		)
 	),
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',

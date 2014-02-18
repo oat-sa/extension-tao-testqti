@@ -21,6 +21,7 @@
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\runtime\tests\TestResultsSubmission;
 use qtism\data\AssessmentTest;
+use qtism\common\datatypes\Duration;
 
 /**
  * A TAO specific implementation of QtiSm's AbstractAssessmentTestSessionFactory.
@@ -115,6 +116,10 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
         // outcome variable's values are sent to the result storage
         // each time the reponse processing takes place.
         $session->setTestResultsSubmission(TestResultsSubmission::OUTCOME_PROCESSING);
+        
+        // Set the acceptable latency time to be considered when qti:timeLimits->minTime
+        // and qti:timeLimits->maxTime are in force.
+        $session->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
         
         return $session;
     }
