@@ -179,8 +179,8 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
                     'isItemRef' : function(value){
                         return filterQtiType(value, 'assessmentItemRef');
                     },
-                    'isSectionRef' : function(value){
-                        return filterQtiType(value, 'assessmentSectionRef');
+                    'isSection' : function(value){
+                        return filterQtiType(value, 'assessmentSection');
                     }
                 },
                 encoders : {
@@ -207,15 +207,17 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
                 });
                 
             //the save button triggers binder's save action.
-            $('#saver').click(function(event){
+            $('#saver').on('click', function(event){
                 event.preventDefault();
                 $('#saver').attr('disabled', true);
                 
-                binder.save(function(){
-                    $('#saver').attr('disabled', false);
-                    helpers.createInfoMessage('Saved');
-                }, function(){
-                    $('#saver').attr('disabled', false);
+                _.defer(function(){
+                    binder.save(function(){
+                        $('#saver').attr('disabled', false);
+                        helpers.createInfoMessage('Saved');
+                    }, function(){
+                        $('#saver').attr('disabled', false);
+                    });
                 });
             });
         }

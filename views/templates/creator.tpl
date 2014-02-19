@@ -93,16 +93,14 @@
     <div id="items" class='card'>
         <h1><?=__("QTI Items")?></h1>
         <div class='content'>
-            
             <div class='help'>
                 <a href="#" class='closed' data-toggle='+ span'>?</a>
                 <span><?=__('Move items to sections (using drag &amp; drop)')?></span>
             </div>
             
-            
             <input type="text" class='search' /><span class='ctrl' />
             
-           <div>
+            <div>
                 <ul class='listbox'></ul>
             </div>
         </div>
@@ -117,7 +115,7 @@
                 <span><?=__('Drop items to a section, and manage them to build your test.')?></span>
             </div>
             
-            <div id="sections" data-bind-each="testParts.0.assessmentSections"  data-bind-tmpl="#section-template" ></div>
+            <div id="sections" data-bind-each="testParts.0.assessmentSections"  data-bind-tmpl="#section-template" data-bind-filter="isSection"></div>
             <a href="#" id="section-adder" class='adder'><?=__('Add a new section')?></a>
        </div>
     </div>
@@ -139,7 +137,7 @@
            <h2 data-in-place='#{{identifier}}title' data-width='50%' data-bind="title">{{title}}</h2>
 
            <a href="#" class='sort' title="<?=__('Sort sections')?>"></a>
-           <a href="#" class='closer' data-close='#section-wrapper-{{identifier}}' title="<?=__('Remove section')?>"></a>
+           <a href="#" class='closer' title="<?=__('Remove section')?>"></a>
 
            <a href="#" class='show-rubricblock' data-flip=':parent' data-flip-back='#{{identifier}}-back' data-unflip='#{{identifier}}-back .hide-rubricblock'><?=__('Rubric block')?></a>
 
@@ -181,7 +179,7 @@
                </form>
            </div>
 
-           <ul class="listbox" data-bind-each="sectionParts" data-bind-tmpl="#item-ref-template"></ul>
+           <ul class="listbox" data-bind-each="sectionParts" data-bind-tmpl="#item-ref-template" data-bind-filter="isItemRef"></ul>
 
        </div>
        <div class="section-back flip flip-back" id='{{identifier}}-back'>
@@ -200,7 +198,8 @@
             </div>
            <textarea data-bind="rubricBlocks.0.content" data-bind-encoder="dom2qti"></textarea>
            <br />
-           <button class='hide-rubricblock' ><?=__('Done')?></button>
+           <button class='hide-rubricblock' ><?=__('Done')?></button> 
+           <button class='rm-rubricblock'><?=__('Remove')?></button>
        </div>
     </div>
 </script>

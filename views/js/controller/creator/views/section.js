@@ -53,8 +53,11 @@ function($, Handlebars, incrementer, uri){
          //make the sections sortable
          this.createSectionsSortable();
 
-         //live listening of position update 
+         //live listening of item position update 
          this.listenForItemPositionChange();
+         
+         //live listening of section changes
+         this.listenForSectionChange();
      },
     
     /**
@@ -78,6 +81,9 @@ function($, Handlebars, incrementer, uri){
         
         //section rubricBlocks behavior
         this.setUpRubricBlocks($section);
+        
+        //enable to close (ie. remove) a section
+        this.setUpCloser($section);
     },
     
     /**
@@ -106,7 +112,6 @@ function($, Handlebars, incrementer, uri){
                         if(response.identifier){
                            sectionData.identifier = response.identifier;
                         }
-                        
                         //ok, add the section
                         cb(sectionData);
                     });
@@ -121,6 +126,7 @@ function($, Handlebars, incrementer, uri){
          * Make the sections sortables
          */
         createSectionsSortable : function (){
+            var self = this;
             this._$sectionContainer.sortable({
                 containement : 'parent',
                 placeholder : 'placeholder',
@@ -128,8 +134,22 @@ function($, Handlebars, incrementer, uri){
                 items: '> div',
                 zIndex: 800,
                 axis: 'y',
-                stop: function(){
+                sort : function(){
+                    self._$sectionContainer.find('.section [data-flip]').flipper('unflip').flipper('destroy');
+                },
+                start : function(event, ui){
+                    
+                    //we need to destroy the editor because a bug in CKE screw it.
+                    var editorName = $('.cke', $(ui.item)).attr('id').replace('cke_', '');
+                    if(editorName && CKEDITOR.instances[editorName]){
+                        CKEDITOR.instances[editorName].destroy(true);
+                    }
+                },
+                stop: function(event, ui){
                     $(this).trigger('change');
+                    
+                    //and setup the editor again...
+                    self._setUpRubricBlocksEditor($('.section-back',  $(ui.item)));
                 }
             });
         }, 
@@ -183,24 +203,14 @@ function($, Handlebars, incrementer, uri){
                 },
                 receive: function(event, ui){
                     var $list = $(this);
+                    var index = $list.data('sortable').currentItem.index();
+                    var itemUri = uri.decode(ui.item.attr('data-uri'));
                     $section.find('.selectable').remove();  
-
-                  /*  if(ui.item.hasClass('section')){
-
-                       self.addSectionRef($list, {
-                            identifier : ui.item.attr('id'),
-                            title : ui.item.find('[data-bind="title"]').text(),
-                            'qti-type' : 'assessmentSectionRef'
-                        });
-
-                    } else {*/
-                        var itemUri = uri.decode(ui.item.attr('data-uri'));
-                        self.addItemRef($list, {
-                            href : itemUri,
-                            label : $.trim(ui.item.clone().children().remove().end().text()),
-                            'qti-type' : 'assessmentItemRef'
-                        });
-                    //}
+                    self.addItemRef($list, index, {
+                        href : itemUri,
+                        label : $.trim(ui.item.clone().children().remove().end().text()),
+                        'qti-type' : 'assessmentItemRef'
+                    });
 
                     return false;
                 }
@@ -212,15 +222,21 @@ function($, Handlebars, incrementer, uri){
          * @param {jQueryElement} $list - the section list to add the item to
          * @param {Object} data - the item's data to give to the template
          */
-        addItemRef : function ($list, data){
+        addItemRef : function ($list, index, data){
             var self = this;
 
-            data.index = $list.children('li').not('.selectable').length + 1;
+            index = index || $list.children('li').not('.selectable').length;
             this.getIdentifier('assessmentItemRef', function(response){
                 if(response.identifier){
                    data.identifier = response.identifier;
-                   $list.append(self._itemRefTmpl(data));
+                   data.index = index + 1;
+                   if(index > 0){
+                       $list.children('li').not('.selectable').eq(index - 1).after(self._itemRefTmpl(data));
+                   } else {
+                       $list.append(self._itemRefTmpl(data));
+                   }
                    $list.trigger('add', [data]);
+                   self.udpateItemsNumber($list.parents('.section'));
                 }
             });
         },
@@ -243,7 +259,7 @@ function($, Handlebars, incrementer, uri){
          * @param {jQueryElement} $section
          */
         udpateItemsNumber : function ($section){
-            $section.find('ul').children('li').not('.selectable').each(function(index, elt){
+            $section.find('ul > li').not('.selectable').each(function(index, elt){
                 var $label = $(elt).find('.label');
                 var current = index + 1;
                 if(parseInt($label.text(), 10) !== current){
@@ -287,6 +303,17 @@ function($, Handlebars, incrementer, uri){
                     self.udpateItemsNumber($(this).parents('.section'));
                 });
         },
+        
+        /**
+         * Listen for events that close items
+         * and trigger the udpateItemsNumber accordingly
+         */
+         listenForSectionChange : function (){
+             var self = this;
+             $(document).on('close.closer', '.section', function(event){
+                self.updateClosing(true) ;
+             });
+         },
 
         /**
          * Move items (re-order) 
@@ -314,7 +341,7 @@ function($, Handlebars, incrementer, uri){
                          relativeItemPosition = position - 1;
                     }
                 }
-                $relativeItem = $section.find('li:nth-child(' + relativeItemPosition + ')');
+                $relativeItem = $section.find('li:eq(' + relativeItemPosition + ')');
                 if($relativeItem.length > 0){
                     if(before === true) {
                         $item.insertBefore($relativeItem);
@@ -357,36 +384,17 @@ function($, Handlebars, incrementer, uri){
          * @param {jQueryElement} $section - the section that contains the rubricBlocks
          */
         setUpRubricBlocks : function($section){
+            var self = this;
             var sectionId = $section.attr('id');
             var $sectionBack = $('#' + sectionId + '-back');
             var $select = $('select', $sectionBack);
             
-            $('textarea', $sectionBack).each(function(){
-                 var $elt = $(this);
-
-                 //set up the wysiwyg
-                 $elt.ckeditor({'toolbarGroups' : [
-                    {name : 'basicstyles', groups : ['basicstyles']},
-                    {name : 'paragraph', groups : ['list', 'indent', 'blocks']},
-                    {name : 'styles'},
-                    {name : 'colors'},
-                    '/',
-                    {name : 'clipboard', groups : ['undo']},
-                    {name : 'editing'}
-                ]});
-
-                 $elt.siblings('.hide-rubricblock').on('click', function(){
-                     if($.trim($elt.val()) === ''){
-                         //trigger removal binding if value is empty
-                         $elt.siblings('input[data-bind-rm]').trigger('change');
-                    } else {
-                        //trigger default values binding
-                        $elt.siblings('input[data-bind]').trigger('change');
-                        $elt.trigger('change');
-                    }
-                });
+            //close other by opening
+            $section.on('flip.flipper', function(){
+                self._$sectionContainer.find('.section').not($section).find('[data-flip]').flipper('unflip');
             });
             
+            this._setUpRubricBlocksEditor($sectionBack);
             
             $select.select2({
                 width: '250px'
@@ -395,6 +403,73 @@ function($, Handlebars, incrementer, uri){
                     $select.select2('val', ['candidate']);
                } 
             });
+            if($select.select2('val').length === 0){
+                $select.select2('val', ['candidate']);
+            }
+        },
+        
+        _setUpRubricBlocksEditor : function($sectionBack){
+            $('textarea', $sectionBack).each(function(){
+                 var $elt = $(this);
+                 var syncRBValue =  function syncRBValue(){
+                     
+                     if($.trim($elt.val()) === ''){
+                         //trigger removal binding if value is empty
+                         $elt.siblings('input[data-bind-rm]').trigger('change');
+                    } else {
+                        //trigger default values binding
+                        $elt.siblings('input[data-bind]').trigger('change');
+                        $elt.trigger('change');
+                    }
+                };
+                
+                 //set up the wysiwyg
+                $elt.ckeditor(function() {
+                    this.on('change', syncRBValue);
+                },
+                {   'customConfig': '',
+                    'removePlugins' : 'autogrow',
+                    'toolbar': 'rb',
+                    'toolbar_rb' :  [
+                        { name: 'basicstyles', items : [ 'Bold','Italic','-','RemoveFormat' ] },
+                        { name: 'styles',      items : [ 'Format'] },
+                        { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ] },
+                        { name: 'links',       items : [ 'Link','Unlink'] }
+                    ]
+                });
+            
+                 $elt.siblings('.hide-rubricblock').off('click').on('click', syncRBValue);
+                 $elt.siblings('.rm-rubricblock').off('click').on('click', function(e){
+                     e.preventDefault();
+                     if(confirm(__('Are you sure you want to empty rubric block content'))){
+                        $elt.editor.setData('');
+                        $elt.trigger('change');
+                     }
+                 });
+            });
+        },
+        
+         /**
+         * Check if the section can be closed
+         * @param {jQueryElement} $section - the section to set up
+         */
+        setUpCloser : function($section){
+            var self = this;
+            var $closer = $section.children('.closer');
+            $closer.on('create.closer', function(e){
+                self.updateClosing();
+            }).closer({
+                target : $section.parent()
+            });
+        },
+        
+        updateClosing : function(minusOne){
+            var $sections = this._$sectionContainer.find('.section');
+            if($sections.length <= 1 || minusOne && $sections.length <= 2){
+                 $sections.children('.closer').closer('disable');
+            } else {
+                 $sections.children('.closer').closer('enable');
+            }
         }
     };
     
