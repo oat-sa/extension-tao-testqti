@@ -705,12 +705,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
         
         // $directory is the directory where test related resources will be stored.
-        $directoryPath = md5($test->getUri()) . DIRECTORY_SEPARATOR;
-        $directory = $repository->createFile('', $directoryPath);
-        $dirPath = $directory->getAbsolutePath();
+        $directory = $repository->createFile('', $path .DIRECTORY_SEPARATOR. md5($test->getUri()) . DIRECTORY_SEPARATOR);
+        $dirPath = $directory->getAbsolutePath().DIRECTORY_SEPARATOR;
         
         if (!file_exists($dirPath)) {
-            mkdir($directory->getAbsolutePath(), 0770, true);
+            mkdir($dirPath, 0770, true);
         }
         
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -720,13 +719,13 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
         $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
         
-        $filePath = $this->getQtiTestDirectory()->getAbsolutePath() . DIRECTORY_SEPARATOR . $directoryPath . TAOQTITEST_FILENAME;
+        $filePath = $dirPath . TAOQTITEST_FILENAME;
         if (file_put_contents($filePath, $emptyTestXml) === false) {
             $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
             throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
         }
         
-        common_Logger::i("Created QTI Test content at location '" . $directory->getAbsolutePath() . "'.");
+        common_Logger::i("Created QTI Test content at location '" . $filePath . "'.");
         $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
         return $directory;
     }
