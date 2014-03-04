@@ -23,10 +23,13 @@
 /*
  * This post-installation script creates a fodler for the QTI Tests
  */
-$extension = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-$dataPath = $extension->getDir(). 'data' . DIRECTORY_SEPARATOR . 'testdata' . DIRECTORY_SEPARATOR;
+$dataPath = FILES_PATH . 'taoQtiTest' . DIRECTORY_SEPARATOR;
+if (file_exists($dataPath)) {
+    helpers_File::emptyDirectory($dataPath);
+}
 
 $source = tao_models_classes_FileSourceService::singleton()->addLocalSource('QTI test datasource', $dataPath);
-$directory = new core_kernel_file_File($source->createFile(''));
+mkdir($dataPath.'testData');
+$directory = new core_kernel_file_File($source->createFile('', 'testData'));
 
 taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestDirectory($directory);
