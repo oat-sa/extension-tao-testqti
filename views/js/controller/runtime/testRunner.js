@@ -17,8 +17,8 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	    'TEST_NAVIGATION_NONLINEAR': 1,
 	    'TEST_ITEM_STATE_INTERACTING': 1,
 	        
-		beforeTransition : function(callback) {
-		
+		beforeTransition : function(callback) {			
+			
 	        var $testRunner = $('#runner');
 	        $testRunner.css('height', '300px');
 	
@@ -144,9 +144,15 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		
 		updateTimer : function() {
 		    var self = this;
-		    if (typeof timerId !== 'undefined') {
-		            clearInterval(timerId);
-		    }
+		    
+		    for (var i = 0; i < timerIds.length; i++) {
+				clearTimeout(timerIds[i]);
+			}
+		    
+		    timerIds = [];
+		    currentTimes = [];
+		    lastDates = [];
+			timeDiffs = [];
 		
 		    $('#qti-timers').remove();
 		
