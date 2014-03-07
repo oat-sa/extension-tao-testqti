@@ -251,6 +251,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     public function compile() {
         
+        $report = new common_report_Report(common_report_Report::TYPE_INFO);
+        
         try {
             // 0. Initialize compilation (compilation directories, renderers, ...).
             $this->initCompilation();
@@ -262,7 +264,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $compiledDoc = $this->compactTest();
             
             // 3. Compile the items of the test.
-            $this->compileItems($compiledDoc);
+            $itemReport = $this->compileItems($compiledDoc);
+            $report->add($itemReport);
             
             // 4. Explode the rubric blocks in the test into rubric block refs.
             $this->explodeRubricBlocks($compiledDoc);
@@ -285,15 +288,25 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $serviceCall = $this->buildServiceCall();
             
             common_Logger::t("QTI Test successfuly compiled.");
-            
-            return $serviceCall;
+
+            $report->setType(common_report_Report::TYPE_SUCCESS);
+            $report->setMessage(__('QTI Test "%s" successfuly published.', $this->getResource()->getLabel()));
+            $report->setData($serviceCall);
         }
         catch (Exception $e) {
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
+            $report->setType(common_report_Report::TYPE_ERROR);
+            $report->add(new common_report_Report(
+                common_report_Report::TYPE_ERROR,
+                __('An unexpected error occured while compiling the QTI Test "%s"', $this->getResource()->getLabel())
+            ));
+            /*
             $msg = "An unexpected error occured while compiling an IMS QTI Test.";
             throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), taoQtiTest_models_classes_QtiTestCompilationFailedException::UNKNOWN);
+            */
         }
+        return $report;
     }
     
     /**
@@ -324,25 +337,29 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @param XmlCompactDocument $compactDoc An XmlCompactDocument object referencing the items of the test.
      * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If the test does not refer to at least one item.
+     * @return common_report_Report
      */
     protected function compileItems(XmlCompactDocument $compactDoc) {
+        $report = new common_report_Report(common_report_Report::TYPE_INFO, __('Items Compilation'));
         $iterator = new QtiComponentIterator($compactDoc->getDocumentComponent(), array('assessmentItemRef'));
         $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
-            $itemService = $this->subCompile($itemToCompile);
+            $subReport = $this->subCompile($itemToCompile);
+            $itemService = $subReport->getdata(); 
             $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
             $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
             $itemCount++;
-        
+            $report->add($subReport);
+            
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
         
         if ($itemCount === 0) {
-            $msg = "A QTI Test must contain at least one QTI Item to be compiled. None found.";
-            $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::NO_ITEMS;
-            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $test, $code);
+            $report->setType(common_report_Report::TYPE_ERROR);
+            $report->setMessage(__("A QTI Test must contain at least one QTI Item to be compiled. None found."));
         }
+        return $report;
     }
     
     /**
