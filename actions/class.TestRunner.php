@@ -309,6 +309,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         return $info;
     }
     
+    protected function timeConstraints() {
+        
+        $testSession = $this->getTestSession();
+        $constraints = array();
+        
+        foreach ($testSession->getTimeConstraints() as $tc) {
+            // transmit to client only if there is a maximum remaining time.
+            if ($tc->getMaximumRemainingTime() !== false) {
+                $constraints[] = array(
+                                'source' => $tc->getSource()->getIdentifier(), 
+                                'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true)
+                                );
+            }
+        }
+        
+        return $constraints;
+    }
+    
     /**
      * Main action of the TestRunner module.
      * 
@@ -449,6 +467,58 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    echo json_encode($context);
 	    
 	    $this->afterAction();
+	}
+	
+	/**
+	 * Action to call when a structural QTI component times out.
+	 * 
+	 */
+	public function timeout() {
+	    $testSession = $this->getTestSession();
+	    $timedOut = false;
+	    
+	    try {
+	        $testSession->checkTimeLimits(false, true);
+	    }
+	    catch (AssessmentTestSessionException $e) {
+	        // Something really timed out...
+	        $timedOut = $e->getCode();
+	    }
+	    
+	    if ($timedOut !== false) {
+	        // We are okay!
+	        switch ($timedOut) {
+	            case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+	                $testSession->endTestSession();
+	            break;
+	            
+	            case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+	                $testSession->moveNextTestPart();
+	            break;
+	            
+	            case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+	                $testSession->moveNextAssessmentSection();
+	            break;
+	            
+	            case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+	                $testSession->moveNextAssessmentItem();
+	            break;
+	        }
+	        $this->beforeAction();
+	        
+	        $context = $this->buildAssessmentTestContext();
+	        
+	        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
+	            $context['newItemUrl'] = $this->buildCurrentItemSrc();
+	        }
+	        
+	        echo json_encode($context);
+	        $this->afterAction();
+	    }
+	    else {
+	        // Oops, it's not consistent.
+	        $this->index();
+	    }
 	}
 	
 	/**
@@ -623,7 +693,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $context['remainingAttempts'] = 0;
 	    $context['isAdaptive'] = false;
 	    $context['allowedToAttempt'] = false;
-	    $context['testPartRemainingTime'] = null;
 	    
 	    if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
 	        // The navigation mode.
@@ -644,11 +713,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Whether the current item is adaptive.
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
 	        
+	        // Time constraints.
+	        $context['timeConstraints'] = $this->timeConstraints();
+	        
 	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
 	        $context['moveForwardUrl'] = $this->buildActionCallUrl('moveForward');
 	        $context['moveBackwardUrl'] = $this->buildActionCallUrl('moveBackward');
 	        $context['skipUrl'] = $this->buildActionCallUrl('skip');
 	        $context['commentUrl'] = $this->buildActionCallUrl('comment');
+	        $context['timeoutUrl'] = $this->buildActionCallUrl('timeout');
 	        
 	        // If the candidate is allowed to move backward e.g. first item of the test.
 	        $context['canMoveBackward'] = $session->canMoveBackward();
@@ -658,21 +731,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        // Display information.
 	        $context['info'] = $this->information();
-	        
-	        // Timings.
-	        $timeConstraints = $session->getTimeConstraints(AssessmentTestPlace::TEST_PART);
-	        if (($tc = $timeConstraints[0]->getMaximumRemainingTime()) !== false) {
-	            $context['testPartRemainingTime'] = $tc->getSeconds(true);
-	        }
-	        
-	        
+
 	        // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
 	        $context['itemServiceApiCall'] = $this->buildServiceApi();
 	        
 	        // Rubric Blocks.
 	        $rubrics = array();
-	        common_Logger::i($this->compilationDirectory);
-	        
 	        
 	        $compilationDirs = $this->getCompilationDirectory();
 	        
