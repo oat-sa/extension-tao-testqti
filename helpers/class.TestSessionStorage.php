@@ -19,7 +19,7 @@
  */
 
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
-use qtism\common\storage\BinaryStream;
+use qtism\common\storage\MemoryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
@@ -88,7 +88,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $data = $storageService->get($userUri, $sessionId);
        
        $stateEmpty = (empty($data) === true);
-       $stream = new BinaryStream(($stateEmpty === true) ? '' : $data);
+       $stream = new MemoryStream(($stateEmpty === true) ? '' : $data);
        $stream->open();
        
        if ($stateEmpty === false) {
@@ -100,7 +100,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        return $stream;
    }
    
-   protected function persistStream(AssessmentTestSession $assessmentTestSession, BinaryStream $stream) {
+   protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream) {
        
        $storageService = tao_models_classes_service_StateStorage::singleton();
        $userUri = common_session_SessionManager::getSession()->getUserUri();

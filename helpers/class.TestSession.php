@@ -29,6 +29,7 @@ use qtism\data\expressions\operators\Divide;
 use qtism\data\expressions\NumberPresented;
 use qtism\data\expressions\NumberCorrect;
 use qtism\common\enums\BaseType;
+use qtism\common\datatypes\Float;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -192,12 +193,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         common_Logger::i('Ending test session.');
         try {
             // Compute the LtiOutcome variable for LTI support.
-            $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, 0.0));
+            $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, new Float(0.0)));
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
             $outcomeProcessingEngine->process();
         
             // if numberPresented returned 0, division by 0 -> null.
-            $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? 0.0 : $this['LtiOutcome'];
+            $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? new Float(0.0) : $this['LtiOutcome'];
             $testUri = $this->getTest()->getUri();
             $var = $this->getVariable('LtiOutcome');
             $varIdentifier = $var->getIdentifier();

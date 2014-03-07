@@ -135,22 +135,25 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
                 this.updateTools();
 
                 $('<iframe id="qti-item" frameborder="0" scrolling="no"/>').appendTo($runner);
-
                 if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING) {
-
-                        //Oooops, eval to be fixed !
-                        var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
-                        var $itemFrame = $('#qti-item', $runner);
-                        
-                        iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
-                        itemServiceApi.loadInto($itemFrame[0], function(){
-                            self.afterTransition();
-                            $itemFrame.show();
-                        });
-                        
-                        itemServiceApi.onFinish(function() {
-                        	self.moveForward();
-                        });
+                	// @todo Oops, eval to be fixed (why Bertrand :s ?)
+                    var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
+                    var $itemFrame = $('#qti-item', $runner);
+                    
+                    iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
+                    itemServiceApi.loadInto($itemFrame[0], function(){
+                        self.afterTransition();
+                        $itemFrame.show();
+                    });
+                    
+                    itemServiceApi.onFinish(function() {
+                    	self.moveForward();
+                    });
+                }
+                else {
+                	// e.g. no more attempts! Simply consider the transition is finished,
+                	// but do not load the item.
+                	self.afterTransition();
                 }
         },
 
