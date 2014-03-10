@@ -340,17 +340,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @return common_report_Report
      */
     protected function compileItems(XmlCompactDocument $compactDoc) {
-        $report = new common_report_Report(common_report_Report::TYPE_INFO, __('Items Compilation'));
+        $report = new common_report_Report(common_report_Report::TYPE_SUCCESS, __('Items Compilation'));
         $iterator = new QtiComponentIterator($compactDoc->getDocumentComponent(), array('assessmentItemRef'));
         $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
             $subReport = $this->subCompile($itemToCompile);
-            $itemService = $subReport->getdata(); 
-            $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-            $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
-            $itemCount++;
             $report->add($subReport);
+            if ($subReport->getType() == common_report_Report::TYPE_SUCCESS) {
+                $itemService = $subReport->getdata(); 
+                $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
+                $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
+                $itemCount++;
+            } else {
+                $report->setType(common_report_Report::TYPE_ERROR);
+            }
             
             common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
         }
