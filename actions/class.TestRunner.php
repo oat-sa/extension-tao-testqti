@@ -272,18 +272,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 // Begin the very first attempt.
                 $this->beginAttempt();
             }
-            else if ($itemSessionState === AssessmentItemSessionState::SUSPENDED) {
-                
-                if ($itemSession->isAttempting() === true) {
-                    // Re-interact with session if currently attempting.
-                    common_Logger::i("Attempt on item '" . $this->buildServiceCallId() . "' recovered.");
-                    $testSession->interactWithItemSession();
-                }
-                else {
-                    // Begin a brand new attempt.
-                    $this->beginAttempt();
-                }
-            }
         }  
     }
     
@@ -365,22 +353,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $testSession = $this->getTestSession();
 	    
 	    try {
-	        
-	        if ($testSession->getState() === AssessmentTestSessionState::INTERACTING) {
-	            
-	            /*
-	             * If the current item session is still interacting, we suspend it before moving forward.
-	             */
-	            $currentItemSession = $testSession->getCurrentAssessmentItemSession();
-	            if ($currentItemSession->getState() === AssessmentItemSessionState::INTERACTING) {
-	                $testSession->suspendItemSession();
-	                common_Logger::i("Item session for '" . $this->buildServiceCallId() . "' suspended.");
-	            }
-	            
-	            $testSession->updateDuration();
-	            $testSession->moveNext();
-	        }	        
-	        
+            $testSession->updateDuration();
+            $testSession->moveNext();
 	        $this->beforeAction();
 	    }
 	    catch (AssessmentTestSessionException $e) {
@@ -408,16 +382,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $testSession = $this->getTestSession();
 	    
 	    try {
-	        /*
-	         * If the current item session is still interacting, we close suspend it before
-	         * going backward.
-	         */
-	        $currentItemSession = $testSession->getCurrentAssessmentItemSession();
-	        if ($currentItemSession->getState() === AssessmentItemSessionState::INTERACTING) {
-	            $testSession->suspendItemSession();
-	            common_Logger::i("Item session for '" . $this->buildServiceCallId() . "' suspended.");
-	        }
-	        
 	        $testSession->updateDuration();
 	        $testSession->moveBack();
 	        $this->beforeAction();
@@ -478,7 +442,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $timedOut = false;
 	    
 	    try {
-	        $testSession->checkTimeLimits(false, true);
+	        $testSession->checkTimeLimits(false, true, false);
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        // Something really timed out...
@@ -559,7 +523,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    try {
 	        common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
-	        $this->getTestSession()->endAttempt($responses);
+	        $this->getTestSession()->endAttempt($responses, true);
 	         
 	        // Return the item session state to the client side.
 	        $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
