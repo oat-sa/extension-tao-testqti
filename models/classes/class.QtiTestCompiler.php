@@ -266,6 +266,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 3. Compile the items of the test.
             $itemReport = $this->compileItems($compiledDoc);
             $report->add($itemReport);
+            if ($itemReport->getType() != common_report_Report::TYPE_SUCCESS) {
+                throw new common_Exception('Failed item compilation');
+            }
             
             // 4. Explode the rubric blocks in the test into rubric block refs.
             $this->explodeRubricBlocks($compiledDoc);
@@ -297,10 +300,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);
-            $report->add(new common_report_Report(
-                common_report_Report::TYPE_ERROR,
-                __('An unexpected error occured while compiling the QTI Test "%s"', $this->getResource()->getLabel())
-            ));
+            $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
             /*
             $msg = "An unexpected error occured while compiling an IMS QTI Test.";
             throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), taoQtiTest_models_classes_QtiTestCompilationFailedException::UNKNOWN);
