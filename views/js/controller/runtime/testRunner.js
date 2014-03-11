@@ -63,6 +63,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		},
 	
 		comment : function() {
+			$('#qti-comment > textarea').val(__('Your comment...'));
 		    $('#qti-comment').css('display', 'block');
 		},
 		

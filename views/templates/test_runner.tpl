@@ -48,7 +48,7 @@
 				<button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button>
 			</div>
 			<div id="qti-comment" class="tao-scope">
-				<textarea><?= __("Your comment..."); ?></textarea>
+				<textarea></textarea>
 				<button id="qti-comment-cancel" class="btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
 				<button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 			</div>
