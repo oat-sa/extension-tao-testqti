@@ -33,6 +33,7 @@ use qtism\runtime\common\State;
 use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\common\datatypes\String;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
@@ -528,6 +529,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 	
 	public function comment() {
+	    $this->beforeAction();
+	    
 	    $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
 	    $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultServer);
 	    
@@ -543,7 +546,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    // build variable and send it.
 	    $itemUri = $this->getCurrentItemUri();
 	    $testUri = $this->getTestSession()->getTest()->getUri();
-	    $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, $comment);
+	    $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new String($comment));
 	    $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
 	}
 	
