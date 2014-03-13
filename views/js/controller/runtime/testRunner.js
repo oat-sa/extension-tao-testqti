@@ -53,13 +53,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		timeout: function() {
 			this.assessmentTestContext.isTimeout = true;
 			this.updateTimer();
-			
-			if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
-				this.actionCall('timeout');
-			}
-			else {
-				this.updateInformation();
-			}
+			this.actionCall('timeout');
 		},
 	
 		comment : function() {
@@ -135,7 +129,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
             }
             else if (this.assessmentTestContext.itemSessionState !== this.TEST_ITEM_STATE_INTERACTING) {
             	$('<div id="qti-info" class="info"></div>').insertAfter('#qti-actions');
-            	$('#qti-info').html(__('No more attempts allow for item "%s".').replace('%s', this.assessmentTestContext.itemIdentifier));
+            	$('#qti-info').html(__('No more attempts allowed for item "%s".').replace('%s', this.assessmentTestContext.itemIdentifier));
             }
 		},
 		
@@ -159,16 +153,17 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			var self = this;
 			$('#qti-timers').remove();
 			
-			if (self.assessmentTestContext.isTimeout === false) {
-				for (var i = 0; i < timerIds.length; i++) {
-					clearTimeout(timerIds[i]);
-				}
-			    
-			    timerIds = [];
-			    currentTimes = [];
-			    lastDates = [];
-				timeDiffs = [];
+			for (var i = 0; i < timerIds.length; i++) {
+				clearTimeout(timerIds[i]);
+			}
+		    
+		    timerIds = [];
+		    currentTimes = [];
+		    lastDates = [];
+			timeDiffs = [];
 			
+			if (self.assessmentTestContext.isTimeout == false && self.assessmentTestContext.itemSessionState == self.TEST_ITEM_STATE_INTERACTING) {
+
 			    if (this.assessmentTestContext.timeConstraints.length > 0) {
 			
 			    	// Insert QTI Timers container.
