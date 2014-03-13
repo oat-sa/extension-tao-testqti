@@ -43,9 +43,6 @@ return array(
 			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
 		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf'
 		),
-	    'checks' => array(
-	        array('type' => 'CheckFileSystemComponent', 'value' => array('id' => 'fs_taoQtiTest_data_testdata', 'location' => 'taoQtiTest/data/testdata', 'rights' => 'rw')),
-	    ),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
