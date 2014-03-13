@@ -112,10 +112,10 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
             $this->getTest()
         );
         
-        // Test result submission mode = OUTCOME_PROCESSING, which mean
+        // Test result submission mode = END, which means
         // outcome variable's values are sent to the result storage
-        // each time the reponse processing takes place.
-        $session->setTestResultsSubmission(TestResultsSubmission::OUTCOME_PROCESSING);
+        // when the test candidate session ends.
+        $session->setTestResultsSubmission(TestResultsSubmission::END);
         
         // Set the acceptable latency time to be considered when qti:timeLimits->minTime
         // and qti:timeLimits->maxTime are in force.
