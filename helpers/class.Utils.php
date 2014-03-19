@@ -133,4 +133,21 @@ class taoQtiTest_helpers_Utils {
         $contentPath = rtrim($contentPath, $ds);
         return $contentPath . $ds . str_replace('/', $ds, $filePath);
     }
+    
+    /**
+     * Returns an empty IMS Manifest file as a DOMDocument, ready to be fill with
+     * new information about IMS QTI Items and Tests.
+     * 
+     * @return DOMDocument
+     */
+    static public function emptyImsManifest() {
+        $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . '/taoQTI/models/classes/QTI/templates/imsmanifest.tpl.php', array(
+            'qtiItems' => array(),
+            'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
+        ));
+        	
+        $manifest = new DOMDocument('1.0', TAO_DEFAULT_ENCODING);
+        $manifest->loadXML($templateRenderer->render());
+        return $manifest;
+    }
 }

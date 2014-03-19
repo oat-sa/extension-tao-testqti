@@ -111,6 +111,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     private $cssScoper = null;
     
     /**
+     * An additional path to be used when test definitions are located in sub-directories.
+     *
+     * @var string
+     */
+    private $extraPath;
+    
+    /**
      * Get the public compilation directory.
      * 
      * @return tao_models_classes_service_StorageDirectory
@@ -201,6 +208,25 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
     
     /**
+     * Get the extra path to be used when test definition is located
+     * in sub-directories.
+     * 
+     * @return string
+     */
+    protected function getExtraPath() {
+        return $this->extraPath;
+    }
+    
+    /**
+     * Set the extra path to be used when test definition is lovated in sub-directories.
+     * 
+     * @param string $extraPath
+     */
+    protected function setExtraPath($extraPath) {
+        $this->extraPath = $extraPath;
+    }
+    
+    /**
      * Initialize the compilation by:
      * 
      * * 1. Spawning public and private compilation directoryies.
@@ -209,9 +235,17 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * for the next compilation process.
      */
     protected function initCompilation() {
+        $ds = DIRECTORY_SEPARATOR;
+        
         // Initialize public and private compilation directories.
         $this->setPrivateDirectory($this->spawnPrivateDirectory());
         $this->setPublicDirectory($this->spawnPublicDirectory());
+        
+        // Extra path.
+        $testService = taoQtiTest_models_classes_QtiTestService::singleton();
+        $testContentPath = $testService->getDocPath($this->getResource());
+        $testDataPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
+        $this->setExtraPath(str_replace(array($testDataPath, TAOQTITEST_FILENAME), '', $testContentPath));
         
         // Initialize rendering engine.
         $renderingEngine = new XhtmlRenderingEngine();
@@ -221,7 +255,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $renderingEngine->setViewPolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
         $renderingEngine->setPrintedVariablePolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
         $renderingEngine->setStateName(TAOQTITEST_RENDERING_STATE_NAME);
-        $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI);
+        $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI . rtrim($this->getExtraPath(), $ds));
         $renderingEngine->setViewsName(TAOQTITEST_VIEWS_NAME);
         $this->setRenderingEngine($renderingEngine);
         
@@ -267,7 +301,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $itemReport = $this->compileItems($compiledDoc);
             $report->add($itemReport);
             if ($itemReport->getType() != common_report_Report::TYPE_SUCCESS) {
-                throw new common_Exception('Failed item compilation');
+                $msg = 'Failed item compilation.';
+                $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::ITEM_COMPILATION;
+                throw taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource, $code);
             }
             
             // 4. Explode the rubric blocks in the test into rubric block refs.
@@ -301,10 +337,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);
             $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
-            /*
-            $msg = "An unexpected error occured while compiling an IMS QTI Test.";
-            throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), taoQtiTest_models_classes_QtiTestCompilationFailedException::UNKNOWN);
-            */
         }
         return $report;
     }
@@ -400,14 +432,16 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $subContent = tao_helpers_File::scandir($testPath, array('recursive' => false, 'absolute' => true));
         $privateDirPath = $this->getPrivateDirectory()->getPath();
         
-        // Append the qti_base.css to copied files.
-        $ds = DIRECTORY_SEPARATOR;
-        $subContent[] = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds . 'views' . $ds . 'css' . $ds . 'qti_base.css';
-        
         // Recursive copy of each root level resources.
         foreach ($subContent as $subC) {
             tao_helpers_File::copy($subC, $privateDirPath . basename($subC));
         }
+        
+        // Append the qti_base.css to copied files.
+        $ds = DIRECTORY_SEPARATOR;
+        $qtiBaseStylesheetPath = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds . 'views' . $ds . 'css' . $ds . 'qti_base.css';
+        $qtiBaseStylesheetDestPath = $privateDirPath . trim($this->getExtraPath(), $ds) . $ds . 'qti_base.css';
+        tao_helpers_File::copy($qtiBaseStylesheetPath, $qtiBaseStylesheetDestPath);
     }
     
     /**
@@ -493,7 +527,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
             
             foreach ($stylesheets as $rubricStylesheet) {
-                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir, $rubricStylesheet->getHref());
+                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir . ltrim($this->getExtraPath(), '/'), $rubricStylesheet->getHref());
                 file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubric->getId()));
             }
             
@@ -546,7 +580,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function copyRemoteResources(RubricBlock $rubricBlock) {
         
         $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
-        $destination = $publicCompiledDocDir . TAOQTITEST_REMOTE_FOLDER . DIRECTORY_SEPARATOR;
+        $ds = DIRECTORY_SEPARATOR;
+        $destination = $publicCompiledDocDir . trim($this->getExtraPath(), $ds) . $ds . TAOQTITEST_REMOTE_FOLDER . $ds;
         
         // If remote directory does not exist yet, create it.
         if (file_exists($destination) === false) {
@@ -572,7 +607,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $pathinfo = pathinfo($finalDestination);
                 
                 if ($finalDestination !== false) {
-                    $newUrl = TAOQTITEST_REMOTE_FOLDER . '/' . $pathinfo['basename'];
+                    $newUrl =  TAOQTITEST_REMOTE_FOLDER . '/' . $pathinfo['basename'];
                      
                     switch ($component->getQtiClassName()) {
                         case 'object':

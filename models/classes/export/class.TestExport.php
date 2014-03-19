@@ -20,14 +20,14 @@
  */
 
 /**
- * Exporter of the qti tests
+ * Export Handler for QTI tests.
  *
  * @access public
  * @author Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
  * @subpackage models_classes_Export
  */
-class taoQtiTest_models_classes_export_testExport implements tao_models_classes_export_ExportHandler
+class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler
 {
 
     /**
@@ -58,27 +58,43 @@ class taoQtiTest_models_classes_export_testExport implements tao_models_classes_
      */
     public function export($formValues, $destination) {
     	$file = null;
-    	if(isset($formValues['filename'])) {
-			$instances = $formValues['instances'];
-			if(count($instances) > 0){
+    	
+    	if (isset($formValues['filename']) === true) {
+    	    
+			$instances = is_string($formValues['instances']) ? array($formValues['instances']) : $formValues['instances'];
+			
+			if (count($instances) > 0) {
 				
-				$itemService = taoItems_models_classes_ItemsService::singleton();
-				
-				$fileName = $formValues['filename'].'_'.time().'.zip';
+				$fileName = $formValues['filename'] .'_' . time() . '.zip';
 				$path = tao_helpers_File::concat(array($destination, $fileName));
-				if(!tao_helpers_File::securityCheck($path, true)){
-					throw new Exception('Unauthorized file name');
+				
+				if (tao_helpers_File::securityCheck($path, true) === false) {
+					throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
 				}
 				
-				// do export here
-				throw new common_exception_NotImplemented('Export not yet implemented');
-				
+			    // Create a new ZIP archive to store data related to the QTI Test.
+			    $zip = new ZipArchive();
+			    if ($zip->open($path, ZipArchive::CREATE) !== true){
+			        throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
+			    }
+			    
+			    // Create an empty IMS Manifest as a basis.
+			    $manifest = taoQtiTest_helpers_Utils::emptyImsManifest();
+			    
+			    foreach ($instances as $instance) {
+			        $testResource = new core_kernel_classes_Resource($instance);
+			        $testExporter = new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
+			        $testExporter->export();
+			    }
+			    
 				$file = $path;
+				$zip->close();
 			}
-		} else {
-			common_Logger::w('Missing filename for export using '.__CLASS__);
+		} 
+		else {
+			common_Logger::w("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.");
 		}
+		
 		return $file;
     }
-
 }

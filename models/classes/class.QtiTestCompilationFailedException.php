@@ -53,6 +53,14 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
     const REMOTE_RESOURCE = 2;
     
     /**
+     * Error code to use when a dependent item failed to
+     * be compiled.
+     * 
+     * @var integer
+     */
+    const ITEM_COMPILATION = 3;
+    
+    /**
      * The resource in database describing the test that failed
      * to be compiled.
      * 
@@ -103,15 +111,19 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
 	    
 		switch ($this->getCode()) {
 			case self::UNKNOWN:
-				return sprintf(__("An unknown error occured while compiled QTI test '%s'."), $testLabel);
+				return sprintf(__("An unknown error occured while compiled QTI Test '%s'."), $testLabel);
 		    break;
 			
 			case self::NO_ITEMS:
-		        return sprintf(__("The QTI test '%s' to be compiled must contain at least 1 QTI item. None found."), $testLabel);
+		        return sprintf(__("The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."), $testLabel);
 			break;
 			
 			case self::REMOTE_RESOURCE:
 			    return sprintf(__("A remote resource referenced in QTI test '%s' could not be retrieved.", $testLabel));
+			break;
+			
+			case self::ITEM_COMPILATION:
+			    return sprintf(__("A QTI Item involved in the QTI Test '%s' could not be compiled.", $testLabel));
 			break;
 			
 			default:

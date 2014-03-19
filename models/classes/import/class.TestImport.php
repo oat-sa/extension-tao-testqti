@@ -58,8 +58,8 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             if(isset($fileInfo['uploaded_file'])){
                 	
                 $uploadedFile = $fileInfo['uploaded_file'];
-                	
-                helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);	//the zip extraction is a long process that can exced the 30s timeout
+                //the zip extraction is a long process that can exceed the 30s timeout
+                helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
                  
                 $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
                 $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);

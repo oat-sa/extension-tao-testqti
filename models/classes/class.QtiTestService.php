@@ -87,7 +87,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * Get the items that are part of a given $test.
      * 
      * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
-     * @return array An array of core_kernel_classes_Resource objects.
+     * @return array An array of core_kernel_classes_Resource objects. The array is associative. Its keys are actually the assessmentItemRef identifiers.
      */
     public function getItems( core_kernel_classes_Resource $test ) {
     	return $this->getDocItems($this->getDoc($test));
@@ -193,6 +193,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass) {
         
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
+        $report->setData($testResource);
         $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
         $qtiPackageParser->validate();
 
@@ -260,7 +261,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                             $destPath = $itemPath . $relPath;
                                             tao_helpers_File::copy($auxPath, $destPath, true);
                                         }
-                                        $itemMap[$qtiResource->getIdentifier()] = $rdfItem;
+                                        $itemMap[realpath($qtiFile)] = $rdfItem;
                                         $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file imported successfully.', $qtiResource->getIdentifier()));
                                     }
                                     else {
@@ -401,15 +402,25 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file does not contain any Item reference.', $qtiResource->getIdentifier())));
         }
         
-        foreach ($assessmentItemRefs as $itemRef) {
-            $itemRefIdentifier = $itemRef->getIdentifier();
-        
-            if (isset($itemMapping[$itemRefIdentifier]) === false || !$itemMapping[$itemRefIdentifier] instanceof core_kernel_classes_Resource) {
+        foreach ($itemMapping as $itemPath => $itemResource) {
+            
+            $found = false;
+            
+            foreach ($assessmentItemRefs as $itemRef) {
+                $itemHref = ltrim($itemRef->getHref(), './');
+                
+                $pos = strpos($itemPath, $itemHref);
+                
+                if ($pos !== false) {
+                    $itemRef->setHref($itemResource->getUri());
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if ($found === false) {
                 $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file references an unknown Item in its definition.', $qtiResource->getIdentifier())));
                 return false;
-            }
-            else {
-                $itemRef->setHref($itemMapping[$itemRefIdentifier]->getUri());
             }
         }
         
@@ -498,46 +509,55 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDoc(core_kernel_classes_Resource $test) {
         
         $doc = new XmlDocument('2.1');
+        $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $dir = $this->createContent($test);
+        } else {
+            $dir = new core_kernel_file_File($dir);
+        }
         
-        if(!is_null($test)){
+        try {
+            $filePath = $this->getDocPath($test);
+            $doc->load($filePath);
+        } catch (Exception $e) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+                );
+        }
             
-            $dir = $this->getTestFile($test);
-            if (is_null($dir)) {
-                $dir = $this->createContent($test);
-            } else {
-                $dir = new core_kernel_file_File($dir);
-            }
-            
-            $testPath = $dir->getAbsolutePath();
-            try {
-                // Search for the test.xml file in the test content directory.
-                $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true, 'only' => tao_helpers_File::$FILE));
-                $dirContent = array();
-                
-                foreach ($files as $f) {
-                    $pathinfo = pathinfo($f);
-                    if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
-                        $dirContent[] = $f;
-                    }
-                }
-                
-                if (count($dirContent) === 0) {
-                    throw new Exception('No QTI-XML test file found.');
-                }
-                else if (count($dirContent) > 1) {
-                    throw new Exception('Multiple QTI-XML test file found.');
-                }
-                
-                $filePath = current($dirContent);
-                $doc->load($filePath);
-            } catch (Exception $e) {
-                throw new taoQtiTest_models_classes_QtiTestServiceException(
-                        "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
-                        taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
-                    );
+        return $doc;
+    }
+    
+    /**
+     * Get the path of the QTI XML test definition of a given $test resource.
+     * 
+     * @param core_kernel_classes_Resource $test
+     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
+     * @return string The absolute path to the QTI XML Test definition related to $test.
+     */
+    public function getDocPath(core_kernel_classes_Resource $test) {
+        $dir = $this->getTestFile($test);
+        $testPath = $dir->getAbsolutePath();
+        $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true, 'only' => tao_helpers_File::$FILE));
+        $dirContent = array();
+        
+        foreach ($files as $f) {
+            $pathinfo = pathinfo($f);
+            if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
+                $dirContent[] = $f;
             }
         }
-        return $doc;
+        
+        if (count($dirContent) === 0) {
+            throw new Exception('No QTI-XML test file found.');
+        }
+        else if (count($dirContent) > 1) {
+            throw new Exception('Multiple QTI-XML test file found.');
+        }
+        
+        $filePath = current($dirContent);
+        return $filePath;
     }
     
     /**
@@ -568,13 +588,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     
     /**
      * Get the items from a QTI test document.
-     * @param \qtism\data\storage\xml\XmlDocument $doc
-     * @return core_kernel_classes_Resource
+     * 
+     * @param \qtism\data\storage\xml\XmlDocument $doc The QTI XML document to be inspected to retrieve the items.
+     * @return An array of core_kernel_classes_Resource object indexed by assessmentItemRef->identifier (string).
      */
-    private function getDocItems( XmlDocument $doc ){
+    private function getDocItems(XmlDocument $doc){
         $itemArray = array();
     	foreach ($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef) {
-            $itemArray[] = new core_kernel_classes_Resource($itemRef->getHref());
+            $itemArray[$itemRef->getIdentifier()] = new core_kernel_classes_Resource($itemRef->getHref());
     	}
     	return $itemArray;
     }
@@ -586,7 +607,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return type
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function setItemsToDoc( XmlDocument $doc, array $items, $sectionIndex = 0) {
+    private function setItemsToDoc(XmlDocument $doc, array $items, $sectionIndex = 0) {
         
         $sections = $doc->getDocumentComponent()->getComponentsByClassName('assessmentSection');
         if(!isset($sections[$sectionIndex])){
