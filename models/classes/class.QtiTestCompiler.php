@@ -246,6 +246,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testContentPath = $testService->getDocPath($this->getResource());
         $testDataPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
         $this->setExtraPath(str_replace(array($testDataPath, TAOQTITEST_FILENAME), '', $testContentPath));
+        common_Logger::i('testContentPath ---> ' . $testContentPath);
+        common_Logger::i('testDataPath ---> ' . $testDataPath);
+        common_Logger::i('EXTRA PATH ---> ' . $this->getExtraPath());
         
         // Initialize rendering engine.
         $renderingEngine = new XhtmlRenderingEngine();
@@ -333,6 +336,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setData($serviceCall);
         }
         catch (Exception $e) {
+            common_Logger::e($e->getMessage());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);

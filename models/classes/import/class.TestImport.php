@@ -58,20 +58,12 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             if(isset($fileInfo['uploaded_file'])){
                 	
                 $uploadedFile = $fileInfo['uploaded_file'];
-                //the zip extraction is a long process that can exceed the 30s timeout
+                
+                // The zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
+                
                 $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($uploadedFile);
-            
-                // The test is now successfuly imported.
-                if ($report->containsError() === true) {
-                    $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
-                    $report->setType(common_report_Report::TYPE_ERROR);
-                }
-                else {
-                    $report->setMessage(__('The IMS QTI Test Package was successfuly imported.'));
-                    $report->setType(common_report_Report::TYPE_SUCCESS);
-                }
-            
+                
                 helpers_TimeOutHelper::reset();
                 tao_helpers_File::remove($uploadedFile);
             } else {

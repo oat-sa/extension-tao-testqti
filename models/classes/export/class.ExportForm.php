@@ -116,7 +116,7 @@ class taoQtiTest_models_classes_export_ExportForm
 		$nameElt->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
     	$this->form->addElement($nameElt);
 
-    	$instanceElt = tao_helpers_form_FormFactory::getElement('instances', 'Radiobox');
+    	$instanceElt = tao_helpers_form_FormFactory::getElement('instances', 'Checkbox');
     	$instanceElt->setDescription(__('Test'));
     	//$instanceElt->setAttribute('checkAll', true);
 		$instanceElt->setOptions(tao_helpers_Uri::encodeArray($options, tao_helpers_Uri::ENCODE_ARRAY_KEYS));

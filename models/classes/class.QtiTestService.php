@@ -184,202 +184,263 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
     
     public function importMultipleTests($file) {
+        
         $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
-        $test = $this->createInstance($testClass);
-        $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
-        $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
-        $test->setPropertyValue($modelProperty, $qtiTestModelResource);
-        
-        $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
-        $targetClass = $itemClass->createSubClass($test->getLabel());
-        
-        return $this->importTest($test, $file, $targetClass);
-    }
-    
-    /**
-     * Import a QTI Test and the Items within into the TAO Platform.
-     * 
-     * @param core_kernel_classes_Resource $testResource
-     * @param string $file The path to the IMS Content Package archive you want to import as a QTI Test.
-     * @return common_report_Report A report about how the importation behaved.
-     */
-    protected function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass) {
-        
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
-        $report->setData($testResource);
-        $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
-        $qtiPackageParser->validate();
-
-        $itemImportService = taoQTI_models_classes_QTI_ImportService::singleton();
-        $itemService = taoItems_models_classes_ItemsService::singleton();
-        $testService = taoTests_models_classes_TestsService::singleton();
-        $itemMap = array();
+        $validPackage = false;
+        $validManifest = false;
         
-        if ($qtiPackageParser->isValid()) {
-            //extract the package
+        // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
+        $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
+        
+        try {
+            $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
+            $qtiPackageParser->validate();
+            $validPackage = true;
+        }
+        catch (Exception $e) {
+            $report->add(common_report_Report::createFailure($invalidArchiveMsg));
+        }
+        
+        // Validate the manifest (well formed XML, valid against the schema).
+        if ($validPackage === true) {
             $folder = $qtiPackageParser->extract();
-            
-            if(!is_dir($folder)) {
-                throw new taoQTI_models_classes_QTI_exception_ExtractException();
+                 
+            if (is_dir($folder) === false) {
+                $report->add(common_report_Report::createFailure($invalidArchiveMsg));
             }
-
-            //load and validate the manifest
-            $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder.'imsmanifest.xml');
-            $qtiManifestParser->validate();
-            
-            if ($qtiManifestParser->isValid() === true) {
-                $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
+            else {
                 
-                if (empty($tests) === true) {
+                $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
+                $qtiManifestParser->validate();
+                
+                if ($qtiManifestParser->isValid() === true) {
+                
+                    $validManifest = true;
                     
-                    // There are no test definition described by the imsmanifest.xml file.
-                    $report->add(common_report_Report::createFailure(__('No Test Definition found in the IMS Manifest file.')));
-                }
-                else if (count($tests) > 1) {
-                    
-                    // @todo support multiple tests in the same QTI Content Package.
-                    $report->add(common_report_Report::createFailure(__('More than one Test Definition found the IMS Manifest file.')));
+                    $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
+                    foreach ($tests as $test) {
+                        $report->add($this->importTest($test, $qtiManifestParser, $folder));
+                    }
                 }
                 else {
-                    
-                    // First step is to import all the items that are dependencies of the test.
-                    $itemError = false;
-                    $testQtiResource = current($tests);
-                    $dependencies = $testQtiResource->getDependencies();
-                    
-                    if (count($dependencies) > 0) {
-                        
-                        foreach ($dependencies as $qtiDependency) {
-                            // Find the resource referenced by the dependency.
-                            $qtiDependencyReferences = $qtiManifestParser->getResources($qtiDependency, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
-                            
-                            if (count($qtiDependencyReferences) > 0) {
-                        
-                                $qtiResource = current($qtiDependencyReferences);
-                        
-                                if (taoQTI_models_classes_QTI_Resource::isAssessmentItem($qtiResource->getType())) {
-                        
-                                    $itemReport = new common_report_Report(common_report_Report::TYPE_SUCCESS, '');
-                                    $qtiFile = $folder . $qtiResource->getFile();
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, $itemClass);
-                                    $rdfItem = $itemReport->getData();
-                        
-                                    if ($rdfItem) {
-                                        $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
-                        
-                                        foreach ($qtiResource->getAuxiliaryFiles() as $auxResource) {
-                                            // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                            $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
-                                            $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
-                                            $destPath = $itemPath . $relPath;
-                                            tao_helpers_File::copy($auxPath, $destPath, true);
-                                        }
-                                        $itemMap[realpath($qtiFile)] = $rdfItem;
-                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file imported successfully.', $qtiResource->getIdentifier()));
-                                    }
-                                    else {
-                                        $itemReport->setType(common_report_Report::TYPE_ERROR);
-                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiResource->getIdentifier()));
-                                        $itemError = ($itemError === false) ? true : $itemError;
-                                    }
-                        
-                                    $report->add($itemReport);
-                                }
-                            }
-                            else {
-                                $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __('The dependency to the IMS QTI Item expected to be referenced as "%s" in the IMS Manifest file could not be resolved.', $qtiDependency), $qtiDependency));
-                                $itemError = ($itemError === false) ? true : $itemError;
-                            }
-                        }
-                        
-                        // If items did not produce errors, we import the test definitio.
-                        if ($itemError === false) {
-                            common_Logger::i('Importing test...');
-                            // Second step is to take care of the test definition and the related media (auxiliary files).
-                            $testDefinition = new XmlDocument();
-                            try {
-                                $testDefinition->load($folder . str_replace('/', DIRECTORY_SEPARATOR, $testQtiResource->getFile()), true);
-                                
-                                // 1. Import test definition (i.e. the QTI-XML Test file).
-                                $testContent = $this->importTestDefinition($testResource, $testDefinition, $testQtiResource, $itemMap, $folder, $report);
-                                
-                                if ($testContent !== false) {
-                                    // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
-                                    $this->importTestAuxiliaryFiles($testContent, $testQtiResource, $folder, $report);
-                                }
-                            }
-                            catch (StorageException $e) {
-                                // Source of the exception = $testDefinition->load()
-                                // What is the reason ?
-                                $finalErrorString = '';
-                                $eStrs = array();
-                                if (($libXmlErrors = $e->getErrors()) !== null) {
-                                    foreach ($libXmlErrors as $libXmlError) {
-                                        $eStrs[] = __('QTI-XML error at line %1$d column %2$d "%3$s".', $libXmlError->line, $libXmlError->column, trim($libXmlError->message));
-                                    }
-                                }
-                                
-                                $finalErrorString = implode("\n", $eStrs);
-                                if (empty($finalErrorString) === true) {
-                                    // Not XML malformation related. No info from LibXmlErrors extracted.
-                                    if (($previous = $e->getPrevious()) != null) {
-                                        // Useful information could be found here.
-                                        $finalErrorString = $previous->getMessage();
-                                        
-                                        if ($previous instanceof UnmarshallingException) {
-                                            $domElement = $previous->getDOMElement();
-                                            $finalErrorString = __('IMS QTI Inconsistency at line %1d:', $domElement->getLineNo()) . ' ' . $previous->getMessage();
-                                        }
-                                    }
-                                    else {
-                                        $finalErrorString = __("Unknown IMS QTI error.");
-                                    }
-                                }
-                                
-                                $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported:\n%s", $testQtiResource->getIdentifier(), $finalErrorString)));
-                            }
-                        }
-                        else {
-                            $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("One or more Items of the IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $testQtiResource->getIdentifier())));
-                        }
-                    }
-                    else {
-                        // No depencies found (i.e. no item resources bound to the test).
-                        $report->add(new common_report_Report(common_report_Report::TYPE_ERROR, __("The IMS QTI Test to be imported do not refer to any Item.")));
-                    }
+                    $msg = __("The 'imsmanifest.xml' file found in the archive is not valid.");
+                    $report->add(common_report_Report::createFailure($msg));
                 }
             }
-            
-            tao_helpers_File::deltree($folder);
-        }
-        else {
-            $report->add(common_report_Report::createFailure(__('The IMS QTI Test Package could not be extracted. The archive might be corrupted.')));
         }
         
         if ($report->containsError() === true) {
-            // We consider a test as an atomic component, we then rollback it.
-        
-            // Delete all imported items.
-            foreach ($itemMap as $item) {
-                common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
-                @$itemService->deleteItem($item);
-            }
-        
-            // Delete the target Item RDFS Class.
-            common_Logger::i("Rollbacking Items target RDFS class '" . $itemClass->getLabel() . "'...");
-            $itemClass->delete();
-        
-            // Delete test definition.
-            common_Logger::i("Rollbacking test '" . $testResource->getLabel() . "...");
-            @$testService->deleteTest($testResource);
-        
-            if (count($itemMap) > 0) {
-                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The imported resources were rolled back.')));
-            }
-            
-            common_Logger::i("Successful Rollback");
+            $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
+            $report->setType(common_report_Report::TYPE_ERROR);
+        }
+        else {
+            $report->setMessage(__('IMS QTI Test Package successfuly imported.'));
+            $report->setType(common_report_Report::TYPE_SUCCESS);
         }
         
+        // Cleanup the folder where the archive was extracted.
+        // Only if the archive was not currupted ;)
+        if (is_dir($folder) === true) {
+            tao_helpers_File::deltree($folder);
+        }
+        
+        if ($report->containsError() === true && $validPackage === true && $validManifest === true) {
+            // We consider a test package as an atomic component, we then rollback it.
+            $itemService = taoItems_models_classes_ItemsService::singleton();
+            
+            foreach ($report as $r) {
+                $data = $r->getData();
+                
+                // Delete all imported items.
+                foreach ($data->items as $item) {
+                    common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
+                    @$itemService->deleteItem($item);
+                }
+                
+                // Delete the target Item RDFS class.
+                common_Logger::i("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
+                @$data->itemClass->delete();
+                
+                // Delete test definition.
+                common_Logger::i("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
+                @$this->deleteTest($data->rdfsResource);
+                
+                if (count($data->items) > 0) {
+                    $msg = __("The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.", $data->manifestResource->getIdentifier());
+                    $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, $msg));
+                }
+            }
+        }
+        
+        return $report;
+    }
+    
+    /**
+     * Import a QTI Test and its dependent Items into the TAO Platform.
+     * 
+     * @param taoQTI_models_classes_QTI_Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
+     * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
+     * @param string $folder The absolute path to the folder where the IMS archive containing the test content
+     * @return common_report_Report A report about how the importation behaved.
+     */
+    protected function importTest(taoQTI_models_classes_QTI_Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+        
+        $itemImportService = taoQTI_models_classes_QTI_ImportService::singleton();
+        $itemService = taoItems_models_classes_ItemsService::singleton();
+        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
+        
+        // Create an RDFS resource in the knowledge base that will hold
+        // the information about the imported QTI Test.
+        $testResource = $this->createInstance($testClass);
+        $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
+        $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
+        $testResource->setPropertyValue($modelProperty, $qtiTestModelResource);
+        
+        // Create the report that will hold information about the import
+        // of $qtiTestResource in TAO.
+        $report = new common_report_Report(common_report_Report::TYPE_INFO);
+        
+        // The class where the items that belong to the test will be imported.
+        $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+        $targetClass = $itemClass->createSubClass($testResource->getLabel());
+        
+        // Load and validate the manifest
+        $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
+        $qtiManifestParser->validate();
+        
+        // Set up $report with useful information for client code (especially for rollback).
+        $reportCtx = new stdClass();
+        $reportCtx->manifestResource = $qtiTestResource;
+        $reportCtx->rdfsResource = $testResource;
+        $reportCtx->itemClass = $targetClass;
+        $reportCtx->items = array();
+        $report->setData($reportCtx);
+                    
+        // First step is to import all the items that are dependencies of the test.
+        $itemError = false;
+        $dependencies = $qtiTestResource->getDependencies();
+        
+        if (count($dependencies) > 0) {
+            
+            foreach ($dependencies as $qtiDependency) {
+                // Find the resource referenced by the dependency.
+                $qtiDependencyReferences = $qtiManifestParser->getResources($qtiDependency, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
+                
+                if (count($qtiDependencyReferences) > 0) {
+            
+                    $qtiResource = current($qtiDependencyReferences);
+            
+                    if (taoQTI_models_classes_QTI_Resource::isAssessmentItem($qtiResource->getType())) {
+            
+                        $itemReport = new common_report_Report(common_report_Report::TYPE_SUCCESS, '');
+                        $qtiFile = $folder . $qtiResource->getFile();
+                        $itemReport = $itemImportService->importQTIFile($qtiFile, $targetClass);
+                        $rdfItem = $itemReport->getData();
+            
+                        if ($rdfItem) {
+                            $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
+            
+                            foreach ($qtiResource->getAuxiliaryFiles() as $auxResource) {
+                                // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
+                                $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
+                                $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
+                                $destPath = $itemPath . $relPath;
+                                tao_helpers_File::copy($auxPath, $destPath, true);
+                            }
+                            $reportCtx->items[realpath($qtiFile)] = $rdfItem;
+                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiResource->getIdentifier()));
+                        }
+                        else {
+                            $itemReport->setType(common_report_Report::TYPE_ERROR);
+                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiResource->getIdentifier()));
+                            $itemError = ($itemError === false) ? true : $itemError;
+                        }
+            
+                        $report->add($itemReport);
+                    }
+                }
+                else {
+                    $msg = __('The dependency to the IMS QTI Item expected to be referenced as "%s" in the IMS Manifest file could not be resolved.', $qtiDependency->getIdentifier());
+                    $report->add(common_report_Report::createFailure($msg));
+                    $itemError = ($itemError === false) ? true : $itemError;
+                }
+            }
+            
+            // If items did not produce errors, we import the test definitio.
+            if ($itemError === false) {
+                common_Logger::i('Importing test...');
+                
+                // Second step is to take care of the test definition and the related media (auxiliary files).
+                $testDefinition = new XmlDocument();
+                
+                try {
+                    $testDefinition->load($folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiTestResource->getFile()), true);
+                    
+                    // 1. Import test definition (i.e. the QTI-XML Test file).
+                    $testContent = $this->importTestDefinition($testResource, $testDefinition, $qtiTestResource, $reportCtx->items, $folder, $report);
+                    
+                    if ($testContent !== false) {
+                        // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
+                        $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
+                    }
+                }
+                catch (StorageException $e) {
+                    // Source of the exception = $testDefinition->load()
+                    // What is the reason ?
+                    $finalErrorString = '';
+                    $eStrs = array();
+                    
+                    if (($libXmlErrors = $e->getErrors()) !== null) {
+                        foreach ($libXmlErrors as $libXmlError) {
+                            $eStrs[] = __('XML error at line %1$d column %2$d "%3$s".', $libXmlError->line, $libXmlError->column, trim($libXmlError->message));
+                        }
+                    }
+                    
+                    $finalErrorString = implode("\n", $eStrs);
+                    if (empty($finalErrorString) === true) {
+                        // Not XML malformation related. No info from LibXmlErrors extracted.
+                        if (($previous = $e->getPrevious()) != null) {
+                            
+                            // Useful information could be found here.
+                            $finalErrorString = $previous->getMessage();
+                            
+                            if ($previous instanceof UnmarshallingException) {
+                                $domElement = $previous->getDOMElement();
+                                $finalErrorString = __('Inconsistency at line %1d:', $domElement->getLineNo()) . ' ' . $previous->getMessage();
+                            }
+                        }
+                        else {
+                            $finalErrorString = __("Unknown error.");
+                        }
+                    }
+                    
+                    $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
+                    $report->add(common_report_Report::createFailure($msg));
+                }
+            }
+            else {
+                $msg = __("One or more dependent IMS QTI Items could not be imported.");
+                $report->add(common_report_Report::createFailure($msg));
+            }
+        }
+        else {
+            // No depencies found (i.e. no item resources bound to the test).
+            $msg = __("No reference to any IMS QTI Item found.");
+            $report->add(common_report_Report::createFailure($msg));
+        }
+        
+        if ($report->containsError() === false) {
+            $report->setType(common_report_Report::TYPE_SUCCESS);
+            $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfuly imported.", $qtiTestResource->getIdentifier());
+            $report->setMessage($msg);
+        }
+        else {
+            $report->setType(common_report_Report::TYPE_ERROR);
+            $msg = __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $qtiTestResource->getIdentifier());
+            $report->setMessage($msg);
+        }
+
         return $report;
     }
 

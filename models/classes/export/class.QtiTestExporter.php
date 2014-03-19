@@ -202,14 +202,17 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // it to the archive.
         $tmpPath = tempnam('/tmp', 'tao');
         $this->getTestDocument()->save($tmpPath);
+        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
         
         // Add the test definition in the archive.
         $testBasePath = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
-        $testHref = $testBasePath . 'test.xml';
+        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '', $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+        
+        $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
         $this->addFile($tmpPath, $testHref);
         $this->referenceTest($testHref, $itemIdentifiers);
                 
-        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
+        
         $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true));
         foreach ($files as $f) {
             // Only add dependency files...
