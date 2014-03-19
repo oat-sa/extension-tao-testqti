@@ -60,15 +60,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
                 $uploadedFile = $fileInfo['uploaded_file'];
                 //the zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
-                 
-                $test = taoTests_models_classes_TestsService::singleton()->createInstance($class);
-                $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
-                $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
-                $test->setPropertyValue($modelProperty, $qtiTestModelResource);
-                
-                $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
-                $subClass = $itemClass->createSubClass($test->getLabel());
-                $report = taoQtiTest_models_classes_QtiTestService::singleton()->importTest($test, $uploadedFile, $subClass);
+                $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($uploadedFile);
             
                 // The test is now successfuly imported.
                 if ($report->containsError() === true) {

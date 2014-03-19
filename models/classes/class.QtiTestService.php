@@ -183,6 +183,19 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         return $qtiType . '-' . (count($typeList) + $offset);
     }
     
+    public function importMultipleTests($file) {
+        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
+        $test = $this->createInstance($testClass);
+        $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
+        $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
+        $test->setPropertyValue($modelProperty, $qtiTestModelResource);
+        
+        $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+        $targetClass = $itemClass->createSubClass($test->getLabel());
+        
+        return $this->importTest($test, $file, $targetClass);
+    }
+    
     /**
      * Import a QTI Test and the Items within into the TAO Platform.
      * 
@@ -190,7 +203,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @param string $file The path to the IMS Content Package archive you want to import as a QTI Test.
      * @return common_report_Report A report about how the importation behaved.
      */
-    public function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass) {
+    protected function importTest(core_kernel_classes_Resource $testResource, $file, $itemClass) {
         
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
         $report->setData($testResource);
