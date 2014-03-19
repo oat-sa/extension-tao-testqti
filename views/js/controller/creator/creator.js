@@ -1,11 +1,36 @@
 /**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ */
+/**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['module', 'jquery', 'lodash','ui', 'core/databindcontroller', 
-'taoQtiTest/controller/creator/views/item', 'taoQtiTest/controller/creator/views/section',
-'taoQtiTest/controller/creator/encoders/dom2qti', 'helpers'], 
-function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEncoder, helpers){
+['module', 'jquery', 'lodash', 'helpers', 
+'core/databindcontroller', 
+'taoQtiTest/controller/creator/views/item', 
+'taoQtiTest/controller/creator/views/test',
+'taoQtiTest/controller/creator/views/testpart',
+'taoQtiTest/controller/creator/views/section',
+'taoQtiTest/controller/creator/views/itemref',
+'taoQtiTest/controller/creator/encoders/dom2qti',
+'taoQtiTest/controller/creator/templates/index',
+'taoQtiTest/controller/creator/helpers/qtiTest',
+'core/validator/validators'], 
+function(module, $, _, helpers, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
     'use strict';
 
     /**
@@ -28,109 +53,6 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
         });
     }
     
-    /**
-     * Get an identifier from the server - to prevent duplicates
-     * @param {string} url
-     * @param {string} model - send the full model to keep consistency
-     * @param {string} type - the data type to get an id for (ie. qti-type)
-     * @param {DataCallback} cb - with the id
-     */
-    function getIdentifier(url, model, type, cb){
-        
-        addMissingQtiType(model);
-        consolidateModel(model);
-        var data = {
-            model : JSON.stringify(model),
-            'qti-type' : type
-        };
-        $.post(url, data, function(data){
-            if(data && typeof cb === 'function'){
-                cb(data);
-            }
-        }, 'json');
-    }
-    
-    /**
-     * Does the value contains the type type
-     * @param {Object} value 
-     * @param {string} type
-     * @returns {boolean} 
-     */
-    function filterQtiType(value, type){
-         return value['qti-type'] && value['qti-type'] === type;
-    }
-    
-    /**
-     * Add the 'qti-type' properties to object that miss it, using the parent key name
-     * @param {Object|Array} collection
-     * @param {string} parentType
-     */
-    function addMissingQtiType(collection, parentType) {
-        _.forEach(collection, function(value, key) {
-            if (_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')) {
-                if (_.isNumber(key)) {
-                    if (parentType) {
-                        value['qti-type'] = parentType;
-                    }
-                } else {
-                    value['qti-type'] = key;
-                }
-            }
-            if (_.isArray(value)) {
-                addMissingQtiType(value, key.replace(/s$/, ''));
-            } else if (_.isObject(value)) {
-                addMissingQtiType(value);
-            }
-        });
-    }
-    
-    /**
-     * Applies consolidation rules to the model
-     * @param {Object} model
-     * @returns {Object}
-     */
-    function consolidateModel(model){
-        if(model && model.testParts && _.isArray(model.testParts) && model.testParts[0]){
-            var testPart = model.testParts[0];
-            if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
-                 _.forEach(testPart.assessmentSections, function(assessmentSection, key) {
-                     
-                     //remove ordering is shuffle is false
-                     if(assessmentSection.ordering && 
-                             assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
-                         delete assessmentSection.ordering;
-                     }
-                     
-                     //remove selection if default values
-                     if(assessmentSection.selection && 
-                             assessmentSection.selection.select !== undefined && assessmentSection.selection.select === 1 &&
-                             (assessmentSection.selection.withReplacement === undefined ||  assessmentSection.selection.withReplacement === false )){
-                         delete assessmentSection.selection;
-                     }
-                     
-
-                      if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
-
-                          //remove rubrick blocks if empty
-                          if (assessmentSection.rubricBlocks.length === 0 || 
-                                  (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
-                              
-                              delete assessmentSection.rubricBlocks;
-                          }
-                          //ensure the view attribute is present
-                          else if(assessmentSection.rubricBlocks.length > 0){
-                            _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
-                                    if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
-                                        rubricBlock.views = ['candidate'];
-                                    }
-                              });
-                          }
-                    }
-                 });
-            }
-        }
-        return model;
-    }
     
     /**
      * The test creator controller is the main entry point
@@ -140,6 +62,8 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
     var Controller = {
         
          routes : {},
+
+         identifiers: [],
         
          /**
           * Start the controller, main entry method.
@@ -150,79 +74,94 @@ function(module, $, _, ui, DataBindController, ItemView, SectionView, Dom2QtiEnc
           */
          start : function(options){
             var self = this;
-            
-            options = _.merge(module.config(), options || {});
-            
             var $container = $('#test-creator');
-             
-            var labels = options.labels || {};
-            this.routes = options.routes || {};
+            var $saver = $('#saver');
 
-            //boostrap the CARD's framework
-            ui.startEventComponents($container);
-            
+            options = _.merge(module.config(), options || {});
+            options.routes = options.routes || {};
+            options.labels = options.labels || {};
+
+
+
             //set up the ItemView, give it a configured loadItems ref
-            ItemView.setUp({
-               loadItems : _.partial(loadItems, this.routes.items)
-            });
-            
+            itemView( _.partial(loadItems, options.routes.items) );
+
             //Print data binder chandes for DEBUGGING ONLY
-//            $container.on('change.binder', function(e, model){
-//                if(e.namespace === 'binder'){
-//                    console.log(model);
-//                }
-//            });
+            //$container.on('change.binder', function(e, model){
+                //if(e.namespace === 'binder'){
+                    //console.log(model);
+                //}
+            //});
             
             //Data Binding options
-            var binderOptions = _.merge(this.routes, {
+            var binderOptions = _.merge(options.routes, {
                 filters : {
                     'isItemRef' : function(value){
-                        return filterQtiType(value, 'assessmentItemRef');
+                        return qtiTestHelper.filterQtiType(value, 'assessmentItemRef');
                     },
                     'isSection' : function(value){
-                        return filterQtiType(value, 'assessmentSection');
+                        return qtiTestHelper.filterQtiType(value, 'assessmentSection');
                     }
                 },
                 encoders : {
                   'dom2qti' : Dom2QtiEncoder  
                 },
+                templates : templates,
                 beforeSave : function(model){
                     //ensure the qti-type is present
-                    addMissingQtiType(model); 
+                    qtiTestHelper.addMissingQtiType(model); 
                     
                     //apply consolidation rules
-                    consolidateModel(model);
+                    qtiTestHelper.consolidateModel(model);
                     return true;
                 }
             });
             
             //set up the databinder
-            var binder = DataBindController.takeControl($container, binderOptions)
+            var binder = DataBindController
+                .takeControl($container, binderOptions)
                 .get(function(model){
-                    //once model is loaded, we set up the SectionView, give it a configured getIdentifier ref
-                    SectionView.setUp({
-                        labels: labels,
-                        getIdentifier: _.partial(getIdentifier, self.routes.identifier, model)
+
+                    //extract ids
+                    self.identifiers = qtiTestHelper.extractIdentifiers(model);
+
+                    //register validators
+                    validators.register('testIdFormat', qtiTestHelper.idFormatValidator());
+                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers));
+            
+                    //once model is loaded, we set up the test view
+                    testView(model, {
+                        identifiers : self.identifiers,
+                        labels : options.labels
                     });
+    
+                    //listen for changes to update available actions
+                    testPartView.listenActionState();
+                    sectionView.listenActionState();
+                    itemrefView.listenActionState();
+                    
                 });
-                
+               
             //the save button triggers binder's save action.
-            $('#saver').on('click', function(event){
+            $saver.on('click', function(event){
                 event.preventDefault();
-                $('#saver').attr('disabled', true);
-                
-                _.defer(function(){
+        
+                if(!$saver.hasClass('disabled')){
+                    $saver.attr('disabled', true).addClass('disabled');
                     binder.save(function(){
-                        $('#saver').attr('disabled', false);
+
+                        $saver.attr('disabled', false).removeClass('disabled');
+
                         helpers.createInfoMessage('Saved');
+
                     }, function(){
-                        $('#saver').attr('disabled', false);
+
+                        $saver.attr('disabled', false).removeClass('disabled');
                     });
-                });
+                }
             });
         }
     };
     
     return Controller;
 });
-

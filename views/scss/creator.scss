@@ -1,0 +1,479 @@
+@import "inc/bootstrap";
+
+
+@mixin respond-to($media : medium)  {
+  $break-small : 1024px;
+  $break-wide  : 1280px;
+  @if $media == small {
+    @media only screen and (max-width: $break-small) { @content; }
+  }
+  @else if $media == medium {
+    @media only screen and (min-width: $break-small + 1) and (max-width: $break-wide) { @content; }
+  }
+  @else if $media == wide {
+    @media only screen and (min-width: $break-wide + 1) { @content; }
+  }
+}
+
+@mixin responsive($key, $small, $medium, $wide){
+    @include respond-to(small) { #{$key} : $small; }
+    @include respond-to(medium) { #{$key} : $medium; }
+    @include respond-to(wide) { #{$key} : $wide;  }
+}
+
+
+#test-creator{
+   
+    $toolbarHeight : 50px; 
+    $minHeight : 550px;
+    
+    $sideWidthWide : 350px;
+    $sideWidthMedium : 300px;
+    $sideWidthSmall : 250px;
+
+    $propsColor: $uiOverlay;
+    $testPartColor: $websiteBorder;
+    $sectionColor: $darkBlueGrey;
+    $rubColor: whiten($logoRed, 0.4);
+
+    position: relative;
+    min-height: $minHeight;
+    height: auto;
+
+    .test-creator-toolbar{
+        position: relative;
+        height: $toolbarHeight;
+        @include responsive('padding-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        background-color: $uiHeaderBg;
+        color: $textColor;
+
+        .logo {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 50px;
+            overflow: hidden;
+            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+            background: url('../img/test-creator.png') no-repeat left;
+        }
+
+        & > ul {
+
+            height: $toolbarHeight;
+
+            li {
+                float: left;
+                height: $toolbarHeight;
+                position: relative;
+                padding: 12px 20px 0 20px;
+                line-height: 1.2;
+                text-align: center;
+                @include font-size(12);
+
+                [class^="icon-"], [class*=" icon-"] {
+                   display: block;
+                   @include font-size(20);
+                   color: $darkBrown;
+                }
+
+                &:hover {
+                   cursor: pointer;
+                   color: $textHighlight;
+                   background-color: $logoRed; 
+                   [class^="icon-"], [class*=" icon-"] {
+                       cursor: pointer;
+                       color: $textHighlight;
+                       background-color: $logoRed; 
+                   }
+                }
+                &.disabled {
+                   background-color: inherit; 
+                    [class^="icon-"], [class*=" icon-"]{
+                        background-color: inherit; 
+                        cursor: not-allowed;
+                        color: $darkBrown;
+                    }
+                }
+            }
+        }
+    }
+
+    .test-creator-items{
+        position: relative;
+        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        display: table-cell;
+        vertical-align: top;
+        min-height: $minHeight - $toolbarHeight;
+        height: auto !important;
+        background-color: $uiClickableDefaultBg;
+        color: $textColor;
+
+        h1 {
+            @include font-size(16);
+            line-height: 1.6;
+            background-color: $uiHeaderBg;
+            color: $textColor;
+            margin-top: 1px;
+            padding: 5px;
+            height: 38px;
+
+            &:before {
+                @include icon(item);
+                @include font-size(16);
+                line-height: 1.6;
+                margin-right: 3px;
+            }
+        }
+        .item-selection {
+            margin: 6px;
+        } 
+        input{
+            @include responsive('width', ($sideWidthSmall - 20px), ($sideWidthMedium - 20px), ($sideWidthWide - 20px));
+            margin-bottom: 10px;
+        }
+        ul.item-box li {
+            position: relative;
+            padding: 4px;
+            @include responsive('padding-right', ($sideWidthSmall / 4), ($sideWidthMedium / 4), ($sideWidthWide / 4));
+            margin: 0;
+            height: 40px; 
+            line-height: 1.2;
+            background-color: $uiGeneralContentBg;
+            border-top: solid 1px $uiGeneralContentBorder; 
+            border-left: solid 1px $uiGeneralContentBorder; 
+            border-right: solid 1px $uiGeneralContentBorder; 
+            text-overflow: ellipsis;
+            &:last-child {
+                border-bottom: solid 1px $uiGeneralContentBorder; 
+            }
+            
+            .flag {
+                text-overflow: ellipsis;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                padding: 0 3px;
+                @include responsive('max-width', ($sideWidthSmall / 4), ($sideWidthMedium / 4), ($sideWidthWide / 4));
+                height: 16px;
+                background-color: $info;
+                color: $textHighlight;
+                @include border-radius-top-left(2);
+            }
+        
+            &:hover, &.selected {
+                background-color: $uiClickableHoverBg;
+                color: $textHighlight;
+                cursor: pointer;
+
+                &:after {
+                    @include icon(right);
+                    position: absolute;
+                    right: 4px;
+                    top: -6px;
+                    @include font-size(28);
+                }
+            }
+        }
+    }
+
+    .test-creator-props{
+        position: relative;
+        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        display: table-cell;
+        vertical-align: top;
+        height: auto !important;
+        min-height: $minHeight - $toolbarHeight;
+        background-color: $uiClickableDefaultBg;
+        color: $textColor;
+
+        h1 {
+            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+            @include font-size(16);
+            line-height: 1.6;
+            background-color: $uiHeaderBg;
+            color: $textColor;
+            margin-top: 1px;
+            padding: 5px;
+            &:before {
+                @include icon(settings);
+                @include font-size(16);
+                line-height: 1.6;
+                margin-right: 3px;
+            }
+        }
+
+        h3 {
+            padding: 6px;
+        }
+
+        h4 {
+            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+            @include font-size(13);
+            line-height: 1.3;
+            background-color: $uiHeaderBg;
+            color: $textColor;
+            margin-top: 1px;
+            padding: 6px;
+            position: relative;
+            clear: both;
+        
+            &.toggler{
+                cursor: pointer;
+                &:after{
+                    position: absolute;
+                    right: 15px;
+                    top: 3px;
+                }
+            }
+        }
+
+        .help {
+            cursor: pointer;
+        }
+
+        .help-content{
+            display: none;
+        }
+
+        .grid-row {
+            padding-left: 6px;
+
+            input {
+                width: 100%;
+                max-width: inherit;
+                min-width: inherit; 
+            }
+        }
+    }
+
+    .test-creator-test{
+        @include responsive('margin-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        @include responsive('margin-right', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        position: relative;
+        width: 100%;
+        display: table-cell;
+        vertical-align: top;
+        min-height: $minHeight - toolbarHeight;
+        background-color: $uiGeneralContentBg;
+        color: $textColor;
+ 
+        h1, h2, h3, li {
+            & > span:first-child {
+                float: left;
+                @include responsive('max-width', '300px', '400px', '500px');
+                text-overflow: ellipsis;
+            }
+            .actions { 
+                float: right;
+                position: relative;
+                display: inline-block;
+                max-width: 300px;
+                height: 39px;
+                text-overflow: ellipsis;
+                .tlb {
+                    display: inline-block;
+                    background: none;
+                    /*opacity: 0;*/
+                    /*height: 0;*/
+                    /*overflow: hidden;*/
+                    margin-left: 15px;
+                    @include font-size(14);
+                    .tlb-top {
+                        background: none !important;
+                        border-width: 0 !important;
+                        @include box-shadow(0, 0, 0);
+                    }
+                }
+            }
+            &:hover, &.active {
+                .tlb {
+                    /*opacity: 1;*/
+                    /*height: auto;*/
+                    /*-webkit-transition: all 0.9s ease-out;*/
+                    /*-moz-transition: all 0.9s ease-out;*/
+                    /*-o-transition: all 0.9s ease-out;*/
+                    /*transition: all 0.9s ease-out;*/
+                }
+            }
+        } 
+
+        & > h1 {
+           position: relative;
+           background-color: $uiClickableDefaultBg; 
+           height: 39px;
+           padding: 4px 28px 3px 48px ;
+           margin-bottom: 10px;
+            &:before {
+                @include icon(test);
+                position: absolute;
+                left: 20px;
+            }
+        }
+
+
+        .test-content {
+            padding: 0 20px;
+            h1, h2 {
+                position: relative;
+                height: 35px;
+
+            }
+        }
+ 
+        .testpart-content {
+            & > button{
+                margin-left: 10px;
+            }
+        }
+
+        .testpart {
+            color: $textColor;
+            border-left: solid 5px $testPartColor;
+            padding: 0 5px;
+            margin: 20px 0;
+
+            & > h1 {
+                background-color: whiten($testPartColor, 0.2);
+                padding: 0 5px;
+                color: $textHighlight;
+                @include border-radius;
+                & > .toggler {
+                    position: absolute;
+                    right: 15px;
+                    color: $textHighlight;
+                }
+            }
+            
+
+        }
+
+        .section {
+            color: $textColor;
+            border-left: solid 5px $sectionColor;
+            padding: 0 5px 0 15px;
+            margin: 20px 0 10px 10px;
+
+            & > h2 {
+                color: blacken($sectionColor, 0.4);
+            }
+            
+            &:last-child{
+                margin-bottom: 0;
+            }
+        }
+
+        .rublocks{
+            border-left: solid 5px $rubColor;
+            padding: 0 5px 0 15px;
+            margin: 0px 0 10px 0px;
+            .rubricblocks {
+                clear: both;
+                padding-left: 25px;
+                li, .rubricblock-content {
+                   position: relative;
+                   clear: both;
+                }
+                li {
+                    padding: 4px;
+                    border: solid 1px $uiGeneralContentBorder;
+                    @include border-radius;
+                    background-color: $uiClickableDefaultBg;
+                    margin-bottom: 10px;
+
+                    .rubricblock-content {
+                        @include border-radius;
+                        background-color: $uiGeneralContentBg;
+                        padding: 4px;
+                        border: solid 1px $uiGeneralContentBg;
+                        margin: 0;
+                        min-height: 30px;
+                    }
+                }
+                .actions{
+                    min-width: 75px;
+                    position: absolute;
+                    right: -6px;
+                    top: -32px;
+                }
+            }
+
+        }
+
+        .itemrefs {
+            position: relative;
+            border: dashed 1px $uiGeneralContentBorder;
+            @include border-radius(3);
+            min-height: 125px;
+            padding: 0;
+            margin-left: 15px;
+            &:before{
+                color: $uiGeneralContentBorder;
+            }
+            &.highlight {
+                border: dashed 1px $uiClickableHoverBg;
+                cursor: pointer;
+                color: $uiGeneralContentBorder;
+                
+                -webkit-transition: all 1.5s ease-out;
+                -moz-transition: all 1.5s ease-out;
+                -o-transition: all 1.5s ease-out;
+                transition: all 1.5s ease-out;
+                &:before {
+                    position: absolute;
+                    left: 45%;
+                    top: 20px;
+                    @include icon(item);
+                    @include font-size(80);
+                    color: whiten($uiClickableHoverBg, 0.2);
+
+                    opacity: .7;
+                    z-index: 999;
+
+                    -webkit-transition: color 1.5s ease-out;
+                    -moz-transition: color 1.5s ease-out;
+                    -o-transition: color 1.5s ease-out;
+                    transition: color 1.5s ease-out;
+                }
+                &:after {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    top: 5px;
+                    content: attr(data-msg);
+                    @include font-size(24);
+                    color: whiten($textColor, 0.2);
+                    font-weight: bold;
+                    z-index: 999;
+                }
+                &:hover {
+                    border-color: $uiClickableHoverBg;
+                    &:before {
+                        color: $uiClickableHoverBg;
+                        opacity: 1;
+                    }
+                }
+                & > li:nth-child(even) {
+                    z-index: 100;
+                    background-color: $uiGeneralContentBg;
+                }
+                .tlb {
+                    opacity: 0;
+                    height: 0;
+                    overflow: hidden;
+                }
+            }
+
+            & > li {
+               position: relative;
+               height: 39px;
+               line-height: 39px;
+               padding: 2px ;
+               clear: both;
+               &:nth-child(even){
+                    background-color: $uiClickableDefaultBg;
+               }
+            }
+        }
+    }
+}

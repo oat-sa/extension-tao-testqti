@@ -1,102 +1,120 @@
 /**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ */
+
+/**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['jquery', 'handlebars'], function($, Handlebars){
+define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, templates){
     'use strict';
-   
+  
+    var itemTemplate = templates.item;
+ 
    /**
      * The ItemView setup items related components
-     * @exports creator/views/item
+     * @exports taoQtiTest/controller/creator/views/item
+     * @param {Function} loadItems - the function used to get items from the server
      */
-   var ItemView = {
-       
-        //compile the item template
-        _template : Handlebars.compile($('#item-template').html()),
-    
-        /**
-         * View entry point
-         * @public
-         * @param {Object} options 
-         * @param {Function} options.loadItems - the function used to get items from the server
-         */
-        setUp: function(options){
-            var self = this;
+   var itemView =  function(loadItems){
             
-            this._$searchField = $('#items .search');
-            this._$itemContainer = $('#items .listbox');
-            
-            this.loadItems = options.loadItems;
-            
-            if(typeof this.loadItems === 'function'){
-                //search pattern is empty the 1st time, give it undefined
-                this.loadItems(undefined, function(items){
-                    self.update(items);
-                    self.setUpLiveSearch();
-                });
-            }
-        },
+        var $panel     = $('.test-creator-items'); 
+        var $search    = $('#item-filter');
+        var $itemBox   = $('.item-box', $panel);
+        
+        if(typeof loadItems === 'function'){
+            //search pattern is empty the 1st time, give it undefined
+            loadItems(undefined, function(items){
+                update(items);
+                setUpLiveSearch();
+            });
+        }
         
         /**
          * Set up the search behavior: once 3 chars are enters into the field,
          * we load the items that matches the given search pattern.
-         * @public
+         * @private
          */
-        setUpLiveSearch: function(){
-            var self = this;
+        function setUpLiveSearch (){
             var timeout;
             
             var liveSearch = function(){
-                var pattern = self._$searchField.val();
+                var pattern = $search.val();
                 if(pattern.length > 3 || pattern.length === 0){
                     clearTimeout(timeout);
                     timeout = setTimeout(function(){
-                        self.loadItems(pattern, function(items){
-                            self.update(items);
+                        loadItems(pattern, function(items){
+                            update(items);
                         });
                     }, 300);
                 }
             };
             
             //trigger the search on keyp and on the magnifer button click
-            this._$searchField.keyup(liveSearch)
+            $search.keyup(liveSearch)
                      .siblings('.ctrl').click(liveSearch);
-        },
+        }
         
         /**
          * Update the items list
-         * @public
+         * @private
          * @param {Array} items - the new items
          */
-        update : function(items){
-            this._$itemContainer.empty().append(this._template(items));
-            this._enableDragging();
-        },
-    
+        function update (items){
+            disableSelection();
+            $itemBox.empty().append(itemTemplate(items));
+            enableSelection();
+        }
     
         /**
-         * Enable to drag the items to sections,
-         * using the jquery-ui draggable.
+         * Disable the selectable component
+         * @private
+         * @param {Array} items - the new items
+         */
+        function disableSelection (){
+            if($panel.data('selectable')){
+                $panel.selectable('disable');
+            }
+        }
+    
+        /**
+         * Enable to select items to be added to sections
+         * using the jquery-ui selectable.
          * @private
          */
-        _enableDragging : function (){
-            this._$itemContainer.find('li').addClass('selectable').draggable({
-                helper : 'clone',
-                scroll: false,
-                revert: 'invalid',
-                opacity: 0.8,
-                connectToSortable: '.section ul',
-                zIndex: 100000,
-                start : function(){
-                    $('.section ul').addClass('active');
-                }, 
-                stop: function(){
-                    $('.section ul').removeClass('active');
-                }
-            });
+        function enableSelection (){
+            
+            if($panel.data('selectable')){
+                $panel.selectable('enable');
+            } else {
+                $panel.selectable({
+                    filter: 'li',
+                    selected: function( event, ui ) {
+                        $(ui.selected).addClass('selected');
+                    },
+                    unselected: function( event, ui ) {
+                        $(ui.unselected).removeClass('selected');
+                    },
+                    stop: function(){
+                        $(this).trigger('itemselect.creator', $('.selected')); 
+                    }
+                });
+            }
         }
    };
     
-    return ItemView;
+    return itemView;
 });
-
-

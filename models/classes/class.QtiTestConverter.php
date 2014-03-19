@@ -22,6 +22,7 @@ use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
 use qtism\common\datatypes\Duration;
 use qtism\common\collections\IntegerCollection;
+use qtism\common\collections\StringCollection;
 use qtism\data\ViewCollection;
 use qtism\data\View;
 
@@ -64,7 +65,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());
-            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to covert QTI Test to json: ' . $re->getMessage() );
+            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to convert the QTI Test to json: ' . $re->getMessage() );
         }
     }
     
@@ -81,7 +82,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());
-            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to create QTI Test from json: ' . $re->getMessage() );
+            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to create the QTI Test from json: ' . $re->getMessage() );
         }
     }
     
@@ -106,11 +107,16 @@ class taoQtiTest_models_classes_QtiTestConverter {
                     foreach($value as $item){
                         $array[$key][] = $this->componentToArray($item);
                     }
+                } else if($value instanceof ViewCollection){
+                    $array[$property->getName()] = array();
+                    foreach($value as $item){
+                        $array[$property->getName()][] = View::getNameByConstant($item);
+                    }
                 } else if($value instanceof QtiComponent){
                     $array[$property->getName()] = $this->componentToArray($value);
                 } else if($value instanceof Duration){
                     $array[$property->getName()] = $value->getSeconds(true);
-                } else if ($value instanceof IntegerCollection){
+                } else if ($value instanceof IntegerCollection || $value instanceof StringCollection){
                     $array[$property->getName()] = array();
                     foreach($value as $item){
                         $array[$property->getName()][] = $item;
@@ -299,12 +305,13 @@ class taoQtiTest_models_classes_QtiTestConverter {
             }
             return $collection;
         }
-        if($collection instanceof IntegerCollection){
+        if($collection instanceof IntegerCollection || $collection instanceof StringCollection){
             foreach($values as $value){
                 $collection[] = $value;
             }
             return $collection;
         }
+        
         return null;
     }
     
