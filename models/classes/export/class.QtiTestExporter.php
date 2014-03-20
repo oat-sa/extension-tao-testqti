@@ -209,6 +209,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '', $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
         
         $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
+        
+        common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
         $this->referenceTest($testHref, $itemIdentifiers);
                 
@@ -219,6 +221,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             if (is_dir($f) === false && strpos($f, TAOQTITEST_FILENAME) === false) {
                 // Add the file to the archive.
                 $fileHref = $testBasePath . ltrim(str_replace($testPath, '', $f), '/');
+                common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFile($f, $fileHref);
                 $this->referenceAuxiliaryFile($fileHref);
             }
