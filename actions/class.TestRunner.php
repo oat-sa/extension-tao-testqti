@@ -147,24 +147,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 	
 	/**
-	 * Get the TAO Resource describing the test to be run.
-	 * 
-	 * @return core_kernel_classes_Resource A TAO Resource in database.
-	 */
-	protected function getTestResource() {
-	    return $this->testResource;
-	}
-	
-	/**
-	 * Set the TAO Resource describing the test to be run.
-	 * 
-	 * @param core_kernel_classes_Resource $testResource A TAO Resource in database.
-	 */
-	protected function setTestResource(core_kernel_classes_Resource $testResource) {
-	    $this->testResource = $testResource;
-	}
-	
-	/**
 	 * Get the error that occured during the previous request.
 	 * 
 	 * @return integer
@@ -209,38 +191,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    return $this->compilationDirectory;
 	}
     
-    protected function beginCandidateInteraction() {
-        $testSession = $this->getTestSession();
-        $itemSession = $testSession->getCurrentAssessmentItemSession();
-        $itemSessionState = $itemSession->getState();
-        
-        $initial = $itemSessionState === AssessmentItemSessionState::INITIAL;
-        $suspended = $itemSessionState === AssessmentItemSessionState::SUSPENDED;
-        $remainingAttempts = $itemSession->getRemainingAttempts();
-        $attemptable = $remainingAttempts === -1 || $remainingAttempts > 0;
-        
-        if ($initial === true || ($suspended === true && $attemptable === true)) {
-            // Begin the very first attempt.
-            common_Logger::i('New attempt begun.');
-            $this->beginAttempt();
-        }
-        // Otherwise, the item is not attemptable bt the candidate.
-    }
-    
     protected function beforeAction() {
         // Controller initialization.
-        $this->retrieveTestResource();
         $this->retrieveTestDefinition();
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $this->getTestResource());
+        
+        // Initialize storage and test session.
+        $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
+        
+        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $testResource);
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory));
         $this->retrieveTestSession();
         
-        // From stackOverflow: http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
-        // license is Creative Commons Attribution Share Alike (author Edward Wilde)
-        header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
-        header('Pragma: no-cache'); // HTTP 1.0.
-        header('Expires: 0'); // Proxies.
+        taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
     }
     
     protected function afterAction() {
@@ -256,16 +219,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
 	public function index() {
 	    $this->beforeAction();
+	    $session = $this->getTestSession();
 	    
-	    $testSession = $this->getTestSession();
-	    if ($testSession->getState() === AssessmentTestSessionState::INITIAL) {
+	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
-            $testSession->beginTestSession();
+            $session->beginTestSession();
             common_Logger::i("Assessment Test Session begun.");
         }
 	    
-        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($testSession) === false) {
-            $this->beginCandidateInteraction();
+        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
         }
         
         $this->buildAssessmentTestContext();
@@ -287,7 +250,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $session->moveNext();
             
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-                $this->beginCandidateInteraction();
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
         }
         catch (AssessmentTestSessionException $e) {
@@ -311,7 +274,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $session->moveBack();
 	        
 	        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            $this->beginCandidateInteraction();
+	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
 	        }
 	    }
 	    catch (AssessmentTestSessionException $e) {
@@ -336,7 +299,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $session->moveNext();
 	        
 	        if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            $this->beginCandidateInteraction();
+	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
 	        }
 	    }
 	    catch (AssessmentTestSessionException $e) {
@@ -368,11 +331,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $this->onTimeout($e);
         }
 
+        // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
+        // to the client with the actual assessment test context. Maybe the client will be able to
+        // continue...
         $context = $this->buildAssessmentTestContext();
         echo json_encode($context);
         $this->afterAction();
 	}
 
+	/**
+	 * Stuff to be undertaken when the Assessment Item presented to the candidate
+	 * times out.
+	 * 
+	 * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to indicate the timeout.
+	 */
 	protected function onTimeout(AssessmentTestSessionException $timeOutException) {
 	    $session = $this->getTestSession();
 	    
@@ -396,7 +368,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        }
 	    
 	        if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            $this->beginCandidateInteraction();
+	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
 	        }
 	    }
 	    else {
@@ -459,6 +431,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction();
     }
 	
+    /**
+     * Action to call to comment an item.
+     * 
+     */
 	public function comment() {
 	    $this->beforeAction();
 	    $testSession = $this->getTestSession();
@@ -507,9 +483,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $doc->load($testFilePath);
 	    
 	    $this->setTestDefinition($doc->getDocumentComponent());
-	    
-	    // Retrieve the compilation directory.
-	    $pathinfo = pathinfo($testFilePath);
 	}
 	
 	/**
@@ -529,26 +502,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
 	        $this->setTestSession($qtiStorage->retrieve($sessionId));
 	    }
-	}
-	
-	/**
-	 * Retrieve the TAO Resource describing the test to be run.
-	 * 
-	 * @return core_kernel_classes_Resource A TAO Test Resource in database.
-	 */
-	protected function retrieveTestResource() {
-	    $this->setTestResource(new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition')));
-	}
-	
-	/**
-	 * Persist the current assessment test session.
-	 * 
-	 * @throws RuntimeException If no assessment test session has started yet.
-	 */
-	protected function persistTestSession() {
-	
-	    
-	}
+    }
 	
 	/**
 	 * Builds an associative array which describes the current AssessmentTestContext and set
@@ -592,7 +546,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
 	        
 	        // Time constraints.
-	        $context['timeConstraints'] = $this->timeConstraints();
+	        $context['timeConstraints'] = taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
 	        
 	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
 	        $qtiTestDefinitionUri = $this->getRequestParameter('QtiTestDefinition');
@@ -609,7 +563,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $context['canMoveBackward'] = $session->canMoveBackward();
 	        
 	        // The places in the test session where the candidate is allowed to jump to.
-	        $context['jumps'] = $this->buildPossibleJumps();
+	        $context['jumps'] = taoQtiTest_helpers_TestRunnerUtils::buildPossibleJumps($session);
 
 	        // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
 	        $context['itemServiceApiCall'] = taoQtiTest_helpers_TestRunnerUtils::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
@@ -640,84 +594,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        
 	        $context['rubrics'] = $rubrics;
 	        
-	        // Comment allowed?
-	        $context['allowComment'] = $this->doesAllowComment();
-	        
-	        // Skipping allowed?
-	        $context['allowSkipping'] = $this->doesAllowSkipping();
+	        // Comment allowed? Skipping allowed?
+	        $context['allowComment'] = taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session);
+	        $context['allowSkipping'] = taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session);
 	    }
 	    
 	    $this->setData('assessmentTestContext', $context);
 	    return $context;
 	}
-	
-	/**
-	 * Begin an attempt on the current item.
-	 * 
-	 */
-	protected function beginAttempt() {
-	    common_Logger::i("New attempt for item '" . taoQtiTest_helpers_TestRunnerUtils::buildServiceCallId($this->getTestSession()) .  "' begins.");
-	    $this->getTestSession()->beginAttempt();
-	}
-	
-	protected function timeConstraints() {
-	
-	    $testSession = $this->getTestSession();
-	    $constraints = array();
-	
-	    foreach ($testSession->getTimeConstraints() as $tc) {
-	        // transmit to client only if there is a maximum remaining time.
-	        if ($tc->getMaximumRemainingTime() !== false) {
-	            $constraints[] = array(
-                    'source' => $tc->getSource()->getIdentifier(),
-                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true)
-	            );
-	        }
-	    }
-	
-	    return $constraints;
-	}
-	
-	protected function doesAllowComment() {
-	    $doesAllowComment = false;
-	    
-	    $routeItem = $this->getTestSession()->getRoute()->current();
-	    $routeControl = $routeItem->getItemSessionControl();
-	    
-	    if (empty($routeControl) === false) {
-	        $doesAllowComment = $routeControl->getItemSessionControl()->doesAllowComment();
-	    }
-	    
-	    return $doesAllowComment;
-	}
-	
-	protected function doesAllowSkipping() {
-	    $doesAllowSkipping = false;
-	    
-	    $routeItem = $this->getTestSession()->getRoute()->current();
-	    $routeControl = $routeItem->getItemSessionControl();
-	    
-	    if (empty($routeControl) === false) {
-	        $doesAllowSkipping = $routeControl->getItemSessionControl()->doesAllowSkipping();
-	    }
-	    
-	    return $doesAllowSkipping && $this->getTestSession()->getCurrentNavigationMode() === NavigationMode::LINEAR;
-	}
-	
-	protected function buildPossibleJumps() {
-	    $jumps = array();
-	    
-	    foreach ($this->getTestSession()->getPossibleJumps() as $jumpObject) {
-	        $jump = array();
-	        $jump['identifier'] = $jumpObject->getTarget()->getAssessmentItemRef()->getIdentifier();
-	        $jump['position'] = $jumpObject->getPosition();
-	        
-	        $jumps[] = $jump;
-	    }
-	    
-	    return $jumps;
-	}
-	
+
 	protected function handleAssessmentTestSessionException(AssessmentTestSessionException $e) {
 	    switch ($e->getCode()) {
 	        case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:

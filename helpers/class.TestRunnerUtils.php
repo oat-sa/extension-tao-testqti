@@ -18,8 +18,10 @@
 *
 */
 
+use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
+use qtism\runtime\tests\AssessmentItemSessionState;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -170,5 +172,130 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $serviceCall = self::buildItemServiceCall($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);         
         $itemServiceCallId = self::buildServiceCallId($session);
         return tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $itemServiceCallId);
+    }
+    
+    /**
+     * Tell the client to not cache the current request. Supports HTTP 1.0 to 1.1.
+     */
+    static public function noHttpClientCache() {
+        // From stackOverflow: http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
+        // license is Creative Commons Attribution Share Alike (author Edward Wilde)
+        header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
+        header('Pragma: no-cache'); // HTTP 1.0.
+        header('Expires: 0'); // Proxies.
+    }
+    
+    /**
+     * Make the candidate interact with the current Assessment Item to be presented. A new attempt
+     * will begin automatically if the candidate still has available attempts. Otherwise,
+     * nothing happends.
+     * 
+     * @param AssessmentTestSession $session The AssessmentTestSession you want to make the candidate interact with.
+     */
+    static public function beginCandidateInteraction(AssessmentTestSession $session) {
+        $itemSession = $session->getCurrentAssessmentItemSession();
+        $itemSessionState = $itemSession->getState();
+        
+        $initial = $itemSessionState === AssessmentItemSessionState::INITIAL;
+        $suspended = $itemSessionState === AssessmentItemSessionState::SUSPENDED;
+        $remainingAttempts = $itemSession->getRemainingAttempts();
+        $attemptable = $remainingAttempts === -1 || $remainingAttempts > 0;
+        
+        if ($initial === true || ($suspended === true && $attemptable === true)) {
+            // Begin the very first attempt.
+            $session->beginAttempt();
+        }
+        // Otherwise, the item is not attemptable bt the candidate.
+    }
+    
+    /**
+     * Whether or not the candidate taking the given $session is allowed
+     * to skip the presented Assessment Item.
+     * 
+     * @param AssessmentTestSession $session A given AssessmentTestSession object.
+     * @return boolean
+     */
+    static public function doesAllowSkipping(AssessmentTestSession $session) {
+        $doesAllowSkipping = false;
+        $navigationMode = $session->getCurrentNavigationMode();
+         
+        $routeItem = $session->getRoute()->current();
+        $routeControl = $routeItem->getItemSessionControl();
+         
+        if (empty($routeControl) === false) {
+            $doesAllowSkipping = $routeControl->getItemSessionControl()->doesAllowSkipping();
+        }
+         
+        return $doesAllowSkipping && $navigationMode === NavigationMode::LINEAR;
+    }
+    
+    /**
+     * Whether or not the candidate taking the given $session is allowed to make
+     * a comment on the presented Assessment Item.
+     * 
+     * @param AssessmentTestSession $session A given AssessmentTestSession object.
+     * @return boolean
+     */
+    static public function doesAllowComment(AssessmentTestSession $session) {
+        $doesAllowComment = false;
+         
+        $routeItem = $session->getRoute()->current();
+        $routeControl = $routeItem->getItemSessionControl();
+         
+        if (empty($routeControl) === false) {
+            $doesAllowComment = $routeControl->getItemSessionControl()->doesAllowComment();
+        }
+         
+        return $doesAllowComment;
+    }
+    
+    /**
+     * Build an array where each cell represent a time constraint (a.k.a. time limits)
+     * in force. Each cell is actually an array with two keys:
+     * 
+     * * 'source': The identifier of the QTI component emitting the constraint (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
+     * * 'seconds': The number of remaining seconds until it times out.
+     * 
+     * @param AssessmentTestSession $session An AssessmentTestSession object.
+     * @return array
+     */
+    static public function buildTimeConstraints(AssessmentTestSession $session) {
+        $constraints = array();
+        
+        foreach ($session->getTimeConstraints() as $tc) {
+            // Only consider time constraints in force.
+            if ($tc->getMaximumRemainingTime() !== false) {
+                $constraints[] = array(
+                    'source' => $tc->getSource()->getIdentifier(),
+                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true)
+                );
+            }
+        }
+        
+        return $constraints;
+    }
+    
+    /**
+     * Build an array where each cell represent a possible Assessment Item a candidate
+     * can jump on during a given $session. Each cell is an array with two keys:
+     * 
+     * * 'identifier': The identifier of the Assessment Item the candidate is allowed to jump on.
+     * * 'position': The position in the route of the Assessment Item.
+     * 
+     * @param AssessmentTestSession $session A given AssessmentTestSession object.
+     * @return array
+     */
+    static public function buildPossibleJumps(AssessmentTestSession $session) {
+        $jumps = array();
+         
+        foreach ($session->getPossibleJumps() as $jumpObject) {
+            $jump = array();
+            $jump['identifier'] = $jumpObject->getTarget()->getAssessmentItemRef()->getIdentifier();
+            $jump['position'] = $jumpObject->getPosition();
+             
+            $jumps[] = $jump;
+        }
+         
+        return $jumps;
     }
 }
