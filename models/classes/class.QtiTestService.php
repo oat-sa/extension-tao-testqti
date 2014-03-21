@@ -18,6 +18,10 @@
  * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
+use oat\taoQtiItem\model\qti\Resource;
+use oat\taoQtiItem\model\qti\ImportService;
+
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -279,14 +283,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     /**
      * Import a QTI Test and its dependent Items into the TAO Platform.
      * 
-     * @param taoQTI_models_classes_QTI_Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
+     * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(taoQTI_models_classes_QTI_Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+    protected function importTest(Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
         
-        $itemImportService = taoQTI_models_classes_QTI_ImportService::singleton();
+        $itemImportService = ImportService::singleton();
         $itemService = taoItems_models_classes_ItemsService::singleton();
         $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
         
@@ -331,7 +335,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             
                     $qtiResource = current($qtiDependencyReferences);
             
-                    if (taoQTI_models_classes_QTI_Resource::isAssessmentItem($qtiResource->getType())) {
+                    if (Resource::isAssessmentItem($qtiResource->getType())) {
             
                         $itemReport = new common_report_Report(common_report_Report::TYPE_SUCCESS, '');
                         $qtiFile = $folder . $qtiResource->getFile();
@@ -459,14 +463,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      *
      * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
      * @param XmlDocument $testDefinition An XmlAssessmentTestDocument object.
-     * @param taoQTI_models_classes_QTI_Resource $qtiResource The manifest resource describing the test to be imported.
+     * @param oat\taoQtiItem\model\qti\Resource $qtiResource The manifest resource describing the test to be imported.
      * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
      * @param string $extractionFolder The absolute path to the temporary folder containing the content of the imported IMS QTI Package Archive.
      * @param common_report_Report $report A Report object to be filled during the import.
      * @return core_kernel_file_File The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an unexpected runtime error occurs.
      */    
-    protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, taoQTI_models_classes_QTI_Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
+    protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
         
         $assessmentItemRefs = $testDefinition->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $assessmentItemRefsCount = count($assessmentItemRefs);
@@ -525,11 +529,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * If some file cannot be copied, warnings will be committed.
      * 
      * @param core_kernel_file_File $testContent The pointer to the TAO Test Content directory where auxilliary files will be stored.
-     * @param taoQTI_models_classes_QTI_Resource $qtiResource The manifest resource describing the test to be imported.
+     * @param oat\taoQtiItem\model\qti\Resource $qtiResource The manifest resource describing the test to be imported.
      * @param string $extractionFolder The absolute path to the temporary folder containing the content of the imported IMS QTI Package Archive.
      * @param common_report_Report A report about how the importation behaved.
      */
-    protected function importTestAuxiliaryFiles(core_kernel_file_File $testContent,taoQTI_models_classes_QTI_Resource $qtiResource, $extractionFolder, common_report_Report $report) {
+    protected function importTestAuxiliaryFiles(core_kernel_file_File $testContent,Resource $qtiResource, $extractionFolder, common_report_Report $report) {
         
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {

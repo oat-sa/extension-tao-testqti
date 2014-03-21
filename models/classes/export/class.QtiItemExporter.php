@@ -18,6 +18,7 @@
  *
  */
 
+use oat\taoQtiItem\model\Export\QTIPackedItemExporter;
 
 /**
  * A specialized QTIPackedItemExporter aiming at exporting items dependent to a test in a given
@@ -26,7 +27,7 @@
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_models_classes_export_QtiItemExporter extends taoQTI_models_classes_Export_QTIPackedItemExporter {
+class taoQtiTest_models_classes_export_QtiItemExporter extends QTIPackedItemExporter {
     
     public function buildBasePath() {
         $basePath = parent::buildBasePath();

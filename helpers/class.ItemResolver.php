@@ -19,6 +19,8 @@
  *
  */
 
+use oat\taoQtiItem\helpers\QtiFile;
+
 use qtism\data\storage\FileResolver;
 use qtism\common\ResolutionException;
 
@@ -50,7 +52,7 @@ class taoQtiTest_helpers_ItemResolver extends FileResolver {
         // The item is retrieved from the database.
         // We can try to reach the QTI-XML file by detecting
         // where it is supposed to be located.
-        return taoQTI_helpers_QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
+        return QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
     }
     
 }

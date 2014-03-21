@@ -19,6 +19,8 @@
  * 
  */
 
+use oat\taoQtiItem\model\qti\Resource;
+
 /**
  * Enables you to parse and validate a QTI Package.
  * The Package is formated as a zip archive containing the manifest and the
@@ -31,7 +33,7 @@
  * @subpackage models_classes_QTI
  */
 class taoQtiTest_models_classes_QtiResource
-    extends taoQTI_models_classes_QTI_Resource
+    extends Resource
 {
     
 }

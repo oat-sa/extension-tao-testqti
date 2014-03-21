@@ -19,6 +19,8 @@
  * 
  */
 
+use oat\taoQtiItem\model\qti\PackageParser;
+
 /**
  * Enables you to parse and validate a QTI Package.
  * The Package is formated as a zip archive containing the manifest and the
@@ -31,6 +33,6 @@
  * @subpackage models_classes_QTI
  */
 class taoQtiTest_models_classes_PackageParser
-    extends taoQTI_models_classes_QTI_PackageParser
+    extends PackageParser
 {
 }

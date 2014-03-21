@@ -18,6 +18,8 @@
  *
  */
 
+use oat\taoQtiItem\model\qti\Resource;
+
 /**
  * Miscellaneous utility methods for the QtiTest extension.
  * 
@@ -32,7 +34,7 @@ class taoQtiTest_helpers_Utils {
      * if $copy = false).
      * 
      * @param core_kernel_file_File|string $testContent The pointer to the TAO Test Content folder.
-     * @param taoQTI_models_classes_QTI_Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the IMS QTI Package) path to the resource file.
+     * @param oat\taoQtiItem\model\qti\Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the IMS QTI Package) path to the resource file.
      * @param string $origin The path to the directory (root folder of extracted IMS QTI package) containing the QTI resource to be copied.
      * @param boolean $copy If set to false, the file will not be actually copied.
      * @param string $rename A new filename  e.g. 'file.css' to be used at storage time.
@@ -55,7 +57,7 @@ class taoQtiTest_helpers_Utils {
         $ds = DIRECTORY_SEPARATOR;
         $contentPath = rtrim($contentPath, $ds);
         
-        if ($qtiResource instanceof taoQTI_models_classes_QTI_Resource) {
+        if ($qtiResource instanceof Resource) {
             $filePath = $qtiResource->getFile();
         }
         else if (is_string($qtiResource) === true) {
@@ -103,7 +105,7 @@ class taoQtiTest_helpers_Utils {
      * Get the expected absolute path to a given $qtiResource that is already stored in TAO.
      * 
      * @param core_kernel_file_File|string $testContent The pointer to the TAO Test Content folder.
-     * @param taoQTI_models_classes_QTI_Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the TAO Content Folder) path to the resource file.
+     * @param oat\taoQtiItem\model\qti\Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the TAO Content Folder) path to the resource file.
      * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @return string The absolute path to $qtiResource.
      */

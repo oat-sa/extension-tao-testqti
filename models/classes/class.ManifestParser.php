@@ -19,6 +19,8 @@
  * 
  */
 
+use oat\taoQtiItem\model\qti\ManifestParser;
+
 /**
  * Enables you to parse and validate a QTI Package.
  * The Package is formated as a zip archive containing the manifest and the
@@ -32,7 +34,7 @@
  * @subpackage models_classes
  */
 class taoQtiTest_models_classes_ManifestParser
-    extends taoQTI_models_classes_QTI_ManifestParser
+    extends ManifestParser
 {
     private $resources = null;
     
@@ -57,7 +59,7 @@ class taoQtiTest_models_classes_ManifestParser
      * 
      * @param string|array $filter The resource types you want to obtain. An empty $filter will make the method return all the resources within the manifest.
      * @param integer $target The critera to be used for filtering. ManifestParser::FILTER_RESOURCE_TYPE allows to filter by resource type, ManifestParser::FILTER_RESOURCE_IDENTIFIER allows to filter by resource identifier.
-     * @return array An array of taoQTI_models_classes_QTI_Resource objects matching $filter (if given).
+     * @return array An array of oat\taoQtiItem\model\qti\Resource objects matching $filter (if given).
      */
     public function getResources($filter = null, $target = self::FILTER_RESOURCE_TYPE) {
         $returnValue = array();
@@ -83,7 +85,7 @@ class taoQtiTest_models_classes_ManifestParser
     /**
      * Get all the resources contained within the manifest.
      * 
-     * @return An array of taoQTI_models_classes_QTI_Resource objects.
+     * @return An array of oat\taoQtiItem\model\qti\Resource objects.
      */
     protected function getAllResources() {
         if ($this->resources == null) {
@@ -97,7 +99,7 @@ class taoQtiTest_models_classes_ManifestParser
      * 
      * @param SimpleXMLElement $source The SimpleXMLElement object you want to extract resources from.
      * @throws common_exception_Error If $source does not correspond to a <manifest> element.
-     * @return array An array of taoQTI_models_classes_QTI_Resource objects.
+     * @return array An array of oat\taoQtiItem\model\qti\Resource objects.
      */
     private function getResourcesFromManifest(SimpleXMLElement $source)
     {
