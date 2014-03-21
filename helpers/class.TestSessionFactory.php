@@ -105,11 +105,16 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     public function createAssessmentTestSession() {
         parent::createAssessmentTestSession();
         
+        // Because we are not certain of the semantics of qti:timeLimits->minTime, we do not take it
+        // into account for the moment.
+        $considerMinTime = false;
+        
         $session = new taoQtiTest_helpers_TestSession(
             $this->getAssessmentTest(),
             $this->getRoute(),
             $this->getResultServer(),
-            $this->getTest()
+            $this->getTest(),
+            $considerMinTime
         );
         
         // Test result submission mode = END, which means

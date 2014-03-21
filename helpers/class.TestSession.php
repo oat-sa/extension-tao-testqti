@@ -77,9 +77,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
      * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
+     * @param boolean $considerMinTime Whether or not minimum time limits must be taken into account or not.
      */
-    public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
-        parent::__construct($assessmentTest, $route);
+    public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test, $considerMinTime = true) {
+        parent::__construct($assessmentTest, $route, $considerMinTime);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setTest($test);
