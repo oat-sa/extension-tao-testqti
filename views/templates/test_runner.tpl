@@ -9,7 +9,7 @@
                 
                 <?
                 $ds = DIRECTORY_SEPARATOR;
-                $expectedMathJaxPath = ROOT_PATH . 'taoQTI' . $ds . 'views' . $ds . 'js' . $ds . 'mathjax' . $ds . 'MathJax.js';
+                $expectedMathJaxPath = ROOT_PATH . 'taoQtiItem' . $ds . 'views' . $ds . 'js' . $ds . 'mathjax' . $ds . 'MathJax.js';
                 $mathJax = is_readable($expectedMathJaxPath);
                 ?>
                 
