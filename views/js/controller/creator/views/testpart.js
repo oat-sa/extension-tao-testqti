@@ -38,9 +38,11 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
     */
    var setUp =  function setUp ($testPart, model, data){
 
+        var $actionContainer = $('h1', $testPart);
+
         //run setup methods
-        actions.properties($('h1', $testPart), 'testpart', model, propHandler);
-        actions.move($testPart, 'testparts', 'testpart');
+        actions.properties($actionContainer, 'testpart', model, propHandler);
+        actions.move($actionContainer, 'testparts', 'testpart');
         sections();
         addSection();
 

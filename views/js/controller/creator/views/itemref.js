@@ -34,8 +34,10 @@ function($, __, actions){
     */
    var setUp =  function setUp ($itemRef, model){
 
-        actions.properties($itemRef, 'itemref', model, propHandler);
-        actions.move($itemRef, 'itemrefs', 'itemref');
+        var $actionContainer = $('.actions', $itemRef);
+        
+        actions.properties($actionContainer, 'itemref', model, propHandler);
+        actions.move($actionContainer, 'itemrefs', 'itemref');
 
         /**
          * Perform some binding once the property view is create

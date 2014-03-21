@@ -75,15 +75,16 @@ function($, propertyView){
 
     /**
      * Enable to move an element
-     * @param {jQueryElement} $element - to move
+     * @param {jQueryElement} $actionContainer - where the mover is
      * @param {String} containerClass - the cssClass of the element container
      * @param {String} elementClass - the cssClass to identify elements 
      */ 
-    function move ($element, containerClass, elementClass) {
+    function move ($actionContainer, containerClass, elementClass) {
+        var $element = $actionContainer.parents('.' + elementClass);
         var $container = $element.parents('.' + containerClass ); 
    
         //move up a testpart
-        $('.move-up:not(.' + disabledClass + ')', $element).click(function(e){
+        $('.move-up', $actionContainer).click(function(e){
             e.preventDefault();
             var $elements = $('.' + elementClass, $container);
             var index = $elements.index($element);
@@ -99,7 +100,7 @@ function($, propertyView){
         });
 
         //move down a testpart
-        $('.move-down:not(.' + disabledClass + ')', $element).click(function(e){
+        $('.move-down', $actionContainer).click(function(e){
             e.preventDefault();
             var $elements = $('.' + elementClass, $container);
             var index = $elements.index($element);

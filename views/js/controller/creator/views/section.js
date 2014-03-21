@@ -39,8 +39,10 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
     */
    var setUp =  function setUp ($section, model, data){
 
-        actions.properties($('h2', $section), 'section', model, propHandler);
-        actions.move($section, 'sections', 'section');
+        var $actionContainer = $('h2', $section);
+        
+        actions.properties($actionContainer, 'section', model, propHandler);
+        actions.move($actionContainer, 'sections', 'section');
         itemRefs();
         acceptItemRefs();
         rubricBlocks();
