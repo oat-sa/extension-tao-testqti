@@ -34,7 +34,11 @@ return array(
     'license' => 'GPL-2.0',
     'version' => '2.5',
 	'author' => 'Open Assessment Technologies',
-	'dependencies' => array('taoTests', 'taoQTI', 'taoQtiCommon'),
+    'requires' => array(
+        'taoTests' => '*',
+        'taoQtiItem' => '*',
+        'taoQtiCommon' => '*'
+    ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
 	),
