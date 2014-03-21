@@ -247,14 +247,20 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	
 		updateNavigation: function() {
 		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
-		            $('#move-forward, #move-backward').css('display', 'none');
-		            $('#skip').css('display', 'inline');
+		    	// LINEAR
+		    	if (this.assessmentTestContext.allowComment === false && this.assessmentTestContext.allowSkipping === false) {
+		    		$('#qti-actions').css('display', 'none');
+		    	}
+		    	else {
+		    		$('#qti-actions').css('display', 'block');
+		    		$('#move-forward, #move-backward').css('display', 'none');
+		    	}
 		    }
-		
-		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_NONLINEAR) {
-		            $('#move-forward').css('display', 'inline');
-		            $('#move-backward').css('display', (this.assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
-		            $('#skip').css('display', 'none');
+		    else {
+		    	// NONLINEAR
+		    	$('qti-actions').css('display', 'block');
+		    	$('#move-forward').css('display', 'inline');
+		    	$('#move-backward').css('display', (this.assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
 		    }
 		},
 	
