@@ -258,7 +258,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		    }
 		    else {
 		    	// NONLINEAR
-		    	$('qti-actions').css('display', 'block');
+		    	$('#qti-actions').css('display', 'block');
 		    	$('#move-forward').css('display', 'inline');
 		    	$('#move-backward').css('display', (this.assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
 		    }
