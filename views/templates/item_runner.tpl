@@ -14,7 +14,7 @@
                                 params   : <?=json_encode(get_data('resultServerParams'))?>
                             },
                             itemService     : {
-                                module      : 'taoQTI/runtime/QtiItemServiceImpl',
+                                module      : 'taoQtiItem/runtime/QtiItemServiceImpl',
                                 params  : {
                                     contentVariables: <?=json_encode(get_data('contentVariableElements'))?>
                                 }
