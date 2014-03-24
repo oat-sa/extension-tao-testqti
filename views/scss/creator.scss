@@ -109,6 +109,7 @@
         color: $textColor;
 
         h1 {
+            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
             @include font-size(16);
             line-height: 1.6;
             background-color: $uiHeaderBg;
