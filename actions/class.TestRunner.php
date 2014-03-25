@@ -409,7 +409,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
 	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
 	    $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
-	    $stateOutput = new taoQtiCommon_helpers_StateOutput();
+	    $stateOutput = new taoQtiCommon_helpers_LegacyStateOutput();
 	    
 	    try {
 	        common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
