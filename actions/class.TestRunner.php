@@ -391,7 +391,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Transform the values from the client-side in a QtiSm form.
 	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
 	            if (empty($val) === false) {
-	                $filler = new taoQtiCommon_helpers_VariableFiller($this->getTestSession()->getCurrentAssessmentItemRef());
+	                $filler = new taoQtiCommon_helpers_LegacyVariableFiller($this->getTestSession()->getCurrentAssessmentItemRef());
 	                
 	                try {
 	                    $var = $filler->fill($id, $val);
