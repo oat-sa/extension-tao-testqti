@@ -306,7 +306,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             if ($itemReport->getType() != common_report_Report::TYPE_SUCCESS) {
                 $msg = 'Failed item compilation.';
                 $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::ITEM_COMPILATION;
-                throw taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource, $code);
+                throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), $code);
             }
             
             // 4. Explode the rubric blocks in the test into rubric block refs.
