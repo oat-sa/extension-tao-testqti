@@ -82,15 +82,6 @@ return array(
 		#BASE WWW the web resources path
 		'BASE_WWW'				=> ROOT_URL	.'taoQtiTest/views/',
 	
-		#BASE DATA the path where items are stored
-		'BASE_DATA'				=> $extpath.'data'.DIRECTORY_SEPARATOR,
-	
-		#BASE PREVIEW the path where items are compiled for preview
-		'BASE_PREVIEW'			=> $extpath.'views'.DIRECTORY_SEPARATOR.'runtime'.DIRECTORY_SEPARATOR,
-
-		#BASE PREVIEW URL the url pointing at where items can be previewed
-		'BASE_PREVIEW_URL'		=> ROOT_URL.'taoItems/views/runtime/',
-	 
 	 	#TAO extension Paths
 		'TAOBASE_WWW'			=> ROOT_URL	.'tao/views/',
 		'TAOVIEW_PATH'			=> $taopath	.'views'.DIRECTORY_SEPARATOR,
