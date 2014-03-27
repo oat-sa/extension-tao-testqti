@@ -18,8 +18,8 @@
             </select>
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'Who can view the rubric block during the delivery.'}}
             </div>
         </div>

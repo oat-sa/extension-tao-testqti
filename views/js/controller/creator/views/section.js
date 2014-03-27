@@ -37,7 +37,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
     * @param {Object} [data] - additionnal data used by the setup
     * @param {Array} [data.identifiers] - the locked identifiers
     */
-   var setUp =  function setUp ($section, model, data){
+   var setUp = function setUp ($section, model, data){
 
         var $actionContainer = $('h2', $section);
         

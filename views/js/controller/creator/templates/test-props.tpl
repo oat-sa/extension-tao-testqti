@@ -12,8 +12,8 @@
             <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable(original={{identifier}});" />
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'The principle identifier of the test.'}}
             </div>
         </div>
@@ -28,8 +28,8 @@
             <input type="text" name="test-title" data-bind="title" data-validate="$notEmpty" readonly="readonly" />
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'The test title.'}}
             </div>
         </div>
@@ -50,8 +50,8 @@
                 <input type="text" name="test-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Minimum duration for the test.'}}
                 </div>
             </div>
@@ -67,8 +67,8 @@
                 <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Maximum duration for the all test.'}}
                 </div>
             </div>
@@ -86,8 +86,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ "Whether a candidate's response that is beyond the maximum duration should still be accepted."}}
                 </div>
             </div>

@@ -11,8 +11,8 @@
             <input type="text" name="itemref-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable(original={{identifier}});" />
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'The identifier of the item reference.'}}
             </div>
         </div>
@@ -27,8 +27,8 @@
             <input type="text" name="itemref-href" data-bind="href" readonly="readonly" />
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'The reference.'}}
             </div>
         </div>
@@ -43,8 +43,8 @@
             <input type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array" />
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'Items can optionally be assigned to one or more categories.'}}
             </div>
         </div>
@@ -62,8 +62,8 @@
             </label>
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'If required it must appear (at least once) in the selection.'}}
             </div>
         </div>
@@ -81,8 +81,8 @@
             </label>
         </div>
         <div class="col-1 help">
-           <span class="icon-help" data-tooltip="~ .help-content"></span> 
-            <div class="help-content">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
             {{__ 'Not shuffled, the position remains fixed.'}}
             </div>
         </div>
@@ -102,8 +102,8 @@
                 <input name="itemref-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Controls the maximum number of attempts allowed. 0 means unlimited.'}}
                 </div>
             </div>
@@ -121,8 +121,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
                 </div>
             </div>
@@ -141,8 +141,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Allow the candidate to review his answers.'}}
                 </div>
             </div>
@@ -162,8 +162,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Show the solution once the answer is submitted.'}}
                 </div>
             </div>
@@ -182,8 +182,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
                 </div>
             </div>
@@ -201,8 +201,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'If the candidate can skip the item, without submitting a response.'}}
                 </div>
             </div>
@@ -221,8 +221,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ "The candidate is not allowed to submit wrong responses."}}
                 </div>
             </div>
@@ -246,8 +246,8 @@
                 <input type="text" name="itemref-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
             </div>
                 <div class="col-1 help">
-                   <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                    <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                     {{__ 'Minimum duration for this item.'}}
                     </div>
                 </div>
@@ -263,8 +263,8 @@
                 <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ 'Maximum duration for this item.'}}
                 </div>
             </div>
@@ -282,8 +282,8 @@
                 </label>
             </div>
             <div class="col-1 help">
-               <span class="icon-help" data-tooltip="~ .help-content"></span> 
-                <div class="help-content">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <div class="tooltip-content">
                 {{__ "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."}}
                 </div>
             </div>
