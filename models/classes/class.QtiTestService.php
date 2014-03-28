@@ -328,7 +328,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             
             // -- Load all items related to test.
             $itemError = false;
-            $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition->getDocumentComponent(), $manifestParser, $folder);
+            
+            // discover test's base path.
+            $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
             
             if (count($dependencies) > 0) {
             

@@ -19,7 +19,7 @@
  */
 
 use oat\taoQtiItem\model\qti\Resource;
-use qtism\data\AssessmentTest;
+use qtism\data\storage\xml\XmlDocument;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -164,27 +164,40 @@ class taoQtiTest_helpers_Utils {
      * 
      * If an IMS Manifest Resource cannot be found for a given assessmentItemRef, the value in the returned array will be false.
      * 
-     * @param AssessmentTest $test A QTI Test Definition.
+     * @param XmlDocument $test A QTI Test Definition.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser A Manifest Parser.
      * @param string $basePath The base path of the folder the IMS archive is exposed as a file system component.
      * @return array An array where keys are identifiers and values are oat\taoQtiItem\model\qti\Resource objects or false.
      */
-    static public function buildAssessmentItemRefsTestMap(AssessmentTest $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath) {
-        $assessmentItemRefs = $test->getComponentsByClassName('assessmentItemRef');
+    static public function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath) {
+        $assessmentItemRefs = $test->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $map = array();
         $itemResources = $manifestParser->getResources('imsqti_item_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
+        
+        // cleanup $basePath.
+        $basePath = rtrim($basePath, "/\\");
+        $basePath = helpers_File::truePath($basePath);
+        $basePath .= DIRECTORY_SEPARATOR;
+        
+        $testPathInfo = pathinfo($test->getDomDocument()->documentURI);
+        $testBasePath = tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
         
         foreach ($assessmentItemRefs as $itemRef) {
             // Find the QTI Resource (in IMS Manifest) related to the item ref.
             // To achieve this, we compare their path.
             $itemRefRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemRef->getHref());
-            $itemRefCanonicalHref = helpers_File::truePath(tao_helpers_File::concat(array($basePath, $itemRefRelativeHref)));
+            $itemRefRelativeHref = ltrim($itemRefRelativeHref, "/\\");
+            
+            $itemRefCanonicalHref = helpers_File::truePath($testBasePath . $itemRefRelativeHref);
             $map[$itemRef->getIdentifier()] = false;
             
             // Compare with items referenced in the manifest.
             foreach ($itemResources as $itemResource) {
-                $itemResourceRelativeHref = $itemResource->getFile();
-                $itemResourceCanonicalHref = helpers_File::truePath(tao_helpers_File::concat(array($basePath, $itemResourceRelativeHref)));
+                
+                $itemResourceRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemResource->getFile());
+                $itemResourceRelativeHref = ltrim($itemResourceRelativeHref, "/\\");
+                
+                $itemResourceCanonicalHref = helpers_File::truePath($basePath . $itemResourceRelativeHref);
                 
                 if ($itemRefCanonicalHref === $itemResourceCanonicalHref && in_array($itemRefCanonicalHref, $map) === false) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
