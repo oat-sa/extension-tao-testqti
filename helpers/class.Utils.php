@@ -188,7 +188,6 @@ class taoQtiTest_helpers_Utils {
             // To achieve this, we compare their path.
             $itemRefRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemRef->getHref());
             $itemRefRelativeHref = ltrim($itemRefRelativeHref, "/\\");
-            
             $itemRefCanonicalHref = helpers_File::truePath($testBasePath . $itemRefRelativeHref);
             $map[$itemRef->getIdentifier()] = false;
             
@@ -199,8 +198,8 @@ class taoQtiTest_helpers_Utils {
                 $itemResourceRelativeHref = ltrim($itemResourceRelativeHref, "/\\");
                 
                 $itemResourceCanonicalHref = helpers_File::truePath($basePath . $itemResourceRelativeHref);
-                
-                if (is_file($itemResourceCanonicalHref) && in_array($itemResourceCanonicalHref, $discovery) === false) {
+
+                if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref) && in_array($itemResourceCanonicalHref, $discovery) === false) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
                     $map[$itemRef->getIdentifier()] = $itemResource;
                     $discovery[] = $itemResourceCanonicalHref;

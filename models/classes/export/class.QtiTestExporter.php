@@ -177,13 +177,28 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function exportItems() { 
         
         $identifiers = array();
+        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
+        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '', $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+        $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
+        
+        $extraReversePath = '';
+        if (empty($extraPath) === false) {
+            $n = count(explode('/', $extraPath));
+            $parts = array();
+            
+            for ($i = 0; $i < $n; $i++) {
+                $parts[] = '..';
+            }
+            
+            $extraReversePath = implode('/', $parts) . DIRECTORY_SEPARATOR;
+        }
         
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
             $itemExporter->export();
             
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = '../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
             $identifiers[] = $itemExporter->buildIdentifier();
