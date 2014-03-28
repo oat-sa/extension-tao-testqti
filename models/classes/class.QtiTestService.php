@@ -356,7 +356,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                     tao_helpers_File::copy($auxPath, $destPath, true);
                                 }
             
-                                $reportCtx->items[helpers_File::truePath($qtiFile)] = $rdfItem;
+                                $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                 $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
                             }
                             else {
@@ -472,34 +472,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */    
     protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
         
-        $assessmentItemRefs = $testDefinition->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
-        $assessmentItemRefsCount = count($assessmentItemRefs);
-        $itemMappingCount = count($itemMapping);
-        
-        if ($assessmentItemRefsCount === 0) {
-            $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file does not contain any Item reference.', $qtiResource->getIdentifier())));
-        }
-        
-        foreach ($itemMapping as $itemPath => $itemResource) {
-            
-            $found = false;
-            
-            foreach ($assessmentItemRefs as $itemRef) {
-                $itemHref = ltrim($itemRef->getHref(), './');
-                
-                $pos = strpos($itemPath, $itemHref);
-                
-                if ($pos !== false) {
-                    $itemRef->setHref($itemResource->getUri());
-                    $found = true;
-                    break;
-                }
-            }
-            
-            if ($found === false) {
-                $report->add(common_report_Report::createFailure(__('The IMS QTI Test referenced as "%s" in the IMS Manifest file references an unknown Item in its definition.', $qtiResource->getIdentifier())));
-                return false;
-            }
+        foreach ($itemMapping as $itemRefId => $itemResource) {
+            $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
+            $itemRef->setHref($itemResource->getUri());
         }
         
         // Bind the newly created test content to the Test Resource in database.

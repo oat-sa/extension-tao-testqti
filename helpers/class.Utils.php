@@ -51,7 +51,6 @@ class taoQtiTest_helpers_Utils {
             $contentPath = $testContent;
         }
         else {
-            common_Logger::i(get_class($testContent));
             throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
         
@@ -182,6 +181,8 @@ class taoQtiTest_helpers_Utils {
         $testPathInfo = pathinfo($test->getDomDocument()->documentURI);
         $testBasePath = tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
         
+        $discovery = array();
+        
         foreach ($assessmentItemRefs as $itemRef) {
             // Find the QTI Resource (in IMS Manifest) related to the item ref.
             // To achieve this, we compare their path.
@@ -199,9 +200,10 @@ class taoQtiTest_helpers_Utils {
                 
                 $itemResourceCanonicalHref = helpers_File::truePath($basePath . $itemResourceRelativeHref);
                 
-                if ($itemRefCanonicalHref === $itemResourceCanonicalHref && in_array($itemRefCanonicalHref, $map) === false) {
+                if (is_file($itemResourceCanonicalHref) && in_array($itemResourceCanonicalHref, $discovery) === false) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
                     $map[$itemRef->getIdentifier()] = $itemResource;
+                    $discovery[] = $itemResourceCanonicalHref;
                     break;
                 }
             }
