@@ -143,7 +143,7 @@ class taoQtiTest_helpers_Utils {
      * @return DOMDocument
      */
     static public function emptyImsManifest() {
-        $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . '/taoQTI/models/classes/QTI/templates/imsmanifest.tpl.php', array(
+        $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . 'taoQtiItem/model/qti/templates/imsmanifest.tpl.php', array(
             'qtiItems' => array(),
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
         ));
