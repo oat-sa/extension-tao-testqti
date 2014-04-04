@@ -26,7 +26,7 @@
  * 
  * @access public
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_QtiTestConverterException extends common_Exception implements common_exception_UserReadableException {
 	

@@ -27,7 +27,7 @@ include_once dirname(__FILE__) . '/../includes/raw_start.php';
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
- * @subpackage test
+ 
  */
 class QtiTestServiceTestCase extends TaoPhpUnitTestRunner {
     

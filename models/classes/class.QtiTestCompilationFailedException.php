@@ -25,7 +25,7 @@
  * 
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_models_classes_CompilationFailedException implements common_exception_UserReadableException {
 	

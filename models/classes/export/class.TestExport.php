@@ -25,7 +25,7 @@
  * @access public
  * @author Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
- * @subpackage models_classes_Export
+ 
  */
 class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler
 {

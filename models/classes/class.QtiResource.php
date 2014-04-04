@@ -30,7 +30,7 @@ use oat\taoQtiItem\model\qti\Resource;
  * @author Jerome Bogaerts, <jerome.bogaerts@tudor.lu>
  * @package taoQTI
  * @see http://www.imsglobal.org/question/qti_v2p0/imsqti_intgv2p0.html#section10003
- * @subpackage models_classes_QTI
+ 
  */
 class taoQtiTest_models_classes_QtiResource
     extends Resource

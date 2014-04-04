@@ -21,7 +21,7 @@
  * Common test related actions
  *
  * @package taoQtiTest
- * @subpackage actions
+ 
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */

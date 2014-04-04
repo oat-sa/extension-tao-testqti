@@ -35,7 +35,7 @@
  * 
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements common_exception_UserReadableException {
 	

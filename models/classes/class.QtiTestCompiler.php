@@ -43,7 +43,7 @@ use qtism\common\utils\Url;
  *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler
 {

@@ -35,7 +35,7 @@ use qtism\data\AssessmentItemRef;
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jerome Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
      

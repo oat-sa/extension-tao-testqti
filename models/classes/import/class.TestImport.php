@@ -24,7 +24,7 @@
  * @access public
  * @author Joel Bout, <joel@taotesting.com>
  * @package taoQTI
- * @subpackage models_classes_import
+ 
  */
 class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler
 {

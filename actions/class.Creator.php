@@ -22,7 +22,7 @@
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
- * @subpackage actions
+ 
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
 class taoQtiTest_actions_Creator extends tao_actions_CommonModule {

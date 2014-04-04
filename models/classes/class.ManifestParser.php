@@ -31,7 +31,7 @@ use oat\taoQtiItem\model\qti\ManifestParser;
  * @author Joel Bout <joel@taotesting.com>
  * @package taoQTITest
  * @see http://www.imsglobal.org/question/qtiv2p1/imsqti_intgv2p1.html#section10005 IMS QTI: Packaging Tests
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_ManifestParser
     extends ManifestParser

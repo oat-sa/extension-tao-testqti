@@ -26,7 +26,7 @@
  * @access public
  * @author Joel Bout, <joel.bout@tudor.lu>
  * @package taoQtiTest
- * @subpackage models_classes
+ 
  */
 class taoQtiTest_models_classes_TestModel
 	implements taoTests_models_classes_TestModel, tao_models_classes_import_ImportProvider, tao_models_classes_export_ExportProvider
