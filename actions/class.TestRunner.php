@@ -39,6 +39,9 @@ use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use qtism\data\View;
+use \taoQtiCommon_helpers_PciVariableFiller;
+use \taoQtiCommon_helpers_PciStateOutput;
+use \taoQtiCommon_helpers_Utils;
 
 /**
  * Runs a QTI Test.
@@ -385,31 +388,29 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->beforeAction();
 	    
 	    // --- Deal with provided responses.
+	    $jsonPayload = taoQtiCommon_helpers_utils::readJsonPayload();
+	    
 	    $responses = new State();
-	    if ($this->hasRequestParameter('responseVariables')) {
-
-	        // Transform the values from the client-side in a QtiSm form.
-	        foreach ($this->getRequestParameter('responseVariables') as $id => $val) {
-	            if (empty($val) === false) {
-	                $filler = new taoQtiCommon_helpers_LegacyVariableFiller($this->getTestSession()->getCurrentAssessmentItemRef());
-	                
-	                try {
-	                    $var = $filler->fill($id, $val);
-	                    $responses->setVariable($var);
-	                }
-	                catch (OutOfRangeException $e) {
-	                    // The value could not be transformed, ignore it.
-	                    // format the logger message.
-	                    common_Logger::d("Could not convert client-side value for variable '${id}'.");
-	                }
-	            }
+	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
+	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
+	    
+	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+	    
+	    foreach ($jsonPayload as $id => $response) {
+	        try {
+	            $var = $filler->fill($id, $response);
+	            $responses->setVariable($var);
+	        }
+	        catch (OutOfRangeException $e) {
+	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
+	        }
+	        catch (OutOfBoundsException $e) {
+	            common_Logger::d("Could not find variable with identifier '${id}' in current item.");
 	        }
 	    }
 	    
-	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
-	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
 	    $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
-	    $stateOutput = new taoQtiCommon_helpers_LegacyStateOutput();
+	    $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
 	    
 	    try {
 	        common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');

@@ -23,30 +23,27 @@ define(['jquery'], function($){
             var that = this;
             
             $.ajax({
-                    url  		: this.endpoint + 'storeItemVariableSet?serviceCallId=' + encodeURIComponent(this.testServiceCallId),
-                    data 		: {
-                            responseVariables: responses,
-                            outcomeVariables: scores,
-                            traceVariables: events,
-                            QtiTestDefinition: this.testDefinition,
-                            QtiTestCompilation: this.testCompilation
-                    },
+                    url  		: this.endpoint + 'storeItemVariableSet?serviceCallId=' + encodeURIComponent(this.testServiceCallId) + '&QtiTestDefinition=' + encodeURIComponent(this.testDefinition) + '&QtiTestCompilation=' + encodeURIComponent(this.testCompilation),
+                    data 		: JSON.stringify(responses),
                     type 		: 'post',
+                    contentType : 'application/json',
                     dataType	: 'json',
                     success		: function(reply) {
-                            if(reply.success){
-                    var fbCount = 0;
-                    if(reply.itemSession){
-                        var runner = that.getQtiRunner();
-                        if(runner){
-                            fbCount = runner.showFeedbacks(reply.itemSession, callback);
-                        }
-                    }
-                    if(!fbCount){
-                        callback();
-                    }
-                }
-                    }
+		                            if (reply.success) {
+				                        var fbCount = 0;
+				                        if (reply.itemSession) {
+				                        	
+				                            var runner = that.getQtiRunner();
+				                            if (runner) {
+				                            	fbCount = runner.showFeedbacks(reply.itemSession, callback);
+				                            }
+			                            }
+			                    
+			                            if(!fbCount){
+			                                callback();
+			                            }
+		                            }
+		                    	}
             });
     };
 
