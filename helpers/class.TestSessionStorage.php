@@ -18,12 +18,14 @@
  *
  */
 
+use qtism\common\storage\IStream;
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\common\storage\MemoryStream;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\storage\binary\QtiBinaryStreamAccessFsFile;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
@@ -124,5 +126,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        }
        
        return $storageService->has($userUri, $sessionId);
+   }
+   
+   protected function createBinaryStreamAccess(IStream $stream) {
+       return new QtiBinaryStreamAccessFsFile($stream);
    }
 }
