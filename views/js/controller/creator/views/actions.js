@@ -83,32 +83,49 @@ function($, propertyView){
         var $element = $actionContainer.parents('.' + elementClass);
         var $container = $element.parents('.' + containerClass ); 
    
-        //move up a testpart
+        //move up an element
         $('.move-up', $actionContainer).click(function(e){
+            var $elements, index;
+    
+            //prevent default and click during animation
             e.preventDefault();
-            var $elements = $('.' + elementClass, $container);
-            var index = $elements.index($element);
+            if($element.is(':animated')){
+                return false;
+            }
+    
+            //get the position
+            $elements = $('.' + elementClass, $container);
+            index = $elements.index($element);
             if (index > 0) {
                 $element.fadeOut(200, function(){
-                        $element.insertBefore($('.' + elementClass + ' :eq(' + (index - 1) + ')', $container))
-                                .fadeIn(400);
-                                
-                        $container.trigger('change');
-                        $element.trigger('move');
-                    });
+                    $element
+                        .insertBefore($('.' + elementClass + ' :eq(' + (index - 1) + ')', $container))
+                        .fadeIn(400);
+                    $container.trigger('change');
+                    $element.trigger('move');
+                });
             }
         });
 
-        //move down a testpart
+        //move down an element
         $('.move-down', $actionContainer).click(function(e){
+            var $elements, index;
+    
+            //prevent default and click during animation
             e.preventDefault();
-            var $elements = $('.' + elementClass, $container);
-            var index = $elements.index($element);
-            if (index < ($elements.length - 1) && $elements.length > 1) {
-                $element.fadeOut(200, function(){
-                    $element.insertAfter($('.' + elementClass + ' :eq(' + (index + 1) + ')', $container))
-                    .fadeIn(400);
+            if($element.is(':animated')){
+                return false;
+            }
 
+            //get the position
+            $elements = $('.' + elementClass, $container);
+            index = $elements.index($element);
+            if (index < ($elements.length - 1) && $elements.length > 1) {
+
+                $element.fadeOut(200, function(){
+                    $element
+                        .insertAfter($('.' + elementClass + ' :eq(' + (index + 1) + ')', $container))
+                        .fadeIn(400);
                     $container.trigger('change');
                     $element.trigger('move');
                 });
