@@ -24,7 +24,7 @@ define(function(){
 
     return {
         'Creator': {
-            'css': 'creator.css', 
+            'css': 'creator', 
             'actions': {
                 'index' : 'controller/creator/creator'
             }
