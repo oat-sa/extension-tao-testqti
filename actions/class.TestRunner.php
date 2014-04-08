@@ -400,14 +400,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    foreach ($jsonPayload as $id => $response) {
 	        try {
 	            $var = $filler->fill($id, $response);
-	            if ($var->getBaseType() === BaseType::FILE && ($val = $var->getValue()) !== null && $val->getMimeType() === taoQtiCommon_helpers_PciJsonMarshaller::FILE_PLACEHOLDER_MIMETYPE) {
-	                // Do not take into account, it is the QTI File Datatype placeholder.
-	                continue;
-	            }
-	            else {
+	            // Do not take into account QTI File placeholders.
+	            if (taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
 	                $responses->setVariable($var);
 	            }
-	            
 	        }
 	        catch (OutOfRangeException $e) {
 	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
