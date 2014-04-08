@@ -34,6 +34,7 @@ use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String;
+use qtism\common\datatypes\File;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
@@ -399,7 +400,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    foreach ($jsonPayload as $id => $response) {
 	        try {
 	            $var = $filler->fill($id, $response);
-	            $responses->setVariable($var);
+	            if ($var->getBaseType() === BaseType::FILE && ($val = $var->getValue()) !== null && $val->getMimeType() === taoQtiCommon_helpers_PciJsonMarshaller::FILE_PLACEHOLDER_MIMETYPE) {
+	                // Do not take into account, it is the QTI File Datatype placeholder.
+	                continue;
+	            }
+	            else {
+	                $responses->setVariable($var);
+	            }
+	            
 	        }
 	        catch (OutOfRangeException $e) {
 	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
