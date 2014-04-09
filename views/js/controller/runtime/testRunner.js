@@ -114,7 +114,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			    });
 			}
 			else {
-				// e.g. no more attempts! Simply consider the transition is finished,
+				// e.g. no more attempts or timeout! Simply consider the transition is finished,
 				// but do not load the item.
 				self.afterTransition();
 			}
@@ -173,49 +173,50 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			        	
 			        	var cst = this.assessmentTestContext.timeConstraints[i];
 			        	
-			        	// Set up a timer for this constraint.
-			        	$('<div class="qti-timer">' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
-			        	
-			        	// Set up a timer and update it with setInterval.
-			            currentTimes[i] = cst.seconds;
-			            lastDates[i] = new Date();
-			            timeDiffs[i] = 0;
-			            timerIndex = i;
-			            source = cst.source;
-			            
-			            // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-			            var superClosure = function(timerIndex, source) {
-			            	timerIds[timerIndex] = setInterval(function() {
-				            	
-				                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
-				
-				                if (timeDiffs[timerIndex] >= 1000) {
-			                        var seconds = timeDiffs[timerIndex] / 1000;
-			                        currentTimes[timerIndex] -= seconds;
-			                        timeDiffs[timerIndex] = 0;
-				                }
-				
-				                if (currentTimes[timerIndex] <= 0) {
-				                	// The timer expired...
-			                        $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
-			                        currentTimes[timerIndex] = 0;
-			                        clearInterval(timerIds[timerIndex]);
-			                        
-			                        // Hide item to prevent any further interaction with the candidate.
-			                        $('#qti-item').css('display', 'none');
-
-			                        self.timeout();
-				                }
-				                else {
-				                	// Not timed-out...
-				                	$('#qti-timers > .qti-timer').eq(timerIndex).html(source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
-				                    lastDates[timerIndex] = new Date();
-				                }
-				
-				            }, 1000);
-			            }
-			            
-			            superClosure(timerIndex, source);     
+			        	if (cst.allowLateSubmission == false) {
+			        	 // Set up a timer for this constraint.
+	                        $('<div class="qti-timer">' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+	                        
+	                        // Set up a timer and update it with setInterval.
+	                        currentTimes[i] = cst.seconds;
+	                        lastDates[i] = new Date();
+	                        timeDiffs[i] = 0;
+	                        timerIndex = i;
+	                        source = cst.source;
+	                        
+	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
+	                        var superClosure = function(timerIndex, source) {
+	                            timerIds[timerIndex] = setInterval(function() {
+	                                
+	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
+	                
+	                                if (timeDiffs[timerIndex] >= 1000) {
+	                                    var seconds = timeDiffs[timerIndex] / 1000;
+	                                    currentTimes[timerIndex] -= seconds;
+	                                    timeDiffs[timerIndex] = 0;
+	                                }
+	                
+	                                if (currentTimes[timerIndex] <= 0) {
+	                                    // The timer expired...
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    currentTimes[timerIndex] = 0;
+	                                    clearInterval(timerIds[timerIndex]);
+	                                    
+	                                     // Hide item to prevent any further interaction with the candidate.
+                                        $('#qti-item').css('display', 'none');
+                                        self.timeout();
+	                                }
+	                                else {
+	                                    // Not timed-out...
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html(source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    lastDates[timerIndex] = new Date();
+	                                }
+	                
+	                            }, 1000);
+	                        }
+	                        
+	                        superClosure(timerIndex, source);    
+			        	}
 			        }
 			        
 			        $('#qti-timers').css('display', 'block');

@@ -267,7 +267,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
             if ($tc->getMaximumRemainingTime() !== false) {
                 $constraints[] = array(
                     'source' => $tc->getSource()->getIdentifier(),
-                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true)
+                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
+                    'allowLateSubmission' => $tc->allowLateSubmission()
                 );
             }
         }
