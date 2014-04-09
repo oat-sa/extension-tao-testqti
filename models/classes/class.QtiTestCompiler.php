@@ -326,10 +326,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 9. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
-            common_Logger::t("QTI Test successfuly compiled.");
+            common_Logger::t("QTI Test successfully compiled.");
 
             $report->setType(common_report_Report::TYPE_SUCCESS);
-            $report->setMessage(__('QTI Test "%s" successfuly published.', $this->getResource()->getLabel()));
+            $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
         catch (Exception $e) {
@@ -360,7 +360,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         common_Logger::t("QTI Test XML document successfully loaded.");
         
         $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
-        common_Logger::t("QTI Test XML document successfuly transformed in a compact version.");
+        common_Logger::t("QTI Test XML document successfully transformed in a compact version.");
         
         return $compiledDoc;
     }
@@ -389,7 +389,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
             
-            common_Logger::t("QTI Item successfuly compiled and registered as a service call in the QTI Test Definition.");
+            common_Logger::t("QTI Item successfully compiled and registered as a service call in the QTI Test Definition.");
         }
         
         if ($itemCount === 0) {

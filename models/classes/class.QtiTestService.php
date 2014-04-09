@@ -238,7 +238,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $report->setType(common_report_Report::TYPE_ERROR);
         }
         else {
-            $report->setMessage(__('IMS QTI Test Package successfuly imported.'));
+            $report->setMessage(__('IMS QTI Test Package successfully imported.'));
             $report->setType(common_report_Report::TYPE_SUCCESS);
         }
         
@@ -436,7 +436,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         
         if ($report->containsError() === false) {
             $report->setType(common_report_Report::TYPE_SUCCESS);
-            $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfuly imported.", $qtiTestResource->getIdentifier());
+            $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             $report->setMessage($msg);
         }
         else {
