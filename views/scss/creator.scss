@@ -270,9 +270,6 @@
                 .tlb {
                     display: inline-block;
                     background: none;
-                    /*opacity: 0;*/
-                    /*height: 0;*/
-                    /*overflow: hidden;*/
                     margin-left: 15px;
                     @include font-size(14);
                     .tlb-top {
@@ -280,16 +277,6 @@
                         border-width: 0 !important;
                         @include box-shadow(0, 0, 0);
                     }
-                }
-            }
-            &:hover, &.active {
-                .tlb {
-                    /*opacity: 1;*/
-                    /*height: auto;*/
-                    /*-webkit-transition: all 0.9s ease-out;*/
-                    /*-moz-transition: all 0.9s ease-out;*/
-                    /*-o-transition: all 0.9s ease-out;*/
-                    /*transition: all 0.9s ease-out;*/
                 }
             }
         } 
@@ -344,6 +331,10 @@
 
         }
 
+        .sections {
+            margin-bottom: 10px;
+        }
+
         .section {
             color: $textColor;
             border-left: solid 5px $sectionColor;
@@ -363,6 +354,9 @@
             border-left: solid 5px $rubColor;
             padding: 0 5px 0 15px;
             margin: 0px 0 10px 0px;
+            h3 {
+                color: $rubColor;
+            }
             .rubricblocks {
                 clear: both;
                 padding-left: 25px;
@@ -395,81 +389,49 @@
             }
 
         }
-
-        .itemrefs {
-            position: relative;
-            border: dashed 1px $uiGeneralContentBorder;
+        
+        .itemrefs-wrapper {
+            border: solid 1px $uiGeneralContentBorder;
             @include border-radius(3);
-            min-height: 125px;
-            padding: 0;
-            margin-left: 15px;
-            &:before{
-                color: $uiGeneralContentBorder;
-            }
-            &.highlight {
-                border: dashed 1px $uiClickableHoverBg;
-                cursor: pointer;
-                color: $uiGeneralContentBorder;
-                
-                -webkit-transition: all 1.5s ease-out;
-                -moz-transition: all 1.5s ease-out;
-                -o-transition: all 1.5s ease-out;
-                transition: all 1.5s ease-out;
-                &:before {
-                    position: absolute;
-                    left: 45%;
-                    top: 20px;
-                    @include icon(item);
-                    @include font-size(80);
-                    color: whiten($uiClickableHoverBg, 0.2);
-
-                    opacity: .7;
-                    z-index: 999;
-
-                    -webkit-transition: color 1.5s ease-out;
-                    -moz-transition: color 1.5s ease-out;
-                    -o-transition: color 1.5s ease-out;
-                    transition: color 1.5s ease-out;
+            padding-left: 5px;
+            .itemrefs {
+                position: relative;
+                padding: 0;
+                margin-left: 15px;
+                &:before{
+                    color: $uiGeneralContentBorder;
                 }
-                &:after {
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    margin: auto;
-                    top: 5px;
-                    content: attr(data-msg);
-                    @include font-size(24);
-                    color: whiten($textColor, 0.2);
-                    font-weight: bold;
-                    z-index: 999;
+                & > li {
+                   position: relative;
+                   height: 39px;
+                   line-height: 39px;
+                   padding: 2px ;
+                   clear: both;
+                   &:nth-child(even){
+                        background-color: $uiClickableDefaultBg;
+                   }
+                }
+            }
+            .itemref-placeholder {
+                display: none;
+                margin: 5px 5px 5px 0;
+                height: 35px;
+                line-height: 35px;            
+                padding-left: 5px;            
+                border: dashed 1px $uiClickableHoverBg;
+                color : $uiClickableHoverBg;
+                background-color: whiten($uiClickableHoverBg, .7);
+                cursor: pointer;
+                @include font-size(18);
+                @include border-radius(3);
+                @include transition;
+                &:before {
+                    @include icon(add);
                 }
                 &:hover {
-                    border-color: $uiClickableHoverBg;
-                    &:before {
-                        color: $uiClickableHoverBg;
-                        opacity: 1;
-                    }
+                    background-color: whiten($uiClickableHoverBg, .9);
+                    @include transition;
                 }
-                & > li:nth-child(even) {
-                    z-index: 100;
-                    background-color: $uiGeneralContentBg;
-                }
-                .tlb {
-                    opacity: 0;
-                    height: 0;
-                    overflow: hidden;
-                }
-            }
-
-            & > li {
-               position: relative;
-               height: 39px;
-               line-height: 39px;
-               padding: 2px ;
-               clear: both;
-               &:nth-child(even){
-                    background-color: $uiClickableDefaultBg;
-               }
             }
         }
     }

@@ -9,7 +9,7 @@
                         <span class="tlb-bar">
                             <span class="tlb-start"></span>
                             <span class="tlb-group">
-                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" ><span class="icon-document"></span></a>
+                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" ><span class="icon-rubric"></span></a>
                                 <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}"><span class="icon-settings"></span></a>
                                 <span class="tlb-separator"></span>
@@ -35,5 +35,10 @@
             <span class="icon-add"></span>{{__ 'New Rubric Block'}}
         </button>
     </div>
-    <ol class="itemrefs decimal clearfix" data-bind-each="sectionParts" data-bind-tmpl="itemref" data-bind-filter="isItemRef" data-msg="{{__ 'Add selected item(s) here.'}}"></ol>
+    <div class="itemrefs-wrapper">
+        <ol class="itemrefs decimal clearfix" data-bind-each="sectionParts" data-bind-tmpl="itemref" data-bind-filter="isItemRef" data-msg="{{__ 'Add selected item(s) here.'}}"></ol>
+        <div class="itemref-placeholder">
+            {{__ 'Add selected item(s) here.'}}
+        </div>
+    </div>
 </div>

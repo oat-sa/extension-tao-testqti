@@ -40,6 +40,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
    var setUp = function setUp ($section, model, data){
 
         var $actionContainer = $('h2', $section);
+
         
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
@@ -48,27 +49,14 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         rubricBlocks();
         addRubricBlock();
 
+        //trigger for the case the section is added an a selection is ongoing
+
+
         /**
          *  Perform some binding once the property view is create
          *  @param {propView} propView - the view object
          */
         function propHandler (propView) {
-            ////disable state
-            //var $container = propView.getView();
-            //var $testPart = data.parent;
-            //if($testPart){
-                //$testPart.on('state.mode', function(e, navigationMode, submissionMode){
-                    //if(e.namespace === 'mode'){
-                        //if(navigationMode === 0){   //linear
-                            //$('input[name=section-allow-skipping]', $container).attr('disabled', false);
-
-                        //} else {
-                            //$('input[name=section-allow-skipping]', $container).attr('disabled', true);
-                        //}
-                    //}
-                //});
-            //}
-
             $section.parents('.testpart').on('delete', removePropHandler);
             $section.on('delete', removePropHandler);
             
@@ -107,24 +95,22 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
          * @private
          */
         function acceptItemRefs(){
-
-             var $items     = $('.test-creator-items'); 
+            var $selected;
+            var $items     = $('.test-creator-items'); 
             
              //the item selector trigger a select event 
              $items.on('itemselect.creator', function(e){
                 var selection = Array.prototype.slice.call(arguments, 1);
-                var $itemRefs = $('.itemrefs', $section);
-            
+                var $placeholder = $('.itemref-placeholder', $section);
+                var $placeholders = $('.itemref-placeholder');
+ 
                 if(selection.length > 0){
-
-                    $itemRefs.addClass('highlight').off('click').one('click', function(e){
-                        e.preventDefault();
-                        var $list = $(this);
+                    $placeholder.show().off('click').on('click', function(e){
 
                         _.forEach(selection, function(item){
                             var $item = $(item);
                             
-                            addItemRef($list, undefined, {
+                            addItemRef($('.itemrefs', $section), undefined, {
                                 href        : uri.decode($item.data('uri')),
                                 label       : $.trim($item.clone().children().remove().end().text()),
                                 'qti-type'  : 'assessmentItemRef'
@@ -133,10 +119,10 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
                         //reset the current selection
                         $('.ui-selected', $items).removeClass('ui-selected').removeClass('selected');
-                        $('.itemrefs').removeClass('highlight').off('click');
-                    });
+                        $placeholders.hide().off('click');
+                    });    
                 } else {
-                    $('.itemrefs').removeClass('highlight').off('click');
+                    $placeholders.hide().off('click');
                 }
              });
 
@@ -150,6 +136,12 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                     itemRefView.setUp($itemRef, model.sectionParts[index]);
                 } 
             });
+
+            //on set up, if there is a selection ongoing, we trigger the event
+            $selected = $('.selected', $items); 
+            if($selected.length > 0){
+                $items.trigger('itemselect.creator', $selected);
+            }
 
         }
 

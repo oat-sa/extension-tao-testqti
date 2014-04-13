@@ -53,36 +53,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
          */
         function propHandler (propView) {
             
-            ////disabling regarding state, not yet implmenented
-            //var $container = propView.getView();
-            //var ns = 'mode';
-
-            //$('input[name=testpart-navigation-mode]', $container).on('change', function(){
-                //$testPart.trigger('state.' + ns);            
-            //});
-
-            //$('input[name=testpart-submission-mode]', $container).on('change', function(){
-                //$testPart.trigger('state.' + ns);                  
-            //});
-
-            //$testPart.on('state.' + ns, function(e){
-                //if(e.namespace === ns){
-                    //updateFormElements();
-                //}
-            //});
-            //updateFormElements();
-
-            //function updateFormElements (){
-                    //if(model.navigationMode === 0){   //linear
-                        //$('input[name=testpart-allow-skipping]', $container).prop('disabled', false);
-
-                    //} else {
-                        //$('input[name=testpart-allow-skipping]', $container).prop('disabled', true);
-                    //}
-            //}
-            
-
-            //but destroy it when it's testpart is removed
+            //destroy it when it's testpart is removed
             $testPart.on('delete', function(e){
                 if(propView !== null){
                     propView.destroy();

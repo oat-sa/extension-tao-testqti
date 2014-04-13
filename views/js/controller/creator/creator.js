@@ -19,7 +19,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['module', 'jquery', 'lodash', 'helpers', 
+['module', 'jquery', 'lodash', 'helpers', 'i18n',
 'core/databindcontroller', 
 'taoQtiTest/controller/creator/views/item', 
 'taoQtiTest/controller/creator/views/test',
@@ -30,7 +30,7 @@ define(
 'taoQtiTest/controller/creator/templates/index',
 'taoQtiTest/controller/creator/helpers/qtiTest',
 'core/validator/validators'], 
-function(module, $, _, helpers, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
+function(module, $, _, helpers, __, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
     'use strict';
 
     /**
@@ -152,7 +152,7 @@ function(module, $, _, helpers, DataBindController, itemView, testView, testPart
 
                         $saver.attr('disabled', false).removeClass('disabled');
 
-                        helpers.createInfoMessage('Saved');
+                        helpers.createInfoMessage(__('Test Saved'));
 
                     }, function(){
 
