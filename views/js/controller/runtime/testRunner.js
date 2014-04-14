@@ -27,9 +27,9 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	        //ask the top window to start the loader 
 	        iframeNotifier.parent('loading');
 	
-	        // Wait at least 500ms for a better user experience.
+	        // Wait at least 250ms for a better user experience.
 	        if(typeof callback === 'function'){
-	            setTimeout(callback, 500);
+	            setTimeout(callback, 250);
 	        }
 		},
 		
@@ -254,10 +254,10 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
 		    	// LINEAR
 		    	if (this.assessmentTestContext.allowComment === false && this.assessmentTestContext.allowSkipping === false) {
-		    		$('#qti-actions').css('display', 'none');
+		    		$('#qti-navigation').css('display', 'none');
 		    	}
 		    	else {
-		    		$('#qti-actions').css('display', 'block');
+		    		$('#qti-navigation').css('display', 'block');
 		    		$('#move-forward, #move-backward').css('display', 'none');
 		    	}
 		    }
