@@ -1,11 +1,12 @@
 #runner {
-	overflow:auto;
+	overflow:hidden;
 }
 
 #qti-item {
 	width: 100%;
 	overflow: hidden;
 	display: none;
+	margin: 36px 0;
 }
 
 .qti-navigation {
@@ -80,10 +81,6 @@
 	font-size: 12px;
 }
 
-#qti-actions {
-    height: 35px;
-}
-
 #qti-rubrics {
 	margin: 0 auto;
 }
@@ -124,16 +121,76 @@
     margin:0 0 0 5px;
 }
 
-#qti-actions {
+#qti-actions, #qti-navigation {
     background-color: #266d9c;
+    position: fixed;
+    width: 100%;
+    height: 36px;
+}
+
+#qti-actions {
+    color: #fff;
+    top: 0;
     border-bottom: 1px solid #0b4a74;
 }
 
-#qti-actions .btn-info, #qti-actions .btn-success, #qti-actions .btn-warning, #qti-actions .btn-error {
+#qti-test-context {
+    padding-top: 2px;
+    padding-left: 10px;
+    line-height: 1.1;
+    width: 25%;
+}
+
+#qti-test-context .icon-right {
+    padding: 0 5px;
+}
+
+#qti-test-context > #qti-test-title,
+#qti-test-context > #qti-test-position {
+    width: 100%;
+    visibility: hidden;
+}
+
+#qti-test-context  #qti-test-title {
+    font-size: 16px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#qti-test-context  #qti-test-position {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+#qti-test-context  #qti-section-title {
+    font-weight: bold;
+    font-style: italic;
+}
+
+#qti-test-context #qti-part-title {
+    font-weight: bold;
+    font-style: italic;
+}
+
+#qti-navigation {
+    bottom: 0;
+    border-top: 1px solid #0b4a74;
+}
+
+#qti-navigation .col-6 {
+    margin: 0;
+    width: 50%;
+}
+
+#qti-navigation .btn-info,
+#qti-navigation .btn-success,
+#qti-navigation .btn-warning,
+#qti-navigation .btn-error {
     border-radius: 0;
     -moz-border-radius:0;
     margin: 0;
     float: right;
+    display: none;
 }
 
 #qti-comment-cancel, #qti-comment-send {

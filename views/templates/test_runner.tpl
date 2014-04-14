@@ -45,7 +45,14 @@
 	<body>
 		<div id="runner">
 			<div id="qti-actions" class="tao-scope">
-				<button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button>
+				<div class="col-4" id="qti-test-context">
+					<div id="qti-test-title"></div>
+					<div id="qti-test-position">
+						
+					</div>
+				</div>
+				<div class="col-4"></div>
+				<div class="col-4"></div>
 			</div>
 			<div id="qti-comment" class="tao-scope">
 				<textarea></textarea>
@@ -53,6 +60,10 @@
 				<button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 			</div>
 			<iframe id="qti-item" frameborder="0" scrolling="no"></iframe>
+			<div id="qti-navigation" class="tao-scope grid-row">
+				<div class="col-6"><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button></div>
+				<div class="col-6"><button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button></div>
+			</div>
 		</div>
 	</body>
 </html>

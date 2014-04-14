@@ -1,4 +1,4 @@
-define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n'], 
+define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'taoQtiTest/lib/jquery.badonkatrunc' ], 
     function($, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
 
 	    var timerIds = [];
@@ -91,19 +91,23 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			$runner.css('height', 'auto');
 			
 			this.assessmentTestContext = assessmentTestContext;
+			this.updateContext();
 			this.updateNavigation();
 			this.updateInformation();
 			this.updateRubrics();
 			this.updateTools();
 			this.updateTimer();
 			
-			$('<iframe id="qti-item" frameborder="0" scrolling="no"/>').appendTo($runner);
+			$('<iframe id="qti-item" frameborder="0"/>').insertBefore($('#qti-navigation'));
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
 				// @todo Oops, eval to be fixed (why Bertrand :s ?)
 			    var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
 			    var $itemFrame = $('#qti-item', $runner);
 			    
-			    iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
+			    // Adjust item frame height.
+			    this.adjustFrame();
+			    
+			    // Inject API into the frame.
 			    itemServiceApi.loadInto($itemFrame[0], function(){
 			        self.afterTransition();
 			        $itemFrame.show();
@@ -264,6 +268,21 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		    	$('#move-backward').css('display', (this.assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
 		    }
 		},
+		
+		updateContext: function() {
+		    // Part:<span id="qti-part-title"></span><span class="icon-right"></span>Section: <span id="qti-section-title"></span>
+		    
+		    
+		    $('#qti-test-title').text(this.assessmentTestContext.testTitle);
+		    
+		    $('#qti-test-position').empty()
+		                           .append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> <span class="icon-right"></span> ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
+		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
+		},
+		
+		adjustFrame: function() {
+		    $('#qti-item').height($(window).height() - $('#qti-actions').outerHeight() - $('#qti-navigation').outerHeight());
+		},
 	
 		formatTime: function(totalSeconds) {
 		    var sec_num = totalSeconds;
@@ -322,6 +341,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	        TestRunner.assessmentTestContext = assessmentTestContext;
 	        TestRunner.updateNavigation();
 	        TestRunner.updateTools();
+	        TestRunner.updateContext();
 	
 	        $('#skip').click(function(){
 	            TestRunner.skip();
@@ -349,6 +369,10 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	        
 	        $('#qti-comment > textarea').click(function(){
 	            TestRunner.emptyComment();
+	        });
+	        
+	        $(window).resize(function() {
+	            TestRunner.adjustFrame();
 	        });
 	
 	        iframeNotifier.parent('serviceready');

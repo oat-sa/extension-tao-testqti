@@ -553,6 +553,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Time constraints.
 	        $context['timeConstraints'] = taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
 	        
+	        // Test title.
+	        $context['testTitle'] = $session->getAssessmentTest()->getTitle();
+	        
+	        // Test Part title.
+	        $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
+	        
+	        // Section title.
+	        $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
+	        
 	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
 	        $qtiTestDefinitionUri = $this->getRequestParameter('QtiTestDefinition');
 	        $qtiTestCompilationUri = $this->getRequestParameter('QtiTestCompilation');
