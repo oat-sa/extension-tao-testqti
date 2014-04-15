@@ -58,7 +58,7 @@ define(['lodash', 'i18n'], function(_, __){
             
             do {
                 suggestion = qtiType +  glue + (index++);
-            } while(lockedIdentifiers.indexOf(suggestion.toLowerCase()) >= 0);
+            } while(_.contains(lockedIdentifiers, suggestion.toLowerCase()));
 
             lockedIdentifiers.push(suggestion);
 
@@ -94,7 +94,7 @@ define(['lodash', 'i18n'], function(_, __){
                 message : __('is already used in the test.'),
                 validate : function(value, callback, options){
                     if(typeof callback === 'function'){
-                        callback(_.values(lockedIdentifiers).indexOf(value.toLowerCase()) === -1 || (options.original && value === options.original));
+                        callback(!_.contains(_.values(lockedIdentifiers), value.toLowerCase()) || (options.original && value === options.original));
                     } 
                 }
             };
