@@ -105,12 +105,12 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			    var $itemFrame = $('#qti-item', $runner);
 			    
 			    // Adjust item frame height.
-			    this.adjustFrame();
 			    iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
 			    
 			    // Inject API into the frame.
 			    itemServiceApi.loadInto($itemFrame[0], function(){
 			        self.afterTransition();
+			        self.adjustFrame();
 			        $itemFrame.show();
 			    });
 			    
