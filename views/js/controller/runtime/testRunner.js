@@ -98,14 +98,12 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			this.updateTools();
 			this.updateTimer();
 			
-			$('<iframe id="qti-item" frameborder="0"/>').insertBefore($('#qti-navigation'));
+			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+			$itemFrame.insertBefore($('#qti-navigation'));
+			iframeResizer.autoHeight($itemFrame, 'body', parseInt($runner.height(), 10));
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
 				// @todo Oops, eval to be fixed (why Bertrand :s ?)
 			    var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
-			    var $itemFrame = $('#qti-item', $runner);
-			    
-			    // Adjust item frame height.
-			    iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
 			    
 			    // Inject API into the frame.
 			    itemServiceApi.loadInto($itemFrame[0], function(){
