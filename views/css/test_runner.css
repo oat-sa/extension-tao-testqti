@@ -6,7 +6,8 @@
 	width: 100%;
 	overflow: hidden;
 	display: none;
-	margin: 36px 0;
+	margin: 0;
+	padding: 0;
 }
 
 .qti-navigation {

@@ -1,4 +1,4 @@
-define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'taoQtiTest/lib/jquery.badonkatrunc' ], 
+define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
     function($, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
 
 	    var timerIds = [];

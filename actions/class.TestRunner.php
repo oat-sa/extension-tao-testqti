@@ -562,6 +562,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        // Section title.
 	        $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
 	        
+	        // Number of items composing the test session.
+	        $context['numberItems'] = $session->getRoute()->count();
+	        
+	        // Number of items completed during the test session.
+	        //$context['numberCompleted'] = taoQtiTest_helpers_TestRunnerUtils::numberCompleted($session);
+	        
 	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
 	        $qtiTestDefinitionUri = $this->getRequestParameter('QtiTestDefinition');
 	        $qtiTestCompilationUri = $this->getRequestParameter('QtiTestCompilation');
