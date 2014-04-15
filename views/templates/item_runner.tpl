@@ -28,7 +28,7 @@
             }());
         </script>
 	</head>
-	<body>
+	<body style="margin:0;">
             <iframe id='item-container' class="toolframe" frameborder="0" style="width:100%;overflow:hidden" scrolling="no"></iframe>
 	</body>
 </html>

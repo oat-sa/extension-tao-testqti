@@ -106,6 +106,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			    
 			    // Adjust item frame height.
 			    this.adjustFrame();
+			    iframeResizer.autoHeight($itemFrame, 'iframe', parseInt($runner.height(), 10));
 			    
 			    // Inject API into the frame.
 			    itemServiceApi.loadInto($itemFrame[0], function(){
@@ -281,7 +282,10 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		},
 		
 		adjustFrame: function() {
-		    $('#qti-item').height($(window).height() - $('#qti-actions').outerHeight() - $('#qti-navigation').outerHeight());
+		    var actionsHeight = $('#qti-actions').outerHeight();
+		    var windowHeight = $(window).height();
+		    var navigationHeight = $('#qti-navigation').outerHeight();
+		    $('#qti-content').height(windowHeight - actionsHeight - navigationHeight);
 		},
 	
 		formatTime: function(totalSeconds) {
@@ -329,10 +333,10 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	           // we give the control to the delivery engine by calling
 	           // finish.
 	           if (assessmentTestContext.state === TestRunner.TEST_STATE_CLOSED) {
-	                   serviceApi.finish();
+                   serviceApi.finish();
 	           }
 	           else {
-	                   TestRunner.update(assessmentTestContext);
+                   TestRunner.update(assessmentTestContext);
 	           }
 	        };
 	    	
@@ -371,7 +375,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	            TestRunner.emptyComment();
 	        });
 	        
-	        $(window).resize(function() {
+	        $(window).bind('resize', function() {
 	            TestRunner.adjustFrame();
 	        });
 	

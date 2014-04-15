@@ -1,3 +1,8 @@
+html, body {
+    padding:0;
+    margin: 0;
+}
+
 #runner {
 	overflow:hidden;
 }
@@ -198,4 +203,10 @@
 #qti-comment-cancel, #qti-comment-send {
     height: 24px;
     line-height: 1.5;
+}
+
+#qti-content {
+    margin: 37px 0 0;
+    padding: 0;
+    overflow-y: auto;
 }
