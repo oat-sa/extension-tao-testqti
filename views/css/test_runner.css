@@ -140,6 +140,7 @@
     padding-left: 10px;
     line-height: 1.1;
     width: 25%;
+    text-shadow: 1px 1px 0 #0b4a74;
 }
 
 #qti-test-context .icon-right {
