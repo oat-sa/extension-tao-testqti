@@ -95,7 +95,7 @@ html, body {
     display: none;
     background-color: #fff;
     position: absolute;
-    bottom: 50px;
+    bottom: 20px;
     left: 20px;
     z-index: 9999;
     width: 300px;
@@ -113,7 +113,7 @@ html, body {
     display: block;
     height: 80px;
     resize: none;
-    width: 300px;
+    width: 100%;
     padding: 2px;
     margin: 3px  0 10px 0;
     -moz-border-radius: 2px;
@@ -183,9 +183,8 @@ html, body {
     border-top: 1px solid #0b4a74;
 }
 
-#qti-navigation .col-6 {
+#qti-navigation .col-4 {
     margin: 0;
-    width: 50%;
 }
 
 #qti-navigation .btn-info,
@@ -230,4 +229,21 @@ html, body {
 
 #qti-test-time {
 
+}
+
+#qti-tools {
+    width: 20%;
+}
+
+#qti-flow {
+    width: 20%;
+}
+
+#qti-section-map {
+    width: 60%;
+}
+
+#qti-section-map .qti-map-button {
+    /*display: inline;*/
+    display: none;
 }

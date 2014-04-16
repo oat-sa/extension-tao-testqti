@@ -1,5 +1,5 @@
-define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
-    function($, $ui, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
+define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
+    function($, $ui, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -94,6 +94,7 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 			this.updateContext();
 			this.updateProgress();
 			this.updateNavigation();
+			this.updateMap();
 			this.updateInformation();
 			this.updateRubrics();
 			this.updateTools();
@@ -290,6 +291,18 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 	            $('#qti-progress-label').text(label);
 	            $('#qti-progressbar').progressbar({
 	                value: ratio
+	            });
+		    }
+		},
+		
+		updateMap: function() {
+		    var $qtiSectionMap = $('#qti-section-map');
+		    
+		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_NONLINEAR) {
+		        _(this.assessmentTestContext.jumps).forEach(function (jump) {
+	                var tooltip = __('Access to item %s').replace('%s', jump.identifier);
+	                var $mapButton = $('<button class="btn-info qti-map-button" alt="' + tooltip + '" title="' + tooltip + '">' + (jump.position + 1) + '</button>');
+	                $qtiSectionMap.append($mapButton);
 	            });
 		    }
 		},
