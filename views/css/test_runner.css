@@ -144,7 +144,6 @@ html, body {
     padding-top: 2px;
     padding-left: 10px;
     line-height: 1.1;
-    width: 25%;
     text-shadow: 1px 1px 0 #0b4a74;
 }
 
@@ -196,8 +195,15 @@ html, body {
     border-radius: 0;
     -moz-border-radius:0;
     margin: 0;
-    float: right;
     display: none;
+}
+
+#comment {
+    float: left;
+}
+
+#move-forward, #move-backward, #skip {
+    float: right;
 }
 
 #qti-comment-cancel, #qti-comment-send {
@@ -209,4 +215,19 @@ html, body {
     margin: 37px 0 0;
     padding: 0;
     overflow-y: auto;
+}
+
+#qti-test-progress {
+    margin-top: 5px;
+    visibility: hidden;
+}
+
+#qti-test-progress > #qti-progress-label {
+    text-align: right;
+    font-size: 12px;
+    text-shadow: 1px 1px 0 #0b4a74;
+}
+
+#qti-test-time {
+
 }

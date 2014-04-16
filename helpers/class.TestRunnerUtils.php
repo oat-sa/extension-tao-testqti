@@ -19,9 +19,11 @@
 */
 
 use qtism\data\NavigationMode;
+use qtism\data\View;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSessionState;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -298,5 +300,178 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
          
         return $jumps;
+    }
+    
+    /**
+     * Build the context of the given candidate test $session as an associative array. This array
+     * is especially usefull to transmit the test context to a view as JSON data.
+     * 
+     * The returned array contains the following keys:
+     * 
+     * * state: The state of test session.
+     * * navigationMode: The current navigation mode.
+     * * submissionMode: The current submission mode.
+     * * remainingAttempts: The number of remaining attempts for the current item.
+     * * isAdaptive: Whether or not the current item is adaptive.
+     * * itemIdentifier: The identifier of the current item.
+     * * itemSessionState: The state of the current assessment item session.
+     * * timeConstraints: The time constraints in force.
+     * * testTitle: The title of the test.
+     * * testPartId: The identifier of the current test part.
+     * * sectionTitle: The title of the current section.
+     * * numberItems: The total number of items eligible to the candidate.
+     * * numberCompleted: The total number items considered to be completed by the candidate.
+     * * moveForwardUrl: The URL to be dereferenced to perform a moveNext on the session.
+     * * moveBackwardUrl: The URL to be dereferenced to perform a moveBack on the session.
+     * * skipUrl: The URL to be dereferenced to perform a skip on the session.
+     * * commentUrl: The URL to be dereferenced to leave a comment about the current item.
+     * * timeoutUrl: The URL to be dereferenced when the time constraints in force reach their maximum.
+     * * canMoveBackward: Whether or not the candidate is allowed/able to move backward.
+     * * jumps: The possible jumpers the candidate is allowed to undertake among eligible items.
+     * * itemServiceApiCall: The JavaScript code to be executed to instantiate the current item.
+     * * rubrics: The XHTML compiled content of the rubric blocks to be displayed for the current item if any.
+     * * allowComment: Whether or not the candidate is allowed to leave a comment about the current item.
+     * * allowSkipping: Whether or not the candidate is allowed to skip the current item.
+     * * considerProgress: Whether or not the test driver view must consider to give a test progress feedback.
+     * 
+     * @param AssessmentTestSession $session A given AssessmentTestSession object.
+     * @param array $testMeta An associative array containing meta-data about the test definition taken by the candidate.
+     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
+     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
+     * @param string $standalone
+     * @param string $compilationDirs An array containing respectively the private and public compilation directories.
+     * @return array The context of the candidate session.
+     */
+    static public function buildAssessmentTestContext(AssessmentTestSession $session, array $testMeta, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs) {
+        $context = array();
+         
+        // The state of the test session.
+        $context['state'] = $session->getState();
+         
+        // Default values for the test session context.
+        $context['navigationMode'] = null;
+        $context['submissionMode'] = null;
+        $context['remainingAttempts'] = 0;
+        $context['isAdaptive'] = false;
+         
+        if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
+            // The navigation mode.
+            $context['navigationMode'] = $session->getCurrentNavigationMode();
+        
+            // The submission mode.
+            $context['submissionMode'] = $session->getCurrentSubmissionMode();
+        
+            // The number of remaining attempts for the current item.
+            $context['remainingAttempts'] = $session->getCurrentRemainingAttempts();
+             
+            // Whether or not the current step is time out.
+            $context['isTimeout'] = self::isTimeout($session);
+             
+            // The identifier of the current item.
+            $context['itemIdentifier'] = $session->getCurrentAssessmentItemRef()->getIdentifier();
+             
+            // The state of the current AssessmentTestSession.
+            $context['itemSessionState'] = $session->getCurrentAssessmentItemSession()->getState();
+        
+            // Whether the current item is adaptive.
+            $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
+             
+            // Time constraints.
+            $context['timeConstraints'] = self::buildTimeConstraints($session);
+             
+            // Test title.
+            $context['testTitle'] = $session->getAssessmentTest()->getTitle();
+             
+            // Test Part title.
+            $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
+             
+            // Section title.
+            $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
+             
+            // Number of items composing the test session.
+            $context['numberItems'] = $session->getRoute()->count();
+             
+            // Number of items completed during the test session.
+            $context['numberCompleted'] = self::testCompletion($session);
+            
+            // Whether or not the progress of the test can be infered.
+            $context['considerProgress'] = self::considerProgress($testMeta);
+             
+            // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
+            $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
+            $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+             
+            // If the candidate is allowed to move backward e.g. first item of the test.
+            $context['canMoveBackward'] = $session->canMoveBackward();
+             
+            // The places in the test session where the candidate is allowed to jump to.
+            $context['jumps'] = self::buildPossibleJumps($session);
+        
+            // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
+            $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
+             
+            // Rubric Blocks.
+            $rubrics = array();
+             
+            // -- variables used in the included rubric block templates.
+            // base path (base URI to be used for resource inclusion).
+            $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
+            $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
+             
+            // state name (the variable to access to get the state of the assessmentTestSession).
+            $stateName = TAOQTITEST_RENDERING_STATE_NAME;
+            $$stateName = $session;
+             
+            // views name (the variable to be accessed for the visibility of rubric blocks).
+            $viewsName = TAOQTITEST_VIEWS_NAME;
+            $$viewsName = array(View::CANDIDATE);
+             
+            foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
+                ob_start();
+                include($compilationDirs['private']->getPath() . $rubric->getHref());
+                $rubrics[] = ob_get_clean();
+            }
+             
+            $context['rubrics'] = $rubrics;
+             
+            // Comment allowed? Skipping allowed?
+            $context['allowComment'] = self::doesAllowComment($session);
+            $context['allowSkipping'] = self::doesAllowSkipping($session);
+        }
+        
+        return $context;
+    }
+    
+    /**
+     * Compute the the number of completed items during a given
+     * candidate test $session.
+     * 
+     * @param AssessmentTestSession $session
+     * @return integer
+     */
+    static public function testCompletion(AssessmentTestSession $session) {
+        $completed = $session->numberCompleted();
+        
+        if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR && $completed > 0) {
+            $completed--;
+        }
+        
+        return $completed;
+    }
+    
+    static public function considerProgress(array $testMeta) {
+        $considerProgress = true;
+        
+        if ($testMeta['preConditions'] === true) {
+            $considerProgress = false;
+        }
+        else if ($testMeta['branchRules'] === true) {
+            $considerProgress = false;
+        }
+        
+        return $considerProgress;
     }
 }

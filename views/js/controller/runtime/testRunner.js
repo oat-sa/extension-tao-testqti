@@ -1,5 +1,5 @@
-define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
-    function($, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
+define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
+    function($, $ui, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -92,6 +92,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 			
 			this.assessmentTestContext = assessmentTestContext;
 			this.updateContext();
+			this.updateProgress();
 			this.updateNavigation();
 			this.updateInformation();
 			this.updateRubrics();
@@ -268,14 +269,29 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 		    }
 		},
 		
+		updateProgress: function() {
+		    
+		    var considerProgress = this.assessmentTestContext.considerProgress;
+		    console.log('updateProgress', considerProgress);
+		    
+		    $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+		    
+		    if (considerProgress === true) {
+		        var ratio = Math.floor(this.assessmentTestContext['numberCompleted'] / this.assessmentTestContext['numberItems'] * 100);
+	            var label = __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%');
+	            $('#qti-progress-label').text(label);
+	            $('#qti-progressbar').progressbar({
+	                value: ratio
+	            });
+		    }
+		},
+		
 		updateContext: function() {
-		    // Part:<span id="qti-part-title"></span><span class="icon-right"></span>Section: <span id="qti-section-title"></span>
-		    
-		    
 		    $('#qti-test-title').text(this.assessmentTestContext.testTitle);
 		    
 		    $('#qti-test-position').empty()
 		                           .append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> <span class="icon-right"></span> ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
+		    
 		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
 		},
 		
@@ -339,11 +355,7 @@ define(['jquery', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService',
 	        };
 	    	
 	        TestRunner.beforeTransition();
-	        
 	        TestRunner.assessmentTestContext = assessmentTestContext;
-	        TestRunner.updateNavigation();
-	        TestRunner.updateTools();
-	        TestRunner.updateContext();
 	
 	        $('#skip').click(function(){
 	            TestRunner.skip();

@@ -97,6 +97,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     private $compilationDirectory;
     
     /**
+     * The meta data about the test definition
+     * being executed.
+     * 
+     * @var array
+     */
+    private $testMeta;
+    
+    /**
      * Get the current assessment test session.
      * 
      * @return AssessmentTestSession An AssessmentTestSession object.
@@ -194,6 +202,26 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	protected function getCompilationDirectory() {
 	    return $this->compilationDirectory;
 	}
+	
+	/**
+	 * Set the meta-data array about the test definition
+	 * being executed.
+	 * 
+	 * @param array $testMeta
+	 */
+	protected function setTestMeta(array $testMeta) {
+	    $this->testMeta = $testMeta;
+	}
+	
+	/**
+	 * Get the meta-data array about the test definition
+	 * being executed.
+	 * 
+	 * @return array
+	 */
+	protected function getTestMeta() {
+	    return $this->testMeta;
+	}
     
     protected function beforeAction() {
         // Controller initialization.
@@ -206,13 +234,32 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $testResource);
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory));
         $this->retrieveTestSession();
+        $this->retrieveTestMeta();
         
+        // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
     }
     
-    protected function afterAction() {
+    protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
         $sessionId = $testSession->getSessionId();
+        
+        // Build assessment test context.
+        $ctx = taoQtiTest_helpers_TestRunnerUtils::buildAssessmentTestContext($this->getTestSession(),
+                                                                              $this->getTestMeta(),
+	                                                                          $this->getRequestParameter('QtiTestDefinition'),
+	                                                                          $this->getRequestParameter('QtiTestCompilation'),
+	                                                                          $this->getRequestParameter('standalone'),
+	                                                                          $this->getCompilationDirectory());
+	    
+        // Put the assessment test context in request data.
+	    $this->setData('assessmentTestContext', $ctx);
+        
+        if ($withContext === true) {
+            // Output only if requested by client-code.
+            echo json_encode($ctx);
+        }
+        
         common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
 	    $this->getStorage()->persist($testSession);
     }
@@ -235,11 +282,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
         }
         
-        $this->buildAssessmentTestContext();
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setView('test_runner.tpl');
         
-        $this->afterAction();
+        $this->afterAction(false);
 	}
 	
 	/**
@@ -261,8 +307,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $this->handleAssessmentTestSessionException($e);
         }
 
-        $context = $this->buildAssessmentTestContext();
-        echo json_encode($context);
         $this->afterAction();
 	}
 	
@@ -284,9 +328,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    catch (AssessmentTestSessionException $e) {
 	        $this->handleAssessmentTestSessionException($e);
 	    }
-	    
-	    $context = $this->buildAssessmentTestContext();
-	    echo json_encode($context);
+
 	    $this->afterAction();
 	}
 	
@@ -310,8 +352,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->handleAssessmentTestSessionException($e);
 	    }
 	    
-	    $context = $this->buildAssessmentTestContext();
-	    echo json_encode($context);
 	    $this->afterAction();
 	}
 	
@@ -338,8 +378,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
         // to the client with the actual assessment test context. Maybe the client will be able to
         // continue...
-        $context = $this->buildAssessmentTestContext();
-        echo json_encode($context);
         $this->afterAction();
 	}
 
@@ -433,7 +471,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    echo json_encode(array('success' => true, 'displayFeedback' => $displayFeedback, 'itemSession' => $stateOutput->getOutput()));
 	    
-	    $this->afterAction();
+	    $this->afterAction(false);
     }
 	
     /**
@@ -481,7 +519,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->setCompilationDirectory($directories);
 	    
 	    $dirPath = $directories['private']->getPath();
-	    $testFilePath = $dirPath .'compact-test.php';
+	    $testFilePath = $dirPath . TAOQTITEST_COMPILED_FILENAME;
 	    
 	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
 	    $doc = new PhpDocument();
@@ -508,120 +546,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $this->setTestSession($qtiStorage->retrieve($sessionId));
 	    }
     }
-	
-	/**
-	 * Builds an associative array which describes the current AssessmentTestContext and set
-	 * into the request data for a later use.
-	 * 
-	 * @return array The built AssessmentTestContext.
-	 */
-	protected function buildAssessmentTestContext() {
-	    $session = $this->getTestSession();
-	    $context = array();
-	    
-	    // The state of the test session.
-	    $context['state'] = $session->getState();
-	    
-	    // Default values for the test session context.
-	    $context['navigationMode'] = null;
-	    $context['submissionMode'] = null;
-	    $context['remainingAttempts'] = 0;
-	    $context['isAdaptive'] = false;
-	    
-	    if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
-	        // The navigation mode.
-	        $context['navigationMode'] = $session->getCurrentNavigationMode();
-	         
-	        // The submission mode.
-	        $context['submissionMode'] = $session->getCurrentSubmissionMode();
-	         
-	        // The number of remaining attempts for the current item.
-	        $context['remainingAttempts'] = $session->getCurrentRemainingAttempts();
-	        
-	        // Whether or not the current step is time out.
-	        $context['isTimeout'] = taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
-	        
-	        // The identifier of the current item.
-	        $context['itemIdentifier'] = $session->getCurrentAssessmentItemRef()->getIdentifier();
-	        
-	        // The state of the current AssessmentTestSession.
-	        $context['itemSessionState'] = $session->getCurrentAssessmentItemSession()->getState();
-	             
-	        // Whether the current item is adaptive.
-	        $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-	        
-	        // Time constraints.
-	        $context['timeConstraints'] = taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
-	        
-	        // Test title.
-	        $context['testTitle'] = $session->getAssessmentTest()->getTitle();
-	        
-	        // Test Part title.
-	        $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
-	        
-	        // Section title.
-	        $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
-	        
-	        // Number of items composing the test session.
-	        $context['numberItems'] = $session->getRoute()->count();
-	        
-	        // Number of items completed during the test session.
-	        //$context['numberCompleted'] = taoQtiTest_helpers_TestRunnerUtils::numberCompleted($session);
-	        
-	        // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
-	        $qtiTestDefinitionUri = $this->getRequestParameter('QtiTestDefinition');
-	        $qtiTestCompilationUri = $this->getRequestParameter('QtiTestCompilation');
-	        $standalone = $this->getRequestParameter('standalone');
-	        
-	        $context['moveForwardUrl'] = taoQtiTest_helpers_TestRunnerUtils::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
-	        $context['moveBackwardUrl'] = taoQtiTest_helpers_TestRunnerUtils::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-	        $context['skipUrl'] = taoQtiTest_helpers_TestRunnerUtils::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-	        $context['commentUrl'] = taoQtiTest_helpers_TestRunnerUtils::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-	        $context['timeoutUrl'] = taoQtiTest_helpers_TestRunnerUtils::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-	        
-	        // If the candidate is allowed to move backward e.g. first item of the test.
-	        $context['canMoveBackward'] = $session->canMoveBackward();
-	        
-	        // The places in the test session where the candidate is allowed to jump to.
-	        $context['jumps'] = taoQtiTest_helpers_TestRunnerUtils::buildPossibleJumps($session);
-
-	        // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
-	        $context['itemServiceApiCall'] = taoQtiTest_helpers_TestRunnerUtils::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
-	        
-	        // Rubric Blocks.
-	        $rubrics = array();
-	        
-	        $compilationDirs = $this->getCompilationDirectory();
-	        
-	        // -- variables used in the included rubric block templates.
-	        // base path (base URI to be used for resource inclusion).
-	        $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
-	        $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
-	        
-	        // state name (the variable to access to get the state of the assessmentTestSession).
-	        $stateName = TAOQTITEST_RENDERING_STATE_NAME;
-	        $$stateName = $session;
-	        
-	        // views name (the variable to be accessed for the visibility of rubric blocks).
-	        $viewsName = TAOQTITEST_VIEWS_NAME;
-	        $$viewsName = array(View::CANDIDATE);
-	        
-	        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
-	            ob_start();
-	            include($compilationDirs['private']->getPath() . $rubric->getHref());
-	            $rubrics[] = ob_get_clean();
-	        }
-	        
-	        $context['rubrics'] = $rubrics;
-	        
-	        // Comment allowed? Skipping allowed?
-	        $context['allowComment'] = taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session);
-	        $context['allowSkipping'] = taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session);
-	    }
-	    
-	    $this->setData('assessmentTestContext', $context);
-	    return $context;
-	}
+    
+    /**
+     * Retrieve the QTI Test Definition meta-data array stored
+     * into the private compilation directory.
+     * 
+     * @return array
+     */
+    protected function retrieveTestMeta() {
+        $directories = $this->getCompilationDirectory();
+        $privateDirectoryPath = $directories['private']->getPath();
+        $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
+        
+        $this->setTestMeta($meta);
+    }
 
 	protected function handleAssessmentTestSessionException(AssessmentTestSessionException $e) {
 	    switch ($e->getCode()) {

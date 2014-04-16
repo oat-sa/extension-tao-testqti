@@ -323,7 +323,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // into the private directory.
             $this->compileTest($assessmentTest);
             
-            // 9. Build the service call.
+            // 9. Compile the test meta data into PHP array source code and put it
+            // into the private directory.
+            $this->compileMeta($assessmentTest);
+            
+            // 10. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
             common_Logger::t("QTI Test successfully compiled.");
@@ -636,11 +640,28 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileTest(AssessmentTest $test) {
         $compiledDocDir = $this->getPrivateDirectory()->getPath();
-        $compiledDocPath = $compiledDocDir . 'compact-test.php';
+        $compiledDocPath = $compiledDocDir . TAOQTITEST_COMPILED_FILENAME;
         $phpCompiledDoc = new PhpDocument('2.1');
         $phpCompiledDoc->setDocumentComponent($test);
         $phpCompiledDoc->save($compiledDocPath);
         common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledDocPath . "'.");
+    }
+    
+    /**
+     * Compile the $test meta-data into PHP source code for maximum performance. The file is
+     * stored into PRIVATE_DIRECTORY/test-meta.php.
+     * 
+     * @param AssessmentTest $test
+     */
+    protected function compileMeta(AssessmentTest $test) {
+        $compiledDocDir = $this->getPrivateDirectory()->getPath();
+        $compiledDocPath = $compiledDocDir . TAOQTITEST_COMPILED_META_FILENAME;
+        
+        $meta = taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
+        $phpCode = common_Utils::toPHPVariableString($meta);
+        $phpCode = '<?php return ' . $phpCode . '; ?>';
+        
+        file_put_contents($compiledDocPath, $phpCode);
     }
     
     /**

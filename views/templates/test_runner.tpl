@@ -52,8 +52,11 @@
 							
 						</div>
 					</div>
-					<div class="col-4"></div>
-					<div class="col-4"></div>
+					<div class="col-4" id="qti-test-time"></div>
+					<div class="col-4" id="qti-test-progress">
+						<div id="qti-progress-label">Test completed at 100%</div>
+						<div id="qti-progressbar"></div>
+					</div>
 				</div>
 				<div id="qti-comment" class="tao-scope">
 					<textarea></textarea>
