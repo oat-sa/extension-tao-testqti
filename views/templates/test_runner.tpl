@@ -66,7 +66,7 @@
 				<iframe id="qti-item" frameborder="0"></iframe>
 				<div id="qti-navigation" class="tao-scope grid-row">
 					<div class="col-6"><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button></div>
-					<div class="col-6"><button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button></div>
+					<div class="col-6"><button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span><button id="move-end" class="btn-error qti-navigation"><?= __("End of Test"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="skip-end" class="btn-error qti-navigation"><span class="icon-external"></span><?= __("Skip & End of Test"); ?></button></div>
 				</div>
 			</div>
 		</div>

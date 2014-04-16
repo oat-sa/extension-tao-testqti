@@ -146,10 +146,18 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 		    }
 		    
 		    if (this.assessmentTestContext.allowSkipping === true) {
-		    	$('#skip').css('display', 'inline');
+		        if (this.assessmentTestContext.isLast === false) {
+		            $('#skip').css('display', 'inline');
+		            $('#skip-end').css('display', 'none');
+		        }
+		        else {
+		            $('#skip-end').css('display', 'inline');
+		            $('#skip').css('display', 'none');
+		        }
 		    }
 		    else {
 		    	$('#skip').css('display', 'none');
+		    	$('#skip-end').css('display', 'none');
 		    }
 		},
 		
@@ -264,7 +272,8 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 		    else {
 		    	// NONLINEAR
 		    	$('#qti-actions').css('display', 'block');
-		    	$('#move-forward').css('display', 'inline');
+		    	$('#move-forward').css('display', (this.assessmentTestContext.isLast === true) ? 'none' : 'inline');
+		    	$('#move-end').css('display', (this.assessmentTestContext.isLast === true) ? 'inline' : 'none');
 		    	$('#move-backward').css('display', (this.assessmentTestContext.canMoveBackward === true) ? 'inline' : 'none');
 		    }
 		},
@@ -272,7 +281,6 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 		updateProgress: function() {
 		    
 		    var considerProgress = this.assessmentTestContext.considerProgress;
-		    console.log('updateProgress', considerProgress);
 		    
 		    $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
 		    
@@ -357,11 +365,11 @@ define(['jquery', 'jqueryui', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserI
 	        TestRunner.beforeTransition();
 	        TestRunner.assessmentTestContext = assessmentTestContext;
 	
-	        $('#skip').click(function(){
+	        $('#skip, #skip-end').click(function(){
 	            TestRunner.skip();
 	        });
 	        
-	        $('#move-forward').click(function(){
+	        $('#move-forward, #move-end').click(function(){
 	            TestRunner.moveForward();
 	        });
 	        

@@ -375,6 +375,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         
             // Whether the current item is adaptive.
             $context['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
+            
+            // Whether the current item is the very last one of the test.
+            $context['isLast'] = $session->getRoute()->isLast();
              
             // Time constraints.
             $context['timeConstraints'] = self::buildTimeConstraints($session);

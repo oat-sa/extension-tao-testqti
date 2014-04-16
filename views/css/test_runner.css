@@ -95,8 +95,8 @@ html, body {
     display: none;
     background-color: #fff;
     position: absolute;
-    top: 50px;
-    right: 20px;
+    bottom: 50px;
+    left: 20px;
     z-index: 9999;
     width: 300px;
     text-align: right;
@@ -202,7 +202,7 @@ html, body {
     float: left;
 }
 
-#move-forward, #move-backward, #skip {
+#move-forward, #move-backward, #move-end, #skip, #skip-end {
     float: right;
 }
 
