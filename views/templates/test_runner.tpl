@@ -52,7 +52,7 @@
 					</div>
 					<div class="col-4" id="qti-test-time"></div>
 					<div class="col-4" id="qti-test-progress">
-						<div id="qti-progress-label">Test completed at 100%</div>
+						<div id="qti-progress-label"></div>
 						<div id="qti-progressbar"></div>
 					</div>
 				</div>
@@ -65,7 +65,7 @@
 				<div id="qti-navigation" class="grid-row">
 					<div class="col-4" id="qti-tools"><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button></div>
 					<div class="col-4" id="qti-section-map"></div>
-					<div class="col-4" id="qti-flow"><button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-right r"></span><button id="move-end" class="btn-error qti-navigation"><?= __("End of Test"); ?><span class="icon-right r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-left"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="skip-end" class="btn-error qti-navigation"><span class="icon-external"></span><?= __("Skip & End of Test"); ?></button></div>
+					<div class="col-4" id="qti-flow"><button id="move-forward" class="btn-info qti-navigation"><?= __("Next"); ?><span class="icon-forward r"></span><button id="move-end" class="btn-error qti-navigation"><?= __("End of Test"); ?><span class="icon-fast-forward r"></span></button><button id="move-backward" class="btn-info qti-navigation"><span class="icon-backward"></span><?= __("Previous"); ?></button><button id="skip" class="btn-info qti-navigation"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="skip-end" class="btn-error qti-navigation"><span class="icon-external"></span><?= __("Skip & End of Test"); ?></button></div>
 				</div>
 			</div>
 		</div>

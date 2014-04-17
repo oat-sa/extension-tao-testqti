@@ -59,6 +59,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		comment : function() {
 			$('#qti-comment > textarea').val(__('Your comment...'));
 		    $('#qti-comment').css('display', 'block');
+		    $('#qti-comment > button').css('display', 'inline');
 		},
 		
 		closeComment : function() {
@@ -311,7 +312,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    $('#qti-test-title').text(this.assessmentTestContext.testTitle);
 		    
 		    $('#qti-test-position').empty()
-		                           .append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> <span class="icon-right"></span> ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
+		                           .append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
 		    
 		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
 		},
@@ -408,6 +409,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	        
 	        $(window).bind('resize', function() {
 	            TestRunner.adjustFrame();
+	            $('#qti-test-title, #qti-test-position').badonkatrunc();
 	        });
 	
 	        iframeNotifier.parent('serviceready');
