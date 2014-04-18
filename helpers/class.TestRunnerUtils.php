@@ -19,6 +19,7 @@
 */
 
 use qtism\data\NavigationMode;
+use qtism\data\SubmissionMode;
 use qtism\data\View;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -220,6 +221,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function doesAllowSkipping(AssessmentTestSession $session) {
         $doesAllowSkipping = false;
         $navigationMode = $session->getCurrentNavigationMode();
+        $submissionMode = $session->getCurrentSubmissionMode();
          
         $routeItem = $session->getRoute()->current();
         $routeControl = $routeItem->getItemSessionControl();
@@ -228,7 +230,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $doesAllowSkipping = $routeControl->getItemSessionControl()->doesAllowSkipping();
         }
          
-        return $doesAllowSkipping && $navigationMode === NavigationMode::LINEAR;
+        return $doesAllowSkipping && $navigationMode === NavigationMode::LINEAR && $submissionMode === SubmissionMode::INDIVIDUAL;
     }
     
     /**

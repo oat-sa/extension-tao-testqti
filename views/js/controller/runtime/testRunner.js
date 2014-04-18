@@ -39,11 +39,17 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 	
 		moveForward: function() {
-		    this.actionCall('moveForward');
+		    var that = this;
+		    this.itemServiceApi.kill(function(signal) {
+		        that.actionCall('moveForward');
+		    });  
 		},
 	
 		moveBackward : function() {
-			this.actionCall('moveBackward');
+		    var that = this;
+		    this.itemServiceApi.kill(function(signal) {
+                that.actionCall('moveBackward');
+            });  
 		},
 	
 		skip : function() {
@@ -79,7 +85,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		            type: 'POST',
 		            data: { comment: $('#qti-comment > textarea').val() },
 		            success: function(assessmentTestContext, textStatus, jqXhr) {
-		                    self.closeComment();
+		                self.closeComment();
 		            }
 		    });
 		},
@@ -92,10 +98,11 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			$runner.css('height', 'auto');
 			
 			this.assessmentTestContext = assessmentTestContext;
+			this.itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
+			
 			this.updateContext();
 			this.updateProgress();
 			this.updateNavigation();
-			this.updateMap();
 			this.updateInformation();
 			this.updateRubrics();
 			this.updateTools();
@@ -104,19 +111,13 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
 			$itemFrame.insertBefore($('#qti-navigation'));
 			iframeResizer.autoHeight($itemFrame, 'body', parseInt($runner.height(), 10));
+			
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
-				// @todo Oops, eval to be fixed (why Bertrand :s ?)
-			    var itemServiceApi = eval(this.assessmentTestContext.itemServiceApiCall);
-			    
 			    // Inject API into the frame.
-			    itemServiceApi.loadInto($itemFrame[0], function(){
+			    this.itemServiceApi.loadInto($itemFrame[0], function(){
 			        self.afterTransition();
 			        self.adjustFrame();
 			        $itemFrame.show();
-			    });
-			    
-			    itemServiceApi.onFinish(function() {
-			    	self.moveForward();
 			    });
 			}
 			else {
@@ -268,7 +269,9 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    	}
 		    	else {
 		    		$('#qti-navigation').css('display', 'block');
-		    		$('#move-forward, #move-backward').css('display', 'none');
+		    		$('#move-backward').css('display', 'none');
+		    		$('#move-forward').css('display', (this.assessmentTestContext.isLast === true) ? 'none' : 'inline');
+		    		$('#move-end').css('display', (this.assessmentTestContext.isLast === true) ? 'inline' : 'none');
 		    	}
 		    }
 		    else {
@@ -292,18 +295,6 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	            $('#qti-progress-label').text(label);
 	            $('#qti-progressbar').progressbar({
 	                value: ratio
-	            });
-		    }
-		},
-		
-		updateMap: function() {
-		    var $qtiSectionMap = $('#qti-section-map');
-		    
-		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_NONLINEAR) {
-		        _(this.assessmentTestContext.jumps).forEach(function (jump) {
-	                var tooltip = __('Access to item %s').replace('%s', jump.identifier);
-	                var $mapButton = $('<button class="btn-info qti-map-button" alt="' + tooltip + '" title="' + tooltip + '">' + (jump.position + 1) + '</button>');
-	                $qtiSectionMap.append($mapButton);
 	            });
 		    }
 		},

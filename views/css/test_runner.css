@@ -19,31 +19,6 @@ html, body {
 	display:none;
 }
 
-#qti-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    filter:alpha(opacity=3);
-    -moz-opacity:0.03;
-    -khtml-opacity: 0.03;
-    opacity: 0.03;
-    z-index: 10000;
-}
-
-#qti-loading {
-	width: 300px;
-    height: 300px;
-    background: transparent;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-top: -150px;
-    margin-left: -150px;
-}
-
 #qti-info {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
@@ -128,23 +103,33 @@ html, body {
 }
 
 #qti-actions, #qti-navigation {
-    background-color: #266d9c;
+    background-color: #ddd;
     position: fixed;
     width: 100%;
-    height: 36px;
 }
 
 #qti-actions {
+    
+}
+
+#qti-navigation {
+    height: 37px;
+}
+
+#qti-actions {
+    height: 40px;
     color: #fff;
     top: 0;
-    border-bottom: 1px solid #0f3e80;
+    border-bottom: 1px solid #555;
+    border-top: 1px solid #555;
 }
 
 #qti-test-context {
-    padding-top: 2px;
+    padding-top: 3px;
     padding-left: 10px;
     line-height: 1.1;
-    text-shadow: 1px 1px 0 #0b4a74;
+    color: #222;
+    text-shadow: 1px 1px 0 #eee;
 }
 
 #qti-test-context .icon-right {
@@ -180,7 +165,7 @@ html, body {
 
 #qti-navigation {
     bottom: 0;
-    border-top: 1px solid #0f3e80;
+    border-top: 1px solid #555;
 }
 
 #qti-navigation .col-4 {
@@ -197,11 +182,6 @@ html, body {
     display: none;  
     height: 25px;
     line-height: 25px;
-    border: 1px solid #0f3e80;
-}
-
-#qti-comment > button {
-    border: 1px solid #4f535a;
 }
 
 #comment {
@@ -218,7 +198,7 @@ html, body {
 }
 
 #qti-content {
-    margin: 37px 0;
+    margin: 40px 0;
     padding: 0;
     overflow-y: auto;
 }
@@ -226,12 +206,13 @@ html, body {
 #qti-test-progress {
     margin-top: 5px;
     visibility: hidden;
+    text-align: right;
 }
 
 #qti-test-progress > #qti-progress-label {
-    text-align: right;
     font-size: 12px;
-    text-shadow: 1px 1px 0 #0b4a74;
+    color: #222;
+    text-shadow: 1px 1px 0 #eee;
 }
 
 #qti-test-time {
@@ -239,17 +220,13 @@ html, body {
 }
 
 #qti-tools {
-    width: 15%;
+    width: 25%;
     padding-left: 15px;
 }
 
 #qti-flow {
-    width: 35%;
-    padding-right: 15px;
-}
-
-#qti-section-map {
-    width: 50%;
+    width: 75%;
+    padding-right: 5px;
 }
 
 #qti-section-map .qti-map-button {
@@ -258,7 +235,7 @@ html, body {
 }
 
 .tao-scope .ui-progressbar {
-    border: 1px solid #0f3e80;
+    border: 1px solid #555;
 }
 
 .tao-scope .ui-progressbar .ui-progressbar-value {
@@ -271,5 +248,4 @@ html, body {
 
 #qti-flow > #move-backward, #qti-flow > #move-forward, #qti-flow > #skip, #qti-tools > #comment, #qti-comment > button {
     min-width: 100px;
-    background-color: #7e949e;
 }
