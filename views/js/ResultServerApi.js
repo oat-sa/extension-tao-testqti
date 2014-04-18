@@ -19,7 +19,7 @@ define([ 'jquery' ], function($) {
     }
 
     ResultServerApi.prototype.submitItemVariables = function(itemId,
-            serviceCallId, responses, scores, events, callback) {
+            serviceCallId, responses, scores, events, params, callback) {
 
         var that = this;
 
