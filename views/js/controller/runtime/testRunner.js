@@ -264,15 +264,9 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		updateNavigation: function() {
 		    if (this.assessmentTestContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
 		    	// LINEAR
-		    	if (this.assessmentTestContext.allowComment === false && this.assessmentTestContext.allowSkipping === false) {
-		    		$('#qti-navigation').css('display', 'none');
-		    	}
-		    	else {
-		    		$('#qti-navigation').css('display', 'block');
-		    		$('#move-backward').css('display', 'none');
-		    		$('#move-forward').css('display', (this.assessmentTestContext.isLast === true) ? 'none' : 'inline');
-		    		$('#move-end').css('display', (this.assessmentTestContext.isLast === true) ? 'inline' : 'none');
-		    	}
+	    		$('#move-backward').css('display', 'none');
+	    		$('#move-forward').css('display', (this.assessmentTestContext.isLast === true) ? 'none' : 'inline');
+	    		$('#move-end').css('display', (this.assessmentTestContext.isLast === true) ? 'inline' : 'none');
 		    }
 		    else {
 		    	// NONLINEAR
