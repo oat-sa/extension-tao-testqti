@@ -43,6 +43,7 @@ use qtism\data\View;
 use \taoQtiCommon_helpers_PciVariableFiller;
 use \taoQtiCommon_helpers_PciStateOutput;
 use \taoQtiCommon_helpers_Utils;
+use oat\taoQtiItem\helpers\QtiRunner;
 
 /**
  * Runs a QTI Test.
@@ -464,12 +465,22 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        foreach ($itemSession->getAllVariables() as $var) {
 	            $stateOutput->addVariable($var);
 	        }
+	        
+	        $itemCompilationDirectory = $this->getDirectory($this->getRequestParameter('itemDataPath'));
+	        $jsonReturn = array('success' => true,
+	                            'displayFeedback' => $displayFeedback,
+	                            'itemSession' => $stateOutput->getOutput(),
+	                            'feedbacks' => array());
+	        
+	        if ($displayFeedback === true) {
+	            $jsonReturn['feedbacks'] = QtiRunner::getFeedbacks($itemCompilationDirectory, $itemSession);
+	        }
+	         
+	        echo json_encode($jsonReturn);
 	    }
 	    catch (AssessmentTestSessionException $e) {
 	        $this->handleAssessmentTestSessionException($e);
 	    }
-	    
-	    echo json_encode(array('success' => true, 'displayFeedback' => $displayFeedback, 'itemSession' => $stateOutput->getOutput()));
 	    
 	    $this->afterAction(false);
     }

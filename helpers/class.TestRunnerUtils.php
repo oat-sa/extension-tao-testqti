@@ -60,6 +60,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $pathResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMPATH);
         $pathParam = new tao_models_classes_service_ConstantParameter($pathResource, $parts[1]);
         $serviceCall->addInParameter($pathParam);
+        
+        $dataPathResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMDATAPATH);
+        $dataPathParam = new tao_models_classes_service_ConstantParameter($dataPathResource, $parts[2]);
+        $serviceCall->addInParameter($dataPathParam);
          
         $parentServiceCallIdResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID);
         $parentServiceCallIdParam = new tao_models_classes_service_ConstantParameter($parentServiceCallIdResource, $session->getSessionId());
@@ -126,30 +130,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $parts = explode('|', $href);
         
         return $parts[0];
-    }
-    
-    /**
-     * Build the hyper-text reference to be used to get a given Assessment Item
-     * (involved in $session) at runtime.
-     * 
-     * @param AssessmentTestSession $session An AssessmentTestSession object.
-     * @param string $itemUri The URI of the an Assessment Item in the knowledge base.
-     * @param string $itemPath The URI of a reference to an Assessment Item compilation folder in the knowledge base.
-     * @param string $qtiTestDefinitionUri The URI of the definition of an Assessment Test in the knowledge base.
-     * @param string $qtiTestCompilationUri The URI of the resource in the knowledge base representing the compilation folder of an Assessment Test.
-     * @return string The hypertext reference to access an item at runtime.
-     */
-    static public function buildItemHref(AssessmentTestSession $session, $itemUri, $itemPath, $qtiTestDefinitionUri, $qtiTestCompilationUri) {
-        $src = BASE_URL . 'ItemRunner/index?';
-        $src .= 'itemUri=' . urlencode($itemUri);
-        $src.= '&itemPath=' . urlencode($itemPath);
-        $src.= '&QtiTestParentServiceCallId=' . urlencode($session->getSessionId());
-        $src.= '&QtiTestDefinition=' . urlencode($qtiTestDefinitionUri);
-        $src.= '&QtiTestCompilation=' . urlencode($qtiTestCompilationUri);
-        $src.= '&standalone=true';
-        $src.= '&serviceCallId=' . self::buildServiceCallId($session);
-         
-        return $src;
     }
     
     /**

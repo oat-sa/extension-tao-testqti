@@ -356,15 +356,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $test = $this->getResource();
         $testContent = $testService->getTestContent($test);
         
-        common_Logger::t('Compacting QTI test ' . $test->getLabel() . '.');
+        common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
         $itemResolver = new taoQtiTest_helpers_ItemResolver('');
         $originalDoc = $testService->getDoc($test);
         
-        common_Logger::t("QTI Test XML document successfully loaded.");
-        
         $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
-        common_Logger::t("QTI Test XML document successfully transformed in a compact version.");
+        common_Logger::t("QTI Test XML transformed in a compact version.");
         
         return $compiledDoc;
     }
@@ -387,7 +385,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             if ($subReport->getType() == common_report_Report::TYPE_SUCCESS) {
                 $itemService = $subReport->getdata(); 
                 $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-                $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $this->getResource()->getUri());
+                $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
                 $itemCount++;
             } else {
                 $report->setType(common_report_Report::TYPE_ERROR);

@@ -1,6 +1,8 @@
 <?php
 
-class taoQtiTest_actions_ItemRunner extends taoItems_actions_ItemRunner {
+use oat\taoQtiItem\controller\AbstractQtiItemRunner;
+
+class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner {
     
     /**
      * The endpoint specific to QTI Items in a QTI Test runner context
@@ -18,11 +20,13 @@ class taoQtiTest_actions_ItemRunner extends taoItems_actions_ItemRunner {
         return array(
             'testServiceCallId' => $this->getRequestParameter('QtiTestParentServiceCallId'),
             'testDefinition'    => $this->getRequestParameter('QtiTestDefinition'),
-            'testCompilation'   => $this->getRequestParameter('QtiTestCompilation')
+            'testCompilation'   => $this->getRequestParameter('QtiTestCompilation'),
+            'itemDataPath'      => $this->getRequestParameter('itemDataPath')
         );
     }
     
     protected function selectView() {
+        $this->setInitialVariableElements();
         $this->setView('item_runner.tpl');
     }
 }

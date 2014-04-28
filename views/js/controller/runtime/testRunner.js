@@ -7,7 +7,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		var timeDiffs = [];
 	
 	    var TestRunner = {
-	    //const
+	    // Constants
 	    'TEST_STATE_INITIAL': 0,
 	    'TEST_STATE_INTERACTING': 1,
 	    'TEST_STATE_MODAL_FEEDBACK': 2,
@@ -17,15 +17,14 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	    'TEST_NAVIGATION_NONLINEAR': 1,
 	    'TEST_ITEM_STATE_INTERACTING': 1,
 	        
-		beforeTransition : function(callback) {			
-			
-	        var $testRunner = $('#runner');
-	        $testRunner.css('height', '300px');
+		beforeTransition : function(callback) {
+		    // Ask the top window to start the loader. 
+            iframeNotifier.parent('loading');
+            
+            // Disable buttons.
+		    this.disableGui();
 	
-	        $('#qti-item, #qti-info, #qti-rubrics, #qti-timers').css('display', 'none');
-	
-	        //ask the top window to start the loader 
-	        iframeNotifier.parent('loading');
+	        $('#qti-item, #qti-info, #qti-rubrics, #qti-timers').css('display', 'none');	        
 	
 	        // Wait at least 250ms for a better user experience.
 	        if(typeof callback === 'function'){
@@ -34,11 +33,15 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 		
 		afterTransition : function() {
-		     //ask the top window to stop the loader 
-		     iframeNotifier.parent('unloading');
+		    this.enableGui();
+    	    
+    	    //ask the top window to stop the loader 
+    	    iframeNotifier.parent('unloading');
 		},
 	
 		moveForward: function() {
+		    this.disableGui();
+		    
 		    var that = this;
 		    this.itemServiceApi.kill(function(signal) {
 		        that.actionCall('moveForward');
@@ -46,6 +49,8 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 	
 		moveBackward : function() {
+		    this.disableGui();
+		    
 		    var that = this;
 		    this.itemServiceApi.kill(function(signal) {
                 that.actionCall('moveBackward');
@@ -53,10 +58,14 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 	
 		skip : function() {
+		    this.disableGui();
+		    
 			this.actionCall('skip');
 		},
 		
 		timeout: function() {
+		    this.disableGui();
+		    
 			this.assessmentTestContext.isTimeout = true;
 			this.updateTimer();
 			this.actionCall('timeout');
@@ -306,13 +315,23 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    var actionsHeight = $('#qti-actions').outerHeight();
 		    var windowHeight = $(window).height();
 		    var navigationHeight = $('#qti-navigation').outerHeight();
-		    $('#qti-content').height(windowHeight - actionsHeight - navigationHeight);
+		    var newContentHeight = windowHeight - actionsHeight - navigationHeight
+		    $('#qti-content, #qti-item').height(newContentHeight);
+		    $('#qti-item').contents().find('html, body').css('height', '100%');
+		},
+		
+		disableGui: function() {
+		    $('#qti-navigation button').addClass('disabled');
+		},
+		
+		enableGui: function() {
+		    $('#qti-navigation button').removeClass('disabled');
 		},
 	
 		formatTime: function(totalSeconds) {
 		    var sec_num = totalSeconds;
 		    var hours   = Math.floor(sec_num / 3600);
-		    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+		    var minutes = Math    .floor((sec_num - (hours * 3600)) / 60);
 		    var seconds = sec_num - (hours * 3600) - (minutes * 60);
 		
 		    if (hours   < 10) {hours   = "0" + hours;}
@@ -365,19 +384,27 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	        TestRunner.assessmentTestContext = assessmentTestContext;
 	
 	        $('#skip, #skip-end').click(function(){
-	            TestRunner.skip();
+	            if (!$(this).hasClass('disabled')) {
+	                TestRunner.skip();
+	            }
 	        });
 	        
 	        $('#move-forward, #move-end').click(function(){
-	            TestRunner.moveForward();
+	            if (!$(this).hasClass('disabled')) {
+	                TestRunner.moveForward();
+	            }
 	        });
 	        
 	        $('#move-backward').click(function(){
-	            TestRunner.moveBackward();
+	            if (!$(this).hasClass('disabled')) {
+	                TestRunner.moveBackward();
+	            }
 	        });
 	        
 	        $('#comment').click(function(){
-	            TestRunner.comment();
+	            if (!$(this).hasClass('disabled')) {
+	                TestRunner.comment();
+	            }
 	        });
 	        
 	        $('#qti-comment-cancel').click(function(){
@@ -398,6 +425,14 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	        });
 	
 	        iframeNotifier.parent('serviceready');
+	        
+	        $(document).bind('loading', function() {
+	            iframeNotifier.parent('loading');
+	        });
+	        
+	        $(document).bind('unloading', function() {
+	            iframeNotifier.parent('unloading');
+	        });
 	    }
 	};
 });

@@ -1,4 +1,4 @@
-define([ 'jquery' ], function($) {
+define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
 
     function ResultServerApi(endpoint, params) {
 
@@ -6,7 +6,8 @@ define([ 'jquery' ], function($) {
         this.testServiceCallId = params.testServiceCallId;
         this.testDefinition = params.testDefinition;
         this.testCompilation = params.testCompilation;
-
+        this.itemDataPath = params.itemDataPath;
+        
         //private variable
         var qtiRunner = null;
         this.setQtiRunner = function(runner) {
@@ -22,14 +23,17 @@ define([ 'jquery' ], function($) {
             serviceCallId, responses, scores, events, params, callback) {
 
         var that = this;
-
+        iframeNotifier.parent('loading');
+        
         $.ajax({
             url : this.endpoint + 'storeItemVariableSet?serviceCallId='
                     + encodeURIComponent(this.testServiceCallId)
                     + '&QtiTestDefinition='
                     + encodeURIComponent(this.testDefinition)
                     + '&QtiTestCompilation='
-                    + encodeURIComponent(this.testCompilation),
+                    + encodeURIComponent(this.testCompilation)
+                    + '&itemDataPath='
+                    + encodeURIComponent(this.itemDataPath),
             data : JSON.stringify(responses),
             type : 'post',
             contentType : 'application/json',
@@ -40,13 +44,14 @@ define([ 'jquery' ], function($) {
                     if (reply.itemSession) {
 
                         var runner = that.getQtiRunner();
-                        if (runner) {
-                            fbCount = runner.showFeedbacks(reply.itemSession,
-                                    callback);
+                        var onShowCallback = function() {
+                            iframeNotifier.parent('unloading');
                         }
+                        fbCount = runner.showFeedbacks(reply.itemSession, callback, onShowCallback);
                     }
 
                     if (!fbCount) {
+                        iframeNotifier.parent('unloading');
                         callback(0);
                     }
                 }

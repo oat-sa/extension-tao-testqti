@@ -16,7 +16,7 @@
     <rdf:type rdf:resource="http://www.tao.lu/middleware/wfEngine.rdf#ClassDeliveryServices"/>
     <rdfs:label xml:lang="en-US"><![CDATA[QTI Test Item Runner]]></rdfs:label>
     <rdfs:comment xml:lang="en-US"><![CDATA[Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts]]></rdfs:comment>
-    <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/ItemRunner/index?itemPath=^itemPath]]></wf:PropertySupportServicesUrl>
+    <wf:PropertySupportServicesUrl><![CDATA[/taoQtiTest/ItemRunner/index?itemPath=^itemPath&itemDataPath=^itemDataPath&QtiTestParentServiceCallId=^QtiTestParentServiceCallId&QtiTestDefinition=^QtiTestDefinition&QtiTestCompilation=^QtiTestCompilation]]></wf:PropertySupportServicesUrl>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemPath"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemDataPath"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAODelivery.rdf#FormalParamItemUri"/>
