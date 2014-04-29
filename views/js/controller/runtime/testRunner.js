@@ -315,9 +315,8 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    var actionsHeight = $('#qti-actions').outerHeight();
 		    var windowHeight = $(window).height();
 		    var navigationHeight = $('#qti-navigation').outerHeight();
-		    var newContentHeight = windowHeight - actionsHeight - navigationHeight
-		    $('#qti-content, #qti-item').height(newContentHeight);
-		    $('#qti-item').contents().find('html, body').css('height', '100%');
+		    var newContentHeight = windowHeight - actionsHeight - navigationHeight;
+		    $('#qti-content').height(newContentHeight);
 		},
 		
 		disableGui: function() {
