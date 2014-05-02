@@ -19,23 +19,23 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
                               :  : :      :
                               :__:-:__.;--'
                              <*_/   <*/
-/* line 35, /home/bertrand/dev/projects/tao/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 35, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after {
   content: "\122"; }
 
-/* line 51, /home/bertrand/dev/projects/tao/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 51, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-props h1:before {
   content: "\132"; }
 
-/* line 76, /home/bertrand/dev/projects/tao/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 76, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
   content: "\14b"; }
 
-/* line 86, /home/bertrand/dev/projects/tao/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 86, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items h1:before {
   content: "\155"; }
 
-/* line 87, /home/bertrand/dev/projects/tao/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 87, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test > h1:before {
   content: "\156"; }
 
@@ -523,29 +523,30 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
       border: solid 1px #dddddd;
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
-      border-radius: 3px; }
-      /* line 396, ../scss/creator.scss */
+      border-radius: 3px;
+      padding-left: 5px; }
+      /* line 397, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemrefs {
         position: relative;
         padding: 0;
-        margin-left: 18px; }
-        /* line 400, ../scss/creator.scss */
+        margin-left: 15px; }
+        /* line 401, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs:before {
           color: #dddddd; }
-        /* line 403, ../scss/creator.scss */
+        /* line 404, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li {
           position: relative;
           height: 39px;
           line-height: 39px;
           padding: 2px;
           clear: both; }
-          /* line 409, ../scss/creator.scss */
+          /* line 410, ../scss/creator.scss */
           #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li:nth-child(even) {
             background-color: #f3f1ef; }
-      /* line 414, ../scss/creator.scss */
+      /* line 415, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder {
         display: none;
-        margin: 5px;
+        margin: 5px 5px 5px 0;
         height: 35px;
         line-height: 35px;
         padding-left: 5px;
@@ -562,11 +563,11 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
         -moz-transition: all 0.5s ease-out;
         -o-transition: all 0.5s ease-out;
         transition: all 0.5s ease-out; }
-        /* line 427, ../scss/creator.scss */
+        /* line 428, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
           font-family: 'tao';
           display: inline-block; }
-        /* line 430, ../scss/creator.scss */
+        /* line 431, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:hover {
           background-color: #ebf2f6;
           -webkit-transition: all 0.5s ease-out;
