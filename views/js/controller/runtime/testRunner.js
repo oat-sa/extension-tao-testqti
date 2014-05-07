@@ -303,11 +303,24 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 		
 		updateContext: function() {
-		    $('#qti-test-title').text(this.assessmentTestContext.testTitle);
 		    
-		    $('#qti-test-position').empty()
-		                           .append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
+		    var testTitle = this.assessmentTestContext.testTitle;
+		    var testPartId = this.assessmentTestContext.testPartId;
+		    var sectionTitle = this.assessmentTestContext.sectionTitle;
 		    
+		    var desc = __('Part:') + ' <span id="qti-part-title">' + testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + sectionTitle + '</span>';
+		    
+		    $('#qti-test-title').text(testTitle);
+		    
+		    try {
+		        $('#qti-test-title, #qti-test-position').badonkatrunc('destroy');
+		    }
+		    catch (e) {
+		        // Very first call, the badonkatrunc wrapper was not there.
+		        // Continue normally.
+		    }
+		    
+		    $('#qti-test-position').empty().append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
 		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
 		},
 		
