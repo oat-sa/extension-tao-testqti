@@ -330,9 +330,9 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    var navigationHeight = $('#qti-navigation').outerHeight();
 		    var newContentHeight = windowHeight - actionsHeight - navigationHeight;
 		    
-		    if (navigator.userAgent.match(/iPad;.*CPU.*OS 7_\d/i) && window.innerHeight != document.documentElement.clientHeight) {
-                newContentHeight -= 20;
-            }
+//		    if (navigator.userAgent.match(/iPad;.*CPU.*OS 7_\d/i) && window.innerHeight != document.documentElement.clientHeight) {
+//                newContentHeight -= 20;
+//            }
 		    
 		    $('#qti-content').height(newContentHeight);
 		},
