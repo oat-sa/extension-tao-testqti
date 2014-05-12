@@ -119,7 +119,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			
 			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
 			$itemFrame.insertBefore($('#qti-navigation'));
-			iframeResizer.autoHeight($itemFrame, 'body', parseInt($runner.height(), 10));
+			iframeResizer.autoHeight($itemFrame, 'body');
 			
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
 			    // Inject API into the frame.
