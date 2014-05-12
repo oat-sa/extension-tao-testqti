@@ -151,6 +151,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         
         try {
         
+            $itemVariableSet = array();
+            
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
@@ -158,14 +160,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::t("Examination of variable '${identifier}'");
-        
-                $variable = $itemSession->getVariable($identifier);
-                $itemUri = self::getItemRefUri($item);
-                $testUri = self::getTestDefinitionUri($item);
-                $transmissionId = "${sessionId}.${item}.${occurence}";
-        
-                $resultTransmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+                $itemVariableSet[] = $itemSession->getVariable($identifier);
             }
+            
+            $itemUri = self::getItemRefUri($item);
+            $testUri = self::getTestDefinitionUri($item);
+            $transmissionId = "${sessionId}.${item}.${occurence}";
+            
+            $resultTransmitter->transmitItemVariable($itemVariableSet, $transmissionId, $itemUri, $testUri);
         }
         catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
