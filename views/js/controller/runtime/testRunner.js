@@ -118,8 +118,12 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			this.updateTimer();
 			
 			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
-			$itemFrame.insertBefore($('#qti-navigation'));
+			$itemFrame.appendTo($('#qti-content'));
 			iframeResizer.autoHeight($itemFrame, 'body');
+			
+			if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false == true) {
+			    $('#qti-content').css('overflow-y', 'scroll');
+			}
 			
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
 			    // Inject API into the frame.
@@ -140,11 +144,11 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
             $('#qti-info').remove();            
             
             if (this.assessmentTestContext.isTimeout === true) {
-            	$('<div id="qti-info" class="info"></div>').insertAfter('#qti-actions');
+            	$('<div id="qti-info" class="info"></div>').prependTo('#qti-content');
             	$('#qti-info').html(__('Maximum time limit reached for item "%s".').replace('%s', this.assessmentTestContext.itemIdentifier));
             }
             else if (this.assessmentTestContext.itemSessionState !== this.TEST_ITEM_STATE_INTERACTING) {
-            	$('<div id="qti-info" class="info"></div>').insertAfter('#qti-actions');
+            	$('<div id="qti-info" class="info"></div>').prependTo('#qti-content');
             	$('#qti-info').html(__('No more attempts allowed for item "%s".').replace('%s', this.assessmentTestContext.itemIdentifier));
             }
 		},
@@ -191,7 +195,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			    if (this.assessmentTestContext.timeConstraints.length > 0) {
 			
 			    	// Insert QTI Timers container.
-			    	$('<div id="qti-timers"></div>').insertAfter('#qti-actions');
+			    	$('<div id="qti-timers"></div>').prependTo('#qti-content');
 			    	// self.formatTime(cst.seconds)
 			        for (var i = this.assessmentTestContext.timeConstraints.length - 1; i >= 0; i--) {
 			        	
@@ -265,7 +269,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		                    return false;
 		            });
 		
-		            $rubrics.insertAfter('#qti-actions');
+		            $rubrics.prependTo('#qti-content');
 		            MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
 		    }
 		},
@@ -325,14 +329,11 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 		
 		adjustFrame: function() {
+		    
 		    var actionsHeight = $('#qti-actions').outerHeight();
-		    var windowHeight = window.innerHeight ? window.innerHeight : $(window).height()
+		    var windowHeight = window.innerHeight ? window.innerHeight : $(window).height();
 		    var navigationHeight = $('#qti-navigation').outerHeight();
 		    var newContentHeight = windowHeight - actionsHeight - navigationHeight;
-		    
-//		    if (navigator.userAgent.match(/iPad;.*CPU.*OS 7_\d/i) && window.innerHeight != document.documentElement.clientHeight) {
-//                newContentHeight -= 20;
-//            }
 		    
 		    $('#qti-content').height(newContentHeight);
 		},

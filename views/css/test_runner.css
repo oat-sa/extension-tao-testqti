@@ -201,7 +201,8 @@ html, body {
     margin: 40px 0;
     padding: 0;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 #qti-test-progress {
