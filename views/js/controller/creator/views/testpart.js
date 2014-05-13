@@ -47,12 +47,22 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
         addSection();
 
         /**
-         * Perform some binding once the property view is create
+         * Perform some binding once the property view is created
          * @private
          * @param {propView} propView - the view object
          */
         function propHandler (propView) {
             
+           var $view = propView.getView();
+
+            //listen for databinder change to update the test part title
+           var $identifier =  $('[data-bind=identifier]', $testPart);
+           $view.on('change.binder', function(e, model){
+                if(e.namespace === 'binder' && model['qti-type'] === 'testPart'){
+                    $identifier.text(model.identifier);
+                }
+            });
+
             //destroy it when it's testpart is removed
             $testPart.on('delete', function(e){
                 if(propView !== null){

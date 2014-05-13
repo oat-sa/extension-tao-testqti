@@ -57,6 +57,17 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
          *  @param {propView} propView - the view object
          */
         function propHandler (propView) {
+
+            var $view = propView.getView();
+
+            //listen for databinder change to update the test part title
+           var $title =  $('[data-bind=title]', $section);
+           $view.on('change.binder', function(e, model){
+                if(e.namespace === 'binder' && model['qti-type'] === 'assessmentSection'){
+                    $title.text(model.title);
+                }
+            });
+
             $section.parents('.testpart').on('delete', removePropHandler);
             $section.on('delete', removePropHandler);
             
