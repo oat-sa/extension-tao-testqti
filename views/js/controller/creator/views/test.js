@@ -74,7 +74,6 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
 
                     //create an new testPart model object to be bound to the template
                     var testPartIndex = $('.testpart').length;
-                    var sectionIndex = $('.section').length;
                     cb({
                         'qti-type' : 'testPart',
                         identifier : qtiTestHelper.getIdentifier('testPart', data.identifiers),
@@ -84,7 +83,7 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
                             identifier : qtiTestHelper.getIdentifier('assessmentSection',  data.identifiers),
-                            title : 'Section ' + (sectionIndex + 1),
+                            title : 'Section 1',
                             index : 0,
                             sectionParts : []             
                         }]
@@ -93,7 +92,9 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
             });
             
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '.testparts', function(e, $testPart, added){
+            $(document)
+              .off('add.binder', '.testparts')
+              .on ('add.binder', '.testparts', function(e, $testPart, added){
                 if(e.namespace === 'binder' && $testPart.hasClass('testpart')){
                     //initialize the new test part
                     testPartView.setUp($testPart, model.testParts[added.index], data);

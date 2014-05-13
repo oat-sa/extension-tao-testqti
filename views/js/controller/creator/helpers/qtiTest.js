@@ -60,7 +60,7 @@ define(['lodash', 'i18n'], function(_, __){
                 suggestion = qtiType +  glue + (index++);
             } while(_.contains(lockedIdentifiers, suggestion.toLowerCase()));
 
-            lockedIdentifiers.push(suggestion);
+            lockedIdentifiers.push(suggestion.toLowerCase());
 
             return suggestion;
         },

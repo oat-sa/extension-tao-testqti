@@ -102,11 +102,14 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                 }
             });
             
+                   
+ 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $testPart.attr('id') + ' .sections', function(e, $section){
+            $(document)
+              .off('add.binder', '#' + $testPart.attr('id') + ' .sections')
+              .on ('add.binder', '#' + $testPart.attr('id') + ' .sections', function(e, $section){
                 if(e.namespace === 'binder' && $section.hasClass('section')){
                     var index = $section.data('bind-index'); 
-
                     //initialize the new test part
                     sectionView.setUp($section, model.assessmentSections[index], data);
                 }

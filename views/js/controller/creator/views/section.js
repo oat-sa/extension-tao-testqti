@@ -128,7 +128,9 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
+            $(document)
+              .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
+              .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
                 if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
                     var index = $itemRef.data('bind-index'); 
 
