@@ -119,13 +119,26 @@
 <!-- assessmentTest/testPart/assessmentSection/selection -->
     <div class="section-selection toggled">
 
+        <div class="grid-row pseudo-label-box">
+            <div class="col-5">
+                <label for="section-enable-selection">{{__ 'Enable selection'}}</label>
+            </div>
+
+            <div class="col-6">
+                <label>
+                    <input type="checkbox" name="section-enable-selection"  />
+                    <span class="icon-checkbox"></span>
+                </label>
+            </div>
+        </div>
+
 <!-- assessmentTest/testPart/assessmentSection/selection/select -->
         <div class="grid-row">
             <div class="col-5">
                 <label for="section-select">{{__ 'Select'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
             </div>
             <div class="col-6">
-                <input name="section-select" type="text" data-increment="1" data-min="1" value="1" data-bind="selection.select"  data-bind-encoder="number" />
+                <input name="section-select" type="text" data-increment="1" data-min="0" value="0" data-bind="selection.select"  data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 

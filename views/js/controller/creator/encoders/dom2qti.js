@@ -90,7 +90,7 @@ define(['jquery', 'lodash'], function($, _){
         */
        decode : function(nodeValue){
            var self = this;
-           var $nodeValue = (nodeValue instanceof jQuery) ? nodeValue : $(nodeValue);
+           var $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
            var result = [];
           
            _.forEach($nodeValue, function(elt){
@@ -113,7 +113,7 @@ define(['jquery', 'lodash'], function($, _){
                         'label' : ''
                     },
                     _.transform(elt.attributes, function(acc, value) {
-                        acc[value['nodeName']] = value['nodeValue'];
+                        acc[value.nodeName] = value.nodeValue;
                     })
                     );
                     if (elt.childNodes.length > 0) {

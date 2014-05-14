@@ -254,7 +254,7 @@
         background-color: $uiGeneralContentBg;
         color: $textColor;
  
-        h1, h2, h3, li {
+        h1, h2, li {
             & > span:first-child {
                 float: left;
                 @include responsive('max-width', '300px', '400px', '500px');
@@ -267,6 +267,7 @@
                 max-width: 300px;
                 height: 39px;
                 text-overflow: ellipsis;
+                z-index: 100;
                 .tlb {
                     display: inline-block;
                     background: none;
@@ -356,7 +357,9 @@
             margin: 0px 0 10px 0px;
             h3 {
                 color: $rubColor;
+                float: none;    
             }
+            
             .rubricblocks {
                 clear: both;
                 padding-left: 25px;
@@ -369,8 +372,12 @@
                     border: solid 1px $uiGeneralContentBorder;
                     @include border-radius;
                     background-color: $uiClickableDefaultBg;
-                    margin-bottom: 10px;
+                    margin-bottom: 20px;
+                    clear: both;
 
+                    .rubricblock-binding {
+                        display: none;
+                    }
                     .rubricblock-content {
                         @include border-radius;
                         background-color: $uiGeneralContentBg;
@@ -378,13 +385,20 @@
                         border: solid 1px $uiGeneralContentBg;
                         margin: 0;
                         min-height: 30px;
+                        overflow: hidden;
+
+                        .grid-row{
+                            display: block;
+                        }
+                        .mini-tlb {
+                            display: none;
+                        }
                     }
                 }
                 .actions{
-                    min-width: 75px;
                     position: absolute;
                     right: -6px;
-                    top: -32px;
+                    top: -5px;
                 }
             }
 

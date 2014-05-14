@@ -20,12 +20,13 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 'lodash', 'uri', 
-'taoQtiTest/controller/creator/views/actions',
-'taoQtiTest/controller/creator/views/itemref',
-'taoQtiTest/controller/creator/views/rubricblock',
-'taoQtiTest/controller/creator/templates/index', 
-'taoQtiTest/controller/creator/helpers/qtiTest'],
+    'jquery', 'lodash', 'uri', 
+    'taoQtiTest/controller/creator/views/actions',
+    'taoQtiTest/controller/creator/views/itemref',
+    'taoQtiTest/controller/creator/views/rubricblock',
+    'taoQtiTest/controller/creator/templates/index', 
+    'taoQtiTest/controller/creator/helpers/qtiTest'
+],
 function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
     'use strict';
         
@@ -60,7 +61,36 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
             var $view = propView.getView();
 
-            //listen for databinder change to update the test part title
+           //enable/disable selection
+           var $selectionSwitcher = $('[name=section-enable-selection]', $view);
+           var $selectionSelect = $('[name=section-select]', $view);
+           var $selectionWithRep = $('[name=section-with-replacement]', $view);
+
+           var switchSelection = function switchSelection(){
+                if($selectionSwitcher.prop('checked') === true){
+                   $selectionSelect.removeClass('disabled').trigger('change');
+                   $selectionWithRep.removeClass('disabled');
+                } else {
+                   $selectionSelect.addClass('disabled');
+                   $selectionWithRep.addClass('disabled');
+                }
+           };
+           $selectionSwitcher.on('change', switchSelection);
+           $selectionSwitcher.on('change', function updateModel(){
+                if(!$selectionSwitcher.prop('checked')){
+                    $selectionSelect.val(0);
+                    $selectionWithRep.removeProp('checked');
+                    delete model.selection;
+                }
+           });
+
+           if(model.selection){
+                $selectionSwitcher.prop('checked', true).trigger('change');
+           } else {
+                $selectionSwitcher.removeProp('checked').trigger('change');
+           }
+
+           //listen for databinder change to update the test part title
            var $title =  $('[data-bind=title]', $section);
            $view.on('change.binder', function(e, model){
                 if(e.namespace === 'binder' && model['qti-type'] === 'assessmentSection'){
@@ -180,6 +210,10 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         }
 
 
+        /**
+         * Set up the rubric blocks that already belongs to the section
+         * @private
+         */
         function rubricBlocks () {
             if(!model.rubricBlocks){
                 model.rubricBlocks = [];
@@ -196,7 +230,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         }
 
         /**
-         * Set up the rubric blocks already belongs to the section
+         * Enable to add new rubrick block
          * @private
          */
         function addRubricBlock () {
@@ -218,6 +252,8 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock, data){
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     var index = $rubricBlock.data('bind-index'); 
+
+                    $('.rubricblock-binding', $rubricBlock).html('<div>&nbsp;</div>');
                     rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index]);
                 }
             });

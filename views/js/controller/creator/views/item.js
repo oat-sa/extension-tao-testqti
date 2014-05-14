@@ -53,7 +53,7 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, 
             
             var liveSearch = function(){
                 var pattern = $search.val();
-                if(pattern.length > 3 || pattern.length === 0){
+                if(pattern.length > 1 || pattern.length === 0){
                     clearTimeout(timeout);
                     timeout = setTimeout(function(){
                         loadItems(pattern, function(items){

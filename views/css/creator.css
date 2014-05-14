@@ -383,73 +383,74 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
       #test-creator .test-creator-test {
         margin-right: 350px; } }
     /* line 258, ../scss/creator.scss */
-    #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test h3 > span:first-child, #test-creator .test-creator-test li > span:first-child {
+    #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child {
       float: left;
       text-overflow: ellipsis; }
       @media only screen and (max-width: 1024px) {
         /* line 258, ../scss/creator.scss */
-        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test h3 > span:first-child, #test-creator .test-creator-test li > span:first-child {
+        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child {
           max-width: "300px"; } }
       @media only screen and (min-width: 1025px) and (max-width: 1280px) {
         /* line 258, ../scss/creator.scss */
-        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test h3 > span:first-child, #test-creator .test-creator-test li > span:first-child {
+        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child {
           max-width: "400px"; } }
       @media only screen and (min-width: 1281px) {
         /* line 258, ../scss/creator.scss */
-        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test h3 > span:first-child, #test-creator .test-creator-test li > span:first-child {
+        #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child {
           max-width: "500px"; } }
     /* line 263, ../scss/creator.scss */
-    #test-creator .test-creator-test h1 .actions, #test-creator .test-creator-test h2 .actions, #test-creator .test-creator-test h3 .actions, #test-creator .test-creator-test li .actions {
+    #test-creator .test-creator-test h1 .actions, #test-creator .test-creator-test h2 .actions, #test-creator .test-creator-test li .actions {
       float: right;
       position: relative;
       display: inline-block;
       max-width: 300px;
       height: 39px;
-      text-overflow: ellipsis; }
-      /* line 270, ../scss/creator.scss */
-      #test-creator .test-creator-test h1 .actions .tlb, #test-creator .test-creator-test h2 .actions .tlb, #test-creator .test-creator-test h3 .actions .tlb, #test-creator .test-creator-test li .actions .tlb {
+      text-overflow: ellipsis;
+      z-index: 100; }
+      /* line 271, ../scss/creator.scss */
+      #test-creator .test-creator-test h1 .actions .tlb, #test-creator .test-creator-test h2 .actions .tlb, #test-creator .test-creator-test li .actions .tlb {
         display: inline-block;
         background: none;
         margin-left: 15px;
         font-size: 14px;
         font-size: 1.4rem; }
-        /* line 275, ../scss/creator.scss */
-        #test-creator .test-creator-test h1 .actions .tlb .tlb-top, #test-creator .test-creator-test h2 .actions .tlb .tlb-top, #test-creator .test-creator-test h3 .actions .tlb .tlb-top, #test-creator .test-creator-test li .actions .tlb .tlb-top {
+        /* line 276, ../scss/creator.scss */
+        #test-creator .test-creator-test h1 .actions .tlb .tlb-top, #test-creator .test-creator-test h2 .actions .tlb .tlb-top, #test-creator .test-creator-test li .actions .tlb .tlb-top {
           background: none !important;
           border-width: 0 !important;
           -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
           -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
           box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-    /* line 284, ../scss/creator.scss */
+    /* line 285, ../scss/creator.scss */
     #test-creator .test-creator-test > h1 {
       position: relative;
       background-color: #f3f1ef;
       height: 39px;
       padding: 4px 28px 3px 48px;
       margin-bottom: 10px; }
-      /* line 290, ../scss/creator.scss */
+      /* line 291, ../scss/creator.scss */
       #test-creator .test-creator-test > h1:before {
         font-family: 'tao';
         display: inline-block;
         position: absolute;
         left: 20px; }
-    /* line 298, ../scss/creator.scss */
+    /* line 299, ../scss/creator.scss */
     #test-creator .test-creator-test .test-content {
       padding: 0 20px; }
-      /* line 300, ../scss/creator.scss */
+      /* line 301, ../scss/creator.scss */
       #test-creator .test-creator-test .test-content h1, #test-creator .test-creator-test .test-content h2 {
         position: relative;
         height: 35px; }
-    /* line 308, ../scss/creator.scss */
+    /* line 309, ../scss/creator.scss */
     #test-creator .test-creator-test .testpart-content > button {
       margin-left: 10px; }
-    /* line 313, ../scss/creator.scss */
+    /* line 314, ../scss/creator.scss */
     #test-creator .test-creator-test .testpart {
       color: #222222;
       border-left: solid 5px #8d949e;
       padding: 0 5px;
       margin: 20px 0; }
-      /* line 319, ../scss/creator.scss */
+      /* line 320, ../scss/creator.scss */
       #test-creator .test-creator-test .testpart > h1 {
         background-color: #a3a9b1;
         padding: 0 5px;
@@ -457,43 +458,44 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
         -moz-border-radius: 2px;
         -webkit-border-radius: 2px;
         border-radius: 2px; }
-        /* line 324, ../scss/creator.scss */
+        /* line 325, ../scss/creator.scss */
         #test-creator .test-creator-test .testpart > h1 > .toggler {
           position: absolute;
           right: 15px;
           color: white; }
-    /* line 334, ../scss/creator.scss */
+    /* line 335, ../scss/creator.scss */
     #test-creator .test-creator-test .sections {
       margin-bottom: 10px; }
-    /* line 338, ../scss/creator.scss */
+    /* line 339, ../scss/creator.scss */
     #test-creator .test-creator-test .section {
       color: #222222;
       border-left: solid 5px #a4bbc5;
       padding: 0 5px 0 15px;
       margin: 20px 0 10px 10px; }
-      /* line 344, ../scss/creator.scss */
+      /* line 345, ../scss/creator.scss */
       #test-creator .test-creator-test .section > h2 {
         color: #627076; }
-      /* line 348, ../scss/creator.scss */
+      /* line 349, ../scss/creator.scss */
       #test-creator .test-creator-test .section:last-child {
         margin-bottom: 0; }
-    /* line 353, ../scss/creator.scss */
+    /* line 354, ../scss/creator.scss */
     #test-creator .test-creator-test .rublocks {
       border-left: solid 5px #d5707f;
       padding: 0 5px 0 15px;
       margin: 0px 0 10px 0px; }
-      /* line 357, ../scss/creator.scss */
+      /* line 358, ../scss/creator.scss */
       #test-creator .test-creator-test .rublocks h3 {
-        color: #d5707f; }
-      /* line 360, ../scss/creator.scss */
+        color: #d5707f;
+        float: none; }
+      /* line 363, ../scss/creator.scss */
       #test-creator .test-creator-test .rublocks .rubricblocks {
         clear: both;
         padding-left: 25px; }
-        /* line 363, ../scss/creator.scss */
+        /* line 366, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks li, #test-creator .test-creator-test .rublocks .rubricblocks .rubricblock-content {
           position: relative;
           clear: both; }
-        /* line 367, ../scss/creator.scss */
+        /* line 370, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks li {
           padding: 4px;
           border: solid 1px #dddddd;
@@ -501,8 +503,12 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
           -webkit-border-radius: 2px;
           border-radius: 2px;
           background-color: #f3f1ef;
-          margin-bottom: 10px; }
-          /* line 374, ../scss/creator.scss */
+          margin-bottom: 20px;
+          clear: both; }
+          /* line 378, ../scss/creator.scss */
+          #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-binding {
+            display: none; }
+          /* line 381, ../scss/creator.scss */
           #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content {
             -moz-border-radius: 2px;
             -webkit-border-radius: 2px;
@@ -511,39 +517,45 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
             padding: 4px;
             border: solid 1px white;
             margin: 0;
-            min-height: 30px; }
-        /* line 383, ../scss/creator.scss */
+            min-height: 30px;
+            overflow: hidden; }
+            /* line 390, ../scss/creator.scss */
+            #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content .grid-row {
+              display: block; }
+            /* line 393, ../scss/creator.scss */
+            #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content .mini-tlb {
+              display: none; }
+        /* line 398, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks .actions {
-          min-width: 75px;
           position: absolute;
           right: -6px;
-          top: -32px; }
-    /* line 393, ../scss/creator.scss */
+          top: -5px; }
+    /* line 407, ../scss/creator.scss */
     #test-creator .test-creator-test .itemrefs-wrapper {
       border: solid 1px #dddddd;
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
       border-radius: 3px;
       padding-left: 5px; }
-      /* line 397, ../scss/creator.scss */
+      /* line 411, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemrefs {
         position: relative;
         padding: 0;
         margin-left: 15px; }
-        /* line 401, ../scss/creator.scss */
+        /* line 415, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs:before {
           color: #dddddd; }
-        /* line 404, ../scss/creator.scss */
+        /* line 418, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li {
           position: relative;
           height: 39px;
           line-height: 39px;
           padding: 2px;
           clear: both; }
-          /* line 410, ../scss/creator.scss */
+          /* line 424, ../scss/creator.scss */
           #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li:nth-child(even) {
             background-color: #f3f1ef; }
-      /* line 415, ../scss/creator.scss */
+      /* line 429, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder {
         display: none;
         margin: 5px 5px 5px 0;
@@ -563,11 +575,11 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
         -moz-transition: all 0.5s ease-out;
         -o-transition: all 0.5s ease-out;
         transition: all 0.5s ease-out; }
-        /* line 428, ../scss/creator.scss */
+        /* line 442, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
           font-family: 'tao';
           display: inline-block; }
-        /* line 431, ../scss/creator.scss */
+        /* line 445, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:hover {
           background-color: #ebf2f6;
           -webkit-transition: all 0.5s ease-out;

@@ -151,14 +151,6 @@ define(['lodash', 'i18n'], function(_, __){
                                  assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
                              delete assessmentSection.ordering;
                          }
-                         
-                         //remove selection if default values
-                         if(assessmentSection.selection && 
-                                 assessmentSection.selection.select !== undefined && assessmentSection.selection.select === 1 &&
-                                 (assessmentSection.selection.withReplacement === undefined ||  assessmentSection.selection.withReplacement === false )){
-                             delete assessmentSection.selection;
-                         }
-                         
 
                           if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
 

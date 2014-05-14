@@ -31,7 +31,7 @@
             <span class="title">{{__ 'Rubric Blocks'}}</span>
         </h3>
         <ol class="rubricblocks decimal" data-bind-each="rubricBlocks" data-bind-tmpl="rubricblock"></ol>
-        <button class="btn-default small rublock-adder">
+        <button class="btn-info small rublock-adder">
             <span class="icon-add"></span>{{__ 'New Rubric Block'}}
         </button>
     </div>
