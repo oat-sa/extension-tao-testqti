@@ -370,7 +370,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Test Part title.
             $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
              
-            // Section title.
+            
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
             // Number of items composing the test session.
