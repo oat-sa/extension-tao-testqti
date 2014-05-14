@@ -5,6 +5,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
+		var waitingTime = 0;
 	
 	    var TestRunner = {
 	    // Constants
@@ -26,9 +27,9 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	
 	        $('#qti-item, #qti-info, #qti-rubrics, #qti-timers').css('display', 'none');	        
 	
-	        // Wait at least 250ms for a better user experience.
+	        // Wait at least waitingTime ms for a better user experience.
 	        if(typeof callback === 'function'){
-	            setTimeout(callback, 250);
+	            setTimeout(callback, waitingTime);
 	        }
 		},
 		
@@ -126,11 +127,15 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			}
 			
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
+			    $(document).on('serviceloaded', function() {
+			        self.afterTransition();
+                    self.adjustFrame();
+                    $itemFrame.show();
+			    });
+			    
 			    // Inject API into the frame.
 			    this.itemServiceApi.loadInto($itemFrame[0], function(){
-			        self.afterTransition();
-			        self.adjustFrame();
-			        $itemFrame.show();
+			        // We now rely on the 'serviceloaded' event.
 			    });
 			}
 			else {
