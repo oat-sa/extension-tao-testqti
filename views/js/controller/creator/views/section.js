@@ -68,10 +68,10 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
            var switchSelection = function switchSelection(){
                 if($selectionSwitcher.prop('checked') === true){
-                   $selectionSelect.removeClass('disabled').trigger('change');
+                   $selectionSelect.incrementer('enable');
                    $selectionWithRep.removeClass('disabled');
                 } else {
-                   $selectionSelect.addClass('disabled');
+                   $selectionSelect.incrementer('disable');
                    $selectionWithRep.addClass('disabled');
                 }
            };
@@ -79,16 +79,12 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
            $selectionSwitcher.on('change', function updateModel(){
                 if(!$selectionSwitcher.prop('checked')){
                     $selectionSelect.val(0);
-                    $selectionWithRep.removeProp('checked');
+                    $selectionWithRep.prop('checked', false);
                     delete model.selection;
                 }
            });
 
-           if(model.selection){
-                $selectionSwitcher.prop('checked', true).trigger('change');
-           } else {
-                $selectionSwitcher.removeProp('checked').trigger('change');
-           }
+           $selectionSwitcher.prop('checked', !!model.selection).trigger('change');
 
            //listen for databinder change to update the test part title
            var $title =  $('[data-bind=title]', $section);
