@@ -74,6 +74,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
             $converter->fromJson($json);
             
+            common_Logger::i(var_export($doc->saveToString(), true));
+            
             $saved = $this->saveDoc($test, $doc);
         }
         return $saved;

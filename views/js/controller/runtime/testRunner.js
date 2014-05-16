@@ -119,7 +119,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			this.updateTimer();
 			
 			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
-			$itemFrame.appendTo($('#qti-content'));
+			$itemFrame.appendTo('#qti-content');
 			iframeResizer.autoHeight($itemFrame, 'body');
 			
 			if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false == true) {
@@ -340,7 +340,8 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    var navigationHeight = $('#qti-navigation').outerHeight();
 		    var newContentHeight = windowHeight - actionsHeight - navigationHeight;
 		    
-		    $('#qti-content').height(newContentHeight);
+		    var $content = $('#qti-content');
+		    $content.height(newContentHeight - parseInt($content.css('paddingTop')) - parseInt($content.css('paddingBottom')));
 		},
 		
 		disableGui: function() {

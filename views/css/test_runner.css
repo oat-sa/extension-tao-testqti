@@ -199,7 +199,7 @@ html, body {
 
 #qti-content {
     margin: 40px 0;
-    padding: 0 10px 0 10px;
+    padding: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;

@@ -61,6 +61,7 @@ class taoQtiTest_models_classes_QtiTestConverter {
      */
     public function toJson(){
         try{
+            common_Logger::i(var_export($this->doc->saveToString(), true));
             return json_encode($this->componentToArray($this->doc->getDocumentComponent()));
         } catch(ReflectionException  $re){
             common_Logger::e($re->getMessage());
