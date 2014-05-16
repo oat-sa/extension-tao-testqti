@@ -163,9 +163,11 @@ define(['lodash', 'i18n'], function(_, __){
                               //ensure the view attribute is present
                               else if(assessmentSection.rubricBlocks.length > 0){
                                 _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
-                                        if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
-                                            rubricBlock.views = ['candidate'];
-                                        }
+                                        rubricBlock.views = ['candidate'];
+                                        //change once views are supported
+                                        //if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
+                                            //rubricBlock.views = ['candidate'];
+                                        //}
                                   });
                               }
                         }
