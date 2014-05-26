@@ -93,7 +93,7 @@ class taoQtiTest_helpers_Utils {
             $origin = rtrim($origin, $ds);
             $sourcePath = $origin . $ds . str_replace('/', $ds, $filePath);
 
-            if (tao_helpers_File::copy($sourcePath, $finalPath) === false) {
+            if (is_readable($sourcePath) === false || tao_helpers_File::copy($sourcePath, $finalPath) === false) {
                 throw new common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
             }
         }

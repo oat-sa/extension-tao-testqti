@@ -533,7 +533,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 taoQtiTest_helpers_Utils::storeQtiResource($testContent, $aux, $extractionFolder);
             }
             catch (common_Exception $e) {
-                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('The file "' . $aux . '" associated with the IMS QTI Test could not be imported.')));
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('Auxiliary file not found at location "%s".', $aux)));
             }
         }
     }
