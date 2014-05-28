@@ -65,13 +65,9 @@ class taoQtiTest_models_classes_import_TestImportForm
      */
     public function initElements()
     {
-    	$descElt = tao_helpers_form_FormFactory::getElement('qti_desc', 'Label');
-		$descElt->setValue(__('A QTI package is a Zip archive containing a imsmanifest.xml file and the QTI resources to import.'));
-		$this->form->addElement($descElt);
-    	
     	//create file upload form box
 		$fileElt = tao_helpers_form_FormFactory::getElement('source', 'AsyncFile');
-		$fileElt->setDescription(__("Add the source file"));
+		$fileElt->setDescription(__("Add a zip file containing QTI tests and items"));
     	if(isset($_POST['import_sent_qti'])){
 			$fileElt->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
 		}
@@ -91,7 +87,7 @@ class taoQtiTest_models_classes_import_TestImportForm
 		$disableValidationElt->setOptions(array("on" => ""));
 		$this->form->addElement($disableValidationElt);
 		*/
-		$this->form->createGroup('file', __('Upload a QTI Test Package File'), array('qti_desc', 'source'));
+		$this->form->createGroup('file', __('Import a QTI 2.1 Test Package'), array('qti_desc', 'source'));
 		
 		$qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
 		$qtiSentElt->setValue(1);
