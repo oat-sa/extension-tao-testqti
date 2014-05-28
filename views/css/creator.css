@@ -19,23 +19,23 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
                               :  : :      :
                               :__:-:__.;--'
                              <*_/   <*/
-/* line 35, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 35, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after {
   content: "\122"; }
 
-/* line 51, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 51, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-props h1:before {
   content: "\132"; }
 
-/* line 76, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 76, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
   content: "\14b"; }
 
-/* line 86, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 86, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items h1:before {
   content: "\155"; }
 
-/* line 87, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 87, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test > h1:before {
   content: "\156"; }
 
