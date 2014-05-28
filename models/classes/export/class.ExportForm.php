@@ -105,10 +105,6 @@ class taoQtiTest_models_classes_export_ExportForm
     		}
     	}
 
-		$descElt = tao_helpers_form_FormFactory::getElement('xml_desc', 'Label');
-		$descElt->setValue(__("A Zip archive containing the QTI items (XML), their resources (images, videos...), the test and an IMS manifest file (XML)."));
-		$this->form->addElement($descElt);
-
 		$nameElt = tao_helpers_form_FormFactory::getElement('filename', 'Textbox');
 		$nameElt->setDescription(__('File name'));
 		$nameElt->setValue($fileName);
@@ -126,7 +122,7 @@ class taoQtiTest_models_classes_export_ExportForm
 		$this->form->addElement($instanceElt);
 
 
-    	$this->form->createGroup('options', __('Export Options'), array('xml_desc', 'filename', 'instances'));
+    	$this->form->createGroup('options', __('Export QTI 2.1 Test Package'), array('xml_desc', 'filename', 'instances'));
     }
 
 } /* end of class taoItems_actions_form_Export */
