@@ -699,17 +699,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 $itemDoc->load($itemContent->getAbsolutePath());
             }
             catch (StorageException $e) {
-                $msg = "An error occured while reading QTI-XML item '".$itemResource->getUri()."'.";
-
-                if (is_null($e->getPrevious()) !== true) {
-                    $msg .= ": " . $e->getPrevious()->getMessage();
-                }
-            $itemRefIdentifiers = array();
-                throw new taoQtiTest_models_classes_QtiTestServiceException(
-                        $msg, 
-                        taoQtiTest_models_classes_QtiTestServiceException::ITEM_READ_ERROR
-                    );
+                // We consider the item not compliant with QTI, let's try the next one.
+                continue;
             }
+            
             $itemRefIdentifier = $itemDoc->getDocumentComponent()->getIdentifier();
 
             //enable more than one reference
