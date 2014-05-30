@@ -107,12 +107,16 @@ class taoQtiTest_models_classes_TestModel
      */
     public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
         $contentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
-        $existingDir = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
+        $existingDir = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty));
         
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
         $dir = $service->createContent($destination, false);
         
-        tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
+        if ($existingDir->fileExists()) {
+            tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
+        } else {
+            common_Logger::w('Test "'.$source->getUri().'" had no content, nothing to clone');
+        }
     }
     
     public function getImportHandlers() {
@@ -131,5 +135,3 @@ class taoQtiTest_models_classes_TestModel
         return 'taoQtiTest_models_classes_QtiTestCompiler';
     }
 }
-
-?>
