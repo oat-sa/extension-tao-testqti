@@ -19,23 +19,23 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
                               :  : :      :
                               :__:-:__.;--'
                              <*_/   <*/
-/* line 35, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 35, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after {
   content: "\122"; }
 
-/* line 51, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 51, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-props h1:before {
   content: "\132"; }
 
-/* line 76, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 76, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
   content: "\14b"; }
 
-/* line 86, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 86, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-items h1:before {
   content: "\155"; }
 
-/* line 87, /home/jerome/tao-dev/taotrunk/tao/views/scss/inc/_tao-icon-vars.scss */
+/* line 87, /home/bertrand/dev/projects/tao26/tao/views/scss/inc/_tao-icon-vars.scss */
 #test-creator .test-creator-test > h1:before {
   content: "\156"; }
 
@@ -400,57 +400,58 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
           max-width: "500px"; } }
     /* line 263, ../scss/creator.scss */
     #test-creator .test-creator-test h1 .actions, #test-creator .test-creator-test h2 .actions, #test-creator .test-creator-test li .actions {
-      float: right;
-      position: relative;
+      /*float: right;*/
+      /*position: relative;*/
+      position: absolute;
+      right: 0;
       display: inline-block;
       max-width: 300px;
       height: 39px;
-      text-overflow: ellipsis;
       z-index: 100; }
-      /* line 271, ../scss/creator.scss */
+      /* line 272, ../scss/creator.scss */
       #test-creator .test-creator-test h1 .actions .tlb, #test-creator .test-creator-test h2 .actions .tlb, #test-creator .test-creator-test li .actions .tlb {
         display: inline-block;
         background: none;
         margin-left: 15px;
         font-size: 14px;
         font-size: 1.4rem; }
-        /* line 276, ../scss/creator.scss */
+        /* line 277, ../scss/creator.scss */
         #test-creator .test-creator-test h1 .actions .tlb .tlb-top, #test-creator .test-creator-test h2 .actions .tlb .tlb-top, #test-creator .test-creator-test li .actions .tlb .tlb-top {
           background: none !important;
           border-width: 0 !important;
           -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
           -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
           box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-    /* line 285, ../scss/creator.scss */
+    /* line 286, ../scss/creator.scss */
     #test-creator .test-creator-test > h1 {
       position: relative;
       background-color: #f3f1ef;
       height: 39px;
       padding: 4px 28px 3px 48px;
       margin-bottom: 10px; }
-      /* line 291, ../scss/creator.scss */
+      /* line 292, ../scss/creator.scss */
       #test-creator .test-creator-test > h1:before {
         font-family: 'tao';
         display: inline-block;
         position: absolute;
         left: 20px; }
-    /* line 299, ../scss/creator.scss */
+    /* line 300, ../scss/creator.scss */
     #test-creator .test-creator-test .test-content {
       padding: 0 20px; }
-      /* line 301, ../scss/creator.scss */
+      /* line 302, ../scss/creator.scss */
       #test-creator .test-creator-test .test-content h1, #test-creator .test-creator-test .test-content h2 {
         position: relative;
         height: 35px; }
-    /* line 309, ../scss/creator.scss */
+    /* line 310, ../scss/creator.scss */
     #test-creator .test-creator-test .testpart-content > button {
       margin-left: 10px; }
-    /* line 314, ../scss/creator.scss */
+    /* line 315, ../scss/creator.scss */
     #test-creator .test-creator-test .testpart {
       color: #222222;
       border-left: solid 5px #8d949e;
       padding: 0 5px;
       margin: 20px 0; }
-      /* line 320, ../scss/creator.scss */
+      /* line 321, ../scss/creator.scss */
       #test-creator .test-creator-test .testpart > h1 {
         background-color: #a3a9b1;
         padding: 0 5px;
@@ -458,44 +459,44 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
         -moz-border-radius: 2px;
         -webkit-border-radius: 2px;
         border-radius: 2px; }
-        /* line 325, ../scss/creator.scss */
+        /* line 326, ../scss/creator.scss */
         #test-creator .test-creator-test .testpart > h1 > .toggler {
           position: absolute;
           right: 15px;
           color: white; }
-    /* line 335, ../scss/creator.scss */
+    /* line 336, ../scss/creator.scss */
     #test-creator .test-creator-test .sections {
       margin-bottom: 10px; }
-    /* line 339, ../scss/creator.scss */
+    /* line 340, ../scss/creator.scss */
     #test-creator .test-creator-test .section {
       color: #222222;
       border-left: solid 5px #a4bbc5;
       padding: 0 5px 0 15px;
       margin: 20px 0 10px 10px; }
-      /* line 345, ../scss/creator.scss */
+      /* line 346, ../scss/creator.scss */
       #test-creator .test-creator-test .section > h2 {
         color: #627076; }
-      /* line 349, ../scss/creator.scss */
+      /* line 350, ../scss/creator.scss */
       #test-creator .test-creator-test .section:last-child {
         margin-bottom: 0; }
-    /* line 354, ../scss/creator.scss */
+    /* line 355, ../scss/creator.scss */
     #test-creator .test-creator-test .rublocks {
       border-left: solid 5px #d5707f;
       padding: 0 5px 0 15px;
       margin: 0px 0 10px 0px; }
-      /* line 358, ../scss/creator.scss */
+      /* line 359, ../scss/creator.scss */
       #test-creator .test-creator-test .rublocks h3 {
         color: #d5707f;
         float: none; }
-      /* line 363, ../scss/creator.scss */
+      /* line 364, ../scss/creator.scss */
       #test-creator .test-creator-test .rublocks .rubricblocks {
         clear: both;
         padding-left: 25px; }
-        /* line 366, ../scss/creator.scss */
+        /* line 367, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks li, #test-creator .test-creator-test .rublocks .rubricblocks .rubricblock-content {
           position: relative;
           clear: both; }
-        /* line 370, ../scss/creator.scss */
+        /* line 371, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks li {
           padding: 4px;
           border: solid 1px #dddddd;
@@ -505,10 +506,10 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
           background-color: #f3f1ef;
           margin-bottom: 20px;
           clear: both; }
-          /* line 378, ../scss/creator.scss */
+          /* line 379, ../scss/creator.scss */
           #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-binding {
             display: none; }
-          /* line 381, ../scss/creator.scss */
+          /* line 382, ../scss/creator.scss */
           #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content {
             -moz-border-radius: 2px;
             -webkit-border-radius: 2px;
@@ -519,43 +520,53 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
             margin: 0;
             min-height: 30px;
             overflow: hidden; }
-            /* line 390, ../scss/creator.scss */
+            /* line 391, ../scss/creator.scss */
             #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content .grid-row {
               display: block; }
-            /* line 393, ../scss/creator.scss */
+            /* line 394, ../scss/creator.scss */
             #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content .mini-tlb {
-              display: none; }
-        /* line 398, ../scss/creator.scss */
+              position: absolute;
+              top: -5px;
+              right: 23px;
+              background-color: white;
+              padding: 5px;
+              border: solid 1px #dddddd;
+              margin: 0;
+              z-index: 300; }
+              /* line 403, ../scss/creator.scss */
+              #test-creator .test-creator-test .rublocks .rubricblocks li .rubricblock-content .mini-tlb .tlb-button {
+                cursor: pointer; }
+        /* line 409, ../scss/creator.scss */
         #test-creator .test-creator-test .rublocks .rubricblocks .actions {
           position: absolute;
           right: -6px;
           top: -5px; }
-    /* line 407, ../scss/creator.scss */
+    /* line 418, ../scss/creator.scss */
     #test-creator .test-creator-test .itemrefs-wrapper {
       border: solid 1px #dddddd;
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
       border-radius: 3px;
       padding-left: 5px; }
-      /* line 411, ../scss/creator.scss */
+      /* line 422, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemrefs {
         position: relative;
         padding: 0;
         margin-left: 15px; }
-        /* line 415, ../scss/creator.scss */
+        /* line 426, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs:before {
           color: #dddddd; }
-        /* line 418, ../scss/creator.scss */
+        /* line 429, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li {
           position: relative;
           height: 39px;
           line-height: 39px;
           padding: 2px;
           clear: both; }
-          /* line 424, ../scss/creator.scss */
+          /* line 435, ../scss/creator.scss */
           #test-creator .test-creator-test .itemrefs-wrapper .itemrefs > li:nth-child(even) {
             background-color: #f3f1ef; }
-      /* line 429, ../scss/creator.scss */
+      /* line 440, ../scss/creator.scss */
       #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder {
         display: none;
         margin: 5px 5px 5px 0;
@@ -575,11 +586,11 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.'
         -moz-transition: all 0.5s ease-out;
         -o-transition: all 0.5s ease-out;
         transition: all 0.5s ease-out; }
-        /* line 442, ../scss/creator.scss */
+        /* line 453, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before {
           font-family: 'tao';
           display: inline-block; }
-        /* line 445, ../scss/creator.scss */
+        /* line 456, ../scss/creator.scss */
         #test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:hover {
           background-color: #ebf2f6;
           -webkit-transition: all 0.5s ease-out;

@@ -261,12 +261,14 @@
                 text-overflow: ellipsis;
             }
             .actions { 
-                float: right;
-                position: relative;
+                /*float: right;*/
+                /*position: relative;*/
+                position: absolute;
+                right: 0;
+                top: 0; 
                 display: inline-block;
                 max-width: 300px;
                 height: 39px;
-                text-overflow: ellipsis;
                 z-index: 100;
                 .tlb {
                     display: inline-block;
@@ -391,7 +393,17 @@
                             display: block;
                         }
                         .mini-tlb {
-                            display: none;
+                           position: absolute;
+                           top: -5px;
+                           right: 23px; 
+                           background-color: $uiGeneralContentBg;
+                           padding: 5px;
+                           border: solid 1px $uiGeneralContentBorder;
+                           margin: 0;
+                           z-index: 300;
+                           .tlb-button{
+                                cursor: pointer;
+                           }
                         }
                     }
                 }

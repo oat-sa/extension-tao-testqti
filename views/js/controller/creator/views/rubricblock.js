@@ -95,7 +95,7 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
             var mathNs = 'm';//for 'http://www.w3.org/1998/Math/MathML'
             var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">');
+            var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">').appendTo('.test-creator-props');
             var fakeXml = '<rubricBlock>' + $rubricBlockBinding.html() + '</rubrickBlock>';
             
             var xmlRenderer = new XmlRenderer({shuffleChoices : false}).load();
@@ -116,7 +116,6 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
                     });
 
                     creatorRenderer.load(function(){
-
                         
                         var syncRubricBlockContent = _.throttle(function (){
                             $rubricBlockBinding
@@ -128,7 +127,7 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
                         $rubricBlockContent.html(rubricBlock.render());
                         var widget = rubricBlock.postRender({});
                             
-                        $('.mini-tlb', $rubricBlockContent).remove();                    
+                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();                    
     
                         widget.on('containerBodyChange', function(data){
                             if(data.container.serial === rubricBlock.getBody().serial){

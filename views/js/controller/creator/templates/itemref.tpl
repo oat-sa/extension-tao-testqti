@@ -1,5 +1,5 @@
 <li id='{{identifier}}' data-uri='{{href}}' class='itemref'>
-    <span class='title'>{{label}}</span>
+    <span class='title truncate'>{{label}}</span>
     <div class="actions"> 
         <div class="tlb">
             <div class="tlb-top">
