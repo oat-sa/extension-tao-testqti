@@ -592,7 +592,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $doc->load($filePath);
         } catch (Exception $e) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    "An error occured while loading QTI-XML test file '${testPath}' : ".$e->getMessage(), 
+                    "An error occured while loading QTI-XML test file '${$filePath}' : ".$e->getMessage(), 
                     taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
                 );
         }
