@@ -126,9 +126,13 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
                         rubricBlock.setRenderer(this);
                         $rubricBlockContent.html(rubricBlock.render());
                         var widget = rubricBlock.postRender({});
-                            
-                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();                    
-    
+                        
+                        //disable some elements that are not yet ready or not usefull    
+                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();                   
+                        $rubricBlockContent.on('editorready', function(){ 
+                            $('.cke_button__taoqtiimage').remove();
+                        });
+
                         widget.on('containerBodyChange', function(data){
                             if(data.container.serial === rubricBlock.getBody().serial){
                                 syncRubricBlockContent();
