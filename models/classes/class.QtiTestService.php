@@ -544,7 +544,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return null|core_kernel_file_File
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function getTestFile(core_kernel_classes_Resource $test){
+    public function getTestFile(core_kernel_classes_Resource $test){
         
         if(is_null($test)){
             throw new taoQtiTest_models_classes_QtiTestServiceException(
