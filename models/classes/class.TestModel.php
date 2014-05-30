@@ -110,9 +110,8 @@ class taoQtiTest_models_classes_TestModel
         $existingDir = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty)->getUri());
         
         $service = taoQtiTest_models_classes_QtiTestService::singleton();
-        $dir = $service->createContent($destination);
+        $dir = $service->createContent($destination, false);
         
-        tao_helpers_File::remove($dir->getAbsolutePath() . DIRECTORY_SEPARATOR . taoQtiTest_models_classes_QtiTestService::QTITEST_FILENAME);
         tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
     }
     

@@ -771,13 +771,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
-     * Create the defautl content of a QTI test.
+     * Create the defautl content directory of a QTI test.
      * 
      * @param core_kernel_classes_Resource $test
+     * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
      * @return core_kernel_file_File the content file
      * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
      */
-    public function createContent( core_kernel_classes_Resource $test) {
+    public function createContent( core_kernel_classes_Resource $test, $createTestFile = true) {
         
     	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
 				PROPERTY_FILE_FILESYSTEM,
@@ -795,21 +796,23 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             mkdir($dirPath, 0770, true);
         }
         
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $emptyTestXml = $this->getQtiTestTemplateFileAsString();
-        
-        // Set the test label as title.
-        $emptyTestXml = str_replace('{testId}', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '', 32)), $emptyTestXml);
-        $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
-        $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
-        
-        $filePath = $dirPath . TAOQTITEST_FILENAME;
-        if (file_put_contents($filePath, $emptyTestXml) === false) {
-            $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
-            throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+        if ($createTestFile === true) {
+            $emptyTestXml = $this->getQtiTestTemplateFileAsString();
+            
+            // Set the test label as title.
+            $emptyTestXml = str_replace('{testId}', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '', 32)), $emptyTestXml);
+            $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
+            $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
+            
+            $filePath = $dirPath . TAOQTITEST_FILENAME;
+            if (file_put_contents($filePath, $emptyTestXml) === false) {
+                $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+            }
+            
+            common_Logger::i("Created QTI Test content at location '" . $filePath . "'.");
         }
         
-        common_Logger::i("Created QTI Test content at location '" . $filePath . "'.");
         $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
         return $directory;
     }
