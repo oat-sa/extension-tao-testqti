@@ -38,7 +38,7 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
      */
    var testView = function testView (model, data) {
        
-        actions.properties($('.test-creator-test > h1'), 'test', model);
+        actions.properties($('.test-creator-test > h1'), 'test', model, propHandler);
         testParts();
         addTestPart();
 
@@ -58,6 +58,24 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
                 }
 
                 testPartView.setUp($testPart, model.testParts[index], data);
+            });
+        }
+        
+        /**
+         * Perform some binding once the property view is created
+         * @private
+         * @param {propView} propView - the view object
+         */
+        function propHandler (propView) {
+            
+           var $view = propView.getView();
+
+            //listen for databinder change to update the test part title
+           var $title =  $('.test-creator-test > h1 [data-bind=title]');
+           $view.on('change.binder', function(e, model){
+                if(e.namespace === 'binder' && model['qti-type'] === 'assessmentTest'){
+                    $title.text(model.title);
+                }
             });
         }
 
