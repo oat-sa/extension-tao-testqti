@@ -52,7 +52,7 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
         if($this->hasRequestParameter('filters')){
             $filterParameter = $this->getRequestParameter('filters');
             if(!empty($filterParameter)){
-                if(preg_match('/\/*/', $filterParameter)){
+                if(preg_match('/\/\*/', $filterParameter)){
                     common_Logger::w('Stars mime type are not yet supported, filter "'. $filterParameter . '" will fail');
                 }
                 $filters = array_map('trim', explode(',', $filterParameter));
@@ -89,11 +89,12 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
         $relPath = trim($this->getRequestParameter('path'), '/');
         $relPath = empty($relPath) ? '' : $relPath.'/';
         
-        $files = tao_helpers_Http::getFiles();
-
-        $fileName = $files['content']['name'];
+        $file = tao_helpers_Http::getUploadedFile('content');
+        $fileName = $file['name'];
         
-        move_uploaded_file($files['content']["tmp_name"], $baseDir.$relPath.$fileName);
+        if(!move_uploaded_file($file["tmp_name"], $baseDir.$relPath.$fileName)){
+            throw new common_exception_Error('Unable to move uploaded file');
+        } 
         
         $fileData = taoQtiTest_helpers_ResourceManager::buildFile($test, $testLang, $relPath.$fileName);
         echo json_encode($fileData);
