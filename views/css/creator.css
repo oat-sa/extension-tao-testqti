@@ -1,9 +1,5 @@
 /* to be included into your scss files, don't forget to set the includePaths (--load-path) in your compiler  */
 /** Use icon within sass: @inclue icon('down'); */
-                                  /* /  \ |    | --:'''':--
-THIS CODE IS GENERATED          :*_* : _:"":\___
-AUTOMAGICALLY    * *      ____.' :::     '._ *=====<<=)           \    :
-DO NOT EDIT!     * *      '-'-'\_      /'._.' \====:_ "" .'     \ :       : /   :    \ :   .      '. :  : :      : :__:-:__.;--' <*_/   <*/
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { content: "\122"; }
 
 #test-creator .test-creator-props h1:before { content: "\132"; }
