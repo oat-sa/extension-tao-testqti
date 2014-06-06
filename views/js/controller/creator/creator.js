@@ -77,6 +77,7 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
             var $container = $('#test-creator');
             var $saver = $('#saver');
 
+
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
@@ -131,6 +132,7 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
             
                     //once model is loaded, we set up the test view
                     testView(model, {
+                        uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels
                     });

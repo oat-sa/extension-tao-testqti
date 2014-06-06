@@ -221,7 +221,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                     model.rubricBlocks[index] = {};
                 }
 
-                rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index]);
+                rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
             });
         }
 
@@ -250,7 +250,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                     var index = $rubricBlock.data('bind-index'); 
 
                     $('.rubricblock-binding', $rubricBlock).html('<div>&nbsp;</div>');
-                    rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index]);
+                    rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
                 }
             });
         }        

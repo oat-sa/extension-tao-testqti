@@ -37,7 +37,7 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
     *
     * @param {jQueryElement} $rubricBlock - the rubricblock to set up
     */
-   var setUp =  function setUp ($rubricBlock, model){
+   var setUp =  function setUp ($rubricBlock, model, data){
        
         actions.properties($rubricBlock, 'rubricblock', model, propHandler);
         setUpEditor();
