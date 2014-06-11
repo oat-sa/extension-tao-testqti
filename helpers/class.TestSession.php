@@ -32,6 +32,7 @@ use qtism\common\enums\BaseType;
 use qtism\common\datatypes\Float;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
+use qtism\runtime\tests\AssessmentItemSessionFactory;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\Route;
@@ -79,8 +80,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
      * @param boolean $considerMinTime Whether or not minimum time limits must be taken into account or not.
      */
-    public function __construct(AssessmentTest $assessmentTest, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test, $considerMinTime = true) {
-        parent::__construct($assessmentTest, $route, $considerMinTime);
+    public function __construct(AssessmentTest $assessmentTest, AssessmentItemSessionFactory $factory, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test, $considerMinTime = true) {
+        parent::__construct($assessmentTest, $factory, $route, $considerMinTime);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setTest($test);

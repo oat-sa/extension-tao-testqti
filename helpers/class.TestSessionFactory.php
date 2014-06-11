@@ -20,6 +20,9 @@
 
 use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
 use qtism\runtime\tests\TestResultsSubmission;
+use qtism\runtime\tests\Route;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentItemSessionFactory;
 use qtism\data\AssessmentTest;
 use qtism\common\datatypes\Duration;
 
@@ -95,37 +98,34 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     }
     
     /**
-     * Create a tao_helpers_TestSession with the content of the factory.
-     * 
-     * When creating the AssessmentTestSession object, the AssessmentTestSession::setAutoForward
-     * method will be called with false.
-     * 
-     * @return taoQtiTest_helpers_TestSession
+     * Instantiates an AssessmentTestSession with the default implementation.
+     *
+     * @return AssessmentTestSession
      */
-    public function createAssessmentTestSession() {
-        parent::createAssessmentTestSession();
-        
-        // Because we are not certain of the semantics of qti:timeLimits->minTime, we do not take it
-        // into account for the moment.
-        $considerMinTime = false;
-        
+    protected function instantiateAssessmentTestSession(Route $route) {
         $session = new taoQtiTest_helpers_TestSession(
-            $this->getAssessmentTest(),
-            $this->getRoute(),
-            $this->getResultServer(),
-            $this->getTest(),
-            $considerMinTime
+                        $this->getAssessmentTest(),
+                        $this->createAssessmentItemSessionFactory(),
+                        $route,
+                        $this->getResultServer(),
+                        $this->getTest(),
+                        false
         );
         
-        // Test result submission mode = END, which means
-        // outcome variable's values are sent to the result storage
-        // when the test candidate session ends.
-        $session->setTestResultsSubmission(TestResultsSubmission::END);
-        
-        // Set the acceptable latency time to be considered when qti:timeLimits->minTime
-        // and qti:timeLimits->maxTime are in force.
-        $session->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
-        
         return $session;
+    }
+    
+    protected function configure(AssessmentTestSession $assessmentTestSession) {
+        $assessmentTestSession->setTestResultsSubmission(TestResultsSubmission::END);
+        $assessmentTestSession->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
+    }
+    
+    /**
+     * Creates a brand new AssessmentItemSessionFactory object.
+     *
+     * @return AssessmentItemSessionFactory
+     */
+    public function createAssessmentItemSessionFactory() {
+        return new AssessmentItemSessionFactory(false);
     }
 }
