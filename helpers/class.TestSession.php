@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -32,15 +32,15 @@ use qtism\common\enums\BaseType;
 use qtism\common\datatypes\Float;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
-use qtism\runtime\tests\AssessmentItemSessionFactory;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
+use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\Route;
 use qtism\runtime\common\OutcomeVariable;
 use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
-use qtism\runtime\tests\AssessmentItemSession;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -75,13 +75,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * Create a new TAO QTI Test Session.
      * 
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
+     * @param AbstractSessionManager $sessionManager The manager to be used to create new AssessmentItemSession objects.
      * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
      * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
-     * @param boolean $considerMinTime Whether or not minimum time limits must be taken into account or not.
      */
-    public function __construct(AssessmentTest $assessmentTest, AssessmentItemSessionFactory $factory, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test, $considerMinTime = true) {
-        parent::__construct($assessmentTest, $factory, $route, $considerMinTime);
+    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
+        parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setTest($test);

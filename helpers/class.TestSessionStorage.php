@@ -14,13 +14,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
 use qtism\common\storage\IStream;
-use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
+use qtism\runtime\tests\AbstractSessionManager;
 use qtism\common\storage\MemoryStream;
+use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
@@ -45,10 +46,11 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    /**
     * Create a new TestSessionStorage object.
     * 
-    * @param AbstractAssessmentTestSessionFactory $factory The factory to be used by the storage to instantiate new AssessmentTestSession objects.
+    * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and AssessmentItemSession objects.
+    * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's components.
     */
-   public function __construct(AbstractAssessmentTestSessionFactory $factory) {
-       parent::__construct($factory);
+   public function __construct(AbstractSessionManager $manager, BinaryAssessmentTestSeeker $seeker) {
+       parent::__construct($manager, $seeker);
    }
    
    /**
@@ -71,13 +73,13 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $this->lastError = $lastError;
    }
    
-   public function retrieve($sessionId) {
+   public function retrieve(AssessmentTest $test, $sessionId) {
        $this->setLastError(-1);
        
-       return parent::retrieve($sessionId);
+       return parent::retrieve($test, $sessionId);
    }
    
-   protected function getRetrievalStream(AssessmentTest $assessmentTest, $sessionId) {
+   protected function getRetrievalStream($sessionId) {
     
        $storageService = tao_models_classes_service_StateStorage::singleton();
        $userUri = common_session_SessionManager::getSession()->getUserUri();

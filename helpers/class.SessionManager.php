@@ -14,25 +14,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
-use qtism\runtime\tests\AbstractAssessmentTestSessionFactory;
+use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\TestResultsSubmission;
 use qtism\runtime\tests\Route;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentItemSessionFactory;
+use qtism\runtime\tests\AssessmentItemSession;
 use qtism\data\AssessmentTest;
+use qtism\data\IAssessmentItem;
 use qtism\common\datatypes\Duration;
 
 /**
- * A TAO specific implementation of QtiSm's AbstractAssessmentTestSessionFactory.
+ * A TAO specific implementation of QTISM's AbstractSessionManager.
  * 
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessionFactory {
+class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
    
     /**
      * The result server to be used by tao_helpers_TestSession created by the factory.
@@ -49,14 +50,14 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     private $test;
     
     /**
-     * Create a new TestSessionFactory.
+     * Create a new SessionManager object.
      * 
-     * @param AssessmentTest $assessmentTest The QtiSm QTI AssessmentTest definition of the AssessmentTestSession to be built.
      * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
      */
-    public function __construct(AssessmentTest $assessmentTest, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
-        parent::__construct($assessmentTest);
+    public function __construct(taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
+        parent::__construct();
+        $this->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
         $this->setResultServer($resultServer);
         $this->setTest($test);
     }
@@ -98,26 +99,35 @@ class taoQtiTest_helpers_TestSessionFactory extends AbstractAssessmentTestSessio
     }
     
     /**
-     * Instantiates an AssessmentTestSession with the default implementation.
+     * Instantiates an AssessmentTestSession with the default implementation provided by QTISM.
      *
      * @return AssessmentTestSession
      */
-    protected function instantiateAssessmentTestSession(Route $route) {
-        $session = new taoQtiTest_helpers_TestSession(
-                        $this->getAssessmentTest(),
-                        $this->createAssessmentItemSessionFactory(),
-                        $route,
-                        $this->getResultServer(),
-                        $this->getTest(),
-                        false
-        );
-        
-        return $session;
+    protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
+        return new taoQtiTest_helpers_TestSession($test, $this, $route, $this->getResultServer(), $this->getTest());
     }
     
-    protected function configure(AssessmentTestSession $assessmentTestSession) {
+    /**
+     * Extra configuration for newly instantiated AssessmentTestSession objects. This implementation
+     * forces test results to be sent at the end of the candidate session, and get the acceptable
+     * latency time from the taoQtiTest extension's configuration.
+     * 
+     * @param AssessmentTestSession $assessmentTestSession
+     */
+    protected function configureAssessmentTestSession(AssessmentTestSession $assessmentTestSession) {
         $assessmentTestSession->setTestResultsSubmission(TestResultsSubmission::END);
-        $assessmentTestSession->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
+    }
+    
+    /**
+     * Instantiates an AssessmentItemSession with the default implementation provided by QTISM.
+     *
+     * @param IAssessmentItem $assessmentItem
+     * @param integer $navigationMode A value from the NavigationMode enumeration.
+     * @param integer $submissionMode A value from the SubmissionMode enumeration.
+     * @return AssessmentItemSession A freshly instantiated AssessmentItemSession.
+     */
+    protected function instantiateAssessmentItemSession(IAssessmentItem $assessmentItem, $navigationMode, $submissionMode) {
+        return new AssessmentItemSession($assessmentItem, $this, $navigationMode, $submissionMode);
     }
     
     /**

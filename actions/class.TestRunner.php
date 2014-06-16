@@ -22,12 +22,9 @@
 
 use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentItemSession;
-use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
-use qtism\runtime\tests\AssessmentTestSessionFactory;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\data\AssessmentTest;
 use qtism\runtime\common\State;
 use qtism\runtime\common\ResponseVariable;
@@ -36,6 +33,7 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String;
 use qtism\common\datatypes\File;
 use qtism\runtime\tests\AssessmentItemSessionException;
+use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
@@ -232,8 +230,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
         
-        $testSessionFactory = new taoQtiTest_helpers_TestSessionFactory($this->getTestDefinition(), $resultServer, $testResource);
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($testSessionFactory));
+        $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, new BinaryAssessmentTestSeeker($this->getTestDefinition())));
         $this->retrieveTestSession();
         $this->retrieveTestMeta();
         
@@ -550,11 +548,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    if ($qtiStorage->exists($sessionId) === false) {
 	        common_Logger::i("Instantiating QTI Assessment Test Session");
-	        $this->setTestSession($qtiStorage->instantiate($sessionId));
+	        $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
 	    }
 	    else {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
-	        $this->setTestSession($qtiStorage->retrieve($sessionId));
+	        $this->setTestSession($qtiStorage->retrieve($this->getTestDefinition(), $sessionId));
 	    }
     }
     
