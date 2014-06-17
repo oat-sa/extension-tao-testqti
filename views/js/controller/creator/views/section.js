@@ -245,7 +245,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock, data){
+            $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     var index = $rubricBlock.data('bind-index'); 
 

@@ -21,30 +21,30 @@
  * FIXME There is a strong dependency to the QtiItem extension, due to the reuse of the QTI Editor for the rubricblock. 
  */
 define([
-    'jquery', 
+    'jquery',
     'lodash',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiItem/qtiCreator/model/qtiClasses',
-    'taoQtiItem/qtiCreator/renderers/Renderer',
+    'taoQtiItem/qtiCreator/helper/creatorRenderer',
     'taoQtiItem/qtiXmlRenderer/renderers/Renderer',
-    'taoQtiItem/qtiCreator/helper/simpleParser'
-],
-function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
+    'taoQtiItem/qtiCreator/helper/simpleParser',
+    'helpers'
+], function($, _, actions, qtiClasses, creatorRenderer, XmlRenderer, simpleParser, helpers){
     'use strict';
-   
-   /**
-    * Set up a rubric block: init action beahviors. Called for each one.
-    *
-    * @param {jQueryElement} $rubricBlock - the rubricblock to set up
-    */
-   var setUp =  function setUp ($rubricBlock, model, data){
-       
+
+    /**
+     * Set up a rubric block: init action beahviors. Called for each one.
+     *
+     * @param {jQueryElement} $rubricBlock - the rubricblock to set up
+     */
+    var setUp = function setUp($rubricBlock, model, data){
+        
         actions.properties($rubricBlock, 'rubricblock', model, propHandler);
         setUpEditor();
 
         $('formatting-toggler', $rubricBlock).click(function(){
-            
-           $rubricBlock.find('.cke_editable').focus().click();
+
+            $rubricBlock.find('.cke_editable').focus().click();
         });
 
         /**
@@ -52,14 +52,14 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
          * @private
          * @param {propView} propView - the view object
          */
-        function propHandler (propView) {
+        function propHandler(propView){
 
             rbViews(propView.getView());
 
             $rubricBlock.parents('.testpart').on('delete', removePropHandler);
             $rubricBlock.parents('.section').on('delete', removePropHandler);
             $rubricBlock.on('delete', removePropHandler);
-            
+
             function removePropHandler(e){
                 if(propView !== null){
                     propView.destroy();
@@ -75,49 +75,61 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
         function rbViews($propContainer){
             var $select = $('select', $propContainer);
 
-            $select
-            .select2({
+            $select.select2({
                 'width' : '100%'
-            })
-            .on("select2-removed", function(e) {
-               if($select.select2('val').length === 0){
+            }).on("select2-removed", function(e){
+                if($select.select2('val').length === 0){
                     $select.select2('val', [1]);
-               } 
+                }
             });
-            
+
             if($select.select2('val').length === 0){
                 $select.select2('val', [1]);
             }
         }
 
         function setUpEditor(){
-    
+
             var mathNs = 'm';//for 'http://www.w3.org/1998/Math/MathML'
             var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
             var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">').appendTo('.test-creator-props');
             var fakeXml = '<rubricBlock>' + $rubricBlockBinding.html() + '</rubrickBlock>';
-            
+
             var xmlRenderer = new XmlRenderer({shuffleChoices : false}).load();
 
             //parse xml
-            var data = simpleParser.parse(fakeXml, {
+            simpleParser.parse(fakeXml, {
                 ns : {
                     math : mathNs
                 },
                 model : qtiClasses,
                 loaded : function(rubricBlock){
 
-                    //render creator:
-                    var creatorRenderer = new CreatorRenderer({
-                        shuffleChoices : false,
-                        baseUrl : '/taoQtiItem/test/samples/test_base_www/',
-                        bodyElementOptionForm : $editorForm
+                    var uri = data.uri, lang = 'en-US';
+                    
+                    creatorRenderer.setOptions({
+                        uri : uri,
+                        lang : lang,
+                        baseUrl : helpers._url('download', 'TestContent', 'taoQtiTest') + '?uri=' + encodeURIComponent(uri) + '&lang=' + lang + '&path=',
+                        interactionOptionForm : $(),
+                        choiceOptionForm : $(),
+                        responseOptionForm : $(),
+                        bodyElementOptionForm : $editorForm,
+                        itemOptionForm : $(),
+                        textOptionForm : $(),
+                        mediaManager : {
+                            appendContainer : '#test-creator',
+                            browseUrl : helpers._url('files', 'TestContent', 'taoQtiTest'),
+                            uploadUrl : helpers._url('upload', 'TestContent', 'taoQtiTest'),
+                            deleteUrl : helpers._url('delete', 'TestContent', 'taoQtiTest'),
+                            downloadUrl : helpers._url('download', 'TestContent', 'taoQtiTest')
+                        }
                     });
 
-                    creatorRenderer.load(function(){
-                        
-                        var syncRubricBlockContent = _.throttle(function (){
+                    creatorRenderer.get().load(function(){
+
+                        var syncRubricBlockContent = _.throttle(function(){
                             $rubricBlockBinding
                                 .html($(rubricBlock.render(xmlRenderer)).html())
                                 .trigger('change');
@@ -125,12 +137,16 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
 
                         rubricBlock.setRenderer(this);
                         $rubricBlockContent.html(rubricBlock.render());
-                        var widget = rubricBlock.postRender({});
-                        
-                        //disable some elements that are not yet ready or not usefull    
-                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();                   
-                        $rubricBlockContent.on('editorready', function(){ 
-                            $('.cke_button__taoqtiimage').remove();
+                        var widget = rubricBlock.postRender({
+                            ready : function(){
+                                this.changeState('active');
+                            }
+                        });
+
+                        //disable some elements that are not yet ready or not useful   
+                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();
+                        $rubricBlockContent.on('editorready', function(){
+//                            $('.cke_button__taoqtiimage').remove();
                         });
 
                         widget.on('containerBodyChange', function(data){
@@ -139,20 +155,20 @@ function($, _, actions, qtiClasses, CreatorRenderer, XmlRenderer, simpleParser){
                             }
 
                         }, true);
-                        
+
                     }, this.getLoadedClasses());
                 }
             });
         }
-   };
-    
-   /**
+    };
+
+    /**
      * The rubriclockView setup RB related components and beahvior
      * 
      * @exports taoQtiTest/controller/creator/views/rubricblock
      */
     return {
         setUp : setUp
-   };
- 
+    };
+
 });
