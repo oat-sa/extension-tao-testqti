@@ -241,6 +241,35 @@
                 min-width: inherit; 
             }
         }
+        .panel {
+            clear : both;
+            position: relative;
+            margin-bottom: 12px;
+            label {
+                width: 40%; 
+            }
+            input, select {
+                position: relative;
+                max-width: inherit;
+                min-width: inherit; 
+                width: 50%;
+            }
+            [data-role='upload-trigger'] {
+                max-width: inherit;
+                min-width: inherit; 
+                width: 80%;
+                margin: 5px;
+            }
+            h3 {
+                @include font-size(13);
+                line-height: 1.3;
+            }
+            .icon-help { 
+                float: right;
+                margin-right: 5px; 
+            }
+        }
+/** FROM QTI CREATOR **/
     }
 
     .test-creator-test{
@@ -295,11 +324,14 @@
                 position: absolute;
                 left: 20px;
             }
+            .actions{
+                margin-right: 12px;
+            }
         }
 
 
         .test-content {
-            padding: 0 20px;
+            padding: 0 0 0 20px;
             h1, h2 {
                 position: relative;
                 height: 35px;
@@ -322,6 +354,7 @@
             & > h1 {
                 background-color: whiten($testPartColor, 0.2);
                 padding: 0 5px;
+                margin-right: 5px;
                 color: $textHighlight;
                 @include border-radius;
                 & > .toggler {
@@ -394,24 +427,89 @@
                         }
                         .mini-tlb {
                            position: absolute;
-                           top: -5px;
-                           right: 23px; 
+                           top: -8px;
+                           right: 26px; 
                            background-color: $uiGeneralContentBg;
-                           padding: 5px;
+                           padding: 4px 6px;
                            border: solid 1px $uiGeneralContentBorder;
                            margin: 0;
-                           z-index: 300;
+                           z-index: 600;
                            .tlb-button{
                                 cursor: pointer;
                            }
                         }
                     }
+                    .actions{
+                        position: absolute;
+                        right: -3px;
+                        top: -2px;
+                    }
+/** from qti creator **/
+                    [data-html-editable]{
+                        border:1px solid transparent;
+                        outline:1px solid transparent !important;
+                        min-height: 20px;
+                        [html-editable-shield]{
+                            padding:0;
+                            min-width:0;
+                            margin:0;
+                        }
+                    }
+
+                    .widget-box{
+                        position: relative;
+                        .html-editable-shield{
+                            background:rgba($uiClickableDefaultBg, .5);
+                            position : absolute;
+                            top : 0;
+                            left : 0;
+                            width : 100%;
+                            height : 100%;
+                            z-index : 999;
+                        }
+                    }
+                    .widget-inline,
+                    .dummy-element,
+                    .inline-text-wrapper {
+                        cursor: default;
+                        padding : 0;
+
+                        position: relative;
+                        [class^="icon-"], [class*=" icon-"] {
+                            display: inline-block;
+                            text-align:center;
+                            width: 100%;
+                            position: relative;
+                            top: 2px;
+                            text-shadow: 1px 1px 0px #ccc;
+                        }
+                        span.mini-tlb{
+                            display: none;
+                        }
+
+                        &.edit-active {
+                            border: 1px solid whiten($info, .2);
+                            -webkit-box-shadow: 1px 1px 3px 1px whiten($info, .2);
+                            box-shadow: 1px 1px 3px 1px whiten($info, .2);
+                            span.mini-tlb[data-edit='active'] {
+                                display: block;
+                                position: absolute !important;
+                                top: -2px !important;
+                                right: -32px !important;
+                                .tlb-button {
+                                    margin:0 !important;
+                                    padding: 0 !important;
+                                    height: 18px !important;
+                                    width: 24px !important;
+                                }
+                            }
+                        }
+                    }
                 }
-                .actions{
-                    position: absolute;
-                    right: -6px;
-                    top: -5px;
-                }
+
+/** //from qti creator **/
+
+
             }
 
         }

@@ -115,7 +115,7 @@ define([
                         interactionOptionForm : $(),
                         choiceOptionForm : $(),
                         responseOptionForm : $(),
-                        bodyElementOptionForm : $editorForm,
+                        bodyElementOptionForm : $(), //uncomment to manage images $editorForm,
                         itemOptionForm : $(),
                         textOptionForm : $(),
                         mediaManager : {
@@ -130,7 +130,9 @@ define([
                     creatorRenderer.get().load(function(){
 
                         var syncRubricBlockContent = _.throttle(function(){
-                            $rubricBlockBinding
+                                var content = $(rubricBlock.render(xmlRenderer)).html();
+                                console.log(content); 
+                                $rubricBlockBinding
                                 .html($(rubricBlock.render(xmlRenderer)).html())
                                 .trigger('change');
                         }, 500);
@@ -146,7 +148,8 @@ define([
                         //disable some elements that are not yet ready or not useful   
                         $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();
                         $rubricBlockContent.on('editorready', function(){
-//                            $('.cke_button__taoqtiimage').remove();
+                            //comment to manage images
+                            $('.cke_button__taoqtiimage').remove();
                         });
 
                         widget.on('containerBodyChange', function(data){

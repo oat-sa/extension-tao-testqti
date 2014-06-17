@@ -248,8 +248,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     var index = $rubricBlock.data('bind-index'); 
-
-                    $('.rubricblock-binding', $rubricBlock).html('<div>&nbsp;</div>');
+                    $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
                 }
             });
