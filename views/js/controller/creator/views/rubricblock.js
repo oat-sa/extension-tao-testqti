@@ -93,7 +93,9 @@ define([
             var mathNs = 'm';//for 'http://www.w3.org/1998/Math/MathML'
             var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">').appendTo('.test-creator-props');
+            var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">');
+               //uncomment to manage images
+               $editorForm.appendTo('.test-creator-props').hide();
             var fakeXml = '<rubricBlock>' + $rubricBlockBinding.html() + '</rubrickBlock>';
 
             var xmlRenderer = new XmlRenderer({shuffleChoices : false}).load();
@@ -115,7 +117,7 @@ define([
                         interactionOptionForm : $(),
                         choiceOptionForm : $(),
                         responseOptionForm : $(),
-                        bodyElementOptionForm : $(), //uncomment to manage images $editorForm,
+                        bodyElementOptionForm : $editorForm,
                         itemOptionForm : $(),
                         textOptionForm : $(),
                         mediaManager : {
@@ -148,6 +150,7 @@ define([
                         $rubricBlockContent.on('editorready', function(){
                             //comment to manage images
                             $('.cke_button__taoqtiimage').remove();
+                            $('.cke_button__taoqtimaths').remove();
                         });
 
                         widget.on('containerBodyChange', function(data){
