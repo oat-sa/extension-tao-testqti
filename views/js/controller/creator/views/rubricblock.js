@@ -130,9 +130,7 @@ define([
                     creatorRenderer.get().load(function(){
 
                         var syncRubricBlockContent = _.throttle(function(){
-                                var content = $(rubricBlock.render(xmlRenderer)).html();
-                                console.log(content); 
-                                $rubricBlockBinding
+                             $rubricBlockBinding
                                 .html($(rubricBlock.render(xmlRenderer)).html())
                                 .trigger('change');
                         }, 500);
