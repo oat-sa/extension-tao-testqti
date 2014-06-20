@@ -89,10 +89,22 @@ function($, __, actions){
             actions.movable($('.itemref', $(this)), 'itemref', '.actions');
         });
        
-        $(document).on('add change deleted', '.itemrefs',  function(e){
+        $(document)
+        .on('delete', function(e){
+            var $parent;
+            var $target = $(e.target);
+            if($target.hasClass('itemref')){
+                $parent = $target.parents('.itemrefs');
+                actions.disable($parent.find('.itemref'), '.actions');
+           }
+        })
+        .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
+            var $parent;
             var $target = $(e.target);
             if($target.hasClass('itemref') || $target.hasClass('itemrefs')){
-                actions.movable($('.itemref', $target.hasClass('itemrefs') ? $target : $target.parents('.itemrefs')), 'itemref', '.actions');
+                $parent = $('.itemref', $target.hasClass('itemrefs') ? $target : $target.parents('.itemrefs'));
+                actions.enable($parent, '.actions');
+                actions.movable($parent, 'itemref', '.actions');
             }
         });
    };

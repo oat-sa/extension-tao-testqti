@@ -94,8 +94,8 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                 }
             });
 
-            $section.parents('.testpart').on('delete', removePropHandler);
-            $section.on('delete', removePropHandler);
+            $section.parents('.testpart').on('deleted.deleter', removePropHandler);
+            $section.on('deleted.deleter', removePropHandler);
             
             function removePropHandler(){
                 if(propView !== null){
@@ -269,13 +269,20 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             actions.removable($sections, 'h2');
             actions.movable($sections, 'section', 'h2');
         });
-       
+
         $(document)
-        .on('add change deleted', '.sections',  function(e){
+        .on('delete', function(e){
+            var $parent;
+            var $target = $(e.target);
+            if($target.hasClass('section')){
+                $parent = $target.parents('.sections');
+                actions.disable($parent.find('.section'), 'h2');
+           }
+        })
+        .on('add change undo.deleter deleted.deleter', function(e){
             var $target = $(e.target);
             if($target.hasClass('section') || $target.hasClass('sections')){
                 $sections = $('.section', $target.hasClass('sections') ? $target : $target.parents('.sections'));
-
                 actions.removable($sections, 'h2');
                 actions.movable($sections, 'section', 'h2');
             }

@@ -189,16 +189,36 @@ function($, propertyView){
             }
         });
     }
+
+    /**
+     * Disable all the actions of the target
+     * @param {jQueryElement} $container - that contains the the actions
+     * @param {String} actionContainerElt - the element name that contains the actions 
+     */ 
+    function disable($container, actionContainerElt){
+        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);    
+    }
     
+    /**
+     * Enable all the actions of the target
+     * @param {jQueryElement} $container - that contains the the actions
+     * @param {String} actionContainerElt - the element name that contains the actions 
+     */ 
+    function enable($container, actionContainerElt){
+        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);    
+    }
+
     /**
      * The actions gives you shared behavior for some actions. 
      * 
      * @exports taoQtiTest/controller/creator/views/actions
      */
     return {
-        properties: properties,
-        move: move,
-        removable : removable,
-        movable : movable
+        properties  : properties,
+        move        : move,
+        removable   : removable,
+        movable     : movable,
+        disable     : disable,
+        enable      : enable
     };
 });

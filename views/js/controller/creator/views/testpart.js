@@ -138,7 +138,14 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
         actions.removable($testParts, 'h1');
         actions.movable($testParts, 'testpart', 'h1');
 
-        $('.testparts').on('add change deleted', function(e){
+        $('.testparts')
+        .on('delete', function(e){
+            var $target = $(e.target);
+            if($target.hasClass('testpart')){
+                actions.disable($('.testpart'), 'h1');
+           }
+        })
+        .on('add change undo.deleter deleted.deleter', function(e){
             var $target = $(e.target);
 
             if($target.hasClass('testpart') || $target.hasClass('testparts')){
