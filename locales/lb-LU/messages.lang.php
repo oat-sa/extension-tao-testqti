@@ -28,7 +28,6 @@ $GLOBALS['__l10n']["List"]="Lëscht";
 $GLOBALS['__l10n']["List values"]="Werter uweisen";
 $GLOBALS['__l10n']["Lists"]="Lëschten";
 $GLOBALS['__l10n']["Manage data list"]="Daten Lëschten verwalten";
-$GLOBALS['__l10n']["Manage deliveries"]="Ausliwwerungen managen";
 $GLOBALS['__l10n']["Manage groups"]="Gruppen verwalten";
 $GLOBALS['__l10n']["Manage items"]="Itemen verwalten";
 $GLOBALS['__l10n']["Manage test takers"]="Testpersounen verwalten";
