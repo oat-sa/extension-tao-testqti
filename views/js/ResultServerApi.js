@@ -23,6 +23,15 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
             serviceCallId, responses, scores, events, params, callback) {
 
         var that = this;
+        var error = function error(){
+            //there is no error management, so doing an alert (an eval and I'll burn in hell...)
+            //TODO manage errors during the delivery
+            alert('An error occurs, please contact your administrator');
+
+            iframeNotifier.parent('unloading');
+            callback(0);
+        };
+
         iframeNotifier.parent('loading');
         
         $.ajax({
@@ -39,14 +48,14 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
             contentType : 'application/json',
             dataType : 'json',
             success : function(reply) {
-                if (reply.success) {
+                if (reply && reply.success) {
                     var fbCount = 0;
                     if (reply.itemSession) {
 
                         var runner = that.getQtiRunner();
                         var onShowCallback = function() {
                             iframeNotifier.parent('unloading');
-                        }
+                        };
                         fbCount = runner.showFeedbacks(reply.itemSession, callback, onShowCallback);
                     }
 
@@ -54,8 +63,11 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
                         iframeNotifier.parent('unloading');
                         callback(0);
                     }
-                }
-            }
+                } else {
+                    error();
+                }           
+            },
+            error : error 
         });
     };
 
