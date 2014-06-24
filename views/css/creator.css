@@ -51,7 +51,7 @@
 @media only screen and (min-width: 1281px) { #test-creator .test-creator-items ul.item-box li .flag { max-width: 87.5px; } }
 #test-creator .test-creator-items ul.item-box li:hover, #test-creator .test-creator-items ul.item-box li.selected { background-color: #3e7da7; color: white; cursor: pointer; }
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { font-family: 'tao'; display: inline-block; position: absolute; right: 4px; top: -6px; font-size: 28px; font-size: 2.8rem; }
-#test-creator .test-creator-props { position: relative; display: table-cell; vertical-align: top; height: auto !important; min-height: 500px; background-color: #f3f1ef; color: #222222; /** FROM QTI CREATOR **/ }
+#test-creator .test-creator-props { position: relative; display: table-cell; vertical-align: top; height: auto !important; min-height: 500px; background-color: #f3f1ef; color: #222222; }
 @media only screen and (max-width: 1024px) { #test-creator .test-creator-props { width: 250px; } }
 @media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-props { width: 300px; } }
 @media only screen and (min-width: 1281px) { #test-creator .test-creator-props { width: 350px; } }
@@ -83,11 +83,8 @@
 @media only screen and (max-width: 1024px) { #test-creator .test-creator-test { margin-right: 250px; } }
 @media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-test { margin-right: 300px; } }
 @media only screen and (min-width: 1281px) { #test-creator .test-creator-test { margin-right: 350px; } }
-#test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child { float: left; text-overflow: ellipsis; }
-@media only screen and (max-width: 1024px) { #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child { max-width: "300px"; } }
-@media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child { max-width: "400px"; } }
-@media only screen and (min-width: 1281px) { #test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child { max-width: "500px"; } }
-#test-creator .test-creator-test h1 .actions, #test-creator .test-creator-test h2 .actions, #test-creator .test-creator-test li .actions { /*float: right;*/ /*position: relative;*/ position: absolute; right: 0; top: 0; display: inline-block; max-width: 300px; height: 39px; z-index: 100; }
+#test-creator .test-creator-test h1 > span:first-child, #test-creator .test-creator-test h2 > span:first-child, #test-creator .test-creator-test li > span:first-child { float: left; }
+#test-creator .test-creator-test h1 .actions, #test-creator .test-creator-test h2 .actions, #test-creator .test-creator-test li .actions { position: absolute; right: 0; top: 0; display: inline-block; max-width: 300px; height: 39px; z-index: 100; }
 #test-creator .test-creator-test h1 .actions .tlb, #test-creator .test-creator-test h2 .actions .tlb, #test-creator .test-creator-test li .actions .tlb { display: inline-block; background: none; margin-left: 15px; font-size: 14px; font-size: 1.4rem; }
 #test-creator .test-creator-test h1 .actions .tlb .tlb-top, #test-creator .test-creator-test h2 .actions .tlb .tlb-top, #test-creator .test-creator-test li .actions .tlb .tlb-top { background: none !important; border-width: 0 !important; -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
 #test-creator .test-creator-test > h1 { position: relative; background-color: #f3f1ef; height: 39px; padding: 4px 28px 3px 48px; margin-bottom: 10px; }

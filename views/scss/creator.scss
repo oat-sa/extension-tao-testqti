@@ -269,7 +269,6 @@
                 margin-right: 5px; 
             }
         }
-/** FROM QTI CREATOR **/
     }
 
     .test-creator-test{
@@ -286,12 +285,8 @@
         h1, h2, li {
             & > span:first-child {
                 float: left;
-                @include responsive('max-width', '300px', '400px', '500px');
-                text-overflow: ellipsis;
             }
             .actions { 
-                /*float: right;*/
-                /*position: relative;*/
                 position: absolute;
                 right: 0;
                 top: 0; 

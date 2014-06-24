@@ -141,7 +141,13 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
                     testPartView.listenActionState();
                     sectionView.listenActionState();
                     itemrefView.listenActionState();
-                    
+                    itemrefView.resize();
+                
+                    $(window)
+                      .off('resize.qti-test-creator')
+                      .on('resize.qti-test-creator', function(){
+                            itemrefView.resize();
+                    });
                 });
                
             //the save button triggers binder's save action.

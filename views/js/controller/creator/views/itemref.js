@@ -20,10 +20,11 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 
+'jquery',
+'lodash', 
 'i18n',
 'taoQtiTest/controller/creator/views/actions'],
-function($, __, actions){
+function($, _, __, actions){
     'use strict';
 
    /**
@@ -38,6 +39,8 @@ function($, __, actions){
         
         actions.properties($actionContainer, 'itemref', model, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
+
+        resize();
 
         /**
          * Perform some binding once the property view is create
@@ -108,6 +111,16 @@ function($, __, actions){
             }
         });
    };
+
+    /**
+     * We need to resize the itemref in case of long labels
+     */
+    var resize = _.throttle(function resize(){
+        var $refs = $('.itemrefs').first();
+        var $actions = $('.itemref .actions').first();
+        var width = $refs.innerWidth() - $actions.outerWidth();
+        $('.itemref > .title').width(width); 
+    }, 100);
     
     /**
      * The itemrefView setup itemref related components and beahvior
@@ -116,7 +129,8 @@ function($, __, actions){
      */
     return {
         setUp : setUp,
-        listenActionState: listenActionState
+        listenActionState: listenActionState,
+        resize : resize
    };
  
 });
