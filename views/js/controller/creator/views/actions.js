@@ -95,14 +95,16 @@ function($, propertyView){
     
             //get the position
             $elements = $('.' + elementClass, $container);
+            console.log($elements.length);
             index = $elements.index($element);
             if (index > 0) {
                 $element.fadeOut(200, function(){
+                    console.log('.' + elementClass + ' :eq(' + (index - 1) + ')');
                     $element
                         .insertBefore($('.' + elementClass + ' :eq(' + (index - 1) + ')', $container))
-                        .fadeIn(400);
-                    $container.trigger('change');
-                    $element.trigger('move');
+                        .fadeIn(400, function(){
+                            $container.trigger('change');
+                        });
                 });
             }
         });
@@ -119,15 +121,17 @@ function($, propertyView){
 
             //get the position
             $elements = $('.' + elementClass, $container);
+            console.log($elements.length);
             index = $elements.index($element);
             if (index < ($elements.length - 1) && $elements.length > 1) {
 
+                console.log('.' + elementClass + ' :eq(' + (index + 1) + ')');
                 $element.fadeOut(200, function(){
                     $element
                         .insertAfter($('.' + elementClass + ' :eq(' + (index + 1) + ')', $container))
-                        .fadeIn(400);
-                    $container.trigger('change');
-                    $element.trigger('move');
+                        .fadeIn(400, function(){
+                            $container.trigger('change');
+                        });
                 });
             }
         });
