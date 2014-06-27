@@ -893,7 +893,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $latency = $ext->getConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY);
         if (empty($latency)) {
-            throw new common_Exception('No default acceptable latency defined.');
+            // Default duration for legacy code or missing config.
+            return 'PT5S';
         }
         return $latency;
     }
