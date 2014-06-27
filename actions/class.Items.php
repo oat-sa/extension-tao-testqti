@@ -67,7 +67,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule {
                     $item['parent'] = $type->getLabel();
                 }
             }
-            if(!is_null($pattern) && !preg_match('/'.$pattern.'+/i', $item['label']) && !preg_match('/'.$pattern.'+/i', $item['parent'])){
+            if(!is_null($pattern) && !preg_match('/'.$pattern.'+/i', $item['label']) && (!array_key_exists('parent', $item) || !preg_match('/'.$pattern.'+/i', $item['parent']))){
                 continue;
             }
             
