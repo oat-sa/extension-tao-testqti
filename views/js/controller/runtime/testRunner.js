@@ -202,13 +202,13 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			    	// Insert QTI Timers container.
 			    	$('<div id="qti-timers"></div>').prependTo('#qti-content');
 			    	// self.formatTime(cst.seconds)
-			        for (var i = this.assessmentTestContext.timeConstraints.length - 1; i >= 0; i--) {
+			        for (var i = 0; i < this.assessmentTestContext.timeConstraints.length; i++) {
 			        	
 			        	var cst = this.assessmentTestContext.timeConstraints[i];
 			        	
 			        	if (cst.allowLateSubmission == false) {
 			        	 // Set up a timer for this constraint.
-	                        $('<div class="qti-timer">' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+	                        $('<div class="qti-timer"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 	                        
 	                        // Set up a timer and update it with setInterval.
 	                        currentTimes[i] = cst.seconds;
@@ -241,7 +241,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	                                }
 	                                else {
 	                                    // Not timed-out...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html(source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
 	                
