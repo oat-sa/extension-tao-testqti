@@ -317,8 +317,6 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    var testPartId = this.assessmentTestContext.testPartId;
 		    var sectionTitle = this.assessmentTestContext.sectionTitle;
 		    
-		    var desc = __('Part:') + ' <span id="qti-part-title">' + testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + sectionTitle + '</span>';
-		    
 		    $('#qti-test-title').text(testTitle);
 		    
 		    try {
@@ -329,7 +327,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		        // Continue normally.
 		    }
 		    
-		    $('#qti-test-position').empty().append(__('Part:') + ' <span id="qti-part-title">' + this.assessmentTestContext.testPartId + '</span> - ' + __('Section:') + ' <span id="qti-section-title">' + this.assessmentTestContext.sectionTitle + '</span>');
+		    $('#qti-test-position').empty().append('<span id="qti-section-title">' + sectionTitle + '</span>');
 		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
 		},
 		
