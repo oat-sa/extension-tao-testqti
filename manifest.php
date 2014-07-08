@@ -37,8 +37,8 @@ return array(
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '2.6',
-        'taoQtiItem' => '*',
-        'taoQtiCommon' => '*'
+        'taoQtiItem' => '2.6',
+        'taoQtiCommon' => '2.6'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
