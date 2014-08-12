@@ -1,5 +1,5 @@
-define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'jquery.trunc' ], 
-    function($, $ui, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __){
+define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc' ], 
+    function($, $ui, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -261,21 +261,26 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    $('#qti-rubrics').remove();
 		
 		    if (this.assessmentTestContext.rubrics.length > 0) {
-		            var $rubrics = $('<div id="qti-rubrics"></div>');
-		
-		            for (var i = 0; i < this.assessmentTestContext.rubrics.length; i++) {
-		                    $rubrics.append(this.assessmentTestContext.rubrics[i]);
-		            }
-		
-		            // modify the <a> tags in order to be sure it
-		            // opens in another window.
-		            $rubrics.find('a').bind('click keypress', function() {
-		                    window.open(this.href);
-		                    return false;
-		            });
-		
-		            $rubrics.prependTo('#qti-content');
-		            MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
+                
+                var $rubrics = $('<div id="qti-rubrics"></div>');
+
+                for (var i = 0; i < this.assessmentTestContext.rubrics.length; i++) {
+                        $rubrics.append(this.assessmentTestContext.rubrics[i]);
+                }
+
+                // modify the <a> tags in order to be sure it
+                // opens in another window.
+                $rubrics.find('a').bind('click keypress', function() {
+                        window.open(this.href);
+                        return false;
+                });
+
+                $rubrics.prependTo('#qti-content');
+
+                if(MathJax){
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
+                }
+		            
 		    }
 		},
 	
