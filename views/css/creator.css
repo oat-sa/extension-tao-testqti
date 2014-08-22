@@ -1,5 +1,23 @@
 /* to be included into your scss files, don't forget to set the includePaths (--load-path) in your compiler  */
 /** Use icon within sass: @inclue icon('down'); */
+/* Fade animation */
+@keyframes fade { 0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; } }
+
+@-webkit-keyframes fade { 0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; } }
+
+@-moz-keyframes fade { 0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; } }
+
+@-o-keyframes fade { 0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; } }
+
+/* Repeat animation */
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { content: "\122"; }
 
 #test-creator .test-creator-props h1:before { content: "\132"; }
