@@ -1,10 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+use oat\tao\helpers\Template;
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>QTI 2.1 Test Driver</title>
-				<link rel="stylesheet" href="<?=TAOBASE_WWW?>css/tao-main-style.css"/>
-                <link rel="stylesheet" href="<?= BASE_WWW ?>css/test_runner.css"/>
-                <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
+				<link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
+                <link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/>
+                <script type="text/javascript" src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
                 
                 <?
                 $ds = DIRECTORY_SEPARATOR;
@@ -23,7 +25,7 @@
 					  }
 					});
                 </script>
-                <script type="text/javascript" src="<?= TAOBASE_WWW ?>../../taoQtiItem/views/js/mathjax/MathJax.js?delayStartupUntil=configured"></script>
+                <script type="text/javascript" src="<?= Template::js('mathjax/MathJax.js?delayStartupUntil=configured', 'taoQtiItem') ?>"></script>
                 <? endif; ?>
                 
                 <script type="text/javascript">

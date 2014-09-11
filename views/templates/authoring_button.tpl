@@ -20,7 +20,7 @@
                  helpers.closeTab(1);
             }
             setTimeout(function(){
-                helpers.openTab('<?=__('Authoring %s', get_data('label'))?>', uri);
+                helpers.openTab(<?=json_encode(__('Authoring %s', get_data('label')))?>, uri);
             }, 10);
         });
 });

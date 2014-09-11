@@ -82,8 +82,5 @@ return array(
 	
 		#BASE WWW the web resources path
 		'BASE_WWW'				=> ROOT_URL	.'taoQtiTest/views/',
-	
-	 	#TAO extension Paths
-		'TAOBASE_WWW'			=> ROOT_URL	.'tao/views/',
 	)
 );

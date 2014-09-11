@@ -1,7 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+use oat\tao\helpers\Template;
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-            <script type="text/javascript" src="<?=TAOBASE_WWW?>js/lib/require.js"></script>
+            <script type="text/javascript" src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
             <script type="text/javascript">
             (function(){
                 var clientConfigUrl = '<?=get_data('client_config_url')?>';
