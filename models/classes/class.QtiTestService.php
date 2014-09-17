@@ -402,6 +402,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                         if ($testContent !== false) {
                             // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
+                            
+                            // 3. Give meaningful names to resources.
+                            $testTitle = $testDefinition->getDocumentComponent()->getTitle();
+                            $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
                         }
                     }
                     else {
