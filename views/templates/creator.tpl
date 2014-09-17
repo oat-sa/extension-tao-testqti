@@ -1,24 +1,20 @@
-<div id="test-creator" class="tao-scope">
-   
-<!-- top toolbar --> 
-    <nav class="test-creator-toolbar">
-        <div class="logo"></div>
-        <ul class="plain">
-            <li id="saver">
-                <span class="icon-save"></span>
-                <?=__('Save')?>
-            </li>
-        </ul>
-    </nav>
-
-
+<div id="test-creator">
 
 <!-- left section: items selection -->
-    <section class="test-creator-items">
-        
+    <section class="test-creator-sidebar test-creator-area test-creator-items">
+        <div class="action-bar plain content-action-bar horizontal-action-bar">
+            <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
+                <li id="authoringBack" class="btn-info small">
+            <span class="li-inner">
+                <span class="icon-left"></span>
+                <?= __('Manage Items') ?>
+            </span>
+                </li>
+            </ul>
+        </div>
         <h1><?=__('Select Items')?></h1>
         <div class='item-selection'>
-            <input id="item-filter" type="search" placeholder='<?=__('filter')?>' />
+            <input id="item-filter" type="search" placeholder='<?=__('Filter')?>' />
             <br />
             <small><?=__("Use Ctrl/Meta key or Lasso for multiple selection")?></small>
             <ul class='item-box plain'></ul>
@@ -26,8 +22,17 @@
     </section>
  
 <!-- test editor  -->
-    <section class="test-creator-test">
-        
+    <section class="test-creator-test test-creator-area">
+        <div class="action-bar plain content-action-bar horizontal-action-bar">
+            <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
+                <li id="saver" class="btn-info small">
+            <span class="li-inner">
+                <span class="icon-save"></span>
+                <?=__('Save')?>
+            </span>
+                </li>
+            </ul>
+        </div>
         <h1><span data-bind="title"></span>
             <div class="actions">
                 <div class="tlb">
@@ -36,7 +41,7 @@
                             <span class="test-actions tlb-bar">
                                 <span class="tlb-start"></span>
                                 <span class="tlb-group">
-                                    <a href="#" class="tlb-button-off property-toggler" title="Manage test Properties">
+                                    <a href="#" class="tlb-button-off property-toggler" title="<?=__('Manage test properties')?>">
                                         <span class="icon-settings"></span>
                                     </a>
                                 </span>
@@ -50,13 +55,16 @@
         <div class="test-content">       
             <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart"> </div>
             <button class="btn-info small testpart-adder">
-                <span class="icon-add"></span>New test part
+                <span class="icon-add"></span><?=__('New test part')?>
             </button>
         </div>
     </section>   
 
-    <section class="test-creator-props">
-        <h1><?=__('Properties')?></h1>
+    <section class="test-creator-sidebar test-creator-area test-creator-props">
+        <div class="action-bar plain content-action-bar horizontal-action-bar">
+
+        </div>
+       <h1><?=__('Properties')?></h1>
     </section
  
 </div>

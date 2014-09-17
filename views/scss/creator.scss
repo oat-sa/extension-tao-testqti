@@ -98,6 +98,11 @@
         }
     }
 
+    .test-creator-sidebar {
+        background-color: $canvas;
+        color: $textColor;
+    }
+
     .test-creator-items{
         position: relative;
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
@@ -105,12 +110,11 @@
         vertical-align: top;
         min-height: $minHeight - $toolbarHeight;
         height: auto !important;
-        background-color: $uiClickableDefaultBg;
-        color: $textColor;
+        border-right: 1px #ddd solid;
 
         h1 {
             @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-            @include font-size(16);
+            @include font-size(14);
             line-height: 1.6;
             background-color: $uiHeaderBg;
             color: $textColor;
@@ -186,10 +190,10 @@
         min-height: $minHeight - $toolbarHeight;
         background-color: $uiClickableDefaultBg;
         color: $textColor;
-
+        border-left: 1px solid #ddd;
         h1 {
             @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-            @include font-size(16);
+            @include font-size(14);
             line-height: 1.6;
             background-color: $uiHeaderBg;
             color: $textColor;
@@ -310,7 +314,7 @@
 
         & > h1 {
            position: relative;
-           background-color: $uiClickableDefaultBg; 
+           background-color: $uiClickableDefaultBg;
            height: 39px;
            padding: 4px 28px 3px 48px ;
            margin-bottom: 10px;
