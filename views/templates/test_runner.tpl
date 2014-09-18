@@ -8,13 +8,13 @@ use oat\tao\helpers\Template;
                 <link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/>
                 <script type="text/javascript" src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
                 
-                <?
+                <?php
                 $ds = DIRECTORY_SEPARATOR;
                 $expectedMathJaxPath = ROOT_PATH . 'taoQtiItem' . $ds . 'views' . $ds . 'js' . $ds . 'mathjax' . $ds . 'MathJax.js';
                 $mathJax = is_readable($expectedMathJaxPath);
                 ?>
                 
-                <? if ($mathJax === true): ?>
+                <?php if ($mathJax === true): ?>
                 <script type="text/x-mathjax-config">
                 	MathJax.Hub.Config({
 					  config: ["TeX-AMS-MML_HTMLorMML-full.js"],
@@ -26,16 +26,16 @@ use oat\tao\helpers\Template;
 					});
                 </script>
                 <script type="text/javascript" src="<?= Template::js('mathjax/MathJax.js?delayStartupUntil=configured', 'taoQtiItem') ?>"></script>
-                <? endif; ?>
+                <?php endif; ?>
                 
                 <script type="text/javascript">
                 (function(){
                     require(['<?=get_data('client_config_url')?>'], function(){
                         require(['taoQtiTest/controller/runtime/testRunner'], function(testRunner){
                         
-                        	<? if ($mathJax === true): ?>
+                        	<?php if ($mathJax === true): ?>
                         	MathJax.Hub.Configured();
-                        	<? endif; ?>
+                        	<?php endif; ?>
                             testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
                             
                         });
