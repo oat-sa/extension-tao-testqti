@@ -31,7 +31,7 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, 
      */
    var itemView =  function(loadItems){
             
-        var $panel     = $('.test-creator-items'); 
+        var $panel     = $('.test-creator-items .item-selection'); 
         var $search    = $('#item-filter');
         var $itemBox   = $('.item-box', $panel);
         

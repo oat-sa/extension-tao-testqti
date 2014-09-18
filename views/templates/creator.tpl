@@ -1,14 +1,22 @@
-<div id="test-creator">
+
+<?php
+use oat\taoQtiItem\helpers\Authoring;
+use oat\tao\helpers\Template;
+?>
+
+<link href="<?= Template::css('creator.css') ?>" rel="stylesheet">
+
+<div id="test-creator" data-content-target="wide">
 
 <!-- left section: items selection -->
     <section class="test-creator-sidebar test-creator-area test-creator-items">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
                 <li id="authoringBack" class="btn-info small">
-            <span class="li-inner">
-                <span class="icon-left"></span>
-                <?= __('Manage Items') ?>
-            </span>
+                    <span class="li-inner">
+                    <span class="icon-left"></span>
+                        <?= __('Manage Tests') ?>
+                    </span>
                 </li>
             </ul>
         </div>
@@ -81,5 +89,8 @@ requirejs.config({
             labels : <?=get_data('labels')?>
        }
     }
+});
+require(['taoQtiTest/controller/creator/creator'], function(controller){
+    controller.start();
 });
 </script>
