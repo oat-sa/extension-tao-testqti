@@ -43,7 +43,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule {
         
         $pattern = null;
         if($this->hasRequestParameter('pattern') && trim($this->getRequestParameter('pattern')) != '' ){
-            $pattern = $this->getRequestParameter('pattern');
+            $pattern = preg_quote($this->getRequestParameter('pattern'));
         }
 
         //get QTI Items
