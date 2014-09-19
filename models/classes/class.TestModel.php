@@ -78,7 +78,7 @@ class taoQtiTest_models_classes_TestModel
     }
     
     /**
-     * (non-PHPdoc)
+     * @deprecated
      * @see taoTests_models_classes_TestModel::getAuthoring()
      */
     public function getAuthoring( core_kernel_classes_Resource $test) {
@@ -87,6 +87,13 @@ class taoQtiTest_models_classes_TestModel
 		$widget->setData('uri', $test->getUri());
 		$widget->setData('label', $test->getLabel());
     	return $widget->render();
+    }
+
+    /**
+     * @see taoTests_models_classes_TestModel::getAuthoringUrl()
+     */
+    public function getAuthoringUrl( core_kernel_classes_Resource $test) {
+        return _url('index', 'Creator', 'taoQtiTest', array('uri' => $test->getUri()));
     }
 
     public static function setQtiTestDirectory(core_kernel_file_File $folder) {
