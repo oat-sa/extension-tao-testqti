@@ -1,11 +1,3 @@
-
-<?php
-use oat\taoQtiItem\helpers\Authoring;
-use oat\tao\helpers\Template;
-?>
-
-<link href="<?= Template::css('creator.css') ?>" rel="stylesheet">
-
 <div id="test-creator" data-content-target="wide">
 
 <!-- left section: items selection -->
@@ -89,8 +81,5 @@ requirejs.config({
             labels : <?=get_data('labels')?>
        }
     }
-});
-require(['taoQtiTest/controller/creator/creator'], function(controller){
-    controller.start();
 });
 </script>
