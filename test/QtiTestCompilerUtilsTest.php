@@ -18,10 +18,10 @@
  *
  */
 
+use oat\tao\test\TaoPhpUnitTestRunner;
 use \qtism\data\storage\xml\XmlDocument;
-
-require_once dirname(__FILE__) . '/../../tao/test/TaoPhpUnitTestRunner.php';
 include_once dirname(__FILE__) . '/../includes/raw_start.php';
+
 
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
