@@ -17,7 +17,10 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+namespace oat\taoQtiTest\test;
 
+use oat\tao\test\TaoPhpUnitTestRunner;
+use \taoQtiTest_helpers_TestCompilerUtils;
 use \qtism\data\storage\xml\XmlDocument;
 
 /**
