@@ -20,9 +20,6 @@
 
 use \qtism\data\storage\xml\XmlDocument;
 
-require_once dirname(__FILE__) . '/../../tao/test/TaoPhpUnitTestRunner.php';
-include_once dirname(__FILE__) . '/../includes/raw_start.php';
-
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
  *
@@ -31,11 +28,11 @@ include_once dirname(__FILE__) . '/../includes/raw_start.php';
  * 
  */
 class QtiTestCompilerUtilsTest extends TaoPhpUnitTestRunner {
-    
+
     static public function samplesDir() {
         return dirname(__FILE__) . '/samples/xml/compiler/meta/';
     }
-    
+
     /**
      * 
      * @dataProvider metaProvider
@@ -48,7 +45,7 @@ class QtiTestCompilerUtilsTest extends TaoPhpUnitTestRunner {
         
         $this->assertEquals($expectedMeta, taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent()));
     }
-    
+
     public function metaProvider() {
         return array(
             array(self::samplesDir() . 'linear_nopreconditions_nobranchrules.xml', array('branchRules' => false, 'preConditions' => false)),
