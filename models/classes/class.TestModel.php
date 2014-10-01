@@ -82,11 +82,7 @@ class taoQtiTest_models_classes_TestModel
      * @see taoTests_models_classes_TestModel::getAuthoring()
      */
     public function getAuthoring( core_kernel_classes_Resource $test) {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-    	$widget = new Renderer($ext->getConstant('DIR_VIEWS').'templates'.DIRECTORY_SEPARATOR.'authoring_button.tpl');
-		$widget->setData('uri', $test->getUri());
-		$widget->setData('label', $test->getLabel());
-    	return $widget->render();
+    	return "";
     }
 
     /**
