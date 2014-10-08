@@ -17,12 +17,15 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
-
 namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoQtiTest_models_classes_ManifestParser;
 use \taoQtiTest_models_classes_QtiTestCompiler;
+use \core_kernel_classes_Resource;
+use \core_kernel_classes_Property;
+use \tao_models_classes_service_FileStorage;
+use \common_report_Report;
 
 /**
  * This test case focuses on testing the ManifestParser model.
@@ -30,83 +33,95 @@ use \taoQtiTest_models_classes_QtiTestCompiler;
  * @author Aamir
  * @package taoQtiTest
  */
+class QtiTestParserTest extends TaoPhpUnitTestRunner
+{
 
-class QtiTestParserTest extends TaoPhpUnitTestRunner {
-
-    static public function dataDir() {
+    static public function dataDir()
+    {
         return dirname(__FILE__) . '/data/';
     }
 
-    static public function samplesDir() {
+    static public function samplesDir()
+    {
         return dirname(__FILE__) . '/samples/';
     }
 
-    public function setUp() {
-		TaoPhpUnitTestRunner::initTest();
+    public function setUp()
+    {
+        TaoPhpUnitTestRunner::initTest();
     }
 
     /**
+     *
      * @return mixed|null
      */
-    public function testManifestParserObject() {
+    public function testManifestParserObject()
+    {
         $objParser = new taoQtiTest_models_classes_ManifestParser($this->dataDir() . 'imsmanifest_mapping_1.xml');
-		$this->assertNotNull($objParser);
-
+        $this->assertNotNull($objParser);
+        
         return $objParser;
     }
 
     /**
      * @depends testManifestParserObject
+     * 
      * @param $objParser
      * @return void
      */
-    public function testManifestParserValidate($objParser) {
+    public function testManifestParserValidate($objParser)
+    {
         $this->assertTrue($objParser->validate());
     }
 
     /**
      * @depends testManifestParserObject
+     * 
      * @param $objParser
      * @return void
      */
-    public function testManifestParserGetResources($objParser) {
+    public function testManifestParserGetResources($objParser)
+    {
         $idResources = $objParser->getResources(null, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
         $this->assertEquals(4, count($idResources));
-
+        
         $typeResources = $objParser->getResources('imsqti_test_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
         $this->assertEquals(1, count($typeResources));
-
+        
         $typeResourcesDefault = $objParser->getResources('imsqti_test_xmlv2p1');
         $this->assertEquals(1, count($typeResourcesDefault));
     }
 
     /**
      * Initialize the compiler
+     * 
      * @return \taoQtiTest_models_classes_QtiTestCompiler
      */
-    public function testQtiTestCreateCompiler() {
+    public function testQtiTestCreateCompiler()
+    {
         $content = new core_kernel_classes_Resource($this->dataDir() . 'qtitest.xml');
         $storage = tao_models_classes_service_FileStorage::singleton();
-
-		$this->assertIsA($content, 'core_kernel_classes_Resource');
-		$this->assertIsA($storage, 'tao_models_classes_service_FileStorage');
-
+        
+        $this->assertIsA($content, 'core_kernel_classes_Resource');
+        $this->assertIsA($storage, 'tao_models_classes_service_FileStorage');
+        
         $compiler = new taoQtiTest_models_classes_QtiTestCompiler($content, $storage);
-		$this->assertIsA($compiler, 'taoQtiTest_models_classes_QtiTestCompiler');
-
+        $this->assertIsA($compiler, 'taoQtiTest_models_classes_QtiTestCompiler');
+        
         return $compiler;
-   }
+    }
 
     /**
      * @depends testQtiTestCreateCompiler
-     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler
+     * 
+     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler            
      * @return void
      */
-    public function testQtiTextCompilerCompile($compiler) {
+    public function testQtiTextCompilerCompile($compiler)
+    {
         $report = $compiler->compile();
-	    $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
-	    $serviceCall = $report->getData();
-	    $this->assertNull($serviceCall);
+        $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
+        $serviceCall = $report->getData();
+        $this->assertNull($serviceCall);
     }
-
 }
