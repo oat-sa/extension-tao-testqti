@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     sass.taoqtitest.files[root + 'css/creator.css'] = root + 'scss/creator.scss';
 
     watch.taoqtitestsass = {
-        files : [root + 'views/scss/home.scss'],
+        files : [root + 'views/scss/**/*.scss'],
         tasks : ['sass:taoqtitest', 'notify:taoqtitestsass'],
         options : {
             debounceDelay : 1000
