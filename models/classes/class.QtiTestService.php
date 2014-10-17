@@ -35,7 +35,7 @@ use qtism\data\AssessmentItemRef;
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jerome Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- 
+ *
  */
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
      
@@ -176,6 +176,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     
     /**
      * Generate an identifier from a qti type, using the syntax "qtitype-index"
+     * 
      * @param XmlDocument $doc
      * @param type $qtiType
      * @param type $offset
@@ -186,9 +187,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         return $qtiType . '-' . (count($typeList) + $offset);
     }
     
-    public function importMultipleTests($file) {
+    /**
+     * Import a QTI Test Package containing one or more QTI Test definitions.
+     * 
+     * @param core_kernel_classes_Class $targetClass The Target RDFS class where you want the Test Resources to be created.
+     * @param string $file The path to the IMS archive you want to import tests from.
+     * @return common_report_Report An import report.
+     */
+    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file) {
         
-        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
+        $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
         $validPackage = false;
         $validManifest = false;
@@ -222,8 +230,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     $validManifest = true;
                     
                     $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
-                    foreach ($tests as $test) {
-                        $report->add($this->importTest($test, $qtiManifestParser, $folder));
+                    foreach ($tests as $qtiTestResource) {
+                        $report->add($this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder));
                     }
                 }
                 else {
@@ -282,16 +290,17 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     /**
      * Import a QTI Test and its dependent Items into the TAO Platform.
      * 
+     * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
      * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
         
         $itemImportService = ImportService::singleton();
         $itemService = taoItems_models_classes_ItemsService::singleton();
-        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
+        $testClass = $targetClass;
         
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
