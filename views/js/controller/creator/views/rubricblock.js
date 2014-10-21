@@ -113,7 +113,7 @@ define([
                     creatorRenderer.setOptions({
                         uri : uri,
                         lang : lang,
-                        baseUrl : helpers._url('download', 'TestContent', 'taoQtiTest') + '?uri=' + encodeURIComponent(uri) + '&lang=' + lang + '&path=',
+                        baseUrl : helpers._url('download', 'TestContent', 'taoQtiTest', {uri : uri, lan : lang, path : ''}),
                         interactionOptionForm : $(),
                         choiceOptionForm : $(),
                         responseOptionForm : $(),
