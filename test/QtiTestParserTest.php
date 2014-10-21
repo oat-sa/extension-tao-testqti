@@ -100,6 +100,7 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
     public function testQtiTestCreateCompiler()
     {
         $content = new core_kernel_classes_Resource($this->dataDir() . 'qtitest.xml');
+        
         $storage = tao_models_classes_service_FileStorage::singleton();
         
         $this->assertIsA($content, 'core_kernel_classes_Resource');
@@ -111,6 +112,8 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
         return $compiler;
     }
 
+    
+    
     /**
      * @depends testQtiTestCreateCompiler
      * 

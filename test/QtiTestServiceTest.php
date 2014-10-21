@@ -23,6 +23,8 @@ use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Property;
 use \taoQtiTest_models_classes_TestModel;
+use \common_report_Report;
+
 
 /**
  * This test case focuses on testing the ManifestParser model.
@@ -197,7 +199,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     public function testSubClassInstanceClone($qtiTest)
     {
         $clone = $this->testService->cloneInstance($qtiTest, $this->testService->getRootclass());
-        $this->assertInstanceOf('core_kernel_classes_Resource', $clone);
+        $this->assertInstanceOf('\core_kernel_classes_Resource', $clone);
         $this->assertTrue($clone->exists());
         
         return $clone;
@@ -286,6 +288,22 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $this->assertTrue(count($unknownHandlers) == 0);
     }
 
+    
+    public function testImportMultipleTests()
+    {
+        $datadir = dirname(__FILE__) . '/data/';
+        $report = $this->testService->importMultipleTests($datadir.'unitqtitest.zip');
+        $this->assertInstanceOf('common_report_Report', $report);      
+        $this->assertEquals($report->getType(), common_report_Report::TYPE_SUCCESS);
+        
+        //$this->assertInstanceOf('core_kernel_classes_Resource', current($report->getData()));
+        foreach ($report as $rep){
+            $result = ($rep->getData());
+        }
+        //taoTests_models_classes_TestsService::singleton()->deleteTest(current($report->getData());
+    }
+    
+    
     /**
      * Verify TestModel compiler class
      * @depends testTestModelInit
