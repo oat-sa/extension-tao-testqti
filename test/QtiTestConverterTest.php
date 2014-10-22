@@ -1,8 +1,27 @@
 <?php
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *
+ */
+namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
 use qtism\data\storage\xml\XmlDocument;
-include_once dirname(__FILE__) . '/../includes/raw_start.php';
+use \taoQtiTest_models_classes_QtiTestConverter;
 
 /**
  * Integration test of the {@link taoQtiTest_models_classes_QtiTestConverter} class.
@@ -11,7 +30,8 @@ include_once dirname(__FILE__) . '/../includes/raw_start.php';
  * @package taoQtiTest
  
  */
-class QtiTestConverterTest extends TaoPhpUnitTestRunner {
+class QtiTestConverterTest extends TaoPhpUnitTestRunner
+{
     
 //     "rubricBlocks" : [ { "content" : [  ],
 //                    "rubricBlock" : { "content" : [  ],
@@ -25,125 +45,31 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner {
      * Data provider 
      * @return array[] the parameters
      */
-    public function dataProvider(){
+    public function dataProvider()
+    {
+        $dataPath = dirname(__FILE__) . '/data/';
         
-        $testPath = dirname(__FILE__) . '/data/qtitest.xml';
-       $json = '{
-   "qti-type":"assessmentTest",
-   "identifier":"testId",
-   "title":"testTitle",
-   "toolName":"",
-   "toolVersion":"",
-   "outcomeDeclarations":[],
-   "testParts":[
-      {
-         "qti-type":"testPart",
-         "identifier":"testPartId",
-         "navigationMode":0,
-         "submissionMode":0,
-         "preConditions":[],
-         "branchRules":[],
-         "itemSessionControl":{
-            "qti-type":"itemSessionControl",
-            "maxAttempts":0,
-            "showFeedback":false,
-            "allowReview":true,
-            "showSolution":false,
-            "allowComment":false,
-            "validateResponses":false,
-            "allowSkipping":true
-         },
-         "assessmentSections":[
-            {
-               "qti-type":"assessmentSection",
-               "title":"assessmentSectionTitle",
-               "visible":false,
-               "keepTogether":true,
-               "ordering":{
-                  "qti-type":"ordering",
-                  "shuffle":true
-               },
-               "rubricBlocks":[],
-               "sectionParts":[
-                  {
-                     "qti-type":"assessmentItemRef",
-                     "href":"http:\/\/tao.localdomain\/bertao.rdf#i137968191265683",
-                     "categories":[],
-                     "variableMappings":{},
-                     "weights":[],
-                     "templateDefaults":{},
-                     "identifier":"astronomy",
-                     "required":false,
-                     "fixed":false,
-                     "preConditions":[],
-                     "branchRules":[]
-                  },
-                  {
-                     "qti-type":"assessmentItemRef",
-                     "href":"http:\/\/tao.localdomain\/bertao.rdf#i137968191389526",
-                     "categories":[],
-                     "variableMappings":{},
-                     "weights":[],
-                     "templateDefaults":{},
-                     "identifier":"elections-in-the-united-states-2004",
-                     "required":false,
-                     "fixed":false,
-                     "preConditions":[],
-                     "branchRules":[]
-                  },
-                  {
-                     "qti-type":"assessmentItemRef",
-                     "href":"http:\/\/tao.localdomain\/bertao.rdf#i137968191388459",
-                     "categories":[],
-                     "variableMappings":{},
-                     "weights":[],
-                     "templateDefaults":{},
-                     "identifier":"periods-of-history",
-                     "required":false,
-                     "fixed":false,
-                     "preConditions":[],
-                     "branchRules":[]
-                  },
-                  {
-                     "qti-type":"assessmentItemRef",
-                     "href":"http:\/\/tao.localdomain\/bertao.rdf#i1379681914588612",
-                     "categories":[],
-                     "variableMappings":{},
-                     "weights":[],
-                     "templateDefaults":{},
-                     "identifier":"space-shuttle-30-years-of-adventure",
-                     "required":false,
-                     "fixed":false,
-                     "preConditions":[],
-                     "branchRules":[]
-                  }
-               ],
-               "identifier":"assessmentSectionId",
-               "required":true,
-               "fixed":false,
-               "preConditions":[],
-               "branchRules":[]
-            }
-         ],
-         "testFeedbacks":[]
-      }
-   ],
-   "testFeedbacks":[]
-}';
+        $json = json_encode(json_decode(file_get_contents($dataPath . 'qtitest.json')));
         
         return array(
-            array($testPath, str_replace(array(' ', "\n", "\t"), '', $json))
+            array(
+                $dataPath . 'qtitest.xml',
+                $json
+            )
         );
     }
-    
+
     /**
      * Test {@link taoQtiTest_models_classes_QtiTestConverter::toJson}
      * @dataProvider dataProvider
-     * @param string $testPath the path of the QTI test to convert
-     * @param string $expected the expected json result 
+     * 
+     * @param string $testPath
+     *            the path of the QTI test to convert
+     * @param string $expected
+     *            the expected json result
      */
-    public function testToJson($testPath, $expected){
-        
+    public function testToJson($testPath, $expected)
+    {
         $doc = new XmlDocument('2.1');
         try {
             $doc->load($testPath);
@@ -156,20 +82,40 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner {
 
         $this->assertEquals($expected, $result);
     }
-    
+
     /**
      * Test {@link taoQtiTest_models_classes_QtiTestConverter::fromJson}
      * @dataProvider dataProvider
-     * @param string $testPath 
-     * @param string $json 
+     * 
+     * @param string $testPath            
+     * @param string $json            
      */
-   public function testFromJson($testPath, $json){
-        
+    public function testFromJson($testPath, $json)
+    {
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($json);
-        $result = $doc->saveToString();
-        $this->assertEquals($result, file_get_contents($testPath));
+        
+        $result = preg_replace(array(
+            '/ {2,}/',
+            '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
+        ), array(
+            ' ',
+            ''
+        ), $doc->saveToString())
+
+        ;
+        $expected = preg_replace(array(
+            '/ {2,}/',
+            '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
+        ), array(
+            ' ',
+            ''
+        ), file_get_contents($testPath))
+
+        ;
+        
+        $this->assertEquals($result, $expected);
     }
 
 }

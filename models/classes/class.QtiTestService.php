@@ -35,7 +35,7 @@ use qtism\data\AssessmentItemRef;
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jerome Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- *
+ 
  */
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
      
@@ -50,8 +50,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return string the json
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getJsonTest(core_kernel_classes_Resource $test){
-        
+    public function getJsonTest(core_kernel_classes_Resource $test)
+    {
         $doc = $this->getDoc($test);
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         return $converter->toJson();
@@ -68,7 +68,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function saveJsonTest(core_kernel_classes_Resource $test, $json) {
         $saved = false;
         
-        if(!empty($json)){
+        if (! empty($json)) {
             $doc = $this->getDoc($test);
             
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
@@ -78,8 +78,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
         return $saved;
     }
-    
-    public function fromJson($json){
+
+    public function fromJson($json)
+    {
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($json);
@@ -92,8 +93,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
      * @return array An array of core_kernel_classes_Resource objects. The array is associative. Its keys are actually the assessmentItemRef identifiers.
      */
-    public function getItems( core_kernel_classes_Resource $test ) {
-    	return $this->getDocItems($this->getDoc($test));
+    public function getItems(core_kernel_classes_Resource $test)
+    {
+        return $this->getDocItems($this->getDoc($test));
     }
     
     /**
@@ -103,8 +105,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return boolean true if set
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function setItems(core_kernel_classes_Resource $test, array $items) {
-        
+    public function setItems(core_kernel_classes_Resource $test, array $items)
+    {
         $doc = $this->getDoc($test);
         $bound = $this->setItemsToDoc($doc, $items);
         
@@ -148,26 +150,29 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @param type $qtiType the type name
      * @return the identifier
      */
-    public function getIdentifierFor(XmlDocument $doc, $qtiType){
+    public function getIdentifierFor(XmlDocument $doc, $qtiType)
+    {
         $components = $doc->getDocumentComponent()->getIdentifiableComponents();
         $index = 1;
         do {
             $identifier = $this->generateIdentifier($doc, $qtiType, $index);
-            $index++;
-        } while(!$this->isIdentifierUnique($components, $identifier));
+            $index ++;
+        } while (! $this->isIdentifierUnique($components, $identifier));
         
         return $identifier;
     }
     
     /**
      * Check whether an identifier is unique against a list of components
-     * @param QtiComponentCollection $components
-     * @param type $identifier
+     * 
+     * @param QtiComponentCollection $components            
+     * @param type $identifier            
      * @return boolean
      */
-    private function isIdentifierUnique(QtiComponentCollection $components, $identifier) {
-        foreach($components as $component){
-            if($component->getIdentifier() == $identifier){
+    private function isIdentifierUnique(QtiComponentCollection $components, $identifier)
+    {
+        foreach ($components as $component) {
+            if ($component->getIdentifier() == $identifier) {
                 return false;
             }
         }
@@ -177,12 +182,13 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     /**
      * Generate an identifier from a qti type, using the syntax "qtitype-index"
      * 
-     * @param XmlDocument $doc
-     * @param type $qtiType
-     * @param type $offset
+     * @param XmlDocument $doc            
+     * @param type $qtiType            
+     * @param type $offset            
      * @return the identifier
      */
-    private function generateIdentifier(XmlDocument $doc, $qtiType, $offset = 1) {
+    private function generateIdentifier(XmlDocument $doc, $qtiType, $offset = 1)
+    {
         $typeList = $doc->getDocumentComponent()->getComponentsByClassName($qtiType);
         return $qtiType . '-' . (count($typeList) + $offset);
     }
@@ -196,7 +202,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function importMultipleTests(core_kernel_classes_Class $targetClass, $file) {
         
-        $testClass = $targetClass;
+        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
         $validPackage = false;
         $validManifest = false;
@@ -230,8 +236,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     $validManifest = true;
                     
                     $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
-                    foreach ($tests as $qtiTestResource) {
-                        $report->add($this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder));
+                    foreach ($tests as $test) {
+                        $report->add($this->importTest($test, $qtiManifestParser, $folder));
                     }
                 }
                 else {
@@ -290,17 +296,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     /**
      * Import a QTI Test and its dependent Items into the TAO Platform.
      * 
-     * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
      * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+    protected function importTest(Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
         
         $itemImportService = ImportService::singleton();
         $itemService = taoItems_models_classes_ItemsService::singleton();
-        $testClass = $targetClass;
+        $testClass = new core_kernel_classes_Class(TAO_TEST_CLASS);
         
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
@@ -619,10 +624,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      * @return string The absolute path to the QTI XML Test definition related to $test.
      */
-    public function getDocPath(core_kernel_classes_Resource $test) {
+    public function getDocPath(core_kernel_classes_Resource $test)
+    {
         $dir = $this->getTestFile($test);
         $testPath = $dir->getAbsolutePath();
-        $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true, 'only' => tao_helpers_File::$FILE));
+        $files = tao_helpers_File::scandir($testPath, array(
+            'recursive' => true,
+            'absolute' => true,
+            'only' => tao_helpers_File::$FILE
+        ));
         $dirContent = array();
         
         foreach ($files as $f) {
@@ -836,7 +846,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @param core_kernel_classes_Resource $test
      * @throws common_exception_Error
      */
-    public function deleteContent( core_kernel_classes_Resource $test) {
+    public function deleteContent(core_kernel_classes_Resource $test)
+    {
         $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
 
         if (!is_null($content)) {
@@ -864,20 +875,21 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * Set the directory where the tests' contents are stored.
      * @param core_kernel_file_File $folder
      */
-    public function setQtiTestDirectory(core_kernel_file_File $folder) {
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-    	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
+    public function setQtiTestDirectory(core_kernel_file_File $folder)
+    {
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
     }
     
     /**
      * Get the directory where the tests' contents are stored.
-     * 
+     *
      * @return core_kernel_file_File
      * @throws common_Exception
      */
-    public function getQtiTestDirectory() {
-    	
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    public function getQtiTestDirectory()
+    {
+        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $uri = $ext->getConfig(self::CONFIG_QTITEST_FOLDER);
         if (empty($uri)) {
             throw new common_Exception('No default repository defined for uploaded files storage.');
@@ -891,7 +903,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @param string $duration An ISO 8601 Duration.
      * @see http://www.php.net/manual/en/dateinterval.construct.php PHP's interval_spec format (based on ISO 8601).
      */
-    public function setQtiTestAcceptableLatency($duration) {
+    public function setQtiTestAcceptableLatency($duration)
+    {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $ext->setConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY, $duration);
     }
@@ -918,7 +931,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * 
      * @return string|boolean The QTI Test template file content or false if it could not be read.
      */
-    public function getQtiTestTemplateFileAsString() {
+    public function getQtiTestTemplateFileAsString()
+    {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
