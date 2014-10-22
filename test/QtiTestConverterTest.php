@@ -28,22 +28,21 @@ use \taoQtiTest_models_classes_QtiTestConverter;
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
- *         
+ 
  */
 class QtiTestConverterTest extends TaoPhpUnitTestRunner
 {
     
-    // "rubricBlocks" : [ { "content" : [ ],
-    // "rubricBlock" : { "content" : [ ],
-    // "qti-type" : "rubricBlock",
-    // "views" : [ 1 ]
-    // },
-    // "views" : [ "" ]
-    // } ],
+//     "rubricBlocks" : [ { "content" : [  ],
+//                    "rubricBlock" : { "content" : [  ],
+//                        "qti-type" : "rubricBlock",
+//                        "views" : [ 1 ]
+//                      },
+//                    "views" : [ "" ]
+//                  } ],
     
     /**
-     * Data provider
-     * 
+     * Data provider 
      * @return array[] the parameters
      */
     public function dataProvider()
@@ -80,7 +79,7 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner
         
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $result = $converter->toJson();
-        
+
         $this->assertEquals($expected, $result);
     }
 
@@ -118,4 +117,5 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner
         
         $this->assertEquals($result, $expected);
     }
+
 }

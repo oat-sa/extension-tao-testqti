@@ -300,7 +300,8 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     public function testImportMultipleTests()
     {
         $datadir = dirname(__FILE__) . '/data/';
-        $report = $this->testService->importMultipleTests($datadir.'unitqtitest.zip');
+        $rootclass = $this->testService->getRootclass();
+        $report = $this->testService->importMultipleTests($rootclass,$datadir.'unitqtitest.zip');
         $this->assertInstanceOf('common_report_Report', $report);      
         $this->assertEquals($report->getType(), common_report_Report::TYPE_SUCCESS);
         $testService = taoTests_models_classes_TestsService::singleton();
