@@ -20,8 +20,10 @@
 namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
+use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Property;
+use \common_ext_ExtensionsManager;
 use \taoQtiTest_models_classes_TestModel;
 use \common_report_Report;
 
@@ -44,6 +46,8 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     public function setUp()
     {
         TaoPhpUnitTestRunner::initTest();
+        common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
     }
 
@@ -57,6 +61,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $this->assertIsA($this->testService, 'taoQtiTest_models_classes_QtiTestService');
     }
 
+    
     /**
      * create qtitest instance
      * 
@@ -288,19 +293,35 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $this->assertTrue(count($unknownHandlers) == 0);
     }
 
-    
+    /**
+     * 
+     * @author Lionel Lecaque, lionel@taotesting.com
+     */
     public function testImportMultipleTests()
     {
         $datadir = dirname(__FILE__) . '/data/';
         $report = $this->testService->importMultipleTests($datadir.'unitqtitest.zip');
         $this->assertInstanceOf('common_report_Report', $report);      
         $this->assertEquals($report->getType(), common_report_Report::TYPE_SUCCESS);
-        
-        //$this->assertInstanceOf('core_kernel_classes_Resource', current($report->getData()));
+        $testService = taoTests_models_classes_TestsService::singleton();
         foreach ($report as $rep){
-            $result = ($rep->getData());
+            $result = $rep->getData();
+           
+            $this->assertInstanceOf('core_kernel_classes_Class', $result->itemClass);
+            $this->assertInstanceOf('core_kernel_classes_Resource', $result->rdfsResource);
+            foreach ($result->items as $items){
+                $this->assertInstanceOf('core_kernel_classes_Resource', $items);
+                $type = current($items->getTypes());
+                $this->assertInstanceOf('core_kernel_classes_Resource', $type);
+                
+                $this->assertEquals($result->itemClass->getUri(),$type->getUri());
+                $expectedLabel = array('Unattended Luggage','Associate Things');
+                $this->assertTrue(in_array($items->getLabel(),$expectedLabel));
+            }
+            $testService->deleteTest($result->rdfsResource);
+            
         }
-        //taoTests_models_classes_TestsService::singleton()->deleteTest(current($report->getData());
+        
     }
     
     
