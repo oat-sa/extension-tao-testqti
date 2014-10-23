@@ -19,7 +19,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(
-['module', 'jquery', 'lodash', 'helpers', 'i18n',
+['module', 'jquery', 'lodash', 'helpers', 'ui/feedback', 'i18n',
 'core/databindcontroller', 
 'taoQtiTest/controller/creator/views/item', 
 'taoQtiTest/controller/creator/views/test',
@@ -30,7 +30,7 @@ define(
 'taoQtiTest/controller/creator/templates/index',
 'taoQtiTest/controller/creator/helpers/qtiTest',
 'core/validator/validators'], 
-function(module, $, _, helpers, __, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
+function(module, $, _, helpers, feedback, __, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
     'use strict';
 
     /**
@@ -143,7 +143,8 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
                     testView(model, {
                         uri : options.uri,
                         identifiers : self.identifiers,
-                        labels : options.labels
+                        labels : options.labels,
+                        exists : options.exists
                     });
     
                     //listen for changes to update available actions
@@ -163,19 +164,26 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
             $saver.on('click', function(event){
                 event.preventDefault();
         
-                if(!$saver.hasClass('disabled')){
-                    $saver.attr('disabled', true).addClass('disabled');
-                    binder.save(function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-
-                        helpers.createInfoMessage(__('Test Saved'));
-
-                    }, function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-                    });
+                if ($saver.hasClass('disabled')){
+                    return;
                 }
+                if ($("#test-creator").find(".test-item-not-found").length) {
+                    feedback().error(__('Test cannot be save while some items are missing'));
+                    return;
+                }
+                
+                $saver.attr('disabled', true).addClass('disabled');
+                binder.save(function(){
+
+                    $saver.attr('disabled', false).removeClass('disabled');
+
+                    feedback().success(__('Test Saved'));
+
+                }, function(){
+
+                    $saver.attr('disabled', false).removeClass('disabled');
+                });
+
             });
         }
     };

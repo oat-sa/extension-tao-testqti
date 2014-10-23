@@ -50,6 +50,8 @@
 @media only screen and (min-width: 1281px) { #test-creator .test-creator-items ul.item-box li .flag { max-width: 87.5px; } }
 #test-creator .test-creator-items ul.item-box li:hover, #test-creator .test-creator-items ul.item-box li.selected { background-color: #3e7da7; color: white; cursor: pointer; }
 #test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { font-family: 'tao'; display: inline-block; position: absolute; right: 4px; top: -6px; font-size: 28px; font-size: 2.8rem; }
+#test-creator .test-item-not-found {font-style: italic; color: #999999;}
+#test-creator .test-item-not-found .title{color: #cc0000; font-weight: bold;}
 #test-creator .test-creator-props { position: relative; display: table-cell; vertical-align: top; height: auto !important; min-height: 500px; background-color: #f3f1ef; color: #222; border-left: 1px solid #ddd; }
 @media only screen and (max-width: 1024px) { #test-creator .test-creator-props { width: 250px; } }
 @media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-props { width: 300px; } }

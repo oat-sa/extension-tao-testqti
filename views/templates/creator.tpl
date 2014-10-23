@@ -78,7 +78,8 @@ requirejs.config({
                 items : '<?=get_data('itemsUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
-            labels : <?=get_data('labels')?>
+            labels : <?=get_data('labels')?>,
+            exists : <?=get_data('exists')?>
        }
     }
 });
