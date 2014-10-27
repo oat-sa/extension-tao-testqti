@@ -1,12 +1,16 @@
-#test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { content: "\122"; }
+                                  /* /  \ |    | --:'''':--
+THIS CODE IS GENERATED          :*_* : _:"":\___
+AUTOMAGICALLY    * *      ____.' :::     '._ *=====<<=)           \    :
+DO NOT EDIT!     * *      '-'-'\_      /'._.' \====:_ "" .'     \ :       : /   :    \ :   .      '. :  : :      : :__:-:__.;--' <*_/   <*/
+#test-creator .test-creator-items ul.item-box li:hover:after, #test-creator .test-creator-items ul.item-box li.selected:after { content: "\e60f"; }
 
-#test-creator .test-creator-props h1:before { content: "\132"; }
+#test-creator .test-creator-props h1:before { content: "\e61d"; }
 
-#test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before { content: "\14b"; }
+#test-creator .test-creator-test .itemrefs-wrapper .itemref-placeholder:before { content: "\e636"; }
 
-#test-creator .test-creator-items h1:before { content: "\155"; }
+#test-creator .test-creator-items h1:before { content: "\e640"; }
 
-#test-creator .test-creator-test > h1:before { content: "\156"; }
+#test-creator .test-creator-test > h1:before { content: "\e641"; }
 
 #test-creator { position: relative; min-height: 550px; height: auto; }
 #test-creator .test-creator-toolbar { position: relative; height: 50px; background-color: #D4D5D7; color: #222; }
