@@ -20,14 +20,14 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery', 'lodash', 'uri', 
+    'jquery', 'lodash', 'uri', 'ui/feedback', 'i18n', 
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index', 
     'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
-function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
+function($, _, uri, feedback, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
     'use strict';
         
    /**
@@ -112,19 +112,37 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             
             if(!model.sectionParts){
                 model.sectionParts = [];
-            }                   
+            }
+
+            var missingItems = false;
+
             $('.itemref', $section).each(function(){
                 var $itemRef = $(this);
-                var index = $itemRef.data('bind-index');
+                var encUri   = uri.encode($itemRef.data('uri'));
+                var index    = $itemRef.data('bind-index');
+
                 if(!model.sectionParts[index]){
                     model.sectionParts[index] = {};
                 }
 
                 itemRefView.setUp($itemRef, model.sectionParts[index]);
-                $itemRef.find('.title').text(
-                    data.labels[uri.encode($itemRef.data('uri'))]
-                );
+
+                $itemRef.find('.title').text(data.labels[encUri]);
+
+                if (!data.exists[encUri]) {
+                    $itemRef.addClass('test-item-not-found');
+                    $itemRef.find('.tlb-group').children().each(function(i,v){
+                        if (!$(v).data('delete')) {
+                            $(v).remove();
+                        }
+                    });
+                    missingItems = true;
+                }
             });
+
+            if (missingItems) {
+                feedback().error(__('Unable to locate test-item within this test'));
+            }
         }
 
         /**
@@ -261,7 +279,6 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
    var listenActionState =  function listenActionState (){
 
         var $sections;
-        var $actionContainer;
         
         $('.sections').each(function(){
             $sections = $('.section', $(this));

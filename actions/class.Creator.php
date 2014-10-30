@@ -40,8 +40,19 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             foreach($items as $item){
                 $labels[$item->getUri()] = $item->getLabel();
             }
-            $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
-            
+
+            $array = tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS);
+            $exists = array();
+            foreach($array as $uri => $label) {
+                if (empty($label)) {
+                    $array[$uri] = __('Test-item not found');
+                    $exists[$uri] = false;
+                } else {
+                    $exists[$uri] = true;
+                }
+            }
+            $this->setData('labels', json_encode($array));
+            $this->setData('exists', json_encode($exists));
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
             $this->setData('itemsUrl', _url('get', 'Items'));

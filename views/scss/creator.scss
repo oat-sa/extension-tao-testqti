@@ -181,6 +181,15 @@
         }
     }
 
+    .test-item-not-found{
+        font-style: italic;
+        color: #999999;
+        .title {
+            color: #cc0000;
+            font-weight: bold;
+        }
+    }
+
     .test-creator-props{
         position: relative;
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
