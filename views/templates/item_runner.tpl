@@ -7,6 +7,7 @@ use oat\tao\helpers\Template;
             <script type="text/javascript">
             (function(){
                 var clientConfigUrl = '<?=get_data('client_config_url')?>';
+                requirejs.config({waitSeconds : <?=get_data('client_timeout')?>});
                 require([clientConfigUrl], function(){
                     require(['taoItems/controller/runtime/itemRunner'], function(itemRunner){
                         itemRunner.start({
@@ -23,7 +24,8 @@ use oat\tao\helpers\Template;
                             },
                             itemId          : <?=json_encode(get_data('itemId'))?>,
                             itemPath        : <?=json_encode(get_data('itemPath'))?>,
-                            clientConfigUrl : clientConfigUrl
+                            clientConfigUrl : clientConfigUrl,
+                            timeout         : <?=get_data('client_timeout')?>
                         });
                     });
                 });
