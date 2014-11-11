@@ -251,10 +251,10 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelImportHandlers($model)
     {
-        $knownHandlers = [
+        $knownHandlers = array(
             'taoQtiTest_models_classes_import_TestImport' => 1
-        ];
-        $unknownHandlers = [];
+        );
+        $unknownHandlers = array();
         foreach ($model->getImportHandlers() as $handler) {
             $handlerClass = get_class($handler);
             if (isset($knownHandlers[$handlerClass])) {
@@ -276,10 +276,10 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelExportHandlers($model)
     {
-        $knownHandlers = [
+        $knownHandlers = array(
             'taoQtiTest_models_classes_export_TestExport' => 1
-        ];
-        $unknownHandlers = [];
+        );
+        $unknownHandlers = array();
         foreach ($model->getExportHandlers() as $handler) {
             $handlerClass = get_class($handler);
             if (isset($knownHandlers[$handlerClass])) {
