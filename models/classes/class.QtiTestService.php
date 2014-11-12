@@ -313,7 +313,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $testResource = $this->createInstance($testClass);
         $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
         $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
-        $testResource->setPropertyValue($modelProperty, $qtiTestModelResource);
+        $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
         
         // Create the report that will hold information about the import
         // of $qtiTestResource in TAO.
