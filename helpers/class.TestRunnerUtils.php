@@ -369,10 +369,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             // Test Part title.
             $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
-             
-            
-            $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
-             
+
             // Number of items composing the test session.
             $context['numberItems'] = $session->getRoute()->count();
              
@@ -398,6 +395,17 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
             $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
              
+            $section = $session->getCurrentAssessmentSection();
+
+            // The navigation map in order to build the test navigator
+            $context['navigatorMap'] = $session->getRoute()->getNavigatorMap(
+				$session->getCurrentTestPart()->getIdentifier(),
+				$section->getIdentifier(),
+                $session->getCompletedItems()
+			);
+
+            $context['sectionTitle'] = $section->getTitle();
+
             // Rubric Blocks.
             $rubrics = array();
              

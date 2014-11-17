@@ -1,5 +1,5 @@
-define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc' ], 
-    function($, $ui, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc' ], 
+    function($, $ui, _, Handlebars, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -103,13 +103,15 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		update : function(assessmentTestContext) {
 			var self = this;
 			$('#qti-item').remove();
-			
+
+            $("#qti-navigator").height($(window).height());
 			var $runner = $('#runner');
 			$runner.css('height', 'auto');
 			
 			this.assessmentTestContext = assessmentTestContext;
 			this.itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
-			
+
+			this.updateNavigator();
 			this.updateContext();
 			this.updateProgress();
 			this.updateNavigation();
@@ -118,7 +120,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			this.updateTools();
 			this.updateTimer();
 			
-			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+			var $itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
 			$itemFrame.appendTo('#qti-content');
 			iframeResizer.autoHeight($itemFrame, 'body');
 			
@@ -300,6 +302,96 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    }
 		},
 		
+		updateNavigator: function() {
+			var ctx = this.assessmentTestContext,
+                numberItems = ctx.numberItems,
+				$parts = $("#qti-navigator-parts"),
+				$part, part;
+
+			$("#qti-navigator-answered").text(ctx.numberCompleted + "/" + numberItems)
+			$("#qti-navigator-unanswered").text(
+				(numberItems - ctx.numberCompleted) + "/" +
+				numberItems
+			);
+
+			ctx = ctx.navigatorMap;
+
+			if (ctx.length > 4) {
+				$parts.removeAttr("class");
+			} else {
+				$parts.attr("class", "parts-" + ctx.length);
+			}
+
+            $parts.children(":not(.first)").remove();
+
+			for (var i = 0; i < ctx.length; i++) {
+				part = ctx[i];
+				$part = $("<li/>", {"data-pid":part.id,text:i+1});
+				if (part.sections.length) {
+					if (part.active) {
+						this.updateNavigatorSections(part.id, part.sections, numberItems);
+						$part.addClass("active");
+					}
+				} else {
+					$part.addClass("disabled");
+				}
+				$parts.append($part);
+			}
+
+			$("#qti-navigator").on("click", ".qti-navigator-section>.title" ,function(){
+				var section = $(this).parent(),
+                    isOpen = section.hasClass("open");
+				section.toggleClass("open", !isOpen)
+                       .children(".items").slideToggle("500");
+			});
+
+			var self = this;
+
+			$("#qti-navigator-parts").on("click", 'li:not(".first,.disabled")',function(){
+				var $this = $(this);
+                
+				if ($this.hasClass("active")) {
+					return;
+				}
+				$("#qti-navigator-parts > .active").removeClass("active");
+				$this.addClass("active");
+
+				var pid = $this.data("pid");
+
+				for (var i = 0; i < ctx.length; i++) {
+					if (ctx[i].id == pid) {
+						self.updateNavigatorSections(pid, ctx[i].sections, numberItems);
+						break;
+					}
+				}
+			});
+		},
+
+		updateNavigatorSections: function(partId, sections, numberItems) {
+			var $sections = $(".qti-navigator-sections").empty(),$section,$items,options;
+
+			if(typeof this._section !== 'function'){
+				this._section = Handlebars.compile("<div class='qti-navigator-section {{classDef}}' data-pid='{{pid}}' data-sid='{{sid}}' data-uri='{{id}}'><div class='title'><b>{{label}}<i>{{answered}}/{{numberItems}}</i></b><img class='open' src='../views/img/arrow_down.gif'/></div><div class='items' style={{styleDef}}></div></div>");
+				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item' data-uri='{{id}}'>{{label}}</div>");
+			}
+
+			for (var s,i = 0; i < sections.length; i++) {
+				s = sections[i];
+                options={classDef:"",styleDef:"",pid:partId,sid:s.id,label:s.label,id:s.id,answered:s.answered,numberItems:numberItems}
+                if (s.active) {
+                    options.classDef = "open";
+                    options.styleDef = "display:block";
+                }
+				$section = $(this._section(options));
+				$items = $section.children(".items");
+				for (var ii = 0; ii < s.items.length; ii++) {
+					$items.append(this._sectionItem({label:s.items[ii].label,id:s.items[ii].id}));
+				}
+				$sections.append($section);
+			}
+
+		},
+
 		updateProgress: function() {
 		    
 		    var considerProgress = this.assessmentTestContext.considerProgress;
@@ -449,6 +541,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	        
 	        $(window).bind('resize', function() {
 	            TestRunner.adjustFrame();
+                $("#qti-navigator").height($(window).height())
 	            $('#qti-test-title, #qti-test-position').badonkatrunc();
 	        });
 
