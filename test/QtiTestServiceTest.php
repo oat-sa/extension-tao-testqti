@@ -198,12 +198,12 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      * Clone test
      * @depends testSubClassInstanceCreate
      * 
-     * @param $qtiTest
+     * @param  \core_kernel_classes_Resource $qtiTest
      * @return \core_kernel_classes_Resource
      */
     public function testSubClassInstanceClone($qtiTest)
     {
-        $clone = $this->testService->cloneInstance($qtiTest, $this->testService->getRootclass());
+        $clone = $qtiTest->duplicate();
         $this->assertInstanceOf('\core_kernel_classes_Resource', $clone);
         $this->assertTrue($clone->exists());
         
