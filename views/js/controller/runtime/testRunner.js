@@ -8,6 +8,8 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		var waitingTime = 0;
 	
 	    var TestRunner = {
+        updateCalls: 0,
+
 	    // Constants
 	    'TEST_STATE_INITIAL': 0,
 	    'TEST_STATE_INTERACTING': 1,
@@ -102,6 +104,8 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 	
 		update : function(assessmentTestContext) {
 			var self = this;
+            ++this.updateCalls;
+
 			$('#qti-item').remove();
 
             $("#qti-navigator").height($(window).height());
@@ -329,7 +333,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				$part = $("<li/>", {"data-pid":part.id,text:i+1});
 				if (part.sections.length) {
 					if (part.active) {
-						this.updateNavigatorSections(part.id, part.sections, numberItems);
+						this.updateNavigatorSections(part.id, part.sections);
 						$part.addClass("active");
 					}
 				} else {
@@ -338,6 +342,14 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				$parts.append($part);
 			}
 
+            if (this.updateCalls == 1) {
+                this.bindNavigatorEvents()
+            }
+		},
+
+        bindNavigatorEvents : function() {
+			var self = this;
+
 			$("#qti-navigator").on("click", ".qti-navigator-section>.title" ,function(){
 				var section = $(this).parent(),
                     isOpen = section.hasClass("open");
@@ -345,7 +357,19 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
                        .children(".items").slideToggle("500");
 			});
 
-			var self = this;
+
+			$("#qti-navigator").on("click", ".qti-navigator-item" ,function(){
+                self.actionCall(
+                    'jump',
+                    {jump: $(this).data("jump")},
+                    {
+                        500: function() {
+                            self.afterTransition();
+                            alert("An error while navigating to this item.");
+                        }
+                    }
+                );
+			});
 
 			$("#qti-navigator-parts").on("click", 'li:not(".first,.disabled")',function(){
 				var $this = $(this);
@@ -356,28 +380,29 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				$("#qti-navigator-parts > .active").removeClass("active");
 				$this.addClass("active");
 
-				var pid = $this.data("pid");
+				var pid = $this.data("pid"),
+                    ctx = self.assessmentTestContext.navigatorMap;
 
 				for (var i = 0; i < ctx.length; i++) {
 					if (ctx[i].id == pid) {
-						self.updateNavigatorSections(pid, ctx[i].sections, numberItems);
+						self.updateNavigatorSections(pid, ctx[i].sections);
 						break;
 					}
 				}
 			});
-		},
+        },
 
-		updateNavigatorSections: function(partId, sections, numberItems) {
-			var $sections = $(".qti-navigator-sections").empty(),$section,$items,options;
+		updateNavigatorSections: function(partId, sections) {
+			var $sections = $(".qti-navigator-sections").empty(),$section,$items,options,item,length=sections.length;
 
-			if(typeof this._section !== 'function'){
-				this._section = Handlebars.compile("<div class='qti-navigator-section {{classDef}}' data-pid='{{pid}}' data-sid='{{sid}}' data-uri='{{id}}'><div class='title'><b>{{label}}<i>{{answered}}/{{numberItems}}</i></b><img class='open' src='../views/img/arrow_down.gif'/></div><div class='items' style={{styleDef}}></div></div>");
-				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item' data-uri='{{id}}'>{{label}}</div>");
+			if(typeof this._section !== "function"){
+				this._section = Handlebars.compile("<div class='qti-navigator-section {{classDef}}' data-pid='{{pid}}' data-uri='{{id}}'><div class='title'>{{label}}<i class='counter'>{{answered}}/{{numberItems}}</i><img class='open' src='../views/img/arrow_down.gif'/></div><div class='items' style={{styleDef}}></div></div>");
+				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item {{classDef}}' data-uri='{{id}}' data-jump='{{position}}'><span class='icon-{{iconDef}}'></span>{{label}}</div>");
 			}
 
-			for (var s,i = 0; i < sections.length; i++) {
+			for (var s,i = 0; i < length; i++) {
 				s = sections[i];
-                options={classDef:"",styleDef:"",pid:partId,sid:s.id,label:s.label,id:s.id,answered:s.answered,numberItems:numberItems}
+                options={classDef:"",styleDef:"",pid:partId,label:s.label,id:s.id,answered:s.answered,numberItems:length}
                 if (s.active) {
                     options.classDef = "open";
                     options.styleDef = "display:block";
@@ -385,7 +410,16 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				$section = $(this._section(options));
 				$items = $section.children(".items");
 				for (var ii = 0; ii < s.items.length; ii++) {
-					$items.append(this._sectionItem({label:s.items[ii].label,id:s.items[ii].id}));
+                    item = s.items[ii];
+                    options = {label:item.label,id:item.id,position:item.position,classDef:"unanswered",iconDef:"unanswered"};
+                    if (item.answered) {
+                        options.classDef = "answered";
+                        options.iconDef = "answered";
+                    }
+                    if (item.active) {
+                        options.classDef += " active";
+                    }
+					$items.append(this._sectionItem(options));
 				}
 				$sections.append($section);
 			}
@@ -462,11 +496,13 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		    return "\u00b1 " + time;
 		},
 		
-		actionCall: function(action) {
+		actionCall: function(action, data, cbStatus) {
 			var self = this;
+            data.XDEBUG_SESSION_START="netbeans-xdebug";
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],
+                    data: data,
 					cache: false,
 					async: true,
 					dataType: 'json',
@@ -477,7 +513,8 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 						else {
 							self.update(assessmentTestContext);
 						}
-					}
+					},
+                    statusCode: cbStatus
 				});
 			});
 		}

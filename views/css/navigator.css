@@ -1,3 +1,27 @@
+@font-face {
+	font-family: 'testRunner';
+	src:url('fonts/testRunner.eot?-c4rutm');
+	src:url('fonts/testRunner.eot?#iefix-c4rutm') format('embedded-opentype'),
+		url('fonts/testRunner.woff?-c4rutm') format('woff'),
+		url('fonts/testRunner.ttf?-c4rutm') format('truetype'),
+		url('fonts/testRunner.svg?-c4rutm#testRunner') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'testRunner';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 .qti-navigator {
 	border-right: 1px solid;
 	float: left;
@@ -21,7 +45,7 @@
 }
 .qti-navigator-info ul li i{
     float: right;
-    font-style: normal;
+    font: .9em Verdana,Geneva,sans-serif;
 }
 
 .qti-navigator-parts ul{
@@ -41,9 +65,9 @@
 	padding: 0 8px;
 }
 .qti-navigator-parts ul li:not(.first){
+    font-family: Verdana,Geneva,sans-serif;
 	margin-left: -1px;
 	text-align: center;
-	
 	display: inline-block;
 	*display: inline;
 	zoom: 1;
@@ -84,7 +108,8 @@
 }
 .qti-navigator-section .title{
     color:#fff;
-    padding: 3px 0;
+    cursor: pointer;
+    padding: 3px 0 3px 22px;
     position: relative;
     background:#307fc1;
     background:-webkit-linear-gradient(top, #3582c6 0%,#266d9c 100%);
@@ -93,17 +118,14 @@
     background: -ms-linear-gradient(top, #3582c6 0%,#266d9c 100%); /* IE10+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3582c6', endColorstr='#266d9c',GradientType=0 ); /* IE6-9 */
 }
-.qti-navigator-section .title b{
-    display: block;
-    font-weight: bold;
-    cursor: pointer;
-    padding-left: 22px;
+.qti-navigator .counter{
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: .9em;
 }
 .qti-navigator-section .title i{
     float: right;
     margin-right: 5px;
     font-style: normal;
-    font-weight: normal;
 }
 .qti-navigator-section img {
     position: absolute;
@@ -132,7 +154,7 @@
     border: 1px solid;
     overflow: hidden;
     display: none;
-    padding: 4px 5px;
+    padding: 4px 5px 5px;
     border-top: none;
 }
 
@@ -144,22 +166,54 @@
 }
 
 .qti-navigator-item{
-    padding: 2px 0
+    color: #707070;
+    cursor: pointer;
+}
+.qti-navigator-item .icon-unanswered:before {
+    color: #707070;
+}
+.qti-navigator-item.active{
+    background-color: rgba(209,227,237,0.5);
+    margin: 0 -5px 0 -5px;
+    padding: 2px 0 4px 5px;
+    color: #000;
+}
+.qti-navigator-item.active .icon-unanswered:before {
+    color: #000000
 }
 
-
-
-/*NEW ICONS*/
-.icon-answered,
-.icon-unanswered {
-    background-repeat: no-repeat;
-    width: 16px;
-    height: 16px;
+.qti-navigator-item.active span:before{}
+.qti-navigator-item:hover{
+    color: #000000;
+}
+.qti-navigator-item span{
+    margin-right: 4px;
+    font-size: 7px;
 }
 
-.icon-answered{
-    background-image: url("../img/answered.png");
+.qti-navigator-item.answered{
+    color: #aaa;
+    cursor: default;
 }
-.icon-unanswered {
-    background-image: url("../img/unanswered.png");
+.qti-navigator-item.answered:hover{
+    color: #aaa;
+}
+.qti-navigator-item .icon-unanswered:before {
+	color: #707070
+}
+.qti-navigator-item:hover .icon-unanswered:before {
+    color: #000000
+}
+
+.icon-unanswered:before {
+	content: "\e6a6";
+}
+.icon-skipped:before {
+	content: "\e600";
+}
+.icon-answered:before {
+	content: "\e601";
+}
+.icon-active:before {
+	content: "\e602";
 }
