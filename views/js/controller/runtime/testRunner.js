@@ -607,7 +607,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		
 		actionCall: function(action, data, cbStatus) {
 			var self = this;
-            //data.XDEBUG_SESSION_START="netbeans-xdebug";
+
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],
