@@ -3,10 +3,6 @@ html, body {
     margin: 0;
 }
 
-#runner {
-	/*overflow:hidden;*/
-}
-
 #qti-item {
 	width: 100%;
 	overflow: hidden;
