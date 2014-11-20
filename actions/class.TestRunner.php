@@ -297,8 +297,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $session = $this->getTestSession();
         
         try {
-            $session->jumpTo($this->getRequestParameter('jump'));
-            
+            $session->jumpTo($this->getRequestParameter('position'));
+
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }

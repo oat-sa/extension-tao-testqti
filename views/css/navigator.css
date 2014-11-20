@@ -8,7 +8,9 @@
 	font-weight: normal;
 	font-style: normal;
 }
-[class^="icon-"], [class*=" icon-"] {
+.icon-answered,
+.icon-unanswered
+{
 	font-family: 'testRunner';
 	speak: none;
 	font-style: normal;
@@ -33,15 +35,10 @@
 	list-style: none;
 	padding: 0;
 }
-.qti-navigator-info {
-}
-.qti-navigator-info ul li {
-    padding-left: 20px;
-    position: relative;
-}
 .qti-navigator-info ul li span{
-    left: 0;
-    position: absolute;
+    margin-right: 4px;
+    display: inline-block;
+    padding-top: 4px;
 }
 .qti-navigator-info ul li i{
     float: right;
@@ -60,18 +57,32 @@
 	margin: 0 5px 0 -15px;
 	padding: 0 !important;
 }
-.qti-navigator-parts ul li{
+.qti-navigator-parts ul li,
+.qti-navigator-filters ul li{
 	display: inline;
 	padding: 0 8px;
 }
+#qti-navigator-linear{
+    font-size: 1.1em;
+    display: none;
+    margin-top: 20px;
+}
+#qti-navigator-linear p{
+    margin-top: 20px;
+    text-align: center;
+}
+.qti-navigator-filters ul {
+	margin: 0 0 10px;
+    text-align: center;
+}
+.qti-navigator-filters ul li,
 .qti-navigator-parts ul li:not(.first){
-    font-family: Verdana,Geneva,sans-serif;
 	margin-left: -1px;
 	text-align: center;
 	display: inline-block;
 	*display: inline;
+    padding: 2px 5px;
 	zoom: 1;
-	margin: 0;
 	cursor: pointer;
 	border: 1px solid #bbb;
 	overflow: visible;
@@ -88,23 +99,37 @@
 				0 1px 2px -1px rgba(0, 0, 0, .5),
 				0 1px 0 rgba(255, 255, 255, .3) inset;
 }
-.qti-navigator-parts ul li.active{
+.qti-navigator-parts ul li:not(.first){
+    font-family: Verdana,Geneva,sans-serif;
+}
+.qti-navigator-parts ul li.active,
+.qti-navigator-filters ul li.active{
 	background: #e9e9e9;
-	padding-top: 3px;
+    padding-top: 3px;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, .2) inset;
+}
+.qti-navigator-parts ul li.disabled{
+    padding-top: 3px;
+    padding-bottom: 1px;
 }
 .qti-navigator-parts .parts-1 {
 	display: none
 }
-.qti-navigator-parts .parts-2 li{
-	padding: 2px 20px;
+.qti-navigator-parts ul.parts-2 li{
+	padding-left: 20px;
+	padding-right: 20px;
 }
-.qti-navigator-parts .parts-3 li{
-	padding: 2px 14px;
+.qti-navigator-parts ul.parts-3 li{
+	padding-left: 14px;
+	padding-right: 14px;
+}
+.qti-navigator-parts ul.parts-4 li{
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .qti-navigator-section {
-	margin-bottom: 5px
+	margin-bottom: 10px
 }
 .qti-navigator-section .title{
     color:#fff;
@@ -168,21 +193,19 @@
 .qti-navigator-item{
     color: #707070;
     cursor: pointer;
+    line-height: 18px;
 }
-.qti-navigator-item .icon-unanswered:before {
-    color: #707070;
-}
-.qti-navigator-item.active{
+.qti-navigator-item[class*="Active"]{
     background-color: rgba(209,227,237,0.5);
     margin: 0 -5px 0 -5px;
     padding: 2px 0 4px 5px;
-    color: #000;
+    color: #000000;
 }
-.qti-navigator-item.active .icon-unanswered:before {
-    color: #000000
+.qti-navigator-item[class*="Active"] span:before{
+    color: #000000;
 }
 
-.qti-navigator-item.active span:before{}
+
 .qti-navigator-item:hover{
     color: #000000;
 }
@@ -191,11 +214,11 @@
     font-size: 7px;
 }
 
-.qti-navigator-item.answered{
+.qti-navigator-item.Answered{
     color: #aaa;
     cursor: default;
 }
-.qti-navigator-item.answered:hover{
+.qti-navigator-item.Answered:hover{
     color: #aaa;
 }
 .qti-navigator-item .icon-unanswered:before {
@@ -203,6 +226,16 @@
 }
 .qti-navigator-item:hover .icon-unanswered:before {
     color: #000000
+}
+
+.qti-navigator-item.AnsweredClosed,
+.qti-navigator-item.AnsweredClosed .icon-answered:before{
+	color: #bbbbbb;
+    cursor: default
+}
+
+.qti-navigator-item.UnansweredClosed .icon-unanswered:before{
+    content: "\e600";
 }
 
 .icon-unanswered:before {

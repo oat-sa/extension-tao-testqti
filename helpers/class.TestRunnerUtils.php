@@ -447,6 +447,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
         // get jumps
         $jumps = $session->getPossibleJumps();
+
+        // no jumps, notify linear-mode
+        if (!$jumps->count()) {
+            return NavigationMode::LINEAR;
+        }
+
         $jumpsMap = array();
         foreach ($jumps as $jump) {
             $jump->getItemSession()->isResponded();
@@ -529,11 +535,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 }
             }
 
-			$returnValue[] = array(
+            $data = array(
 				'id'       => $id,
 				'sections' => $sections,
 				'active'   => $id === $activePart
-			);
+            );
+            if (empty($sections)) {
+                $item = current(current($jumpsMap[$id]));
+                $data['position'] = $item['position'];
+            }
+			$returnValue[] = $data;
 			$testParts[$id] = false;
         }
 

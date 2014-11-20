@@ -9,6 +9,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 	
 	    var TestRunner = {
         updateCalls: 0,
+        guiDisabled: false,
 
 	    // Constants
 	    'TEST_STATE_INITIAL': 0,
@@ -52,6 +53,15 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		},
 	
 		moveBackward : function() {
+		    this.disableGui();
+		    
+		    var that = this;
+		    this.itemServiceApi.kill(function(signal) {
+                that.actionCall('moveBackward');
+            });  
+		},
+	
+		switchTestPart: function() {
 		    this.disableGui();
 		    
 		    var that = this;
@@ -320,6 +330,13 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 
 			ctx = ctx.navigatorMap;
 
+            if (typeof ctx == "number") {
+                // We do not have navigation, we are in LINEAR navigation mode
+                $("#qti-navigator-linear").show().children("p").hide();
+                $("#qti-navigator > .block-navigator__filters").hide();
+                return;
+            }
+
 			if (ctx.length > 4) {
 				$parts.removeAttr("class");
 			} else {
@@ -331,14 +348,10 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 			for (var i = 0; i < ctx.length; i++) {
 				part = ctx[i];
 				$part = $("<li/>", {"data-pid":part.id,text:i+1});
-				if (part.sections.length) {
-					if (part.active) {
-						this.updateNavigatorSections(part.id, part.sections);
-						$part.addClass("active");
-					}
-				} else {
-					$part.addClass("disabled");
-				}
+                if (part.active) {
+                    this.updateNavigatorSections(part.id, part.sections);
+                    $part.addClass("active");
+                }
 				$parts.append($part);
 			}
 
@@ -347,21 +360,14 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
             }
 		},
 
-        bindNavigatorEvents : function() {
-			var self = this;
-
-			$("#qti-navigator").on("click", ".qti-navigator-section>.title" ,function(){
-				var section = $(this).parent(),
-                    isOpen = section.hasClass("open");
-				section.toggleClass("open", !isOpen)
-                       .children(".items").slideToggle("500");
-			});
-
-
-			$("#qti-navigator").on("click", ".qti-navigator-item" ,function(){
-                self.actionCall(
+		jump: function(position) {
+            this.disableGui();
+		    
+		    var self = this;
+		    this.itemServiceApi.kill(function(signal) {
+		        self.actionCall(
                     'jump',
-                    {jump: $(this).data("jump")},
+                    {position: position},
                     {
                         500: function() {
                             self.afterTransition();
@@ -369,14 +375,70 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
                         }
                     }
                 );
+		    });  
+		},
+
+        bindNavigatorEvents : function() {
+			var self = this;
+
+			$("#qti-navigator-linear").on("click", ".btn-info" ,function(){
+
+                if (self.guiDisabled) {
+                    return;
+                }
+
+				var pid = $("#qti-navigator-parts > .active").data("pid"),
+                    ctx = self.assessmentTestContext.navigatorMap,
+                    position;
+
+				for (var i = 0; i < ctx.length; i++) {
+					if (ctx[i].id == pid) {
+                        position = ctx[i].position;
+						break;
+					}
+				}
+
+                if (typeof position != 'undefined') {
+                    self.jump(position);
+                }
+
+			});
+
+			$("#qti-navigator").on("click", ".qti-navigator-section>.title" ,function(){
+                if (self.guiDisabled) {
+                    return;
+                }
+				var section = $(this).parent(),
+                    isOpen = section.hasClass("open");
+				section.toggleClass("open", !isOpen)
+                       .children(".items").slideToggle("500");
+			});
+
+			$("#qti-navigator").on("click", ".qti-navigator-item" ,function(){
+
+                if (self.guiDisabled) {
+                    return;
+                }
+
+                var $this = $(this);
+                if ($this.is(".AnsweredClosed")) {
+                    alert('No more attempts allowed for "' + $this.text() + '"');
+                    return;
+                }
+
+                self.jump($this.data("jump"));
 			});
 
 			$("#qti-navigator-parts").on("click", 'li:not(".first,.disabled")',function(){
+                if (self.guiDisabled) {
+                    return;
+                }
 				var $this = $(this);
-                
+
 				if ($this.hasClass("active")) {
 					return;
 				}
+
 				$("#qti-navigator-parts > .active").removeClass("active");
 				$this.addClass("active");
 
@@ -389,16 +451,56 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 						break;
 					}
 				}
+
+			});
+
+			$("#qti-navigator-filters").on("click", "li",function(){
+                if (self.guiDisabled) {
+                    return;
+                }
+				var $this = $(this);
+
+				if ($this.hasClass("active")) {
+					return;
+				}
+
+				$("#qti-navigator-filters > .active").removeClass("active");
+				$this.addClass("active");
+
+                $("#qti-navigator").find(".qti-navigator-item").show();
+
+                if ($this.data("mode") == 1) {
+                    return;
+                }
+
+                $(".qti-navigator-section").each(function(){
+                    var $section = $(this);
+                    $section.children(".items>.qti-navigator-item").each(function() {
+                        $(this).is(".Answered,.AnsweredActive,.AnsweredActiveClosed").hide();
+                    });
+                })
+
 			});
         },
 
 		updateNavigatorSections: function(partId, sections) {
-			var $sections = $(".qti-navigator-sections").empty(),$section,$items,options,item,length=sections.length;
+			var $sections = $(".qti-navigator-sections").empty(),length=sections.length;
+
+            if (length) {
+                $("#qti-navigator-linear").hide();
+                $("#qti-navigator > .block-navigator__filters").show();
+            } else {
+                $("#qti-navigator-linear").show().children("p").show();
+                $("#qti-navigator > .block-navigator__filters").hide();
+                return;
+            }
 
 			if(typeof this._section !== "function"){
 				this._section = Handlebars.compile("<div class='qti-navigator-section {{classDef}}' data-pid='{{pid}}' data-uri='{{id}}'><div class='title'>{{label}}<i class='counter'>{{answered}}/{{numberItems}}</i><img class='open' src='../views/img/arrow_down.gif'/></div><div class='items' style={{styleDef}}></div></div>");
 				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item {{classDef}}' data-uri='{{id}}' data-jump='{{position}}'><span class='icon-{{iconDef}}'></span>{{label}}</div>");
 			}
+
+            var $section,$items,options,item;
 
 			for (var s,i = 0; i < length; i++) {
 				s = sections[i];
@@ -411,13 +513,16 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				$items = $section.children(".items");
 				for (var ii = 0; ii < s.items.length; ii++) {
                     item = s.items[ii];
-                    options = {label:item.label,id:item.id,position:item.position,classDef:"unanswered",iconDef:"unanswered"};
+                    options = {label:item.label,id:item.id,position:item.position,classDef:"Unanswered",iconDef:"unanswered"};
                     if (item.answered) {
-                        options.classDef = "answered";
+                        options.classDef = "Answered";
                         options.iconDef = "answered";
                     }
                     if (item.active) {
-                        options.classDef += " active";
+                        options.classDef += "Active";
+                    }
+                    if (!item.remainingAttempts) {
+                        options.classDef += "Closed";
                     }
 					$items.append(this._sectionItem(options));
 				}
@@ -474,11 +579,15 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		},
 		
 		disableGui: function() {
+            this.guiDisabled = true;
 		    $('#qti-navigation button').addClass('disabled');
+		    $('#qti-navigator').addClass('disabled');
 		},
 		
 		enableGui: function() {
+            this.guiDisabled = false;
 		    $('#qti-navigation button').removeClass('disabled');
+		    $('#qti-navigator').removeClass('disabled');
 		},
 	
 		formatTime: function(totalSeconds) {
@@ -498,7 +607,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 		
 		actionCall: function(action, data, cbStatus) {
 			var self = this;
-            data.XDEBUG_SESSION_START="netbeans-xdebug";
+            //data.XDEBUG_SESSION_START="netbeans-xdebug";
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],

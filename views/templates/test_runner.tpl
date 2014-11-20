@@ -38,14 +38,19 @@ use oat\tao\helpers\Template;
                     <li class="first"><?= __('Part'); ?></li>
                 </ul>
             </div>
-            <div class="block-navigator__filters">
-                <ul>
-                    <li><?=__('All'); ?></li>
-                    <li><?=__('Unanswered'); ?></li>
-                    <li><?=__('Flagged'); ?></li>
+            <div class="qti-navigator-filters">
+                <ul id="qti-navigator-filters">
+                    <li class="active" data-mode="1"><?=__('All'); ?></li>
+                    <li data-mode="2"><?=__('Unanswered'); ?></li>
+                    <li data-mode="3"><?=__('Flagged'); ?></li>
                 </ul>
             </div>
             <div class="qti-navigator-sections"></div>
+            <div id="qti-navigator-linear">
+                <b>Warning:</b> in this test-part, you are not allowed to freely navigate between items.<p>
+                    <button class="btn-info"><?= __('Start Test-part'); ?><span class="icon-forward r"></span></button>
+                </p>
+            </div>
         </div>
 		<div id="runner" class="tao-scope">
 			<div id="qti-actions">
