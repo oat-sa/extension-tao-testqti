@@ -33,14 +33,14 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
 	public function index(){
             
             $labels = array();
+            $testUri   =  $this->getRequestParameter('uri');
             $testModel = new taoQtiTest_models_classes_TestModel();
-            $items = $testModel->getItems(new core_kernel_classes_Resource($this->getRequestParameter('uri')));
+
+            $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
             foreach($items as $item){
                 $labels[$item->getUri()] = $item->getLabel();
             }
             $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
-            
-            $testUri = tao_helpers_Uri::encode($this->getRequestParameter('uri'));
             
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));

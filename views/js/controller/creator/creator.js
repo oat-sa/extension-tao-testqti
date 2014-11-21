@@ -20,6 +20,7 @@
  */
 define(
 ['module', 'jquery', 'lodash', 'helpers', 'i18n',
+'ui/feedback',
 'core/databindcontroller', 
 'taoQtiTest/controller/creator/views/item', 
 'taoQtiTest/controller/creator/views/test',
@@ -30,7 +31,7 @@ define(
 'taoQtiTest/controller/creator/templates/index',
 'taoQtiTest/controller/creator/helpers/qtiTest',
 'core/validator/validators'], 
-function(module, $, _, helpers, __, DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
+function(module, $, _, helpers, __, feedback,  DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
     'use strict';
 
     /**
@@ -83,6 +84,15 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
             options.labels = options.labels || {};
 
 
+            //back button
+            $('#authoringBack').on('click', function(e){
+                e.preventDefault();
+            
+                //Capitalized History means polyfilled by History.js
+                if(window.History){
+                    window.History.back();
+                }
+            });
 
             //set up the ItemView, give it a configured loadItems ref
             itemView( _.partial(loadItems, options.routes.items) );
@@ -160,7 +170,7 @@ function(module, $, _, helpers, __, DataBindController, itemView, testView, test
 
                         $saver.attr('disabled', false).removeClass('disabled');
 
-                        helpers.createInfoMessage(__('Test Saved'));
+                        feedback().success(__('Test Saved'));
 
                     }, function(){
 

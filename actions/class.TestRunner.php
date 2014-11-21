@@ -282,6 +282,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         }
         
         $this->setData('client_config_url', $this->getClientConfigUrl());
+        $this->setData('client_timeout', $this->getClientTimeout());
         $this->setView('test_runner.tpl');
         
         $this->afterAction(false);

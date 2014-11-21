@@ -18,63 +18,42 @@
 */
 
 /**
- * Common test related actions
- *
- * @package taoQtiTest
- 
+ * Actions about Items in a Test context.
+ * 
  * @author Bertrand Chevrier <bertrand@taotesting.com>
- * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
  */
-class taoQtiTest_actions_Items extends tao_actions_CommonModule {
-
-    
+class taoQtiTest_actions_Items extends tao_actions_CommonModule 
+{
     /**
-     * Get ALL QTI items.
-     * The response is encoded in json and contains only the usefull data.
-     * A pattern parameter is allowed to filter results.
+     * Get ALL QTI items within the platform.
+     * 
+     * The response is encoded in JSON and contains only some basic data about items (uri, label keys).
+     * A 'pattern' request parameter parameter is allowed to filter results at search time.
      * 
      * This method will be refactored (limit, filtering, etc.) with the resource widget.
      */
-    public function get() {
-
+    public function get() 
+    {
         $items = array();
-        
-        $limit = 50;
-        
-        $pattern = null;
-        if($this->hasRequestParameter('pattern') && trim($this->getRequestParameter('pattern')) != '' ){
-            $pattern = preg_quote($this->getRequestParameter('pattern'));
+        $propertyFilters = array(TAO_ITEM_MODEL_PROPERTY => TAO_ITEM_MODEL_QTI);
+        $options = array('recursive' => true, 'like' => true, 'limit' => 50);
+
+        if (($pattern = $this->getRequestParameter('pattern')) !== null && $pattern !== '') {
+            $propertyFilters[RDFS_LABEL] = $pattern;
         }
 
-        //get QTI Items
         $itemsService = taoItems_models_classes_ItemsService::singleton();
-        $i = 0;
-        foreach ($itemsService->getAllByModel(TAO_ITEM_MODEL_QTI) as $itemResource) {
-            if($i > $limit){
-                break;
-            }
-            
-            //reformat them
-            $item = array(
-                'uri' => tao_helpers_Uri::encode($itemResource->getUri()),
-                'label' => $itemResource->getLabel()
+        $itemClass = $itemsService->getRootClass();
+        
+        $result = $itemClass->searchInstances($propertyFilters, $options);
+        foreach ($result as $qtiItem) {
+            $items[] = array(
+                'uri' => $qtiItem->getUri(),
+                'label' => $qtiItem->getLabel()
             );
-            
-            //add the type in case of TAO_ITEM subclass
-            $types = $itemResource->getTypes();
-            foreach ($types as $type) {
-                if ($type->getUri() != TAO_ITEM_CLASS) {
-                    $item['parent'] = $type->getLabel();
-                }
-            }
-            if(!is_null($pattern) && !preg_match('/'.$pattern.'+/i', $item['label']) && (!array_key_exists('parent', $item) || !preg_match('/'.$pattern.'+/i', $item['parent']))){
-                continue;
-            }
-            
-            $items[] = $item;
         }
 
-        $this->setContentHeader('application/json');
-        print json_encode($items);
+        $this->returnJson($items);
     }
 }

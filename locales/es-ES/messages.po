@@ -1,12 +1,17 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v2.6-RC03\n"
-"PO-Revision-Date: 2014-06-20T16:27:23\n"
+"Project-Id-Version: TAO v3.0\n"
+"PO-Revision-Date: 2014-10-21T07:53:00\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: es-ES\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
 msgstr ""
@@ -56,12 +61,6 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-msgid "Author QTI test"
-msgstr ""
-
-msgid "Authoring %s', get_data('label"
-msgstr ""
-
 msgid "Cancel"
 msgstr ""
 
@@ -104,7 +103,7 @@ msgstr ""
 msgid "File name"
 msgstr ""
 
-msgid "filter"
+msgid "Filter"
 msgstr ""
 
 msgid "Fixed"
@@ -170,6 +169,12 @@ msgstr ""
 msgid "Manage Rubric Blocks"
 msgstr ""
 
+msgid "Manage test properties"
+msgstr ""
+
+msgid "Manage Tests"
+msgstr ""
+
 msgid "Max Attempts"
 msgstr ""
 
@@ -218,6 +223,9 @@ msgstr ""
 msgid "New Rubric Block"
 msgstr ""
 
+msgid "New test part"
+msgstr ""
+
 msgid "Next"
 msgstr ""
 
@@ -239,9 +247,6 @@ msgstr ""
 msgid "Ordering"
 msgstr ""
 
-msgid "Part:"
-msgstr ""
-
 msgid "Previous"
 msgstr ""
 
@@ -255,9 +260,6 @@ msgid "QTI Test Package"
 msgstr ""
 
 msgid "QTI Test Package 2.1"
-msgstr ""
-
-msgid "QTI Test: %s', get_data('label"
 msgstr ""
 
 msgid "Reference"
@@ -294,9 +296,6 @@ msgid "Scorer"
 msgstr ""
 
 msgid "Section Properties"
-msgstr ""
-
-msgid "Section:"
 msgstr ""
 
 msgid "Select"

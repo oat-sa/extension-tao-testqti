@@ -393,6 +393,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 
 	return {
 	    start : function(assessmentTestContext){
+            
 	    	window.onServiceApiReady = function onServiceApiReady(serviceApi) {
 	            TestRunner.serviceApi = serviceApi;
 	
@@ -450,16 +451,17 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	            TestRunner.adjustFrame();
 	            $('#qti-test-title, #qti-test-position').badonkatrunc();
 	        });
-	
-	        iframeNotifier.parent('serviceready');
-	        
+
 	        $(document).bind('loading', function() {
 	            iframeNotifier.parent('loading');
 	        });
 	        
+
 	        $(document).bind('unloading', function() {
 	            iframeNotifier.parent('unloading');
 	        });
+            
+	        iframeNotifier.parent('serviceready');
 	    }
 	};
 });

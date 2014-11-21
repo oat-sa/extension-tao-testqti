@@ -125,6 +125,4 @@ class taoQtiTest_models_classes_export_ExportForm
     	$this->form->createGroup('options', __('Export QTI 2.1 Test Package'), array('xml_desc', 'filename', 'instances'));
     }
 
-} /* end of class taoItems_actions_form_Export */
-
-?>
+}

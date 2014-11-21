@@ -17,11 +17,12 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+namespace oat\taoQtiTest\test;
 
+use oat\tao\test\TaoPhpUnitTestRunner;
+use \taoQtiTest_helpers_TestCompilerUtils;
 use \qtism\data\storage\xml\XmlDocument;
 
-require_once dirname(__FILE__) . '/../../tao/test/TaoPhpUnitTestRunner.php';
-include_once dirname(__FILE__) . '/../includes/raw_start.php';
 
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
