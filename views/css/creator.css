@@ -33,6 +33,9 @@ DO NOT EDIT!     * *      '-'-'\_      /'._.' \====:_ "" .'     \ :       : /   
 @media only screen and (max-width: 1024px) { #test-creator .test-creator-items { width: 250px; } }
 @media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-items { width: 300px; } }
 @media only screen and (min-width: 1281px) { #test-creator .test-creator-items { width: 350px; } }
+@media only screen and (max-width: 1024px) { #test-creator .test-creator-items { max-width: 250px; } }
+@media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-items { max-width: 300px; } }
+@media only screen and (min-width: 1281px) { #test-creator .test-creator-items { max-width: 350px; } }
 #test-creator .test-creator-items h1 { font-size: 14px; font-size: 1.4rem; line-height: 1.6; background-color: #D4D5D7; color: #222; margin-top: 1px; padding: 5px; height: 38px; }
 @media only screen and (max-width: 1024px) { #test-creator .test-creator-items h1 { width: 250px; } }
 @media only screen and (min-width: 1025px) and (max-width: 1280px) { #test-creator .test-creator-items h1 { width: 300px; } }

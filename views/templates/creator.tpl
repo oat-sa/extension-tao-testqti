@@ -20,16 +20,16 @@
             <ul class='item-box plain'></ul>
         </div>
     </section>
- 
+
 <!-- test editor  -->
     <section class="test-creator-test test-creator-area">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
                 <li id="saver" class="btn-info small">
-            <span class="li-inner">
-                <span class="icon-save"></span>
-                <?=__('Save')?>
-            </span>
+                    <span class="li-inner">
+                        <span class="icon-save"></span>
+                        <?=__('Save')?>
+                    </span>
                 </li>
             </ul>
         </div>
@@ -46,19 +46,19 @@
                                     </a>
                                 </span>
                                 <span class="tlb-end"></span>
-                            </span>  
-                        </span>   
+                            </span>
+                        </span>
                     </div>
-                </div>  
+                </div>
             </div>
         </h1>
-        <div class="test-content">       
+        <div class="test-content">
             <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart"> </div>
             <button class="btn-info small testpart-adder">
                 <span class="icon-add"></span><?=__('New test part')?>
             </button>
         </div>
-    </section>   
+    </section>
 
     <section class="test-creator-sidebar test-creator-area test-creator-props">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
@@ -66,7 +66,7 @@
         </div>
        <h1><?=__('Properties')?></h1>
     </section
- 
+
 </div>
 <script type="text/javascript">
 requirejs.config({
