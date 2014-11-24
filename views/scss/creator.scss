@@ -317,15 +317,22 @@
            position: relative;
            background-color: $uiClickableDefaultBg;
            height: 39px;
-           padding: 4px 28px 3px 48px ;
+           padding: 6px 60px 3px 48px ;
            margin-bottom: 10px;
             &:before {
                 @include icon(test);
                 position: absolute;
                 left: 20px;
+                margin-top: -2px;
             }
             .actions{
                 margin-right: 12px;
+            }
+            & > span:first-child {
+                display: inline-block;
+                line-height: 1.2em;
+                overflow: hidden;
+                height: 1.2em;
             }
         }
 
