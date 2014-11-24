@@ -106,6 +106,7 @@
     .test-creator-items{
         position: relative;
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        @include responsive('max-width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         display: table-cell;
         vertical-align: top;
         min-height: $minHeight - $toolbarHeight;
