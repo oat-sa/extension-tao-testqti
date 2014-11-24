@@ -825,7 +825,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $emptyTestXml = $this->getQtiTestTemplateFileAsString();
             
             // Set the test label as title.
-            $emptyTestXml = str_replace('{testId}', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '', 32)), $emptyTestXml);
+            $emptyTestXml = str_replace('{testId}', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '*', 32)), $emptyTestXml);
             $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
             $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
             
