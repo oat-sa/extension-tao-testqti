@@ -482,7 +482,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
                     return;
                 }
 
-                var hiddenCount,$items;
+                var hiddenCount,$items,$section;
 
                 $sections.each(function(){
                 	$section = $(this);
