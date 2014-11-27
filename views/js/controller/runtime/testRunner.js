@@ -458,7 +458,13 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
                 if (self.guiDisabled) {
                     return;
                 }
-				var $this = $(this);
+				var $this = $(this),
+                    mode = parseInt($this.data("mode"));
+
+                if (mode == 3) {
+                    alert("TODO: Flagged Mode");
+                    return;
+                }
 
 				if ($this.hasClass("active")) {
 					return;
@@ -469,15 +475,29 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 
                 $("#qti-navigator").find(".qti-navigator-item").show();
 
-                if ($this.data("mode") == 1) {
+                var $sections = $(".qti-navigator-section");
+                $sections.show();
+
+                if (mode == 1) {
                     return;
                 }
 
-                $(".qti-navigator-section").each(function(){
-                    var $section = $(this);
-                    $section.children(".items>.qti-navigator-item").each(function() {
-                        $(this).is(".Answered,.AnsweredActive,.AnsweredActiveClosed").hide();
+                var hiddenCount,$items;
+
+                $sections.each(function(){
+                	$section = $(this);
+                	hiddenCount = 0;
+                	$items = $section.find(".qti-navigator-item");
+                    $items.each(function() {
+                    	if ($(this).is(".Answered")) {
+                    		++hiddenCount;
+	                        $(this).hide();
+                    	}
                     });
+
+                    if (($items.length - hiddenCount) < 1) {
+                    	$section.hide();
+                    }
                 })
 
 			});
