@@ -333,7 +333,7 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
             if (typeof ctx == "number") {
                 // We do not have navigation, we are in LINEAR navigation mode
                 $("#qti-navigator-linear").show().children("p").hide();
-                $("#qti-navigator > .block-navigator__filters").hide();
+                $("#qti-navigator-filters").hide();
                 return;
             }
 
@@ -484,14 +484,14 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
         },
 
 		updateNavigatorSections: function(partId, sections) {
-			var $sections = $(".qti-navigator-sections").empty(),length=sections.length;
+			var $sections = $(".qti-navigator-sections").empty(),lengthSections=sections.length;
 
-            if (length) {
+            if (lengthSections) {
                 $("#qti-navigator-linear").hide();
-                $("#qti-navigator > .block-navigator__filters").show();
+                $("#qti-navigator-filters").show();
             } else {
                 $("#qti-navigator-linear").show().children("p").show();
-                $("#qti-navigator > .block-navigator__filters").hide();
+                $("#qti-navigator-filters").hide();
                 return;
             }
 
@@ -500,19 +500,26 @@ define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/Servic
 				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item {{classDef}}' data-uri='{{id}}' data-jump='{{position}}'><span class='icon-{{iconDef}}'></span>{{label}}</div>");
 			}
 
-            var $section,$items,options,item;
+            var $section,
+                $items,
+                options,
+                item,
+                lengthItems,
+                section,
+                i;
 
-			for (var s,i = 0; i < length; i++) {
-				s = sections[i];
-                options={classDef:"",styleDef:"",pid:partId,label:s.label,id:s.id,answered:s.answered,numberItems:length}
-                if (s.active) {
+			for (i = 0; i < lengthSections; i++) {
+				section = sections[i];
+                lengthItems = section.items.length;
+                options={classDef:"",styleDef:"",pid:partId,label:section.label,id:section.id,answered:section.answered,numberItems:lengthItems};
+                if (section.active) {
                     options.classDef = "open";
                     options.styleDef = "display:block";
                 }
 				$section = $(this._section(options));
 				$items = $section.children(".items");
-				for (var ii = 0; ii < s.items.length; ii++) {
-                    item = s.items[ii];
+				for (var ii = 0; ii < lengthItems; ii++) {
+                    item = section.items[ii];
                     options = {label:item.label,id:item.id,position:item.position,classDef:"Unanswered",iconDef:"unanswered"};
                     if (item.answered) {
                         options.classDef = "Answered";
