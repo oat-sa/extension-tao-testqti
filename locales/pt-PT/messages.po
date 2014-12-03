@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v3.0\n"
-"PO-Revision-Date: 2014-10-21T07:53:02\n"
+"Project-Id-Version: TAO 3.0\n"
+"PO-Revision-Date: 2014-12-03T15:25:42\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pt-PT\n"
@@ -17,7 +17,7 @@ msgid "A QTI Test must contain at least one QTI Item to be compiled. None found.
 msgstr ""
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "Pacote de teste QTI"
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr ""
@@ -29,7 +29,7 @@ msgid "Add selected item(s) here."
 msgstr ""
 
 msgid "Add the source file"
-msgstr ""
+msgstr "Adicionar ficheiro font"
 
 msgid "Allow Comment"
 msgstr ""
@@ -47,16 +47,16 @@ msgid "An invisible section with a parent that is subject to shuffling can speci
 msgstr ""
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr ""
+msgstr "Um item envolvido no teste não pode ser lido ou não está em conformidade com QTI"
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "Um item envolvido no teste não pode ser escrito"
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "Um erro desconhecido ocorreu quando compilava teste QTI '%s'."
 
 msgid "Author"
 msgstr ""
@@ -89,10 +89,10 @@ msgid "Enter a category"
 msgstr ""
 
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "Erro durante a importação do ficheiro"
 
 msgid "Export"
 msgstr ""
@@ -128,7 +128,7 @@ msgid "If the candidate can skip the item, without submitting a response."
 msgstr ""
 
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 msgid "Import a QTI 2.1 Test Package"
 msgstr ""
@@ -137,7 +137,7 @@ msgid "IMS QTI Test Package successfully imported."
 msgstr ""
 
 msgid "Individual"
-msgstr ""
+msgstr "Individual"
 
 msgid "is already used in the test."
 msgstr ""
@@ -164,7 +164,7 @@ msgid "Late submission allowed"
 msgstr ""
 
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 msgid "Manage Rubric Blocks"
 msgstr ""
@@ -230,13 +230,13 @@ msgid "Next"
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "Não tem mais tentativas para o item '%s'"
 
 msgid "No reference to any IMS QTI Item found."
 msgstr ""
 
 msgid "Non Linear"
-msgstr ""
+msgstr "Não linear"
 
 msgid "Not shuffled, the position remains fixed."
 msgstr ""
@@ -290,7 +290,7 @@ msgid "Rubric Blocks"
 msgstr ""
 
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 msgid "Scorer"
 msgstr ""
@@ -320,10 +320,10 @@ msgid "Show the solution once the answer is submitted."
 msgstr ""
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Baralhar"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Simultâneo"
 
 msgid "Skip"
 msgstr ""
@@ -350,7 +350,7 @@ msgid "Submit your responses and head for the previous item."
 msgstr ""
 
 msgid "Test"
-msgstr ""
+msgstr "Teste"
 
 msgid "Test completed at %d%%"
 msgstr ""
@@ -392,10 +392,10 @@ msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None f
 msgstr ""
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "O teste QTI não pode ser carregado correctamente."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "O teste QTI-XML não pode ser escrito correctamente."
 
 msgid "The reference."
 msgstr ""
