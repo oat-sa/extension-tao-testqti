@@ -200,13 +200,19 @@ class taoQtiTest_helpers_Utils {
                 $itemResourceCanonicalHref = helpers_File::truePath($basePath . $itemResourceRelativeHref);
                 
                 // With some Windows flavours (Win7, Win8), the $itemRefCanonicalHref comes out with
-                // a trailing 'file:\' component. Let's clean this. (str_replace is binary-safe \0/)
+                // a leading 'file:\' component. Let's clean this. (str_replace is binary-safe \0/)
                 $os = tao_helpers_Environment::getOperatingSystem();
                 if ($os === 'WINNT' || $os === 'WIN32' || $os === 'Windows') {
                     $itemRefCanonicalHref = str_replace('file:\\', '', $itemRefCanonicalHref);
                     
                     // And moreover, it sometimes refer the temp directory as Windows\TEMP instead of Windows\Temp.
                     $itemRefCanonicalHref = str_replace('\\TEMP\\', '\\Temp\\', $itemRefCanonicalHref);
+                }
+                
+                // With some MacOS flavours, the $itemRefCanonicalHref comes out with
+                // a leading '/private' component. Clean it!
+                if ($os === 'Darwin') {
+                    $itemRefCanonicalHref = str_replace('/private', '', $itemRefCanonicalHref);
                 }
 
                 if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref) && in_array($itemResourceCanonicalHref, $discovery) === false) {
