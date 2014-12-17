@@ -181,8 +181,6 @@ class taoQtiTest_helpers_Utils {
         $testPathInfo = pathinfo($test->getDomDocument()->documentURI);
         $testBasePath = tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
         
-        $discovery = array();
-        
         foreach ($assessmentItemRefs as $itemRef) {
             // Find the QTI Resource (in IMS Manifest) related to the item ref.
             // To achieve this, we compare their path.
@@ -214,11 +212,10 @@ class taoQtiTest_helpers_Utils {
                 if ($os === 'Darwin') {
                     $itemRefCanonicalHref = str_replace('/private', '', $itemRefCanonicalHref);
                 }
-
-                if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref) && in_array($itemResourceCanonicalHref, $discovery) === false) {
+                
+                if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref)) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
                     $map[$itemRef->getIdentifier()] = $itemResource;
-                    $discovery[] = $itemResourceCanonicalHref;
                     break;
                 }
             }

@@ -338,6 +338,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // Expected test.xml file location.
         $expectedTestFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiTestResource->getFile());
         
+        // Already imported test items (qti xml file paths).
+        $alreadyImportedTestItemFiles = array();
+        
         // -- Check if the file referenced by the test QTI resource exists.
         if (is_readable($expectedTestFile) === false) {
             $report->add(common_report_Report::createFailure(__('No file found at location "%s".', $qtiTestResource->getFile())));
@@ -364,38 +367,47 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
             
                                 $qtiFile = $folder . $qtiDependency->getFile();
-                                $itemReport = $itemImportService->importQTIFile($qtiFile, $targetClass);
-                                $rdfItem = $itemReport->getData();
-            
-                                if ($rdfItem) {
-                                    $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
-            
-                                    foreach ($qtiDependency->getAuxiliaryFiles() as $auxResource) {
-                                        // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                        $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
-                                        
-                                        // does the file referenced by $auxPath exist?
-                                        if (is_readable($auxPath) === true) {
-                                            $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
-                                            $destPath = $itemPath . $relPath;
-                                            tao_helpers_File::copy($auxPath, $destPath, true);
-                                        } 
-                                        else {
-                                            $msg = __('Auxiliary file not found at location "%s".', $auxResource);
-                                            $itemReport->add(new common_report_Report(common_report_Report::TYPE_WARNING,$msg));
+                                
+                                // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
+                                if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
+                                
+                                    $itemReport = $itemImportService->importQTIFile($qtiFile, $targetClass);
+                                    $rdfItem = $itemReport->getData();
+                
+                                    if ($rdfItem) {
+                                        $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
+                
+                                        foreach ($qtiDependency->getAuxiliaryFiles() as $auxResource) {
+                                            // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
+                                            $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
+                                            
+                                            // does the file referenced by $auxPath exist?
+                                            if (is_readable($auxPath) === true) {
+                                                $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
+                                                $destPath = $itemPath . $relPath;
+                                                tao_helpers_File::copy($auxPath, $destPath, true);
+                                            } 
+                                            else {
+                                                $msg = __('Auxiliary file not found at location "%s".', $auxResource);
+                                                $itemReport->add(new common_report_Report(common_report_Report::TYPE_WARNING,$msg));
+                                            }
                                         }
+                
+                                        $reportCtx->items[$assessmentItemRefId] = $rdfItem;
+                                        $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
+                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
                                     }
-            
-                                    $reportCtx->items[$assessmentItemRefId] = $rdfItem;
-                                    $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
+                                    else {
+                                        $itemReport->setType(common_report_Report::TYPE_ERROR);
+                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiDependency->getIdentifier()));
+                                        $itemError = ($itemError === false) ? true : $itemError;
+                                    }
+                
+                                    $report->add($itemReport);
                                 }
                                 else {
-                                    $itemReport->setType(common_report_Report::TYPE_ERROR);
-                                    $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiDependency->getIdentifier()));
-                                    $itemError = ($itemError === false) ? true : $itemError;
+                                    $reportCtx->items[$assessmentItemRefId] = $alreadyImportedTestItemFiles[$qtiFile];
                                 }
-            
-                                $report->add($itemReport);
                             }
                         }
                         else {
