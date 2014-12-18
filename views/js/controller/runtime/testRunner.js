@@ -1,5 +1,5 @@
-define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc' ], 
-    function($, $ui, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define(['jquery', 'jqueryui', 'lodash', 'handlebars', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc' ], 
+    function($, $ui, _, Handlebars, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -8,6 +8,9 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		var waitingTime = 0;
 	
 	    var TestRunner = {
+        updateCalls: 0,
+        guiDisabled: false,
+
 	    // Constants
 	    'TEST_STATE_INITIAL': 0,
 	    'TEST_STATE_INTERACTING': 1,
@@ -50,6 +53,15 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 	
 		moveBackward : function() {
+		    this.disableGui();
+		    
+		    var that = this;
+		    this.itemServiceApi.kill(function(signal) {
+                that.actionCall('moveBackward');
+            });  
+		},
+	
+		switchTestPart: function() {
 		    this.disableGui();
 		    
 		    var that = this;
@@ -102,14 +114,18 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	
 		update : function(assessmentTestContext) {
 			var self = this;
+            ++this.updateCalls;
+
 			$('#qti-item').remove();
-			
+
+            $("#qti-navigator").height($(window).height());
 			var $runner = $('#runner');
 			$runner.css('height', 'auto');
 			
 			this.assessmentTestContext = assessmentTestContext;
 			this.itemServiceApi = eval(assessmentTestContext.itemServiceApiCall);
-			
+
+			this.updateNavigator();
 			this.updateContext();
 			this.updateProgress();
 			this.updateNavigation();
@@ -118,7 +134,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 			this.updateTools();
 			this.updateTimer();
 			
-			$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+			var $itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
 			$itemFrame.appendTo('#qti-content');
 			iframeResizer.autoHeight($itemFrame, 'body');
 			
@@ -300,6 +316,248 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    }
 		},
 		
+		updateNavigator: function() {
+			var ctx = this.assessmentTestContext,
+                numberItems = ctx.numberItems,
+				$parts = $("#qti-navigator-parts"),
+				$part, part;
+
+			$("#qti-navigator-answered").text(ctx.numberCompleted + "/" + numberItems)
+			$("#qti-navigator-unanswered").text(
+				(numberItems - ctx.numberCompleted) + "/" +
+				numberItems
+			);
+
+			ctx = ctx.navigatorMap;
+
+            if (typeof ctx == "number") {
+                // We do not have navigation, we are in LINEAR navigation mode
+                $("#qti-navigator-linear").show().children("p").hide();
+                $("#qti-navigator-filters").hide();
+                return;
+            }
+
+			if (ctx.length > 4) {
+				$parts.removeAttr("class");
+			} else {
+				$parts.attr("class", "parts-" + ctx.length);
+			}
+
+            $parts.children(":not(.first)").remove();
+
+			for (var i = 0; i < ctx.length; i++) {
+				part = ctx[i];
+				$part = $("<li/>", {"data-pid":part.id,text:i+1});
+                if (part.active) {
+                    this.updateNavigatorSections(part.id, part.sections);
+                    $part.addClass("active");
+                }
+				$parts.append($part);
+			}
+
+            if (this.updateCalls == 1) {
+                this.bindNavigatorEvents()
+            }
+		},
+
+		jump: function(position) {
+            this.disableGui();
+		    
+		    var self = this;
+		    this.itemServiceApi.kill(function(signal) {
+		        self.actionCall(
+                    'jump',
+                    {position: position},
+                    {
+                        500: function() {
+                            self.afterTransition();
+                            alert("An error while navigating to this item.");
+                        }
+                    }
+                );
+		    });  
+		},
+
+        bindNavigatorEvents : function() {
+			var self = this;
+
+			$("#qti-navigator-linear").on("click", ".btn-info" ,function(){
+
+                if (self.guiDisabled) {
+                    return;
+                }
+
+				var pid = $("#qti-navigator-parts > .active").data("pid"),
+                    ctx = self.assessmentTestContext.navigatorMap,
+                    position;
+
+				for (var i = 0; i < ctx.length; i++) {
+					if (ctx[i].id == pid) {
+                        position = ctx[i].position;
+						break;
+					}
+				}
+
+                if (typeof position != 'undefined') {
+                    self.jump(position);
+                }
+
+			});
+
+			$("#qti-navigator").on("click", ".qti-navigator-section>.title" ,function(){
+                if (self.guiDisabled) {
+                    return;
+                }
+				var section = $(this).parent(),
+                    isOpen = section.hasClass("open");
+				section.toggleClass("open", !isOpen)
+                       .children(".items").slideToggle("500");
+			});
+
+			$("#qti-navigator").on("click", ".qti-navigator-item" ,function(){
+
+                if (self.guiDisabled) {
+                    return;
+                }
+
+                var $this = $(this);
+                if ($this.is(".AnsweredClosed")) {
+                    alert('No more attempts allowed for "' + $this.text() + '"');
+                    return;
+                }
+
+                self.jump($this.data("jump"));
+			});
+
+			$("#qti-navigator-parts").on("click", 'li:not(".first,.disabled")',function(){
+                if (self.guiDisabled) {
+                    return;
+                }
+				var $this = $(this);
+
+				if ($this.hasClass("active")) {
+					return;
+				}
+
+				$("#qti-navigator-parts > .active").removeClass("active");
+				$this.addClass("active");
+
+				var pid = $this.data("pid"),
+                    ctx = self.assessmentTestContext.navigatorMap;
+
+				for (var i = 0; i < ctx.length; i++) {
+					if (ctx[i].id == pid) {
+						self.updateNavigatorSections(pid, ctx[i].sections);
+						break;
+					}
+				}
+
+			});
+
+			$("#qti-navigator-filters").on("click", "li",function(){
+                if (self.guiDisabled) {
+                    return;
+                }
+				var $this = $(this),
+                    mode = parseInt($this.data("mode"));
+
+                if (mode == 3) {
+                    alert("TODO: Flagged Mode");
+                    return;
+                }
+
+				if ($this.hasClass("active")) {
+					return;
+				}
+
+				$("#qti-navigator-filters > .active").removeClass("active");
+				$this.addClass("active");
+
+                $("#qti-navigator").find(".qti-navigator-item").show();
+
+                var $sections = $(".qti-navigator-section");
+                $sections.show();
+
+                if (mode == 1) {
+                    return;
+                }
+
+                var hiddenCount,$items,$section;
+
+                $sections.each(function(){
+                	$section = $(this);
+                	hiddenCount = 0;
+                	$items = $section.find(".qti-navigator-item");
+                    $items.each(function() {
+                    	if ($(this).is(".Answered")) {
+                    		++hiddenCount;
+	                        $(this).hide();
+                    	}
+                    });
+
+                    if (($items.length - hiddenCount) < 1) {
+                    	$section.hide();
+                    }
+                })
+
+			});
+        },
+
+		updateNavigatorSections: function(partId, sections) {
+			var $sections = $(".qti-navigator-sections").empty(),lengthSections=sections.length;
+
+            if (lengthSections) {
+                $("#qti-navigator-linear").hide();
+                $("#qti-navigator-filters").show();
+            } else {
+                $("#qti-navigator-linear").show().children("p").show();
+                $("#qti-navigator-filters").hide();
+                return;
+            }
+
+			if(typeof this._section !== "function"){
+				this._section = Handlebars.compile("<div class='qti-navigator-section {{classDef}}' data-pid='{{pid}}' data-uri='{{id}}'><div class='title'>{{label}}<i class='counter'>{{answered}}/{{numberItems}}</i><img class='open' src='../views/img/arrow_down.gif'/></div><div class='items' style={{styleDef}}></div></div>");
+				this._sectionItem = Handlebars.compile("<div class='qti-navigator-item {{classDef}}' data-uri='{{id}}' data-jump='{{position}}'><span class='icon-{{iconDef}}'></span>{{label}}</div>");
+			}
+
+            var $section,
+                $items,
+                options,
+                item,
+                lengthItems,
+                section,
+                i;
+
+			for (i = 0; i < lengthSections; i++) {
+				section = sections[i];
+                lengthItems = section.items.length;
+                options={classDef:"",styleDef:"",pid:partId,label:section.label,id:section.id,answered:section.answered,numberItems:lengthItems};
+                if (section.active) {
+                    options.classDef = "open";
+                    options.styleDef = "display:block";
+                }
+				$section = $(this._section(options));
+				$items = $section.children(".items");
+				for (var ii = 0; ii < lengthItems; ii++) {
+                    item = section.items[ii];
+                    options = {label:item.label,id:item.id,position:item.position,classDef:"Unanswered",iconDef:"unanswered"};
+                    if (item.answered) {
+                        options.classDef = "Answered";
+                        options.iconDef = "answered";
+                    }
+                    if (item.active) {
+                        options.classDef += "Active";
+                    }
+                    if (!item.remainingAttempts) {
+                        options.classDef += "Closed";
+                    }
+					$items.append(this._sectionItem(options));
+				}
+				$sections.append($section);
+			}
+
+		},
+
 		updateProgress: function() {
 		    
 		    var considerProgress = this.assessmentTestContext.considerProgress;
@@ -348,11 +606,15 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		},
 		
 		disableGui: function() {
+            this.guiDisabled = true;
 		    $('#qti-navigation button').addClass('disabled');
+		    $('#qti-navigator').addClass('disabled');
 		},
 		
 		enableGui: function() {
+            this.guiDisabled = false;
 		    $('#qti-navigation button').removeClass('disabled');
+		    $('#qti-navigator').removeClass('disabled');
 		},
 	
 		formatTime: function(totalSeconds) {
@@ -370,11 +632,13 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 		    return "\u00b1 " + time;
 		},
 		
-		actionCall: function(action) {
+		actionCall: function(action, data, cbStatus) {
 			var self = this;
+
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],
+                    data: data,
 					cache: false,
 					async: true,
 					dataType: 'json',
@@ -385,7 +649,8 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 						else {
 							self.update(assessmentTestContext);
 						}
-					}
+					},
+                    statusCode: cbStatus
 				});
 			});
 		}
@@ -449,6 +714,7 @@ define(['jquery', 'jqueryui', 'lodash', 'spin', 'serviceApi/ServiceApi', 'servic
 	        
 	        $(window).bind('resize', function() {
 	            TestRunner.adjustFrame();
+                $("#qti-navigator").height($(window).height())
 	            $('#qti-test-title, #qti-test-position').badonkatrunc();
 	        });
 

@@ -6,6 +6,7 @@ use oat\tao\helpers\Template;
 		<title>QTI 2.1 Test Driver</title>
 				<link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
                 <link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/>
+                <link rel="stylesheet" href="<?= Template::css('navigator.css') ?>"/>
                 <script type="text/javascript" src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
                 
                 <script type="text/javascript">
@@ -23,6 +24,34 @@ use oat\tao\helpers\Template;
                 </script>
 	</head>
 	<body>
+		<div id="qti-navigator" class="qti-navigator">
+            <div class="qti-navigator-info">
+                <span><?= __('Test navigator'); ?></span>
+                <ul>
+                    <li><span class="icon-answered"></span>Answered<i id="qti-navigator-answered"></i></li>
+                    <li><span class="icon-unanswered"></span>Unanswered<i id="qti-navigator-unanswered"></i></li>
+                    <li><span class="icon-anchor"></span>Flagged<i id="qti-navigator-flagged">2</i></li>
+                </ul>
+            </div>
+            <div class="qti-navigator-parts">
+                <ul id="qti-navigator-parts">
+                    <li class="first"><?= __('Part'); ?></li>
+                </ul>
+            </div>
+            <div class="qti-navigator-filters">
+                <ul id="qti-navigator-filters">
+                    <li class="active" data-mode="1"><?=__('All'); ?></li>
+                    <li data-mode="2"><?=__('Unanswered'); ?></li>
+                    <li data-mode="3"><?=__('Flagged'); ?></li>
+                </ul>
+            </div>
+            <div class="qti-navigator-sections"></div>
+            <div id="qti-navigator-linear">
+                <b>Warning:</b> in this test-part, you are not allowed to freely navigate between items.<p>
+                    <button class="btn-info"><?= __('Start Test-part'); ?><span class="icon-forward r"></span></button>
+                </p>
+            </div>
+        </div>
 		<div id="runner" class="tao-scope">
 			<div id="qti-actions">
 				<div class="col-4" id="qti-test-context">

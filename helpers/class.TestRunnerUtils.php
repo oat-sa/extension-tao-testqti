@@ -272,7 +272,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function buildPossibleJumps(AssessmentTestSession $session) {
         $jumps = array();
-         
+
         foreach ($session->getPossibleJumps() as $jumpObject) {
             $jump = array();
             $jump['identifier'] = $jumpObject->getTarget()->getAssessmentItemRef()->getIdentifier();
@@ -280,7 +280,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             $jumps[] = $jump;
         }
-         
+
         return $jumps;
     }
     
@@ -369,7 +369,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             // Test Part title.
             $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
-             
+
             
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
@@ -383,6 +383,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['considerProgress'] = self::considerProgress($testMeta);
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
+            $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
             $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -394,10 +395,13 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             // The places in the test session where the candidate is allowed to jump to.
             $context['jumps'] = self::buildPossibleJumps($session);
-        
+
+            // The navigation map in order to build the test navigator
+            $context['navigatorMap'] = self::getNavigatorMap($session);
+
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
             $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
-             
+
             // Rubric Blocks.
             $rubrics = array();
              
@@ -429,7 +433,124 @@ class taoQtiTest_helpers_TestRunnerUtils {
         
         return $context;
     }
-    
+
+    /**
+     * Get the section map for navigation between test parts, sections and items.
+     * 
+     * @param AssessmentTestSession $session
+     * @param $jumps
+     * @param AssessmentSection $activePart The currently active test part
+     * @param array $completed An array of completed items
+     * @return array An of navigator map (parts, sections, items so on)
+     */
+    static private function getNavigatorMap(AssessmentTestSession $session) {
+
+        // get jumps
+        $jumps = $session->getPossibleJumps();
+
+        // no jumps, notify linear-mode
+        if (!$jumps->count()) {
+            return NavigationMode::LINEAR;
+        }
+
+        $jumpsMap = array();
+        foreach ($jumps as $jump) {
+            $jump->getItemSession()->isResponded();
+            $routeItem = $jump->getTarget();
+
+            $partId = $routeItem->getTestPart()->getIdentifier();
+            $sectionId = key(current($routeItem->getAssessmentSections()));
+            $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
+
+            $itemSession = $jump->getItemSession();
+            $jumpsMap[$partId][$sectionId][$itemId] = array(
+                'remainingAttempts' => $itemSession->getRemainingAttempts(),
+                'answered' => $itemSession->isResponded(),
+                'position' => $jump->getPosition()
+            );
+        }
+
+        // the active test-part identifier
+		$activePart = $session->getCurrentTestPart()->getIdentifier();
+
+        // the active section identifier
+        $activeSection = $session->getCurrentAssessmentSection()->getIdentifier();
+
+	    $route = $session->getRoute();
+
+        $activeItem = $session->getCurrentAssessmentItemRef()->getIdentifier();
+        if (isset($jumpsMap[$activePart][$activeSection][$activeItem])) {
+            $jumpsMap[$activePart][$activeSection][$activeItem]['active'] = true;
+        }
+
+        // current positon
+	    $oldPosition = $route->getPosition();
+
+	    $route->setPosition($oldPosition);
+
+        $returnValue = array();
+        $testParts   = array();
+
+        foreach($jumps as $jump) {
+            $testPart = $jump->getTarget()->getTestPart();
+			$id = $testPart->getIdentifier();
+
+            if (isset($testParts[$id])) {
+                continue;
+            }
+
+            $sections = array();
+
+            if ($testPart->getNavigationMode() == NavigationMode::NONLINEAR) {
+                foreach($testPart->getAssessmentSections() as $sectionId => $section) {
+
+                    $completed = 0;
+                    $items = array();
+
+                    foreach($section->getSectionParts() as $itemId => $item) {
+
+                        if (isset($jumpsMap[$id][$sectionId][$itemId])) {
+                            $jumpInfo = $jumpsMap[$id][$sectionId][$itemId];
+                            $resItem  =  new \core_kernel_classes_Resource(strstr($item->getHref(), '|', true));
+                            if ($jumpInfo['answered']) {
+                                ++$completed;
+                            }
+                            $items[]  = array_merge(
+                                array(
+                                    'id' => $itemId,
+                                    'label' => $resItem->getLabel()
+                                ), $jumpInfo
+                            );
+                        }
+
+                    }
+
+                    $sections[] = array(
+                        'id'       => $sectionId,
+                        'active'   => $sectionId === $activeSection,
+                        'label'    => $section->getTitle(),
+                        'answered' => $completed,
+                        'items'    => $items
+                    );
+                }
+            }
+
+            $data = array(
+				'id'       => $id,
+				'sections' => $sections,
+				'active'   => $id === $activePart
+            );
+            if (empty($sections)) {
+                $item = current(current($jumpsMap[$id]));
+                $data['position'] = $item['position'];
+            }
+			$returnValue[] = $data;
+			$testParts[$id] = false;
+        }
+
+        return $returnValue;
+    }
+
     /**
      * Compute the the number of completed items during a given
      * candidate test $session.
@@ -446,7 +567,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
         
         return $completed;
     }
-    
+
     static public function considerProgress(array $testMeta) {
         $considerProgress = true;
         

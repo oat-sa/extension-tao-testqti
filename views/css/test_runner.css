@@ -3,10 +3,6 @@ html, body {
     margin: 0;
 }
 
-#runner {
-	overflow:hidden;
-}
-
 #qti-item {
 	width: 100%;
 	overflow: hidden;
@@ -103,10 +99,6 @@ html, body {
     background-color: #ddd;
     position: fixed;
     width: 100%;
-}
-
-#qti-actions {
-    
 }
 
 #qti-navigation {
@@ -212,10 +204,6 @@ html, body {
     font-size: 12px;
     color: #222;
     text-shadow: 1px 1px 0 #eee;
-}
-
-#qti-test-time {
-
 }
 
 #qti-tools {
