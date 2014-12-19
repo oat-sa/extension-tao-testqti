@@ -391,7 +391,13 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 	return {
 	    start : function(assessmentTestContext){
-
+	        
+	        $(document).ajaxError(function(event, jqxhr) {
+                if (jqxhr.status == 403) {
+                    iframeNotifier.parent('serviceforbidden');
+                }
+            });
+	        
 	    	window.onServiceApiReady = function onServiceApiReady(serviceApi) {
 	            TestRunner.serviceApi = serviceApi;
 
