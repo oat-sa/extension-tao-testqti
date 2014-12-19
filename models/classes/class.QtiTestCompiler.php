@@ -19,7 +19,7 @@
  */
 
 use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
-use \qtism\data\storage\xml\XmlStorageException;
+use qtism\data\storage\xml\XmlStorageException;
 use qtism\runtime\rendering\markup\MarkupPostRenderer;
 use qtism\runtime\rendering\css\CssScoper;
 use qtism\data\storage\php\PhpDocument;
