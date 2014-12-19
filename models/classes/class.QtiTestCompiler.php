@@ -19,6 +19,7 @@
  */
 
 use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
+use \qtism\data\storage\xml\XmlStorageException;
 use qtism\runtime\rendering\markup\MarkupPostRenderer;
 use qtism\runtime\rendering\css\CssScoper;
 use qtism\data\storage\php\PhpDocument;
@@ -336,7 +337,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
-        catch(\qtism\data\storage\xml\XmlStorageException $e){
+        catch(XmlStorageException $e){
             $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
             $report->add($subReport);
 
