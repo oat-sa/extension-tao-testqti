@@ -524,7 +524,7 @@
         .itemrefs-wrapper {
             border: solid 1px $uiGeneralContentBorder;
             @include border-radius(3);
-            padding-left: 5px;
+            padding-left: 15px;
             .itemrefs {
                 position: relative;
                 padding: 0;
