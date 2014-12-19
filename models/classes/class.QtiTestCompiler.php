@@ -336,6 +336,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
+        catch(\qtism\data\storage\xml\XmlStorageException $e){
+            $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
+            $report->add($subReport);
+
+            $report->setType(common_report_Report::TYPE_ERROR);
+            $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
+        }
         catch (Exception $e) {
             common_Logger::e($e->getMessage());
             // All exception that were not catched in the compilation steps
