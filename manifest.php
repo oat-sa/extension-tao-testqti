@@ -49,10 +49,14 @@ return array(
 		),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
-            dirname(__FILE__).'/install/local/addQTIExamples.php'
+		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
 		)
 	),
+    'local'	=> array(
+        'php'	=> array(
+            dirname(__FILE__).'/install/local/addQTIExamples.php'
+        )
+    ),
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',
     'acl' => array(
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', array('ext'=>'taoQtiTest')),
