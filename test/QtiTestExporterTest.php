@@ -27,6 +27,8 @@ use \tao_helpers_Uri;
 use \ZipArchive;
 use \taoQtiTest_models_classes_export_QtiTestExporter;
 use \taoQtiTest_helpers_Utils;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\UnlinkTestCase;
 
 /**
  * This test case focuses on testing the export_TestExport and export_QtiTestExporter models.
@@ -38,12 +40,18 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
 {
 
     private $dataDir = '';
+    private $outputDir;
+    
 
     public function setUp()
     {
         TaoPhpUnitTestRunner::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $this->dataDir = dirname(__FILE__) . '/data/';
+        
+        
+        $this->outputDir = sys_get_temp_dir() . '/' ;
+
     }
 
     /**
@@ -131,7 +139,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $elmSource = $form->getElement('filename');
         $this->assertInstanceOf('tao_helpers_form_FormElement', $elmSource);
         $elmSource->setValue('qti_unit_test');
-
+    
         $elmInstance = $form->getElement('instances');
         $this->assertInstanceOf('tao_helpers_form_FormElement', $elmInstance);
 
@@ -174,13 +182,14 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testExportFormSubmit($testExport, $form)
     {
-        $file = $testExport->export($form->getValues(), $this->dataDir);
+        $file = $testExport->export($form->getValues(), $this->outputDir);
 
+       
         $this->assertFileExists($file);
-        $this->assertStringStartsWith($this->dataDir, $file);
-        unlink($file);
+        $this->assertStringStartsWith($this->outputDir, $file);
 
         $this->assertContains('qti_unit_test', $file);
+        unlink($file);
     }
 
     /**
@@ -192,7 +201,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testQtiTestExporter($qtiTest)
     {
-        $file = $this->dataDir . 'qti_unit_test.zip';
+        $file = $this->outputDir . 'qti_unit_test.zip';
 
         $zip = new ZipArchive();
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));

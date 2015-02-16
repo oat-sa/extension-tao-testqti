@@ -71,24 +71,24 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 				if (tao_helpers_File::securityCheck($path, true) === false) {
 					throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
 				}
-				
 			    // Create a new ZIP archive to store data related to the QTI Test.
 			    $zip = new ZipArchive();
 			    if ($zip->open($path, ZipArchive::CREATE) !== true){
 			        throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
 			    }
-			    
 			    // Create an empty IMS Manifest as a basis.
 			    $manifest = taoQtiTest_helpers_Utils::emptyImsManifest();
 			    
 			    foreach ($instances as $instance) {
 			        $testResource = new core_kernel_classes_Resource($instance);
 			        $testExporter = new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
+			        common_Logger::d('Export ' . $instance);
 			        $testExporter->export();
 			    }
 			    
 				$file = $path;
 				$zip->close();
+				
 			}
 		} 
 		else {
