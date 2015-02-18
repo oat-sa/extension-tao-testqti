@@ -58,6 +58,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
     
     /**
+     * 
+     * @see taoTests_models_classes_TestsService::setDefaultModel()
+     */
+    protected function setDefaultModel($test)
+    {
+        $this->setTestModel($test, new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI));    
+    }
+    
+    /**
      * Save the json formated test into the test resource.
      * 
      * @param core_kernel_classes_Resource $test

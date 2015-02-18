@@ -90,6 +90,10 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 				$zip->close();
 				
 			}
+			else {
+			    common_Logger::w("No instance in form to export");
+			
+			}
 		} 
 		else {
 			common_Logger::w("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.");

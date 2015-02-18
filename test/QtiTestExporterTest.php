@@ -27,8 +27,6 @@ use \tao_helpers_Uri;
 use \ZipArchive;
 use \taoQtiTest_models_classes_export_QtiTestExporter;
 use \taoQtiTest_helpers_Utils;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\UnlinkTestCase;
 
 /**
  * This test case focuses on testing the export_TestExport and export_QtiTestExporter models.
@@ -139,7 +137,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $elmSource = $form->getElement('filename');
         $this->assertInstanceOf('tao_helpers_form_FormElement', $elmSource);
         $elmSource->setValue('qti_unit_test');
-    
+
         $elmInstance = $form->getElement('instances');
         $this->assertInstanceOf('tao_helpers_form_FormElement', $elmInstance);
 
@@ -184,7 +182,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
     {
         $file = $testExport->export($form->getValues(), $this->outputDir);
 
-       
+        $this->assertInternalType('string', $file);
         $this->assertFileExists($file);
         $this->assertStringStartsWith($this->outputDir, $file);
 
