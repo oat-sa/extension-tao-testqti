@@ -372,4 +372,29 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $this->testService->deleteTestClass($subClass);
         $this->assertFalse($subClass->exists());
     }
+    
+    /**
+     * Verify that test attribute value in xml file will be properly encoded
+     * (<b>&amp;</b>, <b>&lt;</b> and <b>&quot;</b> symbols must be encoded)
+     * 
+     * @author Aleh Hutnikau, hutnikau@1pt.com
+     */
+    public function testCreateContent()
+    {
+        $attrValue = '"A & B < C"';
+        
+        $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
+        $qtiTest->setLabel($attrValue);
+        $this->testService->createContent($qtiTest);
+        $xmlFilePath = $this->testService->getDocPath($qtiTest);
+        $this->assertTrue(file_exists($xmlFilePath));
+        
+        $doc = new \DOMDocument();
+        
+        $this->assertTrue($doc->load($xmlFilePath));
+        $this->assertEquals($attrValue, $doc->documentElement->getAttribute('title'));
+        
+        $this->testService->deleteTest($qtiTest);
+        $this->assertFalse($qtiTest->exists());
+    }
 }

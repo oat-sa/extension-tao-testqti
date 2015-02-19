@@ -836,13 +836,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         if ($createTestFile === true) {
             $emptyTestXml = $this->getQtiTestTemplateFileAsString();
             
+            $doc = new DOMDocument();
+            $doc->loadXML($emptyTestXml);
+            
             // Set the test label as title.
-            $emptyTestXml = str_replace('{testId}', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '*', 32)), $emptyTestXml);
-            $emptyTestXml = str_replace('{testTitle}', $test->getLabel(), $emptyTestXml);
-            $emptyTestXml = str_replace('{taoVersion}', TAO_VERSION, $emptyTestXml);
+            $doc->documentElement->setAttribute('title', $test->getLabel());
+            $doc->documentElement->setAttribute('identifier', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '*', 32)));
+            $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
             
             $filePath = $dirPath . TAOQTITEST_FILENAME;
-            if (file_put_contents($filePath, $emptyTestXml) === false) {
+            if ($doc->save($filePath) === false) {
                 $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
