@@ -393,5 +393,8 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         
         $this->assertTrue($doc->load($xmlFilePath));
         $this->assertEquals($attrValue, $doc->documentElement->getAttribute('title'));
+        
+        $this->testService->deleteTest($qtiTest);
+        $this->assertFalse($qtiTest->exists());
     }
 }
