@@ -58,6 +58,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
     
     /**
+     * 
+     * @see taoTests_models_classes_TestsService::setDefaultModel()
+     */
+    protected function setDefaultModel($test)
+    {
+        $this->setTestModel($test, new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI));    
+    }
+    
+    /**
      * Save the json formated test into the test resource.
      * 
      * @param core_kernel_classes_Resource $test
@@ -225,8 +234,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                  
             if (is_dir($folder) === false) {
                 $report->add(common_report_Report::createFailure($invalidArchiveMsg));
-            }
-            else {
+            } else {
                 
                 $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
                 $qtiManifestParser->validate();
@@ -244,6 +252,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     $msg = __("The 'imsmanifest.xml' file found in the archive is not valid.");
                     $report->add(common_report_Report::createFailure($msg));
                 }
+                
+                // Cleanup the folder where the archive was extracted.
+                tao_helpers_File::deltree($folder);
+                
             }
         }
         
@@ -254,12 +266,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         else {
             $report->setMessage(__('IMS QTI Test Package successfully imported.'));
             $report->setType(common_report_Report::TYPE_SUCCESS);
-        }
-        
-        // Cleanup the folder where the archive was extracted.
-        // Only if the archive was not currupted ;)
-        if (is_dir($folder) === true) {
-            tao_helpers_File::deltree($folder);
         }
         
         if ($report->containsError() === true && $validPackage === true && $validManifest === true) {
