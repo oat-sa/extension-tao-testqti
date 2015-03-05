@@ -38,12 +38,18 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
 {
 
     private $dataDir = '';
+    private $outputDir;
+    
 
     public function setUp()
     {
         TaoPhpUnitTestRunner::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $this->dataDir = dirname(__FILE__) . '/data/';
+        
+        
+        $this->outputDir = sys_get_temp_dir() . '/' ;
+
     }
 
     /**
@@ -174,13 +180,14 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testExportFormSubmit($testExport, $form)
     {
-        $file = $testExport->export($form->getValues(), $this->dataDir);
+        $file = $testExport->export($form->getValues(), $this->outputDir);
 
+        $this->assertInternalType('string', $file);
         $this->assertFileExists($file);
-        $this->assertStringStartsWith($this->dataDir, $file);
-        unlink($file);
+        $this->assertStringStartsWith($this->outputDir, $file);
 
         $this->assertContains('qti_unit_test', $file);
+        unlink($file);
     }
 
     /**
@@ -192,7 +199,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testQtiTestExporter($qtiTest)
     {
-        $file = $this->dataDir . 'qti_unit_test.zip';
+        $file = $this->outputDir . 'qti_unit_test.zip';
 
         $zip = new ZipArchive();
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));

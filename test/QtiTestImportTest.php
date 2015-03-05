@@ -35,11 +35,15 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
 {
 
     private $dataDir = '';
+    
+    private $tmpDir = '';
 
     public function setUp()
     {
         TaoPhpUnitTestRunner::initTest();
         $this->dataDir = dirname(__FILE__) . '/data/';
+        
+        $this->tmpDir = sys_get_temp_dir() . '/' ;
     }
 
     /**
@@ -103,9 +107,9 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
         ));
         $this->assertFalse($form->isValid());
 
-        copy($this->dataDir . 'qti_package.zip', $this->dataDir . 'qti_package_copy.zip');
+        copy($this->dataDir . 'qti_package.zip', $this->tmpDir . 'qti_package_copy.zip');
         $elmSource->setValue(array(
-            'uploaded_file' => $this->dataDir . 'qti_package_copy.zip'
+            'uploaded_file' => $this->tmpDir . 'qti_package_copy.zip'
         ));
 
         $elmSentQti = $form->getElement('import_sent_qti');
