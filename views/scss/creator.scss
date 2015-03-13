@@ -124,7 +124,8 @@
             height: 38px;
 
             &:before {
-                @include icon(item);
+                @include tao-icon-setup;
+                @include icon-item;
                 @include font-size(16);
                 line-height: 1.6;
                 margin-right: 3px;
@@ -172,7 +173,8 @@
                 cursor: pointer;
 
                 &:after {
-                    @include icon(right);
+                    @include tao-icon-setup;
+                    @include icon-right;
                     position: absolute;
                     right: 4px;
                     top: -6px;
@@ -201,7 +203,8 @@
             margin-top: 1px;
             padding: 5px;
             &:before {
-                @include icon(settings);
+                @include tao-icon-setup;
+                @include icon-settings;
                 @include font-size(16);
                 line-height: 1.6;
                 margin-right: 3px;
@@ -320,7 +323,8 @@
            padding: 6px 60px 3px 48px ;
            margin-bottom: 10px;
             &:before {
-                @include icon(test);
+                @include tao-icon-setup;
+                @include icon-test;
                 position: absolute;
                 left: 20px;
                 margin-top: -2px;
@@ -557,7 +561,8 @@
                 @include border-radius(3);
                 @include transition;
                 &:before {
-                    @include icon(add);
+                    @include tao-icon-setup;
+                    @include icon-add;
                 }
                 &:hover {
                     background-color: whiten($uiClickableHoverBg, .9);
