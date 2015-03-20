@@ -351,6 +351,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setType(common_report_Report::TYPE_ERROR);
             $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         }
+        
+        // Reset time outs to initial value.
+        helpers_TimeOutHelper::reset();
+        
         return $report;
     }
     
@@ -387,6 +391,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $iterator = new QtiComponentIterator($compactDoc->getDocumentComponent(), array('assessmentItemRef'));
         $itemCount = 0;
         foreach ($iterator as $assessmentItemRef) {
+            
+            // Each item could take some time to be compiled, making the request to timeout.
+            helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
+            
             $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
             $subReport = $this->subCompile($itemToCompile);
             $report->add($subReport);
@@ -645,6 +653,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $test
      */
     protected function compileTest(AssessmentTest $test) {
+        // Compiling a test may require extra processing time.
+        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
+        
         $compiledDocDir = $this->getPrivateDirectory()->getPath();
         $compiledDocPath = $compiledDocDir . TAOQTITEST_COMPILED_FILENAME;
         $phpCompiledDoc = new PhpDocument('2.1');
