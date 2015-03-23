@@ -1,5 +1,5 @@
 <?php
-/**  
+/**
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
 * as published by the Free Software Foundation; under version 2
@@ -32,10 +32,10 @@ use qtism\data\View;
  * This converter will be replaced by a JSON Marshaller from inside the qtism lib.
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
- *        
+ *
  * @access public
  * @package taoQtiTest
- *         
+ *
  */
 class taoQtiTest_models_classes_QtiTestConverter
 {
@@ -44,15 +44,15 @@ class taoQtiTest_models_classes_QtiTestConverter
      * The instance of the XmlDocument that represents the QTI Test.
      *
      * This is the pivotal class.
-     * 
+     *
      * @var XmlDocument
      */
     private $doc;
 
     /**
      * Instantiate the converter using a QTITest document.
-     * 
-     * @param \qtism\data\storage\xml\XmlDocument $doc            
+     *
+     * @param \qtism\data\storage\xml\XmlDocument $doc
      */
     public function __construct(XmlDocument $doc)
     {
@@ -61,13 +61,23 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Converts the test from the document to JSON.
-     * 
+     *
      * @return a json string
      */
     public function toJson()
     {
+        return json_encode($this->toArray());
+    }
+
+    /**
+     * Converts the test from the document to an array
+     *
+     * @return the test data as array
+     */
+    public function toArray()
+    {
         try {
-            return json_encode($this->componentToArray($this->doc->getDocumentComponent()));
+            return $this->componentToArray($this->doc->getDocumentComponent());
         } catch (ReflectionException $re) {
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());
@@ -77,7 +87,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Popoulate the document using the JSON parameter.
-     * 
+     *
      * @param string $json a valid json object (one that comes from the toJson method).
      */
     public function fromJson($json)
@@ -96,8 +106,8 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Converts a QTIComponent to an assoc array (instances variables to key/val), using reflection.
-     * 
-     * @param \qtism\data\QtiComponent $component            
+     *
+     * @param \qtism\data\QtiComponent $component
      * @return array
      */
     private function componentToArray(QtiComponent $component)
@@ -105,9 +115,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         $array = array(
             'qti-type' => $component->getQtiClassName()
         );
-        
+
         $reflector = new ReflectionClass($component);
-        
+
         foreach ($this->getProperties($reflector) as $property) {
             $value = $this->getValue($component, $property);
             if ($value !== null) {
@@ -117,19 +127,19 @@ class taoQtiTest_models_classes_QtiTestConverter
                     foreach ($value as $item) {
                         $array[$key][] = $this->componentToArray($item);
                     }
-                } else 
+                } else
                     if ($value instanceof ViewCollection) {
                         $array[$property->getName()] = array();
                         foreach ($value as $item) {
                             $array[$property->getName()][] = View::getNameByConstant($item);
                         }
-                    } else 
+                    } else
                         if ($value instanceof QtiComponent) {
                             $array[$property->getName()] = $this->componentToArray($value);
-                        } else 
+                        } else
                             if ($value instanceof Duration) {
                                 $array[$property->getName()] = $value->getSeconds(true);
-                            } else 
+                            } else
                                 if ($value instanceof IntegerCollection || $value instanceof StringCollection) {
                                     $array[$property->getName()] = array();
                                     foreach ($value as $item) {
@@ -140,14 +150,14 @@ class taoQtiTest_models_classes_QtiTestConverter
                                 }
             }
         }
-        
+
         return $array;
     }
 
     /**
      * Get the class properties.
-     * 
-     * @param ReflectionClass $reflector            
+     *
+     * @param ReflectionClass $reflector
      * @param array $childrenProperties for recursive usage only
      * @return the list of properties
      */
@@ -162,9 +172,9 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Call the getter from a relfection property, to get the value
-     * 
-     * @param \qtism\data\QtiComponent $component            
-     * @param ReflectionProperty $property            
+     *
+     * @param \qtism\data\QtiComponent $component
+     * @param ReflectionProperty $property
      * @return the value produced by the getter
      */
     private function getValue(QtiComponent $component, ReflectionProperty $property)
@@ -192,16 +202,16 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Call the setter to assign a value to a component using a relfection property
-     * 
-     * @param \qtism\data\QtiComponent $component            
-     * @param ReflectionProperty $property            
-     * @param type $value            
+     *
+     * @param \qtism\data\QtiComponent $component
+     * @param ReflectionProperty $property
+     * @param type $value
      */
     private function setValue(QtiComponent $component, ReflectionProperty $property, $value)
     {
         $setterName = 'set' . ucfirst($property->getName());
         try {
-            
+
             $method = new ReflectionMethod($component, $setterName);
             if ($method->isPublic()) {
                 $component->{$setterName}($value);
@@ -211,31 +221,31 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * If a class is explicitly defined for a property, we get it (from the setter's parameter...).
-     * 
-     * @param \qtism\data\QtiComponent $component            
-     * @param ReflectionProperty $property            
+     *
+     * @param \qtism\data\QtiComponent $component
+     * @param ReflectionProperty $property
      * @return null or the ReflectionClass
      */
     public function getPropertyClass(QtiComponent $component, ReflectionProperty $property)
     {
         $setterName = 'set' . ucfirst($property->getName());
         try {
-            
+
             $method = new ReflectionMethod($component, $setterName);
             $parameters = $method->getParameters();
-            
+
             if (count($parameters) == 1) {
                 $param = $parameters[0];
                 return $param->getClass();
             }
         } catch (ReflectionException $re) {}
-        
+
         return null;
     }
 
     /**
      * Converts an assoc array to a QtiComponent using reflection
-     * 
+     *
      * @param array $testArray the assoc array
      * @param \qtism\data\QtiComponent $parent for recursive usage only
      * @param type $attach if we want to attach the component to it's parent or return it
@@ -244,27 +254,27 @@ class taoQtiTest_models_classes_QtiTestConverter
     private function arrayToComponent(array $testArray, QtiComponent $parent = null, $attach = true)
     {
         if (isset($testArray['qti-type']) && ! empty($testArray['qti-type'])) {
-            
+
             $compName = $this->lookupClass($testArray['qti-type']);
-            
+
             if (! empty($compName)) {
-                
+
                 $reflector = new ReflectionClass($compName);
                 $component = $this->createInstance($reflector, $testArray);
-                
+
                 $properties = array();
                 foreach ($this->getProperties($reflector) as $property) {
                     $properties[$property->getName()] = $property;
                 }
-                
+
                 foreach ($testArray as $key => $value) {
-                    
+
                     if (array_key_exists($key, $properties)) {
-                        
+
                         $class = $this->getPropertyClass($component, $properties[$key]);
-                        
+
                         if (is_array($value) && array_key_exists('qti-type', $value)) {
-                            
+
                             $this->arrayToComponent($value, $component, true);
                         } else {
                             $assignableValue = $this->componentValue($value, $class);
@@ -274,7 +284,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                         }
                     }
                 }
-                
+
                 if ($attach) {
                     if (is_null($parent)) {
                         $this->doc->setDocumentComponent($component);
@@ -295,9 +305,9 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Get the value according to it's type and class.
-     * 
-     * @param type $value            
-     * @param type $class            
+     *
+     * @param type $value
+     * @param type $class
      * @return \qtism\common\datatypes\Duration
      */
     private function componentValue($value, $class)
@@ -305,7 +315,7 @@ class taoQtiTest_models_classes_QtiTestConverter
         if (! is_null($class)) {
             if (is_array($value)) {
                 return $this->createComponentCollection(new ReflectionClass($class->name), $value);
-            } else 
+            } else
                 if ($class->name == 'qtism\common\datatypes\Duration') {
                     return new qtism\common\datatypes\Duration('PT' . $value . 'S');
                 }
@@ -315,9 +325,9 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * Instantiate and fill a QtiComponentCollection
-     * 
-     * @param ReflectionClass $class            
-     * @param type $values            
+     *
+     * @param ReflectionClass $class
+     * @param type $values
      * @return \qtism\data\QtiComponentCollection|null
      */
     private function createComponentCollection(ReflectionClass $class, $values)
@@ -341,15 +351,15 @@ class taoQtiTest_models_classes_QtiTestConverter
             }
             return $collection;
         }
-        
+
         return null;
     }
 
     /**
      * Call the constructor with the required parameters of a QtiComponent.
-     * 
-     * @param ReflectionClass $class            
-     * @param array|string $properties            
+     *
+     * @param ReflectionClass $class
+     * @param array|string $properties
      * @return the QtiComponent's instance
      */
     private function createInstance(ReflectionClass $class, $properties)
@@ -372,7 +382,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                     if (is_array($properties[$name])) {
                         $arguments[] = $this->createComponentCollection(new ReflectionClass($paramClass->name), $properties[$name]);
                     }
-                } else 
+                } else
                     if (array_key_exists($name, $properties)) {
                         $arguments[] = $properties[$name];
                     } else {
@@ -400,16 +410,16 @@ class taoQtiTest_models_classes_QtiTestConverter
                     }
             }
         }
-        
+
         return $class->newInstanceArgs($arguments);
     }
 
     /**
      * Get the type of parameter from the jsdoc (yes, I know...
      * but this is temporary ok!)
-     * 
-     * @param type $docComment            
-     * @param type $varName            
+     *
+     * @param type $docComment
+     * @param type $varName
      * @return null|array
      */
     private function getHint($docComment, $varName)
@@ -428,7 +438,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
     /**
      * get the namespaced class name
-     * 
+     *
      * @param type $name the short class name
      * @return the long class name
      */
