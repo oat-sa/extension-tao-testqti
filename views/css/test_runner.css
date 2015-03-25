@@ -148,6 +148,7 @@ html, body {
 #qti-test-context  #qti-test-position {
     font-size: 14px;
     font-weight: normal;
+    padding-top: 10px;
 }
 
 #qti-test-context  #qti-section-title {

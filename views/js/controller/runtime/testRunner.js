@@ -73,7 +73,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		},
 
 		comment : function() {
-			$('#qti-comment > textarea').val(__('Your comment...'));
+			$('#qti-comment > textarea').val(__('Votre commentaire...'));
 		    $('#qti-comment').css('display', 'block');
 		    $('#qti-comment > button').css('display', 'inline');
 		},
@@ -308,7 +308,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 		    if (considerProgress === true) {
 		        var ratio = Math.floor(this.assessmentTestContext['numberCompleted'] / this.assessmentTestContext['numberItems'] * 100);
-	            var label = __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%');
+	            var label = 'Avancement de l\'évaluation (%d%%)'.replace('%d', ratio).replace('%%', '%');
 	            $('#qti-progress-label').text(label);
 	            $('#qti-progressbar').progressbar('value', ratio);
 		    }
@@ -316,14 +316,10 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 		updateContext: function() {
 
-		    var testTitle = this.assessmentTestContext.testTitle;
-		    var testPartId = this.assessmentTestContext.testPartId;
 		    var sectionTitle = this.assessmentTestContext.sectionTitle;
 
-		    $('#qti-test-title').text(testTitle);
-
 		    try {
-		        $('#qti-test-title, #qti-test-position').badonkatrunc('destroy');
+		        $('#qti-test-position').badonkatrunc('destroy');
 		    }
 		    catch (e) {
 		        // Very first call, the badonkatrunc wrapper was not there.
@@ -331,7 +327,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    }
 
 		    $('#qti-test-position').empty().append('<span id="qti-section-title">' + sectionTitle + '</span>');
-		    $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
+		    $('#qti-test-position').badonkatrunc().css('visibility', 'visible');
 		},
 
 		adjustFrame: function() {
