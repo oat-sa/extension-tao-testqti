@@ -195,10 +195,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         parent::endTestSession();
         
         // -- DEPP Specific
-        $userUri = common_session_SessionManager::getSession()->getUserUri();
-        $loginProperty = new core_kernel_classes_Property(PROPERTY_USER_LOGIN);
-        $user = new core_kernel_classes_Resource($userUri);
-        $login = $user->getUniquePropertyValue($loginProperty);
+        $user = common_session_SessionManager::getSession()->getUser();
+        $logins = $user->getPropertyValues(PROPERTY_USER_LOGIN);
+        $login = count($logins) > 0 ? reset($logins) : $user->getIdentifier();
         common_Logger::i("Ending test session for user '${login}'.");
         // -- End DEPP Specific
 
@@ -233,10 +232,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function beginTestSession() {
         parent::beginTestSession();
         
-        $userUri = common_session_SessionManager::getSession()->getUserUri();
-        $loginProperty = new core_kernel_classes_Property(PROPERTY_USER_LOGIN);
-        $user = new core_kernel_classes_Resource($userUri);
-        $login = $user->getUniquePropertyValue($loginProperty);
+        $user = common_session_SessionManager::getSession()->getUser();
+        $logins = $user->getPropertyValues(PROPERTY_USER_LOGIN);
+        $login = count($logins) > 0 ? reset($logins) : $user->getIdentifier();
         common_Logger::i("Beginning test session for user '${login}'.");
     }
     // -- End DEPP Specific
