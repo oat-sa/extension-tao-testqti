@@ -70,6 +70,38 @@ class TestModelTest extends TaoPhpUnitTestRunner
     }
     
 
-}
+    /**
+     * Verify that TestModel import handlers are known and tested
+     */
+    public function testTestModelImportHandlers()
+    {
+        $model = new taoQtiTest_models_classes_TestModel();
+        $handlers = $model->getImportHandlers();
+        $this->assertCount(1, $handlers);
+        $handler = reset($handlers);
+        $this->assertInstanceOf('taoQtiTest_models_classes_import_TestImport', $handler);
+    }
+    
+    /**
+     * Verify that TestModel export handlers are known and tested
+     */
+    public function testTestModelExportHandlers()
+    {
+        $model = new taoQtiTest_models_classes_TestModel();
+        $handlers = $model->getExportHandlers();
+        $this->assertCount(1, $handlers);
+        $handler = reset($handlers);
+        $this->assertInstanceOf('taoQtiTest_models_classes_export_TestExport', $handler);
+    }
+    
+    /**
+     * Verify TestModel compiler class
+     */
+    public function testTestModelCompilerClass()
+    {
+        $model = new taoQtiTest_models_classes_TestModel();
+        $this->assertEquals('taoQtiTest_models_classes_QtiTestCompiler', $model->getCompilerClass());
+    }
+    
 
-?>
+}
