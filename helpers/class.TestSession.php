@@ -194,7 +194,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function endTestSession() {
         parent::endTestSession();
         
-        common_Logger::i('Ending test session.');
+        // -- DEPP Specific
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
+        $loginProperty = new core_kernel_classes_Property(PROPERTY_USER_LOGIN);
+        $user = new core_kernel_classes_Resource($userUri);
+        $login = $user->getUniquePropertyValue($loginProperty);
+        common_Logger::i("Ending test session for user '${login}'.");
+        // -- End DEPP Specific
+
         try {
             // Compute the LtiOutcome variable for LTI support.
             $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, new Float(0.0)));
@@ -221,6 +228,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }
+    
+    // -- DEPP Specific
+    public function beginTestSession() {
+        parent::beginTestSession();
+        
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
+        $loginProperty = new core_kernel_classes_Property(PROPERTY_USER_LOGIN);
+        $user = new core_kernel_classes_Resource($userUri);
+        $login = $user->getUniquePropertyValue($loginProperty);
+        common_Logger::i("Beginning test session for user '${login}'.");
+    }
+    // -- End DEPP Specific
     
     protected function submitTestResults() {
         $testUri = $this->getTest()->getUri();
