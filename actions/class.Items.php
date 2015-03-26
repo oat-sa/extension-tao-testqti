@@ -30,6 +30,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      * 
      * The response is encoded in JSON and contains only some basic data about items (uri, label keys).
      * A 'pattern' request parameter parameter is allowed to filter results at search time.
+     * A 'notempty' ('1', 'true', 'on' and 'yes' values available) request parameter is allowed to filter empty items.
      * 
      * This method will be refactored (limit, filtering, etc.) with the resource widget.
      */
@@ -38,6 +39,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $items = array();
         $propertyFilters = array(TAO_ITEM_MODEL_PROPERTY => TAO_ITEM_MODEL_QTI);
         $options = array('recursive' => true, 'like' => true, 'limit' => 50);
+        $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 
         if (($pattern = $this->getRequestParameter('pattern')) !== null && $pattern !== '') {
             $propertyFilters[RDFS_LABEL] = $pattern;
@@ -47,11 +49,14 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $itemClass = $itemsService->getRootClass();
         
         $result = $itemClass->searchInstances($propertyFilters, $options);
+        
         foreach ($result as $qtiItem) {
-            $items[] = array(
-                'uri' => $qtiItem->getUri(),
-                'label' => $qtiItem->getLabel()
-            );
+            if (!$notEmpty || $itemsService->hasItemContent($qtiItem)) {
+                $items[] = array(
+                    'uri' => $qtiItem->getUri(),
+                    'label' => $qtiItem->getLabel()
+                );
+            }
         }
 
         $this->returnJson($items);
