@@ -20,16 +20,16 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery', 'lodash', 'uri', 
+    'jquery', 'lodash', 'uri',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
-    'taoQtiTest/controller/creator/templates/index', 
+    'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
 function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
     'use strict';
-        
+
    /**
     * Set up a section: init action beahviors. Called for each section.
     *
@@ -42,7 +42,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
         var $actionContainer = $('h2', $section);
 
-        
+
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();
@@ -96,7 +96,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
             $section.parents('.testpart').on('deleted.deleter', removePropHandler);
             $section.on('deleted.deleter', removePropHandler);
-            
+
             function removePropHandler(){
                 if(propView !== null){
                     propView.destroy();
@@ -109,10 +109,10 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
          * @private
          */
         function itemRefs(){
-            
+
             if(!model.sectionParts){
                 model.sectionParts = [];
-            }                   
+            }
             $('.itemref', $section).each(function(){
                 var $itemRef = $(this);
                 var index = $itemRef.data('bind-index');
@@ -133,31 +133,31 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
          */
         function acceptItemRefs(){
             var $selected;
-            var $items     = $('.test-creator-items'); 
-            
-             //the item selector trigger a select event 
+            var $items     = $('.test-creator-items');
+
+             //the item selector trigger a select event
              $items.on('itemselect.creator', function(e){
                 var selection = Array.prototype.slice.call(arguments, 1);
                 var $placeholder = $('.itemref-placeholder', $section);
                 var $placeholders = $('.itemref-placeholder');
- 
+
                 if(selection.length > 0){
                     $placeholder.show().off('click').on('click', function(e){
 
                         _.forEach(selection, function(item){
                             var $item = $(item);
-                            
+
                             addItemRef($('.itemrefs', $section), undefined, {
                                 href        : uri.decode($item.data('uri')),
                                 label       : $.trim($item.clone().children().remove().end().text()),
                                 'qti-type'  : 'assessmentItemRef'
                             });
-                        }); 
+                        });
 
                         //reset the current selection
                         $('.ui-selected', $items).removeClass('ui-selected').removeClass('selected');
                         $placeholders.hide().off('click');
-                    });    
+                    });
                 } else {
                     $placeholders.hide().off('click');
                 }
@@ -169,15 +169,15 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
               .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
               .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
                 if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
-                    var index = $itemRef.data('bind-index'); 
+                    var index = $itemRef.data('bind-index');
 
                     //initialize the new item ref
                     itemRefView.setUp($itemRef, model.sectionParts[index]);
-                } 
+                }
             });
 
             //on set up, if there is a selection ongoing, we trigger the event
-            $selected = $('.selected', $items); 
+            $selected = $('.selected', $items);
             if($selected.length > 0){
                 $items.trigger('itemselect.creator', $selected);
             }
@@ -200,7 +200,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
            if(index > 0){
                $itemRef.insertAfter($items.eq(index - 1));
            } else {
-               $itemRef.appendTo($refList); 
+               $itemRef.appendTo($refList);
            }
            $refList.trigger('add', [$itemRef, itemData]);
         }
@@ -213,7 +213,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         function rubricBlocks () {
             if(!model.rubricBlocks){
                 model.rubricBlocks = [];
-            }                   
+            }
             $('.rubricblock', $section).each(function(){
                 var $rubricBlock = $(this);
                 var index = $rubricBlock.data('bind-index');
@@ -223,6 +223,11 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
                 rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
             });
+
+            //opens the rubric blocks section if they are there.
+            if(model.rubricBlocks.length > 0){
+                $('.rub-toggler', $section).trigger('click');
+            }
         }
 
         /**
@@ -247,12 +252,12 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
-                    var index = $rubricBlock.data('bind-index'); 
+                    var index = $rubricBlock.data('bind-index');
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
                 }
             });
-        }        
+        }
    };
 
    /**
@@ -262,7 +267,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
         var $sections;
         var $actionContainer;
-        
+
         $('.sections').each(function(){
             $sections = $('.section', $(this));
 
@@ -289,20 +294,20 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         })
         .on('open.toggler', '.rub-toggler', function(e){
             if(e.namespace === 'toggler'){
-               $(this).parents('h2').addClass('active'); 
+               $(this).parents('h2').addClass('active');
             }
         })
         .on('close.toggler', '.rub-toggler', function(e){
             if(e.namespace === 'toggler'){
-               $(this).parents('h2').removeClass('active'); 
+               $(this).parents('h2').removeClass('active');
             }
         });
    };
-   
- 
+
+
    /**
      * The sectionView setup section related components and beahvior
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/section
      */
     return {
