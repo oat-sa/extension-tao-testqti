@@ -312,18 +312,7 @@ $GLOBALS['__l10n']["Users"]="Utilisateurs";
 $GLOBALS['__l10n']["Version"]="Version";
 $GLOBALS['__l10n']["Versioning"]="Gestion des versions";
 $GLOBALS['__l10n']["Yes"]="Oui";
-$GLOBALS['__l10n']["You cannot modify this property"]="Cette propriété ne peut pas être modifiée.";
-$GLOBALS['__l10n']["Next"]="Suivant";
-$GLOBALS['__l10n']["Submit your responses and head for the next item."]="Soumettre les réponses et passer à l'écran précédent.";
+$GLOBALS['__l10n']["Your comment..."]="Votre commentaire...";
 $GLOBALS['__l10n']["Previous"]="Précédent";
-$GLOBALS['__l10n']["Submit your responses and head for the previous item."]="Soumettre les réponses et revenir à l'écran précédent.";
-$GLOBALS['__l10n']["Skip"]="Passer";
-$GLOBALS['__l10n']["Skip & End Test"]="Passer et fin du test";
-$GLOBALS['__l10n']["Skip the current task, give an empty response and head for the end of the test."]="Passer à la fin du test en ne donnant pas de réponse.";
-$GLOBALS['__l10n']["Skip the current task and give an empty response."]="Passer à l'écran suivant en ne donnant pas de réponse.";
-$GLOBALS['__l10n']["Submit your responses and head for the end of the test."] ="Soumettre les réponses et passer à la fin du test.";
-$GLOBALS['__l10n']["End Test"]="Fin du test";
-$GLOBALS['__l10n']["Comment"]="Commentaire";
-$GLOBALS['__l10n']["Cancel"]="Annuler";
-$GLOBALS['__l10n']["Send"]="Envoyer";
+
 ?>
