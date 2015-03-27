@@ -47,7 +47,7 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
      * @param {DataCallback} cb - with items
      */
     function loadItems(url, search, cb){
-        $.getJSON(url, {pattern : search}, function(data){
+        $.getJSON(url, {pattern : search, notempty : 'true'}, function(data){
             if(data && typeof cb === 'function'){
                 cb(data);
             }

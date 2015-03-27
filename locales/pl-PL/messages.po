@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.0\n"
-"PO-Revision-Date: 2014-12-03T15:25:42\n"
+"Project-Id-Version: TAO 3.0-RC04\n"
+"PO-Revision-Date: 2015-03-06T15:40:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pl-PL\n"
@@ -392,6 +392,9 @@ msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None f
 msgstr ""
 
 msgid "The QTI test could not be retrieved correctly."
+msgstr ""
+
+msgid "The QTI Test XML or one of its dependencies is malformed or empty."
 msgstr ""
 
 msgid "The QTI-XML test could not be written correctly."
