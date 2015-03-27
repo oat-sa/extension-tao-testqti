@@ -307,5 +307,6 @@ $GLOBALS['__l10n']["Version"]="Version";
 $GLOBALS['__l10n']["Versioning"]="Gestion des versions";
 $GLOBALS['__l10n']["Yes"]="Oui";
 $GLOBALS['__l10n']["Your comment..."]="Votre commentaire...";
+$GLOBALS['__l10n']["Previous"]="Précédent";
 
 ?>
