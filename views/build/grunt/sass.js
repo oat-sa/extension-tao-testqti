@@ -1,4 +1,4 @@
-module.exports = function(grunt) { 
+module.exports = function(grunt) {
 
     var sass    = grunt.config('sass') || {};
     var watch   = grunt.config('watch') || {};
@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     sass.taoqtitest.files[root + 'css/creator.css'] = root + 'scss/creator.scss';
 
     watch.taoqtitestsass = {
-        files : [root + 'views/scss/**/*.scss'],
+        files : [root + 'scss/**/*.scss'],
         tasks : ['sass:taoqtitest', 'notify:taoqtitestsass'],
         options : {
             debounceDelay : 1000
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 
     notify.taoqtitestsass = {
         options: {
-            title: 'Grunt SASS', 
+            title: 'Grunt SASS',
             message: 'SASS files compiled to CSS'
         }
     };
