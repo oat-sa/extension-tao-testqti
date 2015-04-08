@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.0-RC04\n"
-"PO-Revision-Date: 2015-03-25T13:59:25\n"
+"Project-Id-Version: TAO 3.0-RC05\n"
+"PO-Revision-Date: 2015-04-08T14:42:35\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -62,7 +62,7 @@ msgid "Author"
 msgstr ""
 
 msgid "Cancel"
-msgstr "Annuler"
+msgstr ""
 
 msgid "Candidate"
 msgstr ""
@@ -71,7 +71,7 @@ msgid "Categories"
 msgstr ""
 
 msgid "Comment"
-msgstr "Commentaires"
+msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr ""
@@ -83,7 +83,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr "Terminer test"
+msgstr ""
 
 msgid "Enter a category"
 msgstr ""
@@ -151,6 +151,9 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
+msgid "Items"
+msgstr ""
+
 msgid "Items can optionally be assigned to one or more categories."
 msgstr ""
 
@@ -194,7 +197,7 @@ msgid "Maximum duration for this test part."
 msgstr ""
 
 msgid "Maximum time limit reached for item \"%s\"."
-msgstr "Limite de temps maximale atteinte pour l'item \"%s\"."
+msgstr ""
 
 msgid "Minimum Duration"
 msgstr ""
@@ -227,7 +230,7 @@ msgid "New test part"
 msgstr ""
 
 msgid "Next"
-msgstr "Suivant"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Une tentative sur l'item \"%s\" n'est plus permise."
@@ -308,7 +311,7 @@ msgid "Selection"
 msgstr ""
 
 msgid "Send"
-msgstr "Envoyer"
+msgstr ""
 
 msgid "Show Feedback"
 msgstr ""
@@ -341,25 +344,25 @@ msgid "Submission"
 msgstr ""
 
 msgid "Submit your responses and head for the end of the test."
-msgstr "Soumettre vos réponses et terminer le test."
+msgstr ""
 
 msgid "Submit your responses and head for the next item."
-msgstr "Soumettre vos réponses et passer à l'item suivant."
+msgstr ""
 
 msgid "Submit your responses and head for the previous item."
-msgstr "Soumettre vos réponses et revenir à l'item précédent."
+msgstr ""
 
 msgid "Test"
 msgstr "Test"
 
 msgid "Test completed at %d%%"
-msgstr "Test complété à %d %%"
+msgstr ""
 
 msgid "Test constructor"
 msgstr ""
 
 msgid "Test Saved"
-msgstr "Test enregistré"
+msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr ""
@@ -470,5 +473,5 @@ msgid "With Replacement"
 msgstr ""
 
 msgid "Your comment..."
-msgstr "Votre commentaire..."
+msgstr ""
 
