@@ -621,7 +621,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 break;
             }
             
-            if (!preg_match('@^' . ROOT_URL . '@', $url) && !Url::isRelative($url)) {
+            if (isset($url) && !preg_match('@^' . ROOT_URL . '@', $url) && !Url::isRelative($url)) {
                 $finalDestination = taoItems_helpers_Deployment::retrieveFile($url, $destination);
                 $pathinfo = pathinfo($finalDestination);
                 
