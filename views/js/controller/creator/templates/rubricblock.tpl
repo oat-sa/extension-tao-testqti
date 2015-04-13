@@ -1,5 +1,5 @@
 <li class="rubricblock">
-    <div class="actions"> 
+    <div class="actions">
        <div class="tlb">
             <div class="tlb-top">
                 <span class="tlb-box">
@@ -11,11 +11,11 @@
                             <a href="#" class="tlb-button-off" title="{{__ 'Remove Rubric Block'}}" data-delete=":parent .rubricblock"><span class="icon-bin"></span></a>
                         </span>
                         <span class="tlb-end"></span>
-                    </span>  
-                </span>   
+                    </span>
+                </span>
             </div>
         </div>
     </div>
-    <div class="rubricblock-content"></div>
+    <div class="rubricblock-content" contenteditable></div>
     <div class="rubricblock-binding" data-bind="content" data-bind-html="true" data-bind-encoder="dom2qti"></div>
 </li>

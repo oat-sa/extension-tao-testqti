@@ -18,19 +18,25 @@
 
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
- * FIXME There is a strong dependency to the QtiItem extension, due to the reuse of the QTI Editor for the rubricblock. 
  */
 define([
     'jquery',
     'lodash',
     'taoQtiTest/controller/creator/views/actions',
-    'taoQtiItem/qtiCreator/model/qtiClasses',
-    'taoQtiItem/qtiCreator/helper/creatorRenderer',
-    'taoQtiItem/qtiXmlRenderer/renderers/Renderer',
-    'taoQtiItem/qtiCreator/helper/simpleParser',
-    'helpers'
-], function($, _, actions, qtiClasses, creatorRenderer, XmlRenderer, simpleParser, helpers){
+    'helpers',
+    'ckeditor',
+    'ui/ckeditor/ckConfigurator'
+], function($, _, actions, helpers, ckeditor, ckConfigurator){ // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
     'use strict';
+
+    //compute ckeditor config only once
+    var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
+
+    var filterPlugin = function filterPlugin(plugin){
+        return _.contains(['taoqtiimage', 'taoqtimedia'], plugin);
+    };
+    ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
+    ckConfig.extraPlugins = _.reject(ckConfig.extraPlugins.split(','), filterPlugin).join(',');
 
     /**
      * Set up a rubric block: init action beahviors. Called for each one.
@@ -38,14 +44,9 @@ define([
      * @param {jQueryElement} $rubricBlock - the rubricblock to set up
      */
     var setUp = function setUp($rubricBlock, model, data){
-        
+
         actions.properties($rubricBlock, 'rubricblock', model, propHandler);
         setUpEditor();
-
-        $('formatting-toggler', $rubricBlock).click(function(){
-
-            $rubricBlock.find('.cke_editable').focus().click();
-        });
 
         /**
          * Perform some binding once the property view is create
@@ -88,87 +89,34 @@ define([
             }
         }
 
+        /**
+         * Set up ck editor
+         * @private
+         */
         function setUpEditor(){
+            var editor;
 
-            var mathNs = 'm';//for 'http://www.w3.org/1998/Math/MathML'
+            //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var $editorForm = $('<div class="rubricblock-formatting-props props clearfix">');
-               //uncomment to manage images
-               $editorForm.appendTo('.test-creator-props').hide();
-            var fakeXml = '<rubricBlock>' + $rubricBlockBinding.html() + '</rubrickBlock>';
+            var syncRubricBlockContent = _.throttle(function(){
+                 $rubricBlockBinding
+                    .html($rubricBlockContent.html())
+                    .trigger('change');
+            }, 100);
 
-            var xmlRenderer = new XmlRenderer({shuffleChoices : false}).load();
+            $rubricBlockContent.empty().html($rubricBlockBinding.html());
 
-            //parse xml
-            simpleParser.parse(fakeXml, {
-                ns : {
-                    math : mathNs
-                },
-                model : qtiClasses,
-                loaded : function(rubricBlock){
-
-                    var uri = data.uri, lang = 'en-US';
-                    
-                    creatorRenderer.setOptions({
-                        uri : uri,
-                        lang : lang,
-                        baseUrl : helpers._url('download', 'TestContent', 'taoQtiTest', {uri : uri, lan : lang, path : ''}),
-                        interactionOptionForm : $(),
-                        choiceOptionForm : $(),
-                        responseOptionForm : $(),
-                        bodyElementOptionForm : $editorForm,
-                        itemOptionForm : $(),
-                        textOptionForm : $(),
-                        mediaManager : {
-                            appendContainer : '#test-creator',
-                            browseUrl : helpers._url('files', 'TestContent', 'taoQtiTest'),
-                            uploadUrl : helpers._url('upload', 'TestContent', 'taoQtiTest'),
-                            deleteUrl : helpers._url('delete', 'TestContent', 'taoQtiTest'),
-                            downloadUrl : helpers._url('download', 'TestContent', 'taoQtiTest')
-                        }
-                    });
-
-                    creatorRenderer.get().load(function(){
-
-                        var syncRubricBlockContent = _.throttle(function(){
-                             $rubricBlockBinding
-                                .html($(rubricBlock.render(xmlRenderer)).html())
-                                .trigger('change');
-                        }, 500);
-
-                        rubricBlock.setRenderer(this);
-                        $rubricBlockContent.html(rubricBlock.render());
-                        var widget = rubricBlock.postRender({
-                            ready : function(){
-                                this.changeState('active');
-                            }
-                        });
-
-                        //disable some elements that are not yet ready or not useful   
-                        $('.mini-tlb [data-role="delete"]', $rubricBlockContent).remove();
-                        $rubricBlockContent.on('editorready', function(){
-                            //comment to manage images
-                            $('.cke_button__taoqtiimage').remove();
-                            $('.cke_button__taoqtimaths').remove();
-                        });
-
-                        widget.on('containerBodyChange', function(data){
-                            if(data.container.serial === rubricBlock.getBody().serial){
-                                syncRubricBlockContent();
-                            }
-
-                        }, true);
-
-                    }, this.getLoadedClasses());
-                }
+            editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
+            editor.on('change', function(e) {
+                syncRubricBlockContent();
             });
         }
     };
 
     /**
      * The rubriclockView setup RB related components and beahvior
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/rubricblock
      */
     return {

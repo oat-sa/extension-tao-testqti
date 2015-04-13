@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.0-RC04\n"
-"PO-Revision-Date: 2015-03-06T15:40:52\n"
+"Project-Id-Version: TAO 3.0-RC05\n"
+"PO-Revision-Date: 2015-04-13T09:50:39\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -149,6 +149,9 @@ msgid "Item Reference Properties"
 msgstr ""
 
 msgid "Item Session Control"
+msgstr ""
+
+msgid "Items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
