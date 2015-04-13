@@ -2,7 +2,7 @@
 
 <!-- assessmentTest/testPart/assessmentSection/title -->
     <h2><span data-bind="title">{{title}}</span>
-        <div class="actions">  
+        <div class="actions">
             <div class="tlb">
                 <div class="tlb-top">
                     <span class="tlb-box">
@@ -15,12 +15,12 @@
                                 <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}"><span class="icon-up"></span></a>
                                 <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}"><span class="icon-down"></span></a>
-                                <span class="tlb-separator"></span> 
+                                <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}" data-delete=":parent .section"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
-                        </span>  
-                    </span>   
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -36,6 +36,9 @@
         </button>
     </div>
     <div class="itemrefs-wrapper">
+        <h3>
+            <span class="title">{{__ 'Items'}}</span>
+        </h3>
         <ol class="itemrefs decimal clearfix" data-bind-each="sectionParts" data-bind-tmpl="itemref" data-bind-filter="isItemRef" data-msg="{{__ 'Add selected item(s) here.'}}"></ol>
         <div class="itemref-placeholder">
             {{__ 'Add selected item(s) here.'}}

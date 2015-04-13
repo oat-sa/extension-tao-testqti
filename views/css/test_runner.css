@@ -61,6 +61,8 @@ html, body {
 
 #qti-rubrics {
 	margin: 0 auto;
+	padding: 15px;
+	max-width: 1024px;
 }
 
 #qti-comment {
