@@ -372,7 +372,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
 
-                                $qtiFile = $folder . $qtiDependency->getFile();
+                                $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
