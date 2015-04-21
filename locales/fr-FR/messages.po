@@ -83,7 +83,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr ""
+msgstr "Terminer le test"
 
 msgid "Enter a category"
 msgstr ""
@@ -326,22 +326,22 @@ msgid "Shuffle"
 msgstr "Mélanger"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Simultanément"
 
 msgid "Skip"
-msgstr ""
+msgstr "Passer"
 
 msgid "Skip & End Test"
-msgstr ""
+msgstr "Passer et Ternminer le test"
 
 msgid "Skip the current task and give an empty response."
-msgstr ""
+msgstr "Passer la tache actuelle et donner une réponse vide"
 
 msgid "Skip the current task, give an empty response and head for the end of the test."
 msgstr ""
 
 msgid "Submission"
-msgstr ""
+msgstr "Soumission"
 
 msgid "Submit your responses and head for the end of the test."
 msgstr ""
