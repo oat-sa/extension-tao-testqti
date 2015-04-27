@@ -129,8 +129,8 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			if (this.assessmentTestContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.assessmentTestContext.isTimeout === false) {
 			    $(document).on('serviceloaded', function() {
 			        self.afterTransition();
-                    self.adjustFrame();
-                    $itemFrame.show();
+                                self.adjustFrame();
+                                $itemFrame.css({visibility: 'visible'});
 			    });
 
 			    // Inject API into the frame.
