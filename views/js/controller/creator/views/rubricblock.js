@@ -33,7 +33,7 @@ define([
     var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
 
     var filterPlugin = function filterPlugin(plugin){
-        return _.contains(['taoqtiimage', 'taoqtimedia'], plugin);
+        return _.contains(['taoqtiimage', 'taoqtimedia','taoqtimaths', 'taoqtiinclude'], plugin);
     };
     ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
     ckConfig.extraPlugins = _.reject(ckConfig.extraPlugins.split(','), filterPlugin).join(',');
