@@ -25,7 +25,7 @@ define([
     'taoQtiTest/controller/creator/views/actions',
     'helpers',
     'ckeditor',
-    'ui/ckeditor/ckConfigurator'
+    'taoQtiTest/controller/creator/helpers/ckConfigurator'
 ], function($, _, actions, helpers, ckeditor, ckConfigurator){ // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
     'use strict';
 
