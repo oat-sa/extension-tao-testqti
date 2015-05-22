@@ -437,7 +437,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
 	        $msg .= "Session state value: " . $this->getTestSession()->getState() . "\n";
 	        $msg .= "Session ID: " . $this->getTestSession()->getSessionId() . "\n";
-	        $msg .= "JSON Payload: " . json_encode($jsonPayload);
+	        $msg .= "JSON Payload: " . mb_substr(json_encode($jsonPayload), 0, 1000);
 	        common_Logger::e($msg);
 	    }
 	    
