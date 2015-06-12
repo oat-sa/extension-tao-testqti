@@ -143,12 +143,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @return string A URL to be called to perform an action.
      */
     static public function buildActionCallUrl(AssessmentTestSession $session, $action, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone) {
-        $url = BASE_URL . "TestRunner/${action}";
-        $url.= '?QtiTestDefinition=' . urlencode($qtiTestDefinitionUri);
-        $url.= '&QtiTestCompilation=' . urlencode($qtiTestCompilationUri);
-        $url.= '&standalone=' . urlencode($standalone);
-        $url.= '&serviceCallId=' . urlencode($session->getSessionId());
-        return $url;
+        return _url($action, 'TestRunner', null, array(
+            'QtiTestDefinition' => $qtiTestDefinitionUri,
+            'QtiTestCompilation' => $qtiTestCompilationUri,
+            'standalone' => $standalone,
+            'serviceCallId' => $session->getSessionId(),
+        ));
     }
     
     static public function buildServiceApi(AssessmentTestSession $session, $qtiTestDefinitionUri, $qtiTestCompilationUri) {
