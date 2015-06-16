@@ -361,6 +361,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Whether the current item is the very last one of the test.
             $context['isLast'] = $session->getRoute()->isLast();
              
+            // The current position in the route.
+            $context['itemPosition'] = $session->getRoute()->getPosition();
+             
             // Time constraints.
             $context['timeConstraints'] = self::buildTimeConstraints($session);
              
@@ -378,6 +381,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             // Number of items completed during the test session.
             $context['numberCompleted'] = self::testCompletion($session);
+            
+            // Number of items presented during the test session.
+            $context['numberPresented'] = $session->numberPresented();
             
             // Whether or not the progress of the test can be infered.
             $context['considerProgress'] = self::considerProgress($testMeta);
