@@ -7,6 +7,51 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		var timeDiffs = [];
 		var waitingTime = 0;
 
+        /**
+         * Provides a versatile progress bar updater
+         * @type {{update: Function, percentageProgression: Function, positionProgression: Function}}
+         */
+        var progressUpdaters = {
+            /**
+             * Updates the progress bar
+             * @param {Object} assessmentTestContext The progression context
+             */
+            update: function(assessmentTestContext) {
+                var progressIndicator = assessmentTestContext.progressIndicator || 'percentage';
+                var progressIndicatorMethod = progressIndicator + 'Progression';
+                var getProgression = this[progressIndicatorMethod] || this.percentageProgression;
+                var progression = getProgression(assessmentTestContext);
+
+                $('#qti-progress-label').text(progression.label);
+                $('#qti-progressbar').progressbar('value', progression.ratio);
+            },
+
+            /**
+             * Updates the progress bar displaying the percentage
+             * @param {Object} assessmentTestContext The progression context
+             */
+            percentageProgression: function(assessmentTestContext) {
+                var ratio = Math.floor(assessmentTestContext.numberCompleted / assessmentTestContext.numberItems * 100);
+                return {
+                    ratio : ratio,
+                    label : __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%')
+                };
+            },
+
+            /**
+             * Updates the progress bar displaying the position
+             * @param {Object} assessmentTestContext The progression context
+             */
+            positionProgression: function(assessmentTestContext) {
+                var total = assessmentTestContext.numberItems;
+                var position = assessmentTestContext.itemPosition + 1;
+                return {
+                    ratio : Math.floor(position / total * 100),
+                    label : __('Item %X on %Y').replace('%X', position).replace('%Y', total)
+                };
+            }
+        };
+
 	    var TestRunner = {
 	    // Constants
 	    'TEST_STATE_INITIAL': 0,
@@ -307,10 +352,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
 
 		    if (considerProgress === true) {
-		        var ratio = Math.floor(this.assessmentTestContext['numberCompleted'] / this.assessmentTestContext['numberItems'] * 100);
-	            var label = __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%');
-	            $('#qti-progress-label').text(label);
-	            $('#qti-progressbar').progressbar('value', ratio);
+                progressUpdaters.update(this.assessmentTestContext);
 		    }
 		},
 
@@ -391,13 +433,13 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 	return {
 	    start : function(assessmentTestContext){
-	        
+
 	        $(document).ajaxError(function(event, jqxhr) {
                 if (jqxhr.status == 403) {
                     iframeNotifier.parent('serviceforbidden');
                 }
             });
-	        
+
 	    	window.onServiceApiReady = function onServiceApiReady(serviceApi) {
 	            TestRunner.serviceApi = serviceApi;
 
