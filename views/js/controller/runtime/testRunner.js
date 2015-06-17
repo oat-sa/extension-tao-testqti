@@ -247,17 +247,22 @@ define([
 
                         if (cst.allowLateSubmission === false) {
 			        	 // Set up a timer for this constraint.
-	                        $('<div class="qti-timer"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+	                        $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 
 	                        // Set up a timer and update it with setInterval.
 	                        currentTimes[i] = cst.seconds;
 	                        lastDates[i] = new Date();
 	                        timeDiffs[i] = 0;
-                            var timerIndex = i;
-                            var source = cst.source;
-
+	                        timerIndex = i;
+                            
+                            cst.warningTime = Number.NEGATIVE_INFINITY;
+                            
+                            if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
+                                cst.warningTime = parseInt(self.testContext.timerWarning[cst.qtiClassName], 10);
+                            }
+                            
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-                            (function (timerIndex, source) {
+                            (function (timerIndex, cst) {
                                 timerIds[timerIndex] = setInterval(function () {
 
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
@@ -280,12 +285,16 @@ define([
 	                                }
 	                                else {
 	                                    // Not timed-out...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
+                                    
+                                    if (_.isFinite(cst.warningTime) && currentTimes[timerIndex] <= cst.warningTime ) {
+                                        self.timeWarning(cst);
+                                    }
 
 	                            }, 1000);
-                            }(timerIndex, source));
+                            }(timerIndex, cst));
 			        	}
 			        }
 
@@ -293,7 +302,37 @@ define([
 			    }
 			}
 		},
-        updateRubrics: function () {
+        /**
+         * Mark apropriate timer by warning colors and show feedback message
+         * @param {object} cst - Time constraint
+         * @returns {undefined}
+         */
+        timeWarning : function (cst) {
+            $('#qti-timers > .qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+
+            // Initial time more than warning time in config
+            if (cst.seconds > cst.warningTime) {
+                var hours = Math.floor(cst.warningTime / 3600),
+                    minutes,
+                    seconds,
+                    message = '';
+
+                cst.warningTime = cst.warningTime - hours * 3600;
+                minutes = Math.floor(cst.warningTime / 60);
+                seconds = cst.warningTime - minutes * 60;
+                message = '';
+
+                if (hours) message += hours + ' ' + __(hours === 1 ? 'hour' : 'hours') + ' ';
+                message += minutes + ' ' + __(minutes === 1 ? 'minute' : 'minutes');
+                if (seconds) message += ' ' + seconds + ' ' + __(seconds === 1 ? 'second' : 'seconds');
+
+                feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
+            }
+
+            cst.warningTime = Number.NEGATIVE_INFINITY;
+        },
+        
+		updateRubrics: function() {
 		    $('#qti-rubrics').remove();
 
             if (this.testContext.rubrics.length > 0) {

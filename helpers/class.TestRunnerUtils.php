@@ -252,7 +252,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $constraints[] = array(
                     'source' => $tc->getSource()->getIdentifier(),
                     'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
-                    'allowLateSubmission' => $tc->allowLateSubmission()
+                    'allowLateSubmission' => $tc->allowLateSubmission(),
+                    'qtiClassName' => $tc->getSource()->getQtiClassName()
                 );
             }
         }
@@ -425,6 +426,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Comment allowed? Skipping allowed?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
+            
+            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            if (isset($config['timerWarning'])) {
+                $context['timerWarning'] = $config['timerWarning'];
+            }
         }
         
         return $context;

@@ -21,8 +21,10 @@
  * Default log config, does not lock resources
  */
 return array(
-    'timer-warning' => array(
-        'item' => null,
-        'section' => 300
+    //Show warning message if time remaining less than defined (in seconds)
+   'timerWarning' => array(
+        'assessmentItemRef' => null,
+        'assessmentSection' => 300,
+        'testPart' => null
     )
 );
