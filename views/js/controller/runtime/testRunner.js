@@ -16,7 +16,6 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
  *
  */
-
 define([
     'jquery',
     'lodash',
@@ -31,486 +30,470 @@ define([
     'ui/feedback',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
+function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
+    'use strict';
 
-        'use strict';
+    var timerIds = [];
+    var currentTimes = [];
+    var lastDates = [];
+    var timeDiffs = [];
+    var waitingTime = 0;
+    var $controls;
+    var $doc = $(document);
 
-        var timerIds = [];
-        var currentTimes = [];
-        var lastDates = [];
-        var timeDiffs = [];
-        var waitingTime = 0;
-        
-        var $controls;
-        
-        var $doc = $(document);
+    var TestRunner = {
+        // Constants
+        'TEST_STATE_INITIAL': 0,
+        'TEST_STATE_INTERACTING': 1,
+        'TEST_STATE_MODAL_FEEDBACK': 2,
+        'TEST_STATE_SUSPENDED': 3,
+        'TEST_STATE_CLOSED': 4,
+        'TEST_NAVIGATION_LINEAR': 0,
+        'TEST_NAVIGATION_NONLINEAR': 1,
+        'TEST_ITEM_STATE_INTERACTING': 1,
+        beforeTransition: function (callback) {
+            // Ask the top window to start the loader.
+            iframeNotifier.parent('loading');
 
-        var TestRunner = {
-            // Constants
-            'TEST_STATE_INITIAL': 0,
-            'TEST_STATE_INTERACTING': 1,
-            'TEST_STATE_MODAL_FEEDBACK': 2,
-            'TEST_STATE_SUSPENDED': 3,
-            'TEST_STATE_CLOSED': 4,
-            'TEST_NAVIGATION_LINEAR': 0,
-            'TEST_NAVIGATION_NONLINEAR': 1,
-            'TEST_ITEM_STATE_INTERACTING': 1,
+            // Disable buttons.
+            this.disableGui();
 
-            beforeTransition: function (callback) {
-                // Ask the top window to start the loader.
-                iframeNotifier.parent('loading');
+            $('#qti-item, #qti-rubrics, #qti-timers').hide();
 
-                // Disable buttons.
-                this.disableGui();
+            // Wait at least waitingTime ms for a better user experience.
+            if (typeof callback === 'function') {
+                setTimeout(callback, waitingTime);
+            }
+        },
+        afterTransition: function () {
+            this.enableGui();
 
-                $('#qti-item, #qti-rubrics, #qti-timers').hide();
+            //ask the top window to stop the loader
+            iframeNotifier.parent('unloading');
+        },
+        moveForward: function () {
+            this.disableGui();
+            var that = this;
+            this.itemServiceApi.kill(function () {
+                that.actionCall('moveForward');
+            });
+        },
+        moveBackward: function () {
+            this.disableGui();
+            var that = this;
+            this.itemServiceApi.kill(function () {
+                that.actionCall('moveBackward');
+            });
+        },
+        skip: function () {
+            this.disableGui();
+            this.actionCall('skip');
+        },
+        timeout: function () {
+            this.disableGui();
+            this.testContext.isTimeout = true;
+            this.updateTimer();
 
-                // Wait at least waitingTime ms for a better user experience.
-                if (typeof callback === 'function') {
-                    setTimeout(callback, waitingTime);
+            this.itemServiceApi.kill(function () {
+                var confirmBox = $('.timeout-modal-feedback'),
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close');
+
+                confirmBox.modal({width: 500});
+                confirmBtn.off('click').on('click', function () {
+                    confirmBox.modal('close');
+                    that.actionCall('timeout');
+                });
+            });
+        },
+        comment: function () {
+            $controls.$commentText.val('');
+            $controls.$commentArea.show();
+            $controls.$commentAreaButtons.show();
+        },
+        closeComment: function () {
+            $controls.$commentArea.hide();
+        },
+        emptyComment: function () {
+            $controls.$commentText.val('');
+        },
+        storeComment: function () {
+            var self = this;
+            $.ajax({
+                url: self.testContext.commentUrl,
+                cache: false,
+                async: true,
+                type: 'POST',
+                data: {comment: $controls.$commentText.val('')},
+                success: function () {
+                    self.closeComment();
                 }
-            },
+            });
+        },
+        update: function (testContext) {
+            var self = this;
+            $('#qti-item').remove();
 
-            afterTransition: function () {
-                this.enableGui();
+            var $runner = $('#runner');
+            $runner.css('height', 'auto');
 
-                //ask the top window to stop the loader
-                iframeNotifier.parent('unloading');
-            },
+            this.testContext = testContext;
+            this.itemServiceApi = eval(testContext.itemServiceApiCall);
 
-            moveForward: function () {
-                this.disableGui();
-                var that = this;
-                this.itemServiceApi.kill(function () {
-                    that.actionCall('moveForward');
-                });
-            },
+            this.updateContext();
+            this.updateProgress();
+            this.updateNavigation();
+            this.updateInformation();
+            this.updateRubrics();
+            this.updateTools();
+            this.updateTimer();
 
-            moveBackward: function () {
-                this.disableGui();
-                var that = this;
-                this.itemServiceApi.kill(function () {
-                    that.actionCall('moveBackward');
-                });
-            },
+            var $itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+            $itemFrame.appendTo('#qti-content');
+            iframeResizer.autoHeight($itemFrame, 'body');
 
-            skip: function () {
-                this.disableGui();
-                this.actionCall('skip');
-            },
-
-            timeout: function () {
-                this.disableGui();
-                this.testContext.isTimeout = true;
-                this.updateTimer();
-                this.actionCall('timeout');
-            },
-
-            comment: function () {
-                $controls.$commentText.val('');
-                $controls.$commentArea.show();
-                $controls.$commentAreaButtons.show();
-            },
-
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            storeComment: function () {
-                var self = this;
-                $.ajax({
-                    url: self.testContext.commentUrl,
-                    cache: false,
-                    async: true,
-                    type: 'POST',
-                    data: { comment: $controls.$commentText.val('') },
-                    success: function () {
-                        self.closeComment();
-                    }
-                });
-            },
-
-            update: function (testContext) {
-                var self = this;
-                $('#qti-item').remove();
-
-                var $runner = $('#runner');
-                $runner.css('height', 'auto');
-
-                this.testContext = testContext;
-                this.itemServiceApi = eval(testContext.itemServiceApiCall);
-
-                this.updateContext();
-                this.updateProgress();
-                this.updateNavigation();
-                this.updateInformation();
-                this.updateRubrics();
-                this.updateTools();
-                this.updateTimer();
-
-                var $itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
-                $itemFrame.appendTo('#qti-content');
-                iframeResizer.autoHeight($itemFrame, 'body');
-
-                if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
-                    $doc.on('serviceloaded', function () {
-                        self.afterTransition();
-                        self.adjustFrame();
-                        $itemFrame.css({visibility: 'visible'});
-                    });
-
-                    // Inject API into the frame.
-                    this.itemServiceApi.loadInto($itemFrame[0], function () {
-                        // We now rely on the 'serviceloaded' event.
-                    });
-                }
-                else {
-                    // e.g. no more attempts or timeout! Simply consider the transition is finished,
-                    // but do not load the item.
+            if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
+                $doc.on('serviceloaded', function () {
                     self.afterTransition();
-                }
-            },
+                    self.adjustFrame();
+                    $itemFrame.css({visibility: 'visible'});
+                });
 
-            updateInformation: function () {
+                // Inject API into the frame.
+                this.itemServiceApi.loadInto($itemFrame[0], function () {
+                    // We now rely on the 'serviceloaded' event.
+                });
+            }
+            else {
+                // e.g. no more attempts or timeout! Simply consider the transition is finished,
+                // but do not load the item.
+                self.afterTransition();
+            }
+        },
+        updateInformation: function () {
 
-                if (this.testContext.isTimeout === true) {
-                    feedback().error(__('Time limit reached for item "%s".', this.testContext.itemIdentifier));
-                }
-                else if (this.testContext.itemSessionState !== this.TEST_ITEM_STATE_INTERACTING) {
-                    feedback().error(__('No more attempts allowed for item "%s".', this.testContext.itemIdentifier));
-                }
-            },
+            if (this.testContext.isTimeout === true) {
+                feedback().error(__('Time limit reached for item "%s".', this.testContext.itemIdentifier));
+            }
+            else if (this.testContext.itemSessionState !== this.TEST_ITEM_STATE_INTERACTING) {
+                feedback().error(__('No more attempts allowed for item "%s".', this.testContext.itemIdentifier));
+            }
+        },
+        updateTools: function updateTools() {
+            if (this.testContext.allowComment === true) {
+                // @todo
+                // $controls.$commentArea.show();
+            }
+            else {
+                $controls.$commentArea.hide();
+            }
 
-            updateTools: function updateTools() {
-                if (this.testContext.allowComment === true) {
-                   // @todo
-                   // $controls.$commentArea.show();
-                }
-                else {
-                    $controls.$commentArea.hide();
-                }
-
-                if (this.testContext.allowSkipping === true) {
-                    if (this.testContext.isLast === false) {
-                        $controls.$skip.show();
-                        $controls.$skipEnd.hide();
-                    }
-                    else {
-                        $controls.$skip.hide();
-                        $controls.$skipEnd.show();
-                    }
+            if (this.testContext.allowSkipping === true) {
+                if (this.testContext.isLast === false) {
+                    $controls.$skip.show();
+                    $controls.$skipEnd.hide();
                 }
                 else {
                     $controls.$skip.hide();
-                    $controls.$skipEnd.hide();
+                    $controls.$skipEnd.show();
                 }
-            },
+            }
+            else {
+                $controls.$skip.hide();
+                $controls.$skipEnd.hide();
+            }
+        },
+        updateTimer: function () {
+            var self = this;
+            $('#qti-timers').remove();
 
-            updateTimer: function () {
-                var self = this;
-                $('#qti-timers').remove();
+            for (var i = 0; i < timerIds.length; i++) {
+                clearTimeout(timerIds[i]);
+            }
 
-                for (var i = 0; i < timerIds.length; i++) {
-                    clearTimeout(timerIds[i]);
-                }
+            timerIds = [];
+            currentTimes = [];
+            lastDates = [];
+            timeDiffs = [];
 
-                timerIds = [];
-                currentTimes = [];
-                lastDates = [];
-                timeDiffs = [];
-
-                if (self.testContext.isTimeout === false && 
+            if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
-                    if (this.testContext.timeConstraints.length > 0) {
+                if (this.testContext.timeConstraints.length > 0) {
 
-                        // Insert QTI Timers container.
-                        $('<div id="qti-timers"/>').prependTo('#qti-content');
-                        // self.formatTime(cst.seconds)
-                        for (i = 0; i < this.testContext.timeConstraints.length; i++) {
+                    // Insert QTI Timers container.
+                    $('<div id="qti-timers"/>').prependTo('#qti-content');
+                    // self.formatTime(cst.seconds)
+                    for (i = 0; i < this.testContext.timeConstraints.length; i++) {
 
-                            var cst = this.testContext.timeConstraints[i];
+                        var cst = this.testContext.timeConstraints[i];
 
-                            if (cst.allowLateSubmission === false) {
-                                // Set up a timer for this constraint.
-                                $('<div class="qti-timer"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+                        if (cst.allowLateSubmission === false) {
+                            // Set up a timer for this constraint.
+                            $('<div class="qti-timer"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 
-                                // Set up a timer and update it with setInterval.
-                                currentTimes[i] = cst.seconds;
-                                lastDates[i] = new Date();
-                                timeDiffs[i] = 0;
-                                var timerIndex = i;
-                                var source = cst.source;
+                            // Set up a timer and update it with setInterval.
+                            currentTimes[i] = cst.seconds;
+                            lastDates[i] = new Date();
+                            timeDiffs[i] = 0;
+                            var timerIndex = i;
+                            var source = cst.source;
 
-                                // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-                                (function (timerIndex, source) {
-                                    timerIds[timerIndex] = setInterval(function () {
+                            // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
+                            (function (timerIndex, source) {
+                                timerIds[timerIndex] = setInterval(function () {
 
-                                        timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
+                                    timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
-                                        if (timeDiffs[timerIndex] >= 1000) {
-                                            var seconds = timeDiffs[timerIndex] / 1000;
-                                            currentTimes[timerIndex] -= seconds;
-                                            timeDiffs[timerIndex] = 0;
-                                        }
+                                    if (timeDiffs[timerIndex] >= 1000) {
+                                        var seconds = timeDiffs[timerIndex] / 1000;
+                                        currentTimes[timerIndex] -= seconds;
+                                        timeDiffs[timerIndex] = 0;
+                                    }
 
-                                        if (currentTimes[timerIndex] <= 0) {
-                                            // The timer expired...
-                                            $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
-                                            currentTimes[timerIndex] = 0;
-                                            clearInterval(timerIds[timerIndex]);
+                                    if (currentTimes[timerIndex] <= 0) {
+                                        // The timer expired...
+                                        $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+                                        currentTimes[timerIndex] = 0;
+                                        clearInterval(timerIds[timerIndex]);
 
-                                            // Hide item to prevent any further interaction with the candidate.
-                                            $('#qti-item').hide();
-                                            self.timeout();
-                                        }
-                                        else {
-                                            // Not timed-out...
-                                            $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
-                                            lastDates[timerIndex] = new Date();
-                                        }
+                                        // Hide item to prevent any further interaction with the candidate.
+                                        $('#qti-item').hide();
+                                        self.timeout();
+                                    }
+                                    else {
+                                        // Not timed-out...
+                                        $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+                                        lastDates[timerIndex] = new Date();
+                                    }
 
-                                    }, 1000);
-                                }(timerIndex, source));
-                            }
+                                }, 1000);
+                            }(timerIndex, source));
                         }
-
-                        $('#qti-timers').show();
                     }
+
+                    $('#qti-timers').show();
                 }
-            },
+            }
+        },
+        updateRubrics: function () {
+            $('#qti-rubrics').remove();
 
-            updateRubrics: function () {
-                $('#qti-rubrics').remove();
+            if (this.testContext.rubrics.length > 0) {
 
-                if (this.testContext.rubrics.length > 0) {
+                var $rubrics = $('<div id="qti-rubrics"/>');
 
-                    var $rubrics = $('<div id="qti-rubrics"/>');
-
-                    for (var i = 0; i < this.testContext.rubrics.length; i++) {
-                        $rubrics.append(this.testContext.rubrics[i]);
-                    }
-
-                    // modify the <a> tags in order to be sure it
-                    // opens in another window.
-                    $rubrics.find('a').bind('click keypress', function () {
-                        window.open(this.href);
-                        return false;
-                    });
-
-                    $rubrics.prependTo('#qti-content');
-
-                    if (MathJax) {
-                        MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
-                    }
-
+                for (var i = 0; i < this.testContext.rubrics.length; i++) {
+                    $rubrics.append(this.testContext.rubrics[i]);
                 }
-            },
 
-            updateNavigation: function () {
-                if (this.testContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
-                    // LINEAR
-                    $controls.$moveBackward.hide();
-                    $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
-                    $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
+                // modify the <a> tags in order to be sure it
+                // opens in another window.
+                $rubrics.find('a').bind('click keypress', function () {
+                    window.open(this.href);
+                    return false;
+                });
+
+                $rubrics.prependTo('#qti-content');
+
+                if (MathJax) {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
+                }
+
+            }
+        },
+        updateNavigation: function () {
+            if (this.testContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
+                // LINEAR
+                $controls.$moveBackward.hide();
+                $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
+                $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
+            }
+            else {
+                // NONLINEAR
+                $controls.$controls.show();
+                $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
+                $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
+                $controls.$moveBackward.css('display', (this.testContext.canMoveBackward === true) ?
+                        'inline' : 'none');
+            }
+        },
+        updateProgress: function () {
+
+            var considerProgress = this.testContext.considerProgress;
+
+            $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+
+            if (considerProgress === true) {
+                var ratio = Math.floor(this.testContext.numberCompleted / this.testContext.numberItems * 100);
+                $controls.$progressLabel.text(ratio + '%');
+                $controls.$progressBar.progressbar('value', ratio);
+            }
+        },
+        updateContext: function () {
+
+            $controls.$title.text(this.testContext.testTitle);
+            $controls.$position.text(' - ' + this.testContext.sectionTitle);
+            $controls.$titleGroup.show();
+        },
+        adjustFrame: function () {
+
+            var controlsHeight = $controls.$controls.outerHeight();
+            var windowHeight = window.innerHeight ? window.innerHeight : $(window).height();
+            var navigationHeight = $('#qti-navigation').outerHeight();
+            var newContentHeight = windowHeight - controlsHeight - navigationHeight;
+
+            var $content = $('#qti-content');
+            $content.height(newContentHeight - parseInt($content.css('paddingTop')) - parseInt($content.css('paddingBottom')));
+        },
+        disableGui: function () {
+            $('#qti-navigation button').addClass('disabled');
+        },
+        enableGui: function () {
+            $('#qti-navigation button').removeClass('disabled');
+        },
+        formatTime: function (totalSeconds) {
+            var sec_num = totalSeconds;
+            var hours = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+
+            var time = hours + ':' + minutes + ':' + seconds;
+
+            return "\u00b1 " + time;
+        },
+        actionCall: function (action) {
+            var self = this;
+            this.beforeTransition(function () {
+                $.ajax({
+                    url: self.testContext[action + 'Url'],
+                    cache: false,
+                    async: true,
+                    dataType: 'json',
+                    success: function (testContext) {
+                        if (testContext.state === self.TEST_STATE_CLOSED) {
+                            self.serviceApi.finish();
+                        }
+                        else {
+                            self.update(testContext);
+                        }
+                    }
+                });
+            });
+        }
+    };
+
+    return {
+        start: function (testContext) {
+
+            $controls = {
+                $moveForward: $('[data-control="move-forward"]'),
+                $moveEnd: $('[data-control="move-end"]'),
+                $moveBackward: $('[data-control="move-backward"]'),
+                $skip: $('[data-control="skip"]'),
+                $skipEnd: $('[data-control="skip-end"]'),
+                $commentToggle: $('[data-control="comment-toggle"]'),
+                $commentArea: $('[data-control="comment-area"]'),
+                $commentText: $('[data-control="comment-text"]'),
+                $commentCancel: $('[data-control="comment-cancel"]'),
+                $commentSend: $('[data-control="comment-send"]'),
+                $progressBar: $('[data-control="progress-bar"]'),
+                $progressLabel: $('[data-control="progress-label"]'),
+                $title: $('[data-control="qti-test-title"]'),
+                $position: $('[data-control="qti-test-position"]'),
+                $timer: $('[data-control="qti-test-time"]'),
+                $controls: $('.qti-controls')
+            };
+
+            $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
+            $controls.$skipButtons = $controls.$skip.add($controls.$skipEnd);
+            $controls.$moveForwardEnd = $controls.$moveForward.add($controls.$moveEnd);
+            $controls.$titleGroup = $controls.$title.add($controls.$position);
+
+            $doc.ajaxError(function (event, jqxhr) {
+                if (jqxhr.status === 403) {
+                    iframeNotifier.parent('serviceforbidden');
+                }
+            });
+
+            window.onServiceApiReady = function onServiceApiReady(serviceApi) {
+                TestRunner.serviceApi = serviceApi;
+
+                // If the assessment test session is in CLOSED state,
+                // we give the control to the delivery engine by calling finish.
+                if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
+                    serviceApi.finish();
                 }
                 else {
-                    // NONLINEAR
-                    $controls.$controls.show();
-                    $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
-                    $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
-                    $controls.$moveBackward.css('display', (this.testContext.canMoveBackward === true) ?
-                        'inline' : 'none');
+                    TestRunner.update(testContext);
                 }
-            },
+            };
 
-            updateProgress: function () {
+            TestRunner.beforeTransition();
+            TestRunner.testContext = testContext;
 
-                var considerProgress = this.testContext.considerProgress;
-
-                $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
-
-                if (considerProgress === true) {
-                    var ratio = Math.floor(this.testContext.numberCompleted / this.testContext.numberItems * 100);
-                    $controls.$progressLabel.text(ratio + '%');
-                    $controls.$progressBar.progressbar('value', ratio);
+            $controls.$skipButtons.click(function () {
+                if (!$(this).hasClass('disabled')) {
+                    TestRunner.skip();
                 }
-            },
+            });
 
-            updateContext: function () {
+            $controls.$moveForwardEnd.click(function () {
+                if (!$(this).hasClass('disabled')) {
+                    TestRunner.moveForward();
+                }
+            });
 
-                $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+            $controls.$moveBackward.click(function () {
+                if (!$(this).hasClass('disabled')) {
+                    TestRunner.moveBackward();
+                }
+            });
+
+            $controls.$commentToggle.click(function () {
+                if (!$(this).hasClass('disabled')) {
+                    TestRunner.comment();
+                }
+            });
+
+            $controls.$commentCancel.click(function () {
+                TestRunner.closeComment();
+            });
+
+            $controls.$commentSend.click(function () {
+                TestRunner.storeComment();
+            });
+
+            $controls.$commentText.click(function () {
+                TestRunner.emptyComment();
+            });
+
+            $(window).bind('resize', function () {
+                TestRunner.adjustFrame();
                 $controls.$titleGroup.show();
-            },
+            });
 
-            adjustFrame: function () {
-
-                var controlsHeight = $controls.$controls.outerHeight();
-                var windowHeight = window.innerHeight ? window.innerHeight : $(window).height();
-                var navigationHeight = $('#qti-navigation').outerHeight();
-                var newContentHeight = windowHeight - controlsHeight - navigationHeight;
-
-                var $content = $('#qti-content');
-                $content.height(newContentHeight - parseInt($content.css('paddingTop')) - parseInt($content.css('paddingBottom')));
-            },
-
-            disableGui: function () {
-                $('#qti-navigation button').addClass('disabled');
-            },
-
-            enableGui: function () {
-                $('#qti-navigation button').removeClass('disabled');
-            },
-
-            formatTime: function (totalSeconds) {
-                var sec_num = totalSeconds;
-                var hours = Math.floor(sec_num / 3600);
-                var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-                var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-                if (hours < 10) {
-                    hours = "0" + hours;
-                }
-                if (minutes < 10) {
-                    minutes = "0" + minutes;
-                }
-                if (seconds < 10) {
-                    seconds = "0" + seconds;
-                }
-
-                var time = hours + ':' + minutes + ':' + seconds;
-
-                return "\u00b1 " + time;
-            },
-
-            actionCall: function (action) {
-                var self = this;
-                this.beforeTransition(function () {
-                    $.ajax({
-                        url: self.testContext[action + 'Url'],
-                        cache: false,
-                        async: true,
-                        dataType: 'json',
-                        success: function (testContext) {
-                            if (testContext.state === self.TEST_STATE_CLOSED) {
-                                self.serviceApi.finish();
-                            }
-                            else {
-                                self.update(testContext);
-                            }
-                        }
-                    });
-                });
-            }
-        };
-
-        return {
-            start: function (testContext) {
-                
-                $controls = {
-                    $moveForward: $('[data-control="move-forward"]'),
-                    $moveEnd: $('[data-control="move-end"]'),
-                    $moveBackward: $('[data-control="move-backward"]'),
-                    $skip: $('[data-control="skip"]'),
-                    $skipEnd: $('[data-control="skip-end"]'),
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="comment-area"]'),
-                    $commentText: $('[data-control="comment-text"]'),
-                    $commentCancel: $('[data-control="comment-cancel"]'),
-                    $commentSend: $('[data-control="comment-send"]'),
-                    $progressBar: $('[data-control="progress-bar"]'),
-                    $progressLabel: $('[data-control="progress-label"]'),
-                    $title:  $('[data-control="qti-test-title"]'),
-                    $position:  $('[data-control="qti-test-position"]'),
-                    $timer:  $('[data-control="qti-test-time"]'),
-                    $controls: $('.qti-controls')
-                };
-
-                $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
-                $controls.$skipButtons = $controls.$skip.add($controls.$skipEnd);
-                $controls.$moveForwardEnd = $controls.$moveForward.add($controls.$moveEnd);
-                $controls.$titleGroup = $controls.$title.add($controls.$position);
-
-                $doc.ajaxError(function (event, jqxhr) {
-                    if (jqxhr.status === 403) {
-                        iframeNotifier.parent('serviceforbidden');
-                    }
-                });
-
-                window.onServiceApiReady = function onServiceApiReady(serviceApi) {
-                    TestRunner.serviceApi = serviceApi;
-
-                    // If the assessment test session is in CLOSED state,
-                    // we give the control to the delivery engine by calling finish.
-                    if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
-                        serviceApi.finish();
-                    }
-                    else {
-                        TestRunner.update(testContext);
-                    }
-                };
-
-                TestRunner.beforeTransition();
-                TestRunner.testContext = testContext;
-
-                $controls.$skipButtons.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.skip();
-                    }
-                });
-
-                $controls.$moveForwardEnd.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.moveForward();
-                    }
-                });
-
-                $controls.$moveBackward.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.moveBackward();
-                    }
-                });
-
-                $controls.$commentToggle.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
-                    }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
-                });
-
-                $controls.$commentText.click(function () {
-                    TestRunner.emptyComment();
-                });
-
-                $(window).bind('resize', function () {
-                    TestRunner.adjustFrame();
-                    $controls.$titleGroup.show();
-                });
-
-                $doc.bind('loading', function () {
-                    iframeNotifier.parent('loading');
-                });
+            $doc.bind('loading', function () {
+                iframeNotifier.parent('loading');
+            });
 
 
-                $doc.bind('unloading', function () {
-                    iframeNotifier.parent('unloading');
-                });
+            $doc.bind('unloading', function () {
+                iframeNotifier.parent('unloading');
+            });
 
-                $controls.$progressBar.progressbar();
+            $controls.$progressBar.progressbar();
 
-                iframeNotifier.parent('serviceready');
-            }
-        };
-    });
+            iframeNotifier.parent('serviceready');
+        }
+    };
+});

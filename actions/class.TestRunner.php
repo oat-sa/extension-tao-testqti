@@ -428,7 +428,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    // --- Deal with provided responses.
 	    $jsonPayload = taoQtiCommon_helpers_utils::readJsonPayload();
-	    
+	    $jsonPayload['TEST']['base']['string'] = 'test111';
 	    $responses = new State();
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
 	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
