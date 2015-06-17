@@ -431,6 +431,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Comment allowed? Skipping allowed?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
+            
+            // the type of progress bar to display
+            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $context['progressIndicator'] = $config['progress-indicator'];
         }
         
         return $context;

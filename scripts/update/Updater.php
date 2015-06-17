@@ -31,6 +31,8 @@ class Updater extends \common_ext_ExtensionUpdater {
      * @return string $versionUpdatedTo
      */
     public function update($initialVersion) {
+
+        $currentVersion = $initialVersion;
         
         // add testrunner config
         if ($currentVersion == '2.6') {
