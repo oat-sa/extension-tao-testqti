@@ -1,11 +1,12 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'jquery.trunc', 'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback){
 
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
+		var warningTime = (5 * 60); //5 min
 
 	    var TestRunner = {
 	    // Constants
@@ -244,6 +245,10 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
+                                    
+                                    if (currentTimes[timerIndex] <= warningTime) {
+                                        self.timeWarning();
+                                    }
 
 	                            }, 1000);
 	                        }
@@ -256,7 +261,13 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			    }
 			}
 		},
-
+        
+        timeWarning : function () {
+            $('#qti-timers > .qti-timer').addClass('qti-timer__warning');
+            feedback().warning(__("%d minutes left.", parseInt(warningTime / 60, 10)));
+            warningTime = Number.NEGATIVE_INFINITY;
+        },
+        
 		updateRubrics : function() {
 		    $('#qti-rubrics').remove();
 
