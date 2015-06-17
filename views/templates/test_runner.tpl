@@ -46,5 +46,13 @@ use oat\tao\helpers\Template;
 			<button id="qti-comment-cancel" class="btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
 			<button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 		</div>
+        <div class="timeout-modal-feedback modal">
+            <div class="modal-body clearfix">
+                <p><?= __('Time is run out. The test section is ended.') ?></p>
+                <div class="rgt">
+                    <button class="btn-info small js-timeout-confirm" type="button"><?= __('Ok') ?></button>
+                </div>
+            </div>
+        </div>
 	</body>
 </html>

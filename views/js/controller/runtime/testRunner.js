@@ -1,5 +1,18 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define([
+    'jquery', 
+    'lodash', 
+    'spin', 
+    'serviceApi/ServiceApi', 
+    'serviceApi/UserInfoService', 
+    'serviceApi/StateStorage', 
+    'iframeResizer', 
+    'iframeNotifier', 
+    'i18n', 
+    'mathJax', 
+    'ui/modal',
+    'jquery.trunc', 
+    'ui/progressbar'
+], function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -44,6 +57,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    this.disableGui();
 
 		    var that = this;
+            
 		    this.itemServiceApi.kill(function(signal) {
 		        that.actionCall('moveForward');
 		    });
@@ -65,12 +79,23 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		},
 
 		timeout: function() {
+            var that = this;
 		    this.disableGui();
-
+            
 			this.assessmentTestContext.isTimeout = true;
 			this.updateTimer();
-			this.actionCall('timeout');
-		},
+            
+            this.itemServiceApi.kill(function(signal) {
+                var confirmBox = $('.timeout-modal-feedback'),
+                    confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close');
+                    
+                confirmBox.modal({ width: 500 });
+                confirmBtn.off('click').on('click', function () {
+                    confirmBox.modal('close');
+                    that.actionCall('timeout');
+                });
+            });
+        },
 
 		comment : function() {
 			$('#qti-comment > textarea').val(__('Your comment...'));
@@ -237,6 +262,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 	                                     // Hide item to prevent any further interaction with the candidate.
                                         $('#qti-item').css('display', 'none');
+                                        
                                         self.timeout();
 	                                }
 	                                else {
