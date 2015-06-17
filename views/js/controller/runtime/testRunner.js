@@ -6,7 +6,6 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
-		var warningTime = (5 * 60); //5 min
 
 	    var TestRunner = {
 	    // Constants
@@ -216,11 +215,11 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                        lastDates[i] = new Date();
 	                        timeDiffs[i] = 0;
 	                        timerIndex = i;
-	                        source = cst.source;
 
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-	                        var superClosure = function(timerIndex, source) {
+	                        var superClosure = function(timerIndex, cst) {
 	                            timerIds[timerIndex] = setInterval(function() {
+                                    var warningTime = (5 * 60); //5 min
 
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
@@ -242,18 +241,22 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                                }
 	                                else {
 	                                    // Not timed-out...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
                                     
                                     if (currentTimes[timerIndex] <= warningTime) {
-                                        self.timeWarning();
+                                        //var message = timerIndex < 60 ? 
+                                        $('#qti-timers > .qti-timer').addClass('qti-timer__warning');
+                                        
+                                        feedback().warning(__("%d minutes left.", parseInt(warningTime / 60, 10)));
+                                        warningTime = Number.NEGATIVE_INFINITY;
                                     }
 
 	                            }, 1000);
 	                        }
 
-	                        superClosure(timerIndex, source);
+	                        superClosure(timerIndex, cst);
 			        	}
 			        }
 
@@ -261,12 +264,6 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			    }
 			}
 		},
-        
-        timeWarning : function () {
-            $('#qti-timers > .qti-timer').addClass('qti-timer__warning');
-            feedback().warning(__("%d minutes left.", parseInt(warningTime / 60, 10)));
-            warningTime = Number.NEGATIVE_INFINITY;
-        },
         
 		updateRubrics : function() {
 		    $('#qti-rubrics').remove();
