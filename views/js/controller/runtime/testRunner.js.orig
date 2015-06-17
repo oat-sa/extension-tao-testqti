@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,10 +33,6 @@ define([
     'ui/progressbar'
 ], function ($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
     'use strict';
-=======
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback){
->>>>>>> 88644e9... Warning message
 
 	    var timerIds = [];
 	    var currentTimes = [];
@@ -48,8 +43,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
     var $controls;
     var $doc = $(document);
 =======
-		var warningTime = (5 * 60); //5 min
->>>>>>> 88644e9... Warning message
+>>>>>>> cf47bd6... Add config
 
 	    var TestRunner = {
 	    // Constants
@@ -131,7 +125,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
                     that.actionCall('timeout', metaData);
                 });
             });
-        },
+		},
         comment: function () {
             $controls.$commentText.val('');
             $controls.$commentArea.show();
@@ -262,12 +256,21 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                        currentTimes[i] = cst.seconds;
 	                        lastDates[i] = new Date();
 	                        timeDiffs[i] = 0;
+<<<<<<< HEAD
                             var timerIndex = i;
                             var source = cst.source;
 
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
                             (function (timerIndex, source) {
                                 timerIds[timerIndex] = setInterval(function () {
+=======
+	                        timerIndex = i;
+
+	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
+	                        var superClosure = function(timerIndex, cst) {
+	                            timerIds[timerIndex] = setInterval(function() {
+                                    var warningTime = (5 * 60); //5 min
+>>>>>>> cf47bd6... Add config
 
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
@@ -289,16 +292,28 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                                }
 	                                else {
 	                                    // Not timed-out...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
-                                    
-                                    if (currentTimes[timerIndex] <= warningTime) {
-                                        self.timeWarning();
-                                    }
+<<<<<<< HEAD
 
 	                            }, 1000);
                             }(timerIndex, source));
+=======
+                                    
+                                    if (currentTimes[timerIndex] <= warningTime) {
+                                        //var message = timerIndex < 60 ? 
+                                        $('#qti-timers > .qti-timer').addClass('qti-timer__warning');
+                                        
+                                        feedback().warning(__("%d minutes left.", parseInt(warningTime / 60, 10)));
+                                        warningTime = Number.NEGATIVE_INFINITY;
+                                    }
+
+	                            }, 1000);
+	                        }
+
+	                        superClosure(timerIndex, cst);
+>>>>>>> cf47bd6... Add config
 			        	}
 			        }
 
@@ -310,14 +325,8 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
         updateRubrics: function () {
 =======
         
-        timeWarning : function () {
-            $('#qti-timers > .qti-timer').addClass('qti-timer__warning');
-            feedback().warning(__("%d minutes left.", parseInt(warningTime / 60, 10)));
-            warningTime = Number.NEGATIVE_INFINITY;
-        },
-        
 		updateRubrics : function() {
->>>>>>> 88644e9... Warning message
+>>>>>>> cf47bd6... Add config
 		    $('#qti-rubrics').remove();
 
             if (this.testContext.rubrics.length > 0) {
