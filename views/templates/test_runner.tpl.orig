@@ -178,6 +178,14 @@ use oat\tao\helpers\Layout;
     </div>
 
 </div>
+<div class="timeout-modal-feedback modal">
+    <div class="modal-body clearfix">
+        <p><?= __('Time is run out. The test section is ended.') ?></p>
+        <div class="rgt">
+            <button class="btn-info small js-timeout-confirm" type="button"><?= __('Ok') ?></button>
+        </div>
+    </div>
+</div>
 </body>
 =======
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -204,6 +212,7 @@ use oat\tao\helpers\Layout;
 	</head>
 	<body>
 		<div id="runner" class="tao-scope">
+            <div id="feedback-box"></div>
 			<div id="qti-actions">
 				<div class="col-4" id="qti-test-context">
 					<div id="qti-test-title"></div>
@@ -226,14 +235,6 @@ use oat\tao\helpers\Layout;
 			<button id="qti-comment-cancel" class="btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
 			<button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 		</div>
-        <div class="timeout-modal-feedback modal">
-            <div class="modal-body clearfix">
-                <p><?= __('Time is run out. The test section is ended.') ?></p>
-                <div class="rgt">
-                    <button class="btn-info small js-timeout-confirm" type="button"><?= __('Ok') ?></button>
-                </div>
-            </div>
-        </div>
 	</body>
->>>>>>> 7b48a19... Warning message
+>>>>>>> 88644e9... Warning message
 </html>

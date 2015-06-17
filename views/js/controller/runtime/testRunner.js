@@ -122,7 +122,7 @@ define([
                     that.actionCall('timeout', metaData);
                 });
             });
-        },
+		},
         comment: function () {
             $controls.$commentText.val('');
             $controls.$commentArea.show();

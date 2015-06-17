@@ -8,7 +8,7 @@ use oat\tao\helpers\Layout;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
-    <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
+				<link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('tao-3.css', 'tao') ?>"/>
     <!--link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/-->
     <link rel="stylesheet" href="<?= Template::css('delivery.css', 'taoDelivery') ?>"/>
@@ -24,13 +24,13 @@ use oat\tao\helpers\Layout;
             require(['<?=get_data('client_config_url')?>'], function () {
                 require(['taoQtiTest/controller/runtime/testRunner', 'mathJax'], function (testRunner, MathJax) {
                     if (MathJax) {
-                        MathJax.Hub.Configured();
-                    }
-                    testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
-                });
-            });
-        }());
-    </script>
+                                MathJax.Hub.Configured();
+                            }
+                            testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
+                        });
+                    });
+                }());
+                </script>
 </head>
 <body class="delivery-scope">
 <div id="feedback-box"></div>
@@ -41,7 +41,7 @@ use oat\tao\helpers\Layout;
             <div class="lft title-box txt-ctr">
                 <span data-control="qti-test-title" class="qti-controls"></span>
                 <span data-control="qti-test-position" class="qti-controls"></span>
-            </div>
+				</div>
 
 
             <!--div class="rgt navi-box">
@@ -94,12 +94,12 @@ use oat\tao\helpers\Layout;
             <div class="rgt progress-box">
                 <div data-control="progress-bar" class="qti-controls lft"></div>
                 <div data-control="progress-label" class="qti-controls lft"></div>
-            </div>
+				</div>
             <div class="rgt timer-box">
                 <div data-control="qti-test-time" class="qti-controls"></div>
-            </div>
-        </div>
-    </div>
+			</div>
+			</div>
+		</div>
 
 </div>
 
@@ -119,7 +119,7 @@ use oat\tao\helpers\Layout;
                             </a>
                         </li>
                     </ul>
-                </div>
+		</div>
 
 
                 <div class="rgt navi-box">
