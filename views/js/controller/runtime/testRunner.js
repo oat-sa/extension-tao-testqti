@@ -1,46 +1,11 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; under version 2
- * of the License (non-upgradable).
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
- *
- */
-define([
-    'jquery',
-    'lodash',
-    'spin',
-    'serviceApi/ServiceApi',
-    'serviceApi/UserInfoService',
-    'serviceApi/StateStorage',
-    'iframeResizer',
-    'iframeNotifier',
-    'i18n',
-    'mathJax',
-    'ui/feedback',
-    'ui/modal',
-    'jquery.trunc',
-    'ui/progressbar'
-], function ($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
-    'use strict';
+define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'jquery.trunc', 'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback){
 
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
-    var $controls;
-    var $doc = $(document);
 
 	    var TestRunner = {
 	    // Constants
@@ -232,6 +197,7 @@ define([
 		    currentTimes = [];
 		    lastDates = [];
 			timeDiffs = [];
+            $timers = $('#qti-timers > .qti-timer');
 
             if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
@@ -275,7 +241,7 @@ define([
 
 	                                if (currentTimes[timerIndex] <= 0) {
 	                                    // The timer expired...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $timers.eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    currentTimes[timerIndex] = 0;
 	                                    clearInterval(timerIds[timerIndex]);
 
@@ -305,26 +271,18 @@ define([
         /**
          * Mark apropriate timer by warning colors and show feedback message
          * @param {object} cst - Time constraint
+         * @param {integer} cst.warningTime - Warning time in seconds.
+         * @param {integer} cst.qtiClassName - Class name of qti instance for which the timer is set (assessmentItemRef | assessmentSection | testPart).
+         * @param {integer} cst.seconds - Initial timer value.
          * @returns {undefined}
          */
         timeWarning : function (cst) {
+            var  message = '';
             $('#qti-timers > .qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
 
             // Initial time more than warning time in config
             if (cst.seconds > cst.warningTime) {
-                var hours = Math.floor(cst.warningTime / 3600),
-                    minutes,
-                    seconds,
-                    message = '';
-
-                cst.warningTime = cst.warningTime - hours * 3600;
-                minutes = Math.floor(cst.warningTime / 60);
-                seconds = cst.warningTime - minutes * 60;
-                message = '';
-
-                if (hours) message += hours + ' ' + __(hours === 1 ? 'hour' : 'hours') + ' ';
-                message += minutes + ' ' + __(minutes === 1 ? 'minute' : 'minutes');
-                if (seconds) message += ' ' + seconds + ' ' + __(seconds === 1 ? 'second' : 'seconds');
+                message = moment.duration(300, "seconds").humanize();
 
                 feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
             }

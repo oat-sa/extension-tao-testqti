@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,14 +34,23 @@ define([
     'ui/progressbar'
 ], function ($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
     'use strict';
+=======
+define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'moment', 'jquery.trunc', 'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment){
+>>>>>>> c64e900... Add jsdoc, change message generation
 
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
+<<<<<<< HEAD
     var $controls;
     var $doc = $(document);
+=======
+		var $timers;
+		var timerIndex;
+>>>>>>> c64e900... Add jsdoc, change message generation
 
 	    var TestRunner = {
 	    // Constants
@@ -232,6 +242,7 @@ define([
 		    currentTimes = [];
 		    lastDates = [];
 			timeDiffs = [];
+            $timers = $('#qti-timers > .qti-timer');
 
             if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
@@ -245,34 +256,30 @@ define([
 
                         var cst = this.testContext.timeConstraints[i];
 
+<<<<<<< HEAD
                         if (cst.allowLateSubmission === false) {
 			        	 // Set up a timer for this constraint.
+=======
+			        	if (cst.allowLateSubmission == false) {
+                            // Set up a timer for this constraint.
+>>>>>>> c64e900... Add jsdoc, change message generation
 	                        $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 
 	                        // Set up a timer and update it with setInterval.
 	                        currentTimes[i] = cst.seconds;
 	                        lastDates[i] = new Date();
 	                        timeDiffs[i] = 0;
-<<<<<<< HEAD
-                            var timerIndex = i;
-                            var source = cst.source;
-
-	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-                            (function (timerIndex, source) {
-                                timerIds[timerIndex] = setInterval(function () {
-=======
 	                        timerIndex = i;
                             
                             cst.warningTime = Number.NEGATIVE_INFINITY;
                             
-                            if (self.assessmentTestContext.timerWarning && self.assessmentTestContext.timerWarning[cst.qtiClassName]) {
-                                cst.warningTime = parseInt(self.assessmentTestContext.timerWarning[cst.qtiClassName], 10);
+                            if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
+                                cst.warningTime = parseInt(self.testContext.timerWarning[cst.qtiClassName], 10);
                             }
                             
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-	                        var superClosure = function(timerIndex, cst) {
-	                            timerIds[timerIndex] = setInterval(function() {
->>>>>>> 80b599c... create config
+                            (function (timerIndex, cst) {
+                                timerIds[timerIndex] = setInterval(function () {
 
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
@@ -284,7 +291,7 @@ define([
 
 	                                if (currentTimes[timerIndex] <= 0) {
 	                                    // The timer expired...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $timers.eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    currentTimes[timerIndex] = 0;
 	                                    clearInterval(timerIds[timerIndex]);
 
@@ -294,24 +301,16 @@ define([
 	                                }
 	                                else {
 	                                    // Not timed-out...
-	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+	                                    $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
 	                                    lastDates[timerIndex] = new Date();
 	                                }
-<<<<<<< HEAD
-
-	                            }, 1000);
-                            }(timerIndex, source));
-=======
                                     
                                     if (_.isFinite(cst.warningTime) && currentTimes[timerIndex] <= cst.warningTime ) {
                                         self.timeWarning(cst);
                                     }
 
 	                            }, 1000);
-	                        };
-
-	                        superClosure(timerIndex, cst);
->>>>>>> 80b599c... create config
+                            }(timerIndex, cst));
 			        	}
 			        }
 
@@ -319,32 +318,21 @@ define([
 			    }
 			}
 		},
-<<<<<<< HEAD
-        updateRubrics: function () {
-=======
         /**
          * Mark apropriate timer by warning colors and show feedback message
          * @param {object} cst - Time constraint
+         * @param {integer} cst.warningTime - Warning time in seconds.
+         * @param {integer} cst.qtiClassName - Class name of qti instance for which the timer is set (assessmentItemRef | assessmentSection | testPart).
+         * @param {integer} cst.seconds - Initial timer value.
          * @returns {undefined}
          */
         timeWarning : function (cst) {
+            var  message = '';
             $('#qti-timers > .qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
 
             // Initial time more than warning time in config
             if (cst.seconds > cst.warningTime) {
-                var hours = Math.floor(cst.warningTime / 3600),
-                    minutes,
-                    seconds,
-                    message = '';
-
-                cst.warningTime = cst.warningTime - hours * 3600;
-                minutes = Math.floor(cst.warningTime / 60);
-                seconds = cst.warningTime - minutes * 60;
-                message = '';
-
-                if (hours) message += hours + ' ' + __(hours === 1 ? 'hour' : 'hours') + ' ';
-                message += minutes + ' ' + __(minutes === 1 ? 'minute' : 'minutes');
-                if (seconds) message += ' ' + seconds + ' ' + __(seconds === 1 ? 'second' : 'seconds');
+                message = moment.duration(300, "seconds").humanize();
 
                 feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
             }
@@ -352,8 +340,7 @@ define([
             cst.warningTime = Number.NEGATIVE_INFINITY;
         },
         
-		updateRubrics : function() {
->>>>>>> 80b599c... create config
+		updateRubrics: function() {
 		    $('#qti-rubrics').remove();
 
             if (this.testContext.rubrics.length > 0) {
