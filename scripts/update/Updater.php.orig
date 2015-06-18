@@ -15,11 +15,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
+<<<<<<< HEAD
+=======
+ *
+ *
+>>>>>>> 923b85b... increase version build js css lang
  */
 
 namespace oat\taoQtiTest\scripts\update;
 
-
+<<<<<<< HEAD
+/**
+ *
+ * @author Aleh Hutnikau <hutnikau@1pt.com>
+ */
 class Updater extends \common_ext_ExtensionUpdater {
     
     /**
@@ -47,4 +56,24 @@ class Updater extends \common_ext_ExtensionUpdater {
    
         return $currentVersion;
     }
+=======
+
+class Updater extends \common_ext_ExtensionUpdater 
+{
+
+	/**
+     * 
+     * @param string $currentVersion
+     * @return string $versionUpdatedTo
+     */
+    public function update($initialVersion) {
+        
+        $currentVersion = $initialVersion;
+		if ($currentVersion == '2.6') {
+			$currentVersion = '2.6.1';
+		}
+
+		return $currentVersion;
+	}
+>>>>>>> 923b85b... increase version build js css lang
 }

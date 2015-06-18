@@ -52,7 +52,11 @@ return array(
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
 		)
 	),
+<<<<<<< HEAD
+    'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
+=======
 	'update' => "oat\\taoQtiTest\\scripts\\update\\Updater",
+>>>>>>> 923b85b... increase version build js css lang
     'local'	=> array(
         'php'	=> array(
             dirname(__FILE__).'/install/local/addQTIExamples.php'
