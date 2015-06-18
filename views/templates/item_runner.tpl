@@ -32,5 +32,9 @@ use oat\tao\helpers\Template;
             }());
         </script>
 	</head>
-	<body style="margin:0;"></body>
+	<body style="margin:0;">
+
+
+    item goes here
+	</body>
 </html>
