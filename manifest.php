@@ -33,7 +33,7 @@ return array(
     'label' => 'QTI test model',
 	'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '2.6',
+    'version' => '2.6.1',
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '2.6',
@@ -52,6 +52,7 @@ return array(
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
 		)
 	),
+	'update' => "oat\\taoQtiTest\\scripts\\update\\Updater",
     'local'	=> array(
         'php'	=> array(
             dirname(__FILE__).'/install/local/addQTIExamples.php'
