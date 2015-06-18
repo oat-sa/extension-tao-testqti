@@ -20,7 +20,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
                 var progressIndicator = assessmentTestContext.progressIndicator || 'percentage';
                 var progressIndicatorMethod = progressIndicator + 'Progression';
                 var getProgression = this[progressIndicatorMethod] || this.percentageProgression;
-                var progression = getProgression(assessmentTestContext);
+                var progression = getProgression && getProgression(assessmentTestContext) || {};
 
                 $('#qti-progress-label').text(progression.label);
                 $('#qti-progressbar').progressbar('value', progression.ratio);
@@ -31,7 +31,8 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
              * @param {Object} assessmentTestContext The progression context
              */
             percentageProgression: function(assessmentTestContext) {
-                var ratio = Math.floor(assessmentTestContext.numberCompleted / assessmentTestContext.numberItems * 100);
+                var total = Math.max(1, assessmentTestContext.numberItems);
+                var ratio = Math.floor(assessmentTestContext.numberCompleted / total * 100);
                 return {
                     ratio : ratio,
                     label : __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%')
@@ -43,11 +44,11 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
              * @param {Object} assessmentTestContext The progression context
              */
             positionProgression: function(assessmentTestContext) {
-                var total = assessmentTestContext.numberItems;
+                var total = Math.max(1, assessmentTestContext.numberItems);
                 var position = assessmentTestContext.itemPosition + 1;
                 return {
                     ratio : Math.floor(position / total * 100),
-                    label : __('Item %X on %Y').replace('%X', position).replace('%Y', total)
+                    label : __('Item %d on %d', position, total)
                 };
             }
         };
