@@ -48,7 +48,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
                 var position = assessmentTestContext.itemPosition + 1;
                 return {
                     ratio : Math.floor(position / total * 100),
-                    label : __('Item %d on %d', position, total)
+                    label : __('Item %d of %d', position, total)
                 };
             }
         };
