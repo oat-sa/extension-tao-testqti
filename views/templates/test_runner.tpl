@@ -34,49 +34,57 @@ use oat\tao\helpers\Layout;
 </head>
 <body class="delivery-scope">
 
-<ul class="plain action-bar content-action-bar horizontal-action-bar">
+<div class="plain action-bar content-action-bar horizontal-action-bar">
+    <div class="grid-row">
+        <div class
+    </div>
+    <ul>
+        <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
+            <a class="li-inner" href="#">
+                <?= __("Comment"); ?>
+            </a>
+        </li>
+    </ul>
+    <ul class="rgt">
 
-    <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
-        <a class="li-inner" href="#">
-            <?= __("Comment"); ?>
-        </a>
-    </li>
+        <li data-control="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
+            <a class="li-inner" href="#">
+                <?= __("Next"); ?>
+                <span class="icon-forward r"></span>
+            </a>
+        </li>
 
-    <li data-control="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
-        <a class="li-inner" href="#">
-            <?= __("Next"); ?>
-            <span class="icon-forward r"></span>
-        </a>
-    </li>
+        <li data-control="move-end" class="small btn-info action" title="<?= __("Submit and go to the end of the test"); ?>">
+            <a class="li-inner" href="#">
+                <?= __("End Test"); ?>
+                <span class="icon-fast-forward r"></span>
+            </a>
+        </li>
 
-    <li data-control="move-end" class="small btn-info action" title="<?= __("Submit and go to the end of the test"); ?>">
-        <a class="li-inner" href="#">
-            <?= __("End Test"); ?>
-            <span class="icon-fast-forward r"></span>
-        </a>
-    </li>
+        <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
+            <a class="li-inner" href="#">
+                <span class="icon-backward"></span>
+                <?= __("Previous"); ?>
+            </a>
+        </li>
 
-    <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
-        <a class="li-inner" href="#">
-            <span class="icon-backward"></span>
-            <?= __("Previous"); ?>
-        </a>
-    </li>
+        <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
+            <a class="li-inner" href="#">
+                <span class="icon-external"></span>
+                <?= __("Skip"); ?>
+            </a>
+        </li>
 
-    <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
-        <a class="li-inner" href="#">
-            <span class="icon-external"></span>
-            <?= __("Skip"); ?>
-        </a>
-    </li>
+        <li data-control="skip-end" class="small btn-info action" title="<?= __("Skip to the end of the test"); ?>">
+            <a class="li-inner" href="#">
+                <span class="icon-external"></span>
+                <?= __("Skip &amp; End Test"); ?>
+            </a>
+        </li>
+    </ul>
+</div>
 
-    <li data-control="skip-end" class="small btn-info action" title="<?= __("Skip to the end of the test"); ?>">
-        <a class="li-inner" href="#">
-            <span class="icon-external"></span>
-            <?= __("Skip &amp; End Test"); ?>
-        </a>
-    </li>
-</ul>
+
 
 <div id="runner" class="tao-scope">
     <div id="qti-actions">
