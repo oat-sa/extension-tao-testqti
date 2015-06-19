@@ -1,24 +1,56 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'moment', 'jquery.trunc', 'ui/progressbar'],
+define([
+    'jquery',
+    'lodash',
+    'spin',
+    'serviceApi/ServiceApi',
+    'serviceApi/UserInfoService',
+    'serviceApi/StateStorage',
+    'iframeResizer',
+    'iframeNotifier',
+    'i18n',
+    'mathJax',
+    'ui/feedback', 
+    'moment',
+    'ui/modal',
+    'jquery.trunc',
+    'ui/progressbar'],
     function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment){
-
-	    var timerIds = [];
-	    var currentTimes = [];
-	    var lastDates = [];
-		var timeDiffs = [];
-		var waitingTime = 0;
-		var $timers;
-		var timerIndex;
-
-	    var TestRunner = {
-	    // Constants
-	    'TEST_STATE_INITIAL': 0,
-	    'TEST_STATE_INTERACTING': 1,
-	    'TEST_STATE_MODAL_FEEDBACK': 2,
-	    'TEST_STATE_SUSPENDED': 3,
-	    'TEST_STATE_CLOSED': 4,
-	    'TEST_NAVIGATION_LINEAR': 0,
-	    'TEST_NAVIGATION_NONLINEAR': 1,
-	    'TEST_ITEM_STATE_INTERACTING': 1,
+    'use strict';
+    var timerIds = [],
+        currentTimes = [],
+        lastDates = [],
+        timeDiffs = [],
+        waitingTime = 0,
+        $timers,
+        timerIndex,
+        $itemFrame,
+        TestRunner = {
+            // Constants
+            'TEST_STATE_INITIAL' : 0,
+            'TEST_STATE_INTERACTING' : 1,
+            'TEST_STATE_MODAL_FEEDBACK' : 2,
+            'TEST_STATE_SUSPENDED' : 3,
+            'TEST_STATE_CLOSED' : 4,
+            'TEST_NAVIGATION_LINEAR' : 0,
+            'TEST_NAVIGATION_NONLINEAR' : 1,
+            'TEST_ITEM_STATE_INTERACTING' : 1,
+            'SESSION_EXIT_CODE' : {
+                'COMPLETED_NORMALLY' : 700,
+                'QUIT' : 701,
+                'COMPLETE_TIMEOUT' : 703,
+                'TIMEOUT' : 704,
+                'FORCE_QUIT' : 705,
+                'IN_PROGRESS' : 706,
+                'ERROR' : 300
+            },
+            'TEST_EXIT_CODE': {
+                'COMPLETE' : 'C',
+                'TERMINATED' : 'T',
+                'INCOMPLETE' : 'IC',
+                'INCOMPLETE_QUIT' : 'IQ',
+                'INACTIVE' : 'IA',
+                'CANDIDATE_DISAGREED_WITH_NDA' : 'DA'
+            },
 
 		beforeTransition : function(callback) {
 		    // Ask the top window to start the loader.
@@ -46,6 +78,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    this.disableGui();
 
 		    var that = this;
+            
 		    this.itemServiceApi.kill(function(signal) {
 		        that.actionCall('moveForward');
 		    });
@@ -66,12 +99,24 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			this.actionCall('skip');
 		},
 
-		timeout: function() {
+		timeout: function(qtiClassName) {
+            var that = this;
 		    this.disableGui();
-
+            
 			this.assessmentTestContext.isTimeout = true;
 			this.updateTimer();
-			this.actionCall('timeout');
+
+            this.itemServiceApi.kill(function(signal) {
+                var confirmBox = $('.timeout-modal-feedback'),
+                    confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
+                    metaData = {'SESSION_EXIT_CODE' : TestRunner.SESSION_EXIT_CODE.TIMEOUT};
+                    
+                confirmBox.modal({ width: 500 });
+                confirmBtn.off('click').on('click', function () {
+                    confirmBox.modal('close');
+                    that.actionCall('timeout', metaData);
+                });
+            });
 		},
 
 		comment : function() {
@@ -201,7 +246,6 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			if (self.assessmentTestContext.isTimeout == false && self.assessmentTestContext.itemSessionState == self.TEST_ITEM_STATE_INTERACTING) {
 
 			    if (this.assessmentTestContext.timeConstraints.length > 0) {
-
 			    	// Insert QTI Timers container.
 			    	$('<div id="qti-timers"></div>').prependTo('#qti-content');
 			    	// self.formatTime(cst.seconds)
@@ -210,7 +254,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			        	var cst = this.assessmentTestContext.timeConstraints[i];
 
 			        	if (cst.allowLateSubmission == false) {
-                            // Set up a timer for this constraint.
+			        	 // Set up a timer for this constraint.
 	                        $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 
 	                        // Set up a timer and update it with setInterval.
@@ -228,7 +272,6 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
 	                        var superClosure = function(timerIndex, cst) {
 	                            timerIds[timerIndex] = setInterval(function() {
-
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
 	                                if (timeDiffs[timerIndex] >= 1000) {
@@ -245,7 +288,8 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 	                                     // Hide item to prevent any further interaction with the candidate.
                                         $('#qti-item').css('display', 'none');
-                                        self.timeout();
+                                        
+                                        self.timeout(cst.qtiClassName);
 	                                }
 	                                else {
 	                                    // Not timed-out...
@@ -401,12 +445,14 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    return "\u00b1 " + time;
 		},
 
-		actionCall: function(action) {
+		actionCall: function(action, metaData) {
 			var self = this;
+            metaData = {metaData : metaData} || {};
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],
 					cache: false,
+                    data: metaData,
 					async: true,
 					dataType: 'json',
 					success: function(assessmentTestContext, textStatus, jqXhr) {
