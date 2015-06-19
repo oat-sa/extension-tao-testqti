@@ -24,6 +24,7 @@ use oat\tao\helpers\Template;
 	</head>
 	<body>
 		<div id="runner" class="tao-scope">
+            <div id="feedback-box"></div>
 			<div id="qti-actions">
 				<div class="col-4" id="qti-test-context">
 					<div id="qti-test-title"></div>
