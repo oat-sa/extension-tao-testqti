@@ -238,7 +238,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
     }
-    
+
     protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
         $sessionId = $testSession->getSessionId();
@@ -295,6 +295,32 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveForward() {
         $this->beforeAction();
         $session = $this->getTestSession();
+        
+        $itemVariableSet = array();
+        
+        $metaData = array(
+            'EXIT_CODE_SECTION' => 700
+        );
+        
+        $resultVariable = new \taoResultServer_models_classes_TraceVariable();
+        $resultVariable->setIdentifier('EXIT_CODE_SECTION');
+        $resultVariable->setBaseType(BaseType::INTEGER);
+        $resultVariable->setCardinality(Cardinality::SINGLE);
+        $resultVariable->setTrace(700);
+        
+        $itemVariableSet[] = $resultVariable;
+        
+        $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
+	    $testUri = $session->getTest()->getUri();
+        
+	    $sessionId = $session->getSessionId();
+        $item = $session->getCurrentAssessmentItemRef()->getIdentifier();
+	    $occurence = $session->getCurrentAssessmentItemRefOccurence();
+	    $transmissionId = "${sessionId}.${item}.${occurence}";
+        
+        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+        
+        $resultServer->storeItemVariableSet($testUri, $itemUri, $itemVariableSet, $transmissionId);
         
         try {
             $session->moveNext();
@@ -428,7 +454,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    // --- Deal with provided responses.
 	    $jsonPayload = taoQtiCommon_helpers_utils::readJsonPayload();
-	    $jsonPayload['TEST']['base']['string'] = 'test111';
+
 	    $responses = new State();
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
 	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
@@ -444,6 +470,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
 	    
 	    foreach ($jsonPayload as $id => $response) {
+            if ($id === 'META_DATA') {
+                $this->saveMetaData($response);
+                continue;
+            }
 	        try {
 	            $var = $filler->fill($id, $response);
 	            // Do not take into account QTI File placeholders.
@@ -492,6 +522,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction(false);
     }
 	
+    private function saveMetaData($metaData)
+    {
+        
+    }
+    
     /**
      * Action to call to comment an item.
      * 
