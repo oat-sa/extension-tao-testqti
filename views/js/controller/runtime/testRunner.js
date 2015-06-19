@@ -23,6 +23,7 @@ define([
         waitingTime = 0,
         $timers,
         timerIndex,
+        $itemFrame,
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL' : 0,
@@ -98,7 +99,7 @@ define([
 			this.actionCall('skip');
 		},
 
-		timeout: function() {
+		timeout: function(qtiClassName) {
             var that = this;
 		    this.disableGui();
             
@@ -245,7 +246,6 @@ define([
 			if (self.assessmentTestContext.isTimeout == false && self.assessmentTestContext.itemSessionState == self.TEST_ITEM_STATE_INTERACTING) {
 
 			    if (this.assessmentTestContext.timeConstraints.length > 0) {
-
 			    	// Insert QTI Timers container.
 			    	$('<div id="qti-timers"></div>').prependTo('#qti-content');
 			    	// self.formatTime(cst.seconds)
@@ -272,7 +272,6 @@ define([
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
 	                        var superClosure = function(timerIndex, cst) {
 	                            timerIds[timerIndex] = setInterval(function() {
-
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
 	                                if (timeDiffs[timerIndex] >= 1000) {
@@ -290,7 +289,7 @@ define([
 	                                     // Hide item to prevent any further interaction with the candidate.
                                         $('#qti-item').css('display', 'none');
                                         
-                                        self.timeout();
+                                        self.timeout(cst.qtiClassName);
 	                                }
 	                                else {
 	                                    // Not timed-out...
@@ -448,7 +447,7 @@ define([
 
 		actionCall: function(action, metaData) {
 			var self = this;
-            metaData = metaData || {};
+            metaData = {metaData : metaData} || {};
 			this.beforeTransition(function() {
 				$.ajax({
 					url: self.assessmentTestContext[action + 'Url'],
