@@ -237,6 +237,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
+        
+        $this->saveMetaData();
     }
 
     protected function afterAction($withContext = true) {
@@ -296,32 +298,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->beforeAction();
         $session = $this->getTestSession();
         
-        $itemVariableSet = array();
-        
-        $metaData = array(
-            'EXIT_CODE_SECTION' => 700
-        );
-        
-        $resultVariable = new \taoResultServer_models_classes_TraceVariable();
-        $resultVariable->setIdentifier('EXIT_CODE_SECTION');
-        $resultVariable->setBaseType(BaseType::INTEGER);
-        $resultVariable->setCardinality(Cardinality::SINGLE);
-        $resultVariable->setTrace(700);
-        
-        $itemVariableSet[] = $resultVariable;
-        
-        $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
-	    $testUri = $session->getTest()->getUri();
-        
-	    $sessionId = $session->getSessionId();
-        $item = $session->getCurrentAssessmentItemRef()->getIdentifier();
-	    $occurence = $session->getCurrentAssessmentItemRefOccurence();
-	    $transmissionId = "${sessionId}.${item}.${occurence}";
-        
-        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        
-        $resultServer->storeItemVariableSet($testUri, $itemUri, $itemVariableSet, $transmissionId);
-        
         try {
             $session->moveNext();
             
@@ -336,6 +312,41 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->afterAction();
 	}
 	
+    /**
+     * Save metadata (given from GET['metaData'] parameter).
+     */
+    private function saveMetaData()
+    {
+        $metaData = $this->getRequestParameter('metaData');
+        if (is_array($metaData)) {
+            $session = $this->getTestSession();
+            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
+            $testUri = $session->getTest()->getUri();
+            $sessionId = $session->getSessionId();
+            $item = $session->getCurrentAssessmentItemRef()->getIdentifier();
+            $occurence = $session->getCurrentAssessmentItemRefOccurence();
+            $transmissionId = "${sessionId}.${item}.${occurence}";
+            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $itemVariableSet = array();
+
+            foreach ($metaData as $key => $value) {
+                $resultVariable = new \taoResultServer_models_classes_TraceVariable();
+                $resultVariable->setIdentifier($key);
+                $baseType = is_numeric($value) ? BaseType::INTEGER : BaseType::STRING;
+                $value = is_numeric($value) ? (int) $value : $value;
+
+                $resultVariable->setBaseType($baseType);
+                $resultVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+                $resultVariable->setTrace($value);
+
+                $itemVariableSet[] = $resultVariable;
+            }
+
+            $resultServer->storeItemVariableSet($testUri, $itemUri, $itemVariableSet, $transmissionId);
+        } 
+    }
+    
 	/**
 	 * Move backward in the Assessment Test Session flow.
 	 *
@@ -522,11 +533,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction(false);
     }
 	
-    private function saveMetaData($metaData)
-    {
-        
-    }
-    
     /**
      * Action to call to comment an item.
      * 

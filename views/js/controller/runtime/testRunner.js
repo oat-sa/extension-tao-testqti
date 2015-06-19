@@ -1,14 +1,30 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback){
-
-	    var timerIds = [];
-	    var currentTimes = [];
-	    var lastDates = [];
-		var timeDiffs = [];
-		var waitingTime = 0;
-
-	    var TestRunner = {
-	    // Constants
+define([
+    'jquery',
+    'lodash',
+    'spin',
+    'serviceApi/ServiceApi',
+    'serviceApi/UserInfoService',
+    'serviceApi/StateStorage',
+    'iframeResizer',
+    'iframeNotifier',
+    'i18n',
+    'mathJax',
+    'ui/feedback', 
+    'moment',
+    'ui/modal',
+    'jquery.trunc',
+    'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment){
+    'use strict';
+    var timerIds = [],
+        currentTimes = [],
+        lastDates = [],
+        timeDiffs = [],
+        waitingTime = 0,
+        $timers,
+        timerIndex,
+        TestRunner = {
+            // Constants
 	    'TEST_STATE_INITIAL': 0,
 	    'TEST_STATE_INTERACTING': 1,
 	    'TEST_STATE_MODAL_FEEDBACK': 2,
@@ -72,7 +88,9 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    this.disableGui();
 			this.actionCall('skip');
 		},
-        timeout: function () {
+
+		timeout: function(qtiClassName) {
+            var that = this;
 		    this.disableGui();
             this.testContext.isTimeout = true;
 			this.updateTimer();
@@ -202,7 +220,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
             if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
-                if (this.testContext.timeConstraints.length > 0) {
+			    if (this.testContext.timeConstraints.length > 0) {
 
 			    	// Insert QTI Timers container.
                     $('<div id="qti-timers"/>').prependTo('#qti-content');
@@ -389,6 +407,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 		actionCall: function(action, metaData) {
 			var self = this;
+            metaData = metaData || {};
 			this.beforeTransition(function() {
 				$.ajax({
                     url: self.testContext[action + 'Url'],

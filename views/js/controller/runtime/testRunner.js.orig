@@ -1,56 +1,12 @@
 <<<<<<< HEAD
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; under version 2
- * of the License (non-upgradable).
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
- *
- */
-define([
-    'jquery',
-    'lodash',
-    'spin',
-    'serviceApi/ServiceApi',
-    'serviceApi/UserInfoService',
-    'serviceApi/StateStorage',
-    'iframeResizer',
-    'iframeNotifier',
-    'i18n',
-    'mathJax',
-    'ui/feedback',
-    'ui/modal',
-    'jquery.trunc',
-    'ui/progressbar'
-], function ($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
-    'use strict';
-=======
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'moment', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment){
->>>>>>> c64e900... Add jsdoc, change message generation
+define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'ui/feedback', 'jquery.trunc', 'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback){
 
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
-<<<<<<< HEAD
-    var $controls;
-    var $doc = $(document);
-=======
-		var $timers;
-		var timerIndex;
->>>>>>> c64e900... Add jsdoc, change message generation
 
 	    var TestRunner = {
 	    // Constants
@@ -62,6 +18,44 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	    'TEST_NAVIGATION_LINEAR': 0,
 	    'TEST_NAVIGATION_NONLINEAR': 1,
 	    'TEST_ITEM_STATE_INTERACTING': 1,
+=======
+define([
+    'jquery',
+    'lodash',
+    'spin',
+    'serviceApi/ServiceApi',
+    'serviceApi/UserInfoService',
+    'serviceApi/StateStorage',
+    'iframeResizer',
+    'iframeNotifier',
+    'i18n',
+    'mathJax',
+    'ui/feedback', 
+    'moment',
+    'ui/modal',
+    'jquery.trunc',
+    'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment){
+    'use strict';
+    var timerIds = [],
+        currentTimes = [],
+        lastDates = [],
+        timeDiffs = [],
+        waitingTime = 0,
+        $timers,
+        timerIndex,
+        $itemFrame,
+        TestRunner = {
+            // Constants
+            'TEST_STATE_INITIAL' : 0,
+            'TEST_STATE_INTERACTING' : 1,
+            'TEST_STATE_MODAL_FEEDBACK' : 2,
+            'TEST_STATE_SUSPENDED' : 3,
+            'TEST_STATE_CLOSED' : 4,
+            'TEST_NAVIGATION_LINEAR' : 0,
+            'TEST_NAVIGATION_NONLINEAR' : 1,
+            'TEST_ITEM_STATE_INTERACTING' : 1,
+>>>>>>> 0a5c573... Saving meta data
             'SESSION_EXIT_CODE' : {
                 'COMPLETED_NORMALLY' : 700,
                 'QUIT' : 701,
@@ -117,7 +111,13 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    this.disableGui();
 			this.actionCall('skip');
 		},
+<<<<<<< HEAD
         timeout: function () {
+=======
+
+		timeout: function(qtiClassName) {
+            var that = this;
+>>>>>>> 0a5c573... Saving meta data
 		    this.disableGui();
             this.testContext.isTimeout = true;
 			this.updateTimer();
@@ -247,8 +247,12 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
             if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
+<<<<<<< HEAD
                 if (this.testContext.timeConstraints.length > 0) {
 
+=======
+			    if (this.assessmentTestContext.timeConstraints.length > 0) {
+>>>>>>> 0a5c573... Saving meta data
 			    	// Insert QTI Timers container.
                     $('<div id="qti-timers"/>').prependTo('#qti-content');
 			    	// self.formatTime(cst.seconds)
@@ -256,13 +260,8 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
                         var cst = this.testContext.timeConstraints[i];
 
-<<<<<<< HEAD
                         if (cst.allowLateSubmission === false) {
 			        	 // Set up a timer for this constraint.
-=======
-			        	if (cst.allowLateSubmission == false) {
-                            // Set up a timer for this constraint.
->>>>>>> c64e900... Add jsdoc, change message generation
 	                        $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
 
 	                        // Set up a timer and update it with setInterval.
@@ -278,9 +277,14 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
                             }
                             
 	                        // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
+<<<<<<< HEAD
                             (function (timerIndex, cst) {
                                 timerIds[timerIndex] = setInterval(function () {
 
+=======
+	                        var superClosure = function(timerIndex, cst) {
+	                            timerIds[timerIndex] = setInterval(function() {
+>>>>>>> 0a5c573... Saving meta data
 	                                timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
 
 	                                if (timeDiffs[timerIndex] >= 1000) {
@@ -296,8 +300,14 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                                    clearInterval(timerIds[timerIndex]);
 
 	                                     // Hide item to prevent any further interaction with the candidate.
+<<<<<<< HEAD
                                         $('#qti-item').hide();
                                         self.timeout();
+=======
+                                        $('#qti-item').css('display', 'none');
+                                        
+                                        self.timeout(cst.qtiClassName);
+>>>>>>> 0a5c573... Saving meta data
 	                                }
 	                                else {
 	                                    // Not timed-out...
@@ -439,6 +449,10 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 		actionCall: function(action, metaData) {
 			var self = this;
+<<<<<<< HEAD
+=======
+            metaData = {metaData : metaData} || {};
+>>>>>>> 0a5c573... Saving meta data
 			this.beforeTransition(function() {
 				$.ajax({
                     url: self.testContext[action + 'Url'],
