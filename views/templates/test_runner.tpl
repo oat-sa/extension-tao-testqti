@@ -36,42 +36,41 @@ use oat\tao\helpers\Layout;
 
 <ul class="plain action-bar content-action-bar horizontal-action-bar">
 
-
-    <li id="qti-tools" class="small btn-info action" title="<?= __("Comment"); ?>">
+    <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
         <a class="li-inner" href="#">
             <?= __("Comment"); ?>
         </a>
     </li>
 
-    <li id="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
+    <li data-control="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
         <a class="li-inner" href="#">
             <?= __("Next"); ?>
             <span class="icon-forward r"></span>
         </a>
     </li>
 
-    <li id="move-end" class="small btn-error action" title="<?= __("Submit and go to the end of the test"); ?>">
+    <li data-control="move-end" class="small btn-info action" title="<?= __("Submit and go to the end of the test"); ?>">
         <a class="li-inner" href="#">
             <?= __("End Test"); ?>
             <span class="icon-fast-forward r"></span>
         </a>
     </li>
 
-    <li id="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
+    <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
         <a class="li-inner" href="#">
             <span class="icon-backward"></span>
             <?= __("Previous"); ?>
         </a>
     </li>
 
-    <li id="skip" class="small btn-warning action" title="<?= __("Skip to the next item"); ?>">
+    <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
         <a class="li-inner" href="#">
             <span class="icon-external"></span>
             <?= __("Skip"); ?>
         </a>
     </li>
 
-    <li id="skip-end" class="small btn-error action" title="<?= __("Skip to the end of the test"); ?>">
+    <li data-control="skip-end" class="small btn-info action" title="<?= __("Skip to the end of the test"); ?>">
         <a class="li-inner" href="#">
             <span class="icon-external"></span>
             <?= __("Skip &amp; End Test"); ?>
@@ -89,8 +88,8 @@ use oat\tao\helpers\Layout;
 
         <div class="col-4" id="qti-test-time"></div>
         <div class="col-4" id="qti-test-progress">
-            <div id="qti-progress-label"></div>
-            <div id="qti-progressbar"></div>
+            <div data-control="progress-label"></div>
+            <div data-control="progress-bar"></div>
         </div>
     </div>
     <div id="qti-content"></div>
@@ -98,10 +97,10 @@ use oat\tao\helpers\Layout;
 
     </div>
 </div>
-<div id="qti-comment">
-    <textarea></textarea>
-    <button id="qti-comment-cancel" class="btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
-    <button id="qti-comment-send" class="btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
+<div data-control="comment-area">
+    <textarea data-control="comment-text" placeholder="Your comment here&hellip;"></textarea>
+    <button data-control="comment-cancel" class="small btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
+    <button data-control="comment-send" class="small btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 </div>
 </body>
 </html>
