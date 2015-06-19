@@ -52,7 +52,16 @@ class taoQtiTest_helpers_ItemResolver extends FileResolver {
         // The item is retrieved from the database.
         // We can try to reach the QTI-XML file by detecting
         // where it is supposed to be located.
-        return QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
+        
+        // strip xinclude, we don't need that at the moment.
+        $file = QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
+        $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
+        $raw = file_get_contents($file);
+        $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
+        
+        file_put_contents($tmpfile, $raw);
+        
+        return $tmpfile;
     }
     
 }

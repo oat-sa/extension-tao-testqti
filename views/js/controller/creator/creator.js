@@ -18,20 +18,43 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(
-['module', 'jquery', 'lodash', 'helpers', 'i18n',
-'ui/feedback',
-'core/databindcontroller', 
-'taoQtiTest/controller/creator/views/item', 
-'taoQtiTest/controller/creator/views/test',
-'taoQtiTest/controller/creator/views/testpart',
-'taoQtiTest/controller/creator/views/section',
-'taoQtiTest/controller/creator/views/itemref',
-'taoQtiTest/controller/creator/encoders/dom2qti',
-'taoQtiTest/controller/creator/templates/index',
-'taoQtiTest/controller/creator/helpers/qtiTest',
-'core/validator/validators'], 
-function(module, $, _, helpers, __, feedback,  DataBindController, itemView, testView, testPartView, sectionView, itemrefView, Dom2QtiEncoder, templates, qtiTestHelper, validators ){
+define([
+    'module',
+    'jquery',
+    'lodash',
+    'helpers',
+    'i18n',
+    'history',
+    'ui/feedback',
+    'core/databindcontroller',
+    'taoQtiTest/controller/creator/views/item',
+    'taoQtiTest/controller/creator/views/test',
+    'taoQtiTest/controller/creator/views/testpart',
+    'taoQtiTest/controller/creator/views/section',
+    'taoQtiTest/controller/creator/views/itemref',
+    'taoQtiTest/controller/creator/encoders/dom2qti',
+    'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'core/validator/validators'
+], function(
+    module,
+    $,
+    _,
+    helpers,
+    __,
+    history,
+    feedback,
+    DataBindController,
+    itemView, testView,
+    testPartView,
+    sectionView,
+    itemrefView,
+    Dom2QtiEncoder,
+    templates,
+    qtiTestHelper,
+    validators
+    ){
+
     'use strict';
 
     /**
@@ -42,7 +65,7 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
 
     /**
      * Call the server to get the list of items
-     * @param {string} url 
+     * @param {string} url
      * @param {string} search - a posix pattern to filter items
      * @param {DataCallback} cb - with items
      */
@@ -53,22 +76,22 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
             }
         });
     }
-    
-    
+
+
     /**
      * The test creator controller is the main entry point
-     * and orchestrates data retrieval and view/components loading. 
+     * and orchestrates data retrieval and view/components loading.
      * @exports creator/controller
      */
     var Controller = {
-        
+
          routes : {},
 
          identifiers: [],
-        
+
          /**
           * Start the controller, main entry method.
-          * @public 
+          * @public
           * @param {Object} options
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
@@ -87,10 +110,9 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
-            
-                //Capitalized History means polyfilled by History.js
-                if(window.History){
-                    window.History.back();
+
+                if (history) {
+                    history.back();
                 }
             });
 
@@ -103,7 +125,7 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
                     //console.log(model);
                 //}
             //});
-            
+
             //Data Binding options
             var binderOptions = _.merge(options.routes, {
                 filters : {
@@ -115,19 +137,19 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
                     }
                 },
                 encoders : {
-                  'dom2qti' : Dom2QtiEncoder  
+                  'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
                 beforeSave : function(model){
                     //ensure the qti-type is present
-                    qtiTestHelper.addMissingQtiType(model); 
-                    
+                    qtiTestHelper.addMissingQtiType(model);
+
                     //apply consolidation rules
                     qtiTestHelper.consolidateModel(model);
                     return true;
                 }
             });
-            
+
             //set up the databinder
             var binder = DataBindController
                 .takeControl($container, binderOptions)
@@ -139,31 +161,31 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
                     //register validators
                     validators.register('testIdFormat', qtiTestHelper.idFormatValidator());
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers));
-            
+
                     //once model is loaded, we set up the test view
                     testView(model, {
                         uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels
                     });
-    
+
                     //listen for changes to update available actions
                     testPartView.listenActionState();
                     sectionView.listenActionState();
                     itemrefView.listenActionState();
                     itemrefView.resize();
-                
+
                     $(window)
                       .off('resize.qti-test-creator')
                       .on('resize.qti-test-creator', function(){
                             itemrefView.resize();
                     });
                 });
-               
+
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
                 event.preventDefault();
-        
+
                 if(!$saver.hasClass('disabled')){
                     $saver.attr('disabled', true).addClass('disabled');
                     binder.save(function(){
@@ -180,6 +202,6 @@ function(module, $, _, helpers, __, feedback,  DataBindController, itemView, tes
             });
         }
     };
-    
+
     return Controller;
 });

@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -23,7 +23,7 @@ define(['lodash', 'i18n'], function(_, __){
     'use strict';
 
     /**
-     * Utils to manage the QTI Test model 
+     * Utils to manage the QTI Test model
      * @exports taoQtiTest/controller/creator/qtiTestHelper
      */
     var qtiTestHelper = {
@@ -32,13 +32,13 @@ define(['lodash', 'i18n'], function(_, __){
          * Extract qti identifiers from a model
          * @param {Object} obj - the model to extract id from
          * @returns {Array} the extracted identifiers
-         */       
+         */
         extractIdentifiers : function(obj){
             var self = this;
             var identifiers = [];
             if(_.has(obj, 'identifier')){
                 identifiers = identifiers.concat(obj.identifier.toLowerCase());
-            } 
+            }
             _.flatten(_.forEach(obj, function(value) {
                 identifiers = identifiers.concat(typeof value === "object" ? self.extractIdentifiers(value) : []);
             }), true);
@@ -50,12 +50,12 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {String} qtiType - the type of element you want an id for
          * @param {Array} lockedIdentifiers - the list of identifiers you cannot use anymore
          * @returns {String} the identifier
-         */       
+         */
         getIdentifier : function(qtiType, lockedIdentifiers){
             var index = 1;
             var suggestion;
             var glue =  '-';
-            
+
             do {
                 suggestion = qtiType +  glue + (index++);
             } while(_.contains(lockedIdentifiers, suggestion.toLowerCase()));
@@ -77,12 +77,12 @@ define(['lodash', 'i18n'], function(_, __){
                 validate : function(value, callback){
                     if(typeof callback === 'function'){
                         callback(qtiIdPattern.test(value));
-                    } 
+                    }
                 }
             };
         },
 
-        
+
         /**
          * Gives you a validator that check if a QTI id is available
          * @param {Array} lockedIdentifiers - the list of identifiers you cannot use anymore
@@ -95,21 +95,21 @@ define(['lodash', 'i18n'], function(_, __){
                 validate : function(value, callback, options){
                     if(typeof callback === 'function'){
                         callback(!_.contains(_.values(lockedIdentifiers), value.toLowerCase()) || (options.original && value === options.original));
-                    } 
+                    }
                 }
             };
         },
- 
+
         /**
          * Does the value contains the type type
-         * @param {Object} value 
+         * @param {Object} value
          * @param {string} type
-         * @returns {boolean} 
+         * @returns {boolean}
          */
         filterQtiType : function (value, type){
              return value['qti-type'] && value['qti-type'] === type;
         },
-    
+
         /**
          * Add the 'qti-type' properties to object that miss it, using the parent key name
          * @param {Object|Array} collection
@@ -134,7 +134,7 @@ define(['lodash', 'i18n'], function(_, __){
                 }
             });
         },
-    
+
         /**
          * Applies consolidation rules to the model
          * @param {Object} model
@@ -145,9 +145,9 @@ define(['lodash', 'i18n'], function(_, __){
                 var testPart = model.testParts[0];
                 if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
                      _.forEach(testPart.assessmentSections, function(assessmentSection, key) {
-                         
+
                          //remove ordering is shuffle is false
-                         if(assessmentSection.ordering && 
+                         if(assessmentSection.ordering &&
                                  assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
                              delete assessmentSection.ordering;
                          }
@@ -155,9 +155,9 @@ define(['lodash', 'i18n'], function(_, __){
                           if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
 
                               //remove rubrick blocks if empty
-                              if (assessmentSection.rubricBlocks.length === 0 || 
+                              if (assessmentSection.rubricBlocks.length === 0 ||
                                       (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
-                                  
+
                                   delete assessmentSection.rubricBlocks;
                               }
                               //ensure the view attribute is present

@@ -433,6 +433,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
 	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
 	    
+	    if ($currentItem === false) {
+	        $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
+	        $msg .= "Session state value: " . $this->getTestSession()->getState() . "\n";
+	        $msg .= "Session ID: " . $this->getTestSession()->getSessionId() . "\n";
+	        $msg .= "JSON Payload: " . mb_substr(json_encode($jsonPayload), 0, 1000);
+	        common_Logger::e($msg);
+	    }
+	    
 	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
 	    
 	    foreach ($jsonPayload as $id => $response) {
