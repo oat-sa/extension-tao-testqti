@@ -13,7 +13,7 @@ class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner {
     }
     
     /**
-     * Define additionnal parameters for the result server
+     * Define additional parameters for the result server
      * @return array
      */
     protected function getResultServerParams(){

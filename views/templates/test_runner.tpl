@@ -10,15 +10,15 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('tao-3.css', 'tao') ?>"/>
-    <link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/>
+    <!--link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/-->
     <link rel="stylesheet" href="<?= Template::css('delivery.css', 'taoDelivery') ?>"/>
 
     <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
         <link rel="stylesheet" href="<?= $themeUrl ?>"/>
     <?php endif; ?>
-    <script type="text/javascript" src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
+    <script src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
 
-    <script type="text/javascript">
+    <script>
         (function () {
             requirejs.config({waitSeconds: <?=get_data('client_timeout')?> });
             require(['<?=get_data('client_config_url')?>'], function () {
@@ -33,82 +33,149 @@ use oat\tao\helpers\Layout;
     </script>
 </head>
 <body class="delivery-scope">
+<div id="feedback-box"></div>
 
-<div class="plain action-bar content-action-bar horizontal-action-bar">
-    <div class="grid-row">
-        <div class
+<div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
+    <div class="control-box">
+        <div class="grid-row">
+            <div class="lft title-box txt-ctr">
+                <span data-control="qti-test-title" class="qti-controls"></span>
+                <span data-control="qti-test-position" class="qti-controls"></span>
+            </div>
+
+
+            <!--div class="rgt navi-box">
+                <ul class="plain">
+                    <li data-control="move-forward" class="small btn-info action" title="<?= __(
+                        "Submit and go to the next item"
+                    ); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-forward"></span>
+                            <span class="text"><?= __("Next"); ?></span>
+                        </a>
+                    </li>
+
+                    <li data-control="move-end" class="small btn-info action" title="<?= __(
+                        "Submit and go to the end of the test"
+                    ); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-fast-forward"></span>
+                            <span class="text"><?= __("End Test"); ?></span>
+                        </a>
+                    </li>
+
+                    <li data-control="move-backward" class="small btn-info action" title="<?= __(
+                        "Submit and go to the previous item"
+                    ); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-backward"></span>
+                            <span class="text"><?= __("Previous"); ?></span>
+                        </a>
+                    </li>
+
+                    <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-external"></span>
+                            <span class="text"><?= __("Skip"); ?></span>
+                        </a>
+                    </li>
+
+                    <li data-control="skip-end" class="small btn-info action" title="<?= __(
+                        "Skip to the end of the test"
+                    ); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-external"></span>
+                            <span class="text"><?= __("Skip &amp; End Test"); ?></span>
+                        </a>
+                    </li>
+                </ul>
+            </div-->
+
+            <div class="rgt progress-box">
+                <div data-control="progress-bar" class="qti-controls lft"></div>
+                <div data-control="progress-label" class="qti-controls lft"></div>
+            </div>
+            <div class="rgt timer-box">
+                <div data-control="qti-test-time" class="qti-controls"></div>
+            </div>
+        </div>
     </div>
-    <ul>
-        <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
-            <a class="li-inner" href="#">
-                <?= __("Comment"); ?>
-            </a>
-        </li>
-    </ul>
-    <ul class="rgt">
 
-        <li data-control="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
-            <a class="li-inner" href="#">
-                <?= __("Next"); ?>
-                <span class="icon-forward r"></span>
-            </a>
-        </li>
-
-        <li data-control="move-end" class="small btn-info action" title="<?= __("Submit and go to the end of the test"); ?>">
-            <a class="li-inner" href="#">
-                <?= __("End Test"); ?>
-                <span class="icon-fast-forward r"></span>
-            </a>
-        </li>
-
-        <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
-            <a class="li-inner" href="#">
-                <span class="icon-backward"></span>
-                <?= __("Previous"); ?>
-            </a>
-        </li>
-
-        <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
-            <a class="li-inner" href="#">
-                <span class="icon-external"></span>
-                <?= __("Skip"); ?>
-            </a>
-        </li>
-
-        <li data-control="skip-end" class="small btn-info action" title="<?= __("Skip to the end of the test"); ?>">
-            <a class="li-inner" href="#">
-                <span class="icon-external"></span>
-                <?= __("Skip &amp; End Test"); ?>
-            </a>
-        </li>
-    </ul>
 </div>
 
 
+<div id="qti-content"></div>
 
-<div id="runner" class="tao-scope">
-    <div id="qti-actions">
-        <div class="col-4" id="qti-test-context">
-            <div id="qti-test-title"></div>
-            <div id="qti-test-position"></div>
+<div id="qti-navigation">
+    <div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
+        <div class="control-box">
+            <div class="grid-row">
+                <div class="lft comment-toggle-box">
+                    <ul class="plain">
+                        <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-tag"></span>
+                                <?= __("Comment"); ?>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <div class="rgt navi-box">
+                    <ul class="plain">
+                        <li data-control="move-forward" class="small btn-info action" title="<?= __(
+                            "Submit and go to the next item"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-forward"></span>
+                                <span class="text"><?= __("Next"); ?></span>
+                            </a>
+                        </li>
+
+                        <li data-control="move-end" class="small btn-info action" title="<?= __(
+                            "Submit and go to the end of the test"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-fast-forward"></span>
+                                <span class="text"><?= __("End Test"); ?></span>
+                            </a>
+                        </li>
+
+                        <li data-control="move-backward" class="small btn-info action" title="<?= __(
+                            "Submit and go to the previous item"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-backward"></span>
+                                <span class="text"><?= __("Previous"); ?></span>
+                            </a>
+                        </li>
+
+                        <li data-control="skip" class="small btn-info action" title="<?= __(
+                            "Skip to the next item"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-external"></span>
+                                <span class="text"><?= __("Skip"); ?></span>
+                            </a>
+                        </li>
+
+                        <li data-control="skip-end" class="small btn-info action" title="<?= __(
+                            "Skip to the end of the test"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-external"></span>
+                                <span class="text"><?= __("Skip &amp; End Test"); ?></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
         </div>
 
-
-        <div class="col-4" id="qti-test-time"></div>
-        <div class="col-4" id="qti-test-progress">
-            <div data-control="progress-label"></div>
-            <div data-control="progress-bar"></div>
-        </div>
     </div>
-    <div id="qti-content"></div>
-    <div id="qti-navigation" class="grid-row">
 
-    </div>
-</div>
-<div data-control="comment-area">
-    <textarea data-control="comment-text" placeholder="Your comment here&hellip;"></textarea>
-    <button data-control="comment-cancel" class="small btn-info"><span class="icon-close"></span><?= __("Cancel"); ?></button>
-    <button data-control="comment-send" class="small btn-info"><span class="icon-success"></span><?= __("Send"); ?></button>
 </div>
 </body>
 </html>

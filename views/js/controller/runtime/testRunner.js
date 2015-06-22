@@ -28,10 +28,10 @@ define([
     'iframeNotifier',
     'i18n',
     'mathJax',
-    'jquery.trunc',
+    'ui/feedback',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax) {
+    function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
 
         'use strict';
 
@@ -63,7 +63,7 @@ define([
                 // Disable buttons.
                 this.disableGui();
 
-                $('#qti-item, #qti-info, #qti-rubrics, #qti-timers').hide();
+                $('#qti-item, #qti-rubrics, #qti-timers').hide();
 
                 // Wait at least waitingTime ms for a better user experience.
                 if (typeof callback === 'function') {
@@ -156,10 +156,6 @@ define([
                 $itemFrame.appendTo('#qti-content');
                 iframeResizer.autoHeight($itemFrame, 'body');
 
-                if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false == true) {
-                    $('#qti-content').css('overflow-y', 'scroll');
-                }
-
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.on('serviceloaded', function () {
                         self.afterTransition();
@@ -180,21 +176,19 @@ define([
             },
 
             updateInformation: function () {
-                $('#qti-info').remove();
 
                 if (this.testContext.isTimeout === true) {
-                    $('<div id="qti-info" class="info"></div>').prependTo('#qti-content');
-                    $('#qti-info').html(__('Maximum time limit reached for item "%s".').replace('%s', this.testContext.itemIdentifier));
+                    feedback().error(__('Time limit reached for item "%s".', this.testContext.itemIdentifier));
                 }
                 else if (this.testContext.itemSessionState !== this.TEST_ITEM_STATE_INTERACTING) {
-                    $('<div id="qti-info" class="info"></div>').prependTo('#qti-content');
-                    $('#qti-info').html(__('No more attempts allowed for item "%s".').replace('%s', this.testContext.itemIdentifier));
+                    feedback().error(__('No more attempts allowed for item "%s".', this.testContext.itemIdentifier));
                 }
             },
 
             updateTools: function updateTools() {
                 if (this.testContext.allowComment === true) {
-                    $controls.$commentArea.show();
+                   // @todo
+                   // $controls.$commentArea.show();
                 }
                 else {
                     $controls.$commentArea.hide();
@@ -235,7 +229,7 @@ define([
                     if (this.testContext.timeConstraints.length > 0) {
 
                         // Insert QTI Timers container.
-                        $('<div id="qti-timers"></div>').prependTo('#qti-content');
+                        $('<div id="qti-timers"/>').prependTo('#qti-content');
                         // self.formatTime(cst.seconds)
                         for (i = 0; i < this.testContext.timeConstraints.length; i++) {
 
@@ -295,7 +289,7 @@ define([
 
                 if (this.testContext.rubrics.length > 0) {
 
-                    var $rubrics = $('<div id="qti-rubrics"></div>');
+                    var $rubrics = $('<div id="qti-rubrics"/>');
 
                     for (var i = 0; i < this.testContext.rubrics.length; i++) {
                         $rubrics.append(this.testContext.rubrics[i]);
@@ -326,7 +320,7 @@ define([
                 }
                 else {
                     // NONLINEAR
-                    $('#qti-actions').show();
+                    $controls.$controls.show();
                     $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
                     $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
                     $controls.$moveBackward.css('display', (this.testContext.canMoveBackward === true) ?
@@ -342,38 +336,24 @@ define([
 
                 if (considerProgress === true) {
                     var ratio = Math.floor(this.testContext.numberCompleted / this.testContext.numberItems * 100);
-                    var label = __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%');
-                    $controls.$progressLabel.text(label);
+                    $controls.$progressLabel.text(ratio + '%');
                     $controls.$progressBar.progressbar('value', ratio);
                 }
             },
 
             updateContext: function () {
 
-                var testTitle = this.testContext.testTitle;
-                var testPartId = this.testContext.testPartId;
-                var sectionTitle = this.testContext.sectionTitle;
-
-                $('#qti-test-title').text(testTitle);
-
-                try {
-                    $('#qti-test-title, #qti-test-position').badonkatrunc('destroy');
-                }
-                catch (e) {
-                    // Very first call, the badonkatrunc wrapper was not there.
-                    // Continue normally.
-                }
-
-                $('#qti-test-position').empty().append('<span id="qti-section-title">' + sectionTitle + '</span>');
-                $('#qti-test-title, #qti-test-position').badonkatrunc().css('visibility', 'visible');
+                $controls.$title.text(this.testContext.testTitle);
+                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+                $controls.$titleGroup.show();
             },
 
             adjustFrame: function () {
 
-                var actionsHeight = $('#qti-actions').outerHeight();
+                var controlsHeight = $controls.$controls.outerHeight();
                 var windowHeight = window.innerHeight ? window.innerHeight : $(window).height();
                 var navigationHeight = $('#qti-navigation').outerHeight();
-                var newContentHeight = windowHeight - actionsHeight - navigationHeight;
+                var newContentHeight = windowHeight - controlsHeight - navigationHeight;
 
                 var $content = $('#qti-content');
                 $content.height(newContentHeight - parseInt($content.css('paddingTop')) - parseInt($content.css('paddingBottom')));
@@ -444,12 +424,17 @@ define([
                     $commentCancel: $('[data-control="comment-cancel"]'),
                     $commentSend: $('[data-control="comment-send"]'),
                     $progressBar: $('[data-control="progress-bar"]'),
-                    $progressLabel: $('[data-control="progress-label"]')
+                    $progressLabel: $('[data-control="progress-label"]'),
+                    $title:  $('[data-control="qti-test-title"]'),
+                    $position:  $('[data-control="qti-test-position"]'),
+                    $timer:  $('[data-control="qti-test-time"]'),
+                    $controls: $('.qti-controls')
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
                 $controls.$skipButtons = $controls.$skip.add($controls.$skipEnd);
                 $controls.$moveForwardEnd = $controls.$moveForward.add($controls.$moveEnd);
+                $controls.$titleGroup = $controls.$title.add($controls.$position);
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -461,8 +446,7 @@ define([
                     TestRunner.serviceApi = serviceApi;
 
                     // If the assessment test session is in CLOSED state,
-                    // we give the control to the delivery engine by calling
-                    // finish.
+                    // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
                     }
@@ -512,7 +496,7 @@ define([
 
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
-                    $('#qti-test-title, #qti-test-position').badonkatrunc();
+                    $controls.$titleGroup.show();
                 });
 
                 $doc.bind('loading', function () {
