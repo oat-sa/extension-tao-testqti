@@ -37,8 +37,17 @@ use oat\tao\helpers\Template;
 			</div>
 			<div id="qti-content"></div>
 			<div id="qti-navigation" class="grid-row">
-				<div class="col-4" id="qti-tools"><button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button></div>
-				<div class="col-4" id="qti-flow"><button id="move-forward" class="btn-info qti-navigation" title="<?= __("Submit your responses and head for the next item."); ?>"><?= __("Next"); ?><span class="icon-forward r"></span><button id="move-end" class="btn-error qti-navigation" title="<?= __("Submit your responses and head for the end of the test."); ?>"><?= __("End Test"); ?><span class="icon-fast-forward r"></span></button><button id="move-backward" class="btn-info qti-navigation" title="<?= __("Submit your responses and head for the previous item."); ?>"><span class="icon-backward"></span><?= __("Previous"); ?></button><button id="skip" class="btn-warning qti-navigation" title="<?= __("Skip the current task and give an empty response."); ?>"><span class="icon-external"></span><?= __("Skip"); ?></button><button id="skip-end" class="btn-error qti-navigation" title="<?= __("Skip the current task, give an empty response and head for the end of the test."); ?>"><span class="icon-external"></span><?= __("Skip & End Test"); ?></button></div>
+				<div class="col-4" id="qti-tools">
+                    <button id="comment" class="btn-info"><span class="icon-document"></span><?= __("Comment"); ?></button>
+                    <button id="toggle-rubric-help" class="btn-info qti-navigation" title="<?= __("Display the help rubric block."); ?>"><span class="icon-help"></span><?= __("Help"); ?></button>
+                    <button id="toggle-rubric-formula" class="btn-info qti-navigation" title="<?= __("Display the formula rubric block."); ?>"><span class="icon-maths"></span><?= __("Formula"); ?></button>
+                </div>
+				<div class="col-4" id="qti-flow">
+                    <button id="move-forward" class="btn-info qti-navigation" title="<?= __("Submit your responses and head for the next item."); ?>"><?= __("Next"); ?><span class="icon-forward r"></span><button id="move-end" class="btn-error qti-navigation" title="<?= __("Submit your responses and head for the end of the test."); ?>"><?= __("End Test"); ?><span class="icon-fast-forward r"></span></button>
+                    <button id="move-backward" class="btn-info qti-navigation" title="<?= __("Submit your responses and head for the previous item."); ?>"><span class="icon-backward"></span><?= __("Previous"); ?></button>
+                    <button id="skip" class="btn-warning qti-navigation" title="<?= __("Skip the current task and give an empty response."); ?>"><span class="icon-external"></span><?= __("Skip"); ?></button>
+                    <button id="skip-end" class="btn-error qti-navigation" title="<?= __("Skip the current task, give an empty response and head for the end of the test."); ?>"><span class="icon-external"></span><?= __("Skip & End Test"); ?></button>
+                </div>
 			</div>
 		</div>
 		<div id="qti-comment">
