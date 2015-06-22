@@ -1,6 +1,7 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
-
+define(['module', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
+    function(module, $,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+        
+        var config = module.config();
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
@@ -431,16 +432,28 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 			});
 		}
 	};
-
+    
+    function toogleRubricBlock(rubricId){
+        var $rubricBlock = $('.qti-rubricBlock#'+rubricId);
+        if($rubricBlock.is(':visible')){
+            $rubricBlock.hide();
+        }else{
+            $rubricBlock.show();
+        }
+    }
+    
 	return {
 	    start : function(assessmentTestContext){
-
+	        
+            console.log('config', config);
+            console.log('assessmentTestContext', assessmentTestContext);
+            
 	        $(document).ajaxError(function(event, jqxhr) {
                 if (jqxhr.status == 403) {
                     iframeNotifier.parent('serviceforbidden');
                 }
             });
-
+	        
 	    	window.onServiceApiReady = function onServiceApiReady(serviceApi) {
 	            TestRunner.serviceApi = serviceApi;
 
@@ -469,7 +482,15 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 	                TestRunner.moveForward();
 	            }
 	        });
-
+            
+            $('#toggle-rubric-help').show().click(function(){
+                toogleRubricBlock('rubric-help');
+            });
+            
+            $('#toggle-rubric-formula').show().click(function(){
+                toogleRubricBlock('rubric-formula');
+            });
+            
 	        $('#move-backward').click(function(){
 	            if (!$(this).hasClass('disabled')) {
 	                TestRunner.moveBackward();
@@ -511,6 +532,12 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
             $('#qti-progressbar').progressbar();
 
 	        iframeNotifier.parent('serviceready');
+            
+            setTimeout(function(){
+                return;
+                $('link[title="formula css"]')[0].disabled = false;
+                console.log($('link[title="formula css"]')[0].disabled);
+            }, 2000);
 	    }
 	};
 });
