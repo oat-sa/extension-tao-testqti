@@ -52,7 +52,7 @@ return array(
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
 		)
 	),
-	'update' => "oat\\taoQtiTest\\scripts\\update\\Updater",
+    'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
     'local'	=> array(
         'php'	=> array(
             dirname(__FILE__).'/install/local/addQTIExamples.php'
