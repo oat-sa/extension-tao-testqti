@@ -34,7 +34,7 @@ define([
     'jquery.trunc',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment) {
+function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment) {
     'use strict';
     var timerIds = [],
         currentTimes = [],
@@ -202,8 +202,8 @@ define([
             },
             updateTools: function updateTools() {
                 if (this.testContext.allowComment === true) {
-                    // @todo
-                    // $controls.$commentArea.show();
+                   // @todo
+                   // $controls.$commentArea.show();
                 }
                 else {
                     $controls.$commentArea.hide();
@@ -239,7 +239,7 @@ define([
                 $timers = $('#qti-timers > .qti-timer');
 
                 if (self.testContext.isTimeout === false &&
-                        self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
+                    self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
                     if (this.testContext.timeConstraints.length > 0) {
 
@@ -345,7 +345,6 @@ define([
                         window.open(this.href);
                         return false;
                     });
-
                     $rubrics.prependTo('#qti-content');
 
                     if (MathJax) {
@@ -367,7 +366,7 @@ define([
                     $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
                     $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
                     $controls.$moveBackward.css('display', (this.testContext.canMoveBackward === true) ?
-                            'inline' : 'none');
+                        'inline' : 'none');
                 }
             },
             updateProgress: function () {
@@ -444,6 +443,36 @@ define([
                         }
                     });
                 });
+            },
+            /**
+             * Exit from test (after confirmation). All answered questions will be submitted.
+             * @returns {undefined}
+             */
+            exit: function () {
+                var self = this;
+                this.itemServiceApi.kill(function(signal) {
+                    var $confirmBox = $('.exit-modal-feedback'),
+                        $confirmBtn = $confirmBox.find('.js-exit-confirm'),
+                        $cancelBtn = $confirmBox.find('.js-exit-cancel, .modal-close'),
+                        message = __(
+                            "You have %d unaswered question(s) and have %d item(s) marked for review. Are you sure you want to end the test?", 
+                            self.testContext.numberItems - self.testContext.numberCompleted,
+                            self.testContext.numberCompleted
+                        ),
+                        metaData = {};
+
+                    $confirmBox.find('.message').html(message);
+                    $confirmBox.modal({ width: 500 });
+                    
+                    $cancelBtn.off('click').on('click', function () {
+                        $confirmBox.modal('close');
+                    });
+                    
+                    $confirmBtn.off('click').on('click', function () {
+                        $confirmBox.modal('close');
+                        self.actionCall('endTestSession', metaData);
+                    });
+                });
             }
         };
 
@@ -463,10 +492,11 @@ define([
                     $commentSend: $('[data-control="comment-send"]'),
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
-                    $title: $('[data-control="qti-test-title"]'),
-                    $position: $('[data-control="qti-test-position"]'),
-                    $timer: $('[data-control="qti-test-time"]'),
-                    $controls: $('.qti-controls')
+                    $title:  $('[data-control="qti-test-title"]'),
+                    $position:  $('[data-control="qti-test-position"]'),
+                    $timer:  $('[data-control="qti-test-time"]'),
+                    $controls: $('.qti-controls'),
+                    $exit:  $('[data-control="exit"]')
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
@@ -531,7 +561,12 @@ define([
                 $controls.$commentText.click(function () {
                     TestRunner.emptyComment();
                 });
-
+                
+                $controls.$exit.click(function (e) {
+                    e.preventDefault();
+                    TestRunner.exit();
+                });
+                
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();

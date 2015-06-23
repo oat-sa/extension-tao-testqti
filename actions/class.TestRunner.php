@@ -417,6 +417,18 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // continue...
         $this->afterAction();
 	}
+    
+	/**
+	 * Action to end test session
+	 */
+	public function endTestSession() {
+	    $this->beforeAction();
+        
+        common_Logger::i("The user has requested termination of the test session '${sessionId}'");
+	    $this->getTestSession()->endTestSession();
+        
+        $this->afterAction();
+	}
 
 	/**
 	 * Stuff to be undertaken when the Assessment Item presented to the candidate
