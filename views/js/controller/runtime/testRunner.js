@@ -425,7 +425,7 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
                 return "\u00b1 " + time;
             },
             /**
-             * Call action specified in testContext. A prefix <i>url</i> will be added to the action name.
+             * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
              * @param {Sting} action - Action name 
              * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage.
