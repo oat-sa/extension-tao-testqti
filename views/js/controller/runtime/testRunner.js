@@ -465,6 +465,7 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
             },
             /**
              * Exit from test (after confirmation). All answered questions will be submitted.
+             * 
              * @returns {undefined}
              */
             exit: function () {
