@@ -1,3 +1,9 @@
+@import "inc/bootstrap";
+
+html, body {
+    padding:0;
+    margin: 0;
+}
 
 #runner {
 	overflow:hidden;
@@ -53,6 +59,10 @@
 	font-weight: bold;
 	color: #333;
 	font-size: 12px;
+    &.qti-timer__warning {
+        border-color: mix(#fff, $warning, 20%);
+        background-color: mix(#fff, $warning, 90%);
+    }
 }
 
 #qti-rubrics {
@@ -99,9 +109,13 @@
 
 #qti-actions, #qti-navigation {
     background-color: #ddd;
+    position: fixed;
     width: 100%;
 }
 
+#qti-actions {
+    
+}
 
 #qti-navigation {
     height: 37px;
@@ -163,7 +177,25 @@
     margin: 0;
 }
 
+#qti-flow .btn-info,
+#qti-flow .btn-success,
+#qti-flow .btn-warning,
+#qti-flow .btn-error,
+#qti-tools .btn-info,
+#qti-comment > button {
+    margin: 5px 2px;
+    display: none;  
+    height: 25px;
+    line-height: 25px;
+}
 
+#comment {
+    float: left;
+}
+
+#move-forward, #move-backward, #move-end, #skip, #skip-end {
+    float: right;
+}
 
 #qti-comment-cancel, #qti-comment-send {
     height: 24px;
@@ -190,7 +222,14 @@
     text-shadow: 1px 1px 0 #eee;
 }
 
+#qti-test-time {
 
+}
+
+#qti-tools {
+    width: 25%;
+    padding-left: 15px;
+}
 
 #qti-flow {
     width: 75%;
@@ -206,7 +245,14 @@
     border: 1px solid #555;
 }
 
+.tao-scope .ui-progressbar .ui-progressbar-value {
+    background-color: #7e949e;
+}
 
 #qti-flow .icon-backward, #qti-flow .icon-forward, #qti-flow .icon-fast-forward {
     text-shadow: 0 1px 0 rgba(0, 0, 0, 1.1);
+}
+
+#qti-flow > #move-backward, #qti-flow > #move-forward, #qti-flow > #skip, #qti-tools > #comment, #qti-comment > button {
+    min-width: 100px;
 }
