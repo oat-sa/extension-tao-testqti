@@ -55,7 +55,7 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-            'SESSION_EXIT_CODE': {
+            'ITEM_EXIT_CODE': {
                 'COMPLETED_NORMALLY': 700,
                 'QUIT': 701,
                 'COMPLETE_TIMEOUT': 703,
@@ -118,8 +118,9 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
 
                 this.itemServiceApi.kill(function (signal) {
                     var confirmBox = $('.timeout-modal-feedback'),
-                            confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
-                            metaData = {'SESSION_EXIT_CODE': TestRunner.SESSION_EXIT_CODE.TIMEOUT};
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
+                        metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
+                        
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -423,9 +424,27 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
 
                 return "\u00b1 " + time;
             },
+            /**
+             * Call action specified in testContext. A prefix <i>url</i> will be added to the action name.
+             * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
+             * @param {Sting} action - Action name 
+             * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage.
+             * Example: 
+             * <pre>
+             * {
+             *   "TEST" : {
+             *      "TEST_EXIT_CODE" : "T"
+             *   },
+             *   "ITEM" : {
+             *      "ITEM_EXIT_CODE" : 704
+             *   }
+             * }
+             * </pre>
+             * @returns {undefined}
+             */
             actionCall: function (action, metaData) {
                 var self = this;
-                metaData = metaData || {};
+                metaData = metaData ? {"metaData" : metaData} : {};
                 this.beforeTransition(function () {
                     $.ajax({
                         url: self.testContext[action + 'Url'],
@@ -449,27 +468,25 @@ function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResize
              * @returns {undefined}
              */
             exit: function () {
-                var self = this;
-                this.itemServiceApi.kill(function(signal) {
-                    var $confirmBox = $('.exit-modal-feedback'),
-                        $confirmBtn = $confirmBox.find('.js-exit-confirm'),
-                        $cancelBtn = $confirmBox.find('.js-exit-cancel, .modal-close'),
-                        message = __(
-                            "You have %d unaswered question(s) and have %d item(s) marked for review. Are you sure you want to end the test?", 
-                            self.testContext.numberItems - self.testContext.numberCompleted,
-                            self.testContext.numberCompleted
-                        ),
-                        metaData = {};
+                var self = this,
+                    $confirmBox = $('.exit-modal-feedback'),
+                    message = __(
+                        "You have %s unaswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?", 
+                        (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
+                        self.testContext.numberCompleted.toString()
+                    ),
+                    metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
+            
+                $confirmBox.find('.message').html(message);
+                $confirmBox.modal({ width: 500 });
+            
+                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                });
 
-                    $confirmBox.find('.message').html(message);
-                    $confirmBox.modal({ width: 500 });
-                    
-                    $cancelBtn.off('click').on('click', function () {
-                        $confirmBox.modal('close');
-                    });
-                    
-                    $confirmBtn.off('click').on('click', function () {
-                        $confirmBox.modal('close');
+                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                    self.itemServiceApi.kill(function () {
                         self.actionCall('endTestSession', metaData);
                     });
                 });

@@ -311,42 +311,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         $this->afterAction();
 	}
-	
-    /**
-     * Save metadata (given from GET['metaData'] parameter).
-     */
-    private function saveMetaData()
-    {
-        $metaData = $this->getRequestParameter('metaData');
-        if (is_array($metaData)) {
-            $session = $this->getTestSession();
-            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
-            $testUri = $session->getTest()->getUri();
-            $sessionId = $session->getSessionId();
-            $item = $session->getCurrentAssessmentItemRef()->getIdentifier();
-            $occurence = $session->getCurrentAssessmentItemRefOccurence();
-            $transmissionId = "${sessionId}.${item}.${occurence}";
-            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-
-            $itemVariableSet = array();
-
-            foreach ($metaData as $key => $value) {
-                $resultVariable = new \taoResultServer_models_classes_TraceVariable();
-                $resultVariable->setIdentifier($key);
-                $baseType = is_numeric($value) ? BaseType::INTEGER : BaseType::STRING;
-                $value = is_numeric($value) ? (int) $value : $value;
-
-                $resultVariable->setBaseType($baseType);
-                $resultVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-                $resultVariable->setTrace($value);
-
-                $itemVariableSet[] = $resultVariable;
-            }
-
-            $resultServer->storeItemVariableSet($testUri, $itemUri, $itemVariableSet, $transmissionId);
-        } 
-    }
-    
+	    
 	/**
 	 * Move backward in the Assessment Test Session flow.
 	 *
@@ -423,9 +388,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 */
 	public function endTestSession() {
 	    $this->beforeAction();
+        $session = $this->getTestSession();
+        $sessionId = $session->getSessionId();
         
-        common_Logger::i("The user has requested termination of the test session '${sessionId}'");
-	    $this->getTestSession()->endTestSession();
+        common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+	    $session->endTestSession();
         
         $this->afterAction();
 	}
@@ -493,10 +460,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
 	    
 	    foreach ($jsonPayload as $id => $response) {
-            if ($id === 'META_DATA') {
-                $this->saveMetaData($response);
-                continue;
-            }
 	        try {
 	            $var = $filler->fill($id, $response);
 	            // Do not take into account QTI File placeholders.
@@ -545,6 +508,40 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction(false);
     }
 	
+    /**
+     * Save metadata (given from GET['metaData'] parameter).
+     */
+    private function saveMetaData()
+    {
+        $metaData = $this->getRequestParameter('metaData');
+        if (is_array($metaData)) {
+            $session = $this->getTestSession();
+            $sessionId = $session->getSessionId();
+            $testUri = $session->getTest()->getUri();
+            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+            $item = $session->getCurrentAssessmentItemRef();
+            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
+
+            foreach ($metaData as $type => $data) {
+                foreach ($data as $key => $value) {
+                    $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+                    $metaVariable->setIdentifier($key);
+                    $metaVariable->setBaseType(-1);
+                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::RECORD));
+                    $metaVariable->setTrace($value);
+
+                    if (strcasecmp($type, 'ITEM') === 0) {
+                        $occurence = $session->getCurrentAssessmentItemRefOccurence();
+                        $transmissionId = "${sessionId}.${item}.${occurence}";
+                        $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                    } elseif (strcasecmp($type, 'TEST') === 0) {
+                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+                    }
+                }
+            }
+        } 
+    }
+    
     /**
      * Action to call to comment an item.
      * 
