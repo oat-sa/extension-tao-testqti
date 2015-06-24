@@ -37,7 +37,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         // add testrunner config
         if ($currentVersion == '2.6') {
 
-            common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
                 'progress-indicator' => 'percentage'
             ));
 
