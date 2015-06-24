@@ -408,7 +408,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 
 		    var time    = hours + ':' + minutes + ':' + seconds;
 
-		    return "\u00b1 " + time;
+		    return time;
 		},
 
 		actionCall: function(action) {
