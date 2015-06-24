@@ -63,7 +63,9 @@ define([
                 // Disable buttons.
                 this.disableGui();
 
-                $('#qti-item, #qti-rubrics, #qti-timers').hide();
+                $controls.$itemFrame.hide();
+                $controls.$rubricBlocks.hide();
+                $controls.$timers.hide();
 
                 // Wait at least waitingTime ms for a better user experience.
                 if (typeof callback === 'function') {
@@ -136,7 +138,7 @@ define([
 
             update: function (testContext) {
                 var self = this;
-                $('#qti-item').remove();
+                $controls.$itemFrame.remove();
 
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
@@ -152,19 +154,19 @@ define([
                 this.updateTools();
                 this.updateTimer();
 
-                var $itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
-                $itemFrame.appendTo('#qti-content');
-                iframeResizer.autoHeight($itemFrame, 'body');
+                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+                $controls.$itemFrame.appendTo($controls.$contentBox);
+                iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.on('serviceloaded', function () {
                         self.afterTransition();
                         self.adjustFrame();
-                        $itemFrame.css({visibility: 'visible'});
+                        $controls.$itemFrame.css({visibility: 'visible'});
                     });
 
                     // Inject API into the frame.
-                    this.itemServiceApi.loadInto($itemFrame[0], function () {
+                    this.itemServiceApi.loadInto($controls.$itemFrame[0], function () {
                         // We now rely on the 'serviceloaded' event.
                     });
                 }
@@ -187,8 +189,7 @@ define([
 
             updateTools: function updateTools() {
                 if (this.testContext.allowComment === true) {
-                   // @todo
-                   // $controls.$commentArea.show();
+                   $controls.$commentArea.show();
                 }
                 else {
                     $controls.$commentArea.hide();
@@ -212,7 +213,7 @@ define([
 
             updateTimer: function () {
                 var self = this;
-                $('#qti-timers').remove();
+                $controls.$timers.remove();
 
                 for (var i = 0; i < timerIds.length; i++) {
                     clearTimeout(timerIds[i]);
@@ -229,7 +230,8 @@ define([
                     if (this.testContext.timeConstraints.length > 0) {
 
                         // Insert QTI Timers container.
-                        $('<div id="qti-timers"/>').prependTo('#qti-content');
+                        $controls.$timers = $('<div id="qti-timers"/>');
+                        $controls.$timers.prependTo($controls.$contentBox);
                         // self.formatTime(cst.seconds)
                         for (i = 0; i < this.testContext.timeConstraints.length; i++) {
 
@@ -237,7 +239,9 @@ define([
 
                             if (cst.allowLateSubmission === false) {
                                 // Set up a timer for this constraint.
-                                $('<div class="qti-timer"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+                                $('<div class="qti-timer"><span class="icon-time"></span> ' +
+                                    cst.source + ' - ' +
+                                    self.formatTime(cst.seconds) + '</div>').appendTo($controls.$timers);
 
                                 // Set up a timer and update it with setInterval.
                                 currentTimes[i] = cst.seconds;
@@ -260,17 +264,19 @@ define([
 
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
-                                            $('#qti-timers > .qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+                                            $controls.$timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
                                             currentTimes[timerIndex] = 0;
                                             clearInterval(timerIds[timerIndex]);
 
                                             // Hide item to prevent any further interaction with the candidate.
-                                            $('#qti-item').hide();
+                                            $controls.$itemFrame.hide();
                                             self.timeout();
                                         }
                                         else {
                                             // Not timed-out...
-                                            $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+                                            $controls.$timers.find('.qti-timer')
+                                                .eq(timerIndex)
+                                                .html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
                                             lastDates[timerIndex] = new Date();
                                         }
 
@@ -279,33 +285,33 @@ define([
                             }
                         }
 
-                        $('#qti-timers').show();
+                        $controls.$timers.show();
                     }
                 }
             },
 
             updateRubrics: function () {
-                $('#qti-rubrics').remove();
+                $controls.$rubricBlocks.remove();
 
                 if (this.testContext.rubrics.length > 0) {
 
-                    var $rubrics = $('<div id="qti-rubrics"/>');
+                    $controls.$rubricBlocks = $('<div id="qti-rubrics"/>');
 
                     for (var i = 0; i < this.testContext.rubrics.length; i++) {
-                        $rubrics.append(this.testContext.rubrics[i]);
+                        $controls.$rubricBlocks.append(this.testContext.rubrics[i]);
                     }
 
                     // modify the <a> tags in order to be sure it
                     // opens in another window.
-                    $rubrics.find('a').bind('click keypress', function () {
+                    $controls.$rubricBlocks.find('a').bind('click keypress', function () {
                         window.open(this.href);
                         return false;
                     });
 
-                    $rubrics.prependTo('#qti-content');
+                    $controls.$rubricBlocks.prependTo($controls.$contentBox);
 
                     if (MathJax) {
-                        MathJax.Hub.Queue(["Typeset", MathJax.Hub], $('#qti-rubrics')[0]);
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub], $controls.$rubricBlocks[0]);
                     }
 
                 }
@@ -332,7 +338,7 @@ define([
 
                 var considerProgress = this.testContext.considerProgress;
 
-                $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+                $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
 
                 if (considerProgress === true) {
                     var ratio = Math.floor(this.testContext.numberCompleted / this.testContext.numberItems * 100);
@@ -349,22 +355,17 @@ define([
             },
 
             adjustFrame: function () {
-
-                var controlsHeight = $controls.$controls.outerHeight();
-                var windowHeight = window.innerHeight ? window.innerHeight : $(window).height();
-                var navigationHeight = $('#qti-navigation').outerHeight();
-                var newContentHeight = windowHeight - controlsHeight - navigationHeight;
-
-                var $content = $('#qti-content');
-                $content.height(newContentHeight - parseInt($content.css('paddingTop')) - parseInt($content.css('paddingBottom')));
+                var $actionBars = $('.horizontal-action-bar:visible'),
+                    actionBarHeight = $actionBars.outerHeight() * $actionBars.length;
+                $controls.$contentBox.height($(window).innerHeight() - actionBarHeight);
             },
 
             disableGui: function () {
-                $('#qti-navigation button').addClass('disabled');
+                $controls.$naviButtons.addClass('disabled');
             },
 
             enableGui: function () {
-                $('#qti-navigation button').removeClass('disabled');
+                $controls.$naviButtons.removeClass('disabled');
             },
 
             formatTime: function (totalSeconds) {
@@ -418,6 +419,7 @@ define([
                     $moveBackward: $('[data-control="move-backward"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
+                    $naviButtons: $('.bottom-action-bar .navi-box a'),
                     $commentToggle: $('[data-control="comment-toggle"]'),
                     $commentArea: $('[data-control="comment-area"]'),
                     $commentText: $('[data-control="comment-text"]'),
@@ -425,10 +427,15 @@ define([
                     $commentSend: $('[data-control="comment-send"]'),
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
+                    $progressBox: $('.progress-box'),
                     $title:  $('[data-control="qti-test-title"]'),
                     $position:  $('[data-control="qti-test-position"]'),
                     $timer:  $('[data-control="qti-test-time"]'),
-                    $controls: $('.qti-controls')
+                    $controls: $('.qti-controls'),
+                    $itemFrame: $('#qti-item'),
+                    $rubricBlocks: $('#qti-rubrics'),
+                    $timers: $('#qti-timers'),
+                    $contentBox: $('#qti-content')
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
@@ -511,6 +518,9 @@ define([
                 $controls.$progressBar.progressbar();
 
                 iframeNotifier.parent('serviceready');
+
+
+                TestRunner.adjustFrame();
             }
         };
     });
