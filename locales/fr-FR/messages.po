@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v3.1-dev\n"
-"PO-Revision-Date: 2015-06-18T16:38:03\n"
+"Project-Id-Version: TAO 3.1.0-rc01\n"
+"PO-Revision-Date: 2015-06-24T17:25:49\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -83,7 +83,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr "Terminer le test"
+msgstr ""
 
 msgid "Enter a category"
 msgstr ""
@@ -326,22 +326,22 @@ msgid "Shuffle"
 msgstr "Mélanger"
 
 msgid "Simultaneous"
-msgstr "Simultanément"
+msgstr ""
 
 msgid "Skip"
-msgstr "Passer"
+msgstr ""
 
 msgid "Skip & End Test"
-msgstr "Passer et Ternminer le test"
+msgstr ""
 
 msgid "Skip the current task and give an empty response."
-msgstr "Passer la tache actuelle et donner une réponse vide"
+msgstr ""
 
 msgid "Skip the current task, give an empty response and head for the end of the test."
 msgstr ""
 
 msgid "Submission"
-msgstr "Soumission"
+msgstr ""
 
 msgid "Submit your responses and head for the end of the test."
 msgstr ""
