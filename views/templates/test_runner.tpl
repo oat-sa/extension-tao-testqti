@@ -60,7 +60,6 @@ use oat\tao\helpers\Layout;
         </div>
         <div class="test-item flex-container-remaining">
             <div id="qti-content">
-                <iframe for item></iframe>
             </div>
         </div>
         <div class="test-sidebar test-sidebar-right flex-container-navi">
@@ -82,6 +81,14 @@ use oat\tao\helpers\Layout;
             </div>
             <div class="rgt navi-box">
                 <ul class="plain">
+                    <li data-control="move-backward" class="small btn-info action" title="<?= __(
+                        "Submit and go to the previous item"
+                    ); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-backward"></span>
+                            <span class="text"><?= __("Previous"); ?></span>
+                        </a>
+                    </li>
                     <li data-control="move-forward" class="small btn-info action" title="<?= __(
                         "Submit and go to the next item"
                     ); ?>">
@@ -96,14 +103,6 @@ use oat\tao\helpers\Layout;
                         <a class="li-inner" href="#">
                             <span class="icon-fast-forward"></span>
                             <span class="text"><?= __("End Test"); ?></span>
-                        </a>
-                    </li>
-                    <li data-control="move-backward" class="small btn-info action" title="<?= __(
-                        "Submit and go to the previous item"
-                    ); ?>">
-                        <a class="li-inner" href="#">
-                            <span class="icon-backward"></span>
-                            <span class="text"><?= __("Previous"); ?></span>
                         </a>
                     </li>
                     <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
