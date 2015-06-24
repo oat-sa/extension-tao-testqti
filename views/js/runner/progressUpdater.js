@@ -58,14 +58,14 @@ define([
 
         /**
          * Updates the progress bar
-         * @param {Object} assessmentTestContext The progression context
+         * @param {Object} testContext The progression context
          * @returns {{ratio: number, label: string}}
          */
-        update: function(assessmentTestContext) {
-            var progressIndicator = assessmentTestContext.progressIndicator || 'percentage';
+        update: function(testContext) {
+            var progressIndicator = testContext.progressIndicator || 'percentage';
             var progressIndicatorMethod = progressIndicator + 'Progression';
             var getProgression = this[progressIndicatorMethod] || this.percentageProgression;
-            var progression = getProgression && getProgression(assessmentTestContext) || {};
+            var progression = getProgression && getProgression(testContext) || {};
 
             this.write(progression.label, progression.ratio);
             return progression;
@@ -73,12 +73,12 @@ define([
 
         /**
          * Updates the progress bar displaying the percentage
-         * @param {Object} assessmentTestContext The progression context
+         * @param {Object} testContext The progression context
          * @returns {{ratio: number, label: string}}
          */
-        percentageProgression: function(assessmentTestContext) {
-            var total = Math.max(1, assessmentTestContext.numberItems);
-            var ratio = Math.floor(assessmentTestContext.numberCompleted / total * 100);
+        percentageProgression: function(testContext) {
+            var total = Math.max(1, testContext.numberItems);
+            var ratio = Math.floor(testContext.numberCompleted / total * 100);
             return {
                 ratio : ratio,
                 label : __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%')
@@ -87,12 +87,12 @@ define([
 
         /**
          * Updates the progress bar displaying the position
-         * @param {Object} assessmentTestContext The progression context
+         * @param {Object} testContext The progression context
          * @returns {{ratio: number, label: string}}
          */
-        positionProgression: function(assessmentTestContext) {
-            var total = Math.max(1, assessmentTestContext.numberItems);
-            var position = assessmentTestContext.itemPosition + 1;
+        positionProgression: function(testContext) {
+            var total = Math.max(1, testContext.numberItems);
+            var position = testContext.itemPosition + 1;
             return {
                 ratio : Math.floor(position / total * 100),
                 label : __('Item %d of %d', position, total)
