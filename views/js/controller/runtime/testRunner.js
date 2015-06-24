@@ -1,57 +1,11 @@
-define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
-    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'taoQtiTest/runner/progressUpdater', 'jquery.trunc', 'ui/progressbar'],
+    function($,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, progressUpdater){
 
 	    var timerIds = [];
 	    var currentTimes = [];
 	    var lastDates = [];
 		var timeDiffs = [];
 		var waitingTime = 0;
-
-        /**
-         * Provides a versatile progress bar updater
-         * @type {{update: Function, percentageProgression: Function, positionProgression: Function}}
-         */
-        var progressUpdaters = {
-            /**
-             * Updates the progress bar
-             * @param {Object} assessmentTestContext The progression context
-             */
-            update: function(assessmentTestContext) {
-                var progressIndicator = assessmentTestContext.progressIndicator || 'percentage';
-                var progressIndicatorMethod = progressIndicator + 'Progression';
-                var getProgression = this[progressIndicatorMethod] || this.percentageProgression;
-                var progression = getProgression && getProgression(assessmentTestContext) || {};
-
-                $('#qti-progress-label').text(progression.label);
-                $('#qti-progressbar').progressbar('value', progression.ratio);
-            },
-
-            /**
-             * Updates the progress bar displaying the percentage
-             * @param {Object} assessmentTestContext The progression context
-             */
-            percentageProgression: function(assessmentTestContext) {
-                var total = Math.max(1, assessmentTestContext.numberItems);
-                var ratio = Math.floor(assessmentTestContext.numberCompleted / total * 100);
-                return {
-                    ratio : ratio,
-                    label : __('Test completed at %d%%').replace('%d', ratio).replace('%%', '%')
-                };
-            },
-
-            /**
-             * Updates the progress bar displaying the position
-             * @param {Object} assessmentTestContext The progression context
-             */
-            positionProgression: function(assessmentTestContext) {
-                var total = Math.max(1, assessmentTestContext.numberItems);
-                var position = assessmentTestContext.itemPosition + 1;
-                return {
-                    ratio : Math.floor(position / total * 100),
-                    label : __('Item %d of %d', position, total)
-                };
-            }
-        };
 
 	    var TestRunner = {
 	    // Constants
@@ -353,7 +307,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
 		    $('#qti-test-progress').css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
 
 		    if (considerProgress === true) {
-                progressUpdaters.update(this.assessmentTestContext);
+                this.progressUpdater.update(this.assessmentTestContext);
 		    }
 		},
 
@@ -508,7 +462,7 @@ define(['jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInf
                 iframeNotifier.parent('unloading');
 	        });
 
-            $('#qti-progressbar').progressbar();
+            TestRunner.progressUpdater = progressUpdater('#qti-progressbar', '#qti-progress-label');
 
 	        iframeNotifier.parent('serviceready');
 	    }
