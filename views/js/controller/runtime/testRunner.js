@@ -1,5 +1,5 @@
-define(['module', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
-    function(module, $,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
+define(['module', 'taoQtiTest/testRunner/actionBarHook', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceApi/UserInfoService', 'serviceApi/StateStorage', 'iframeResizer', 'iframeNotifier', 'i18n', 'mathJax', 'jquery.trunc', 'ui/progressbar'],
+    function(module, actionBarHook, $,  _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax){
         
         var config = module.config();
 	    var timerIds = [];
@@ -445,8 +445,7 @@ define(['module', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceA
 	return {
 	    start : function(assessmentTestContext){
 	        
-            console.log('config', config);
-            console.log('assessmentTestContext', assessmentTestContext);
+            actionBarHook.init(config, assessmentTestContext);
             
 	        $(document).ajaxError(function(event, jqxhr) {
                 if (jqxhr.status == 403) {
@@ -483,13 +482,13 @@ define(['module', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceA
 	            }
 	        });
             
-            $('#toggle-rubric-help').show().click(function(){
-                toogleRubricBlock('rubric-help');
-            });
-            
-            $('#toggle-rubric-formula').show().click(function(){
-                toogleRubricBlock('rubric-formula');
-            });
+//            $('#toggle-rubric-help').show().click(function(){
+//                toogleRubricBlock('rubric-help');
+//            });
+//            
+//            $('#toggle-rubric-formula').show().click(function(){
+//                toogleRubricBlock('rubric-formula');
+//            });
             
 	        $('#move-backward').click(function(){
 	            if (!$(this).hasClass('disabled')) {
@@ -533,11 +532,6 @@ define(['module', 'jquery', 'lodash', 'spin', 'serviceApi/ServiceApi', 'serviceA
 
 	        iframeNotifier.parent('serviceready');
             
-            setTimeout(function(){
-                return;
-                $('link[title="formula css"]')[0].disabled = false;
-                console.log($('link[title="formula css"]')[0].disabled);
-            }, 2000);
 	    }
 	};
 });
