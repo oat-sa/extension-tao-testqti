@@ -21,6 +21,7 @@ define([
     'jquery',
     'lodash',
     'spin',
+    'taoQtiTest/runner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -31,7 +32,7 @@ define([
     'ui/feedback',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
+    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
 
         'use strict';
 
@@ -40,9 +41,9 @@ define([
         var lastDates = [];
         var timeDiffs = [];
         var waitingTime = 0;
-        
+
         var $controls;
-        
+
         var $doc = $(document);
 
         var TestRunner = {
@@ -224,7 +225,7 @@ define([
                 lastDates = [];
                 timeDiffs = [];
 
-                if (self.testContext.isTimeout === false && 
+                if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
                     if (this.testContext.timeConstraints.length > 0) {
@@ -341,9 +342,7 @@ define([
                 $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
 
                 if (considerProgress === true) {
-                    var ratio = Math.floor(this.testContext.numberCompleted / this.testContext.numberItems * 100);
-                    $controls.$progressLabel.text(ratio + '%');
-                    $controls.$progressBar.progressbar('value', ratio);
+                    this.progressUpdater.update(this.testContext);
                 }
             },
 
@@ -412,7 +411,7 @@ define([
 
         return {
             start: function (testContext) {
-                
+
                 $controls = {
                     $moveForward: $('[data-control="move-forward"]'),
                     $moveEnd: $('[data-control="move-end"]'),
@@ -515,7 +514,7 @@ define([
                     iframeNotifier.parent('unloading');
                 });
 
-                $controls.$progressBar.progressbar();
+                TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
 
                 iframeNotifier.parent('serviceready');
 
