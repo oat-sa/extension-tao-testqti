@@ -439,7 +439,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $context['timerWarning'] = $config['timerWarning'];
             }
             // the type of progress bar to display
-            $context['progressIndicator'] = $config['progress-indicator']
+            $context['progressIndicator'] = $config['progress-indicator'];
         }
         
         return $context;

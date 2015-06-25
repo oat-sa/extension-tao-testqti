@@ -10,7 +10,7 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('tao-3.css', 'tao') ?>"/>
-    <!--link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/-->
+    <link rel="stylesheet" href="<?= Template::css('test_runner.css') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('delivery.css', 'taoDelivery') ?>"/>
 
     <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
@@ -81,14 +81,14 @@ use oat\tao\helpers\Layout;
                 </div>
                 <div class="rgt navi-box">
                     <ul class="plain">
-                    <li data-control="move-backward" class="small btn-info action" title="<?= __(
-                        "Submit and go to the previous item"
-                    ); ?>">
-                        <a class="li-inner" href="#">
-                            <span class="icon-backward"></span>
-                            <span class="text"><?= __("Previous"); ?></span>
-                        </a>
-                    </li>
+                        <li data-control="move-backward" class="small btn-info action" title="<?= __(
+                            "Submit and go to the previous item"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-backward"></span>
+                                <span class="text"><?= __("Previous"); ?></span>
+                            </a>
+                        </li>
                         <li data-control="move-forward" class="small btn-info action" title="<?= __(
                             "Submit and go to the next item"
                         ); ?>">
@@ -105,7 +105,7 @@ use oat\tao\helpers\Layout;
                                 <span class="text"><?= __("End Test"); ?></span>
                             </a>
                         </li>
-                    <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
+                        <li data-control="skip" class="small btn-info action" title="<?= __("Skip to the next item"); ?>">
                             <a class="li-inner" href="#">
                                 <span class="icon-external"></span>
                                 <span class="text"><?= __("Skip"); ?></span>
@@ -117,6 +117,14 @@ use oat\tao\helpers\Layout;
                             <a class="li-inner" href="#">
                                 <span class="icon-external"></span>
                                 <span class="text"><?= __("Skip &amp; End Test"); ?></span>
+                            </a>
+                        </li>
+                        <li data-control="exit" class="small btn-info action" title="<?= __(
+                            "Exit"
+                        ); ?>">
+                            <a class="li-inner" href="#">
+                                <span class="icon-logout"></span>
+                                <span class="text"><?= __("Exit"); ?></span>
                             </a>
                         </li>
                     </ul>

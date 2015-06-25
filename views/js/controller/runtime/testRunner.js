@@ -442,7 +442,7 @@ define([
 
                 var time = hours + ':' + minutes + ':' + seconds;
 
-                return "\u00b1 " + time;
+                return time;
             },
             /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
