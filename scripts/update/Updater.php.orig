@@ -19,10 +19,14 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+<<<<<<< HEAD
+
+=======
 /**
  *
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-SÃ©bastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
+>>>>>>> frontend-adaptation
 class Updater extends \common_ext_ExtensionUpdater {
     
     /**
@@ -38,12 +42,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($currentVersion == '2.6') {
 
             \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
-                'progress-indicator' => 'percentage',
+<<<<<<< HEAD
                 'timerWarning' => array(
                     'assessmentItemRef' => null,
                     'assessmentSection' => 300,
                     'testPart' => null
                 )
+=======
+                'progress-indicator' => 'percentage'
+>>>>>>> frontend-adaptation
             ));
 
             $currentVersion = '2.6.1';
@@ -51,4 +58,8 @@ class Updater extends \common_ext_ExtensionUpdater {
    
         return $currentVersion;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> frontend-adaptation

@@ -35,10 +35,10 @@ define([
     'jquery.trunc',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment) {
+<<<<<<< HEAD
+function ($, _, Spinner, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, moment) {
     'use strict';
-
-     var timerIds = [],
+    var timerIds = [],
         currentTimes = [],
         lastDates = [],
         timeDiffs = [],
@@ -48,6 +48,23 @@ define([
         timerIndex,
         $doc = $(document),
         TestRunner = {
+=======
+    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
+
+        'use strict';
+
+        var timerIds = [];
+        var currentTimes = [];
+        var lastDates = [];
+        var timeDiffs = [];
+        var waitingTime = 0;
+
+        var $controls;
+
+        var $doc = $(document);
+
+        var TestRunner = {
+>>>>>>> frontend-adaptation
             // Constants
             'TEST_STATE_INITIAL': 0,
             'TEST_STATE_INTERACTING': 1,
@@ -90,14 +107,12 @@ define([
                     setTimeout(callback, waitingTime);
                 }
             },
-
             afterTransition: function () {
                 this.enableGui();
 
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
             },
-
             moveForward: function () {
                 this.disableGui();
                 var that = this;
@@ -105,7 +120,6 @@ define([
                     that.actionCall('moveForward');
                 });
             },
-
             moveBackward: function () {
                 this.disableGui();
                 var that = this;
@@ -113,12 +127,10 @@ define([
                     that.actionCall('moveBackward');
                 });
             },
-
             skip: function () {
                 this.disableGui();
                 this.actionCall('skip');
             },
-
             timeout: function (qtiClassName) {
                 var that = this;
                 this.disableGui();
@@ -142,15 +154,12 @@ define([
                 $controls.$commentArea.show();
                 $controls.$commentAreaButtons.show();
             },
-
             closeComment: function () {
                 $controls.$commentArea.hide();
             },
-
             emptyComment: function () {
                 $controls.$commentText.val('');
             },
-
             storeComment: function () {
                 var self = this;
                 $.ajax({
@@ -158,13 +167,12 @@ define([
                     cache: false,
                     async: true,
                     type: 'POST',
-                    data: { comment: $controls.$commentText.val('') },
+                    data: {comment: $controls.$commentText.val('')},
                     success: function () {
                         self.closeComment();
                     }
                 });
             },
-
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -205,7 +213,6 @@ define([
                     self.afterTransition();
                 }
             },
-
             updateInformation: function () {
 
                 if (this.testContext.isTimeout === true) {
@@ -215,7 +222,6 @@ define([
                     feedback().error(__('No more attempts allowed for item "%s".', this.testContext.itemIdentifier));
                 }
             },
-
             updateTools: function updateTools() {
                 if (this.testContext.allowComment === true) {
                    $controls.$commentArea.show();
@@ -239,7 +245,6 @@ define([
                     $controls.$skipEnd.hide();
                 }
             },
-
             updateTimer: function () {
                 var self = this;
                 $controls.$timers.remove();
@@ -269,7 +274,13 @@ define([
 
                             if (cst.allowLateSubmission === false) {
                                 // Set up a timer for this constraint.
-                                $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo($controls.$timers);
+<<<<<<< HEAD
+                                $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo('#qti-timers');
+=======
+                                $('<div class="qti-timer"><span class="icon-time"></span> ' +
+                                    cst.source + ' - ' +
+                                    self.formatTime(cst.seconds) + '</div>').appendTo($controls.$timers);
+>>>>>>> frontend-adaptation
 
                                 // Set up a timer and update it with setInterval.
                                 currentTimes[i] = cst.seconds;
@@ -297,7 +308,11 @@ define([
 
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
-                                            $timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+<<<<<<< HEAD
+                                            $timers.eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+=======
+                                            $controls.$timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+>>>>>>> frontend-adaptation
                                             currentTimes[timerIndex] = 0;
                                             clearInterval(timerIds[timerIndex]);
 
@@ -307,9 +322,13 @@ define([
                                         }
                                         else {
                                             // Not timed-out...
+<<<<<<< HEAD
+                                            $('#qti-timers > .qti-timer').eq(timerIndex).html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+=======
                                             $controls.$timers.find('.qti-timer')
                                                 .eq(timerIndex)
-                                                .html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+                                                .html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+>>>>>>> frontend-adaptation
                                             lastDates[timerIndex] = new Date();
                                         }
 
@@ -326,7 +345,6 @@ define([
                     }
                 }
             },
-
             /**
              * Mark apropriate timer by warning colors and show feedback message
              * @param {object} cst - Time constraint
@@ -365,8 +383,12 @@ define([
                         window.open(this.href);
                         return false;
                     });
+<<<<<<< HEAD
+                    $rubrics.prependTo('#qti-content');
+=======
 
                     $controls.$rubricBlocks.prependTo($controls.$contentBox);
+>>>>>>> frontend-adaptation
 
                     if (MathJax) {
                         MathJax.Hub.Queue(["Typeset", MathJax.Hub], $controls.$rubricBlocks[0]);
@@ -374,7 +396,6 @@ define([
 
                 }
             },
-
             updateNavigation: function () {
                 if (this.testContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
                     // LINEAR
@@ -391,7 +412,6 @@ define([
                         'inline' : 'none');
                 }
             },
-
             updateProgress: function () {
 
                 var considerProgress = this.testContext.considerProgress;
@@ -402,28 +422,23 @@ define([
                     this.progressUpdater.update(this.testContext);
                 }
             },
-
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-
             adjustFrame: function () {
                 var $actionBars = $('.horizontal-action-bar:visible'),
                     actionBarHeight = $actionBars.outerHeight() * $actionBars.length;
                 $controls.$contentBox.height($(window).innerHeight() - actionBarHeight);
             },
-
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
             },
-
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
             },
-
             formatTime: function (totalSeconds) {
                 var sec_num = totalSeconds;
                 var hours = Math.floor(sec_num / 3600);
@@ -536,11 +551,14 @@ define([
                     $position:  $('[data-control="qti-test-position"]'),
                     $timer:  $('[data-control="qti-test-time"]'),
                     $controls: $('.qti-controls'),
+<<<<<<< HEAD
+                    $exit:  $('[data-control="exit"]')
+=======
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
                     $timers: $('#qti-timers'),
-                    $contentBox: $('#qti-content'),
-                    $exit:  $('[data-control="exit"]')
+                    $contentBox: $('#qti-content')
+>>>>>>> frontend-adaptation
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
