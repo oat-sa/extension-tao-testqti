@@ -55,16 +55,15 @@ use oat\tao\helpers\Layout;
     </div>
 
     <div class="content-panel">
-        <div class="test-sidebar test-sidebar-left flex-container-navi">
-            optional navi left
-        </div>
+        <!--div class="test-sidebar test-sidebar-left flex-container-navi">
+        </div-->
         <div class="test-item flex-container-remaining">
             <div id="qti-content">
             </div>
         </div>
-        <div class="test-sidebar test-sidebar-right flex-container-navi">
+        <!--div class="test-sidebar test-sidebar-right flex-container-navi">
             optional navi right
-        </div>
+        </div-->
     </div>
 
     <div class="plain action-bar content-action-bar horizontal-action-bar bottom-action-bar">

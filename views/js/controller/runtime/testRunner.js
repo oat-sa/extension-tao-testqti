@@ -30,9 +30,10 @@ define([
     'i18n',
     'mathJax',
     'ui/feedback',
+    'ui/deleter',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback) {
+    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter) {
 
         'use strict';
 
@@ -363,8 +364,12 @@ define([
 
             adjustFrame: function () {
                 var $actionBars = $('.horizontal-action-bar:visible'),
-                    actionBarHeight = $actionBars.outerHeight() * $actionBars.length;
-                $controls.$contentBox.height($(window).innerHeight() - actionBarHeight);
+                    actionBarHeight = $actionBars.outerHeight() * $actionBars.length,
+                    finalHeight = $(window).innerHeight() - actionBarHeight;
+                $controls.$contentBox.height(finalHeight);
+                if($controls.$sideBars.length){
+                    $controls.$sideBars.height(finalHeight);
+                }
             },
 
             disableGui: function () {
@@ -441,7 +446,8 @@ define([
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
                     $timers: $('#qti-timers'),
-                    $contentBox: $('#qti-content')
+                    $contentBox: $('#qti-content'),
+                    $sideBars: $('.test-sidebar')
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
@@ -528,6 +534,7 @@ define([
 
 
                 TestRunner.adjustFrame();
+                deleter($('#feedback-box'));
             }
         };
     });
