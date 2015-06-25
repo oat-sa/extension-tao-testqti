@@ -12,7 +12,7 @@ html, body {
 #qti-item {
 	width: 100%;
 	overflow: hidden;
-        visibility: hidden;
+    visibility: hidden;
 	margin: 0;
 	padding: 0;
 }
@@ -43,25 +43,34 @@ html, body {
 }
 
 #qti-timers {
-	margin: 20px 100px;
 	display: none;
+}
+
+.timer-box {
+    padding-top: 0 !important;
+    height: 23px;
 }
 
 .qti-timer {
     -moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	-khtml-border-radius: 4px;
-	border-radius: 4px;
-	padding: 3px 6px;
-	background-color: #f3f3f3;
-	border: 1px solid #333;
-	margin: 10px 0;
-	font-weight: bold;
-	color: #333;
-	font-size: 12px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    font-size: 12px;
+    width: 140px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+    height: 23px;
+    line-height: 11px;
+    .qti-timer_label {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
     &.qti-timer__warning {
-        border-color: mix(#fff, $warning, 20%);
-        background-color: mix(#fff, $warning, 90%);
+        color: $warning;
     }
 }
 
@@ -203,7 +212,6 @@ html, body {
 }
 
 #qti-content {
-    margin: 40px 0;
     padding: 0px;
     overflow-y: auto;
     overflow-x: hidden;

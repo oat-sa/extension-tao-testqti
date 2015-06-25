@@ -261,7 +261,7 @@ define([
 
                         // Insert QTI Timers container.
                         $controls.$timers = $('<div id="qti-timers"/>');
-                        $controls.$timers.prependTo($controls.$contentBox);
+                        $controls.$timers.prependTo($controls.$timersBox);
                         // self.formatTime(cst.seconds)
                         for (i = 0; i < this.testContext.timeConstraints.length; i++) {
 
@@ -269,7 +269,10 @@ define([
 
                             if (cst.allowLateSubmission === false) {
                                 // Set up a timer for this constraint.
-                                $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '"><span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(cst.seconds) + '</div>').appendTo($controls.$timers);
+                                $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '">'
+                                    + '<span class="qti-timer_label">' + cst.source + '</span>'
+                                    + '<span class="qti-timer_time">' + self.formatTime(cst.seconds) + '</span></div>')
+                                    .appendTo($controls.$timers);
 
                                 // Set up a timer and update it with setInterval.
                                 currentTimes[i] = cst.seconds;
@@ -309,7 +312,8 @@ define([
                                             // Not timed-out...
                                             $controls.$timers.find('.qti-timer')
                                                 .eq(timerIndex)
-                                                .html('<span class="icon-time"></span> ' + cst.source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+                                                .find('.qti-timer_time')
+                                                .html(self.formatTime(Math.round(currentTimes[timerIndex])));
                                             lastDates[timerIndex] = new Date();
                                         }
 
@@ -538,6 +542,7 @@ define([
                     $controls: $('.qti-controls'),
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
+                    $timersBox: $('[data-control="qti-test-time"]'),
                     $timers: $('#qti-timers'),
                     $contentBox: $('#qti-content'),
                     $exit:  $('[data-control="exit"]')
