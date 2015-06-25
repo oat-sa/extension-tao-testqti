@@ -319,19 +319,27 @@ define([
             },
 
             updateNavigation: function () {
+                if(this.testContext.isLast === true) {
+                    $controls.$moveForward.hide();
+                    $controls.$moveEnd.show();
+                }
+                else {
+                    $controls.$moveForward.show();
+                    $controls.$moveEnd.hide();
+                }
                 if (this.testContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
                     // LINEAR
                     $controls.$moveBackward.hide();
-                    $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
-                    $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
                 }
                 else {
                     // NONLINEAR
                     $controls.$controls.show();
-                    $controls.$moveForward.css('display', (this.testContext.isLast === true) ? 'none' : 'inline');
-                    $controls.$moveEnd.css('display', (this.testContext.isLast === true) ? 'inline' : 'none');
-                    $controls.$moveBackward.css('display', (this.testContext.canMoveBackward === true) ?
-                        'inline' : 'none');
+                    if(this.testContext.canMoveBackward === true) {
+                        $controls.$moveBackward.show();
+                    }
+                    else {
+                        $controls.$moveBackward.hide();
+                    }
                 }
             },
 
@@ -418,7 +426,6 @@ define([
                     $moveBackward: $('[data-control="move-backward"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
-                    $naviButtons: $('.bottom-action-bar .navi-box a'),
                     $commentToggle: $('[data-control="comment-toggle"]'),
                     $commentArea: $('[data-control="comment-area"]'),
                     $commentText: $('[data-control="comment-text"]'),
@@ -441,6 +448,7 @@ define([
                 $controls.$skipButtons = $controls.$skip.add($controls.$skipEnd);
                 $controls.$moveForwardEnd = $controls.$moveForward.add($controls.$moveEnd);
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
+                $controls.$naviButtons = $controls.$moveForward.add($controls.$moveEnd).add($controls.$moveBackward).add($controls.$skip).add($controls.$skipEnd);
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {

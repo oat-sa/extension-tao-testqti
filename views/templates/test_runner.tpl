@@ -81,25 +81,19 @@ use oat\tao\helpers\Layout;
             </div>
             <div class="rgt navi-box">
                 <ul class="plain">
-                    <li data-control="move-backward" class="small btn-info action" title="<?= __(
-                        "Submit and go to the previous item"
-                    ); ?>">
+                    <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-backward"></span>
                             <span class="text"><?= __("Previous"); ?></span>
                         </a>
                     </li>
-                    <li data-control="move-forward" class="small btn-info action" title="<?= __(
-                        "Submit and go to the next item"
-                    ); ?>">
+                    <li data-control="move-forward" class="small btn-info action" title="<?= __("Submit and go to the next item"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-forward"></span>
                             <span class="text"><?= __("Next"); ?></span>
                         </a>
                     </li>
-                    <li data-control="move-end" class="small btn-info action" title="<?= __(
-                        "Submit and go to the end of the test"
-                    ); ?>">
+                    <li data-control="move-end" class="small btn-info action" title="<?= __("Submit and go to the end of the test"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-fast-forward"></span>
                             <span class="text"><?= __("End Test"); ?></span>
@@ -111,9 +105,7 @@ use oat\tao\helpers\Layout;
                             <span class="text"><?= __("Skip"); ?></span>
                         </a>
                     </li>
-                    <li data-control="skip-end" class="small btn-info action" title="<?= __(
-                        "Skip to the end of the test"
-                    ); ?>">
+                    <li data-control="skip-end" class="small btn-info action" title="<?= __("Skip to the end of the test"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-external"></span>
                             <span class="text"><?= __("Skip &amp; End Test"); ?></span>
