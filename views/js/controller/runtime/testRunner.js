@@ -260,7 +260,7 @@ define([
                 currentTimes = [];
                 lastDates = [];
                 timeDiffs = [];
-                $timers = $();
+                $timers;
 
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
@@ -289,7 +289,6 @@ define([
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
                                     cst.warningTime = parseInt(self.testContext.timerWarning[cst.qtiClassName], 10);
                                 }
-
                                 (function (timerIndex, cst) {
                                     timerIds[timerIndex] = setInterval(function () {
 
@@ -300,23 +299,19 @@ define([
                                             currentTimes[timerIndex] -= seconds;
                                             timeDiffs[timerIndex] = 0;
                                         }
-
+                                        
+                                        $timers.eq(timerIndex)
+                                            .html(self.formatTime(Math.round(currentTimes[timerIndex])));
+                                    
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
-                                            $timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
                                             currentTimes[timerIndex] = 0;
                                             clearInterval(timerIds[timerIndex]);
 
                                             // Hide item to prevent any further interaction with the candidate.
                                             $controls.$itemFrame.hide();
                                             self.timeout();
-                                        }
-                                        else {
-                                            // Not timed-out...
-                                            $controls.$timerWrapper.find('.qti-timer')
-                                                .eq(timerIndex)
-                                                .find('.qti-timer_time')
-                                                .html(self.formatTime(Math.round(currentTimes[timerIndex])));
+                                        } else {
                                             lastDates[timerIndex] = new Date();
                                         }
 
@@ -328,7 +323,8 @@ define([
                                 }(timerIndex, cst));
                             }
                         }
-
+                        
+                        $timers = $controls.$timerWrapper.find('.qti-timer .qti-timer_time');
                         $controls.$timerWrapper.show();
                     }
                 }
@@ -345,12 +341,11 @@ define([
              */
             timeWarning: function (cst) {
                 var message = '';
-                $('#qti-timers > .qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+                $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
 
                 // Initial time more than warning time in config
                 if (cst.seconds > cst.warningTime) {
                     message = moment.duration(cst.warningTime, "seconds").humanize();
-
                     feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
                 }
 
@@ -568,8 +563,7 @@ define([
                     $position:  $('[data-control="qti-test-position"]'),
 
                     // timers
-                    $timer:  $('[data-control="qti-test-time"]'),
-                    $timerWrapper: $('#qti-timers'),
+                    $timerWrapper:  $('[data-control="qti-timers"]'),
 
                     // other zones
                     $controls: $('.qti-controls'),

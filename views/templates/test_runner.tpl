@@ -47,9 +47,7 @@ use oat\tao\helpers\Layout;
                 <div data-control="item-number" class="qti-controls lft"></div>
             </div>
             <div class="rgt timer-box">
-                <div data-control="qti-timers" class="qti-controls">
-
-                </div>
+                <div data-control="qti-timers" class="qti-controls"></div>
             </div>
         </div>
     </div>
