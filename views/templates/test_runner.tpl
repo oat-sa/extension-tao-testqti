@@ -77,6 +77,11 @@ use oat\tao\helpers\Layout;
                         </a>
                     </li>
                 </ul>
+                <div data-control="qti-comment">
+                    <textarea></textarea>
+                    <button data-control="qti-comment-cancel" class="btn-info"></span><?= __("Cancel"); ?></button>
+                    <button data-control="qti-comment-send" class="btn-info"><?= __("Send"); ?></button>
+                </div>
             </div>
             <div class="rgt navi-box">
                 <ul class="plain">
