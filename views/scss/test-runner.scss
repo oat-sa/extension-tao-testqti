@@ -1,0 +1,157 @@
+@import "inc/bootstrap";
+
+@import "inc/loading-bar";
+@import "inc/action-bars";
+@import "inc/section-container";
+
+.qti-test-scope {
+
+    // entry page
+    .test-listing {
+        width: 500px;
+        margin: auto;
+        h1 {
+            font-family: $headingFont;
+            @include font-size(22);
+            font-weight: normal;
+        }
+        h2 {
+            font-family: $headingFont;
+            @include font-size(18);
+            margin: 30px 0 10px;
+        }
+        .entry-point-box {
+            margin-top: 0
+        }
+    }
+
+    // action bars
+    .horizontal-action-bar {
+        opacity: 0;
+
+        .progress-box, .timer-box, .title-box {
+            padding-top: 4px
+        }
+        .progressbar {
+            margin-top: 5px;
+            min-width: 150px;
+            height: 0.6em;
+        }
+        & > .control-box {
+            color: white(.9);
+            text-shadow: 1px 1px 0 black;
+            .lft, .rgt {
+                padding-left: 20px;
+                &:first-child {
+                    padding-left: 0;
+                }
+                &:last-child {
+                    text-align: right;
+                    ul {
+                        display: inline-block;
+                    }
+                }
+            }
+            [class^="btn-"], [class*=" btn-"] {
+                white-space: nowrap;
+            }
+        }
+        &.bottom-action-bar {
+            overflow: visible;
+        }
+
+        // navigation elements
+        .bottom-action-bar .action {
+            display:none;
+        }
+    }
+
+    // main blocks
+    .test-sidebar {
+        background:$canvas;
+        overflow: auto;
+    }
+
+    .test-sidebar-left {
+        border-right: 1px #ddd solid;
+    }
+
+    .test-sidebar-right {
+        border-left: 1px #ddd solid;
+    }
+
+    .content-panel {
+        height: auto !important;
+    }
+
+    #qti-content {
+        overflow: auto;
+    }
+
+    #qti-item {
+        width: 100%;
+    }
+
+    .size-wrapper {
+        max-width: 1280px;
+        margin: auto;
+        width: 100%;
+    }
+
+    // comment
+    .comment-toggle-box {
+        position: relative;
+        overflow:visible
+    }
+
+    [data-control="qti-comment"]{
+        display: none;
+        background-color: $canvas;
+        position: absolute;
+        bottom: 33px;
+        left: 8px;
+        z-index: 9999;
+        text-align: right;
+        padding: 5px;
+        @include simple-border();
+        @include box-shadow(0, 0, 15px, 1px, rgba(0,0,0,0.20));
+        textarea {
+            display: block;
+            height: 100px;
+            resize: none;
+            width: 350px;
+            padding: 3px;
+            margin: 0  0 10px 0;
+            border: none;
+            @include font-size(13);
+            @include simple-border();
+        }
+    }
+
+
+    #qti-timers {
+        display: none;
+    }
+
+    .timer-box {
+        padding-top: 0 !important;
+        height: 23px;
+    }
+
+
+    [data-control="exit"]{
+        margin-left: 20px;
+    }
+
+    .qti-timer {
+        width: 140px;
+        display: inline-block;
+        text-align: center;
+        vertical-align: top;
+        height: 23px;
+        line-height: 11px;
+        &.qti-timer__warning {
+            color: $warning;
+        }
+    }
+}
