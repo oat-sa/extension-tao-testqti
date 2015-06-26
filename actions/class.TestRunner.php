@@ -237,8 +237,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
+        
+        $this->saveMetaData();
     }
-    
+
     protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
         $sessionId = $testSession->getSessionId();
@@ -309,7 +311,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         $this->afterAction();
 	}
-	
+	    
 	/**
 	 * Move backward in the Assessment Test Session flow.
 	 *
@@ -380,6 +382,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // continue...
         $this->afterAction();
 	}
+    
+	/**
+	 * Action to end test session
+	 */
+	public function endTestSession() {
+	    $this->beforeAction();
+        $session = $this->getTestSession();
+        $sessionId = $session->getSessionId();
+        
+        common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+	    $session->endTestSession();
+        
+        $this->afterAction();
+	}
 
 	/**
 	 * Stuff to be undertaken when the Assessment Item presented to the candidate
@@ -428,7 +444,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    // --- Deal with provided responses.
 	    $jsonPayload = taoQtiCommon_helpers_utils::readJsonPayload();
-	    
+
 	    $responses = new State();
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
 	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
@@ -492,6 +508,40 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->afterAction(false);
     }
 	
+    /**
+     * Save metadata (given from GET['metaData'] parameter).
+     */
+    private function saveMetaData()
+    {
+        $metaData = $this->getRequestParameter('metaData');
+        if (is_array($metaData)) {
+            $session = $this->getTestSession();
+            $sessionId = $session->getSessionId();
+            $testUri = $session->getTest()->getUri();
+            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+            $item = $session->getCurrentAssessmentItemRef();
+            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
+
+            foreach ($metaData as $type => $data) {
+                foreach ($data as $key => $value) {
+                    $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+                    $metaVariable->setIdentifier($key);
+                    $metaVariable->setBaseType(-1);
+                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::RECORD));
+                    $metaVariable->setTrace($value);
+
+                    if (strcasecmp($type, 'ITEM') === 0) {
+                        $occurence = $session->getCurrentAssessmentItemRefOccurence();
+                        $transmissionId = "${sessionId}.${item}.${occurence}";
+                        $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                    } elseif (strcasecmp($type, 'TEST') === 0) {
+                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+                    }
+                }
+            }
+        } 
+    }
+    
     /**
      * Action to call to comment an item.
      * 

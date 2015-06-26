@@ -31,23 +31,25 @@ define([
     'mathJax',
     'ui/feedback',
     'ui/deleter',
+    'moment',
+    'ui/modal',
+    'jquery.trunc',
     'ui/progressbar'
 ],
-    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter) {
+    function ($, _, Spinner, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter,  moment) {
 
         'use strict';
 
-        var timerIds = [];
-        var currentTimes = [];
-        var lastDates = [];
-        var timeDiffs = [];
-        var waitingTime = 0;
-
-        var $controls;
-
-        var $doc = $(document);
-
-        var TestRunner = {
+     var timerIds = [],
+        currentTimes = [],
+        lastDates = [],
+        timeDiffs = [],
+        waitingTime = 0,
+        $timers,
+        $controls,
+        timerIndex,
+        $doc = $(document),
+        TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
             'TEST_STATE_INTERACTING': 1,
@@ -57,7 +59,23 @@ define([
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-
+            'ITEM_EXIT_CODE': {
+                'COMPLETED_NORMALLY': 700,
+                'QUIT': 701,
+                'COMPLETE_TIMEOUT': 703,
+                'TIMEOUT': 704,
+                'FORCE_QUIT': 705,
+                'IN_PROGRESS': 706,
+                'ERROR': 300
+            },
+            'TEST_EXIT_CODE': {
+                'COMPLETE': 'C',
+                'TERMINATED': 'T',
+                'INCOMPLETE': 'IC',
+                'INCOMPLETE_QUIT': 'IQ',
+                'INACTIVE': 'IA',
+                'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
+            },
             beforeTransition: function (callback) {
                 // Ask the top window to start the loader.
                 iframeNotifier.parent('loading');
@@ -103,13 +121,24 @@ define([
                 this.actionCall('skip');
             },
 
-            timeout: function () {
+            timeout: function (qtiClassName) {
+                var that = this;
                 this.disableGui();
                 this.testContext.isTimeout = true;
                 this.updateTimer();
-                this.actionCall('timeout');
-            },
 
+                this.itemServiceApi.kill(function (signal) {
+                    var confirmBox = $('.timeout-modal-feedback'),
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
+                        metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
+                        
+                    confirmBox.modal({width: 500});
+                    confirmBtn.off('click').on('click', function () {
+                        confirmBox.modal('close');
+                        that.actionCall('timeout', metaData);
+                    });
+                });
+            },
             comment: function () {
                 $controls.$commentText.val('');
                 $controls.$commentArea.show();
@@ -225,6 +254,7 @@ define([
                 currentTimes = [];
                 lastDates = [];
                 timeDiffs = [];
+                $timers = $('#qti-timers > .qti-timer');
 
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
@@ -233,7 +263,7 @@ define([
 
                         // Insert QTI Timers container.
                         $controls.$timers = $('<div id="qti-timers"/>');
-                        $controls.$timers.prependTo($controls.$contentBox);
+                        $controls.$timers.prependTo($controls.$timersBox);
                         // self.formatTime(cst.seconds)
                         for (i = 0; i < this.testContext.timeConstraints.length; i++) {
 
@@ -241,19 +271,25 @@ define([
 
                             if (cst.allowLateSubmission === false) {
                                 // Set up a timer for this constraint.
-                                $('<div class="qti-timer"><span class="icon-time"></span> ' +
-                                    cst.source + ' - ' +
-                                    self.formatTime(cst.seconds) + '</div>').appendTo($controls.$timers);
+                                $('<div class="qti-timer qti-timer__type-' + cst.qtiClassName + '">'
+                                    + '<span class="qti-timer_label">' + cst.source + '</span>'
+                                    + '<span class="qti-timer_time">' + self.formatTime(cst.seconds) + '</span></div>')
+                                    .appendTo($controls.$timers);
 
                                 // Set up a timer and update it with setInterval.
                                 currentTimes[i] = cst.seconds;
                                 lastDates[i] = new Date();
                                 timeDiffs[i] = 0;
-                                var timerIndex = i;
-                                var source = cst.source;
+                                timerIndex = i;
+
+                                cst.warningTime = Number.NEGATIVE_INFINITY;
+
+                                if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
+                                    cst.warningTime = parseInt(self.testContext.timerWarning[cst.qtiClassName], 10);
+                                }
 
                                 // ~*~*~ ❙==[||||)0__    <----- SUPER CLOSURE !
-                                (function (timerIndex, source) {
+                                (function (timerIndex, cst) {
                                     timerIds[timerIndex] = setInterval(function () {
 
                                         timeDiffs[timerIndex] += (new Date()).getTime() - lastDates[timerIndex].getTime();
@@ -266,7 +302,7 @@ define([
 
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
-                                            $controls.$timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
+                                            $timers.find('.qti-timer').eq(timerIndex).html(self.formatTime(Math.round(currentTimes[timerIndex])));
                                             currentTimes[timerIndex] = 0;
                                             clearInterval(timerIds[timerIndex]);
 
@@ -278,12 +314,17 @@ define([
                                             // Not timed-out...
                                             $controls.$timers.find('.qti-timer')
                                                 .eq(timerIndex)
-                                                .html('<span class="icon-time"></span> ' + source + ' - ' + self.formatTime(Math.round(currentTimes[timerIndex])));
+                                                .find('.qti-timer_time')
+                                                .html(self.formatTime(Math.round(currentTimes[timerIndex])));
                                             lastDates[timerIndex] = new Date();
                                         }
 
+                                        if (_.isFinite(cst.warningTime) && currentTimes[timerIndex] <= cst.warningTime) {
+                                            self.timeWarning(cst);
+                                        }
+
                                     }, 1000);
-                                }(timerIndex, source));
+                                }(timerIndex, cst));
                             }
                         }
 
@@ -292,6 +333,27 @@ define([
                 }
             },
 
+            /**
+             * Mark apropriate timer by warning colors and show feedback message
+             * @param {object} cst - Time constraint
+             * @param {integer} cst.warningTime - Warning time in seconds.
+             * @param {integer} cst.qtiClassName - Class name of qti instance for which the timer is set (assessmentItemRef | assessmentSection | testPart).
+             * @param {integer} cst.seconds - Initial timer value.
+             * @returns {undefined}
+             */
+            timeWarning: function (cst) {
+                var message = '';
+                $('#qti-timers > .qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+
+                // Initial time more than warning time in config
+                if (cst.seconds > cst.warningTime) {
+                    message = moment.duration(cst.warningTime, "seconds").humanize();
+
+                    feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
+                }
+
+                cst.warningTime = Number.NEGATIVE_INFINITY;
+            },
             updateRubrics: function () {
                 $controls.$rubricBlocks.remove();
 
@@ -398,15 +460,34 @@ define([
 
                 var time = hours + ':' + minutes + ':' + seconds;
 
-                return "\u00b1 " + time;
+                return time;
             },
-
-            actionCall: function (action) {
+            /**
+             * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
+             * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
+             * @param {Sting} action - Action name 
+             * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
+             * Example: 
+             * <pre>
+             * {
+             *   "TEST" : {
+             *      "TEST_EXIT_CODE" : "T"
+             *   },
+             *   "ITEM" : {
+             *      "ITEM_EXIT_CODE" : 704
+             *   }
+             * }
+             * </pre>
+             * @returns {undefined}
+             */
+            actionCall: function (action, metaData) {
                 var self = this;
+                metaData = metaData ? {"metaData" : metaData} : {};
                 this.beforeTransition(function () {
                     $.ajax({
                         url: self.testContext[action + 'Url'],
                         cache: false,
+                        data: metaData,
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
@@ -417,6 +498,35 @@ define([
                                 self.update(testContext);
                             }
                         }
+                    });
+                });
+            },
+            /**
+             * Exit from test (after confirmation). All answered questions will be submitted.
+             * 
+             * @returns {undefined}
+             */
+            exit: function () {
+                var self = this,
+                    $confirmBox = $('.exit-modal-feedback'),
+                    message = __(
+                        "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
+                        (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
+                        self.testContext.numberCompleted.toString()
+                    ),
+                    metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
+            
+                $confirmBox.find('.message').html(message);
+                $confirmBox.modal({ width: 500 });
+            
+                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                });
+
+                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                    self.itemServiceApi.kill(function () {
+                        self.actionCall('endTestSession', metaData);
                     });
                 });
             }
@@ -445,9 +555,11 @@ define([
                     $controls: $('.qti-controls'),
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
+                    $timersBox: $('[data-control="qti-test-time"]'),
                     $timers: $('#qti-timers'),
                     $contentBox: $('#qti-content'),
-                    $sideBars: $('.test-sidebar')
+                    $sideBars: $('.test-sidebar'),
+                    $exit: $('[data-control="exit"]')
                 };
 
                 $controls.$commentAreaButtons = $controls.$commentCancel.add($controls.$commentSend);
@@ -513,7 +625,12 @@ define([
                 $controls.$commentText.click(function () {
                     TestRunner.emptyComment();
                 });
-
+                
+                $controls.$exit.click(function (e) {
+                    e.preventDefault();
+                    TestRunner.exit();
+                });
+                
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();

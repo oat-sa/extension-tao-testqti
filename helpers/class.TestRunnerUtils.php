@@ -252,7 +252,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $constraints[] = array(
                     'source' => $tc->getSource()->getIdentifier(),
                     'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
-                    'allowLateSubmission' => $tc->allowLateSubmission()
+                    'allowLateSubmission' => $tc->allowLateSubmission(),
+                    'qtiClassName' => $tc->getSource()->getQtiClassName()
                 );
             }
         }
@@ -394,6 +395,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['endTestSessionUrl'] = self::buildActionCallUrl($session, 'endTestSession', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
              
             // If the candidate is allowed to move backward e.g. first item of the test.
             $context['canMoveBackward'] = $session->canMoveBackward();
@@ -432,8 +434,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             
-            // the type of progress bar to display
             $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            if (isset($config['timerWarning'])) {
+                $context['timerWarning'] = $config['timerWarning'];
+            }
+            // the type of progress bar to display
             $context['progressIndicator'] = $config['progress-indicator'];
         }
         
