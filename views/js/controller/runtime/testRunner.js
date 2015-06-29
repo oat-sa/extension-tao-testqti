@@ -540,7 +540,7 @@ define([
                     $moveBackward: $('[data-control="move-backward"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
-                    $exit: $(parent.document.querySelectorAll('[data-control="exit"]')[0]),
+                    $exit: $(window.parent.document).find('[data-control="exit"]'),
                     $naviButtons: $('.bottom-action-bar .action'),
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
