@@ -34,7 +34,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter,  moment) {
+    function ($, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -405,7 +405,6 @@ define([
             },
 
             updateProgress: function () {
-
                 var considerProgress = this.testContext.considerProgress;
 
                 $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
@@ -599,6 +598,10 @@ define([
                     }
                 };
 
+                if(testContext.timeConstraints.length) {
+                    $controls.$topActionBar.addClass('has-timers');
+                }
+
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
 
@@ -663,6 +666,7 @@ define([
                 $controls.$topActionBar.add($controls.$bottomActionBar).animate({ opacity: 1 }, 600);
 
                 deleter($('#feedback-box'));
+                modal($('body'));
             }
         };
     });
