@@ -260,7 +260,6 @@ define([
                 currentTimes = [];
                 lastDates = [];
                 timeDiffs = [];
-                $timers;
 
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
@@ -424,7 +423,7 @@ define([
             },
 
             adjustFrame: function () {
-                var finalHeight = $(window).innerHeight() - ($controls.$actionBars.outerHeight() * $controls.$actionBars.length);
+                var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.height(finalHeight);
@@ -541,6 +540,7 @@ define([
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
                     $exit: $(window.parent.document).find('[data-control="exit"]'),
+                    $logout: $(window.parent.document).find('[data-control="logout"]'),
                     $naviButtons: $('.bottom-action-bar .action'),
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
@@ -570,14 +570,15 @@ define([
                     $rubricBlocks: $('#qti-rubrics'),
                     $contentBox: $('#qti-content'),
                     $sideBars: $('.test-sidebar'),
-                    $actionBars: $('.horizontal-action-bar:visible')
-
-
+                    $topActionBar: $('.horizontal-action-bar.top-action-bar'),
+                    $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
+
+                $controls.$logout.addClass('hidden');
+                $controls.$exit.removeClass('hidden');
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
-
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -659,7 +660,7 @@ define([
 
                 TestRunner.adjustFrame();
 
-                $controls.$actionBars.animate({ opacity: 1 }, 600);
+                $controls.$topActionBar.add($controls.$bottomActionBar).animate({ opacity: 1 }, 600);
 
                 deleter($('#feedback-box'));
             }
