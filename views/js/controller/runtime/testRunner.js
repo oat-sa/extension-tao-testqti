@@ -533,7 +533,6 @@ define([
 
         return {
             start: function (testContext) {
-
                 $controls = {
                     // navigation
                     $moveForward: $('[data-control="move-forward"]'),
@@ -541,7 +540,7 @@ define([
                     $moveBackward: $('[data-control="move-backward"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
-                    $exit: $('[data-control="exit"]'),
+                    $exit: $(window.parent.document).find('[data-control="exit"]'),
                     $naviButtons: $('.bottom-action-bar .action'),
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),

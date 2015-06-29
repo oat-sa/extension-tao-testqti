@@ -113,12 +113,6 @@ use oat\tao\helpers\Layout;
                             <span class="text"><?= __("Skip &amp; End Test"); ?></span>
                         </a>
                     </li>
-                    <li data-control="exit" class="small btn-info action" title="<?= __("Exit"); ?>">
-                        <a class="li-inner" href="#">
-                            <span class="icon-logout"></span>
-                            <span class="text"><?= __("Exit"); ?></span>
-                        </a>
-                    </li>
                 </ul>
             </div>
         </div>
