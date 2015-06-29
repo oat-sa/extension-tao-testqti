@@ -6,24 +6,6 @@
 
 .qti-test-scope {
 
-    // entry page
-    .test-listing {
-        width: 500px;
-        margin: auto;
-        h1 {
-            font-family: $headingFont;
-            @include font-size(22);
-            font-weight: normal;
-        }
-        h2 {
-            font-family: $headingFont;
-            @include font-size(18);
-            margin: 30px 0 10px;
-        }
-        .entry-point-box {
-            margin-top: 0
-        }
-    }
 
     // action bars
     .horizontal-action-bar {
@@ -46,7 +28,7 @@
                     padding-left: 0;
                 }
                 &:last-child {
-                    text-align: right;
+                    //text-align: right;
                     ul {
                         display: inline-block;
                     }
@@ -58,6 +40,13 @@
         }
         &.bottom-action-bar {
             overflow: visible;
+        }
+        &.has-timers {
+            height: 47px;
+            .progress-box,
+            .title-box {
+                padding-top: 10px;
+            }
         }
 
         // navigation elements
@@ -133,25 +122,45 @@
         display: none;
     }
 
-    .timer-box {
-        padding-top: 0 !important;
-        height: 23px;
-    }
-
-
     [data-control="exit"]{
         margin-left: 20px;
     }
 
     .qti-timer {
-        width: 140px;
         display: inline-block;
         text-align: center;
         vertical-align: top;
-        height: 23px;
-        line-height: 11px;
+        line-height: 1.2;
+        position: relative;
+        padding: 0 20px;
+        .qti-timer_label {
+            max-width: 160px;
+            @include font-size(12);
+        }
         &.qti-timer__warning {
-            color: $warning;
+            .qti-timer_time {
+                color: $warning;
+            }
+        }
+        &::before {
+            content: ' ';
+            background: white(.3);
+            width: 1px;
+            height: 20px;
+            position: absolute;
+            left: 0;
+            top: 5px
+        }
+        &:first-child {
+            &::before {
+                content: none;
+            }
+        }
+
+    }
+    &.non-lti-context {
+        .title-box {
+            display:none;
         }
     }
 }
