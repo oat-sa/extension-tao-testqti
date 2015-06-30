@@ -32,7 +32,7 @@ define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($,
     
     function initQtiTool(id, toolconfig, assessmentTestContext){
         
-        var $toolsContainer = $('.tools-box');
+        var $toolsContainer = $('.tools-box-list');
         var tplData = {
             id : id,
             navigation : false,
