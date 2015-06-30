@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 /**
  *
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sï¿½bastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
     
@@ -47,6 +47,25 @@ class Updater extends \common_ext_ExtensionUpdater {
             ));
 
             $currentVersion = '2.6.1';
+        }
+        
+        // add testrunner review screen config
+        if ($currentVersion == '2.6.1') {
+
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
+                'progress-indicator' => 'percentage',
+                'test-taker-review' => true,
+                'test-taker-review-region' => 'left',
+                'test-taker-review-section-only' => false,
+                'test-taker-review-prevents-unseen' => false,
+                'timerWarning' => array(
+                    'assessmentItemRef' => null,
+                    'assessmentSection' => 300,
+                    'testPart' => null
+                )
+            ));
+
+            $currentVersion = '2.6.2';
         }
    
         return $currentVersion;
