@@ -48,7 +48,7 @@ define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($,
         };
         var $button = $(buttonTpl(tplData));
         var amd = toolconfig.hook;
-        amd = 'taoAct/actionBar/help';
+        
         require([amd], function(hook){
             if(_.isFunction(hook.init)){
                 hook.init($button, toolconfig, assessmentTestContext);
