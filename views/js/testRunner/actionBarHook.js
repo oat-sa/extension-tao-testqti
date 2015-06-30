@@ -16,10 +16,23 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  *
  */
+
+/**
+ * This module allows adding extra buttons in the action bar of the test runner
+ * 
+ */
 define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($, _, buttonTpl){
 
     'use strict';
-
+    
+    /**
+     * Init the action bar hook from the test runner config
+     * (if any qtiTools has been registered in the config)
+     * 
+     * @param {Object} config
+     * @param {Object} assessmentTestContext - the complete state of the test
+     * @returns {undefined}
+     */
     function init(config, assessmentTestContext){
         
         if(config && config.qtiTools){
@@ -30,13 +43,25 @@ define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($,
         
     }
     
+    /**
+     * Init a test runner button from its config
+     * 
+     * @param {String} id
+     * @param {Object} toolconfig
+     * @param {String} toolconfig.label - the label to be displayed in the button
+     * @param {String} toolconfig.icon - the icon to be displayed in the button
+     * @param {String} toolconfig.hook - the amd module to be loaded to initialize the button
+     * @param {String} [toolconfig.title] - the title to be displayed in the button
+     * @param {Object} assessmentTestContext - the complete state of the test
+     * @returns {undefined}
+     */
     function initQtiTool(id, toolconfig, assessmentTestContext){
         
         var $toolsContainer = $('.tools-box-list');
         var tplData = {
             id : id,
             navigation : false,
-            title : toolconfig.label,
+            title : toolconfig.title || toolconfig.label,
             label : toolconfig.label,
             icon : toolconfig.icon
         };
