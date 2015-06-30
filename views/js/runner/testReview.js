@@ -86,6 +86,16 @@ define([
     };
 
     /**
+     * Maps of config options translated from the context object to the local options
+     * @type {Object}
+     * @private
+     */
+    var _optionsMap = {
+        'reviewSectionOnly' : 'sectionOnly',
+        'reviewPreventsUnseen' : 'preventsUnseen'
+    };
+
+    /**
      * Provides a test review manager
      * @type {{init: Function, update: Function, on: Function, off: Function, trigger: Function}}
      */
@@ -396,6 +406,20 @@ define([
         },
 
         /**
+         * Updates the local options from the provided context
+         * @param {Object} testContext The progression context
+         * @private
+         */
+        _updateOptions: function(testContext) {
+            var options = this.options;
+            _.forEach(_optionsMap, function(optionKey, contextKey) {
+                if (undefined !== testContext[contextKey]) {
+                    options[optionKey] = testContext[contextKey];
+                }
+            });
+        },
+
+        /**
          * Updates the info panel
          * @param {Object} testContext The progression context
          */
@@ -458,8 +482,7 @@ define([
          * @param {Object} testContext The progression context
          */
         update: function update(testContext) {
-            console.log(testContext);
-
+            this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
         },

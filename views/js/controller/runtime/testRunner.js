@@ -419,7 +419,9 @@ define([
             },
 
             updateTestReview: function() {
-                this.testReview.update(this.testContext);
+                if (this.testReview) {
+                    this.testReview.update(this.testContext);
+                }
             },
 
             updateProgress: function () {
@@ -492,7 +494,7 @@ define([
              *   }
              * }
              * </pre>
-             * @param {Object} extraParams - Additional parameters to sent to the server
+             * @param {Object} extraParams - Additional parameters to be sent to the server
              * @returns {undefined}
              */
             actionCall: function (action, metaData, extraParams) {
@@ -681,15 +683,17 @@ define([
 
                 TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
 
-                TestRunner.testReview = testReview($controls.$contentPanel, {
-                    region: 'left',
-                    sectionOnly: false,
-                    preventsUnseen: false
-                }).on('jump', function(event, position) {
+                if ($controls.$contentPanel.data('reviewScreen')) {
+                    TestRunner.testReview = testReview($controls.$contentPanel, {
+                        region: $controls.$contentPanel.data('reviewRegion') || 'left',
+                        sectionOnly: !!$controls.$contentPanel.data('reviewSectionOnly'),
+                        preventsUnseen: !!$controls.$contentPanel.data('reviewPreventsUnseen')
+                    }).on('jump', function(event, position) {
                         TestRunner.jump(position);
-                }).on('mark', function(event, flag, position, itemId) {
-                    TestRunner.markForReview(flag, position, itemId);
-                });
+                    }).on('mark', function(event, flag, position, itemId) {
+                        TestRunner.markForReview(flag, position, itemId);
+                    });
+                }
 
                 iframeNotifier.parent('serviceready');
 

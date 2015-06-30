@@ -1,6 +1,14 @@
 <?php
 use oat\tao\helpers\Template;
 use oat\tao\helpers\Layout;
+
+$contentPanelSetup = '';
+if (get_data('review_screen')) {
+    $contentPanelSetup .= ' data-review-screen="1"';
+}
+if (get_data('review_region')) {
+    $contentPanelSetup .= ' data-review-region="' . get_data('review_region') . '"';
+}
 ?><!doctype html>
 <html class="no-js" lang="<?= tao_helpers_I18n::getLangCode() ?>">
 <head>
@@ -53,7 +61,7 @@ use oat\tao\helpers\Layout;
         </div>
     </div>
 
-    <div class="content-panel">
+    <div class="content-panel"<?= $contentPanelSetup; ?>>
         <!--div class="test-sidebar test-sidebar-left flex-container-navi">
         </div-->
         <div class="test-item flex-container-remaining">

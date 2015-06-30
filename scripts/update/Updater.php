@@ -51,19 +51,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         // add testrunner review screen config
         if ($currentVersion == '2.6.1') {
-
-            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
-                'progress-indicator' => 'percentage',
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $extension->setConfig('testRunner', array_merge($config, array(
                 'test-taker-review' => true,
                 'test-taker-review-region' => 'left',
                 'test-taker-review-section-only' => false,
                 'test-taker-review-prevents-unseen' => false,
-                'timerWarning' => array(
-                    'assessmentItemRef' => null,
-                    'assessmentSection' => 300,
-                    'testPart' => null
-                )
-            ));
+            )));
 
             $currentVersion = '2.6.2';
         }
