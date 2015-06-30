@@ -20,6 +20,7 @@
 define([
     'jquery',
     'lodash',
+    'taoQtiTest/runner/testReview',
     'taoQtiTest/runner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
@@ -34,7 +35,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -98,6 +99,18 @@ define([
                 iframeNotifier.parent('unloading');
             },
 
+            jump: function(position) {
+                this.disableGui();
+                var that = this;
+                this.itemServiceApi.kill(function() {
+                    that.actionCall('jump', null, {position: position});
+                });
+            },
+
+            markForReview: function(flag, position, itemId) {
+                // todo
+            },
+
             moveForward: function () {
                 this.disableGui();
                 var that = this;
@@ -129,7 +142,7 @@ define([
                     var confirmBox = $('.timeout-modal-feedback'),
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
                         metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
-                        
+
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -182,6 +195,7 @@ define([
                 this.updateContext();
                 this.updateProgress();
                 this.updateNavigation();
+                this.updateTestReview();
                 this.updateInformation();
                 this.updateRubrics();
                 this.updateTools();
@@ -298,10 +312,10 @@ define([
                                             currentTimes[timerIndex] -= seconds;
                                             timeDiffs[timerIndex] = 0;
                                         }
-                                        
+
                                         $timers.eq(timerIndex)
                                             .html(self.formatTime(Math.round(currentTimes[timerIndex])));
-                                    
+
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
                                             currentTimes[timerIndex] = 0;
@@ -322,7 +336,7 @@ define([
                                 }(timerIndex, cst));
                             }
                         }
-                        
+
                         $timers = $controls.$timerWrapper.find('.qti-timer .qti-timer_time');
                         $controls.$timerWrapper.show();
                     }
@@ -404,6 +418,10 @@ define([
                 }
             },
 
+            updateTestReview: function() {
+                this.testReview.update(this.testContext);
+            },
+
             updateProgress: function () {
                 var considerProgress = this.testContext.considerProgress;
 
@@ -461,9 +479,9 @@ define([
             /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
-             * @param {Sting} action - Action name 
+             * @param {Sting} action - Action name
              * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example: 
+             * Example:
              * <pre>
              * {
              *   "TEST" : {
@@ -474,16 +492,20 @@ define([
              *   }
              * }
              * </pre>
+             * @param {Object} extraParams - Additional parameters to sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData) {
+            actionCall: function (action, metaData, extraParams) {
                 var self = this;
-                metaData = metaData ? {"metaData" : metaData} : {};
+                var params = metaData ? {"metaData" : metaData} : {};
+                if (extraParams) {
+                    params = _.assign(params, extraParams);
+                }
                 this.beforeTransition(function () {
                     $.ajax({
                         url: self.testContext[action + 'Url'],
                         cache: false,
-                        data: metaData,
+                        data: params,
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
@@ -500,7 +522,7 @@ define([
 
             /**
              * Exit from test (after confirmation). All answered questions will be submitted.
-             * 
+             *
              * @returns {undefined}
              */
             exit: function () {
@@ -512,10 +534,10 @@ define([
                         self.testContext.numberCompleted.toString()
                     ),
                     metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
-            
+
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
-            
+
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
                     $confirmBox.modal('close');
                 });
@@ -564,6 +586,7 @@ define([
                     $timerWrapper:  $('[data-control="qti-timers"]'),
 
                     // other zones
+                    $contentPanel: $('.content-panel'),
                     $controls: $('.qti-controls'),
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
@@ -641,7 +664,7 @@ define([
                     e.preventDefault();
                     TestRunner.exit();
                 });
-                
+
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
@@ -657,6 +680,16 @@ define([
                 });
 
                 TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
+
+                TestRunner.testReview = testReview($controls.$contentPanel, {
+                    region: 'left',
+                    sectionOnly: false,
+                    preventsUnseen: false
+                }).on('jump', function(event, position) {
+                        TestRunner.jump(position);
+                }).on('mark', function(event, flag, position, itemId) {
+                    TestRunner.markForReview(flag, position, itemId);
+                });
 
                 iframeNotifier.parent('serviceready');
 
