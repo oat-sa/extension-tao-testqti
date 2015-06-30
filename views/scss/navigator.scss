@@ -12,13 +12,6 @@
     -ms-user-select: none;
     user-select: none;
 
-//    &.test-sidebar-left {
-//        float: left;
-//    }
-//    &.test-sidebar-right {
-//        float: right;
-//    }
-
     ul, li {
         list-style: none;
         padding: 0;
@@ -144,6 +137,10 @@
             background-color: $uiClickableHoverBg;
             color: $textHighlight;
             padding: 2px 8px;
+
+            &:hover {
+                background-color: whiten($uiClickableHoverBg, .2);
+            }
         }
     }
     .qti-navigator-part:not(:first-child) {
@@ -152,9 +149,13 @@
 
     .qti-navigator-section {
         & > .qti-navigator-label {
-            background-color: $uiClickableDefaultBg;
+            background-color: blacken($uiClickableDefaultBg, .1);
             color: $textColor;
             padding: 2px 2px 2px 8px;
+
+            &:hover {
+                background-color: blacken($uiClickableDefaultBg, .2);
+            }
         }
     }
     .qti-navigator-section:not(:first-child) {
@@ -174,6 +175,10 @@
         &.active {
             background-color: $uiClickableActiveBg;
             color: $textHighlight;
+        }
+
+        &:hover {
+            background-color: whiten($uiClickableActiveBg, .2);
         }
     }
 }
