@@ -31,7 +31,12 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 
     const AMD = 'taoQtiTest/controller/runtime/testRunner';
 
-    //put your code here
+    /**
+     * Register a qti tools in the client lib config registry
+     * 
+     * @param string $name
+     * @param array $toolConfig
+     */
     public function registerQtiTools($name, $toolConfig){
         $newConfig = array('qtiTools' => array());
         //@todo validate tool config structure before registration
