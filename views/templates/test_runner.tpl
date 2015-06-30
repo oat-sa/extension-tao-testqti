@@ -10,6 +10,7 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('test-runner.css', 'taoQtiTest') ?>"/>
+    <link rel="stylesheet" href="<?= Template::css('navigator.css', 'taoQtiTest') ?>"/>
 
     <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
         <link rel="stylesheet" href="<?= $themeUrl ?>"/>

@@ -1,0 +1,179 @@
+@import "inc/bootstrap";
+
+.qti-navigator {
+    border-right: 1px solid;
+    font-size: 12px;
+    padding: 8px;
+    width: 200px;
+
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+//    &.test-sidebar-left {
+//        float: left;
+//    }
+//    &.test-sidebar-right {
+//        float: right;
+//    }
+
+    ul, li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    span {
+        display: inline-block;
+    }
+
+    .collapsed .collapsible-panel, .masked {
+        display: none!important;
+    }
+
+    .qti-navigator-label {
+        display: block;
+    }
+
+    .qti-navigator-icon {
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    .unseen {
+        .qti-navigator-icon {
+            cursor: default;
+        }
+    }
+
+    .icon-answered:before {
+        content: "\e69f";
+    }
+    .icon-viewed:before {
+        content: "\e631";
+    }
+    .icon-flagged:before {
+        content: "\e64e";
+    }
+    .icon-unanswered:before,
+    .icon-unseen:before {
+        content: "\e69e";
+    }
+
+    .collapsible, .qti-navigator-item {
+        .qti-navigator-label {
+            cursor: pointer;
+        }
+    }
+
+    .qti-navigator-counter {
+        text-align: right;
+        float: right;
+        font: .9em Verdana,Geneva,sans-serif;
+    }
+
+    .qti-navigator-message {
+
+    }
+
+    .qti-navigator-actions {
+        text-align: center;
+    }
+
+    .qti-navigator-info {
+        background-color: $uiOverlay;
+
+        & > .qti-navigator-label {
+            background-color: $uiHeaderBg;
+            color: $textColor;
+            padding: 0 8px;
+        }
+
+        ul {
+            padding: 4px;
+        }
+    }
+
+    .qti-navigator-filters {
+        background-color: $canvas;
+        margin: 10px 0;
+        padding: 4px;
+        text-align: center;
+
+        ul {
+            display: inline-block;
+        }
+
+        li {
+            display: inline;
+            padding: 0;
+        }
+    }
+
+    .qti-navigator-filter {
+        span {
+            @include simple-border($canvas);
+            @include border-radius(2);
+            @include font-size(12);
+            display: inline-block;
+            line-height: 1.8rem;
+            cursor: pointer;
+            padding: 1px 8px;
+
+            &:hover {
+                @include simple-border($uiGeneralContentBorder);
+            }
+        }
+        &.active {
+            span {
+                border-style: inset;
+            }
+        }
+    }
+
+    .qti-navigator-linear,
+    .qti-navigator-linear-part {
+        padding: 4px;
+        background-color: whiten($warning, .8);
+    }
+
+    .qti-navigator-part {
+        & > .qti-navigator-label {
+            background-color: $uiClickableHoverBg;
+            color: $textHighlight;
+            padding: 2px 8px;
+        }
+    }
+    .qti-navigator-part:not(:first-child) {
+        margin-top: 1px;
+    }
+
+    .qti-navigator-section {
+        & > .qti-navigator-label {
+            background-color: $uiClickableDefaultBg;
+            color: $textColor;
+            padding: 2px 2px 2px 8px;
+        }
+    }
+    .qti-navigator-section:not(:first-child) {
+        margin-top: 1px;
+    }
+
+    .qti-navigator-item {
+        margin: 1px 0;
+        padding-left: 10px;
+
+        .qti-navigator-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &.active {
+            background-color: $uiClickableActiveBg;
+            color: $textHighlight;
+        }
+    }
+}
