@@ -847,7 +847,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
             // Set the test label as title.
             $doc->documentElement->setAttribute('title', $test->getLabel());
-            $doc->documentElement->setAttribute('identifier', str_replace('_', '-', tao_helpers_Display::textCleaner($test->getLabel(), '*', 32)));
+
+            //generate a valid qti identifier
+            $identifier = tao_helpers_Display::textCleaner($test->getLabel(), '*', 32);
+            $identifier = str_replace('_', '-', $identifier);
+            if(preg_match('/^[0-9]/', $identifier)){
+                $identifier = '_'.$identifier;
+            }
+            $doc->documentElement->setAttribute('identifier', $identifier);
+            
             $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
 
             $filePath = $dirPath . TAOQTITEST_FILENAME;
