@@ -18,6 +18,8 @@
  */
 
 define([
+	'module',
+	'taoQtiTest/testRunner/actionBarHook',
     'jquery',
     'lodash',
     'taoQtiTest/runner/progressUpdater',
@@ -34,10 +36,11 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function (module, actionBarHook, $, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
-
+	
+	var config = module.config();
     var timerIds = [],
         currentTimes = [],
         lastDates = [],
@@ -531,6 +534,9 @@ define([
 
         return {
             start: function (testContext) {
+
+				actionBarHook.init(config, testContext);
+
                 $controls = {
                     // navigation
                     $moveForward: $('[data-control="move-forward"]'),

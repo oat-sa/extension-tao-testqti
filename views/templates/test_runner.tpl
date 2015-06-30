@@ -66,7 +66,7 @@ use oat\tao\helpers\Layout;
 
     <div class="plain action-bar content-action-bar horizontal-action-bar bottom-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft comment-toggle-box">
+            <div class="lft tools-box">
                 <ul class="plain">
                     <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
                         <a class="li-inner" href="#">
