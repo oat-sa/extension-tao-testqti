@@ -289,6 +289,28 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+
+    /**
+     * Jump to an item in the Assessment Test Session flow.
+     *
+     */
+    public function jumpTo() {
+        $this->beforeAction();
+        $session = $this->getTestSession();
+
+        try {
+            $session->jumpTo(intval($this->getRequestParameter('position')));
+
+            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            }
+        }
+        catch (AssessmentTestSessionException $e) {
+            $this->handleAssessmentTestSessionException($e);
+        }
+
+        $this->afterAction();
+    }
 	
 	/**
 	 * Move forward in the Assessment Test Session flow.
