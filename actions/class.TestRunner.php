@@ -282,6 +282,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
             taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
         }
+
+        // loads the specific config
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $this->setData('review_screen', !empty($config['test-taker-review']));
+        $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
         
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setData('client_timeout', $this->getClientTimeout());
@@ -289,6 +294,29 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+
+    /**
+     * Mark an item for review in the Assessment Test Session flow.
+     *
+     */
+    public function markForReview() {
+        $this->beforeAction();
+        $testSession = $this->getTestSession();
+
+        $itemPosition = intval($this->getRequestParameter('position'));
+        $flag = $this->getRequestParameter('flag');
+        if (is_numeric($flag)) {
+            $flag = !!(intval($flag));
+        } else {
+            $flag = 'false' != strtolower($flag);
+        }
+
+        $result = taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+        
+        echo json_encode(array(
+           'success' => $result 
+        ));
+    }
 
     /**
      * Jump to an item in the Assessment Test Session flow.

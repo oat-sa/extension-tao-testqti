@@ -108,7 +108,17 @@ define([
             },
 
             markForReview: function(flag, position, itemId) {
-                // todo
+                $.ajax({
+                    url: this.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    data: {
+                        flag: flag,
+                        position: position,
+                        id: itemId
+                    }
+                });
             },
 
             moveForward: function () {

@@ -25,6 +25,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\Jump;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -338,6 +339,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $context['isAdaptive'] = false;
          
         if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
+            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $reviewScreen = !empty($config['test-taker-review']);
+            
             // The navigation mode.
             $context['navigationMode'] = $session->getCurrentNavigationMode();
         
@@ -374,7 +378,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Test Part title.
             $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
              
-            
+            // Current Section title.
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
             // Number of items composing the test session.
@@ -390,7 +394,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['considerProgress'] = self::considerProgress($testMeta);
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
-            $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
+            if ($reviewScreen) {
+                $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+                $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            }
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
             $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -405,7 +412,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['jumps'] = self::buildPossibleJumps($session);
 
             // The navigation map in order to build the test navigator
-            $context['navigatorMap'] = self::getNavigatorMap($session);
+            if ($reviewScreen) {
+                $context['navigatorMap'] = self::getNavigatorMap($session);
+            }
         
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
             $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
@@ -438,15 +447,123 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             
-            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-            if (isset($config['timerWarning'])) {
-                $context['timerWarning'] = $config['timerWarning'];
+            // loads the specific config into the context object
+            $configMap = array(
+                // name in config                   => name in context object
+                'timerWarning'                      => 'timerWarning',
+                'progress-indicator'                => 'progressIndicator',
+                'test-taker-review'                 => 'reviewScreen',
+                'test-taker-review-region'          => 'reviewRegion',
+                'test-taker-review-section-only'    => 'reviewSectionOnly',
+                'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
+            );
+            foreach ($configMap as $configKey => $contextKey) {
+                if (isset($config[$configKey])) {
+                    $context[$contextKey] = $config[$configKey];
+                }    
             }
-            // the type of progress bar to display
-            $context['progressIndicator'] = $config['progress-indicator'];
         }
         
         return $context;
+    }
+
+    /**
+     * Gets a call identifier for a particular item in the test
+     * @param AssessmentTestSession $session
+     * @param string|Jump $itemPosition
+     * @return null|string
+     */
+    static public function getItemCallId(AssessmentTestSession $session, $itemPosition) {
+        $sessionId = $session->getSessionId();
+
+        $transmissionId = null;
+        $itemSession = null;
+        
+        if ($itemPosition && $itemPosition instanceof Jump) {
+            $itemSession = $itemPosition->getItemSession();
+            $routeItem = $itemPosition->getTarget();
+            $itemRef = $routeItem->getAssessmentItemRef();
+        } else {
+            $jumps = $session->getPossibleJumps();
+            foreach($jumps as $jump) {
+                if ($itemPosition == $jump->getPosition()) {
+                    $itemSession = $jump->getItemSession();
+                    $routeItem = $jump->getTarget();
+                    $itemRef = $routeItem->getAssessmentItemRef();
+                    break;
+                }
+            }
+        }
+
+        if ($itemSession) {
+            $occurrence = $routeItem->getOccurence();
+            $transmissionId = "${sessionId}.${itemRef}.${occurrence}";
+        }
+        
+        return $transmissionId;
+    }
+
+    /**
+     * Sets an item to be reviewed
+     * @param AssessmentTestSession $session
+     * @param int $itemPosition
+     * @param bool $flag
+     * @return bool
+     * @throws common_exception_Error
+     */
+    static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
+        $result = false;
+        
+        $transmissionId = self::getItemCallId($session, $itemPosition);
+        
+        if ($transmissionId) {
+            $serviceService = tao_models_classes_service_StateStorage::singleton();
+            $userUri = common_session_SessionManager::getSession()->getUserUri();
+            $state = $serviceService->get($userUri, $transmissionId);
+
+            if ($state) {
+                $state = json_decode($state, true);
+            } else {
+                $state = array();
+            }
+
+            $state['markForReview'] = $flag;
+            $serviceService->set($userUri, $transmissionId, json_encode($state));
+            $result = true;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Gets the marked for review state of an item
+     * @param AssessmentTestSession $session
+     * @param int $itemPosition
+     * @return bool
+     * @throws common_exception_Error
+     */
+    static public function getItemFlag(AssessmentTestSession $session, $itemPosition) {
+        $result = false;
+        
+        $transmissionId = self::getItemCallId($session, $itemPosition);
+        
+        if ($transmissionId) {
+            $serviceService = tao_models_classes_service_StateStorage::singleton();
+            $userUri = common_session_SessionManager::getSession()->getUserUri();
+            $state = $serviceService->get($userUri, $transmissionId);
+
+            if ($state) {
+                $state = json_decode($state, true);
+            } else {
+                $state = array();
+            }
+
+            if (isset($state['markForReview'])) {
+                $result = $state['markForReview'];
+            }
+        }
+        
+        return $result;
     }
 
     /**
@@ -480,7 +597,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 'remainingAttempts' => $itemSession->getRemainingAttempts(),
                 'answered' => $itemSession->isResponded(),
                 'viewed' => $itemSession->isPresented(),
-                'flagged' => false, // todo
+                'flagged' => self::getItemFlag($session, $jump),
                 'position' => $jump->getPosition()
             );
         }
