@@ -438,6 +438,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             if (isset($config['timerWarning'])) {
                 $context['timerWarning'] = $config['timerWarning'];
             }
+            $context['exitButton'] = isset($config['exitButton']) && $config['exitButton'];
             // the type of progress bar to display
             $context['progressIndicator'] = $config['progress-indicator'];
         }
