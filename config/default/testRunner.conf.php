@@ -53,5 +53,5 @@ return array(
      * Prevents the test taker to access unseen items.
      * @type boolean
      */
-    'test-taker-review-prevents-unseen' => false
+    'test-taker-review-prevents-unseen' => true
 );

@@ -57,7 +57,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'test-taker-review' => false,
                 'test-taker-review-region' => 'left',
                 'test-taker-review-section-only' => false,
-                'test-taker-review-prevents-unseen' => false,
+                'test-taker-review-prevents-unseen' => true,
             )));
 
             $currentVersion = '2.6.2';
