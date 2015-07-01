@@ -36,7 +36,7 @@ use qtism\runtime\tests\Jump;
 class taoQtiTest_helpers_TestRunnerUtils {
     
     /**
-     * Get the ServiceCall object represeting how to call the current Assessment Item to be
+     * Get the ServiceCall object representing how to call the current Assessment Item to be
      * presented to a candidate in a given Assessment Test $session.
      *
      * @param AssessmentTestSession $session An AssessmentTestSession Object.
@@ -340,7 +340,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
          
         if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
             $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-            $reviewScreen = !empty($config['test-taker-review']);
             
             // The navigation mode.
             $context['navigationMode'] = $session->getCurrentNavigationMode();
@@ -394,10 +393,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['considerProgress'] = self::considerProgress($testMeta);
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
-            if ($reviewScreen) {
-                $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-                $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            }
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
             $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -411,9 +406,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // The places in the test session where the candidate is allowed to jump to.
             $context['jumps'] = self::buildPossibleJumps($session);
 
-            // The navigation map in order to build the test navigator
-            if ($reviewScreen) {
+            // The test review screen setup
+            if (!empty($config['test-taker-review'])) {
+                // The navigation map in order to build the test navigator
                 $context['navigatorMap'] = self::getNavigatorMap($session);
+
+                // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
+                $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+                $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             }
         
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
@@ -477,25 +477,22 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $sessionId = $session->getSessionId();
 
         $transmissionId = null;
-        $itemSession = null;
+        $routeItem = null;
         
         if ($itemPosition && $itemPosition instanceof Jump) {
-            $itemSession = $itemPosition->getItemSession();
             $routeItem = $itemPosition->getTarget();
-            $itemRef = $routeItem->getAssessmentItemRef();
         } else {
             $jumps = $session->getPossibleJumps();
             foreach($jumps as $jump) {
                 if ($itemPosition == $jump->getPosition()) {
-                    $itemSession = $jump->getItemSession();
                     $routeItem = $jump->getTarget();
-                    $itemRef = $routeItem->getAssessmentItemRef();
                     break;
                 }
             }
         }
-
-        if ($itemSession) {
+        
+        if ($routeItem) {
+            $itemRef = $routeItem->getAssessmentItemRef();
             $occurrence = $routeItem->getOccurence();
             $transmissionId = "${sessionId}.${itemRef}.${occurrence}";
         }
@@ -504,9 +501,44 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
+     * Gets the state of a particular item
+     * @param string $serviceCallId
+     * @return array
+     * @throws common_exception_Error
+     */
+    static public function getItemState($serviceCallId) {
+        $state = tao_models_classes_service_StateStorage::singleton()->get(
+            common_session_SessionManager::getSession()->getUserUri(),
+            $serviceCallId
+        );
+        
+        if ($state) {
+            $state = json_decode($state, true);
+        } else {
+            $state = array();
+        }
+        
+        return $state;
+    }
+
+    /**
+     * Sets the state of a particular item
+     * @param string $serviceCallId
+     * @param array $state
+     * @throws common_exception_Error
+     */
+    static public function setItemState($serviceCallId, $state) {
+        tao_models_classes_service_StateStorage::singleton()->set(
+            common_session_SessionManager::getSession()->getUserUri(),
+            $serviceCallId,
+            json_encode($state)
+        );
+    }
+
+    /**
      * Sets an item to be reviewed
      * @param AssessmentTestSession $session
-     * @param int $itemPosition
+     * @param string|Jump $itemPosition
      * @param bool $flag
      * @return bool
      * @throws common_exception_Error
@@ -514,21 +546,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
         $result = false;
         
-        $transmissionId = self::getItemCallId($session, $itemPosition);
-        
-        if ($transmissionId) {
-            $serviceService = tao_models_classes_service_StateStorage::singleton();
-            $userUri = common_session_SessionManager::getSession()->getUserUri();
-            $state = $serviceService->get($userUri, $transmissionId);
-
-            if ($state) {
-                $state = json_decode($state, true);
-            } else {
-                $state = array();
-            }
-
+        $serviceCallId = self::getItemCallId($session, $itemPosition);
+        if ($serviceCallId) {
+            $state = self::getItemState($serviceCallId);
             $state['markForReview'] = $flag;
-            $serviceService->set($userUri, $transmissionId, json_encode($state));
+            self::setItemState($serviceCallId, $state);
             $result = true;
         }
         
@@ -538,26 +560,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
     /**
      * Gets the marked for review state of an item
      * @param AssessmentTestSession $session
-     * @param int $itemPosition
+     * @param string|Jump $itemPosition
      * @return bool
      * @throws common_exception_Error
      */
     static public function getItemFlag(AssessmentTestSession $session, $itemPosition) {
         $result = false;
-        
-        $transmissionId = self::getItemCallId($session, $itemPosition);
-        
-        if ($transmissionId) {
-            $serviceService = tao_models_classes_service_StateStorage::singleton();
-            $userUri = common_session_SessionManager::getSession()->getUserUri();
-            $state = $serviceService->get($userUri, $transmissionId);
 
-            if ($state) {
-                $state = json_decode($state, true);
-            } else {
-                $state = array();
-            }
-
+        $serviceCallId = self::getItemCallId($session, $itemPosition);
+        if ($serviceCallId) {
+            $state = self::getItemState($serviceCallId);
             if (isset($state['markForReview'])) {
                 $result = $state['markForReview'];
             }

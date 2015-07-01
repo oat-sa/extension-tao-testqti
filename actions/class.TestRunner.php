@@ -303,19 +303,22 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->beforeAction();
         $testSession = $this->getTestSession();
 
-        $itemPosition = intval($this->getRequestParameter('position'));
-        $flag = $this->getRequestParameter('flag');
-        if (is_numeric($flag)) {
-            $flag = !!(intval($flag));
-        } else {
-            $flag = 'false' != strtolower($flag);
+        try {
+            $itemPosition = intval($this->getRequestParameter('position'));
+            $flag = $this->getRequestParameter('flag');
+            if (is_numeric($flag)) {
+                $flag = !!(intval($flag));
+            } else {
+                $flag = 'false' != strtolower($flag);
+            }
+
+            taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+        }
+        catch (AssessmentTestSessionException $e) {
+            $this->handleAssessmentTestSessionException($e);
         }
 
-        $result = taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
-        
-        echo json_encode(array(
-           'success' => $result 
-        ));
+        $this->afterAction();
     }
 
     /**

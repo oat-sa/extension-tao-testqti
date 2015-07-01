@@ -107,16 +107,24 @@ define([
                 });
             },
 
-            markForReview: function(flag, position, itemId) {
+            markForReview: function(flag, position) {
+                var that = this;
+                this.disableGui();
+
                 $.ajax({
                     url: this.testContext.markForReviewUrl,
                     cache: false,
                     async: true,
                     type: 'POST',
+                    dataType: 'json',
                     data: {
                         flag: flag,
-                        position: position,
-                        id: itemId
+                        position: position
+                    },
+                    success: function(testContext) {
+                        that.setTestContext(testContext);
+                        that.updateTestReview();
+                        that.enableGui();
                     }
                 });
             },
@@ -192,6 +200,11 @@ define([
                 });
             },
 
+            setTestContext: function(testContext) {
+                this.testContext = testContext;
+                this.itemServiceApi = eval(testContext.itemServiceApiCall);
+            },
+
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -199,9 +212,7 @@ define([
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
 
-                this.testContext = testContext;
-                this.itemServiceApi = eval(testContext.itemServiceApiCall);
-
+                this.setTestContext(testContext);
                 this.updateContext();
                 this.updateProgress();
                 this.updateNavigation();
@@ -700,8 +711,8 @@ define([
                         preventsUnseen: !!$controls.$contentPanel.data('reviewPreventsUnseen')
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
-                    }).on('mark', function(event, flag, position, itemId) {
-                        TestRunner.markForReview(flag, position, itemId);
+                    }).on('mark', function(event, flag, position) {
+                        TestRunner.markForReview(flag, position);
                     });
                 }
 
