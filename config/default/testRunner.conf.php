@@ -33,7 +33,7 @@ return array(
      * Enables the test taker review screen
      * @type boolean
      */
-    'test-taker-review' => true,
+    'test-taker-review' => false,
 
     /**
      * Position of the test taker review screen. Can be:

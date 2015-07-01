@@ -54,7 +54,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $extension->setConfig('testRunner', array_merge($config, array(
-                'test-taker-review' => true,
+                'test-taker-review' => false,
                 'test-taker-review-region' => 'left',
                 'test-taker-review-section-only' => false,
                 'test-taker-review-prevents-unseen' => false,
