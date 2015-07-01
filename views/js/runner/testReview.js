@@ -51,6 +51,8 @@ define([
      */
     var _selectors = {
         component : '.qti-navigator',
+        infoPanel : '.qti-navigator-info',
+        infoPanelLabels : '.qti-navigator-info > .qti-navigator-label',
         parts : '.qti-navigator-part',
         partLabels : '.qti-navigator-part > .qti-navigator-label',
         sections : '.qti-navigator-section',
@@ -166,6 +168,12 @@ define([
          */
         _initEvents: function() {
             var that = this;
+
+            // click on the info panel title: toggle the related panel
+            this.$container.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
+                var $panel = $(this).closest(_selectors.infoPanel);
+                that._togglePanel($panel, _selectors.infoPanel);
+            });
 
             // click on a part title: toggle the related panel
             this.$tree.on('click' + _selectors.component, _selectors.partLabels, function() {

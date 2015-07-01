@@ -1,7 +1,7 @@
         <div id="qti-navigator" class="test-sidebar test-sidebar-{{region}} flex-container-navi qti-navigator">
-            <div id="qti-navigator-info" class="qti-navigator-info">
-                <span class="qti-navigator-label">{{__ 'Test navigator'}}</span>
-                <ul>
+            <div id="qti-navigator-info" class="qti-navigator-info collapsible">
+                <span class="qti-navigator-label">{{__ 'Test status'}}</span>
+                <ul class="collapsible-panel">
                     <li id="qti-navigator-answered">
                         <span class="qti-navigator-label"><span class="qti-navigator-icon icon-answered"></span>{{__ 'Answered'}}<span class="qti-navigator-counter">-/-</span></span>
                     </li>
