@@ -26,5 +26,7 @@ return array(
         'assessmentItemRef' => null,
         'assessmentSection' => 300,
         'testPart' => null
-    )
+    ),
+    'progress-indicator' => 'percentage',
+    'exitButton'=>false
 );

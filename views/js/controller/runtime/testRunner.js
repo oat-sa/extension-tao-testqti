@@ -573,8 +573,8 @@ define([
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
 
-                $controls.$logout.addClass('hidden');
-                $controls.$exit.removeClass('hidden');
+                $controls.$logout.toggleClass('hidden', testContext['exitButton']);
+                $controls.$exit.toggleClass('hidden', !testContext['exitButton']);
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
