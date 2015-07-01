@@ -51,7 +51,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($currentVersion == '2.6.1') {
             $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-            $config['exitButton'] = true;
+            $config['exitButton'] = false;
             \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $config);
 
             $currentVersion = '2.6.2';

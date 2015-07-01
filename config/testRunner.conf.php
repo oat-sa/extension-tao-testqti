@@ -25,6 +25,7 @@ return array(
    'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => 300,
-        'testPart' => null
+        'testPart' => null,
+        'exitButton' => false
     )
 );
