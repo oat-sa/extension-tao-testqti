@@ -409,7 +409,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // The test review screen setup
             if (!empty($config['test-taker-review'])) {
                 // The navigation map in order to build the test navigator
-                $context['navigatorMap'] = self::getNavigatorMap($session);
+                $navigator = self::getNavigatorMap($session);
+                $context['navigatorMap'] = $navigator['map'];
+                $context['numberReview'] = $navigator['flagged'];
 
                 // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
                 $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -582,10 +584,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * Get the section map for navigation between test parts, sections and items.
      *
      * @param AssessmentTestSession $session
-     * @param $jumps
-     * @param AssessmentSection $activePart The currently active test part
-     * @param array $completed An array of completed items
-     * @return array An of navigator map (parts, sections, items so on)
+     * @return array A navigator map (parts, sections, items so on)
      */
     static private function getNavigatorMap(AssessmentTestSession $session) {
 
@@ -598,6 +597,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
 
         $jumpsMap = array();
+        $numberFlagged = 0;
         foreach ($jumps as $jump) {
             $routeItem = $jump->getTarget();
             $partId = $routeItem->getTestPart()->getIdentifier();
@@ -605,13 +605,18 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
 
             $itemSession = $jump->getItemSession();
+            $flagged = self::getItemFlag($session, $jump);
             $jumpsMap[$partId][$sectionId][$itemId] = array(
                 'remainingAttempts' => $itemSession->getRemainingAttempts(),
                 'answered' => $itemSession->isResponded(),
                 'viewed' => $itemSession->isPresented(),
-                'flagged' => self::getItemFlag($session, $jump),
+                'flagged' => $flagged,
                 'position' => $jump->getPosition()
             );
+            
+            if ($flagged) {
+                $numberFlagged ++;
+            }
         }
 
         // the active test-part identifier
@@ -695,7 +700,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $testParts[$id] = false;
         }
 
-        return $returnValue;
+        return array(
+            'map' => $returnValue,
+            'flagged' => $numberFlagged,
+        );
     }
     
     /**
