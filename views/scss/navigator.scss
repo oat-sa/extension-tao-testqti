@@ -56,7 +56,7 @@
     }
 
     .collapsible, .qti-navigator-item {
-        .qti-navigator-label {
+        & > .qti-navigator-label {
             cursor: pointer;
         }
     }
