@@ -466,7 +466,10 @@ define([
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
-                    $controls.$sideBars.height(finalHeight);
+                    $controls.$sideBars.each(function() {
+                        var $sideBar = $(this);
+                        $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
+                    });
                 }
             },
 
@@ -720,6 +723,7 @@ define([
                     }).on('mark', function(event, flag, position) {
                         TestRunner.markForReview(flag, position);
                     });
+                    $controls.$sideBars = $('.test-sidebar');
                 }
 
                 iframeNotifier.parent('serviceready');
