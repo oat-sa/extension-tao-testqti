@@ -118,8 +118,8 @@ define([
             var insertMethod = putOnRight ? 'append' : 'prepend';
 
             // clean the DOM if the init method is called after initialisation
-            if (this.$container) {
-                this.$container.empty();
+            if (this.$component) {
+                this.$component.remove();
             }
 
             // build the component structure and inject it into the DOM
@@ -145,21 +145,23 @@ define([
          * @private
          */
         _loadDOM: function() {
+            this.$component = this.$container.find(_selectors.component);
+
             // access to info panel displaying counters
-            this.$infoAnswered = this.$container.find('#qti-navigator-answered ' + _selectors.counters);
-            this.$infoViewed = this.$container.find('#qti-navigator-viewed ' + _selectors.counters);
-            this.$infoUnanswered = this.$container.find('#qti-navigator-unanswered ' + _selectors.counters);
-            this.$infoFlagged = this.$container.find('#qti-navigator-flagged ' + _selectors.counters);
+            this.$infoAnswered = this.$component.find('#qti-navigator-answered ' + _selectors.counters);
+            this.$infoViewed = this.$component.find('#qti-navigator-viewed ' + _selectors.counters);
+            this.$infoUnanswered = this.$component.find('#qti-navigator-unanswered ' + _selectors.counters);
+            this.$infoFlagged = this.$component.find('#qti-navigator-flagged ' + _selectors.counters);
 
             // access to filter switches
-            this.$filterBar = this.$container.find('#qti-navigator-filters');
+            this.$filterBar = this.$component.find('#qti-navigator-filters');
             this.$filters = this.$filterBar.find('li');
 
             // access to the tree of parts/sections/items
-            this.$tree = this.$container.find('#qti-navigator-tree');
+            this.$tree = this.$component.find('#qti-navigator-tree');
 
             // access to the panel displayed when a linear part is reached
-            this.$linearState = this.$container.find('#qti-navigator-linear');
+            this.$linearState = this.$component.find('#qti-navigator-linear');
         },
 
         /**
@@ -170,15 +172,22 @@ define([
             var that = this;
 
             // click on the info panel title: toggle the related panel
-            this.$container.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
+            this.$component.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
+                if (that.disabled) {
+                    return;
+                }
+
                 var $panel = $(this).closest(_selectors.infoPanel);
                 that._togglePanel($panel, _selectors.infoPanel);
             });
 
             // click on a part title: toggle the related panel
             this.$tree.on('click' + _selectors.component, _selectors.partLabels, function() {
-                var $panel = $(this).closest(_selectors.parts);
+                if (that.disabled) {
+                    return;
+                }
 
+                var $panel = $(this).closest(_selectors.parts);
                 var open = that._togglePanel($panel, _selectors.parts);
 
                 if (open) {
@@ -192,6 +201,10 @@ define([
 
             // click on a section title: toggle the related panel
             this.$tree.on('click' + _selectors.component, _selectors.sectionLabels, function() {
+                if (that.disabled) {
+                    return;
+                }
+
                 var $panel = $(this).closest(_selectors.sections);
 
                 that._togglePanel($panel, _selectors.sections);
@@ -199,8 +212,13 @@ define([
 
             // click on an item: jump to the position
             this.$tree.on('click' + _selectors.component, _selectors.itemLabels, function(event) {
+                if (that.disabled) {
+                    return;
+                }
+
                 var $item = $(this).closest(_selectors.items);
                 var $target;
+
                 if (!$item.hasClass(_cssCls.disabled)) {
                     $target = $(event.target);
                     if ($target.is(_selectors.icons)) {
@@ -216,7 +234,12 @@ define([
 
             // click on the start button inside a linear part: jump to the position
             this.$tree.on('click' + _selectors.component, _selectors.linearStart, function() {
+                if (that.disabled) {
+                    return;
+                }
+
                 var $btn = $(this);
+                
                 if (!$btn.hasClass(_cssCls.disabled)) {
                     $btn.addClass(_cssCls.disabled);
                     that._jump($btn);
@@ -225,6 +248,10 @@ define([
 
             // click on a filter button
             this.$filterBar.on('click' + _selectors.component, 'li', function() {
+                if (that.disabled) {
+                    return;
+                }
+
                 var $btn = $(this);
                 var mode = $btn.data('mode');
 
@@ -496,12 +523,28 @@ define([
         },
 
         /**
+         * Disables the component
+         */
+        disable: function disable() {
+            this.disabled = true;
+            this.$component.addClass(_cssCls.disabled);
+        },
+
+        /**
+         * Enables the component
+         */
+        enable: function enable() {
+            this.disabled = false;
+            this.$component.removeClass(_cssCls.disabled);
+        },
+
+        /**
          * Install an event handler on the underlying DOM element
          * @param {String} eventName
          * @returns {testReview}
          */
         on: function on(eventName) {
-            var dom = this.$container;
+            var dom = this.$component;
             if (dom) {
                 dom.on.apply(dom, arguments);
             }
@@ -515,7 +558,7 @@ define([
          * @returns {testReview}
          */
         off: function off(eventName) {
-            var dom = this.$container;
+            var dom = this.$component;
             if (dom) {
                 dom.off.apply(dom, arguments);
             }
@@ -530,7 +573,7 @@ define([
          * @returns {testReview}
          */
         trigger : function trigger(eventName, extraParameters) {
-            var dom = this.$container;
+            var dom = this.$component;
 
             if (undefined === extraParameters) {
                 extraParameters = [];

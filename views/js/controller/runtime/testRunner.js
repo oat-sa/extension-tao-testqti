@@ -472,10 +472,16 @@ define([
 
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
+                if (this.testReview) {
+                    this.testReview.disable();
+                }
             },
 
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
+                if (this.testReview) {
+                    this.testReview.enable();
+                }
             },
 
             formatTime: function (totalSeconds) {
