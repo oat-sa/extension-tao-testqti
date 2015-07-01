@@ -573,7 +573,7 @@ define([
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
 
-                $controls.$logout.addClass('hidden');
+                $controls.$logout.toggleClass('hidden', testContext['exitButton']);
                 $controls.$exit.toggleClass('hidden', !testContext['exitButton']);
 
                 // title
