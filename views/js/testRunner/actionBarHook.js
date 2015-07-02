@@ -21,10 +21,17 @@
  * This module allows adding extra buttons in the action bar of the test runner
  * 
  */
-define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($, _, buttonTpl){
+define([
+    'jquery',
+    'lodash',
+    'core/errorHandler',
+    'tpl!taoQtiTest/testRunner/tpl/button'
+], function($, _, errorHandler, buttonTpl){
 
     'use strict';
-    
+
+    var _ns = '.actionBarHook';
+
     /**
      * Init the action bar hook from the test runner config
      * (if any qtiTools has been registered in the config)
@@ -34,13 +41,17 @@ define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($,
      * @returns {undefined}
      */
     function init(config, assessmentTestContext){
-        
+
         if(config && config.qtiTools){
             _.forIn(config.qtiTools, function(toolconfig, id){
                 initQtiTool(id, toolconfig, assessmentTestContext);
             });
         }
-        
+
+    }
+
+    function isValid(toolconfig){
+        return _.isObject(toolconfig) && toolconfig.label && toolconfig.hook;
     }
     
     /**
@@ -49,37 +60,52 @@ define(['jquery', 'lodash', 'tpl!taoQtiTest/testRunner/tpl/button'], function($,
      * @param {String} id
      * @param {Object} toolconfig
      * @param {String} toolconfig.label - the label to be displayed in the button
-     * @param {String} toolconfig.icon - the icon to be displayed in the button
      * @param {String} toolconfig.hook - the amd module to be loaded to initialize the button
+     * @param {String} [toolconfig.icon] - the icon to be displayed in the button
      * @param {String} [toolconfig.title] - the title to be displayed in the button
      * @param {Object} assessmentTestContext - the complete state of the test
+     * @fires ready.actionBarHook when the hook has been initialized
      * @returns {undefined}
      */
-    function initQtiTool(id, toolconfig, assessmentTestContext){
-        
-        var $toolsContainer = $('.tools-box-list');
-        var tplData = {
-            id : id,
-            navigation : false,
-            title : toolconfig.title || toolconfig.label,
-            label : toolconfig.label,
-            icon : toolconfig.icon
-        };
-        var $button = $(buttonTpl(tplData));
-        var amd = toolconfig.hook;
-        
-        require([amd], function(hook){
-            if(_.isFunction(hook.init)){
-                hook.init($button, toolconfig, assessmentTestContext);
-                
-                //only attach the button to the dom when everything is ready
-                $toolsContainer.append($button);
-            }
-        });
+    function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext){
+
+        if(isValid(toolconfig)){
+            
+            var tplData = {
+                id : id,
+                navigation : false,
+                title : toolconfig.title || toolconfig.label,
+                label : toolconfig.label,
+                icon : toolconfig.icon || ''
+            };
+            var $button = $(buttonTpl(tplData));
+
+            require([toolconfig.hook], function(hook){
+                if(_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear)){
+
+                    hook.init($button, toolconfig, assessmentTestContext);
+
+                    //only attach the button to the dom when everything is ready
+                    $toolsContainer.append($button);
+
+                    //ready !
+                    $button.trigger('ready' + _ns);
+                }else{
+                    errorHandler.throw(_ns, 'invalid hook format');
+                }
+            }, function(e){
+                errorHandler.throw(_ns, 'the hook amd module cannot be found');
+            });
+            
+        }else{
+            errorHandler.throw(_ns, 'invalid tool config format');
+        }
+
     }
-    
+
     return {
         init : init,
+        isValid : isValid,
         initQtiTool : initQtiTool
     };
 });
