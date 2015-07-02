@@ -51,6 +51,13 @@ define([
      */
     var _selectors = {
         component : '.qti-navigator',
+        filterBar : '.qti-navigator-filters',
+        tree : '.qti-navigator-tree',
+        linearState : '.qti-navigator-linear',
+        infoAnswered : '.qti-navigator-answered .qti-navigator-counter',
+        infoViewed : '.qti-navigator-viewed .qti-navigator-counter',
+        infoUnanswered : '.qti-navigator-unanswered .qti-navigator-counter',
+        infoFlagged : '.qti-navigator-flagged .qti-navigator-counter',
         infoPanel : '.qti-navigator-info',
         infoPanelLabels : '.qti-navigator-info > .qti-navigator-label',
         parts : '.qti-navigator-part',
@@ -112,10 +119,11 @@ define([
          * @returns {testReview}
          */
         init: function init(element, options) {
-            this.options = _.isObject(options) && options || {};
-
-            var putOnRight = 'right' === this.options.region;
+            var initOptions = _.isObject(options) && options || {};
+            var putOnRight = 'right' === initOptions.region;
             var insertMethod = putOnRight ? 'append' : 'prepend';
+
+            this.options = initOptions;
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -130,7 +138,7 @@ define([
                     region: putOnRight ? 'right' : 'left'
                 }));
             } else {
-                throw "Unable to inject the component structure into the DOM";
+                throw new Error("Unable to inject the component structure into the DOM");
             }
 
             // install the component behaviour
@@ -148,20 +156,20 @@ define([
             this.$component = this.$container.find(_selectors.component);
 
             // access to info panel displaying counters
-            this.$infoAnswered = this.$component.find('#qti-navigator-answered ' + _selectors.counters);
-            this.$infoViewed = this.$component.find('#qti-navigator-viewed ' + _selectors.counters);
-            this.$infoUnanswered = this.$component.find('#qti-navigator-unanswered ' + _selectors.counters);
-            this.$infoFlagged = this.$component.find('#qti-navigator-flagged ' + _selectors.counters);
+            this.$infoAnswered = this.$component.find(_selectors.infoAnswered);
+            this.$infoViewed = this.$component.find(_selectors.infoViewed);
+            this.$infoUnanswered = this.$component.find(_selectors.infoUnanswered);
+            this.$infoFlagged = this.$component.find(_selectors.infoFlagged);
 
             // access to filter switches
-            this.$filterBar = this.$component.find('#qti-navigator-filters');
+            this.$filterBar = this.$component.find(_selectors.filterBar);
             this.$filters = this.$filterBar.find('li');
 
             // access to the tree of parts/sections/items
-            this.$tree = this.$component.find('#qti-navigator-tree');
+            this.$tree = this.$component.find(_selectors.tree);
 
             // access to the panel displayed when a linear part is reached
-            this.$linearState = this.$component.find('#qti-navigator-linear');
+            this.$linearState = this.$component.find(_selectors.linearState);
         },
 
         /**
@@ -169,50 +177,50 @@ define([
          * @private
          */
         _initEvents: function() {
-            var that = this;
+            var self = this;
 
             // click on the info panel title: toggle the related panel
             this.$component.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
                 var $panel = $(this).closest(_selectors.infoPanel);
-                that._togglePanel($panel, _selectors.infoPanel);
+                self._togglePanel($panel, _selectors.infoPanel);
             });
 
             // click on a part title: toggle the related panel
             this.$tree.on('click' + _selectors.component, _selectors.partLabels, function() {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
                 var $panel = $(this).closest(_selectors.parts);
-                var open = that._togglePanel($panel, _selectors.parts);
+                var open = self._togglePanel($panel, _selectors.parts);
 
                 if (open) {
                     if ($panel.hasClass(_cssCls.active)) {
-                        that._openSelected();
+                        self._openSelected();
                     } else {
-                        that._openOnly($panel.find(_selectors.sections).first(), $panel);
+                        self._openOnly($panel.find(_selectors.sections).first(), $panel);
                     }
                 }
             });
 
             // click on a section title: toggle the related panel
             this.$tree.on('click' + _selectors.component, _selectors.sectionLabels, function() {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
                 var $panel = $(this).closest(_selectors.sections);
 
-                that._togglePanel($panel, _selectors.sections);
+                self._togglePanel($panel, _selectors.sections);
             });
 
             // click on an item: jump to the position
             this.$tree.on('click' + _selectors.component, _selectors.itemLabels, function(event) {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
@@ -223,42 +231,42 @@ define([
                     $target = $(event.target);
                     if ($target.is(_selectors.icons)) {
                         if (!$item.hasClass(_cssCls.unseen)) {
-                            that._mark($item);
+                            self._mark($item);
                         }
                     } else {
-                        that._select($item);
-                        that._jump($item);
+                        self._select($item);
+                        self._jump($item);
                     }
                 }
             });
 
             // click on the start button inside a linear part: jump to the position
             this.$tree.on('click' + _selectors.component, _selectors.linearStart, function() {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
                 var $btn = $(this);
-                
+
                 if (!$btn.hasClass(_cssCls.disabled)) {
                     $btn.addClass(_cssCls.disabled);
-                    that._jump($btn);
+                    self._jump($btn);
                 }
             });
 
             // click on a filter button
             this.$filterBar.on('click' + _selectors.component, 'li', function() {
-                if (that.disabled) {
+                if (self.disabled) {
                     return;
                 }
 
                 var $btn = $(this);
                 var mode = $btn.data('mode');
 
-                that.$filters.removeClass(_cssCls.active);
+                self.$filters.removeClass(_cssCls.active);
                 $btn.addClass(_cssCls.active);
 
-                that._filter(mode);
+                self._filter(mode);
             });
         },
 

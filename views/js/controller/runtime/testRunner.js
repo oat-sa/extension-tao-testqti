@@ -99,16 +99,25 @@ define([
                 iframeNotifier.parent('unloading');
             },
 
+            /**
+             * Jumps to a particular item in the test
+             * @param {Number} position The position of the item within the test
+             */
             jump: function(position) {
+                var self = this;
                 this.disableGui();
-                var that = this;
                 this.itemServiceApi.kill(function() {
-                    that.actionCall('jump', null, {position: position});
+                    self.actionCall('jump', null, {position: position});
                 });
             },
 
+            /**
+             * Marks an item for later review
+             * @param {Boolean} flag The state of the flag
+             * @param {Number} position The position of the item within the test
+             */
             markForReview: function(flag, position) {
-                var that = this;
+                var self = this;
                 this.disableGui();
 
                 $.ajax({
@@ -122,26 +131,26 @@ define([
                         position: position
                     },
                     success: function(testContext) {
-                        that.setTestContext(testContext);
-                        that.updateTestReview();
-                        that.enableGui();
+                        self.setTestContext(testContext);
+                        self.updateTestReview();
+                        self.enableGui();
                     }
                 });
             },
 
             moveForward: function () {
                 this.disableGui();
-                var that = this;
+                var self = this;
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveForward');
+                    self.actionCall('moveForward');
                 });
             },
 
             moveBackward: function () {
                 this.disableGui();
-                var that = this;
+                var self = this;
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveBackward');
+                    self.actionCall('moveBackward');
                 });
             },
 
@@ -151,7 +160,7 @@ define([
             },
 
             timeout: function () {
-                var that = this;
+                var self = this;
                 this.disableGui();
                 this.testContext.isTimeout = true;
                 this.updateTimer();
@@ -164,7 +173,7 @@ define([
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        that.actionCall('timeout', metaData);
+                        self.actionCall('timeout', metaData);
                     });
                 });
             },
@@ -200,6 +209,10 @@ define([
                 });
             },
 
+            /**
+             * Sets the assessment test context object
+             * @param {Object} testContext
+             */
             setTestContext: function(testContext) {
                 this.testContext = testContext;
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
@@ -439,12 +452,18 @@ define([
                 }
             },
 
+            /**
+             * Updates the test taker review screen
+             */
             updateTestReview: function() {
                 if (this.testReview) {
                     this.testReview.update(this.testContext);
                 }
             },
 
+            /**
+             * Updates the progress bar
+             */
             updateProgress: function () {
                 var considerProgress = this.testContext.considerProgress;
 
