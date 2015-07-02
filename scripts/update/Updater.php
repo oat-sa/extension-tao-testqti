@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 /**
  *
- * @author Jean-Sï¿½bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
     
@@ -48,9 +48,16 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.6.1';
         }
-        
-        // add testrunner review screen config
+   
         if ($currentVersion == '2.6.1') {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config['exitButton'] = false;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $config);
+
+            $currentVersion = '2.6.2';
+        }
+        // add testrunner review screen config
+        if ($currentVersion == '2.6.2') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $extension->setConfig('testRunner', array_merge($config, array(
@@ -60,9 +67,9 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'test-taker-review-prevents-unseen' => true,
             )));
 
-            $currentVersion = '2.6.2';
+            $currentVersion = '2.6.3';
         }
-   
+        
         return $currentVersion;
     }
 }

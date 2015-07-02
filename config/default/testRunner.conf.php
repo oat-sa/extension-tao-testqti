@@ -62,5 +62,11 @@ return array(
      * Prevents the test taker to access unseen items.
      * @type boolean
      */
-    'test-taker-review-prevents-unseen' => true
+    'test-taker-review-prevents-unseen' => true,
+
+    /**
+     * Replace logout to exit button...
+     * @type boolean
+     */
+    'exitButton' => false
 );

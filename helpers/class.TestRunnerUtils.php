@@ -250,7 +250,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         foreach ($session->getTimeConstraints() as $tc) {
             // Only consider time constraints in force.
             if ($tc->getMaximumRemainingTime() !== false) {
+                $label = method_exists($tc->getSource(), 'getTitle') ? $tc->getSource()->getTitle() : $tc->getSource()->getIdentifier();
                 $constraints[] = array(
+                    'label' => $label,
                     'source' => $tc->getSource()->getIdentifier(),
                     'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
@@ -452,6 +454,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // loads the specific config into the context object
             $configMap = array(
                 // name in config                   => name in context object
+                'exitButton'                        => 'exitButton',
                 'timerWarning'                      => 'timerWarning',
                 'progress-indicator'                => 'progressIndicator',
                 'test-taker-review'                 => 'reviewScreen',
@@ -462,13 +465,13 @@ class taoQtiTest_helpers_TestRunnerUtils {
             foreach ($configMap as $configKey => $contextKey) {
                 if (isset($config[$configKey])) {
                     $context[$contextKey] = $config[$configKey];
-                }    
+                }
             }
         }
         
         return $context;
     }
-
+        
     /**
      * Gets a call identifier for a particular item in the test
      * @param AssessmentTestSession $session
