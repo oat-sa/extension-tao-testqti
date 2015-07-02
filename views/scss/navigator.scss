@@ -1,9 +1,7 @@
 @import "inc/bootstrap";
 
 .qti-navigator {
-    border-right: 1px solid;
-    font-size: 12px;
-    padding: 8px;
+    padding: 0;
     width: 200px;
 
     cursor: default;
@@ -12,27 +10,44 @@
     -ms-user-select: none;
     user-select: none;
 
-    ul, li {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
     span {
         display: inline-block;
     }
 
     .collapsed .collapsible-panel, .masked {
-        display: none!important;
+        display: none !important;
+    }
+
+    .collapsed {
+        .icon-up {
+            display: none!important;
+        }
+
+        .icon-down {
+            display: inline-block!important;
+        }
     }
 
     .qti-navigator-label {
         display: block;
+        line-height: 30px;
+        padding: 0 6px;
+
+        .icon-up, .icon-down {
+            float: right;
+            line-height: 30px;
+        }
+
+        .icon-down {
+            display: none;
+        }
     }
 
-    .qti-navigator-icon {
+    .qti-navigator-icon, .icon {
+        position: relative;
+        top: 1px;
         display: inline-block;
-        margin-right: 4px;
+        width: 22px;
     }
 
     .unseen {
@@ -42,17 +57,17 @@
     }
 
     .icon-answered:before {
-        content: "\e69f";
+        @include icon-result-ok();
     }
     .icon-viewed:before {
-        content: "\e631";
+        @include icon-preview();
     }
     .icon-flagged:before {
-        content: "\e64e";
+        @include icon-anchor();
     }
     .icon-unanswered:before,
     .icon-unseen:before {
-        content: "\e69e";
+        @include icon-result-nok();
     }
 
     .collapsible, .qti-navigator-item {
@@ -64,7 +79,7 @@
     .qti-navigator-counter {
         text-align: right;
         float: right;
-        font: .9em Verdana,Geneva,sans-serif;
+        @include font-size(12);
     }
 
     .qti-navigator-message {
@@ -76,12 +91,15 @@
     }
 
     .qti-navigator-info {
-        background-color: $uiOverlay;
-
         & > .qti-navigator-label {
             background-color: $uiHeaderBg;
             color: $textColor;
-            padding: 0 8px;
+            border-top: 1px solid white();
+            padding: 2px 8px;
+        }
+
+        li {
+            border-bottom: 1px solid white(.9);
         }
 
         ul {
@@ -90,56 +108,74 @@
     }
 
     .qti-navigator-filters {
-        background-color: $canvas;
-        margin: 10px 0;
-        padding: 4px;
+        margin-top: 16px;
         text-align: center;
 
-        ul {
-            display: inline-block;
-        }
-
         li {
-            display: inline;
-            padding: 0;
+            display: block;
+            float: left;
         }
     }
 
     .qti-navigator-filter {
         span {
-            @include simple-border($canvas);
-            @include border-radius(2);
-            @include font-size(12);
-            display: inline-block;
-            line-height: 1.8rem;
+            @include simple-border();
+            border-left: none;
+            background-color: $uiGeneralContentBg;
+            display: block;
+            line-height: 1.8;
             cursor: pointer;
-            padding: 1px 8px;
+            padding: 3px 20px;
 
             &:hover {
-                @include simple-border($uiGeneralContentBorder);
+                background-color: $uiClickableHoverBg;
+                color: $textHighlight;
             }
         }
         &.active {
             span {
-                border-style: inset;
+                background-color: $uiClickableActiveBg;
+                color: $textHighlight;
             }
         }
     }
 
     .qti-navigator-linear,
     .qti-navigator-linear-part {
-        padding: 4px;
-        background-color: whiten($warning, .8);
+        padding: 8px;
+        background-color: mix(#fff, $warning, 90%);
+
+        .qti-navigator-label {
+            @include font-size(14);
+        }
+
+        .qti-navigator-title {
+            @include font-size(14);
+            margin: 8px 0;
+
+            .icon-warning {
+                color: $warning !important;
+            }
+        }
+
+        .qti-navigator-message {
+            @include font-size(14);
+        }
     }
 
     .qti-navigator-part {
         & > .qti-navigator-label {
-            background-color: $uiClickableHoverBg;
-            color: $textHighlight;
+            background-color: mix(#fff, $websiteBorder, 70%);
             padding: 2px 8px;
 
             &:hover {
-                background-color: whiten($uiClickableHoverBg, .2);
+                background-color: mix(#fff, $websiteBorder, 50%);
+            }
+        }
+
+        &.active {
+            & > .qti-navigator-label {
+                background-color: mix(#fff, $websiteBorder, 45%);
             }
         }
     }
@@ -149,36 +185,45 @@
 
     .qti-navigator-section {
         & > .qti-navigator-label {
-            background-color: blacken($uiClickableDefaultBg, .1);
-            color: $textColor;
-            padding: 2px 2px 2px 8px;
+            padding: 2px 10px 2px 8px;
+            border-bottom: 1px solid white(.9);
 
             &:hover {
-                background-color: blacken($uiClickableDefaultBg, .2);
+                background-color: mix(#fff, $grey, 75%);
             }
-        }
-    }
-    .qti-navigator-section:not(:first-child) {
-        margin-top: 1px;
-    }
-
-    .qti-navigator-item {
-        margin: 1px 0;
-        padding-left: 10px;
-
-        .qti-navigator-label {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         &.active {
-            background-color: $uiClickableActiveBg;
-            color: $textHighlight;
+            & > .qti-navigator-label {
+                background-color: mix(#fff, $grey, 60%);
+
+            }
+        }
+    }
+
+    .qti-navigator-item {
+        background: white();
+        margin: 1px 0;
+        padding-left: 10px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &.active {
+            background: lighten($lightBlueGrey, 5);
         }
 
         &:hover {
-            background-color: whiten($uiClickableActiveBg, .2);
+            background: lighten($lightBlueGrey, 3);
+        }
+
+        &.disabled {
+            background-color: mix(#fff, $grey, 65%) !important;
+
+            & > .qti-navigator-label {
+                cursor: not-allowed;
+            }
         }
     }
 }
