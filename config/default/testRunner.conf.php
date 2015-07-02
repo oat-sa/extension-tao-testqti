@@ -18,9 +18,18 @@
  */
 
 /**
- * Default log config, does not lock resources
+ * Default test runner config
  */
 return array(
+
+
+    //Show warning message if time remaining less than defined (in seconds)
+   'timerWarning' => array(
+        'assessmentItemRef' => null,
+        'assessmentSection' => null,
+        'testPart'          => null
+    ),
+
     /**
      * Tells what type of progress bar to use? Can be:
      * - percentage : Classic progress bar displaying the percentage of answered items
