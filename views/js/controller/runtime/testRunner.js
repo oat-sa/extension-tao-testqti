@@ -20,6 +20,7 @@
 define([
     'jquery',
     'lodash',
+    'taoQtiTest/runner/testReview',
     'taoQtiTest/runner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
@@ -34,7 +35,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -98,19 +99,58 @@ define([
                 iframeNotifier.parent('unloading');
             },
 
+            /**
+             * Jumps to a particular item in the test
+             * @param {Number} position The position of the item within the test
+             */
+            jump: function(position) {
+                var self = this;
+                this.disableGui();
+                this.itemServiceApi.kill(function() {
+                    self.actionCall('jump', null, {position: position});
+                });
+            },
+
+            /**
+             * Marks an item for later review
+             * @param {Boolean} flag The state of the flag
+             * @param {Number} position The position of the item within the test
+             */
+            markForReview: function(flag, position) {
+                var self = this;
+                this.disableGui();
+
+                $.ajax({
+                    url: this.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        flag: flag,
+                        position: position
+                    },
+                    success: function(testContext) {
+                        self.setTestContext(testContext);
+                        self.updateTestReview();
+                        self.enableGui();
+                    }
+                });
+            },
+
             moveForward: function () {
                 this.disableGui();
-                var that = this;
+                var self = this;
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveForward');
+                    self.actionCall('moveForward');
                 });
             },
 
             moveBackward: function () {
                 this.disableGui();
-                var that = this;
+                var self = this;
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveBackward');
+                    self.actionCall('moveBackward');
                 });
             },
 
@@ -120,7 +160,7 @@ define([
             },
 
             timeout: function () {
-                var that = this;
+                var self = this;
                 this.disableGui();
                 this.testContext.isTimeout = true;
                 this.updateTimer();
@@ -129,11 +169,11 @@ define([
                     var confirmBox = $('.timeout-modal-feedback'),
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
                         metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
-                        
+
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        that.actionCall('timeout', metaData);
+                        self.actionCall('timeout', metaData);
                     });
                 });
             },
@@ -169,6 +209,15 @@ define([
                 });
             },
 
+            /**
+             * Sets the assessment test context object
+             * @param {Object} testContext
+             */
+            setTestContext: function(testContext) {
+                this.testContext = testContext;
+                this.itemServiceApi = eval(testContext.itemServiceApiCall);
+            },
+
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -176,12 +225,11 @@ define([
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
 
-                this.testContext = testContext;
-                this.itemServiceApi = eval(testContext.itemServiceApiCall);
-
+                this.setTestContext(testContext);
                 this.updateContext();
                 this.updateProgress();
                 this.updateNavigation();
+                this.updateTestReview();
                 this.updateInformation();
                 this.updateRubrics();
                 this.updateTools();
@@ -298,10 +346,10 @@ define([
                                             currentTimes[timerIndex] -= seconds;
                                             timeDiffs[timerIndex] = 0;
                                         }
-                                        
+
                                         $timers.eq(timerIndex)
                                             .html(self.formatTime(Math.round(currentTimes[timerIndex])));
-                                    
+
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
                                             currentTimes[timerIndex] = 0;
@@ -322,7 +370,7 @@ define([
                                 }(timerIndex, cst));
                             }
                         }
-                        
+
                         $timers = $controls.$timerWrapper.find('.qti-timer .qti-timer_time');
                         $controls.$timerWrapper.show();
                     }
@@ -404,6 +452,18 @@ define([
                 }
             },
 
+            /**
+             * Updates the test taker review screen
+             */
+            updateTestReview: function() {
+                if (this.testReview) {
+                    this.testReview.update(this.testContext);
+                }
+            },
+
+            /**
+             * Updates the progress bar
+             */
             updateProgress: function () {
                 var considerProgress = this.testContext.considerProgress;
 
@@ -425,16 +485,25 @@ define([
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
-                    $controls.$sideBars.height(finalHeight);
+                    $controls.$sideBars.each(function() {
+                        var $sideBar = $(this);
+                        $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
+                    });
                 }
             },
 
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
+                if (this.testReview) {
+                    this.testReview.disable();
+                }
             },
 
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
+                if (this.testReview) {
+                    this.testReview.enable();
+                }
             },
 
             formatTime: function (totalSeconds) {
@@ -461,9 +530,9 @@ define([
             /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
-             * @param {Sting} action - Action name 
+             * @param {Sting} action - Action name
              * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example: 
+             * Example:
              * <pre>
              * {
              *   "TEST" : {
@@ -474,16 +543,20 @@ define([
              *   }
              * }
              * </pre>
+             * @param {Object} extraParams - Additional parameters to be sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData) {
+            actionCall: function (action, metaData, extraParams) {
                 var self = this;
-                metaData = metaData ? {"metaData" : metaData} : {};
+                var params = metaData ? {"metaData" : metaData} : {};
+                if (extraParams) {
+                    params = _.assign(params, extraParams);
+                }
                 this.beforeTransition(function () {
                     $.ajax({
                         url: self.testContext[action + 'Url'],
                         cache: false,
-                        data: metaData,
+                        data: params,
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
@@ -500,7 +573,7 @@ define([
 
             /**
              * Exit from test (after confirmation). All answered questions will be submitted.
-             * 
+             *
              * @returns {undefined}
              */
             exit: function () {
@@ -512,10 +585,10 @@ define([
                         self.testContext.numberCompleted.toString()
                     ),
                     metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
-            
+
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
-            
+
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
                     $confirmBox.modal('close');
                 });
@@ -564,6 +637,7 @@ define([
                     $timerWrapper:  $('[data-control="qti-timers"]'),
 
                     // other zones
+                    $contentPanel: $('.content-panel'),
                     $controls: $('.qti-controls'),
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
@@ -641,7 +715,7 @@ define([
                     e.preventDefault();
                     TestRunner.exit();
                 });
-                
+
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
@@ -657,6 +731,19 @@ define([
                 });
 
                 TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
+
+                if ($controls.$contentPanel.data('reviewScreen')) {
+                    TestRunner.testReview = testReview($controls.$contentPanel, {
+                        region: $controls.$contentPanel.data('reviewRegion') || 'left',
+                        sectionOnly: !!$controls.$contentPanel.data('reviewSectionOnly'),
+                        preventsUnseen: !!$controls.$contentPanel.data('reviewPreventsUnseen')
+                    }).on('jump', function(event, position) {
+                        TestRunner.jump(position);
+                    }).on('mark', function(event, flag, position) {
+                        TestRunner.markForReview(flag, position);
+                    });
+                    $controls.$sideBars = $('.test-sidebar');
+                }
 
                 iframeNotifier.parent('serviceready');
 
