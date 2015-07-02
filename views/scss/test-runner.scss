@@ -126,6 +126,10 @@
         margin-left: 20px;
     }
 
+    [data-control="comment-toggle"] {
+        display:none;
+    }
+
     .qti-timer {
         display: inline-block;
         text-align: center;
