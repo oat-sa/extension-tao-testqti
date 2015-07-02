@@ -249,8 +249,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         foreach ($session->getTimeConstraints() as $tc) {
             // Only consider time constraints in force.
             if ($tc->getMaximumRemainingTime() !== false) {
+                $label = method_exists($tc->getSource(), 'getTitle') ? $tc->getSource()->getTitle() : $tc->getSource()->getIdentifier();
                 $constraints[] = array(
-                    'source' => $tc->getSource()->getIdentifier(),
+                    'label' => $label,
                     'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $tc->getSource()->getQtiClassName()

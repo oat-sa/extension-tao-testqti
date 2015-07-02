@@ -240,7 +240,7 @@ define([
 
             createTimer: function(cst) {
                 var $timer = $('<div>', {'class': 'qti-timer qti-timer__type-' + cst.qtiClassName }),
-                    $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.source }),
+                    $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.label }),
                     $time  = $('<div>', {'class': 'qti-timer_time', text: this.formatTime(cst.seconds) });
 
                 $timer.append($label);
