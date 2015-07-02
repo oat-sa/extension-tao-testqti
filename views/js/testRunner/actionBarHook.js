@@ -33,23 +33,15 @@ define([
     var _ns = '.actionBarHook';
 
     /**
-     * Init the action bar hook from the test runner config
-     * (if any qtiTools has been registered in the config)
+     * Check that the toolConfig is correct
      * 
-     * @param {Object} config
-     * @param {Object} assessmentTestContext - the complete state of the test
-     * @returns {undefined}
+     * @param {Object} toolconfig
+     * @param {String} toolconfig.label - the label to be displayed in the button
+     * @param {String} toolconfig.hook - the amd module to be loaded to initialize the button
+     * @param {String} [toolconfig.icon] - the icon to be displayed in the button
+     * @param {String} [toolconfig.title] - the title to be displayed in the button
+     * @returns {unresolved}
      */
-    function init(config, assessmentTestContext){
-
-        if(config && config.qtiTools){
-            _.forIn(config.qtiTools, function(toolconfig, id){
-                initQtiTool(id, toolconfig, assessmentTestContext);
-            });
-        }
-
-    }
-
     function isValid(toolconfig){
         return _.isObject(toolconfig) && toolconfig.label && toolconfig.hook;
     }
@@ -104,7 +96,6 @@ define([
     }
 
     return {
-        init : init,
         isValid : isValid,
         initQtiTool : initQtiTool
     };
