@@ -39,6 +39,16 @@ return array(
     'progress-indicator' => 'percentage',
 
     /**
+     * When the `progress-indicator` option is set to `position`, define the scope of progress 
+     * (i. e.: the number of items on which the ratio is computed). Can be:
+     * - section : The progression within the current section
+     * - part : The progression within the current part
+     * - test : The progression within the current test
+     * @type string
+     */
+    'progress-indicator-scope' => 'section',
+
+    /**
      * Enables the test taker review screen
      * @type boolean
      */

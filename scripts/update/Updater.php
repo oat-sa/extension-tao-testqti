@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 /**
  *
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sï¿½bastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
     
@@ -56,6 +56,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.6.2';
         }
+        
         // add testrunner review screen config
         if ($currentVersion == '2.6.2') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -68,6 +69,35 @@ class Updater extends \common_ext_ExtensionUpdater {
             )));
 
             $currentVersion = '2.6.3';
+        }
+        
+        // adjust testrunner config
+        if ($currentVersion == '2.6.3') {
+            $defaultConfig = array(
+                'timerWarning' => array(
+                    'assessmentItemRef' => null,
+                    'assessmentSection' => null,
+                    'testPart'          => null
+                ),
+                'progress-indicator' => 'percentage',
+                'progress-indicator-scope' => 'section',
+                'test-taker-review' => false,
+                'test-taker-review-region' => 'left',
+                'test-taker-review-section-only' => false,
+                'test-taker-review-prevents-unseen' => true,
+                'exitButton' => false
+            );
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            foreach($defaultConfig as $key => $value) {
+                if (!isset($config[$key])) {
+                    $config[$key] = $value;
+                }
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.6.4';
         }
         
         return $currentVersion;
