@@ -20,7 +20,8 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define(['jquery', 'lodash'], function($, _){
-    
+    'use strict';
+
    /**
     * Get the list of objects attributes to encode
     * @param {Object} object
@@ -35,7 +36,7 @@ define(['jquery', 'lodash'], function($, _){
            'label'
         ]);
    };
-   
+
    /**
     * Encode object's properties to xml/html string attributes
     * @param {Object} attributes
@@ -47,16 +48,16 @@ define(['jquery', 'lodash'], function($, _){
              return acc + ' ' + key + '="'+ value + '" ';
          }
          return acc;
-     }, '');  
+     }, '');
    };
-    
+
    /**
-    * This encoder is used to transform DOM to JSON QTI and JSON QTI to DOM. 
+    * This encoder is used to transform DOM to JSON QTI and JSON QTI to DOM.
     * It works now for the rubricBlocks components.
     * @exports creator/encoders/dom2qti
     */
    var Dom2QtiEncoder = {
-       
+
        /**
         * Encode an object to a dom string
         * @param {Object} modelValue
@@ -64,7 +65,7 @@ define(['jquery', 'lodash'], function($, _){
         */
        encode : function(modelValue){
            var self = this;
-           
+
            if(_.isArray(modelValue)){
                return _.reduce(modelValue, function(result, value){
                    return result + self.encode(value);
@@ -79,10 +80,10 @@ define(['jquery', 'lodash'], function($, _){
                 } else {
                     return startTag + '/>';
                 }
-           } 
+           }
            return modelValue;
        },
-       
+
        /**
         * Decode a string that represents a DOM to a QTI formated object
         * @param {string} nodeValue
@@ -92,7 +93,7 @@ define(['jquery', 'lodash'], function($, _){
            var self = this;
            var $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
            var result = [];
-          
+
            _.forEach($nodeValue, function(elt){
                var object;
                 if (elt.nodeType === 3) {
@@ -105,27 +106,29 @@ define(['jquery', 'lodash'], function($, _){
                     }
                 } else if (elt.nodeType === 1){
                     object = _.merge({
-                        'qti-type': elt.nodeName.toLowerCase(),
-                        'id' : '',
-                        'class' : '',
-                        'xmlBase' : '',
-                        'lang' : '',
-                        'label' : ''
-                    },
-                    _.transform(elt.attributes, function(acc, value) {
-                        acc[value.nodeName] = value.nodeValue;
-                    })
+                            'qti-type': elt.nodeName.toLowerCase(),
+                            'id' : '',
+                            'class' : '',
+                            'xmlBase' : '',
+                            'lang' : '',
+                            'label' : ''
+                        },
+                        _.transform(elt.attributes, function(acc, value) {
+                            if(value.nodeName){
+                                acc[value.nodeName] = value.nodeValue;
+                            }
+                        })
                     );
                     if (elt.childNodes.length > 0) {
                         object.content = self.decode(elt.childNodes);
-                    } 
+                    }
                     result.push(object);
                 }
             });
            return result;
        }
    };
-   
+
    return Dom2QtiEncoder;
 });
 
