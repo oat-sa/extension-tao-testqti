@@ -750,11 +750,11 @@ define([
 
                 TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
 
-                if ($controls.$contentPanel.data('reviewScreen')) {
+                if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
-                        region: $controls.$contentPanel.data('reviewRegion') || 'left',
-                        sectionOnly: !!$controls.$contentPanel.data('reviewSectionOnly'),
-                        preventsUnseen: !!$controls.$contentPanel.data('reviewPreventsUnseen')
+                        region: testContext.reviewRegion || 'left',
+                        sectionOnly: !!testContext.reviewSectionOnly,
+                        preventsUnseen: !!testContext.reviewPreventsUnseen
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
                     }).on('mark', function(event, flag, position) {

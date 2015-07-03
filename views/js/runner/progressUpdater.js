@@ -91,8 +91,24 @@ define([
          * @returns {{ratio: number, label: string}}
          */
         positionProgression: function(testContext) {
-            var total = Math.max(1, testContext.numberItems);
-            var position = testContext.itemPosition + 1;
+            var progressScope = testContext.progressIndicatorScope;
+            var progressScopeCounter = {
+                test : {
+                    total : 'numberItems',
+                    position : 'itemPosition'
+                },
+                testPart : {
+                    total : 'numberItemsPart',
+                    position : 'itemPositionPart'
+                },
+                testSection : {
+                    total : 'numberItemsSection',
+                    position : 'itemPositionSection'
+                }
+            };
+            var counter = progressScopeCounter[progressScope] || progressScopeCounter.test;
+            var total = Math.max(1, testContext[counter.total]);
+            var position = testContext[counter.position] + 1;
             return {
                 ratio : Math.floor(position / total * 100),
                 label : __('Item %d of %d', position, total)
