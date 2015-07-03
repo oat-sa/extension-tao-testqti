@@ -97,11 +97,11 @@ define([
                     total : 'numberItems',
                     position : 'itemPosition'
                 },
-                part : {
+                testPart : {
                     total : 'numberItemsPart',
                     position : 'itemPositionPart'
                 },
-                section : {
+                testSection : {
                     total : 'numberItemsSection',
                     position : 'itemPositionSection'
                 }

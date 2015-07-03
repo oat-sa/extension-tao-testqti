@@ -80,7 +80,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                     'testPart'          => null
                 ),
                 'progress-indicator' => 'percentage',
-                'progress-indicator-scope' => 'section',
+                'progress-indicator-scope' => 'testSection',
                 'test-taker-review' => false,
                 'test-taker-review-region' => 'left',
                 'test-taker-review-section-only' => false,
