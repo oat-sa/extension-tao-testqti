@@ -143,7 +143,7 @@ define([
             moveForward: function () {
                 var self = this;
                 this.disableGui();
-                
+
                 this.itemServiceApi.kill(function () {
                     self.actionCall('moveForward');
                 });
@@ -173,7 +173,7 @@ define([
                     var confirmBox = $('.timeout-modal-feedback'),
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
                         metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
-                        
+
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -350,10 +350,10 @@ define([
                                             currentTimes[timerIndex] -= seconds;
                                             timeDiffs[timerIndex] = 0;
                                         }
-                                        
+
                                         $timers.eq(timerIndex)
                                             .html(self.formatTime(Math.round(currentTimes[timerIndex])));
-                                    
+
                                         if (currentTimes[timerIndex] <= 0) {
                                             // The timer expired...
                                             currentTimes[timerIndex] = 0;
@@ -374,7 +374,7 @@ define([
                                 }(timerIndex, cst));
                             }
                         }
-                        
+
                         $timers = $controls.$timerWrapper.find('.qti-timer .qti-timer_time');
                         $controls.$timerWrapper.show();
                     }
@@ -534,9 +534,9 @@ define([
             /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
-             * @param {Sting} action - Action name 
+             * @param {Sting} action - Action name
              * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example: 
+             * Example:
              * <pre>
              * {
              *   "TEST" : {
@@ -577,7 +577,7 @@ define([
 
             /**
              * Exit from test (after confirmation). All answered questions will be submitted.
-             * 
+             *
              * @returns {undefined}
              */
             exit: function () {
@@ -589,10 +589,10 @@ define([
                         self.testContext.numberCompleted.toString()
                     ),
                     metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
-            
+
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
-            
+
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
                     $confirmBox.modal('close');
                 });
@@ -609,13 +609,14 @@ define([
         return {
             start: function (testContext) {
 
+                var config = module.config();
 				var $toolsContainer = $('.tools-box-list');
                 if(config && config.qtiTools){
                     _.forIn(config.qtiTools, function(toolconfig, id){
                         actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
                     });
                 }
-        
+
                 $controls = {
                     // navigation
                     $moveForward: $('[data-control="move-forward"]'),
@@ -732,7 +733,7 @@ define([
                     e.preventDefault();
                     TestRunner.exit();
                 });
-                
+
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
