@@ -60,7 +60,7 @@ define([
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-            'ITEM_EXIT_CODE': {
+            'SECTION_EXIT_CODE': {
                 'COMPLETED_NORMALLY': 700,
                 'QUIT': 701,
                 'COMPLETE_TIMEOUT': 703,
@@ -172,7 +172,7 @@ define([
                 this.itemServiceApi.kill(function () {
                     var confirmBox = $('.timeout-modal-feedback'),
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
-                        metaData = {"ITEM" : {"ITEM_EXIT_CODE" : TestRunner.ITEM_EXIT_CODE.TIMEOUT}};
+                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
 
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
@@ -542,8 +542,8 @@ define([
              *   "TEST" : {
              *      "TEST_EXIT_CODE" : "T"
              *   },
-             *   "ITEM" : {
-             *      "ITEM_EXIT_CODE" : 704
+             *   "SECTION" : {
+             *      "SECTION_EXIT_CODE" : 704
              *   }
              * }
              * </pre>
@@ -588,8 +588,11 @@ define([
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
                         self.testContext.numberCompleted.toString()
                     ),
-                    metaData = {"TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE}};
-
+                    metaData = {
+                        "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
+                        "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
+                    };
+                
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
 
