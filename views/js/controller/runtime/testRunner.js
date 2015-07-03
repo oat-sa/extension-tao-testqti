@@ -20,6 +20,8 @@
 define([
     'jquery',
     'lodash',
+    'module',
+    'taoQtiTest/testRunner/actionBarHook',
     'taoQtiTest/runner/testReview',
     'taoQtiTest/runner/progressUpdater',
     'serviceApi/ServiceApi',
@@ -35,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -139,16 +141,18 @@ define([
             },
 
             moveForward: function () {
-                this.disableGui();
                 var self = this;
+                this.disableGui();
+
                 this.itemServiceApi.kill(function () {
                     self.actionCall('moveForward');
                 });
             },
 
             moveBackward: function () {
-                this.disableGui();
                 var self = this;
+
+                this.disableGui();
                 this.itemServiceApi.kill(function () {
                     self.actionCall('moveBackward');
                 });
@@ -604,6 +608,14 @@ define([
 
         return {
             start: function (testContext) {
+
+                var config = module.config();
+				var $toolsContainer = $('.tools-box-list');
+                if(config && config.qtiTools){
+                    _.forIn(config.qtiTools, function(toolconfig, id){
+                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
+                    });
+                }
 
                 $controls = {
                     // navigation

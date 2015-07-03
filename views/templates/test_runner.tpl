@@ -67,8 +67,8 @@ use oat\tao\helpers\Layout;
 
     <div class="plain action-bar content-action-bar horizontal-action-bar bottom-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft comment-toggle-box">
-                <ul class="plain">
+            <div class="lft tools-box">
+                <ul class="plain tools-box-list">
                     <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-tag"></span>
@@ -83,7 +83,7 @@ use oat\tao\helpers\Layout;
                 </div>
             </div>
             <div class="rgt navi-box">
-                <ul class="plain">
+                <ul class="plain navi-box-list">
                     <li data-control="move-backward" class="small btn-info action" title="<?= __("Submit and go to the previous item"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-backward"></span>
