@@ -282,6 +282,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
             taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
         }
+
+        // loads the specific config
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $this->setData('review_screen', !empty($config['test-taker-review']));
+        $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
         
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setData('client_timeout', $this->getClientTimeout());
@@ -289,6 +294,61 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+
+    /**
+     * Mark an item for review in the Assessment Test Session flow.
+     *
+     */
+    public function markForReview() {
+        $this->beforeAction();
+        $testSession = $this->getTestSession();
+
+        try {
+            if ($this->hasRequestParameter('position')) {
+                $itemPosition = intval($this->getRequestParameter('position'));
+            } else {
+                $itemPosition = $testSession->getRoute()->getPosition();                
+            }
+            if ($this->hasRequestParameter('flag')) {
+                $flag = $this->getRequestParameter('flag');
+                if (is_numeric($flag)) {
+                    $flag = !!(intval($flag));
+                } else {
+                    $flag = 'false' != strtolower($flag);
+                }
+            } else {
+                $flag = true;
+            }
+            taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+        }
+        catch (AssessmentTestSessionException $e) {
+            $this->handleAssessmentTestSessionException($e);
+        }
+
+        $this->afterAction();
+    }
+
+    /**
+     * Jump to an item in the Assessment Test Session flow.
+     *
+     */
+    public function jumpTo() {
+        $this->beforeAction();
+        $session = $this->getTestSession();
+
+        try {
+            $session->jumpTo(intval($this->getRequestParameter('position')));
+
+            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            }
+        }
+        catch (AssessmentTestSessionException $e) {
+            $this->handleAssessmentTestSessionException($e);
+        }
+
+        $this->afterAction();
+    }
 	
 	/**
 	 * Move forward in the Assessment Test Session flow.

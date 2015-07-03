@@ -167,4 +167,15 @@
             display:none;
         }
     }
+
+    #qti-rubrics{
+        margin: auto;
+        max-width: 1024px;
+        width: 100%;
+        padding: 15px;
+        .qti-rubricBlock {
+            margin: 20px 0;
+        }
+    }
+
 }

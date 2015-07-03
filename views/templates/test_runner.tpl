@@ -10,6 +10,7 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('test-runner.css', 'taoQtiTest') ?>"/>
+    <link rel="stylesheet" href="<?= Template::css('navigator.css', 'taoQtiTest') ?>"/>
 
     <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
         <link rel="stylesheet" href="<?= $themeUrl ?>"/>
@@ -52,7 +53,7 @@ use oat\tao\helpers\Layout;
         </div>
     </div>
 
-    <div class="content-panel">
+    <div class="content-panel"<?= get_data('review_screen') ? ' data-review-screen="1"' : ''; ?><?= get_data('review_region') ? ' data-review-region="' . get_data('review_region') . '"' : ''; ?>>
         <!--div class="test-sidebar test-sidebar-left flex-container-navi">
         </div-->
         <div class="test-item flex-container-remaining">
