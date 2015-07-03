@@ -604,6 +604,7 @@ define([
 
         return {
             start: function (testContext) {
+
                 $controls = {
                     // navigation
                     $moveForward: $('[data-control="move-forward"]'),
@@ -647,11 +648,16 @@ define([
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
 
-                $controls.$logout.toggleClass('hidden', testContext['exitButton']);
-                $controls.$exit.toggleClass('hidden', !testContext['exitButton']);
+                $controls.$logout.toggleClass('hidden', testContext.exitButton);
+                $controls.$exit.toggleClass('hidden', !testContext.exitButton);
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
+
+                // @todo remove when framework gets isn place
+                if(testContext.allowComment) {
+                    $controls.$commentToggle.show();
+                }
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
