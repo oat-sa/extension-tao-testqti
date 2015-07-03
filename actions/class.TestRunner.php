@@ -581,13 +581,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
             $item = $session->getCurrentAssessmentItemRef();
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
+            $assessmentSectionId = $session->getCurrentAssessmentSection()->getIdentifier();
 
             foreach ($metaData as $type => $data) {
                 foreach ($data as $key => $value) {
                     $metaVariable = new \taoResultServer_models_classes_TraceVariable();
                     $metaVariable->setIdentifier($key);
-                    $metaVariable->setBaseType(-1);
-                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::RECORD));
+                    $metaVariable->setBaseType('string');
+                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
                     $metaVariable->setTrace($value);
 
                     if (strcasecmp($type, 'ITEM') === 0) {
@@ -595,6 +596,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                         $transmissionId = "${sessionId}.${item}.${occurence}";
                         $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                     } elseif (strcasecmp($type, 'TEST') === 0) {
+                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+                    } elseif (strcasecmp($type, 'SECTION') === 0) {
+                        //suffix section variables with _{SECTION_IDENTIFIER}
+                        $metaVariable->setIdentifier($key.'_'.$assessmentSectionId);
                         $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
                     }
                 }
