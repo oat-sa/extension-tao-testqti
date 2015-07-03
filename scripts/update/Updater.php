@@ -49,6 +49,27 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.6.1';
         }
    
+        if ($currentVersion == '2.6.1') {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config['exitButton'] = false;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $config);
+
+            $currentVersion = '2.6.2';
+        }
+        // add testrunner review screen config
+        if ($currentVersion == '2.6.2') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $extension->setConfig('testRunner', array_merge($config, array(
+                'test-taker-review' => false,
+                'test-taker-review-region' => 'left',
+                'test-taker-review-section-only' => false,
+                'test-taker-review-prevents-unseen' => true,
+            )));
+
+            $currentVersion = '2.6.3';
+        }
+        
         return $currentVersion;
     }
 }

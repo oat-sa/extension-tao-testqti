@@ -18,10 +18,11 @@
  */
 
 define([
-	'module',
-	'taoQtiTest/testRunner/actionBarHook',
     'jquery',
     'lodash',
+    'module',
+    'taoQtiTest/testRunner/actionBarHook',
+    'taoQtiTest/runner/testReview',
     'taoQtiTest/runner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
@@ -36,11 +37,10 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function (module, actionBarHook, $, _, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
-	
-	var config = module.config();
+
     var timerIds = [],
         currentTimes = [],
         lastDates = [],
@@ -101,19 +101,60 @@ define([
                 iframeNotifier.parent('unloading');
             },
 
-            moveForward: function () {
+            /**
+             * Jumps to a particular item in the test
+             * @param {Number} position The position of the item within the test
+             */
+            jump: function(position) {
+                var self = this;
                 this.disableGui();
-                var that = this;
+                this.itemServiceApi.kill(function() {
+                    self.actionCall('jump', null, {position: position});
+                });
+            },
+
+            /**
+             * Marks an item for later review
+             * @param {Boolean} flag The state of the flag
+             * @param {Number} position The position of the item within the test
+             */
+            markForReview: function(flag, position) {
+                var self = this;
+                this.disableGui();
+
+                $.ajax({
+                    url: this.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        flag: flag,
+                        position: position
+                    },
+                    success: function(testContext) {
+                        self.setTestContext(testContext);
+                        self.updateTestReview();
+                        self.enableGui();
+                    }
+                });
+            },
+
+            moveForward: function () {
+                var self = this;
+                this.disableGui();
+                
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveForward');
+                    self.actionCall('moveForward');
                 });
             },
 
             moveBackward: function () {
+                var self = this;
+
                 this.disableGui();
-                var that = this;
                 this.itemServiceApi.kill(function () {
-                    that.actionCall('moveBackward');
+                    self.actionCall('moveBackward');
                 });
             },
 
@@ -123,7 +164,7 @@ define([
             },
 
             timeout: function () {
-                var that = this;
+                var self = this;
                 this.disableGui();
                 this.testContext.isTimeout = true;
                 this.updateTimer();
@@ -136,7 +177,7 @@ define([
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        that.actionCall('timeout', metaData);
+                        self.actionCall('timeout', metaData);
                     });
                 });
             },
@@ -172,6 +213,15 @@ define([
                 });
             },
 
+            /**
+             * Sets the assessment test context object
+             * @param {Object} testContext
+             */
+            setTestContext: function(testContext) {
+                this.testContext = testContext;
+                this.itemServiceApi = eval(testContext.itemServiceApiCall);
+            },
+
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -179,12 +229,11 @@ define([
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
 
-                this.testContext = testContext;
-                this.itemServiceApi = eval(testContext.itemServiceApiCall);
-
+                this.setTestContext(testContext);
                 this.updateContext();
                 this.updateProgress();
                 this.updateNavigation();
+                this.updateTestReview();
                 this.updateInformation();
                 this.updateRubrics();
                 this.updateTools();
@@ -243,7 +292,7 @@ define([
 
             createTimer: function(cst) {
                 var $timer = $('<div>', {'class': 'qti-timer qti-timer__type-' + cst.qtiClassName }),
-                    $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.source }),
+                    $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.label }),
                     $time  = $('<div>', {'class': 'qti-timer_time', text: this.formatTime(cst.seconds) });
 
                 $timer.append($label);
@@ -407,6 +456,18 @@ define([
                 }
             },
 
+            /**
+             * Updates the test taker review screen
+             */
+            updateTestReview: function() {
+                if (this.testReview) {
+                    this.testReview.update(this.testContext);
+                }
+            },
+
+            /**
+             * Updates the progress bar
+             */
             updateProgress: function () {
                 var considerProgress = this.testContext.considerProgress;
 
@@ -428,16 +489,25 @@ define([
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
-                    $controls.$sideBars.height(finalHeight);
+                    $controls.$sideBars.each(function() {
+                        var $sideBar = $(this);
+                        $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
+                    });
                 }
             },
 
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
+                if (this.testReview) {
+                    this.testReview.disable();
+                }
             },
 
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
+                if (this.testReview) {
+                    this.testReview.enable();
+                }
             },
 
             formatTime: function (totalSeconds) {
@@ -477,16 +547,20 @@ define([
              *   }
              * }
              * </pre>
+             * @param {Object} extraParams - Additional parameters to be sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData) {
+            actionCall: function (action, metaData, extraParams) {
                 var self = this;
-                metaData = metaData ? {"metaData" : metaData} : {};
+                var params = metaData ? {"metaData" : metaData} : {};
+                if (extraParams) {
+                    params = _.assign(params, extraParams);
+                }
                 this.beforeTransition(function () {
                     $.ajax({
                         url: self.testContext[action + 'Url'],
                         cache: false,
-                        data: metaData,
+                        data: params,
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
@@ -575,6 +649,7 @@ define([
                     $timerWrapper:  $('[data-control="qti-timers"]'),
 
                     // other zones
+                    $contentPanel: $('.content-panel'),
                     $controls: $('.qti-controls'),
                     $itemFrame: $('#qti-item'),
                     $rubricBlocks: $('#qti-rubrics'),
@@ -584,11 +659,16 @@ define([
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
 
-                $controls.$logout.addClass('hidden');
-                $controls.$exit.removeClass('hidden');
+                $controls.$logout.toggleClass('hidden', testContext.exitButton);
+                $controls.$exit.toggleClass('hidden', !testContext.exitButton);
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
+
+                // @todo remove when framework gets isn place
+                if(testContext.allowComment) {
+                    $controls.$commentToggle.show();
+                }
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -668,6 +748,19 @@ define([
                 });
 
                 TestRunner.progressUpdater = progressUpdater($controls.$progressBar, $controls.$progressLabel);
+
+                if ($controls.$contentPanel.data('reviewScreen')) {
+                    TestRunner.testReview = testReview($controls.$contentPanel, {
+                        region: $controls.$contentPanel.data('reviewRegion') || 'left',
+                        sectionOnly: !!$controls.$contentPanel.data('reviewSectionOnly'),
+                        preventsUnseen: !!$controls.$contentPanel.data('reviewPreventsUnseen')
+                    }).on('jump', function(event, position) {
+                        TestRunner.jump(position);
+                    }).on('mark', function(event, flag, position) {
+                        TestRunner.markForReview(flag, position);
+                    });
+                    $controls.$sideBars = $('.test-sidebar');
+                }
 
                 iframeNotifier.parent('serviceready');
 

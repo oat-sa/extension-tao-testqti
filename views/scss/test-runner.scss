@@ -126,6 +126,10 @@
         margin-left: 20px;
     }
 
+    [data-control="comment-toggle"] {
+        display:none;
+    }
+
     .qti-timer {
         display: inline-block;
         text-align: center;
@@ -163,4 +167,15 @@
             display:none;
         }
     }
+
+    #qti-rubrics{
+        margin: auto;
+        max-width: 1024px;
+        width: 100%;
+        padding: 15px;
+        .qti-rubricBlock {
+            margin: 20px 0;
+        }
+    }
+
 }
