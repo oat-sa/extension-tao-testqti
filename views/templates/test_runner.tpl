@@ -53,7 +53,7 @@ use oat\tao\helpers\Layout;
         </div>
     </div>
 
-    <div class="content-panel"<?= get_data('review_screen') ? ' data-review-screen="1"' : ''; ?><?= get_data('review_region') ? ' data-review-region="' . get_data('review_region') . '"' : ''; ?>>
+    <div class="content-panel<?= get_data('review_screen') ? ' has-review-screen' : ''; ?><?= get_data('review_region') ? ' review-screen-region-' . get_data('review_region') : ''; ?>">
         <!--div class="test-sidebar test-sidebar-left flex-container-navi">
         </div-->
         <div class="test-item flex-container-remaining">
