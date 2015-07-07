@@ -42,7 +42,6 @@ use \taoQtiCommon_helpers_PciVariableFiller;
 use \taoQtiCommon_helpers_PciStateOutput;
 use \taoQtiCommon_helpers_Utils;
 use oat\taoQtiItem\helpers\QtiRunner;
-use qtism\common\datatypes\String;
 
 /**
  * Runs a QTI Test.
@@ -690,7 +689,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                     }
                 }
             }
-            common_Logger::d(print_r($rdfOutcomeMap, true));
+//            common_Logger::d(print_r($rdfOutcomeMap, true));
+//            common_Logger::d(print_r($testSession->getVariable('testTaker-firstName'), true));
+//            $testSession->getVariable('testTaker-firstName')->setValue(new String('Sam'));
+//            common_Logger::d(print_r($testSession->getVariable('testTaker-firstName')->getValue(), true));
 
             $this->setTestSession($testSession);
 	    }
