@@ -120,7 +120,7 @@ use oat\tao\helpers\Layout;
 </div>
 <div class="timeout-modal-feedback modal">
     <div class="modal-body clearfix">
-        <p><?= __('Time is run out. The test section is ended.') ?></p>
+        <p><?= __('Time limit reached, this part of the test has ended.') ?></p>
         <div class="rgt">
             <button class="btn-info small js-timeout-confirm" type="button"><?= __('Ok') ?></button>
         </div>
