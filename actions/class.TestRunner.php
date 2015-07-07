@@ -42,6 +42,7 @@ use \taoQtiCommon_helpers_PciVariableFiller;
 use \taoQtiCommon_helpers_PciStateOutput;
 use \taoQtiCommon_helpers_Utils;
 use oat\taoQtiItem\helpers\QtiRunner;
+use qtism\common\datatypes\String;
 
 /**
  * Runs a QTI Test.
@@ -672,7 +673,26 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    if ($qtiStorage->exists($sessionId) === false) {
 	        common_Logger::i("Instantiating QTI Assessment Test Session");
-	        $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
+            $testSession = $qtiStorage->instantiate($this->getTestDefinition(), $sessionId);
+
+            //set default variables
+            $rdfOutcomeMap = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+            if(is_array($rdfOutcomeMap)){
+                $testTaker = common_session_SessionManager::getSession()->getUser();
+                foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
+                    $value = $testTaker->getOnePropertyValue(new core_kernel_classes_Property($rdfPropUri));
+                    if($value instanceof \core_kernel_classes_Literal){
+                        //set outcome value
+                        $outcome = $testSession->getVariable($outcomeId);
+                        if(!is_null($outcome)){
+                            $outcome->setValue(new String($value->literal));
+                        }
+                    }
+                }
+            }
+            common_Logger::d(print_r($rdfOutcomeMap, true));
+
+            $this->setTestSession($testSession);
 	    }
 	    else {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
