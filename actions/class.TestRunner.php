@@ -284,7 +284,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         }
 
         // loads the specific config
-        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $this->setData('review_screen', !empty($config['test-taker-review']));
         $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
         
@@ -672,23 +672,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    if ($qtiStorage->exists($sessionId) === false) {
 	        common_Logger::i("Instantiating QTI Assessment Test Session");
-            $testSession = $qtiStorage->instantiate($this->getTestDefinition(), $sessionId);
-
-            //set default variables
-            $rdfOutcomeMap = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
-            if(is_array($rdfOutcomeMap)){
-                $testTaker = common_session_SessionManager::getSession()->getUser();
-                foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
-                    //set outcome value
-                    $values = $testTaker->getPropertyValues($rdfPropUri);
-                    $outcome = $testSession->getVariable($outcomeId);
-                    if(!is_null($outcome) && count($values)){
-                        $outcome->setValue(new String($values[0]));
-                    }
-                }
-            }
-
-            $this->setTestSession($testSession);
+            $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
+            $this->setInitialOutcomes();
 	    }
 	    else {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
@@ -720,4 +705,25 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        break;
 	    }
 	}
+    
+    /**
+     * Set the initial outcomes defined in the rdf outcome map configuration file
+     */
+    protected function setInitialOutcomes(){
+        
+        $testSession = $this->getTestSession();
+        
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        if(is_array($rdfOutcomeMap)){
+            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
+                //set outcome value
+                $values = $testTaker->getPropertyValues($rdfPropUri);
+                $outcome = $testSession->getVariable($outcomeId);
+                if(!is_null($outcome) && count($values)){
+                    $outcome->setValue(new String($values[0]));
+                }
+            }
+        }
+    }
 }
