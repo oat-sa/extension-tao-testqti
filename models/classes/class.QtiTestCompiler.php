@@ -455,12 +455,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         foreach ($subContent as $subC) {
             tao_helpers_File::copy($subC, $privateDirPath . basename($subC));
         }
-        
-        // Append the qti_base.css to copied files.
-        $ds = DIRECTORY_SEPARATOR;
-        $qtiBaseStylesheetPath = dirname(__FILE__) . $ds . '..' . $ds . '..' . $ds . 'views' . $ds . 'css' . $ds . 'qti_base.css';
-        $qtiBaseStylesheetDestPath = $privateDirPath . trim($this->getExtraPath(), $ds) . $ds . 'qti_base.css';
-        tao_helpers_File::copy($qtiBaseStylesheetPath, $qtiBaseStylesheetDestPath);
     }
     
     /**
@@ -521,7 +515,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             $rubric = $rubricDoc->getDocumentComponent();
             $rubricStylesheets = $rubric->getStylesheets();
-            $stylesheets = new StylesheetCollection(array(new Stylesheet('qti_base.css')));
+            $stylesheets = new StylesheetCollection();
             // In any case, include the base QTI Stylesheet.
             $stylesheets->merge($rubricStylesheets);
             $rubric->setStylesheets($stylesheets);

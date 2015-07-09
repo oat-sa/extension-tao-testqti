@@ -15,28 +15,95 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
- *
- *
  */
 
 namespace oat\taoQtiTest\scripts\update;
 
-
-class Updater extends \common_ext_ExtensionUpdater 
-{
-
-	/**
+/**
+ *
+ * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ */
+class Updater extends \common_ext_ExtensionUpdater {
+    
+    /**
      * 
-     * @param string $currentVersion
+     * @param string $initialVersion
      * @return string $versionUpdatedTo
      */
     public function update($initialVersion) {
-        
-        $currentVersion = $initialVersion;
-		if ($currentVersion == '2.6') {
-			$currentVersion = '2.6.1';
-		}
 
-		return $currentVersion;
-	}
+        $currentVersion = $initialVersion;
+        
+        // add testrunner config
+        if ($currentVersion == '2.6') {
+
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
+                'progress-indicator' => 'percentage',
+                'timerWarning' => array(
+                    'assessmentItemRef' => null,
+                    'assessmentSection' => 300,
+                    'testPart' => null
+                )
+            ));
+
+            $currentVersion = '2.6.1';
+        }
+   
+        if ($currentVersion == '2.6.1') {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config['exitButton'] = false;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $config);
+
+            $currentVersion = '2.6.2';
+        }
+        
+        // add testrunner review screen config
+        if ($currentVersion == '2.6.2') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $extension->setConfig('testRunner', array_merge($config, array(
+                'test-taker-review' => false,
+                'test-taker-review-region' => 'left',
+                'test-taker-review-section-only' => false,
+                'test-taker-review-prevents-unseen' => true,
+            )));
+
+            $currentVersion = '2.6.3';
+        }
+        
+        // adjust testrunner config
+        if ($currentVersion == '2.6.3') {
+            $defaultConfig = array(
+                'timerWarning' => array(
+                    'assessmentItemRef' => null,
+                    'assessmentSection' => null,
+                    'testPart'          => null
+                ),
+                'progress-indicator' => 'percentage',
+                'progress-indicator-scope' => 'testSection',
+                'test-taker-review' => false,
+                'test-taker-review-region' => 'left',
+                'test-taker-review-section-only' => false,
+                'test-taker-review-prevents-unseen' => true,
+                'exitButton' => false
+            );
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            foreach($defaultConfig as $key => $value) {
+                if (!isset($config[$key])) {
+                    $config[$key] = $value;
+                }
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.6.4';
+        }
+
+         if ($currentVersion == '2.6.4') {
+            $currentVersion = '2.7.0';
+         }
+        
+        return $currentVersion;
+    }
 }
