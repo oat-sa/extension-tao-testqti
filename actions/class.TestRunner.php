@@ -231,7 +231,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
         
         $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, new BinaryAssessmentTestSeeker($this->getTestDefinition())));
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
+        $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
+        
+        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
         $this->retrieveTestSession();
         $this->retrieveTestMeta();
         
