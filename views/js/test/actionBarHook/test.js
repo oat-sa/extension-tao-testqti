@@ -4,6 +4,7 @@ define([
     'taoQtiTest/testRunner/actionBarHook',
     'core/errorHandler'
 ], function($, _, actionBarHook, errorHandler){
+    'use strict';
 
     var containerId = 'tools-container';
 
@@ -47,47 +48,47 @@ define([
     });
 
     QUnit.asyncTest('initQtiTool ok', function(assert){
-        
+
         QUnit.expect(1);
-        
+
         var $container = $('#' + containerId);
         actionBarHook.initQtiTool($container, 'tool1', tools[0], {});
-        
+
         $container.on('ready.actionBarHook', function(){
             assert.equal($container.find('[data-control=tool1]').length, 1, 'button found');
             QUnit.start();
         });
-        
+
     });
-    
+
     QUnit.asyncTest('initQtiTool invalid hook', function(assert){
-        
+
         QUnit.expect(2);
         var $container = $('#' + containerId);
-        
+
         errorHandler.listen('.actionBarHook', function(err){
             assert.equal(err.message, 'invalid hook format', 'error thrown for invlid hook format');
             assert.equal($container.children('[data-control=toolX]').length, 0, 'button found');
             QUnit.start();
         });
-        
+
         actionBarHook.initQtiTool($container, 'toolX', tools[5], {});
-        
+
     });
-    
+
     QUnit.asyncTest('initQtiTool inexisting hook', function(assert){
-        
+
         QUnit.expect(2);
         var $container = $('#' + containerId);
-        
+
         errorHandler.listen('.actionBarHook', function(err){
             assert.equal(err.message, 'the hook amd module cannot be found', 'error thrown for hook not found');
             assert.equal($container.children('[data-control=toolX]').length, 0, 'button found');
             QUnit.start();
         });
-        
+
         actionBarHook.initQtiTool($container, 'toolX', tools[6], {});
-        
+
     });
 });
 
