@@ -20,6 +20,7 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\php\PhpDocument;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -222,5 +223,25 @@ class taoQtiTest_helpers_Utils {
         }
 
         return $map;
+    }
+    
+    /**
+     * Retrieve the Test Definition the test session is built from as an AssessmentTest object. 
+     * 
+     * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-|http://sample/first.rdf#i14363448109065884+'</i>)
+     * 
+     * @return AssessmentTest The AssessmentTest object the current test session is built from.
+     */
+    static public function getTestDefinition($qtiTestCompilation) {
+        $directoryIds = explode('|', $qtiTestCompilation);
+
+        $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0])->getPath();
+        $testFilePath = $dirPath . TAOQTITEST_COMPILED_FILENAME;
+
+        common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
+        $doc = new PhpDocument();
+        $doc->load($testFilePath);
+
+        return $doc->getDocumentComponent();
     }
 }

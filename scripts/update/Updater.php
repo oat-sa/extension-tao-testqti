@@ -104,6 +104,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.7.0';
          }
         
+        if ($currentVersion == '2.6.4') {
+            // correct access roles
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('act'=>'taoQtiTest', 'mod' => 'TestCommand')));
+//            array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestCommand'))
+            $currentVersion = '2.6.5';
+        }
+        
         return $currentVersion;
     }
 }

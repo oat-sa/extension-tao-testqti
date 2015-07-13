@@ -202,7 +202,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $outcomeProcessingEngine->process();
         
             // if numberPresented returned 0, division by 0 -> null.
-            $finalLtiOutcomeValue = (is_null($this['LtiOutcome'])) ? new Float(0.0) : $this['LtiOutcome'];
             $testUri = $this->getTest()->getUri();
             $var = $this->getVariable('LtiOutcome');
             $varIdentifier = $var->getIdentifier();

@@ -224,7 +224,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     
     protected function beforeAction() {
         // Controller initialization.
-        $this->retrieveTestDefinition();
+        $this->retrieveTestDefinition($this->getRequestParameter('QtiTestCompilation'));
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
         
         // Initialize storage and test session.
@@ -297,7 +297,42 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+    
+    public function endExpiredTests() 
+    {
+        error_reporting(E_ALL);
+        $started = \taoDelivery_models_classes_DeliveryServerService::singleton()->getResumableDeliveries();
+        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+        foreach ($started as $deliveryExecution) {
+            $compiledDelivery = $deliveryExecution->getDelivery();
+            $runtime = \taoDelivery_models_classes_DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
+            $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+            
+            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
 
+            $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+            $qtiStorage = new taoQtiTest_helpers_TestSessionStorage($sessionManager, new BinaryAssessmentTestSeeker($testDefinition));
+
+            
+            
+            $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
+            
+            var_dump($qtiStorage);
+            var_dump($session);
+            var_dump($testDefinition);
+            exit();
+            /*try {
+                $session->checkTimeLimits(false, false, false);
+            } catch (AssessmentTestSessionException $e) {
+                if (AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW){
+                    $session->endTestSession();
+                    $deliveryExecution->setState(INSTANCE_DELIVERYEXEC_FINISHED);
+                }
+            }*/
+        }
+    }
+    
     /**
      * Mark an item for review in the Assessment Test Session flow.
      *
@@ -427,19 +462,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function timeout() {
 	    $this->beforeAction();
 	    $session = $this->getTestSession();
-	    $timedOut = false;
 	    
 	    try {
             $session->checkTimeLimits(false, true, false);
-        }
-        catch (AssessmentTestSessionException $e) {
-            $timedOut = $e;
-        }
-        
-        if ($timedOut !== false) {
+        } catch (AssessmentTestSessionException $e) {
             $this->onTimeout($e);
         }
-
+        
         // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
         // to the client with the actual assessment test context. Maybe the client will be able to
         // continue...
@@ -642,26 +671,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * from as an AssessmentTest object. This method
 	 * also retrieves the compilation directory.
 	 * 
+     * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-|http://sample/first.rdf#i14363448109065884+'</i>)
+     * 
 	 * @return AssessmentTest The AssessmentTest object the current test session is built from.
 	 */
-	protected function retrieveTestDefinition() {
-	    
-	    $directories = array('private' => null, 'public' => null);
-	    $directoryIds = explode('|', $this->getRequestParameter('QtiTestCompilation'));
-	    
-	    $directories['private'] = $this->getDirectory($directoryIds[0]);
-	    $directories['public'] = $this->getDirectory($directoryIds[1]);
+	protected function retrieveTestDefinition($qtiTestCompilation) {
+        $directoryIds = explode('|', $qtiTestCompilation);
+	    $directories = array(
+            'private' => $this->getDirectory($directoryIds[0]), 
+            'public' => $this->getDirectory($directoryIds[1])
+        );
 	    
 	    $this->setCompilationDirectory($directories);
-	    
-	    $dirPath = $directories['private']->getPath();
-	    $testFilePath = $dirPath . TAOQTITEST_COMPILED_FILENAME;
-	    
-	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
-	    $doc = new PhpDocument();
-	    $doc->load($testFilePath);
-	    
-	    $this->setTestDefinition($doc->getDocumentComponent());
+	    $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($qtiTestCompilation);
+	    $this->setTestDefinition($testDefinition);
 	}
 	
 	/**
