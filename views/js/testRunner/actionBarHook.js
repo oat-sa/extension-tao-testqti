@@ -65,7 +65,7 @@ define([
         if(isValid(toolconfig)){
 
             var order = _.parseInt(toolconfig.order);
-            if(isNaN(order)){
+            if(_.isNaN(order)){
                 order = 0;
             }
             var tplData = {
@@ -110,9 +110,11 @@ define([
      */
     function _appendInOrder($container, $button){
         
+        var $after, $before;
         var order = $button.data('order');
+        
         if(order){
-            var $after, $before;
+            
             $container.children('.action').each(function(){
 
                 var $btn = $(this),
@@ -139,7 +141,7 @@ define([
             }
 
         }else{
-            //unordered buttons are append at the end
+            //unordered buttons are append at the end (including when order equals 0)
             $container.append($button);
         }
     }
