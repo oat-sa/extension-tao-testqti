@@ -42,7 +42,7 @@ define([
      * @param {String} [toolconfig.title] - the title to be displayed in the button
      * @returns {unresolved}
      */
-    function isValid(toolconfig){
+    function isValidConfig(toolconfig){
         return _.isObject(toolconfig) && toolconfig.label && toolconfig.hook;
     }
     
@@ -63,25 +63,34 @@ define([
 
         if(isValid(toolconfig)){
             
-            var tplData = {
-                id : id,
-                navigation : false,
-                title : toolconfig.title || toolconfig.label,
-                label : toolconfig.label,
-                icon : toolconfig.icon || ''
-            };
-            var $button = $(buttonTpl(tplData));
-
             require([toolconfig.hook], function(hook){
-                if(_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear)){
+                
+                var tplData = {
+                    id : id,
+                    navigation : false,
+                    title : toolconfig.title || toolconfig.label,
+                    label : toolconfig.label,
+                    icon : toolconfig.icon || ''
+                };
+                var $button = $(buttonTpl(tplData));
+            
+                if(isValidHook(hook)){
+                    
+                    //if an instance of the tool is already attached, remove it:
+                    
+                    if(hook.isVisible(toolconfig, assessmentTestContext)){
+                        
+                        //init the control
+                        hook.init($button, toolconfig, assessmentTestContext);
 
-                    hook.init($button, toolconfig, assessmentTestContext);
+                        //only attach the button to the dom when everything is ready
+                        $toolsContainer.append($button);
 
-                    //only attach the button to the dom when everything is ready
-                    $toolsContainer.append($button);
-
-                    //ready !
-                    $button.trigger('ready' + _ns);
+                        //ready !
+                        $button.trigger('ready' + _ns);
+                    
+                    }
+                    
                 }else{
                     errorHandler.throw(_ns, 'invalid hook format');
                 }
@@ -94,9 +103,22 @@ define([
         }
 
     }
-
+    
+    /**
+     * Check if the hook object is valid
+     * 
+     * @param {Object} hook
+     * @param {Function} hook.init
+     * @param {Function} hook.clear
+     * @param {Function} hook.isVisible
+     * @returns {Boolean}
+     */
+    function isValidHook(hook){
+        return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear) && _.isFunction(hook.isVisible));
+    }
+    
     return {
-        isValid : isValid,
+        isValid : isValidConfig,
         initQtiTool : initQtiTool
     };
 });
