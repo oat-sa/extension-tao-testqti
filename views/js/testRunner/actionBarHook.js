@@ -45,7 +45,7 @@ define([
     function isValid(toolconfig){
         return _.isObject(toolconfig) && toolconfig.label && toolconfig.hook;
     }
-    
+
     /**
      * Init a test runner button from its config
      * 
@@ -55,6 +55,7 @@ define([
      * @param {String} toolconfig.hook - the amd module to be loaded to initialize the button
      * @param {String} [toolconfig.icon] - the icon to be displayed in the button
      * @param {String} [toolconfig.title] - the title to be displayed in the button
+     * @param {Number} [toolconfig.order] - the order to which the button should be positioned
      * @param {Object} assessmentTestContext - the complete state of the test
      * @fires ready.actionBarHook when the hook has been initialized
      * @returns {undefined}
@@ -62,13 +63,18 @@ define([
     function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext){
 
         if(isValid(toolconfig)){
-            
+
+            var order = _.parseInt(toolconfig.order);
+            if(_.isNaN(order)){
+                order = 0;
+            }
             var tplData = {
                 id : id,
                 navigation : false,
                 title : toolconfig.title || toolconfig.label,
                 label : toolconfig.label,
-                icon : toolconfig.icon || ''
+                icon : toolconfig.icon || '',
+                order : order
             };
             var $button = $(buttonTpl(tplData));
 
@@ -78,7 +84,7 @@ define([
                     hook.init($button, toolconfig, assessmentTestContext);
 
                     //only attach the button to the dom when everything is ready
-                    $toolsContainer.append($button);
+                    _appendInOrder($toolsContainer, $button);
 
                     //ready !
                     $button.trigger('ready' + _ns);
@@ -88,11 +94,56 @@ define([
             }, function(e){
                 errorHandler.throw(_ns, 'the hook amd module cannot be found');
             });
-            
+
         }else{
             errorHandler.throw(_ns, 'invalid tool config format');
         }
 
+    }
+
+    /**
+     * Append a dom element $button to a $container in a specific order
+     * The orders are provided by data-order attribute set to the $button
+     * 
+     * @param {JQuery} $container
+     * @param {JQuery} $button
+     */
+    function _appendInOrder($container, $button){
+        
+        var $after, $before;
+        var order = $button.data('order');
+        
+        if(order){
+            
+            $container.children('.action').each(function(){
+
+                var $btn = $(this),
+                    _order = $btn.data('order');
+
+                if(_order === order){
+                    $after = $btn;
+                    return false;//stops
+                }else if(_order > order){
+                    $before = $btn;
+                    $after = null;
+                }else if(_order < order){
+                    $after = $btn;
+                    $before = null;
+                }
+            });
+
+            if($after){
+                $after.after($button);
+            }else if($before){
+                $before.before($button);
+            }else{
+                $container.append($button);
+            }
+
+        }else{
+            //unordered buttons are append at the end (including when order equals 0)
+            $container.append($button);
+        }
     }
 
     return {

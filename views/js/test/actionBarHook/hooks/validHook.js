@@ -16,16 +16,11 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  *
  */
-define([], function(){
-    
-     'use strict';
-    
-    return {
-        init : function init($btn, config, assessmentTestContext){
-            
-        },
-        clear : function(){
-            
-        }
-    };
+define({
+    init : function init($btn, config, assessmentTestContext){
+
+    },
+    clear : function(){
+
+    }
 });
