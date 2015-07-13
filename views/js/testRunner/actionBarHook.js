@@ -56,10 +56,11 @@ define([
      * @param {String} [toolconfig.icon] - the icon to be displayed in the button
      * @param {String} [toolconfig.title] - the title to be displayed in the button
      * @param {Object} assessmentTestContext - the complete state of the test
+     * @param {Object} testRunner - the test runner instance
      * @fires ready.actionBarHook when the hook has been initialized
      * @returns {undefined}
      */
-    function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext){
+    function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext, testRunner){
 
         if(isValidConfig(toolconfig)){
             
@@ -91,7 +92,7 @@ define([
                     if(hook.isVisible(toolconfig, assessmentTestContext)){
                         
                         //init the control
-                        hook.init($button, toolconfig, assessmentTestContext);
+                        hook.init($button, toolconfig, assessmentTestContext, testRunner);
 
                         //only attach the button to the dom when everything is ready
                         _appendInOrder($toolsContainer, $button);

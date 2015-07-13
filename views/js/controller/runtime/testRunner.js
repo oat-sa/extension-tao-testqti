@@ -293,7 +293,7 @@ define([
 				var $toolsContainer = $('.tools-box-list');
                 if(config && config.qtiTools){
                     _.forIn(config.qtiTools, function(toolconfig, id){
-                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
+                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext, TestRunner);
                     });
                 }
             },
