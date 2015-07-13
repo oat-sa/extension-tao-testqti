@@ -81,8 +81,14 @@ define([
                 if(isValidHook(hook)){
                     
                     //if an instance of the tool is already attached, remove it:
+                    var $existingBtn = $toolsContainer.children('[data-control="'+id+'"]'); 
+                    if($existingBtn.length){
+                        hook.clear($button, toolconfig, assessmentTestContext);
+                        $existingBtn.remove();
+                    }
                     
-                    if(true || hook.isVisible(toolconfig, assessmentTestContext)){
+                    //check if the tool is to be available
+                    if(hook.isVisible(toolconfig, assessmentTestContext)){
                         
                         //init the control
                         hook.init($button, toolconfig, assessmentTestContext);
@@ -92,7 +98,6 @@ define([
 
                         //ready !
                         $button.trigger('ready' + _ns);
-                    
                     }
                     
                 }else{
@@ -163,7 +168,7 @@ define([
      * @returns {Boolean}
      */
     function isValidHook(hook){
-        return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear));
+        return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear) && _.isFunction(hook.isVisible));
     }
     
     return {

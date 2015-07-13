@@ -37,7 +37,7 @@ define([
         }
     ];
 
-    QUnit.test('isValid', function(assert){
+    QUnit.test('isValidConfig', function(assert){
         assert.ok(actionBarHook.isValid(tools[0]), 'tool valid');
         assert.ok(actionBarHook.isValid(tools[1]), 'tool valid');
         assert.ok(!actionBarHook.isValid(tools[2]), 'tool invalid');
@@ -57,6 +57,28 @@ define([
         $container.on('ready.actionBarHook', function(){
             assert.equal($container.find('[data-control=tool1]').length, 1, 'button found');
             QUnit.start();
+        });
+        
+    });
+    
+    QUnit.asyncTest('initQtiTool multiple times the same', function(assert){
+        
+        QUnit.expect(3);
+        
+        var $container = $('#' + containerId);
+        actionBarHook.initQtiTool($container, 'tool1', tools[0], {});
+        actionBarHook.initQtiTool($container, 'tool1', tools[0], {});
+        actionBarHook.initQtiTool($container, 'tool1', tools[0], {});
+        
+        var count = 0;
+        $container.on('ready.actionBarHook', function(){
+            
+            //no matter how many times the initQtiTool is called, only have one button available at once
+            assert.equal($container.find('[data-control=tool1]').length, 1, 'button found');
+            
+            if(++count === 3){
+                QUnit.start();
+            }
         });
         
     });
@@ -143,5 +165,6 @@ define([
 
         });
     });
+    
 });
 
