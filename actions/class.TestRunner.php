@@ -310,18 +310,21 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
-
+            
+            $subjectProp = new \core_kernel_classes_Property(PROPERTY_DELVIERYEXECUTION_SUBJECT);
+			$delvieryExecutionSubject = $deliveryExecution->getOnePropertyValue($subjectProp);
+            
             $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
-            $qtiStorage = new taoQtiTest_helpers_TestSessionStorage($sessionManager, new BinaryAssessmentTestSeeker($testDefinition));
-
+            
+            $qtiStorage = new taoQtiTest_helpers_TestSessionStorage(
+                $sessionManager, 
+                new BinaryAssessmentTestSeeker($testDefinition), 
+                $delvieryExecutionSubject->getUri()
+            );
             
             
             $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
             
-            var_dump($qtiStorage);
-            var_dump($session);
-            var_dump($testDefinition);
-            exit();
             /*try {
                 $session->checkTimeLimits(false, false, false);
             } catch (AssessmentTestSessionException $e) {
