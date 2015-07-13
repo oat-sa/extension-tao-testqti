@@ -61,30 +61,34 @@ define([
      */
     function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext){
 
-        if(isValid(toolconfig)){
+        if(isValidConfig(toolconfig)){
             
             require([toolconfig.hook], function(hook){
                 
+				var order = _.parseInt(toolconfig.order);
+		        if(_.isNaN(order)){
+		            order = 0;
+		        }
                 var tplData = {
                     id : id,
                     navigation : false,
                     title : toolconfig.title || toolconfig.label,
                     label : toolconfig.label,
-                    icon : toolconfig.icon || ''
+                    icon : toolconfig.icon || '',
+					order : order
                 };
                 var $button = $(buttonTpl(tplData));
-            
                 if(isValidHook(hook)){
                     
                     //if an instance of the tool is already attached, remove it:
                     
-                    if(hook.isVisible(toolconfig, assessmentTestContext)){
+                    if(true || hook.isVisible(toolconfig, assessmentTestContext)){
                         
                         //init the control
                         hook.init($button, toolconfig, assessmentTestContext);
 
                         //only attach the button to the dom when everything is ready
-                        $toolsContainer.append($button);
+                        _appendInOrder($toolsContainer, $button);
 
                         //ready !
                         $button.trigger('ready' + _ns);
@@ -104,6 +108,51 @@ define([
 
     }
     
+	/**
+     * Append a dom element $button to a $container in a specific order
+     * The orders are provided by data-order attribute set to the $button
+     * 
+     * @param {JQuery} $container
+     * @param {JQuery} $button
+     */
+    function _appendInOrder($container, $button){
+        
+        var $after, $before;
+        var order = $button.data('order');
+        
+        if(order){
+            
+            $container.children('.action').each(function(){
+
+                var $btn = $(this),
+                    _order = $btn.data('order');
+
+                if(_order === order){
+                    $after = $btn;
+                    return false;//stops
+                }else if(_order > order){
+                    $before = $btn;
+                    $after = null;
+                }else if(_order < order){
+                    $after = $btn;
+                    $before = null;
+                }
+            });
+
+            if($after){
+                $after.after($button);
+            }else if($before){
+                $before.before($button);
+            }else{
+                $container.append($button);
+            }
+
+        }else{
+            //unordered buttons are append at the end (including when order equals 0)
+            $container.append($button);
+        }
+    }
+
     /**
      * Check if the hook object is valid
      * 
@@ -114,7 +163,7 @@ define([
      * @returns {Boolean}
      */
     function isValidHook(hook){
-        return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear) && _.isFunction(hook.isVisible));
+        return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear));
     }
     
     return {
