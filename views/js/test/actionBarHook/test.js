@@ -34,9 +34,15 @@ define([
         {
             'label' : 'tool X',
             'hook' : 'taoQtiTest/test/actionBarHook/hooks/noexisting'
+        },
+        {
+            'label' : 'hidden tool',
+            'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHookHidden'
         }
     ];
-
+    
+    QUnit.module('validation');
+    
     QUnit.test('isValidConfig', function(assert){
         assert.ok(actionBarHook.isValid(tools[0]), 'tool valid');
         assert.ok(actionBarHook.isValid(tools[1]), 'tool valid');
@@ -45,9 +51,12 @@ define([
         assert.ok(!actionBarHook.isValid(tools[4]), 'tool invalid');
         assert.ok(actionBarHook.isValid(tools[5]), 'tool valid');
         assert.ok(actionBarHook.isValid(tools[6]), 'tool valid');
+        assert.ok(actionBarHook.isValid(tools[7]), 'tool valid');
     });
-
-    QUnit.asyncTest('initQtiTool ok', function(assert){
+    
+    QUnit.module('initQtiTool');
+    
+    QUnit.asyncTest('ok', function(assert){
         
         QUnit.expect(1);
         
@@ -61,7 +70,7 @@ define([
         
     });
     
-    QUnit.asyncTest('initQtiTool multiple times the same', function(assert){
+    QUnit.asyncTest('multiple times the same', function(assert){
         
         QUnit.expect(3);
         
@@ -83,7 +92,21 @@ define([
         
     });
     
-    QUnit.asyncTest('initQtiTool invalid hook', function(assert){
+    QUnit.test('hidden tool', function(assert){
+        
+        QUnit.expect(0);
+        
+        var $container = $('#' + containerId);
+        actionBarHook.initQtiTool($container, 'tool1', tools[7], {});
+        
+        $container.on('ready.actionBarHook', function(){
+            //the test is not supposed to be there
+            assert.equal($container.find('[data-control=tool1]').length, 1, 'button found');
+        });
+        
+    });
+    
+    QUnit.asyncTest('invalid hook', function(assert){
         
         QUnit.expect(2);
         var $container = $('#' + containerId);
@@ -98,7 +121,7 @@ define([
         
     });
     
-    QUnit.asyncTest('initQtiTool inexisting hook', function(assert){
+    QUnit.asyncTest('inexisting hook', function(assert){
         
         QUnit.expect(2);
         var $container = $('#' + containerId);
