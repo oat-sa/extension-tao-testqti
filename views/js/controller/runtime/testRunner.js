@@ -236,7 +236,7 @@ define([
                 this.updateTestReview();
                 this.updateInformation();
                 this.updateRubrics();
-                this.updateTools();
+                this.updateTools(testContext);
                 this.updateTimer();
 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
@@ -272,8 +272,8 @@ define([
                 }
             },
 
-            updateTools: function updateTools() {
-
+            updateTools: function updateTools(testContext) {
+                
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         $controls.$skip.show();
@@ -287,6 +287,15 @@ define([
                 else {
                     $controls.$skip.hide();
                     $controls.$skipEnd.hide();
+                }
+                
+                var config = module.config();
+				var $toolsContainer = $('.tools-box-list');
+                if(config && config.qtiTools){
+                    _.forIn(config.qtiTools, function(toolconfig, id){
+//                        actionBarHook.removeQtiTool($toolsContainer, id, toolconfig, testContext);
+                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
+                    });
                 }
             },
 
@@ -611,14 +620,6 @@ define([
 
         return {
             start: function (testContext) {
-
-                var config = module.config();
-				var $toolsContainer = $('.tools-box-list');
-                if(config && config.qtiTools){
-                    _.forIn(config.qtiTools, function(toolconfig, id){
-                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
-                    });
-                }
 
                 $controls = {
                     // navigation
