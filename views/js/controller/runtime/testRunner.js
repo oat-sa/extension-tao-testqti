@@ -22,8 +22,8 @@ define([
     'lodash',
     'module',
     'taoQtiTest/testRunner/actionBarHook',
-    'taoQtiTest/runner/testReview',
-    'taoQtiTest/runner/progressUpdater',
+    'taoQtiTest/testRunner/testReview',
+    'taoQtiTest/testRunner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -592,7 +592,7 @@ define([
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
                         "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
                     };
-                
+
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
 
