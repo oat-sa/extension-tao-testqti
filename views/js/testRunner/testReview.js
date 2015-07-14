@@ -22,8 +22,8 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'tpl!taoQtiTest/tpl/navigator',
-    'tpl!taoQtiTest/tpl/navigatorTree'
+    'tpl!taoQtiTest/testRunner/tpl/navigator',
+    'tpl!taoQtiTest/testRunner/tpl/navigatorTree'
 ], function ($, _, __, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
