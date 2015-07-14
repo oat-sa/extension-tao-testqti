@@ -304,6 +304,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $started = \taoDelivery_models_classes_DeliveryServerService::singleton()->getResumableDeliveries();
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
         foreach ($started as $deliveryExecution) {
+            var_dump($deliveryExecution);
             $compiledDelivery = $deliveryExecution->getDelivery();
             $runtime = \taoDelivery_models_classes_DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
             $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
@@ -324,7 +325,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             
             
             $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
-            
             /*try {
                 $session->checkTimeLimits(false, false, false);
             } catch (AssessmentTestSessionException $e) {
