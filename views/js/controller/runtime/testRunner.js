@@ -274,6 +274,9 @@ define([
 
             updateTools: function updateTools(testContext) {
                 
+				var $toolsContainer,
+                    config = module.config();
+                
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         $controls.$skip.show();
@@ -289,9 +292,8 @@ define([
                     $controls.$skipEnd.hide();
                 }
                 
-                var config = module.config();
-				var $toolsContainer = $('.tools-box-list');
                 if(config && config.qtiTools){
+                    $toolsContainer = $('.tools-box-list');
                     _.forIn(config.qtiTools, function(toolconfig, id){
                         actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext, TestRunner);
                     });
