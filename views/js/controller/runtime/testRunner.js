@@ -586,7 +586,7 @@ define([
                     message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        self.testContext.numberCompleted.toString()
+                        self.testContext.numberReview.toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
@@ -613,7 +613,7 @@ define([
             start: function (testContext) {
 
                 var config = module.config();
-				var $toolsContainer = $('.tools-box-list');
+                var $toolsContainer = $('.tools-box-list');
                 if(config && config.qtiTools){
                     _.forIn(config.qtiTools, function(toolconfig, id){
                         actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
