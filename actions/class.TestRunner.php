@@ -584,7 +584,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     }
 	
     /**
-     * Save metadata (given from GET['metaData'] parameter).
+     * Save metadata of session (given from GET['metaData'] parameter).
+     * Invokes in self::beforeAction() method.
      * 
      * @param array $metaData Meta data array to be saved.
      * Example:

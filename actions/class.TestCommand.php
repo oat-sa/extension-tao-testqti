@@ -31,7 +31,10 @@ use \taoQtiTest_actions_TestRunner as TestRunner;
  */
 class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
 {
-    
+    /**
+     * Action to finish test attempts where the maximum time limit has been reached.
+     * To end user will be sent array that contains id's of finished session.
+     */
     public function endExpiredTests() 
     {
         $started = \taoDelivery_models_classes_DeliveryServerService::singleton()->getResumableDeliveries();
@@ -83,6 +86,7 @@ class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
                 }
             }
         }
-        var_dump($result);
+        
+        echo json_encode($result);
     }
 }

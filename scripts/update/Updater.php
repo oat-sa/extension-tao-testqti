@@ -19,6 +19,9 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\tao\model\accessControl\func\AccessRule;
+use oat\tao\model\accessControl\func\AclProxy;
+
 /**
  *
  * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
