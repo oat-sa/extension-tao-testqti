@@ -31,6 +31,9 @@ use qtism\runtime\storage\binary\QtiBinaryStreamAccessFsFile;
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
  * 
+ * It is able to retrieve test sessions related to a given user and a given
+ * test definition.
+ * 
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
@@ -42,15 +45,24 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
     * @var integer
     */
    private $lastError = -1;
+   
+   /**
+    * The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+    * 
+    * @var string
+    */
+   private $userUri;
     
    /**
     * Create a new TestSessionStorage object.
     * 
     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and AssessmentItemSession objects.
     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's components.
+    * @param string $userUri The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
     */
-   public function __construct(AbstractSessionManager $manager, BinaryAssessmentTestSeeker $seeker) {
+   public function __construct(AbstractSessionManager $manager, BinaryAssessmentTestSeeker $seeker, $userUri) {
        parent::__construct($manager, $seeker);
+       $this->setUserUri($userUri);
    }
    
    /**
@@ -73,6 +85,24 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        $this->lastError = $lastError;
    }
    
+   /**
+    * Get the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+    * 
+    * @return string
+    */
+   public function getUserUri() {
+       return $this->userUri;
+   }
+   
+   /**
+    * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+    * 
+    * @param string $userUri
+    */
+   public function setUserUri($userUri) {
+       $this->userUri = $userUri;
+   }
+   
    public function retrieve(AssessmentTest $test, $sessionId) {
        $this->setLastError(-1);
        
@@ -82,7 +112,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function getRetrievalStream($sessionId) {
     
        $storageService = tao_models_classes_service_StateStorage::singleton();
-       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       $userUri = $this->getUserUri();
        
        if (is_null($userUri) === true) {
            $msg = "Could not retrieve current user URI.";
@@ -107,7 +137,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream) {
        
        $storageService = tao_models_classes_service_StateStorage::singleton();
-       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       $userUri = $this->getUserUri();
        
        if (is_null($userUri) === true) {
            $msg = "Could not retrieve current user URI.";
@@ -120,7 +150,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    
    public function exists($sessionId) {
        $storageService = tao_models_classes_service_StateStorage::singleton();
-       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       $userUri = $this->getUserUri();
        
        if (is_null($userUri) === true) {
            $msg = "Could not retrieve current user URI.";

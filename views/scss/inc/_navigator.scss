@@ -57,7 +57,7 @@
     }
 
     .icon-answered:before {
-        @include icon-result-ok();
+        @include icon-radio-checked();
     }
     .icon-viewed:before {
         @include icon-preview();
@@ -67,7 +67,7 @@
     }
     .icon-unanswered:before,
     .icon-unseen:before {
-        @include icon-result-nok();
+        @include icon-radio();
     }
 
     .collapsible, .qti-navigator-item {

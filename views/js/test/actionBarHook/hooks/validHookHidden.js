@@ -19,5 +19,11 @@
 define({
     init : function init($btn, config, assessmentTestContext){
 
+    },
+    clear : function(){
+
+    },
+    isVisible : function(){
+        return false;
     }
 });
