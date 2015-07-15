@@ -21,7 +21,7 @@
 define([
     'jquery',
     'lodash',
-    'taoQtiTest/runner/testReview',
+    'taoQtiTest/testRunner/testReview',
     'json!taoQtiTest/test/samples/json/testContext.json'
 ], function($, _, testReview, testContextData) {
     'use strict';
