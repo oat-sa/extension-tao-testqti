@@ -251,7 +251,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                     $testsFound = (count($tests) !== 0);
 
-                    if( !$testsFound ){
+                    if( $testsFound !== true ){
                         $report->add(
                             common_report_Report::createFailure(
                                 __("Package is valid but no tests were found. Make sure that it contains valid QTI tests.")
@@ -283,7 +283,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $report->setType(common_report_Report::TYPE_SUCCESS);
         }
 
-        if ($report->containsError() === true && $validPackage === true && $validManifest === true && $testsFound) {
+        if ($report->containsError() === true && $validPackage === true && $validManifest === true && $testsFound === true) {
             // We consider a test package as an atomic component, we then rollback it.
             $itemService = taoItems_models_classes_ItemsService::singleton();
 
