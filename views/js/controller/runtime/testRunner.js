@@ -586,7 +586,7 @@ define([
                     message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        self.testContext.numberReview.toString()
+                        self.testContext.numberReview ? self.testContext.numberReview.toString() : '0'
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
