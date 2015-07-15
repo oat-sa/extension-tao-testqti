@@ -112,7 +112,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function getRetrievalStream($sessionId) {
     
        $storageService = tao_models_classes_service_StateStorage::singleton();
-       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       $userUri = $this->getUserUri();
        
        if (is_null($userUri) === true) {
            $msg = "Could not retrieve current user URI.";
@@ -137,7 +137,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream) {
        
        $storageService = tao_models_classes_service_StateStorage::singleton();
-       $userUri = common_session_SessionManager::getSession()->getUserUri();
+       $userUri = $this->getUserUri();
        
        if (is_null($userUri) === true) {
            $msg = "Could not retrieve current user URI.";
