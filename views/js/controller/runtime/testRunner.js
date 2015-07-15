@@ -302,6 +302,7 @@ define([
 
             updateTimer: function () {
                 var self = this;
+                var hasTimers;
                 $controls.$timerWrapper.empty();
 
                 for (var i = 0; i < timerIds.length; i++) {
@@ -316,7 +317,11 @@ define([
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
-                    if (this.testContext.timeConstraints.length > 0) {
+                    hasTimers = !!this.testContext.timeConstraints.length;
+                    $controls.$topActionBar.toggleClass('has-timers', hasTimers);
+                    self.adjustFrame();
+
+                    if (hasTimers) {
 
                         // Insert QTI Timers container.
                         // self.formatTime(cst.seconds)
@@ -693,9 +698,6 @@ define([
                     }
                 };
 
-                if(testContext.timeConstraints.length) {
-                    $controls.$topActionBar.addClass('has-timers');
-                }
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
