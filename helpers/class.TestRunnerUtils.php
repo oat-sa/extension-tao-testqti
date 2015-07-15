@@ -414,24 +414,22 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $navigator = self::getNavigatorMap($session);
                 if ($navigator !== NavigationMode::LINEAR) {
                     $context['navigatorMap'] = $navigator['map'];
-                    $context['numberReview'] = $navigator['numberItemsFlagged'];
+                } else {
+                    $navigator = self::countItems($session);
                 }
 
-                // Setup of the progress bar when displaying position
-                if (isset($config['progress-indicator']) && 'position' == $config['progress-indicator']) {
-                    if ($navigator !== NavigationMode::LINEAR) {
-                        $context['numberItemsPart'] = $navigator['numberItemsPart'];
-                        $context['numberItemsSection'] = $navigator['numberItemsSection'];
-                        $context['itemPositionPart'] = $navigator['itemPositionPart'];
-                        $context['itemPositionSection'] = $navigator['itemPositionSection'];
-                    } else {
-                        $numberItems = self::countItems($session);
-                        $context['numberItemsSection'] = $numberItems['numberItemsSection'];
-                        $context['numberItemsPart'] = $numberItems['numberItemsPart'];
-                        $context['itemPositionPart'] = $numberItems['itemPositionPart'];
-                        $context['itemPositionSection'] = $numberItems['itemPositionSection'];
-                    }
-                }
+                // Extract the progression stats 
+                $context['numberFlagged'] = $navigator['numberItemsFlagged'];
+                $context['numberItemsPart'] = $navigator['numberItemsPart'];
+                $context['numberItemsSection'] = $navigator['numberItemsSection'];
+                $context['numberCompletedPart'] = $navigator['numberCompletedPart'];
+                $context['numberCompletedSection'] = $navigator['numberCompletedSection'];
+                $context['numberPresentedPart'] = $navigator['numberPresentedPart'];
+                $context['numberPresentedSection'] = $navigator['numberPresentedSection'];
+                $context['numberFlaggedPart'] = $navigator['numberFlaggedPart'];
+                $context['numberFlaggedSection'] = $navigator['numberFlaggedSection'];
+                $context['itemPositionPart'] = $navigator['itemPositionPart'];
+                $context['itemPositionSection'] = $navigator['itemPositionSection'];
 
                 // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
                 $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -485,7 +483,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 'progress-indicator-scope'          => 'progressIndicatorScope',
                 'test-taker-review'                 => 'reviewScreen',
                 'test-taker-review-region'          => 'reviewRegion',
-                'test-taker-review-section-only'    => 'reviewSectionOnly',
+                'test-taker-review-scope'           => 'reviewScope',
                 'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
             );
             foreach ($configMap as $configKey => $contextKey) {
@@ -610,6 +608,83 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
+     * Checks if an item has been completed
+     * @param Jump $jump
+     * @return bool
+     */
+    static private function isItemCompleted(Jump $jump) {
+        $itemSession = $jump->getItemSession();
+        $routeItem = $jump->getTarget();
+
+        $completed = false;
+        if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
+            // In linear mode, we consider the item completed if it was presented.
+            if ($itemSession->isPresented() === true) {
+                $completed = true;
+            }
+        }
+        else {
+            // In nonlinear mode we consider: 
+            // - an adaptive item completed if it's completion status is 'completed'.
+            // - a non-adaptive item to be completed if it is responded.
+            $isAdaptive = $itemSession->getAssessmentItem()->isAdaptive();
+
+            if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
+                $completed = true;
+            }
+            else if ($isAdaptive === false && $itemSession->isResponded() === true) {
+                $completed = true;
+            }
+        }
+        
+        return $completed;
+    }
+
+    /**
+     * Gets infos about a particular item
+     * @param AssessmentTestSession $session
+     * @param Jump $jump
+     * @return array
+     */
+    static private function getItemInfo(AssessmentTestSession $session, Jump $jump) {
+        $itemSession = $jump->getItemSession();
+        return array(
+            'remainingAttempts' => $itemSession->getRemainingAttempts(),
+            'answered' => self::isItemCompleted($jump),
+            'viewed' => $itemSession->isPresented(),
+            'flagged' => self::getItemFlag($session, $jump),
+            'position' => $jump->getPosition()
+        );
+    }
+
+    /**
+     * Builds a map of available jumps and count the flagged items
+     * @param AssessmentTestSession $session
+     * @param array $jumps
+     * @return array
+     */
+    static private function getJumpsMap(AssessmentTestSession $session, $jumps) {
+        $jumpsMap = array();
+        $numberItemsFlagged = 0;
+        foreach ($jumps as $jump) {
+            $routeItem = $jump->getTarget();
+            $partId = $routeItem->getTestPart()->getIdentifier();
+            $sectionId = key(current($routeItem->getAssessmentSections()));
+            $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
+
+            $jumpsMap[$partId][$sectionId][$itemId] = self::getItemInfo($session, $jump);
+            if ($jumpsMap[$partId][$sectionId][$itemId]['flagged']) {
+                $numberItemsFlagged ++;
+            }
+        }
+        
+        return array(
+            'flagged' => $numberItemsFlagged,
+            'map' => $jumpsMap,
+        );
+    }
+
+    /**
      * Gets the section map for navigation between test parts, sections and items.
      *
      * @param AssessmentTestSession $session
@@ -624,29 +699,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
         if (!$jumps->count()) {
             return NavigationMode::LINEAR;
         }
-
-        $jumpsMap = array();
-        $numberItemsFlagged = 0;
-        foreach ($jumps as $jump) {
-            $routeItem = $jump->getTarget();
-            $partId = $routeItem->getTestPart()->getIdentifier();
-            $sectionId = key(current($routeItem->getAssessmentSections()));
-            $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
-
-            $itemSession = $jump->getItemSession();
-            $flagged = self::getItemFlag($session, $jump);
-            $jumpsMap[$partId][$sectionId][$itemId] = array(
-                'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                'answered' => $itemSession->isResponded(),
-                'viewed' => $itemSession->isPresented(),
-                'flagged' => $flagged,
-                'position' => $jump->getPosition()
-            );
-            
-            if ($flagged) {
-                $numberItemsFlagged ++;
-            }
-        }
+        
+        $jumpsMapInfo = self::getJumpsMap($session, $jumps);
+        $jumpsMap = $jumpsMapInfo['map'];
+        $numberItemsFlagged = $jumpsMapInfo['flagged'];
+        
 
         // the active test-part identifier
         $activePart = $session->getCurrentTestPart()->getIdentifier();
@@ -671,6 +728,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $testPartIdx = 0;
         $numberItemsPart = 0;
         $numberItemsSection = 0;
+        $numberCompletedPart = 0;
+        $numberCompletedSection = 0;
+        $numberPresentedPart = 0;
+        $numberPresentedSection = 0;
+        $numberFlaggedPart = 0;
+        $numberFlaggedSection = 0;
         $itemPositionPart = 0;
         $itemPositionSection = 0;
         $itemPosition = $session->getRoute()->getPosition();
@@ -690,6 +753,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 foreach($testPart->getAssessmentSections() as $sectionId => $section) {
 
                     $completed = 0;
+                    $presented = 0;
+                    $flagged = 0;
                     $items = array();
                     $firstPositionSection = PHP_INT_MAX;
 
@@ -700,6 +765,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
                             $resItem  =  new \core_kernel_classes_Resource(strstr($item->getHref(), '|', true));
                             if ($jumpInfo['answered']) {
                                 ++$completed;
+                            }
+                            if ($jumpInfo['viewed']) {
+                                ++$presented;
+                            }
+                            if ($jumpInfo['flagged']) {
+                                ++$flagged;
                             }
                             $items[]  = array_merge(
                                 array(
@@ -726,10 +797,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
                     if ($sectionData['active']) {
                         $numberItemsSection = count($items);
-                        $itemPositionSection = $itemPosition - $firstPositionSection; 
+                        $itemPositionSection = $itemPosition - $firstPositionSection;
+                        $numberCompletedSection = $completed;
+                        $numberPresentedSection = $presented;
+                        $numberFlaggedSection = $flagged;
                     }
                     if ($id === $activePart) {
                         $numberItemsPart += count($items);
+                        $numberCompletedPart += $completed;
+                        $numberPresentedPart += $presented;
+                        $numberFlaggedPart += $flagged;
                     }
                 }
                 
@@ -758,6 +835,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
             'numberItemsFlagged' => $numberItemsFlagged,
             'numberItemsPart' => $numberItemsPart,
             'numberItemsSection' => $numberItemsSection,
+            'numberCompletedPart' => $numberCompletedPart,
+            'numberCompletedSection' => $numberCompletedSection,
+            'numberPresentedPart' => $numberPresentedPart,
+            'numberPresentedSection' => $numberPresentedSection,
+            'numberFlaggedPart' => $numberFlaggedPart,
+            'numberFlaggedSection' => $numberFlaggedSection,
             'itemPositionPart' => $itemPositionPart,
             'itemPositionSection' => $itemPositionSection,
         );
@@ -779,19 +862,19 @@ class taoQtiTest_helpers_TestRunnerUtils {
         // the active section identifier
         $activeSection = $session->getCurrentAssessmentSection()->getIdentifier();
 
-        $jumpsMap = array();
-        foreach ($jumps as $jump) {
-            $routeItem = $jump->getTarget();
-            $partId = $routeItem->getTestPart()->getIdentifier();
-            $sectionId = key(current($routeItem->getAssessmentSections()));
-            $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
-
-            $jumpsMap[$partId][$sectionId][$itemId] = $jump->getPosition();
-        }
+        $jumpsMapInfo = self::getJumpsMap($session, $jumps);
+        $jumpsMap = $jumpsMapInfo['map'];
+        $numberItemsFlagged = $jumpsMapInfo['flagged'];
 
         $testParts = array();
-        $numberItemsSection = 0;
         $numberItemsPart = 0;
+        $numberItemsSection = 0;
+        $numberCompletedPart = 0;
+        $numberCompletedSection = 0;
+        $numberPresentedPart = 0;
+        $numberPresentedSection = 0;
+        $numberFlaggedPart = 0;
+        $numberFlaggedSection = 0;
         $itemPositionPart = 0;
         $itemPositionSection = 0;
         $itemPosition = $session->getRoute()->getPosition();
@@ -806,22 +889,42 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
             $firstPositionPart = PHP_INT_MAX;
             foreach($testPart->getAssessmentSections() as $sectionId => $section) {
+                $completed = 0;
+                $presented = 0;
+                $flagged = 0;
                 $numberItems = count($section->getSectionParts());
                 $firstPositionSection = PHP_INT_MAX;
                 foreach($section->getSectionParts() as $itemId => $item) {
                     if (isset($jumpsMap[$id][$sectionId][$itemId])) {
-                        $position = $jumpsMap[$id][$sectionId][$itemId];
-                        $firstPositionPart = min($firstPositionPart, $position);
-                        $firstPositionSection = min($firstPositionSection, $position);
+                        $jumpInfo = $jumpsMap[$id][$sectionId][$itemId];
+                        
+                        if ($jumpInfo['answered']) {
+                            ++$completed;
+                        }
+                        if ($jumpInfo['viewed']) {
+                            ++$presented;
+                        }
+                        if ($jumpInfo['flagged']) {
+                            ++$flagged;
+                        }
+                        
+                        $firstPositionPart = min($firstPositionPart, $jumpInfo['position']);
+                        $firstPositionSection = min($firstPositionSection, $jumpInfo['position']);
                     }
                 }
 
                 if ($sectionId === $activeSection) {
                     $numberItemsSection = $numberItems;
                     $itemPositionSection = $itemPosition - $firstPositionSection;
+                    $numberCompletedSection = $completed;
+                    $numberPresentedSection = $presented;
+                    $numberFlaggedSection = $flagged;
                 }
                 if ($id === $activePart) {
                     $numberItemsPart += $numberItems;
+                    $numberCompletedPart += $completed;
+                    $numberPresentedPart += $presented;
+                    $numberFlaggedPart += $flagged;
                 }
             }
             if ($id === $activePart) {
@@ -830,8 +933,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
 
         return array(
+            'numberItemsFlagged' => $numberItemsFlagged,
             'numberItemsPart' => $numberItemsPart,
             'numberItemsSection' => $numberItemsSection,
+            'numberCompletedPart' => $numberCompletedPart,
+            'numberCompletedSection' => $numberCompletedSection,
+            'numberPresentedPart' => $numberPresentedPart,
+            'numberPresentedSection' => $numberPresentedSection,
+            'numberFlaggedPart' => $numberFlaggedPart,
+            'numberFlaggedSection' => $numberFlaggedSection,
             'itemPositionPart' => $itemPositionPart,
             'itemPositionSection' => $itemPositionSection,
         );

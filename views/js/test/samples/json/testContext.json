@@ -9,20 +9,28 @@
   "itemSessionState": 1,
   "isLast": false,
   "itemPosition": 0,
-  "timeConstraints": [],
-  "testTitle": "Test 7",
-  "testPartId": "testPart-1",
+  "timeConstraints": [
+    {
+      "label": "QTI Example Test",
+      "source": "Test-1",
+      "seconds": 7810,
+      "allowLateSubmission": false,
+      "qtiClassName": "assessmentTest"
+    }
+  ],
+  "testTitle": "QTI Example Test",
+  "testPartId": "Introduction",
   "sectionTitle": "Section 1",
   "numberItems": 9,
   "numberCompleted": 0,
   "numberPresented": 1,
   "considerProgress": true,
-  "moveForwardUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/moveForward?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "moveBackwardUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/moveBackward?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "skipUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/skip?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "commentUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/comment?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "timeoutUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/timeout?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "endTestSessionUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/endTestSession?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
+  "moveForwardUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/moveForward?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "moveBackwardUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/moveBackward?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "skipUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/skip?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "commentUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/comment?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "timeoutUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/timeout?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "endTestSessionUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/endTestSession?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
   "canMoveBackward": false,
   "jumps": [
     {
@@ -64,7 +72,7 @@
   ],
   "navigatorMap": [
     {
-      "id": "testPart-1",
+      "id": "Introduction",
       "sections": [
         {
           "id": "assessmentSection-1",
@@ -89,7 +97,7 @@
       "label": "Part 1"
     },
     {
-      "id": "testPart-2",
+      "id": "QTIExamples",
       "sections": [
         {
           "id": "assessmentSection-2",
@@ -176,21 +184,33 @@
       "label": "Part 2"
     }
   ],
-  "numberReview": 0,
-  "jumpUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/jumpTo?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "markForReviewUrl": "http:\/\/parcc.dev\/taoQtiTest\/TestRunner\/markForReview?QtiTestDefinition=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358424814618461&QtiTestCompilation=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i1435843802614465-%7Chttp%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438025926466%2B&standalone=true&serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489",
-  "itemServiceApiCall": "new ServiceApi(\"http:\\\/\\\/parcc.dev\\\/taoQtiTest\\\/ItemRunner\\\/index\",{\"itemUri\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i1435220772806039\",\"itemPath\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358438037787467+\",\"itemDataPath\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358438031158468-\",\"QtiTestParentServiceCallId\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358438344898489\",\"QtiTestDefinition\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358424814618461\",\"QtiTestCompilation\":\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i1435843802614465-|http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358438025926466+\",\"standalone\":true},\"http:\\\/\\\/parcc.dev\\\/PARCC.rdf#i14358438344898489.item-1.0\",new StateStorage(null, \"http:\\\/\\\/parcc.dev\\\/tao\\\/ServiceModule\\\/submitState?serviceCallId=http%3A%2F%2Fparcc.dev%2FPARCC.rdf%23i14358438344898489.item-1.0\"),new UserInfoService(\"http:\\\/\\\/parcc.dev\\\/tao\\\/ServiceModule\\\/getUserPropertyValues\",{}))",
+  "numberFlagged": 0,
+  "numberItemsPart": 1,
+  "numberItemsSection": 1,
+  "numberCompletedPart": 0,
+  "numberCompletedSection": 0,
+  "numberPresentedPart": 1,
+  "numberPresentedSection": 1,
+  "numberFlaggedPart": 0,
+  "numberFlaggedSection": 0,
+  "itemPositionPart": 0,
+  "itemPositionSection": 0,
+  "jumpUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/jumpTo?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "markForReviewUrl": "http:\/\/tao.dev\/taoQtiTest\/TestRunner\/markForReview?QtiTestDefinition=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i1434615925556637&QtiTestCompilation=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468266248480-%7Chttp%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468264481%2B&standalone=true&serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504",
+  "itemServiceApiCall": "new ServiceApi(\u0022http:\\\/\\\/tao.dev\\\/taoQtiTest\\\/ItemRunner\\\/index\u0022,{\u0022itemUri\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i1434615927811740\u0022,\u0022itemPath\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468271277482+\u0022,\u0022itemDataPath\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468276374483-\u0022,\u0022QtiTestParentServiceCallId\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468729921504\u0022,\u0022QtiTestDefinition\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i1434615925556637\u0022,\u0022QtiTestCompilation\u0022:\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468266248480-|http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468264481+\u0022,\u0022standalone\u0022:true},\u0022http:\\\/\\\/tao.dev\\\/TAO.rdf#i14369468729921504.item-1.0\u0022,new StateStorage(null, \u0022http:\\\/\\\/tao.dev\\\/tao\\\/ServiceModule\\\/submitState?serviceCallId=http%3A%2F%2Ftao.dev%2FTAO.rdf%23i14369468729921504.item-1.0\u0022),new UserInfoService(\u0022http:\\\/\\\/tao.dev\\\/tao\\\/ServiceModule\\\/getUserPropertyValues\u0022,{}))",
   "rubrics": [],
-  "allowComment": false,
+  "allowComment": true,
   "allowSkipping": false,
+  "exitButton": true,
   "timerWarning": {
-    "assessmentItemRef": null,
-    "assessmentSection": 300,
-    "testPart": null
+    "assessmentItemRef": 15,
+    "assessmentSection": 15,
+    "testPart": 15
   },
-  "progressIndicator": "percentage",
+  "progressIndicator": "position",
+  "progressIndicatorScope": "test",
   "reviewScreen": true,
   "reviewRegion": "left",
-  "reviewSectionOnly": false,
+  "reviewScope": "test",
   "reviewPreventsUnseen": true
 }
