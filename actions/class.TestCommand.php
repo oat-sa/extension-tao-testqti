@@ -21,6 +21,7 @@
 
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSessionException;
+use \taoQtiTest_actions_TestRunner as TestRunner;
 
 /**
  * taoQtiTest_actions_TestCommand represents an executable commands. 
@@ -35,7 +36,8 @@ class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
     {
         $started = \taoDelivery_models_classes_DeliveryServerService::singleton()->getResumableDeliveries();
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
-        
+        $result = array();
+
         foreach ($started as $deliveryExecution) {
             $compiledDelivery = $deliveryExecution->getDelivery();
             $runtime = \taoDelivery_models_classes_DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
@@ -43,21 +45,44 @@ class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
             
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
-
+            
+            $subjectProp = new \core_kernel_classes_Property(PROPERTY_DELVIERYEXECUTION_SUBJECT);
+            $delvieryExecutionSubject = $deliveryExecution->getOnePropertyValue($subjectProp);
+            
             $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
-            $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage($sessionManager, new BinaryAssessmentTestSeeker($testDefinition));
-
+            
+            $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
+                $sessionManager, 
+                new BinaryAssessmentTestSeeker($testDefinition), 
+                $delvieryExecutionSubject->getUri()
+            );
+            
             $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
+            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
+            $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
+            
+            $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
+            $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
+            $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getUri());
+            
             
             try {
                 $session->checkTimeLimits(false, false, false);
             } catch (AssessmentTestSessionException $e) {
                 if (AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW){
+                    $session->saveMetaData(array(
+                       'TEST' => array('TEST_EXIT_CODE' => TestRunner::TEST_CODE_INCOMPLETE),
+                       'SECTION' => array('SECTION_EXIT_CODE' => TestRunner::SECTION_CODE_TIMEOUT),
+                    ));
                     $session->endTestSession();
                     $deliveryExecution->setState(INSTANCE_DELIVERYEXEC_FINISHED);
+                    
+                    \common_Logger::i("Expired test session {$session->getSessionId()} has finished.");
+                    
+                    $result[] = $session->getSessionId();
                 }
             }
         }
+        var_dump($result);
     }
-    
 }

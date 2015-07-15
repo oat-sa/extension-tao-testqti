@@ -54,6 +54,21 @@ use oat\taoQtiItem\helpers\QtiRunner;
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     
+    const SECTION_CODE_COMPLETED_NORMALLY = 700;
+    const SECTION_CODE_QUIT = 701;
+    const SECTION_CODE_COMPLETE_TIMEOUT = 703;
+    const SECTION_CODE_TIMEOUT = 704;
+    const SECTION_CODE_FORCE_QUIT = 705;
+    const SECTION_CODE_IN_PROGRESS = 706;
+    const SECTION_CODE_ERROR = 300;
+    
+    const TEST_CODE_COMPLETE = 'C';
+    const TEST_CODE_TERMINATED = 'T';
+    const TEST_CODE_INCOMPLETE = 'IC';
+    const TEST_CODE_INCOMPLETE_QUIT = 'IQ';
+    const TEST_CODE_INACTIVE = 'IA';
+    const TEST_CODE_DISAGREED_WITH_NDA = 'DA';
+    
     /**
      * The current AssessmentTestSession object.
      * 
@@ -241,7 +256,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $this->saveMetaData();
+        $metaData = $this->getRequestParameter('metaData');
+        if (!empty($metaData)) {
+            $this->saveMetaData($metaData);
+        }
     }
 
     protected function afterAction($withContext = true) {
@@ -297,44 +315,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
-    
-    public function endExpiredTests() 
-    {
-        error_reporting(E_ALL);
-        $started = \taoDelivery_models_classes_DeliveryServerService::singleton()->getResumableDeliveries();
-        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        foreach ($started as $deliveryExecution) {
-            var_dump($deliveryExecution);
-            $compiledDelivery = $deliveryExecution->getDelivery();
-            $runtime = \taoDelivery_models_classes_DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
-            $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
-            
-            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
-            $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
-            
-            $subjectProp = new \core_kernel_classes_Property(PROPERTY_DELVIERYEXECUTION_SUBJECT);
-			$delvieryExecutionSubject = $deliveryExecution->getOnePropertyValue($subjectProp);
-            
-            $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
-            
-            $qtiStorage = new taoQtiTest_helpers_TestSessionStorage(
-                $sessionManager, 
-                new BinaryAssessmentTestSeeker($testDefinition), 
-                $delvieryExecutionSubject->getUri()
-            );
-            
-            
-            $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
-            /*try {
-                $session->checkTimeLimits(false, false, false);
-            } catch (AssessmentTestSessionException $e) {
-                if (AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW){
-                    $session->endTestSession();
-                    $deliveryExecution->setState(INSTANCE_DELIVERYEXEC_FINISHED);
-                }
-            }*/
-        }
-    }
     
     /**
      * Mark an item for review in the Assessment Test Session flow.
@@ -605,41 +585,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	
     /**
      * Save metadata (given from GET['metaData'] parameter).
+     * 
+     * @param array $metaData Meta data array to be saved.
+     * Example:
+     * array(
+     *   'TEST' => array('TEST_EXIT_CODE' => 'IC'),
+     *   'SECTION' => array('SECTION_EXIT_CODE' => 701),
+     * )
      */
-    private function saveMetaData()
+    private function saveMetaData(array $metaData, $session = null)
     {
-        $metaData = $this->getRequestParameter('metaData');
-        if (is_array($metaData)) {
+        if ($session === null) {
             $session = $this->getTestSession();
-            $sessionId = $session->getSessionId();
-            $testUri = $session->getTest()->getUri();
-            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-            $item = $session->getCurrentAssessmentItemRef();
-            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
-            $assessmentSectionId = $session->getCurrentAssessmentSection()->getIdentifier();
-
-            foreach ($metaData as $type => $data) {
-                foreach ($data as $key => $value) {
-                    $metaVariable = new \taoResultServer_models_classes_TraceVariable();
-                    $metaVariable->setIdentifier($key);
-                    $metaVariable->setBaseType('string');
-                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-                    $metaVariable->setTrace($value);
-
-                    if (strcasecmp($type, 'ITEM') === 0) {
-                        $occurence = $session->getCurrentAssessmentItemRefOccurence();
-                        $transmissionId = "${sessionId}.${item}.${occurence}";
-                        $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
-                    } elseif (strcasecmp($type, 'TEST') === 0) {
-                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                    } elseif (strcasecmp($type, 'SECTION') === 0) {
-                        //suffix section variables with _{SECTION_IDENTIFIER}
-                        $metaVariable->setIdentifier($key.'_'.$assessmentSectionId);
-                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                    }
-                }
-            }
-        } 
+        }
+        $session->saveMetaData($metaData);
     }
     
     /**
