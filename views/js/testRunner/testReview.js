@@ -53,6 +53,7 @@ define([
         component : '.qti-navigator',
         filterBar : '.qti-navigator-filters',
         tree : '.qti-navigator-tree',
+        collapseHandle : '.qti-navigator-collapsible',
         linearState : '.qti-navigator-linear',
         infoAnswered : '.qti-navigator-answered .qti-navigator-counter',
         infoViewed : '.qti-navigator-viewed .qti-navigator-counter',
@@ -71,7 +72,7 @@ define([
         linearStart : '.qti-navigator-linear-part button',
         counters : '.qti-navigator-counter',
         actives : '.active',
-        collapsibles : '.collapsible',
+        collapsible : '.collapsible',
         collapsiblePanels : '.collapsible-panel',
         unseen : '.unseen',
         answered : '.answered',
@@ -179,6 +180,18 @@ define([
         _initEvents: function() {
             var self = this;
 
+            // click on the collapse handle: collapse/expand the review panel
+            this.$component.on('click' + _selectors.component, _selectors.collapseHandle, function() {
+                if (self.disabled) {
+                    return;
+                }
+
+                self.$component.toggleClass(_cssCls.collapsed);
+                if (self.$component.hasClass(_cssCls.collapsed)) {
+                    self._openSelected();
+                }
+            });
+
             // click on the info panel title: toggle the related panel
             this.$component.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
                 if (self.disabled) {
@@ -229,7 +242,7 @@ define([
 
                 if (!$item.hasClass(_cssCls.disabled)) {
                     $target = $(event.target);
-                    if ($target.is(_selectors.icons)) {
+                    if ($target.is(_selectors.icons) && !self.$component.hasClass(_cssCls.collapsed)) {
                         if (!$item.hasClass(_cssCls.unseen)) {
                             self._mark($item);
                         }
@@ -264,6 +277,7 @@ define([
                 var mode = $btn.data('mode');
 
                 self.$filters.removeClass(_cssCls.active);
+                self.$component.removeClass(_cssCls.collapsed);
                 $btn.addClass(_cssCls.active);
 
                 self._filter(mode);
@@ -330,7 +344,7 @@ define([
          * @private
          */
         _openOnly: function(opened, root) {
-            (root || this.$tree).find(_selectors.collapsibles).addClass(_cssCls.collapsed);
+            (root || this.$tree).find(_selectors.collapsible).addClass(_cssCls.collapsed);
             opened.removeClass(_cssCls.collapsed);
         },
 

@@ -28,6 +28,74 @@
         }
     }
 
+    &.collapsed {
+        flex: 0 0 65px;
+
+        ul {
+            padding: 0!important;
+        }
+
+        .qti-navigator-text,
+        .qti-navigator-info > .qti-navigator-label,
+        .qti-navigator-part > .qti-navigator-label,
+        .qti-navigator-section > .qti-navigator-label,
+        .qti-navigator-message {
+            display: none !important;
+        }
+
+        .qti-navigator-label {
+            padding: 0 2px!important;
+        }
+
+        .qti-navigator-icon, .icon {
+            width: 20px;
+        }
+
+        .qti-navigator-counter {
+            @include font-size(10);
+        }
+
+        .qti-navigator-collapsible {
+            .qti-navigator-collapse {
+                display: none;
+            }
+            .qti-navigator-expand {
+                display: block;
+            }
+        }
+
+        .qti-navigator-info.collapsed .collapsible-panel {
+            display: block !important;
+        }
+
+        .qti-navigator-filter {
+            span {
+                display: none;
+            }
+            &.active {
+                span {
+                    display: block;
+                    padding: 3px 0;
+                    border: 0 none;
+                    width: 64px;
+                }
+            }
+        }
+
+        .qti-navigator-item,
+        .qti-navigator-linear,
+        .qti-navigator-linear-part {
+            padding-left: 2px;
+            text-align: center;
+
+            .qti-navigator-icon, .icon {
+                @include font-size(20);
+                line-height: 30px;
+                width: auto;
+            }
+        }
+    }
+
     .qti-navigator-label {
         display: block;
         line-height: 30px;
@@ -84,6 +152,25 @@
 
     .qti-navigator-actions {
         text-align: center;
+    }
+
+    .qti-navigator-collapsible {
+        background-color: $uiClickableActiveBg;
+        color: $textColor;
+        border-top: 1px solid white();
+        cursor: pointer;
+        padding-left: 2px;
+        text-align: center;
+
+        .icon {
+            @include font-size(20);
+            line-height: 30px;
+            width: auto;
+        }
+
+        .qti-navigator-expand {
+            display: none;
+        }
     }
 
     .qti-navigator-info {
