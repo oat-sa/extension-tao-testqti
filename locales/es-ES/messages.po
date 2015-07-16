@@ -86,7 +86,7 @@ msgid "Categories"
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr ""
@@ -267,7 +267,7 @@ msgid "New test part"
 msgstr ""
 
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 msgid "No"
 msgstr ""
