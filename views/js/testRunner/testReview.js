@@ -107,7 +107,7 @@ define([
 
     /**
      * Provides a test review manager
-     * @type {{init: Function, update: Function, on: Function, off: Function, trigger: Function}}
+     * @type {{init: Function, update: Function, enable: Function, disable: Function, hide: Function, show: Function, toggle: Function, on: Function, off: Function, trigger: Function}}
      */
     var testReview = {
         /**
@@ -125,6 +125,8 @@ define([
             var insertMethod = putOnRight ? 'append' : 'prepend';
 
             this.options = initOptions;
+            this.disabled = false;
+            this.hidden = false;
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -537,27 +539,74 @@ define([
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context
+         * @returns {testReview}
          */
         update: function update(testContext) {
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
+            return this;
         },
 
         /**
          * Disables the component
+         * @returns {testReview}
          */
         disable: function disable() {
             this.disabled = true;
             this.$component.addClass(_cssCls.disabled);
+            return this;
         },
 
         /**
          * Enables the component
+         * @returns {testReview}
          */
         enable: function enable() {
             this.disabled = false;
             this.$component.removeClass(_cssCls.disabled);
+            return this;
+        },
+
+        /**
+         * Hides the component
+         * @returns {testReview}
+         */
+        hide: function hide() {
+            this.disabled = true;
+            this.hidden = true;
+            this.$component.addClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Shows the component
+         * @returns {testReview}
+         */
+        show: function show() {
+            this.disabled = false;
+            this.hidden = false;
+            this.$component.removeClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Toggles the display state of the component
+         * @param {Boolean} [show] External condition that's tells if the component must be shown or hidden
+         * @returns {testReview}
+         */
+        toggle: function toggle(show) {
+            if (undefined === show) {
+                show = this.hidden;
+            }
+
+            if (show) {
+                this.show();
+            } else {
+                this.hide();
+            }
+
+            return this;
         },
 
         /**

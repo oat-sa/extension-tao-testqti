@@ -14,7 +14,7 @@
         display: inline-block;
     }
 
-    .collapsed .collapsible-panel, .masked {
+    .collapsed .collapsible-panel, .masked, &.masked {
         display: none !important;
     }
 
