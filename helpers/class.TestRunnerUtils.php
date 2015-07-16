@@ -26,6 +26,7 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
+use qtism\runtime\tests\RouteItem;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -415,6 +416,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 if ($navigator !== NavigationMode::LINEAR) {
                     $context['navigatorMap'] = $navigator['map'];
                     $context['numberReview'] = $navigator['numberItemsFlagged'];
+                    $context['itemFlagged'] = self::getItemFlag($session, $context['itemPosition']);
                 }
 
                 // Setup of the progress bar when displaying position
@@ -501,7 +503,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     /**
      * Gets a call identifier for a particular item in the test
      * @param AssessmentTestSession $session
-     * @param string|Jump $itemPosition
+     * @param string|Jump|RouteItem $itemPosition
      * @return null|string
      */
     static public function getItemCallId(AssessmentTestSession $session, $itemPosition) {
@@ -510,8 +512,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $transmissionId = null;
         $routeItem = null;
         
-        if ($itemPosition && $itemPosition instanceof Jump) {
-            $routeItem = $itemPosition->getTarget();
+        if ($itemPosition && is_object($itemPosition)) {
+            if ($itemPosition instanceof RouteItem) {
+                $routeItem = $itemPosition;
+            } else if ($itemPosition instanceof Jump) {
+                $routeItem = $itemPosition->getTarget();
+            }
         } else {
             $jumps = $session->getPossibleJumps();
             foreach($jumps as $jump) {
@@ -569,7 +575,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     /**
      * Sets an item to be reviewed
      * @param AssessmentTestSession $session
-     * @param string|Jump $itemPosition
+     * @param string|Jump|RouteItem $itemPosition
      * @param bool $flag
      * @return bool
      * @throws common_exception_Error
@@ -591,7 +597,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     /**
      * Gets the marked for review state of an item
      * @param AssessmentTestSession $session
-     * @param string|Jump $itemPosition
+     * @param string|Jump|RouteItem $itemPosition
      * @return bool
      * @throws common_exception_Error
      */
