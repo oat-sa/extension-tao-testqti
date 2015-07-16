@@ -19,6 +19,8 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+
 /**
  *
  * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
@@ -100,9 +102,21 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.6.4';
         }
 
-         if ($currentVersion == '2.6.4') {
+        if ($currentVersion == '2.6.4') {
             $currentVersion = '2.7.0';
-         }
+        }
+
+        if ($currentVersion === '2.7.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            
+            $registry->registerQtiTools('markForReview', array(
+                'label' => 'Mark for review',
+                'icon' => 'anchor',
+                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
+            ));
+            
+            $currentVersion = '2.8.0';
+        }
         
         return $currentVersion;
     }
