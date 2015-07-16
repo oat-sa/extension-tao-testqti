@@ -190,6 +190,7 @@
         cursor: pointer;
         padding: 0 8px;
         text-align: right;
+        display: none;
 
         .icon {
             @include font-size(20);
@@ -201,6 +202,10 @@
         .qti-navigator-expand {
             display: none;
         }
+    }
+
+    &.collapsible .qti-navigator-collapsible {
+        display: block;
     }
 
     .qti-navigator-info {

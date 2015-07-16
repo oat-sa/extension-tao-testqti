@@ -131,6 +131,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         // add show/hide button
+        // adjust testrunner config: set the "can collapse" option
         if ($currentVersion == '2.9.0') {
             $registry = TestRunnerClientConfigRegistry::getRegistry();
             
@@ -141,6 +142,11 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
                 'order' => -1
             ));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-can-collapse'] = false;
+            $extension->setConfig('testRunner', $config);
 
             $currentVersion = '2.10.0';
         }

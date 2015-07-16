@@ -487,6 +487,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 'test-taker-review-region'          => 'reviewRegion',
                 'test-taker-review-scope'           => 'reviewScope',
                 'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
+                'test-taker-review-can-collapse'    => 'reviewCanCollapse',
             );
             foreach ($configMap as $configKey => $contextKey) {
                 if (isset($config[$configKey])) {

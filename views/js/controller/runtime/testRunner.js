@@ -273,7 +273,7 @@ define([
             },
 
             updateTools: function updateTools(testContext) {
-                
+
 				var $toolsContainer,
                     config = module.config();
 
@@ -291,7 +291,7 @@ define([
                     $controls.$skip.hide();
                     $controls.$skipEnd.hide();
                 }
-                
+
                 if(config && config.qtiTools){
                     $toolsContainer = $('.tools-box-list');
                     _.forIn(config.qtiTools, function(toolconfig, id){
@@ -598,11 +598,7 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback');
-                    
-                // @todo
-            	self.testContext.numberReview = self.testContext.numberReview || 0;
-            	
-            	
+
                 var  message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
@@ -766,7 +762,8 @@ define([
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
                         reviewScope: !!testContext.reviewScope,
-                        preventsUnseen: !!testContext.reviewPreventsUnseen
+                        preventsUnseen: !!testContext.reviewPreventsUnseen,
+                        canCollapse: !!testContext.reviewCanCollapse
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
                     }).on('mark', function(event, flag, position) {

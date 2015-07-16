@@ -36,6 +36,7 @@ define([
     var _cssCls = {
         active : 'active',
         collapsed : 'collapsed',
+        collapsible : 'collapsible',
         masked : 'masked',
         disabled : 'disabled',
         flagged : 'flagged',
@@ -103,7 +104,8 @@ define([
      */
     var _optionsMap = {
         'reviewScope' : 'reviewScope',
-        'reviewPreventsUnseen' : 'preventsUnseen'
+        'reviewPreventsUnseen' : 'preventsUnseen',
+        'canCollapse' : 'canCollapse'
     };
 
     /**
@@ -160,6 +162,7 @@ define([
             // install the component behaviour
             this._loadDOM();
             this._initEvents();
+            this._updateDisplayOptions();
 
             return this;
         },
@@ -478,6 +481,14 @@ define([
         },
 
         /**
+         * Updates the display according to options
+         * @private
+         */
+        _updateDisplayOptions: function() {
+            this.$component.toggleClass(_cssCls.collapsible, this.options.canCollapse);
+        },
+
+        /**
          * Updates the local options from the provided context
          * @param {Object} testContext The progression context
          * @private
@@ -606,6 +617,7 @@ define([
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
+            this._updateDisplayOptions();
             return this;
         },
 
