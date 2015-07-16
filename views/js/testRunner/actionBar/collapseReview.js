@@ -57,11 +57,16 @@ define([
     var initCollapseButton = function initCollapseButton($btn, config, testContext, testRunner) {
         $button = $($btn)
             .on('click' + _ns, function() {
-                testRunner.toggle();
-                _setCollapseButtonState(!!testRunner.hidden);
+                var testReview = testRunner.testReview;
+                if (testReview) {
+                    testReview.toggle();
+                    _setCollapseButtonState(!testReview.hidden);
+                }
             });
 
-        _setCollapseButtonState(!!testRunner.hidden);
+        if (testRunner.testReview) {
+            _setCollapseButtonState(!testRunner.testReview.hidden);
+        }
     };
 
     /**

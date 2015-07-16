@@ -69,12 +69,14 @@ define([
     QUnit.asyncTest('button install/uninstall', function(assert) {
         var callExpected = true;
         var testRunnerMock = {
-            toggle: function() {
-                if (callExpected) {
-                    assert.ok(true, 'The button must trigger a call to toggle');
-                    QUnit.start();
-                } else {
-                    assert.ok(false, 'The button must not trigger a call to toggle');
+            testReview: {
+                toggle: function() {
+                    if (callExpected) {
+                        assert.ok(true, 'The button must trigger a call to toggle');
+                        QUnit.start();
+                    } else {
+                        assert.ok(false, 'The button must not trigger a call to toggle');
+                    }
                 }
             }
         };
@@ -103,8 +105,11 @@ define([
 
     QUnit.test('button active/idle', function(assert) {
         var testRunnerMock = {
-            toggle: function() {},
-            hidden: true
+            testReview: {
+                toggle: function () {
+                },
+                hidden: true
+            }
         };
 
         var testContextMock = {
@@ -114,14 +119,14 @@ define([
         var $btn = $('#mark-for-review-2');
 
         collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
-        assert.ok($btn.hasClass('active'), 'The collapseReview button is activated when the component is hidden');
+        assert.ok(!$btn.hasClass('active'), 'The collapseReview button is idle when the component is hidden');
 
 
         $btn = $('#mark-for-review-3');
 
-        testRunnerMock.hidden = false;
+        testRunnerMock.testReview.hidden = false;
         collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
-        assert.ok(!$btn.hasClass('active'), 'The collapseReview button is idled when the component is visible');
+        assert.ok($btn.hasClass('active'), 'The collapseReview button is activate when the component is visible');
     });
 
 
@@ -129,13 +134,15 @@ define([
         var expectedHidden = true;
 
         var testRunnerMock = {
-            toggle: function() {
-                testRunnerMock.hidden = !testRunnerMock.hidden;
-                assert.equal(testRunnerMock.hidden, expectedHidden, 'The collapseReview button state must reflect the display state of the component');
-                assert.equal(!$btn.hasClass('active'), testRunnerMock.hidden, 'The collapseReview button is active when the component is hidden, or idle when the component is visible');
-                QUnit.start();
-            },
-            hidden: false
+            testReview: {
+                toggle: function () {
+                    testRunnerMock.testReview.hidden = !testRunnerMock.testReview.hidden;
+                    assert.equal(testRunnerMock.testReview.hidden, expectedHidden, 'The collapseReview button state must reflect the display state of the component');
+                    assert.equal($btn.hasClass('active'), testRunnerMock.testReview.hidden, 'The collapseReview button is idle when the component is hidden, or active when the component is visible');
+                    QUnit.start();
+                },
+                hidden: false
+            }
         };
 
         var testContextMock = {
@@ -145,7 +152,7 @@ define([
         var $btn = $('#mark-for-review-4');
 
         collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
-        assert.ok(!$btn.hasClass('active'), 'The collapseReview button is idled when the component is visible');
+        assert.ok($btn.hasClass('active'), 'The collapseReview button is active when the component is visible');
 
         $btn.click();
 

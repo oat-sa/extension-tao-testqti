@@ -27,3 +27,10 @@ $registry->registerQtiTools('markForReview', array(
     'icon' => 'anchor',
     'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
 ));
+
+$registry->registerQtiTools('collapseReview', array(
+    'title' => 'Show/Hide the review screen',
+    'label' => 'Review',
+    'icon' => 'mobile-menu',
+    'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview'
+));
