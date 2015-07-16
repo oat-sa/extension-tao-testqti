@@ -139,6 +139,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'label' => 'Review',
                 'icon' => 'mobile-menu',
                 'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+                'order' => -1
             ));
 
             $currentVersion = '2.10.0';

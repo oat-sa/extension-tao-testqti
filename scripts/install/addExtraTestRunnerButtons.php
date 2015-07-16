@@ -32,5 +32,6 @@ $registry->registerQtiTools('collapseReview', array(
     'title' => 'Show/Hide the review screen',
     'label' => 'Review',
     'icon' => 'mobile-menu',
-    'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview'
+    'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+    'order' => -1
 ));
