@@ -23,8 +23,9 @@ define([
     'lodash',
     'i18n',
     'tpl!taoQtiTest/testRunner/tpl/navigator',
-    'tpl!taoQtiTest/testRunner/tpl/navigatorTree'
-], function ($, _, __, navigatorTpl, navigatorTreeTpl) {
+    'tpl!taoQtiTest/testRunner/tpl/navigatorTree',
+    'util/capitalize'
+], function ($, _, __, navigatorTpl, navigatorTreeTpl, capitalize) {
     'use strict';
 
     /**
@@ -101,8 +102,19 @@ define([
      * @private
      */
     var _optionsMap = {
-        'reviewSectionOnly' : 'sectionOnly',
+        'reviewScope' : 'reviewScope',
         'reviewPreventsUnseen' : 'preventsUnseen'
+    };
+
+    /**
+     * Maps the handled review scopes
+     * @type {Object}
+     * @private
+     */
+    var _reviewScopes = {
+        test : 'test',
+        testPart : 'testPart',
+        testSection : 'testSection'
     };
 
     /**
@@ -115,7 +127,8 @@ define([
          * @param {String|jQuery|HTMLElement} element The element on which install the component
          * @param {Object} [options] A list of extra options
          * @param {String} [options.region] The region on which put the component: left or right
-         * @param {Boolean} [options.sectionOnly] Limit the review screen to the current test section only
+         * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+         * the whole test, the current test part or the current test section)
          * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
          * @returns {testReview}
          */
@@ -483,17 +496,62 @@ define([
          * @param {Object} testContext The progression context
          */
         _updateInfos: function(testContext) {
-            var total = testContext.numberItems || 0;
-            var answered = testContext.numberCompleted || 0;
-            var viewed = testContext.numberPresented || 0;
-            var flagged = testContext.numberReview || 0;
-            var unanswered = total - answered;
+            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test';
+            var progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope);
+            var getProgression = this[progressInfoMethod] || this._getProgressionOfTest;
+            var progression = getProgression && getProgression(testContext) || {};
+            var unanswered = Number(progression.total) - Number(progression.answered);
 
             // update the info panel
-            this.$infoAnswered.text(answered + '/' + total);
-            this.$infoUnanswered.text(unanswered + '/' + total);
-            this.$infoViewed.text(viewed + '/' + total);
-            this.$infoFlagged.text(flagged + '/' + total);
+            this.$infoAnswered.text(progression.answered + '/' + progression.total);
+            this.$infoUnanswered.text(unanswered + '/' + progression.total);
+            this.$infoViewed.text(progression.viewed + '/' + progression.total);
+            this.$infoFlagged.text(progression.flagged + '/' + progression.total);
+        },
+
+        /**
+         * Gets the progression stats for the whole test
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTest: function(testContext) {
+            return {
+                total : testContext.numberItems || 0,
+                answered : testContext.numberCompleted || 0,
+                viewed : testContext.numberPresented || 0,
+                flagged : testContext.numberFlagged || 0
+            };
+        },
+
+        /**
+         * Gets the progression stats for the current test part
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTestPart: function(testContext) {
+            return {
+                total : testContext.numberItemsPart || 0,
+                answered : testContext.numberCompletedPart || 0,
+                viewed : testContext.numberPresentedPart || 0,
+                flagged : testContext.numberFlaggedPart || 0
+            };
+        },
+
+        /**
+         * Gets the progression stats for the current test section
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTestSection: function(testContext) {
+            return {
+                total : testContext.numberItemsSection || 0,
+                answered : testContext.numberCompletedSection || 0,
+                viewed : testContext.numberPresentedSection || 0,
+                flagged : testContext.numberFlaggedSection || 0
+            };
         },
 
         /**
@@ -502,8 +560,11 @@ define([
          */
         _updateTree: function(testContext) {
             var navigatorMap = testContext.navigatorMap;
+            var reviewScope = this.options.reviewScope;
+            var reviewScopePart = reviewScope === 'testPart';
+            var reviewScopeSection = reviewScope === 'testSection';
             var _partsFilter = function(part) {
-                if (part.sections) {
+                if (reviewScopeSection && part.sections) {
                     part.sections = _.filter(part.sections, _partsFilter);
                 }
                 return part.active;
@@ -511,7 +572,7 @@ define([
 
             // rebuild the tree
             if (navigatorMap) {
-                if (this.options.sectionOnly) {
+                if (reviewScopePart || reviewScopeSection) {
                     // display only the current section
                     navigatorMap = _.filter(navigatorMap, _partsFilter);
                 }
@@ -668,7 +729,8 @@ define([
      * @param {String|jQuery|HTMLElement} element The element on which install the component
      * @param {Object} [options] A list of extra options
      * @param {String} [options.region] The region on which put the component: left or right
-     * @param {Boolean} [options.sectionOnly] Limit the review screen to the current test section only
+     * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+     * the whole test, the current test part or the current test section)
      * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
      * @returns {testReview}
      */

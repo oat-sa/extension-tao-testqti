@@ -63,10 +63,13 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
-     * Limits the test taker review screen to the current test section.
-     * @type boolean
+     * Limits the test taker review screen to a particular scope. Can be:
+     * - test : the whole test
+     * - testPart : the current test part
+     * - testSection : the current test section
+     * @type string
      */
-    'test-taker-review-section-only' => false,
+    'test-taker-review-scope' => 'test',
 
     /**
      * Prevents the test taker to access unseen items.
