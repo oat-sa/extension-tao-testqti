@@ -49,7 +49,8 @@ return array(
 		),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
+		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
+		    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

@@ -273,7 +273,7 @@ define([
             },
 
             updateTools: function updateTools(testContext) {
-
+                
 				var $toolsContainer,
                     config = module.config();
 
@@ -291,7 +291,7 @@ define([
                     $controls.$skip.hide();
                     $controls.$skipEnd.hide();
                 }
-
+                
                 if(config && config.qtiTools){
                     $toolsContainer = $('.tools-box-list');
                     _.forIn(config.qtiTools, function(toolconfig, id){
@@ -312,6 +312,7 @@ define([
 
             updateTimer: function () {
                 var self = this;
+                var hasTimers;
                 $controls.$timerWrapper.empty();
 
                 for (var i = 0; i < timerIds.length; i++) {
@@ -326,7 +327,11 @@ define([
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
-                    if (this.testContext.timeConstraints.length > 0) {
+                    hasTimers = !!this.testContext.timeConstraints.length;
+                    $controls.$topActionBar.toggleClass('has-timers', hasTimers);
+                    self.adjustFrame();
+
+                    if (hasTimers) {
 
                         // Insert QTI Timers container.
                         // self.formatTime(cst.seconds)
@@ -592,8 +597,13 @@ define([
              */
             exit: function () {
                 var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    message = __(
+                    $confirmBox = $('.exit-modal-feedback');
+                    
+                // @todo
+            	self.testContext.numberReview = self.testContext.numberReview || 0;
+            	
+            	
+                var  message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
                         (self.testContext.numberFlagged || 0).toString()
@@ -695,9 +705,6 @@ define([
                     }
                 };
 
-                if(testContext.timeConstraints.length) {
-                    $controls.$topActionBar.addClass('has-timers');
-                }
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
