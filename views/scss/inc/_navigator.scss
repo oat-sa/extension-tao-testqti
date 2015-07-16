@@ -111,6 +111,18 @@
                 padding-left: 9px;
             }
         }
+
+        .qti-navigator-linear-part {
+            padding: 8px 0;
+
+            .qti-navigator-title {
+                margin-top: 0;
+            }
+        }
+
+        .qti-navigator-actions button {
+            padding: 0 9px 0 5px;
+        }
     }
 
     .qti-navigator-label {
