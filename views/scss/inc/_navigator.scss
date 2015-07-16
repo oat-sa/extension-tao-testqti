@@ -29,7 +29,7 @@
     }
 
     &.collapsed {
-        flex: 0 0 65px;
+        flex: 0 0 40px;
 
         ul {
             padding: 0!important;
@@ -48,14 +48,17 @@
         }
 
         .qti-navigator-icon, .icon {
-            width: 20px;
+            width: auto;
         }
 
         .qti-navigator-counter {
-            @include font-size(10);
+            float: none;
+            text-align: center;
         }
 
         .qti-navigator-collapsible {
+            text-align: center;
+
             .qti-navigator-collapse {
                 display: none;
             }
@@ -64,8 +67,17 @@
             }
         }
 
-        .qti-navigator-info.collapsed .collapsible-panel {
-            display: block !important;
+        .qti-navigator-info {
+            &.collapsed .collapsible-panel {
+                display: block !important;
+            }
+
+            .qti-navigator-label span {
+                display: block;
+                text-align: center;
+                width: auto;
+                line-height: 30px;
+            }
         }
 
         .qti-navigator-filter {
@@ -77,7 +89,7 @@
                     display: block;
                     padding: 3px 0;
                     border: 0 none;
-                    width: 64px;
+                    width: 39px;
                 }
             }
         }
@@ -89,9 +101,14 @@
             text-align: center;
 
             .qti-navigator-icon, .icon {
-                @include font-size(20);
-                line-height: 30px;
-                width: auto;
+                line-height: 34px;
+            }
+        }
+
+        .qti-navigator-item {
+            .qti-navigator-icon {
+                padding-right: 100px;
+                padding-left: 9px;
             }
         }
     }
@@ -159,13 +176,14 @@
         color: $textColor;
         border-top: 1px solid white();
         cursor: pointer;
-        padding-left: 2px;
-        text-align: center;
+        padding: 0 8px;
+        text-align: right;
 
         .icon {
             @include font-size(20);
             line-height: 30px;
             width: auto;
+            color: $textHighlight;
         }
 
         .qti-navigator-expand {
