@@ -102,7 +102,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.6.4';
         }
 
-        if ($currentVersion == '2.6.4') {
+         if ($currentVersion == '2.6.4') {
             $currentVersion = '2.7.0';
         }
 
@@ -116,6 +116,17 @@ class Updater extends \common_ext_ExtensionUpdater {
             ));
             
             $currentVersion = '2.8.0';
+         }
+
+        // adjust testrunner config
+        if ($currentVersion == '2.8.0') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-scope'] = 'test';
+            unset($config['test-taker-review-section-only']);
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.9.0';
         }
         
         return $currentVersion;

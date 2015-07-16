@@ -549,8 +549,8 @@ define([
             /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
-             * @param {Sting} action - Action name
-             * @param {Object} metaData - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
+             * @param {String} action - Action name
+             * @param {Object} [metaData] - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
              * Example:
              * <pre>
              * {
@@ -562,7 +562,7 @@ define([
              *   }
              * }
              * </pre>
-             * @param {Object} extraParams - Additional parameters to be sent to the server
+             * @param {Object} [extraParams] - Additional parameters to be sent to the server
              * @returns {undefined}
              */
             actionCall: function (action, metaData, extraParams) {
@@ -606,7 +606,7 @@ define([
                 var  message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        self.testContext.numberReview ? self.testContext.numberReview.toString() : '0'
+                        (self.testContext.numberFlagged || 0).toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
@@ -765,7 +765,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        sectionOnly: !!testContext.reviewSectionOnly,
+                        reviewScope: !!testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
