@@ -63,6 +63,20 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
+     * Forces a unique title for all test items.
+     * @type string
+     */
+    'test-taker-review-force-title' => false,
+    
+    /**
+     * A unique title for all test items, when the option `test-taker-review-force-title` is enabled.
+     * This title will be processed through a sprintf() call, with the item sequence number as argument, 
+     * so you can easily insert the sequence number inside the title. 
+     * @type string
+     */
+    'test-taker-review-item-title' => 'Item %d',
+
+    /**
      * Limits the test taker review screen to a particular scope. Can be:
      * - test : the whole test
      * - testPart : the current test part
@@ -81,5 +95,5 @@ return array(
      * Replace logout to exit button...
      * @type boolean
      */
-    'exitButton' => false
+    'exitButton' => false,
 );

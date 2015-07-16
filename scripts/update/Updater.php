@@ -129,6 +129,17 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.9.0';
         }
         
+        // adjust testrunner config: set the item sequence number options
+        if ($currentVersion == '2.10.0') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-force-title'] = false;
+            $config['test-taker-review-item-title'] = 'Item %d';
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.11.0';
+        }
+        
         return $currentVersion;
     }
 }
