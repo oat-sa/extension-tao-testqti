@@ -417,6 +417,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                     $context['navigatorMap'] = $navigator['map'];
                 } else {
                     $navigator = self::countItems($session);
+                    $context['itemFlagged'] = self::getItemFlag($session, $context['itemPosition']);
                 }
 
                 // Extract the progression stats 
