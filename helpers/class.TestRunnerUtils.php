@@ -731,7 +731,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
         // get config for the sequence number option
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $forceTitles = !empty($config['test-taker-review-force-title']);
-        $uniqueTitle = isset($config['test-taker-review-config-title']) ? $config['test-taker-review-config-title'] : '%d';
+        $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
 
         $returnValue = array();
         $testParts   = array();
