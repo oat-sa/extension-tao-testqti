@@ -22,8 +22,8 @@ define([
     'lodash',
     'module',
     'taoQtiTest/testRunner/actionBarHook',
-    'taoQtiTest/runner/testReview',
-    'taoQtiTest/runner/progressUpdater',
+    'taoQtiTest/testRunner/testReview',
+    'taoQtiTest/testRunner/progressUpdater',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -236,7 +236,7 @@ define([
                 this.updateTestReview();
                 this.updateInformation();
                 this.updateRubrics();
-                this.updateTools();
+                this.updateTools(testContext);
                 this.updateTimer();
 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
@@ -272,7 +272,10 @@ define([
                 }
             },
 
-            updateTools: function updateTools() {
+            updateTools: function updateTools(testContext) {
+                
+				var $toolsContainer,
+                    config = module.config();
 
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
@@ -288,6 +291,13 @@ define([
                     $controls.$skip.hide();
                     $controls.$skipEnd.hide();
                 }
+                
+                if(config && config.qtiTools){
+                    $toolsContainer = $('.tools-box-list');
+                    _.forIn(config.qtiTools, function(toolconfig, id){
+                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext, TestRunner);
+                    });
+                }
             },
 
             createTimer: function(cst) {
@@ -302,6 +312,7 @@ define([
 
             updateTimer: function () {
                 var self = this;
+                var hasTimers;
                 $controls.$timerWrapper.empty();
 
                 for (var i = 0; i < timerIds.length; i++) {
@@ -316,7 +327,11 @@ define([
                 if (self.testContext.isTimeout === false &&
                     self.testContext.itemSessionState === self.TEST_ITEM_STATE_INTERACTING) {
 
-                    if (this.testContext.timeConstraints.length > 0) {
+                    hasTimers = !!this.testContext.timeConstraints.length;
+                    $controls.$topActionBar.toggleClass('has-timers', hasTimers);
+                    self.adjustFrame();
+
+                    if (hasTimers) {
 
                         // Insert QTI Timers container.
                         // self.formatTime(cst.seconds)
@@ -582,17 +597,22 @@ define([
              */
             exit: function () {
                 var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    message = __(
+                    $confirmBox = $('.exit-modal-feedback');
+                    
+                // @todo
+            	self.testContext.numberReview = self.testContext.numberReview || 0;
+            	
+            	
+                var  message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        self.testContext.numberCompleted.toString()
+                        self.testContext.numberReview.toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
                         "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
                     };
-                
+
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
 
@@ -611,14 +631,6 @@ define([
 
         return {
             start: function (testContext) {
-
-                var config = module.config();
-				var $toolsContainer = $('.tools-box-list');
-                if(config && config.qtiTools){
-                    _.forIn(config.qtiTools, function(toolconfig, id){
-                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext);
-                    });
-                }
 
                 $controls = {
                     // navigation
@@ -693,9 +705,6 @@ define([
                     }
                 };
 
-                if(testContext.timeConstraints.length) {
-                    $controls.$topActionBar.addClass('has-timers');
-                }
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;

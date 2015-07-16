@@ -24,6 +24,6 @@ define({
 
     },
     isVisible : function(){
-        return true;
+        return false;
     }
 });
