@@ -19,7 +19,7 @@
 
 /**
  * This module allows adding extra buttons in the action bar of the test runner
- * 
+ *
  */
 define([
     'jquery',
@@ -34,7 +34,7 @@ define([
 
     /**
      * Check that the toolConfig is correct
-     * 
+     *
      * @param {Object} toolconfig
      * @param {String} toolconfig.label - the label to be displayed in the button
      * @param {String} toolconfig.hook - the amd module to be loaded to initialize the button
@@ -45,10 +45,10 @@ define([
     function isValidConfig(toolconfig){
         return _.isObject(toolconfig) && toolconfig.label && toolconfig.hook;
     }
-    
+
     /**
      * Init a test runner button from its config
-     * 
+     *
      * @param {String} id
      * @param {Object} toolconfig
      * @param {String} toolconfig.label - the label to be displayed in the button
@@ -63,9 +63,9 @@ define([
     function initQtiTool($toolsContainer, id, toolconfig, assessmentTestContext, testRunner){
 
         if(isValidConfig(toolconfig)){
-            
+
             require([toolconfig.hook], function(hook){
-                
+
 				var order = _.parseInt(toolconfig.order);
 		        if(_.isNaN(order)){
 		            order = 0;
@@ -80,17 +80,17 @@ define([
                 };
                 var $button = $(buttonTpl(tplData));
                 if(isValidHook(hook)){
-                    
+
                     //if an instance of the tool is already attached, remove it:
-                    var $existingBtn = $toolsContainer.children('[data-control="'+id+'"]'); 
+                    var $existingBtn = $toolsContainer.children('[data-control="'+id+'"]');
                     if($existingBtn.length){
                         hook.clear($button, toolconfig, assessmentTestContext);
                         $existingBtn.remove();
                     }
-                    
+
                     //check if the tool is to be available
                     if(hook.isVisible(toolconfig, assessmentTestContext)){
-                        
+
                         //init the control
                         hook.init($button, toolconfig, assessmentTestContext, testRunner);
 
@@ -100,38 +100,38 @@ define([
                         //ready !
                         $button.trigger('ready' + _ns);
                     }
-                    
+
                 }else{
                     errorHandler.throw(_ns, 'invalid hook format');
                 }
             }, function(e){
                 errorHandler.throw(_ns, 'the hook amd module cannot be found');
             });
-            
+
         }else{
             errorHandler.throw(_ns, 'invalid tool config format');
         }
 
     }
-    
+
 	/**
      * Append a dom element $button to a $container in a specific order
      * The orders are provided by data-order attribute set to the $button
-     * 
+     *
      * @param {JQuery} $container
      * @param {JQuery} $button
      */
     function _appendInOrder($container, $button){
-        
+
         var $after, $before;
-        var order = $button.data('order');
-        
+        var order = parseInt($button.data('order'), 10);
+
         if(order){
-            
+
             $container.children('.action').each(function(){
 
                 var $btn = $(this),
-                    _order = $btn.data('order');
+                    _order = parseInt($btn.data('order'), 10);
 
                 if(_order === order){
                     $after = $btn;
@@ -161,7 +161,7 @@ define([
 
     /**
      * Check if the hook object is valid
-     * 
+     *
      * @param {Object} hook
      * @param {Function} hook.init
      * @param {Function} hook.clear
@@ -171,7 +171,7 @@ define([
     function isValidHook(hook){
         return (_.isObject(hook) && _.isFunction(hook.init) && _.isFunction(hook.clear) && _.isFunction(hook.isVisible));
     }
-    
+
     return {
         isValid : isValidConfig,
         initQtiTool : initQtiTool

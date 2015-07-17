@@ -14,7 +14,7 @@
         display: inline-block;
     }
 
-    .collapsed .collapsible-panel, .masked {
+    .collapsed .collapsible-panel, .masked, &.masked {
         display: none !important;
     }
 
@@ -25,6 +25,103 @@
 
         .icon-down {
             display: inline-block!important;
+        }
+    }
+
+    &.collapsed {
+        flex: 0 0 40px;
+
+        ul {
+            padding: 0!important;
+        }
+
+        .qti-navigator-text,
+        .qti-navigator-info > .qti-navigator-label,
+        .qti-navigator-part > .qti-navigator-label,
+        .qti-navigator-section > .qti-navigator-label,
+        .qti-navigator-message {
+            display: none !important;
+        }
+
+        .qti-navigator-label {
+            padding: 0 2px!important;
+        }
+
+        .qti-navigator-icon, .icon {
+            width: auto;
+        }
+
+        .qti-navigator-counter {
+            float: none;
+            text-align: center;
+        }
+
+        .qti-navigator-collapsible {
+            text-align: center;
+
+            .qti-navigator-collapse {
+                display: none;
+            }
+            .qti-navigator-expand {
+                display: block;
+            }
+        }
+
+        .qti-navigator-info {
+            &.collapsed .collapsible-panel {
+                display: block !important;
+            }
+
+            .qti-navigator-label span {
+                display: block;
+                text-align: center;
+                width: auto;
+                line-height: 30px;
+            }
+        }
+
+        .qti-navigator-filter {
+            span {
+                display: none;
+            }
+            &.active {
+                span {
+                    display: block;
+                    padding: 3px 0;
+                    border: 0 none;
+                    width: 39px;
+                }
+            }
+        }
+
+        .qti-navigator-item,
+        .qti-navigator-linear,
+        .qti-navigator-linear-part {
+            padding-left: 2px;
+            text-align: center;
+
+            .qti-navigator-icon, .icon {
+                line-height: 34px;
+            }
+        }
+
+        .qti-navigator-item {
+            .qti-navigator-icon {
+                padding-right: 100px;
+                padding-left: 9px;
+            }
+        }
+
+        .qti-navigator-linear-part {
+            padding: 8px 0;
+
+            .qti-navigator-title {
+                margin-top: 0;
+            }
+        }
+
+        .qti-navigator-actions button {
+            padding: 0 9px 0 5px;
         }
     }
 
@@ -84,6 +181,31 @@
 
     .qti-navigator-actions {
         text-align: center;
+    }
+
+    .qti-navigator-collapsible {
+        background-color: $uiClickableActiveBg;
+        color: $textColor;
+        border-top: 1px solid white();
+        cursor: pointer;
+        padding: 0 8px;
+        text-align: right;
+        display: none;
+
+        .icon {
+            @include font-size(20);
+            line-height: 30px;
+            width: auto;
+            color: $textHighlight;
+        }
+
+        .qti-navigator-expand {
+            display: none;
+        }
+    }
+
+    &.collapsible .qti-navigator-collapsible {
+        display: block;
     }
 
     .qti-navigator-info {

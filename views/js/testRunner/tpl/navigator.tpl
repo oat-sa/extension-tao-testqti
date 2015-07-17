@@ -1,18 +1,43 @@
-        <div class="test-sidebar test-sidebar-{{region}} flex-container-navi qti-navigator">
+        <aside class="test-sidebar test-sidebar-{{region}} flex-container-navi qti-navigator">
+            <div class="qti-navigator-collapsible">
+                <span class="qti-navigator-collapse icon icon-left" title="{{__ 'Collapse the review panel'}}"></span>
+                <span class="qti-navigator-expand icon icon-right" title="{{__ 'Expand the review panel'}}"></span>
+            </div>
+
             <div class="qti-navigator-info collapsible">
-                <span class="qti-navigator-label">{{__ 'Test status'}}<span class="icon-up"></span><span class="icon-down"></span></span>
+                <span class="qti-navigator-label">
+                    <span class="qti-navigator-text">{{__ 'Test status'}}</span>
+                    <span class="icon-up"></span>
+                    <span class="icon-down"></span>
+                </span>
                 <ul class="collapsible-panel plain">
-                    <li class="qti-navigator-answered">
-                        <span class="qti-navigator-label"><span class="qti-navigator-icon icon-answered"></span>{{__ 'Answered'}}<span class="qti-navigator-counter">-/-</span></span>
+                    <li class="qti-navigator-answered" title="{{__ 'Completed items'}}">
+                        <span class="qti-navigator-label">
+                            <span class="qti-navigator-icon icon-answered"></span>
+                            <span class="qti-navigator-text">{{__ 'Answered'}}</span>
+                            <span class="qti-navigator-counter">-/-</span>
+                        </span>
                     </li>
-                    <li class="qti-navigator-viewed">
-                        <span class="qti-navigator-label"><span class="qti-navigator-icon icon-viewed"></span>{{__ 'Viewed'}}<span class="qti-navigator-counter">-/-</span></span>
+                    <li class="qti-navigator-viewed" title="{{__ 'Viewed items'}}">
+                        <span class="qti-navigator-label">
+                            <span class="qti-navigator-icon icon-viewed"></span>
+                            <span class="qti-navigator-text">{{__ 'Viewed'}}</span>
+                            <span class="qti-navigator-counter">-/-</span>
+                        </span>
                     </li>
-                    <li class="qti-navigator-unanswered">
-                        <span class="qti-navigator-label"><span class="qti-navigator-icon icon-unanswered"></span>{{__ 'Unanswered'}}<span class="qti-navigator-counter">-/-</span></span>
+                    <li class="qti-navigator-unanswered" title="{{__ 'Unanswered items'}}">
+                        <span class="qti-navigator-label">
+                            <span class="qti-navigator-icon icon-unanswered"></span>
+                            <span class="qti-navigator-text">{{__ 'Unanswered'}}</span>
+                            <span class="qti-navigator-counter">-/-</span>
+                        </span>
                     </li>
-                    <li class="qti-navigator-flagged">
-                        <span class="qti-navigator-label"><span class="qti-navigator-icon icon-flagged"></span>{{__ 'Flagged'}}<span class="qti-navigator-counter">-/-</span></span>
+                    <li class="qti-navigator-flagged" title="{{__ 'Items marked for later review'}}">
+                        <span class="qti-navigator-label">
+                            <span class="qti-navigator-icon icon-flagged"></span>
+                            <span class="qti-navigator-text">{{__ 'Flagged'}}</span>
+                            <span class="qti-navigator-counter">-/-</span>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -31,13 +56,16 @@
                 </ul>
             </div>
 
-            <div class="qti-navigator-tree">
-            </div>
+            <nav class="qti-navigator-tree">
+            </nav>
 
             <div id="qti-navigator-linear" class="qti-navigator-linear">
-                <h3 class="qti-navigator-title"><span class="icon icon-warning"></span>{{__ 'Warning'}}</h3>
+                <h3 class="qti-navigator-title">
+                    <span class="icon icon-warning" title="{{__ 'In this part of the test navigation is not allowed.'}}"></span>
+                    <span class="qti-navigator-text">{{__ 'Warning'}}</span>
+                </h3>
                 <p class="qti-navigator-message">
                     {{__ 'In this part of the test navigation is not allowed.'}}
                 </p>
             </div>
-        </div>
+        </aside>

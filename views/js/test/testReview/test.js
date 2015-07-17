@@ -41,6 +41,9 @@ define([
         { name : 'update', title : 'update' },
         { name : 'enable', title : 'enable' },
         { name : 'disable', title : 'disable' },
+        { name : 'show', title : 'show' },
+        { name : 'hide', title : 'hide' },
+        { name : 'toggle', title : 'toggle' },
         { name : 'trigger', title : 'trigger' },
         { name : 'on', title : 'on' },
         { name : 'off', title : 'off' }
@@ -147,6 +150,77 @@ define([
             QUnit.start();
         });
         $fixture.find('.qti-navigator-item[data-id="item-1"] .qti-navigator-icon').click();
+    });
+
+
+    QUnit.test('disable/enable', function(assert) {
+        var $fixture = $('#qti-navigator-5');
+        var component = testReview($fixture.empty());
+        var $component = component.$component;
+
+        assert.ok($fixture.children().length === 1, "The testReview instance installs a DOM structure, and this structure start with a unique element");
+        assert.ok($component.is(':visible'), "The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "The testReview component element is enabled");
+        assert.ok(!component.disabled, "The testReview component is enabled");
+
+        component.disable();
+        assert.ok($component.is(':visible'), "The testReview component element is visible");
+        assert.ok($component.hasClass('disabled'), "The testReview component element is disabled");
+        assert.ok(component.disabled, "The testReview component is disabled");
+
+        component.enable();
+        assert.ok($component.is(':visible'), "The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "The testReview component element is enabled");
+        assert.ok(!component.disabled, "The testReview component is enabled");
+    });
+
+
+    QUnit.test('hide/show', function(assert) {
+        var $fixture = $('#qti-navigator-6');
+        var component = testReview($fixture.empty());
+        var $component = component.$component;
+
+        assert.ok($fixture.children().length === 1, "The testReview instance installs a DOM structure, and this structure start with a unique element");
+        assert.ok($component.is(':visible'), "The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "The testReview component element is enabled");
+        assert.ok(!component.disabled, "The testReview component is enabled");
+        assert.ok(!component.hidden, "The testReview component is visible");
+
+        component.hide();
+        assert.ok($component.is(':visible'), "hide(): The testReview component element is hidden");
+        assert.ok(!$component.hasClass('disabled'), "hide(): The testReview component element is enabled");
+        assert.ok(component.disabled, "hide(): The testReview component is disabled");
+        assert.ok(component.hidden, "hide(): The testReview component is hidden");
+
+        component.show();
+        assert.ok($component.is(':visible'), "show(): The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "show(): The testReview component element is enabled");
+        assert.ok(!component.disabled, "show(): The testReview component is enabled");
+        assert.ok(!component.hidden, "show(): The testReview component is visible");
+
+        component.toggle();
+        assert.ok($component.is(':visible'), "toggle()#1: The testReview component element is hidden");
+        assert.ok(!$component.hasClass('disabled'), "toggle()#1: The testReview component element is enabled");
+        assert.ok(component.disabled, "toggle()#1: The testReview component is disabled");
+        assert.ok(component.hidden, "toggle()#1: The testReview component is hidden");
+
+        component.toggle();
+        assert.ok($component.is(':visible'), "toggle()#2: The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "toggle()#2: The testReview component element is enabled");
+        assert.ok(!component.disabled, "toggle()#2: The testReview component is enabled");
+        assert.ok(!component.hidden, "toggle()#2: The testReview component is visible");
+
+        component.toggle(true);
+        assert.ok($component.is(':visible'), "toggle(true): The testReview component element is visible");
+        assert.ok(!$component.hasClass('disabled'), "toggle(true): The testReview component element is enabled");
+        assert.ok(!component.disabled, "toggle(true): The testReview component is enabled");
+        assert.ok(!component.hidden, "toggle(true): The testReview component is visible");
+
+        component.toggle(false);
+        assert.ok($component.is(':visible'), "toggle(false): The testReview component element is hidden");
+        assert.ok(!$component.hasClass('disabled'), "toggle(false): The testReview component element is enabled");
+        assert.ok(component.disabled, "toggle(false): The testReview component is disabled");
+        assert.ok(component.hidden, "toggle(false): The testReview component is hidden");
     });
 
 });

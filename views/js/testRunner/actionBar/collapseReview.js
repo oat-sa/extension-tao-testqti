@@ -28,7 +28,7 @@ define([
      * @type {String}
      * @private
      */
-    var _ns = '.markForReview';
+    var _ns = '.collapseReview';
 
     /**
      * The DOM element representing the handled button
@@ -38,11 +38,11 @@ define([
     var $button = null;
 
     /**
-     * Sets the visual state of the flag button
+     * Sets the visual state of the button
      * @param {Boolean} flagged
      * @private
      */
-    var _setFlagButtonState = function(flagged) {
+    var _setCollapseButtonState = function(flagged) {
         $button.toggleClass('active', flagged);
     };
 
@@ -54,23 +54,25 @@ define([
      * @param {Object} testContext The assessment test context object
      * @param {Object} testRunner The test runner instance
      */
-    var initFlagButton = function initFlagButton($btn, config, testContext, testRunner) {
-        var flagged = !!testContext.itemFlagged;
-
+    var initCollapseButton = function initCollapseButton($btn, config, testContext, testRunner) {
         $button = $($btn)
             .on('click' + _ns, function() {
-                flagged = !flagged;
-                testRunner.markForReview(flagged, testContext.itemPosition);
-                _setFlagButtonState(flagged);
+                var testReview = testRunner.testReview;
+                if (testReview) {
+                    testReview.toggle();
+                    _setCollapseButtonState(!testReview.hidden);
+                }
             });
 
-        _setFlagButtonState(flagged);
+        if (testRunner.testReview) {
+            _setCollapseButtonState(!testRunner.testReview.hidden);
+        }
     };
 
     /**
      * Uninstalls the button
      */
-    var clearFlagButton = function clearFlagButton() {
+    var clearCollapseButton = function clearCollapseButton() {
         $button && $button.off(_ns);
         $button = null;
     };
@@ -82,13 +84,13 @@ define([
      * @param {Object} testRunner The test runner instance
      * @returns {Boolean}
      */
-    var isVisibleFlagButton = function isVisibleFlagButton(config, testContext) {
-        return !!testContext.reviewScreen && !!testContext.navigatorMap;
+    var isVisibleCollapseButton = function isVisibleCollapseButton(config, testContext) {
+        return !!testContext.reviewScreen;
     };
 
     return {
-        init : initFlagButton,
-        clear : clearFlagButton,
-        isVisible : isVisibleFlagButton
+        init : initCollapseButton,
+        clear : clearCollapseButton,
+        isVisible : isVisibleCollapseButton
     };
 });
