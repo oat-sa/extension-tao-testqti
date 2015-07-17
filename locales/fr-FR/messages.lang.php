@@ -321,6 +321,7 @@ $GLOBALS['__l10n']["Show detailed report"]="Montrer le détail du rapport";
 $GLOBALS['__l10n']["Shuffle"]="Mélanger";
 $GLOBALS['__l10n']["Simple Mode"]="Mode simple";
 $GLOBALS['__l10n']["Size"]="Taille";
+$GLOBALS['__l10n']["Skip & End Test"]="Passer et terminer le test";
 $GLOBALS['__l10n']["Success"]="Succès";
 $GLOBALS['__l10n']["Supported export formats"]="Formats d'export supportés";
 $GLOBALS['__l10n']["Take or continue a test."]="Commencer ou reprendre un test.";

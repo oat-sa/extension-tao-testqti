@@ -101,11 +101,11 @@ $GLOBALS['__l10n']["Create items, manage item and test banks, organize cohorts a
 $GLOBALS['__l10n']["CSV"]="CSV (以逗號分隔)";
 $GLOBALS['__l10n']["CSV Options"]="CSV 選項";
 $GLOBALS['__l10n']["Current language"]="目前的語言";
-$GLOBALS['__l10n']["Data imported"]="已匯入的資料";
-$GLOBALS['__l10n']["Data imported successfully"]="資料已成功匯入";
-$GLOBALS['__l10n']["Data Lang."]="資料語言";
-$GLOBALS['__l10n']["Data Language"]="資料語言";
-$GLOBALS['__l10n']["Data language"]="資料語言";
+$GLOBALS['__l10n']["Data imported"]="已匯入的數據";
+$GLOBALS['__l10n']["Data imported successfully"]="數據已成功匯入";
+$GLOBALS['__l10n']["Data Lang."]="數據語言";
+$GLOBALS['__l10n']["Data Language"]="數據語言";
+$GLOBALS['__l10n']["Data language"]="數據語言";
 $GLOBALS['__l10n']["Date"]="日期";
 $GLOBALS['__l10n']["Default user cannot be deleted"]="無法刪除預設用戶";
 $GLOBALS['__l10n']["Define the default values"]="設定預設值";
