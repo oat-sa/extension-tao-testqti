@@ -730,6 +730,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
         $route->setPosition($oldPosition);
 
+        // get config for the sequence number option
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $forceTitles = !empty($config['test-taker-review-force-title']);
+        $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
+
         $returnValue = array();
         $testParts   = array();
         $testPartIdx = 0;
@@ -764,6 +769,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                     $flagged = 0;
                     $items = array();
                     $firstPositionSection = PHP_INT_MAX;
+                    $positionInSection = 0;
 
                     foreach($section->getSectionParts() as $itemId => $item) {
 
@@ -779,10 +785,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
                             if ($jumpInfo['flagged']) {
                                 ++$flagged;
                             }
+                            if ($forceTitles) {
+                                $label = sprintf($uniqueTitle, ++$positionInSection);
+                            } else {
+                                $label = $resItem->getLabel();
+                            }
                             $items[]  = array_merge(
                                 array(
                                     'id' => $itemId,
-                                    'label' => $resItem->getLabel()
+                                    'label' => $label,
                                 ),
                                 $jumpInfo
                             );
