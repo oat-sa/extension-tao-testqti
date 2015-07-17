@@ -56,7 +56,8 @@ define([
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            navigatorMap: []
         };
 
         assert.ok(markForReview.isVisible(configMock, testContextMock), 'The markForReview button is visible when the test taker screen is enabled');
@@ -80,7 +81,8 @@ define([
         };
 
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            navigatorMap: []
         };
 
         var $btn = $('#mark-for-review-1');
@@ -108,6 +110,7 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
+            navigatorMap: [],
             itemFlagged: true
         };
 
@@ -140,6 +143,7 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
+            navigatorMap: [],
             itemFlagged: false,
             itemPosition: 1
         };

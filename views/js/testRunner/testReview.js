@@ -36,6 +36,7 @@ define([
     var _cssCls = {
         active : 'active',
         collapsed : 'collapsed',
+        collapsible : 'collapsible',
         masked : 'masked',
         disabled : 'disabled',
         flagged : 'flagged',
@@ -54,6 +55,7 @@ define([
         component : '.qti-navigator',
         filterBar : '.qti-navigator-filters',
         tree : '.qti-navigator-tree',
+        collapseHandle : '.qti-navigator-collapsible',
         linearState : '.qti-navigator-linear',
         infoAnswered : '.qti-navigator-answered .qti-navigator-counter',
         infoViewed : '.qti-navigator-viewed .qti-navigator-counter',
@@ -72,7 +74,7 @@ define([
         linearStart : '.qti-navigator-linear-part button',
         counters : '.qti-navigator-counter',
         actives : '.active',
-        collapsibles : '.collapsible',
+        collapsible : '.collapsible',
         collapsiblePanels : '.collapsible-panel',
         unseen : '.unseen',
         answered : '.answered',
@@ -102,7 +104,8 @@ define([
      */
     var _optionsMap = {
         'reviewScope' : 'reviewScope',
-        'reviewPreventsUnseen' : 'preventsUnseen'
+        'reviewPreventsUnseen' : 'preventsUnseen',
+        'canCollapse' : 'canCollapse'
     };
 
     /**
@@ -118,7 +121,7 @@ define([
 
     /**
      * Provides a test review manager
-     * @type {{init: Function, update: Function, on: Function, off: Function, trigger: Function}}
+     * @type {{init: Function, update: Function, enable: Function, disable: Function, hide: Function, show: Function, toggle: Function, on: Function, off: Function, trigger: Function}}
      */
     var testReview = {
         /**
@@ -137,6 +140,8 @@ define([
             var insertMethod = putOnRight ? 'append' : 'prepend';
 
             this.options = initOptions;
+            this.disabled = false;
+            this.hidden = false;
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -157,6 +162,7 @@ define([
             // install the component behaviour
             this._loadDOM();
             this._initEvents();
+            this._updateDisplayOptions();
 
             return this;
         },
@@ -191,6 +197,18 @@ define([
          */
         _initEvents: function() {
             var self = this;
+
+            // click on the collapse handle: collapse/expand the review panel
+            this.$component.on('click' + _selectors.component, _selectors.collapseHandle, function() {
+                if (self.disabled) {
+                    return;
+                }
+
+                self.$component.toggleClass(_cssCls.collapsed);
+                if (self.$component.hasClass(_cssCls.collapsed)) {
+                    self._openSelected();
+                }
+            });
 
             // click on the info panel title: toggle the related panel
             this.$component.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
@@ -242,7 +260,7 @@ define([
 
                 if (!$item.hasClass(_cssCls.disabled)) {
                     $target = $(event.target);
-                    if ($target.is(_selectors.icons)) {
+                    if ($target.is(_selectors.icons) && !self.$component.hasClass(_cssCls.collapsed)) {
                         if (!$item.hasClass(_cssCls.unseen)) {
                             self._mark($item);
                         }
@@ -277,6 +295,7 @@ define([
                 var mode = $btn.data('mode');
 
                 self.$filters.removeClass(_cssCls.active);
+                self.$component.removeClass(_cssCls.collapsed);
                 $btn.addClass(_cssCls.active);
 
                 self._filter(mode);
@@ -343,7 +362,7 @@ define([
          * @private
          */
         _openOnly: function(opened, root) {
-            (root || this.$tree).find(_selectors.collapsibles).addClass(_cssCls.collapsed);
+            (root || this.$tree).find(_selectors.collapsible).addClass(_cssCls.collapsed);
             opened.removeClass(_cssCls.collapsed);
         },
 
@@ -459,6 +478,14 @@ define([
                 var nb = total - $filtered.length;
                 $section.find(_selectors.counters).html(nb + '/' + total);
             });
+        },
+
+        /**
+         * Updates the display according to options
+         * @private
+         */
+        _updateDisplayOptions: function() {
+            this.$component.toggleClass(_cssCls.collapsible, this.options.canCollapse);
         },
 
         /**
@@ -584,27 +611,75 @@ define([
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context
+         * @returns {testReview}
          */
         update: function update(testContext) {
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
+            this._updateDisplayOptions();
+            return this;
         },
 
         /**
          * Disables the component
+         * @returns {testReview}
          */
         disable: function disable() {
             this.disabled = true;
             this.$component.addClass(_cssCls.disabled);
+            return this;
         },
 
         /**
          * Enables the component
+         * @returns {testReview}
          */
         enable: function enable() {
             this.disabled = false;
             this.$component.removeClass(_cssCls.disabled);
+            return this;
+        },
+
+        /**
+         * Hides the component
+         * @returns {testReview}
+         */
+        hide: function hide() {
+            this.disabled = true;
+            this.hidden = true;
+            this.$component.addClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Shows the component
+         * @returns {testReview}
+         */
+        show: function show() {
+            this.disabled = false;
+            this.hidden = false;
+            this.$component.removeClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Toggles the display state of the component
+         * @param {Boolean} [show] External condition that's tells if the component must be shown or hidden
+         * @returns {testReview}
+         */
+        toggle: function toggle(show) {
+            if (undefined === show) {
+                show = this.hidden;
+            }
+
+            if (show) {
+                this.show();
+            } else {
+                this.hide();
+            }
+
+            return this;
         },
 
         /**

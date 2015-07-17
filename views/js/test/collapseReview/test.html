@@ -2,13 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Ui Test - Test Taker Review Screen</title>
+        <title>Ui Test - Test Taker Review Screen - Collapse Review Button</title>
         <base href="../../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-only="testReview.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-only="collapseReview.js"></script>
 
         <script  type="text/javascript">
             var taobase_www = '../../../../../../../../../tao/views/';
@@ -21,7 +21,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/testReview/test'], function(){
+                require(['taoQtiTest/test/collapseReview/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();
@@ -32,12 +32,10 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture">
-            <div id="qti-navigator-1"></div>
-            <div id="qti-navigator-2"></div>
-            <div id="qti-navigator-3"></div>
-            <div id="qti-navigator-4"></div>
-            <div id="qti-navigator-5"></div>
-            <div id="qti-navigator-6"></div>
+            <div id="mark-for-review-1"></div>
+            <div id="mark-for-review-2"></div>
+            <div id="mark-for-review-3"></div>
+            <div id="mark-for-review-4"></div>
         </div>
     </body>
 </html>

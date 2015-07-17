@@ -90,6 +90,12 @@ return array(
      * @type boolean
      */
     'test-taker-review-prevents-unseen' => true,
+    
+    /**
+     * Allows the test taker to collapse the review screen: when collapsed the component is reduced to one tiny column.
+     * @type boolean
+     */
+    'test-taker-review-can-collapse' => false,
 
     /**
      * Replace logout to exit button...

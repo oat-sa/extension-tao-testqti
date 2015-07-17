@@ -106,6 +106,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.7.0';
         }
 
+        // add markForReview button
         if ($currentVersion === '2.7.0') {
             $registry = TestRunnerClientConfigRegistry::getRegistry();
             
@@ -118,7 +119,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.8.0';
          }
 
-        // adjust testrunner config
+        // adjust testrunner config: set the review scope
         if ($currentVersion == '2.8.0') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
@@ -128,7 +129,28 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.9.0';
         }
-        
+
+       // add show/hide button
+        // adjust testrunner config: set the "can collapse" option
+        if ($currentVersion == '2.9.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            
+            $registry->registerQtiTools('collapseReview', array(
+                'title' => 'Show/Hide the review screen',
+                'label' => 'Review',
+                'icon' => 'mobile-menu',
+                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+                'order' => -1
+            ));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-can-collapse'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.10.0';
+        }
+
         // adjust testrunner config: set the item sequence number options
         if ($currentVersion == '2.10.0') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
