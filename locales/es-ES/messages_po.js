@@ -1,1 +1,1 @@
-[]
+{"Comment":"Comentario","Next":"Siguiente"}
