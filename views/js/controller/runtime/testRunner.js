@@ -145,7 +145,14 @@ define([
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
-                    self.actionCall('moveForward');
+                    var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
+                        metaData;
+                        
+                    if (lastInSection) {
+                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                    }
+                    
+                    self.actionCall('moveForward', metaData);
                 });
             },
 
@@ -171,9 +178,16 @@ define([
 
                 this.itemServiceApi.kill(function () {
                     var confirmBox = $('.timeout-modal-feedback'),
+                        testContext = self.testContext,
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
+                        metaData = {};
+                        
+                    if (testContext.numberCompletedSection === testContext.numberItemsSection) {
+                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
+                    } else {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
-
+                    }
+                    
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -566,8 +580,8 @@ define([
              * @returns {undefined}
              */
             actionCall: function (action, metaData, extraParams) {
-                var self = this;
-                var params = metaData ? {"metaData" : metaData} : {};
+                var self = this,
+                    params = metaData ? {"metaData" : metaData} : {};
                 if (extraParams) {
                     params = _.assign(params, extraParams);
                 }
@@ -598,7 +612,11 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback');
-
+                    
+                // @todo
+            	self.testContext.numberReview = self.testContext.numberReview || 0;
+            	
+            	
                 var  message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
@@ -762,8 +780,7 @@ define([
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
                         reviewScope: !!testContext.reviewScope,
-                        preventsUnseen: !!testContext.reviewPreventsUnseen,
-                        canCollapse: !!testContext.reviewCanCollapse
+                        preventsUnseen: !!testContext.reviewPreventsUnseen
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
                     }).on('mark', function(event, flag, position) {
