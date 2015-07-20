@@ -611,13 +611,8 @@ define([
              */
             exit: function () {
                 var self = this,
-                    $confirmBox = $('.exit-modal-feedback');
-                    
-                // @todo
-            	self.testContext.numberReview = self.testContext.numberReview || 0;
-            	
-            	
-                var  message = __(
+                    $confirmBox = $('.exit-modal-feedback').
+                    message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
                         (self.testContext.numberFlagged || 0).toString()
@@ -780,7 +775,8 @@ define([
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
                         reviewScope: !!testContext.reviewScope,
-                        preventsUnseen: !!testContext.reviewPreventsUnseen
+                        preventsUnseen: !!testContext.reviewPreventsUnseen,
+                        canCollapse: !!testContext.reviewCanCollapse
                     }).on('jump', function(event, position) {
                         TestRunner.jump(position);
                     }).on('mark', function(event, flag, position) {
