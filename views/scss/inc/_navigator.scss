@@ -112,11 +112,12 @@
             }
         }
 
+        .qti-navigator-linear,
         .qti-navigator-linear-part {
-            padding: 8px 0;
+            padding: 0 0 8px 0;
 
-            .qti-navigator-title {
-                margin-top: 0;
+            .icon {
+                display: block;
             }
         }
 
@@ -261,7 +262,11 @@
     .qti-navigator-linear,
     .qti-navigator-linear-part {
         padding: 8px;
-        background-color: mix(#fff, $warning, 90%);
+        background: white();
+
+        .icon {
+            display: none;
+        }
 
         .qti-navigator-label {
             @include font-size(14);
@@ -270,10 +275,6 @@
         .qti-navigator-title {
             @include font-size(14);
             margin: 8px 0;
-
-            .icon-warning {
-                color: $warning !important;
-            }
         }
 
         .qti-navigator-message {
