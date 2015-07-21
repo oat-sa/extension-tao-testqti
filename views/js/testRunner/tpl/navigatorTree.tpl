@@ -36,7 +36,7 @@
                             <p class="qti-navigator-actions">
                                 <button class="btn-info small" data-id="{{itemId}}" data-position="{{position}}" title="{{__ 'Start Test-part'}}">
                                     <span class="qti-navigator-text">{{__ 'Start Test-part'}}</span>
-                                    <span class="icon-forward r"></span>
+                                    <span class="icon-play r"></span>
                                 </button>
                             </p>
                         </div>
