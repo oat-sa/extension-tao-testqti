@@ -29,17 +29,14 @@
                         </ul>
                         {{else}}
                         <div class="qti-navigator-linear-part collapsible-panel">
-                            <h3 class="qti-navigator-title">
-                                <span class="icon icon-warning" title="{{__ 'In this part of the test navigation is not allowed.'}}"></span>
-                                <span class="qti-navigator-text">{{__ 'Warning'}}</span>
-                            </h3>
+                            <span class="icon icon-info" title="{{__ 'In this part of the test navigation is not allowed.'}}"></span>
                             <p class="qti-navigator-message">
                                 {{__ 'In this part of the test navigation is not allowed.'}}
                             </p>
                             <p class="qti-navigator-actions">
                                 <button class="btn-info small" data-id="{{itemId}}" data-position="{{position}}" title="{{__ 'Start Test-part'}}">
                                     <span class="qti-navigator-text">{{__ 'Start Test-part'}}</span>
-                                    <span class="icon-forward r"></span>
+                                    <span class="icon-play r"></span>
                                 </button>
                             </p>
                         </div>
