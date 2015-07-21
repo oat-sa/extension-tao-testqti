@@ -1,20 +1,17 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-rc01\n"
-"PO-Revision-Date: 2015-04-30 17:32+0000\n"
-"Last-Translator: Michael <michael.t@examguardian.com>\n"
-"Language: zh-CN\n"
+"Project-Id-Version: TAO v3.1.0-sprint03\n"
+"PO-Revision-Date: 2015-07-21T16:37:25\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Pootle 2.5.1-rc1\n"
+"Language: zh-CN\n"
 "sourceLanguage: en-US\n"
 "targetLanguage: zh-CN\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-POOTLE-MTIME: 1430415132.000000\n"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -88,8 +85,14 @@ msgstr "考生"
 msgid "Categories"
 msgstr "分类"
 
+msgid "Collapse the review panel"
+msgstr ""
+
 msgid "Comment"
 msgstr "备注"
+
+msgid "Completed items"
+msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "允许最大的使用次数.输入0为无限制。"
@@ -114,6 +117,9 @@ msgstr "文件导入时出现错误"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
+msgstr ""
+
+msgid "Expand the review panel"
 msgstr ""
 
 msgid "Export"
@@ -202,6 +208,9 @@ msgstr "题目可以选择性的被分配到一个或多个类别。"
 
 msgid "Items Compilation"
 msgstr "题目编译"
+
+msgid "Items marked for later review"
+msgstr ""
 
 msgid "Keep Together"
 msgstr "保持在一起"
@@ -524,6 +533,9 @@ msgstr "导师"
 msgid "Unanswered"
 msgstr ""
 
+msgid "Unanswered items"
+msgstr ""
+
 msgid "Unknown error."
 msgstr "不明的错误。"
 
@@ -539,14 +551,14 @@ msgstr "验证回应"
 msgid "Viewed"
 msgstr ""
 
+msgid "Viewed items"
+msgstr ""
+
 msgid "Views"
 msgstr "显示"
 
 msgid "Visible"
 msgstr "可见"
-
-msgid "Warning"
-msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr ""
@@ -572,5 +584,12 @@ msgstr "递送时,谁可以浏览指导语区块。"
 msgid "With Replacement"
 msgstr "跟取代"
 
-msgid "Your comment..."
-msgstr "评论您的..."
+msgid "XML error at line %1$d column %2$d \"%3$s\"."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Your comment…"
+msgstr ""
+
