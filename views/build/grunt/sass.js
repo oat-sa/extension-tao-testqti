@@ -8,6 +8,7 @@ module.exports = function(grunt) {
     sass.taoqtitest = { };
     sass.taoqtitest.files = { };
     sass.taoqtitest.files[root + 'css/creator.css'] = root + 'scss/creator.scss';
+    sass.taoqtitest.files[root + 'css/test-runner.css'] = root + 'scss/test-runner.scss';
 
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],

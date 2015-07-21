@@ -25,6 +25,8 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\Jump;
+use qtism\runtime\tests\RouteItem;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -35,7 +37,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 class taoQtiTest_helpers_TestRunnerUtils {
     
     /**
-     * Get the ServiceCall object represeting how to call the current Assessment Item to be
+     * Get the ServiceCall object representing how to call the current Assessment Item to be
      * presented to a candidate in a given Assessment Test $session.
      *
      * @param AssessmentTestSession $session An AssessmentTestSession Object.
@@ -249,10 +251,13 @@ class taoQtiTest_helpers_TestRunnerUtils {
         foreach ($session->getTimeConstraints() as $tc) {
             // Only consider time constraints in force.
             if ($tc->getMaximumRemainingTime() !== false) {
+                $label = method_exists($tc->getSource(), 'getTitle') ? $tc->getSource()->getTitle() : $tc->getSource()->getIdentifier();
                 $constraints[] = array(
+                    'label' => $label,
                     'source' => $tc->getSource()->getIdentifier(),
                     'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
-                    'allowLateSubmission' => $tc->allowLateSubmission()
+                    'allowLateSubmission' => $tc->allowLateSubmission(),
+                    'qtiClassName' => $tc->getSource()->getQtiClassName()
                 );
             }
         }
@@ -337,6 +342,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $context['isAdaptive'] = false;
          
         if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
+            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            
             // The navigation mode.
             $context['navigationMode'] = $session->getCurrentNavigationMode();
         
@@ -373,7 +380,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Test Part title.
             $context['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
              
-            
+            // Current Section title.
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
             // Number of items composing the test session.
@@ -394,13 +401,50 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['endTestSessionUrl'] = self::buildActionCallUrl($session, 'endTestSession', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
              
             // If the candidate is allowed to move backward e.g. first item of the test.
             $context['canMoveBackward'] = $session->canMoveBackward();
              
             // The places in the test session where the candidate is allowed to jump to.
             $context['jumps'] = self::buildPossibleJumps($session);
-        
+
+            // The test review screen setup
+            if (!empty($config['test-taker-review'])) {
+                // The navigation map in order to build the test navigator
+                $navigator = self::getNavigatorMap($session);
+                if ($navigator !== NavigationMode::LINEAR) {
+                    $context['navigatorMap'] = $navigator['map'];
+                    $context['itemFlagged'] = self::getItemFlag($session, $context['itemPosition']);
+                } else {
+                    $navigator = self::countItems($session);
+                }
+
+                // Extract the progression stats 
+                $context['numberFlagged'] = $navigator['numberItemsFlagged'];
+                $context['numberItemsPart'] = $navigator['numberItemsPart'];
+                $context['numberItemsSection'] = $navigator['numberItemsSection'];
+                $context['numberCompletedPart'] = $navigator['numberCompletedPart'];
+                $context['numberCompletedSection'] = $navigator['numberCompletedSection'];
+                $context['numberPresentedPart'] = $navigator['numberPresentedPart'];
+                $context['numberPresentedSection'] = $navigator['numberPresentedSection'];
+                $context['numberFlaggedPart'] = $navigator['numberFlaggedPart'];
+                $context['numberFlaggedSection'] = $navigator['numberFlaggedSection'];
+                $context['itemPositionPart'] = $navigator['itemPositionPart'];
+                $context['itemPositionSection'] = $navigator['itemPositionSection'];
+
+                // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
+                $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+                $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            } else if (isset($config['progress-indicator']) && 'position' == $config['progress-indicator']) {
+                // Setup of the progress bar when displaying position
+                $numberItems = self::countItems($session);
+                $context['numberItemsSection'] = $numberItems['numberItemsSection'];
+                $context['numberItemsPart'] = $numberItems['numberItemsPart'];
+                $context['itemPositionPart'] = $numberItems['itemPositionPart'];
+                $context['itemPositionSection'] = $numberItems['itemPositionSection'];
+            }
+
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
             $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
              
@@ -432,12 +476,520 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             
-            // the type of progress bar to display
-            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-            $context['progressIndicator'] = $config['progress-indicator'];
+            // loads the specific config into the context object
+            $configMap = array(
+                // name in config                   => name in context object
+                'exitButton'                        => 'exitButton',
+                'timerWarning'                      => 'timerWarning',
+                'progress-indicator'                => 'progressIndicator',
+                'progress-indicator-scope'          => 'progressIndicatorScope',
+                'test-taker-review'                 => 'reviewScreen',
+                'test-taker-review-region'          => 'reviewRegion',
+                'test-taker-review-scope'           => 'reviewScope',
+                'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
+                'test-taker-review-can-collapse'    => 'reviewCanCollapse',
+            );
+            foreach ($configMap as $configKey => $contextKey) {
+                if (isset($config[$configKey])) {
+                    $context[$contextKey] = $config[$configKey];
+                }
+            }
         }
         
         return $context;
+    }
+        
+    /**
+     * Gets a call identifier for a particular item in the test
+     * @param AssessmentTestSession $session
+     * @param string|Jump|RouteItem $itemPosition
+     * @return null|string
+     */
+    static public function getItemCallId(AssessmentTestSession $session, $itemPosition) {
+        $sessionId = $session->getSessionId();
+
+        $transmissionId = null;
+        $routeItem = null;
+        
+        if ($itemPosition && is_object($itemPosition)) {
+            if ($itemPosition instanceof RouteItem) {
+                $routeItem = $itemPosition;
+            } else if ($itemPosition instanceof Jump) {
+            $routeItem = $itemPosition->getTarget();
+            }
+        } else {
+            $jumps = $session->getPossibleJumps();
+            foreach($jumps as $jump) {
+                if ($itemPosition == $jump->getPosition()) {
+                    $routeItem = $jump->getTarget();
+                    break;
+                }
+            }
+        }
+        
+        if ($routeItem) {
+            $itemRef = $routeItem->getAssessmentItemRef();
+            $occurrence = $routeItem->getOccurence();
+            $transmissionId = "${sessionId}.${itemRef}.${occurrence}";
+        }
+        
+        return $transmissionId;
+    }
+
+    /**
+     * Gets the state of a particular item
+     * @param string $serviceCallId
+     * @return array
+     * @throws common_exception_Error
+     */
+    static public function getItemState($serviceCallId) {
+        $state = tao_models_classes_service_StateStorage::singleton()->get(
+            common_session_SessionManager::getSession()->getUserUri(),
+            $serviceCallId
+        );
+        
+        if ($state) {
+            $state = json_decode($state, true);
+        } else {
+            $state = array();
+        }
+        
+        return $state;
+    }
+
+    /**
+     * Sets the state of a particular item
+     * @param string $serviceCallId
+     * @param array $state
+     * @throws common_exception_Error
+     */
+    static public function setItemState($serviceCallId, $state) {
+        tao_models_classes_service_StateStorage::singleton()->set(
+            common_session_SessionManager::getSession()->getUserUri(),
+            $serviceCallId,
+            json_encode($state)
+        );
+    }
+
+    /**
+     * Sets an item to be reviewed
+     * @param AssessmentTestSession $session
+     * @param string|Jump|RouteItem $itemPosition
+     * @param bool $flag
+     * @return bool
+     * @throws common_exception_Error
+     */
+    static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
+        $result = false;
+        
+        $serviceCallId = self::getItemCallId($session, $itemPosition);
+        if ($serviceCallId) {
+            $state = self::getItemState($serviceCallId);
+            $state['markForReview'] = $flag;
+            self::setItemState($serviceCallId, $state);
+            $result = true;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Gets the marked for review state of an item
+     * @param AssessmentTestSession $session
+     * @param string|Jump|RouteItem $itemPosition
+     * @return bool
+     * @throws common_exception_Error
+     */
+    static public function getItemFlag(AssessmentTestSession $session, $itemPosition) {
+        $result = false;
+
+        $serviceCallId = self::getItemCallId($session, $itemPosition);
+        if ($serviceCallId) {
+            $state = self::getItemState($serviceCallId);
+            if (isset($state['markForReview'])) {
+                $result = $state['markForReview'];
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Checks if an item has been completed
+     * @param Jump $jump
+     * @return bool
+     */
+    static private function isItemCompleted(Jump $jump) {
+        $itemSession = $jump->getItemSession();
+        $routeItem = $jump->getTarget();
+
+        $completed = false;
+        if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
+            // In linear mode, we consider the item completed if it was presented.
+            if ($itemSession->isPresented() === true) {
+                $completed = true;
+            }
+        }
+        else {
+            // In nonlinear mode we consider: 
+            // - an adaptive item completed if it's completion status is 'completed'.
+            // - a non-adaptive item to be completed if it is responded.
+            $isAdaptive = $itemSession->getAssessmentItem()->isAdaptive();
+
+            if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
+                $completed = true;
+            }
+            else if ($isAdaptive === false && $itemSession->isResponded() === true) {
+                $completed = true;
+            }
+        }
+        
+        return $completed;
+    }
+
+    /**
+     * Gets infos about a particular item
+     * @param AssessmentTestSession $session
+     * @param Jump $jump
+     * @return array
+     */
+    static private function getItemInfo(AssessmentTestSession $session, Jump $jump) {
+        $itemSession = $jump->getItemSession();
+        return array(
+            'remainingAttempts' => $itemSession->getRemainingAttempts(),
+            'answered' => self::isItemCompleted($jump),
+            'viewed' => $itemSession->isPresented(),
+            'flagged' => self::getItemFlag($session, $jump),
+            'position' => $jump->getPosition()
+        );
+    }
+
+    /**
+     * Builds a map of available jumps and count the flagged items
+     * @param AssessmentTestSession $session
+     * @param array $jumps
+     * @return array
+     */
+    static private function getJumpsMap(AssessmentTestSession $session, $jumps) {
+        $jumpsMap = array();
+        $numberItemsFlagged = 0;
+        foreach ($jumps as $jump) {
+            $routeItem = $jump->getTarget();
+            $partId = $routeItem->getTestPart()->getIdentifier();
+            $sectionId = key(current($routeItem->getAssessmentSections()));
+            $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
+
+            $jumpsMap[$partId][$sectionId][$itemId] = self::getItemInfo($session, $jump);
+            if ($jumpsMap[$partId][$sectionId][$itemId]['flagged']) {
+                $numberItemsFlagged ++;
+            }
+        }
+        
+        return array(
+            'flagged' => $numberItemsFlagged,
+            'map' => $jumpsMap,
+        );
+    }
+
+    /**
+     * Gets the section map for navigation between test parts, sections and items.
+     *
+     * @param AssessmentTestSession $session
+     * @return array A navigator map (parts, sections, items so on)
+     */
+    static private function getNavigatorMap(AssessmentTestSession $session) {
+
+        // get jumps
+        $jumps = $session->getPossibleJumps();
+
+        // no jumps, notify linear-mode
+        if (!$jumps->count()) {
+            return NavigationMode::LINEAR;
+        }
+
+        $jumpsMapInfo = self::getJumpsMap($session, $jumps);
+        $jumpsMap = $jumpsMapInfo['map'];
+        $numberItemsFlagged = $jumpsMapInfo['flagged'];
+
+
+        // the active test-part identifier
+        $activePart = $session->getCurrentTestPart()->getIdentifier();
+
+        // the active section identifier
+        $activeSection = $session->getCurrentAssessmentSection()->getIdentifier();
+
+        $route = $session->getRoute();
+
+        $activeItem = $session->getCurrentAssessmentItemRef()->getIdentifier();
+        if (isset($jumpsMap[$activePart][$activeSection][$activeItem])) {
+            $jumpsMap[$activePart][$activeSection][$activeItem]['active'] = true;
+        }
+
+        // current position
+        $oldPosition = $route->getPosition();
+
+        $route->setPosition($oldPosition);
+
+        // get config for the sequence number option
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $forceTitles = !empty($config['test-taker-review-force-title']);
+        $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
+
+        $returnValue = array();
+        $testParts   = array();
+        $testPartIdx = 0;
+        $numberItemsPart = 0;
+        $numberItemsSection = 0;
+        $numberCompletedPart = 0;
+        $numberCompletedSection = 0;
+        $numberPresentedPart = 0;
+        $numberPresentedSection = 0;
+        $numberFlaggedPart = 0;
+        $numberFlaggedSection = 0;
+        $itemPositionPart = 0;
+        $itemPositionSection = 0;
+        $itemPosition = $session->getRoute()->getPosition();
+
+        foreach($jumps as $jump) {
+            $testPart = $jump->getTarget()->getTestPart();
+            $id = $testPart->getIdentifier();
+
+            if (isset($testParts[$id])) {
+                continue;
+            }
+
+            $sections = array();
+
+            if ($testPart->getNavigationMode() == NavigationMode::NONLINEAR) {
+                $firstPositionPart = PHP_INT_MAX;
+                foreach($testPart->getAssessmentSections() as $sectionId => $section) {
+
+                    $completed = 0;
+                    $presented = 0;
+                    $flagged = 0;
+                    $items = array();
+                    $firstPositionSection = PHP_INT_MAX;
+                    $positionInSection = 0;
+
+                    foreach($section->getSectionParts() as $itemId => $item) {
+
+                        if (isset($jumpsMap[$id][$sectionId][$itemId])) {
+                            $jumpInfo = $jumpsMap[$id][$sectionId][$itemId];
+                            $resItem  =  new \core_kernel_classes_Resource(strstr($item->getHref(), '|', true));
+                            if ($jumpInfo['answered']) {
+                                ++$completed;
+                            }
+                            if ($jumpInfo['viewed']) {
+                                ++$presented;
+                            }
+                            if ($jumpInfo['flagged']) {
+                                ++$flagged;
+                            }
+                            if ($forceTitles) {
+                                $label = sprintf($uniqueTitle, ++$positionInSection);
+                            } else {
+                                $label = $resItem->getLabel();
+                            }
+                            $items[]  = array_merge(
+                                array(
+                                    'id' => $itemId,
+                                    'label' => $label,
+                                ),
+                                $jumpInfo
+                            );
+
+                            $firstPositionPart = min($firstPositionPart, $jumpInfo['position']);
+                            $firstPositionSection = min($firstPositionSection, $jumpInfo['position']);
+                        }
+
+                    }
+
+                    $sectionData = array(
+                        'id'       => $sectionId,
+                        'active'   => $sectionId === $activeSection,
+                        'label'    => $section->getTitle(),
+                        'answered' => $completed,
+                        'items'    => $items
+                    );
+                    $sections[] = $sectionData;
+
+                    if ($sectionData['active']) {
+                        $numberItemsSection = count($items);
+                        $itemPositionSection = $itemPosition - $firstPositionSection; 
+                        $numberCompletedSection = $completed;
+                        $numberPresentedSection = $presented;
+                        $numberFlaggedSection = $flagged;
+                    }
+                    if ($id === $activePart) {
+                        $numberItemsPart += count($items);
+                        $numberCompletedPart += $completed;
+                        $numberPresentedPart += $presented;
+                        $numberFlaggedPart += $flagged;
+                    }
+                }
+                
+                if ($id === $activePart) {
+                    $itemPositionPart = $itemPosition - $firstPositionPart;
+                }
+            }
+
+            $data = array(
+                'id'       => $id,
+                'sections' => $sections,
+                'active'   => $id === $activePart,
+                'label'    => __('Part %d', ++$testPartIdx),
+            );
+            if (empty($sections)) {
+                $item = current(current($jumpsMap[$id]));
+                $data['position'] = $item['position'];
+                $data['itemId'] = key(current($jumpsMap[$id]));
+            }
+            $returnValue[] = $data;
+            $testParts[$id] = false;
+        }
+
+        return array(
+            'map' => $returnValue,
+            'numberItemsFlagged' => $numberItemsFlagged,
+            'numberItemsPart' => $numberItemsPart,
+            'numberItemsSection' => $numberItemsSection,
+            'numberCompletedPart' => $numberCompletedPart,
+            'numberCompletedSection' => $numberCompletedSection,
+            'numberPresentedPart' => $numberPresentedPart,
+            'numberPresentedSection' => $numberPresentedSection,
+            'numberFlaggedPart' => $numberFlaggedPart,
+            'numberFlaggedSection' => $numberFlaggedSection,
+            'itemPositionPart' => $itemPositionPart,
+            'itemPositionSection' => $itemPositionSection,
+        );
+    }
+    
+    /**
+     * Gets the number of items within the current section and the current part.
+     *
+     * @param AssessmentTestSession $session
+     * @return array The list of counters (numberItemsSection and numberItemsPart)
+     */
+    static private function countItems(AssessmentTestSession $session) {
+        // get jumps
+        $jumps = self::getTestMap($session);
+
+        // the active test-part identifier
+        $activePart = $session->getCurrentTestPart()->getIdentifier();
+
+        // the active section identifier
+        $activeSection = $session->getCurrentAssessmentSection()->getIdentifier();
+
+        $jumpsMapInfo = self::getJumpsMap($session, $jumps);
+        $jumpsMap = $jumpsMapInfo['map'];
+        $numberItemsFlagged = $jumpsMapInfo['flagged'];
+
+        $testParts = array();
+        $numberItemsPart = 0;
+        $numberItemsSection = 0;
+        $numberCompletedPart = 0;
+        $numberCompletedSection = 0;
+        $numberPresentedPart = 0;
+        $numberPresentedSection = 0;
+        $numberFlaggedPart = 0;
+        $numberFlaggedSection = 0;
+        $itemPositionPart = 0;
+        $itemPositionSection = 0;
+        $itemPosition = $session->getRoute()->getPosition();
+        foreach($jumps as $jump) {
+            $testPart = $jump->getTarget()->getTestPart();
+            $id = $testPart->getIdentifier();
+
+            if (isset($testParts[$id])) {
+                continue;
+            }
+            $testParts[$id] = true;
+
+            $firstPositionPart = PHP_INT_MAX;
+            foreach($testPart->getAssessmentSections() as $sectionId => $section) {
+                $completed = 0;
+                $presented = 0;
+                $flagged = 0;
+                $numberItems = count($section->getSectionParts());
+                $firstPositionSection = PHP_INT_MAX;
+                foreach($section->getSectionParts() as $itemId => $item) {
+                    if (isset($jumpsMap[$id][$sectionId][$itemId])) {
+                        $jumpInfo = $jumpsMap[$id][$sectionId][$itemId];
+                        
+                        if ($jumpInfo['answered']) {
+                            ++$completed;
+                        }
+                        if ($jumpInfo['viewed']) {
+                            ++$presented;
+                        }
+                        if ($jumpInfo['flagged']) {
+                            ++$flagged;
+                        }
+                        
+                        $firstPositionPart = min($firstPositionPart, $jumpInfo['position']);
+                        $firstPositionSection = min($firstPositionSection, $jumpInfo['position']);
+                    }
+                }
+
+                if ($sectionId === $activeSection) {
+                    $numberItemsSection = $numberItems;
+                    $itemPositionSection = $itemPosition - $firstPositionSection;
+                    $numberCompletedSection = $completed;
+                    $numberPresentedSection = $presented;
+                    $numberFlaggedSection = $flagged;
+                }
+                if ($id === $activePart) {
+                    $numberItemsPart += $numberItems;
+                    $numberCompletedPart += $completed;
+                    $numberPresentedPart += $presented;
+                    $numberFlaggedPart += $flagged;
+                }
+            }
+            if ($id === $activePart) {
+                $itemPositionPart = $itemPosition - $firstPositionPart;
+            }
+        }
+
+        return array(
+            'numberItemsFlagged' => $numberItemsFlagged,
+            'numberItemsPart' => $numberItemsPart,
+            'numberItemsSection' => $numberItemsSection,
+            'numberCompletedPart' => $numberCompletedPart,
+            'numberCompletedSection' => $numberCompletedSection,
+            'numberPresentedPart' => $numberPresentedPart,
+            'numberPresentedSection' => $numberPresentedSection,
+            'numberFlaggedPart' => $numberFlaggedPart,
+            'numberFlaggedSection' => $numberFlaggedSection,
+            'itemPositionPart' => $itemPositionPart,
+            'itemPositionSection' => $itemPositionSection,
+        );
+    }
+
+    /**
+     * Gets the map of the reachable items.
+     * @param AssessmentTestSession $session
+     * @return array The map of the test
+     */
+    static public function getTestMap($session) {
+        $map = array();
+
+        if ($session->isRunning() !== false) {
+            $route = $session->getRoute();
+            $routeItems = $route->getAllRouteItems();
+            $offset = $route->getRouteItemPosition($routeItems[0]);
+            foreach ($routeItems as $routeItem) {
+                $itemRef = $routeItem->getAssessmentItemRef();
+                $occurrence = $routeItem->getOccurence();
+
+                // get the session related to this route item.
+                $store = $session->getAssessmentItemSessionStore();
+                $itemSession = $store->getAssessmentItemSession($itemRef, $occurrence);
+                $map[] = new Jump($offset, $routeItem, $itemSession);
+                $offset++;
+            }
+        }
+        
+        return $map;
     }
     
     /**

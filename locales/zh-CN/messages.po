@@ -16,11 +16,17 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-POOTLE-MTIME: 1430415132.000000\n"
 
+msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
+msgstr ""
+
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
 msgstr "没有找到任何题目。 一个QTI考试必须有至少一个QTI项目才能进行编译。"
 
 msgid "A qti testpackage"
 msgstr "一个QTI的考试包"
+
+msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
+msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "一个可见的章节是要让考生能看见的。"
@@ -33,6 +39,9 @@ msgstr "在此处添加所选的题目。"
 
 msgid "Add the source file"
 msgstr "添加来源文件"
+
+msgid "All"
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "允许备注"
@@ -61,8 +70,14 @@ msgstr "在编译QTI考试'%s'时出现了一个不明错误。"
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "在汇集QTI考试'%s'中时出现了一个不明错误。"
 
+msgid "Answered"
+msgstr ""
+
 msgid "Author"
 msgstr "作者"
+
+msgid "Auxiliary file not found at location \"%s\"."
+msgstr ""
 
 msgid "Cancel"
 msgstr "取消"
@@ -97,6 +112,10 @@ msgstr "错误"
 msgid "Error during file import"
 msgstr "文件导入时出现错误"
 
+msgid "Error found in the IMS QTI Test:\n"
+"%s"
+msgstr ""
+
 msgid "Export"
 msgstr "导出"
 
@@ -114,6 +133,9 @@ msgstr "固定"
 
 msgid "Fixed position in a shuffled the selection."
 msgstr "在随机顺序中固定位置。"
+
+msgid "Flagged"
+msgstr ""
 
 msgid "Identifier"
 msgstr "识别码"
@@ -136,8 +158,23 @@ msgstr "导入"
 msgid "Import a QTI 2.1 Test Package"
 msgstr "导入一个QTI 2.1考试包"
 
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr ""
+
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr ""
+
 msgid "IMS QTI Test Package successfully imported."
 msgstr "IMS QTI考试包已经成功导入。"
+
+msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr ""
+
+msgid "In this part of the test navigation is not allowed."
+msgstr ""
+
+msgid "Inconsistency at line %1d:"
+msgstr ""
 
 msgid "Individual"
 msgstr "个别"
@@ -147,6 +184,9 @@ msgstr "已经在考试中被使用。"
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots.)"
 msgstr "不是一个有效的标识符(字母数字，下划线，破折号和点)"
+
+msgid "Item %d of %d"
+msgstr ""
 
 msgid "Item Reference Properties"
 msgstr "题目参考属性"
@@ -199,9 +239,6 @@ msgstr "这个区域的最长时限。"
 msgid "Maximum duration for this test part."
 msgstr "这个考试部分的最长时限。"
 
-msgid "Maximum time limit reached for item \"%s\"."
-msgstr "已经超过\"%s\"题目的最长时限。"
-
 msgid "Minimum Duration"
 msgstr "最短时限"
 
@@ -235,6 +272,12 @@ msgstr "新考试部分"
 msgid "Next"
 msgstr "下一个"
 
+msgid "No"
+msgstr ""
+
+msgid "No file found at location \"%s\"."
+msgstr ""
+
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "题目\"%s\"已经无剩余的使用次数。"
 
@@ -247,11 +290,23 @@ msgstr "非线性"
 msgid "Not shuffled, the position remains fixed."
 msgstr "不是随机顺序，该位置保持固定。"
 
+msgid "Ok"
+msgstr ""
+
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "有一个或多个独立IMS QTI题目无法被导入。"
 
+msgid "Only display the items marked for review"
+msgstr ""
+
+msgid "Only display the unanswered items"
+msgstr ""
+
 msgid "Ordering"
 msgstr "排序"
+
+msgid "Part %d"
+msgstr ""
 
 msgid "Previous"
 msgstr "上一个"
@@ -261,6 +316,15 @@ msgstr "监考人"
 
 msgid "Properties"
 msgstr "属性"
+
+msgid "QTI 2.1 Test Driver"
+msgstr ""
+
+msgid "QTI Test \"%s\" publishing failed."
+msgstr ""
+
+msgid "QTI Test \"%s\" successfully published."
+msgstr ""
 
 msgid "QTI Test Package"
 msgstr "QTI考试包"
@@ -285,6 +349,9 @@ msgstr "必要的"
 
 msgid "Required field"
 msgstr "必填栏"
+
+msgid "Reset filters"
+msgstr ""
 
 msgid "Rubric Block"
 msgstr "指导语区块"
@@ -334,32 +401,32 @@ msgstr "同时"
 msgid "Skip"
 msgstr "跳过"
 
-msgid "Skip & End Test"
-msgstr "跳过&结束考试"
+msgid "Skip &amp; End Test"
+msgstr ""
 
-msgid "Skip the current task and give an empty response."
-msgstr "跳过当前课题，并给出一个空的回应。"
+msgid "Skip to the end of the test"
+msgstr ""
 
-msgid "Skip the current task, give an empty response and head for the end of the test."
-msgstr "跳过当前课题，并给出一个空的回应然后前往考试的结尾。"
+msgid "Skip to the next item"
+msgstr ""
+
+msgid "Start Test-part"
+msgstr ""
 
 msgid "Submission"
 msgstr "提交"
 
-msgid "Submit your responses and head for the end of the test."
-msgstr "提交你的回应和前往考试的结尾。"
+msgid "Submit and go to the end of the test"
+msgstr ""
 
-msgid "Submit your responses and head for the next item."
-msgstr "提交你的回应和前往下一题目。"
+msgid "Submit and go to the next item"
+msgstr ""
 
-msgid "Submit your responses and head for the previous item."
-msgstr "提交你的回应和前往上一个题目。"
+msgid "Submit and go to the previous item"
+msgstr ""
 
 msgid "Test"
 msgstr "考试"
-
-msgid "Test completed at %d%%"
-msgstr "测试已完成%d%%"
 
 msgid "Test constructor"
 msgstr "考试建造器"
@@ -367,11 +434,17 @@ msgstr "考试建造器"
 msgid "Test Saved"
 msgstr "考试已储存"
 
+msgid "Test status"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "发现'imsmanifest.xml'文件未有效存档。"
 
 msgid "The candidate is not allowed to submit wrong responses."
 msgstr "考生不可提供错误的回应。"
+
+msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgstr ""
 
 msgid "The identifier of the item reference."
 msgstr "该题目引用的标识符。"
@@ -381,6 +454,9 @@ msgstr "区域引用的标识符。"
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "无法汇入IMS QTI考试包。"
+
+msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr ""
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "导航模 ​​式决定了报考者可采取的一般途径。 线性模式限制了报考者依次尝试每一个题目。 非线性模式移除了这个限制。"
@@ -409,6 +485,9 @@ msgstr "该QTI-XML考试未能被正确写入。"
 msgid "The reference."
 msgstr "参照"
 
+msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgstr ""
+
 msgid "The section title."
 msgstr "区域标题。"
 
@@ -427,6 +506,12 @@ msgstr "这个约束影响到考生考完试以后是否可以看得见题目的
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "这个约束控制考生是否可以在考试中对题目提供评论。 评论不是回应的一部分，也不会被评分。"
 
+msgid "Time limit reached for item \"%s\"."
+msgstr ""
+
+msgid "Time limit reached, this part of the test has ended."
+msgstr ""
+
 msgid "Time Limits"
 msgstr "时间限制"
 
@@ -435,6 +520,9 @@ msgstr "标题"
 
 msgid "Tutor"
 msgstr "导师"
+
+msgid "Unanswered"
+msgstr ""
 
 msgid "Unknown error."
 msgstr "不明的错误。"
@@ -448,11 +536,20 @@ msgstr "使用Ctrl/Meta键或套索的多重选择"
 msgid "Validate Responses"
 msgstr "验证回应"
 
+msgid "Viewed"
+msgstr ""
+
 msgid "Views"
 msgstr "显示"
 
 msgid "Visible"
 msgstr "可见"
+
+msgid "Warning"
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete the test."
+msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "当选择子元素时，每个子元素通常都只能被选一次而已。"
