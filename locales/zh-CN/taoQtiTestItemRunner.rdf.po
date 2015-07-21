@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO v3.1.0-sprint03\n"
-"PO-Revision-Date: 2015-07-17T13:07:59\n"
+"PO-Revision-Date: 2015-07-21T16:37:25\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -28,5 +28,5 @@ msgstr "QTI考试题目运行器"
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr "将题目嵌入和执行到QTI考试。 该服务将启动TAO的API和上下文。"
+msgstr "将题目嵌入和执行到QTI考试。 这个服务将启动TAO的API和上下文。"
 

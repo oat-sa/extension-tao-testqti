@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO v3.1.0-sprint03\n"
-"PO-Revision-Date: 2015-07-17T13:07:59\n"
+"PO-Revision-Date: 2015-07-21T16:37:25\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -85,8 +85,14 @@ msgstr "考生"
 msgid "Categories"
 msgstr "分类"
 
+msgid "Collapse the review panel"
+msgstr ""
+
 msgid "Comment"
 msgstr "备注"
+
+msgid "Completed items"
+msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "允许最大的使用次数.输入0为无限制。"
@@ -111,6 +117,9 @@ msgstr "文件导入时出现错误"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
+msgstr ""
+
+msgid "Expand the review panel"
 msgstr ""
 
 msgid "Export"
@@ -199,6 +208,9 @@ msgstr "题目可以选择性的被分配到一个或多个类别。"
 
 msgid "Items Compilation"
 msgstr "题目编译"
+
+msgid "Items marked for later review"
+msgstr ""
 
 msgid "Keep Together"
 msgstr "保持在一起"
@@ -345,7 +357,7 @@ msgid "Required"
 msgstr "必要的"
 
 msgid "Required field"
-msgstr "必要的字段"
+msgstr "必填栏"
 
 msgid "Reset filters"
 msgstr ""
@@ -498,10 +510,10 @@ msgid "The test title."
 msgstr "考试标题。"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr "考完试以后考生是否可以看得见题目的回馈。"
+msgstr "这个约束影响到考生考完试以后是否可以看得见题目的回馈。"
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr "控制考生是否可以在考试中对题目提供评论。 评论不是回应的一部分，也不会被评分。"
+msgstr "这个约束控制考生是否可以在考试中对题目提供评论。 评论不是回应的一部分，也不会被评分。"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
@@ -521,6 +533,9 @@ msgstr "导师"
 msgid "Unanswered"
 msgstr ""
 
+msgid "Unanswered items"
+msgstr ""
+
 msgid "Unknown error."
 msgstr "不明的错误。"
 
@@ -536,14 +551,14 @@ msgstr "验证回应"
 msgid "Viewed"
 msgstr ""
 
+msgid "Viewed items"
+msgstr ""
+
 msgid "Views"
 msgstr "显示"
 
 msgid "Visible"
 msgstr "可见"
-
-msgid "Warning"
-msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr ""

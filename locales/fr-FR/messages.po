@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO v3.1.0-sprint03\n"
-"PO-Revision-Date: 2015-07-17T13:07:52\n"
+"PO-Revision-Date: 2015-07-21T16:37:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -85,7 +85,13 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
+msgid "Collapse the review panel"
+msgstr ""
+
 msgid "Comment"
+msgstr ""
+
+msgid "Completed items"
 msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
@@ -98,7 +104,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr "Terminer le test"
+msgstr ""
 
 msgid "Enter a category"
 msgstr ""
@@ -111,6 +117,9 @@ msgstr "Erreur pendant l'import du fichier."
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
+msgstr ""
+
+msgid "Expand the review panel"
 msgstr ""
 
 msgid "Export"
@@ -198,6 +207,9 @@ msgid "Items can optionally be assigned to one or more categories."
 msgstr ""
 
 msgid "Items Compilation"
+msgstr ""
+
+msgid "Items marked for later review"
 msgstr ""
 
 msgid "Keep Together"
@@ -393,10 +405,10 @@ msgid "Shuffle"
 msgstr "Mélanger"
 
 msgid "Simultaneous"
-msgstr "Simultanément"
+msgstr ""
 
 msgid "Skip"
-msgstr "Passer"
+msgstr ""
 
 msgid "Skip &amp; End Test"
 msgstr ""
@@ -411,7 +423,7 @@ msgid "Start Test-part"
 msgstr ""
 
 msgid "Submission"
-msgstr "Soumission"
+msgstr ""
 
 msgid "Submit and go to the end of the test"
 msgstr ""
@@ -521,6 +533,9 @@ msgstr ""
 msgid "Unanswered"
 msgstr ""
 
+msgid "Unanswered items"
+msgstr ""
+
 msgid "Unknown error."
 msgstr ""
 
@@ -536,13 +551,13 @@ msgstr ""
 msgid "Viewed"
 msgstr ""
 
+msgid "Viewed items"
+msgstr ""
+
 msgid "Views"
 msgstr ""
 
 msgid "Visible"
-msgstr ""
-
-msgid "Warning"
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
