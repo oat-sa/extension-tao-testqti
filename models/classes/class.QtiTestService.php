@@ -215,6 +215,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
         $validPackage = false;
         $validManifest = false;
+        $testsFound = false;
 
         // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
         $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
@@ -242,10 +243,20 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 if ($qtiManifestParser->isValid() === true) {
 
                     $validManifest = true;
-
-                    $tests = $qtiManifestParser->getResources('imsqti_test_xmlv2p1');
-                    foreach ($tests as $qtiTestResource) {
-                        $report->add($this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder));
+                    
+                    $tests = array();
+                    foreach(Resource::getTestTypes() as $type){
+                        $tests = array_merge($tests, $qtiManifestParser->getResources($type));
+                    }
+                    
+                    $testsFound = (count($tests) !== 0);
+                    
+                    if ($testsFound !== true) {
+                        $report->add(common_report_Report::createFailure(__("Package is valid but no tests were found. Make sure that it contains valid QTI tests.")));
+                    } else {
+                        foreach ($tests as $qtiTestResource) {
+                            $report->add($this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder));
+                        }
                     }
                 }
                 else {
@@ -268,7 +279,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $report->setType(common_report_Report::TYPE_SUCCESS);
         }
 
-        if ($report->containsError() === true && $validPackage === true && $validManifest === true) {
+        if ($report->containsError() === true && $validPackage === true && $validManifest === true && $testsFound === true) {
             // We consider a test package as an atomic component, we then rollback it.
             $itemService = taoItems_models_classes_ItemsService::singleton();
 
