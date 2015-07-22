@@ -19,6 +19,8 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\tao\model\accessControl\func\AccessRule;
+use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 
 /**
@@ -160,6 +162,12 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
 
             $currentVersion = '2.11.0';
+        }
+        
+        if ($currentVersion == '2.7.0') {
+            // correct access roles
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('act'=>'taoQtiTest', 'mod' => 'TestCommand')));
+            $currentVersion = '2.7.1';
         }
         
         return $currentVersion;

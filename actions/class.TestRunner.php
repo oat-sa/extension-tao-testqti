@@ -47,6 +47,21 @@ use oat\taoQtiItem\helpers\QtiRunner;
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     
+    const SECTION_CODE_COMPLETED_NORMALLY = 700;
+    const SECTION_CODE_QUIT = 701;
+    const SECTION_CODE_COMPLETE_TIMEOUT = 703;
+    const SECTION_CODE_TIMEOUT = 704;
+    const SECTION_CODE_FORCE_QUIT = 705;
+    const SECTION_CODE_IN_PROGRESS = 706;
+    const SECTION_CODE_ERROR = 300;
+    
+    const TEST_CODE_COMPLETE = 'C';
+    const TEST_CODE_TERMINATED = 'T';
+    const TEST_CODE_INCOMPLETE = 'IC';
+    const TEST_CODE_INCOMPLETE_QUIT = 'IQ';
+    const TEST_CODE_INACTIVE = 'IA';
+    const TEST_CODE_DISAGREED_WITH_NDA = 'DA';
+    
     /**
      * The current AssessmentTestSession object.
      * 
@@ -217,7 +232,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     
     protected function beforeAction() {
         // Controller initialization.
-        $this->retrieveTestDefinition();
+        $this->retrieveTestDefinition($this->getRequestParameter('QtiTestCompilation'));
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
         
         // Initialize storage and test session.
@@ -234,7 +249,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $this->saveMetaData();
+        $metaData = $this->getRequestParameter('metaData');
+        if (!empty($metaData)) {
+            $this->saveMetaData($metaData);
+        }
     }
 
     protected function afterAction($withContext = true) {
@@ -290,7 +308,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
-
+    
     /**
      * Mark an item for review in the Assessment Test Session flow.
      *
@@ -420,19 +438,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function timeout() {
 	    $this->beforeAction();
 	    $session = $this->getTestSession();
-	    $timedOut = false;
 	    
 	    try {
             $session->checkTimeLimits(false, true, false);
-        }
-        catch (AssessmentTestSessionException $e) {
-            $timedOut = $e;
-        }
-        
-        if ($timedOut !== false) {
+        } catch (AssessmentTestSessionException $e) {
             $this->onTimeout($e);
         }
-
+        
         // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
         // to the client with the actual assessment test context. Maybe the client will be able to
         // continue...
@@ -565,42 +577,22 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     }
 	
     /**
-     * Save metadata (given from GET['metaData'] parameter).
+     * Save metadata of session (given from GET['metaData'] parameter).
+     * Invokes in self::beforeAction() method.
+     * 
+     * @param array $metaData Meta data array to be saved.
+     * Example:
+     * array(
+     *   'TEST' => array('TEST_EXIT_CODE' => 'IC'),
+     *   'SECTION' => array('SECTION_EXIT_CODE' => 701),
+     * )
      */
-    private function saveMetaData()
+    private function saveMetaData(array $metaData, $session = null)
     {
-        $metaData = $this->getRequestParameter('metaData');
-        if (is_array($metaData)) {
+        if ($session === null) {
             $session = $this->getTestSession();
-            $sessionId = $session->getSessionId();
-            $testUri = $session->getTest()->getUri();
-            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-            $item = $session->getCurrentAssessmentItemRef();
-            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($session);
-            $assessmentSectionId = $session->getCurrentAssessmentSection()->getIdentifier();
-
-            foreach ($metaData as $type => $data) {
-                foreach ($data as $key => $value) {
-                    $metaVariable = new \taoResultServer_models_classes_TraceVariable();
-                    $metaVariable->setIdentifier($key);
-                    $metaVariable->setBaseType('string');
-                    $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-                    $metaVariable->setTrace($value);
-
-                    if (strcasecmp($type, 'ITEM') === 0) {
-                        $occurence = $session->getCurrentAssessmentItemRefOccurence();
-                        $transmissionId = "${sessionId}.${item}.${occurence}";
-                        $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
-                    } elseif (strcasecmp($type, 'TEST') === 0) {
-                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                    } elseif (strcasecmp($type, 'SECTION') === 0) {
-                        //suffix section variables with _{SECTION_IDENTIFIER}
-                        $metaVariable->setIdentifier($key.'_'.$assessmentSectionId);
-                        $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                    }
-                }
-            }
-        } 
+        }
+        $session->saveMetaData($metaData);
     }
     
     /**
@@ -635,26 +627,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * from as an AssessmentTest object. This method
 	 * also retrieves the compilation directory.
 	 * 
+     * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-|http://sample/first.rdf#i14363448109065884+'</i>)
+     * 
 	 * @return AssessmentTest The AssessmentTest object the current test session is built from.
 	 */
-	protected function retrieveTestDefinition() {
-	    
-	    $directories = array('private' => null, 'public' => null);
-	    $directoryIds = explode('|', $this->getRequestParameter('QtiTestCompilation'));
-	    
-	    $directories['private'] = $this->getDirectory($directoryIds[0]);
-	    $directories['public'] = $this->getDirectory($directoryIds[1]);
+	protected function retrieveTestDefinition($qtiTestCompilation) {
+        $directoryIds = explode('|', $qtiTestCompilation);
+	    $directories = array(
+            'private' => $this->getDirectory($directoryIds[0]), 
+            'public' => $this->getDirectory($directoryIds[1])
+        );
 	    
 	    $this->setCompilationDirectory($directories);
-	    
-	    $dirPath = $directories['private']->getPath();
-	    $testFilePath = $dirPath . TAOQTITEST_COMPILED_FILENAME;
-	    
-	    common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
-	    $doc = new PhpDocument();
-	    $doc->load($testFilePath);
-	    
-	    $this->setTestDefinition($doc->getDocumentComponent());
+	    $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($qtiTestCompilation);
+	    $this->setTestDefinition($testDefinition);
 	}
 	
 	/**
