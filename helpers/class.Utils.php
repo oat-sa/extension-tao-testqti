@@ -148,7 +148,7 @@ class taoQtiTest_helpers_Utils {
             'qtiItems' => array(),
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
         ));
-        	
+            
         $manifest = new DOMDocument('1.0', TAO_DEFAULT_ENCODING);
         $manifest->loadXML($templateRenderer->render());
         return $manifest;

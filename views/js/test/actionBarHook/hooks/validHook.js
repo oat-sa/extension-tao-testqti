@@ -22,5 +22,8 @@ define({
     },
     clear : function(){
 
+    },
+    isVisible : function(){
+        return true;
     }
 });

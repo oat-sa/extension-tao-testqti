@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 
 /**
  *
@@ -105,7 +106,63 @@ class Updater extends \common_ext_ExtensionUpdater {
 
          if ($currentVersion == '2.6.4') {
             $currentVersion = '2.7.0';
+        }
+
+        // add markForReview button
+        if ($currentVersion === '2.7.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            
+            $registry->registerQtiTools('markForReview', array(
+                'label' => 'Mark for review',
+                'icon' => 'anchor',
+                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
+            ));
+            
+            $currentVersion = '2.8.0';
          }
+
+        // adjust testrunner config: set the review scope
+        if ($currentVersion == '2.8.0') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-scope'] = 'test';
+            unset($config['test-taker-review-section-only']);
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.9.0';
+        }
+
+       // add show/hide button
+        // adjust testrunner config: set the "can collapse" option
+        if ($currentVersion == '2.9.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            
+            $registry->registerQtiTools('collapseReview', array(
+                'title' => 'Show/Hide the review screen',
+                'label' => 'Review',
+                'icon' => 'mobile-menu',
+                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+                'order' => -1
+            ));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-can-collapse'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.10.0';
+        }
+
+        // adjust testrunner config: set the item sequence number options
+        if ($currentVersion == '2.10.0') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-force-title'] = false;
+            $config['test-taker-review-item-title'] = 'Item %d';
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.11.0';
+        }
         
         if ($currentVersion == '2.7.0') {
             // correct access roles

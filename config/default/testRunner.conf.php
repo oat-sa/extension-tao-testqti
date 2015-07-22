@@ -63,20 +63,43 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
-     * Limits the test taker review screen to the current test section.
-     * @type boolean
+     * Forces a unique title for all test items.
+     * @type string
      */
-    'test-taker-review-section-only' => false,
+    'test-taker-review-force-title' => false,
+    
+    /**
+     * A unique title for all test items, when the option `test-taker-review-force-title` is enabled.
+     * This title will be processed through a sprintf() call, with the item sequence number as argument, 
+     * so you can easily insert the sequence number inside the title. 
+     * @type string
+     */
+    'test-taker-review-item-title' => 'Item %d',
+
+    /**
+     * Limits the test taker review screen to a particular scope. Can be:
+     * - test : the whole test
+     * - testPart : the current test part
+     * - testSection : the current test section
+     * @type string
+     */
+    'test-taker-review-scope' => 'test',
 
     /**
      * Prevents the test taker to access unseen items.
      * @type boolean
      */
     'test-taker-review-prevents-unseen' => true,
+    
+    /**
+     * Allows the test taker to collapse the review screen: when collapsed the component is reduced to one tiny column.
+     * @type boolean
+     */
+    'test-taker-review-can-collapse' => false,
 
     /**
      * Replace logout to exit button...
      * @type boolean
      */
-    'exitButton' => false
+    'exitButton' => false,
 );

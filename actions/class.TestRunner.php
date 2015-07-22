@@ -21,7 +21,6 @@
  */
 
 use qtism\data\storage\php\PhpDocument;
-use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -31,16 +30,10 @@ use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String;
-use qtism\common\datatypes\File;
-use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
-use qtism\data\View;
-use \taoQtiCommon_helpers_PciVariableFiller;
-use \taoQtiCommon_helpers_PciStateOutput;
-use \taoQtiCommon_helpers_Utils;
 use oat\taoQtiItem\helpers\QtiRunner;
 
 /**
@@ -518,7 +511,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $this->beforeAction();
 	    
 	    // --- Deal with provided responses.
-	    $jsonPayload = taoQtiCommon_helpers_utils::readJsonPayload();
+	    $jsonPayload = taoQtiCommon_helpers_Utils::readJsonPayload();
 
 	    $responses = new State();
 	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
