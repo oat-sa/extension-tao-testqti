@@ -152,7 +152,9 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
         $report = $testImport->import($class, $form);
         $this->assertInstanceOf('common_report_Report', $report);
 
-        $this->assertEquals($report->getType(), common_report_Report::TYPE_SUCCESS);
+        // As the QTI Package has no test into it, the report has to be TYPE_ERROR.
+        // 'qti_package.zip'. @todo have a TYPE_SUCCESS case.
+        $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
     }
 
 }
