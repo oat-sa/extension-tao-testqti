@@ -372,15 +372,17 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->beforeAction();
         $session = $this->getTestSession();
         
-        try {
-            $session->moveNext();
-            
-            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+        if (!$this->checkTimeout()) {
+            try {
+                $session->moveNext();
+                
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
             }
-        }
-        catch (AssessmentTestSessionException $e) {
-            $this->handleAssessmentTestSessionException($e);
+            catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
         }
 
         $this->afterAction();
@@ -415,18 +417,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function skip() {
 	    $this->beforeAction();
 	    $session = $this->getTestSession();
-	    
-	    try {
-	        $session->skip();
-	        $session->moveNext();
-	        
-	        if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
-	        }
-	    }
-	    catch (AssessmentTestSessionException $e) {
-	        $this->handleAssessmentTestSessionException($e);
-	    }
+
+        if (!$this->checkTimeout()) {
+            try {
+                $session->skip();
+                $session->moveNext();
+
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+        }
 	    
 	    $this->afterAction();
 	}
@@ -464,6 +467,49 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction();
 	}
+
+    /**
+     * Checks if the current item/section/part is timed out.
+     * If so the item/section/part is skipped to the next available item/section/part.
+     *
+     * @return bool
+     * @throws AssessmentTestSessionException
+     */
+    protected function checkTimeout() {
+        $session = $this->getTestSession();
+        $result = false;
+
+        try {
+            $session->checkTimeLimits(false, true, false);
+        }
+        catch (AssessmentTestSessionException $e) {
+            switch ($e->getCode()) {
+                case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                    $session->endTestSession();
+                    break;
+
+                case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+                    $session->moveNextTestPart();
+                    break;
+
+                case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+                    $session->moveNextAssessmentSection();
+                    break;
+
+                case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+                    $session->moveNextAssessmentItem();
+                    break;
+            }
+
+            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            }
+
+            $result = true;
+        }
+
+        return $result;
+    }
 
 	/**
 	 * Stuff to be undertaken when the Assessment Item presented to the candidate
