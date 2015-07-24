@@ -43,7 +43,12 @@ define([
         answered : 'answered',
         viewed : 'viewed',
         unseen : 'unseen',
-        icon : 'qti-navigator-icon'
+        icon : 'qti-navigator-icon',
+        scope : {
+            test : 'scope-test',
+            testPart : 'scope-test-part',
+            testSection : 'scope-test-section'
+        }
     };
 
     /**
@@ -485,7 +490,16 @@ define([
          * @private
          */
         _updateDisplayOptions: function() {
-            this.$component.toggleClass(_cssCls.collapsible, this.options.canCollapse);
+            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test';
+            var scopeClass = _cssCls.scope[reviewScope];
+            var $root = this.$component;
+            _.forEach(_cssCls.scope, function(cls) {
+                $root.removeClass(cls);
+            });
+            if (scopeClass) {
+                $root.addClass(scopeClass);
+            }
+            $root.toggleClass(_cssCls.collapsible, this.options.canCollapse);
         },
 
         /**

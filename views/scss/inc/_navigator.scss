@@ -126,6 +126,12 @@
         }
     }
 
+    &.scope-test-section {
+        .qti-navigator-part > .qti-navigator-label {
+            display: none !important;
+        }
+    }
+
     .qti-navigator-label {
         display: block;
         line-height: 30px;
