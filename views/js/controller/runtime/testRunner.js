@@ -785,6 +785,9 @@ define([
                     $controls.$sideBars = $('.test-sidebar');
                 }
 
+                TestRunner.updateProgress();
+                TestRunner.updateTestReview();
+
                 iframeNotifier.parent('serviceready');
 
 
