@@ -122,21 +122,23 @@ define([
                 var self = this;
                 this.disableGui();
 
-                $.ajax({
-                    url: this.testContext.markForReviewUrl,
-                    cache: false,
-                    async: true,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        flag: flag,
-                        position: position
-                    },
-                    success: function(testContext) {
-                        self.setTestContext(testContext);
-                        self.updateTestReview();
-                        self.enableGui();
-                    }
+                this.itemServiceApi.kill(function () {
+                    $.ajax({
+                        url: self.testContext.markForReviewUrl,
+                        cache: false,
+                        async: true,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            flag: flag,
+                            position: position
+                        },
+                        success: function(testContext) {
+                            self.setTestContext(testContext);
+                            self.updateTestReview();
+                            self.enableGui();
+                        }
+                    });
                 });
             },
 
