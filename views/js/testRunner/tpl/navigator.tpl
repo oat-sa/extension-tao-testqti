@@ -11,17 +11,17 @@
                     <span class="icon-down"></span>
                 </span>
                 <ul class="collapsible-panel plain">
-                    <li class="qti-navigator-answered" title="{{__ 'Completed items'}}">
-                        <span class="qti-navigator-label">
-                            <span class="qti-navigator-icon icon-answered"></span>
-                            <span class="qti-navigator-text">{{__ 'Answered'}}</span>
-                            <span class="qti-navigator-counter">-/-</span>
-                        </span>
-                    </li>
                     <li class="qti-navigator-viewed" title="{{__ 'Viewed items'}}">
                         <span class="qti-navigator-label">
                             <span class="qti-navigator-icon icon-viewed"></span>
                             <span class="qti-navigator-text">{{__ 'Viewed'}}</span>
+                            <span class="qti-navigator-counter">-/-</span>
+                        </span>
+                    </li>
+                    <li class="qti-navigator-answered" title="{{__ 'Completed items'}}">
+                        <span class="qti-navigator-label">
+                            <span class="qti-navigator-icon icon-answered"></span>
+                            <span class="qti-navigator-text">{{__ 'Answered'}}</span>
                             <span class="qti-navigator-counter">-/-</span>
                         </span>
                     </li>
