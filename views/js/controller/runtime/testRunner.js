@@ -614,10 +614,16 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
+                    testProgression = TestRunner.testReview ? 
+                        TestRunner.testReview.getProgression(self.testContext) : {
+                            total : self.testContext.numberItems,
+                            answered : self.testContext.numberCompleted,
+                            flagged : self.testContext.numberFlagged || 0
+                        },
                     message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        (self.testContext.numberFlagged || 0).toString()
+                        (testProgression.total - testProgression.answered).toString(),
+                        (testProgression.flagged).toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
