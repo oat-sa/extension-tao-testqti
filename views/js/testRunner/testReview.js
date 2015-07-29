@@ -22,9 +22,10 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'tpl!taoQtiTest/tpl/navigator',
-    'tpl!taoQtiTest/tpl/navigatorTree'
-], function ($, _, __, navigatorTpl, navigatorTreeTpl) {
+    'tpl!taoQtiTest/testRunner/tpl/navigator',
+    'tpl!taoQtiTest/testRunner/tpl/navigatorTree',
+    'util/capitalize'
+], function ($, _, __, navigatorTpl, navigatorTreeTpl, capitalize) {
     'use strict';
 
     /**
@@ -35,13 +36,19 @@ define([
     var _cssCls = {
         active : 'active',
         collapsed : 'collapsed',
+        collapsible : 'collapsible',
         masked : 'masked',
         disabled : 'disabled',
         flagged : 'flagged',
         answered : 'answered',
         viewed : 'viewed',
         unseen : 'unseen',
-        icon : 'qti-navigator-icon'
+        icon : 'qti-navigator-icon',
+        scope : {
+            test : 'scope-test',
+            testPart : 'scope-test-part',
+            testSection : 'scope-test-section'
+        }
     };
 
     /**
@@ -53,6 +60,7 @@ define([
         component : '.qti-navigator',
         filterBar : '.qti-navigator-filters',
         tree : '.qti-navigator-tree',
+        collapseHandle : '.qti-navigator-collapsible',
         linearState : '.qti-navigator-linear',
         infoAnswered : '.qti-navigator-answered .qti-navigator-counter',
         infoViewed : '.qti-navigator-viewed .qti-navigator-counter',
@@ -71,7 +79,7 @@ define([
         linearStart : '.qti-navigator-linear-part button',
         counters : '.qti-navigator-counter',
         actives : '.active',
-        collapsibles : '.collapsible',
+        collapsible : '.collapsible',
         collapsiblePanels : '.collapsible-panel',
         unseen : '.unseen',
         answered : '.answered',
@@ -100,13 +108,25 @@ define([
      * @private
      */
     var _optionsMap = {
-        'reviewSectionOnly' : 'sectionOnly',
-        'reviewPreventsUnseen' : 'preventsUnseen'
+        'reviewScope' : 'reviewScope',
+        'reviewPreventsUnseen' : 'preventsUnseen',
+        'canCollapse' : 'canCollapse'
+    };
+
+    /**
+     * Maps the handled review scopes
+     * @type {Object}
+     * @private
+     */
+    var _reviewScopes = {
+        test : 'test',
+        testPart : 'testPart',
+        testSection : 'testSection'
     };
 
     /**
      * Provides a test review manager
-     * @type {{init: Function, update: Function, on: Function, off: Function, trigger: Function}}
+     * @type {{init: Function, update: Function, enable: Function, disable: Function, hide: Function, show: Function, toggle: Function, on: Function, off: Function, trigger: Function}}
      */
     var testReview = {
         /**
@@ -114,7 +134,8 @@ define([
          * @param {String|jQuery|HTMLElement} element The element on which install the component
          * @param {Object} [options] A list of extra options
          * @param {String} [options.region] The region on which put the component: left or right
-         * @param {Boolean} [options.sectionOnly] Limit the review screen to the current test section only
+         * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+         * the whole test, the current test part or the current test section)
          * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
          * @returns {testReview}
          */
@@ -124,6 +145,8 @@ define([
             var insertMethod = putOnRight ? 'append' : 'prepend';
 
             this.options = initOptions;
+            this.disabled = false;
+            this.hidden = false;
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -144,6 +167,7 @@ define([
             // install the component behaviour
             this._loadDOM();
             this._initEvents();
+            this._updateDisplayOptions();
 
             return this;
         },
@@ -178,6 +202,18 @@ define([
          */
         _initEvents: function() {
             var self = this;
+
+            // click on the collapse handle: collapse/expand the review panel
+            this.$component.on('click' + _selectors.component, _selectors.collapseHandle, function() {
+                if (self.disabled) {
+                    return;
+                }
+
+                self.$component.toggleClass(_cssCls.collapsed);
+                if (self.$component.hasClass(_cssCls.collapsed)) {
+                    self._openSelected();
+                }
+            });
 
             // click on the info panel title: toggle the related panel
             this.$component.on('click' + _selectors.component, _selectors.infoPanelLabels, function() {
@@ -229,7 +265,7 @@ define([
 
                 if (!$item.hasClass(_cssCls.disabled)) {
                     $target = $(event.target);
-                    if ($target.is(_selectors.icons)) {
+                    if ($target.is(_selectors.icons) && !self.$component.hasClass(_cssCls.collapsed)) {
                         if (!$item.hasClass(_cssCls.unseen)) {
                             self._mark($item);
                         }
@@ -264,6 +300,7 @@ define([
                 var mode = $btn.data('mode');
 
                 self.$filters.removeClass(_cssCls.active);
+                self.$component.removeClass(_cssCls.collapsed);
                 $btn.addClass(_cssCls.active);
 
                 self._filter(mode);
@@ -330,7 +367,7 @@ define([
          * @private
          */
         _openOnly: function(opened, root) {
-            (root || this.$tree).find(_selectors.collapsibles).addClass(_cssCls.collapsed);
+            (root || this.$tree).find(_selectors.collapsible).addClass(_cssCls.collapsed);
             opened.removeClass(_cssCls.collapsed);
         },
 
@@ -449,6 +486,23 @@ define([
         },
 
         /**
+         * Updates the display according to options
+         * @private
+         */
+        _updateDisplayOptions: function() {
+            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test';
+            var scopeClass = _cssCls.scope[reviewScope];
+            var $root = this.$component;
+            _.forEach(_cssCls.scope, function(cls) {
+                $root.removeClass(cls);
+            });
+            if (scopeClass) {
+                $root.addClass(scopeClass);
+            }
+            $root.toggleClass(_cssCls.collapsible, this.options.canCollapse);
+        },
+
+        /**
          * Updates the local options from the provided context
          * @param {Object} testContext The progression context
          * @private
@@ -467,17 +521,62 @@ define([
          * @param {Object} testContext The progression context
          */
         _updateInfos: function(testContext) {
-            var total = testContext.numberItems || 0;
-            var answered = testContext.numberCompleted || 0;
-            var viewed = testContext.numberPresented || 0;
-            var flagged = testContext.numberReview || 0;
-            var unanswered = total - answered;
+            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test';
+            var progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope);
+            var getProgression = this[progressInfoMethod] || this._getProgressionOfTest;
+            var progression = getProgression && getProgression(testContext) || {};
+            var unanswered = Number(progression.total) - Number(progression.answered);
 
             // update the info panel
-            this.$infoAnswered.text(answered + '/' + total);
-            this.$infoUnanswered.text(unanswered + '/' + total);
-            this.$infoViewed.text(viewed + '/' + total);
-            this.$infoFlagged.text(flagged + '/' + total);
+            this.$infoAnswered.text(progression.answered + '/' + progression.total);
+            this.$infoUnanswered.text(unanswered + '/' + progression.total);
+            this.$infoViewed.text(progression.viewed + '/' + progression.total);
+            this.$infoFlagged.text(progression.flagged + '/' + progression.total);
+        },
+
+        /**
+         * Gets the progression stats for the whole test
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTest: function(testContext) {
+            return {
+                total : testContext.numberItems || 0,
+                answered : testContext.numberCompleted || 0,
+                viewed : testContext.numberPresented || 0,
+                flagged : testContext.numberFlagged || 0
+            };
+        },
+
+        /**
+         * Gets the progression stats for the current test part
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTestPart: function(testContext) {
+            return {
+                total : testContext.numberItemsPart || 0,
+                answered : testContext.numberCompletedPart || 0,
+                viewed : testContext.numberPresentedPart || 0,
+                flagged : testContext.numberFlaggedPart || 0
+            };
+        },
+
+        /**
+         * Gets the progression stats for the current test section
+         * @param {Object} testContext The progression context
+         * @returns {{total: (Number), answered: (Number), viewed: (Number), flagged: (Number)}}
+         * @private
+         */
+        _getProgressionOfTestSection: function(testContext) {
+            return {
+                total : testContext.numberItemsSection || 0,
+                answered : testContext.numberCompletedSection || 0,
+                viewed : testContext.numberPresentedSection || 0,
+                flagged : testContext.numberFlaggedSection || 0
+            };
         },
 
         /**
@@ -486,8 +585,11 @@ define([
          */
         _updateTree: function(testContext) {
             var navigatorMap = testContext.navigatorMap;
+            var reviewScope = this.options.reviewScope;
+            var reviewScopePart = reviewScope === 'testPart';
+            var reviewScopeSection = reviewScope === 'testSection';
             var _partsFilter = function(part) {
-                if (part.sections) {
+                if (reviewScopeSection && part.sections) {
                     part.sections = _.filter(part.sections, _partsFilter);
                 }
                 return part.active;
@@ -495,7 +597,7 @@ define([
 
             // rebuild the tree
             if (navigatorMap) {
-                if (this.options.sectionOnly) {
+                if (reviewScopePart || reviewScopeSection) {
                     // display only the current section
                     navigatorMap = _.filter(navigatorMap, _partsFilter);
                 }
@@ -523,27 +625,75 @@ define([
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context
+         * @returns {testReview}
          */
         update: function update(testContext) {
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
+            this._updateDisplayOptions();
+            return this;
         },
 
         /**
          * Disables the component
+         * @returns {testReview}
          */
         disable: function disable() {
             this.disabled = true;
             this.$component.addClass(_cssCls.disabled);
+            return this;
         },
 
         /**
          * Enables the component
+         * @returns {testReview}
          */
         enable: function enable() {
             this.disabled = false;
             this.$component.removeClass(_cssCls.disabled);
+            return this;
+        },
+
+        /**
+         * Hides the component
+         * @returns {testReview}
+         */
+        hide: function hide() {
+            this.disabled = true;
+            this.hidden = true;
+            this.$component.addClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Shows the component
+         * @returns {testReview}
+         */
+        show: function show() {
+            this.disabled = false;
+            this.hidden = false;
+            this.$component.removeClass(_cssCls.masked);
+            return this;
+        },
+
+        /**
+         * Toggles the display state of the component
+         * @param {Boolean} [show] External condition that's tells if the component must be shown or hidden
+         * @returns {testReview}
+         */
+        toggle: function toggle(show) {
+            if (undefined === show) {
+                show = this.hidden;
+            }
+
+            if (show) {
+                this.show();
+            } else {
+                this.hide();
+            }
+
+            return this;
         },
 
         /**
@@ -605,7 +755,8 @@ define([
      * @param {String|jQuery|HTMLElement} element The element on which install the component
      * @param {Object} [options] A list of extra options
      * @param {String} [options.region] The region on which put the component: left or right
-     * @param {Boolean} [options.sectionOnly] Limit the review screen to the current test section only
+     * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+     * the whole test, the current test part or the current test section)
      * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
      * @returns {testReview}
      */

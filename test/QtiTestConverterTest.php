@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
+use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use \taoQtiTest_models_classes_QtiTestConverter;
 
@@ -32,29 +33,24 @@ use \taoQtiTest_models_classes_QtiTestConverter;
  */
 class QtiTestConverterTest extends TaoPhpUnitTestRunner
 {
-    
-//     "rubricBlocks" : [ { "content" : [  ],
-//                    "rubricBlock" : { "content" : [  ],
-//                        "qti-type" : "rubricBlock",
-//                        "views" : [ 1 ]
-//                      },
-//                    "views" : [ "" ]
-//                  } ],
-    
+
     /**
      * Data provider 
      * @return array[] the parameters
      */
     public function dataProvider()
     {
-        $dataPath = dirname(__FILE__) . '/data/';
-        
-        $json = json_encode(json_decode(file_get_contents($dataPath . 'qtitest.json')));
+        $dataPath = __DIR__ . '/data/';
         
         return array(
             array(
                 $dataPath . 'qtitest.xml',
-                $json
+                json_encode(json_decode(file_get_contents($dataPath . 'qtitest.json')))
+            ),
+            array(
+                $dataPath . 'branching/test.xml',
+                json_encode(json_decode(file_get_contents($dataPath . 'branching/test.json')))
+
             )
         );
     }

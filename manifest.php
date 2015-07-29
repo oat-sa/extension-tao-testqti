@@ -33,11 +33,12 @@ return array(
     'label' => 'QTI test model',
 	'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '2.7.0',
+    'version' => '2.11.0',
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=2.6',
-        'taoQtiItem' => '>=2.6'
+        'taoQtiItem' => '>=2.6',
+        'taoDelivery' => '>=2.7'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -49,7 +50,8 @@ return array(
 		),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php'
+		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
+		    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
@@ -64,7 +66,8 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'ItemRunner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestRunner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Creator')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items'))
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
+        array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestCommand'))
     ),
 	'constants' => array(
 		# actions directory
