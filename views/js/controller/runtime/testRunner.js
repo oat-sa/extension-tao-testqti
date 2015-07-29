@@ -106,11 +106,31 @@ define([
              * @param {Number} position The position of the item within the test
              */
             jump: function(position) {
-                var self = this;
+                var self = this,
+                    action = 'jump',
+                    params = {position: position},
+                    items,
+                    isJumpToOtherSection = true;
                 this.disableGui();
-                this.itemServiceApi.kill(function() {
-                    self.actionCall('jump', null, {position: position});
-                });
+
+                items = this.getCurrentSectionItems();
+                for(var i in items ) {
+                    if (!items.hasOwnProperty(i)) {
+                        continue;
+                    }
+                    if( items[i].position == position ){
+                        isJumpToOtherSection = false;
+                        break;
+                    }
+                }
+
+                if( isJumpToOtherSection  && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action, params);
+                } else {
+                    this.itemServiceApi.kill(function() {
+                        self.actionCall(action, null, params);
+                    });
+                }
             },
 
             /**
@@ -143,19 +163,125 @@ define([
             },
 
             moveForward: function () {
-                var self = this;
+                var self = this,
+                    action = 'moveForward',
+                    metaData,
+                    isTimedSection = false,
+                    lastInSection,
+                    isItemActive;
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
-                        metaData;
-                        
-                    if (lastInSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                lastInSection = ((this.testContext.itemPositionSection + 1) === this.testContext.numberItemsSection)
+                                && (this.testContext.itemSessionState < TestRunner.TEST_STATE_CLOSED);
+
+                if(lastInSection && this.isCurrentItemActive()){
+                    if( this.isTimedSection() ){
+                        this.exitTimedSection(action);
+                    } else {
+                        this.exitSection(action);
                     }
-                    
-                    self.actionCall('moveForward', metaData);
+                } else {
+                    this.itemServiceApi.kill(function () {
+                        self.actionCall(action, metaData);
+                    });
+                }
+            },
+
+            exitSection: function(action, params){
+                var self = this,
+                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+
+                self.itemServiceApi.kill(function () {
+                    self.actionCall(action, metaData, params);
                 });
+            },
+
+            exitTimedSection: function(action, params){
+                var self = this,
+                    $confirmBox = $('.exit-modal-feedback'),
+                    message,
+                    items,
+                    unansweredCount=0,
+                    flaggedCount=0;
+
+                items = this.getCurrentSectionItems();
+                for(var i in items ){
+                    if( !items.hasOwnProperty(i) ){
+                        continue;
+                    }
+
+                    if( items[i].answered === false ){
+                        unansweredCount++;
+                    }
+                    if( items[i].flagged === true ){
+                        flaggedCount++;
+                    }
+                }
+
+                message = __(
+                    "You have %s unanswered question(s) and have %s item(s) marked for review. " +
+                    "After you complete the section it would be impossible to return to this section to make changes.  " +
+                    "Are you sure you want to end the section?",
+                    (unansweredCount || 0).toString(),
+                    (flaggedCount || 0).toString()
+                );
+
+                $confirmBox.find('.message').html(message);
+                $confirmBox.modal({ width: 500 });
+
+                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
+                    self.enableGui();
+                    $confirmBox.modal('close');
+                });
+
+                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                    self.exitSection(action, params);
+                });
+            },
+
+            isCurrentItemActive: function(){
+                return (!this.testContext.isTimeout == false) && (this.testContext.remainingAttempts != 0);
+            },
+
+            isTimedSection: function(){
+                var timeConstraints = this.testContext.timeConstraints,
+                    isTimedSection = false;
+                for( var index in timeConstraints ){
+                    if(    timeConstraints.hasOwnProperty(index)
+                        && timeConstraints[index].qtiClassName == 'assessmentSection' ){
+                        isTimedSection = true;
+                    }
+                }
+
+                return isTimedSection;
+            },
+
+            getCurrentSectionItems: function(){
+                var partId  = this.testContext.testPartId,
+                    navMap  = this.testContext.navigatorMap,
+                    sectionItems;
+
+                for( var partIndex in navMap ){
+                    if( !navMap.hasOwnProperty(partIndex)){
+                        continue;
+                    }
+                    if( navMap[partIndex].id !== partId ){
+                        continue;
+                    }
+
+                    for(var sectionIndex in navMap[partIndex].sections){
+                        if( !navMap[partIndex].sections.hasOwnProperty(sectionIndex)){
+                            continue;
+                        }
+                        if( navMap[partIndex].sections[sectionIndex].active === true ){
+                            sectionItems = navMap[partIndex].sections[sectionIndex].items;
+                            break;
+                        }
+                    }
+                }
+
+                return sectionItems;
             },
 
             moveBackward: function () {

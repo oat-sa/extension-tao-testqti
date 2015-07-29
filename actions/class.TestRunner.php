@@ -349,8 +349,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function jumpTo() {
         $this->beforeAction();
         $session = $this->getTestSession();
+        $metaData = $this->getRequestParameter('metaData');
 
         try {
+            if( isset($metaData['SECTION']['SECTION_EXIT_CODE']) ){
+                $this->endTimedSection();
+            }
+
             $session->jumpTo(intval($this->getRequestParameter('position')));
 
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
@@ -363,7 +368,33 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         $this->afterAction();
     }
-	
+
+    protected function endTimedSection()
+    {
+        $session = $this->getTestSession();
+
+        $section = $session->getCurrentAssessmentSection();
+        $limits = $section->getTimeLimits();
+
+        //ensure that session is timed
+        if( $limits->hasMaxTime() ) {
+            $components = $section->getComponents();
+
+            foreach( $components as $object ){
+                if( $object instanceof \qtism\data\ExtendedAssessmentItemRef ){
+                    $items = $session->getAssessmentItemSessions( $object->getIdentifier() );
+
+                    foreach ($items as $item) {
+                        if( $item instanceof \qtism\runtime\tests\AssessmentItemSession ){
+                            $item->endItemSession();
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
 	/**
 	 * Move forward in the Assessment Test Session flow.
 	 *
@@ -371,10 +402,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveForward() {
         $this->beforeAction();
         $session = $this->getTestSession();
-        
+        $metaData = $this->getRequestParameter('metaData');
+
         try {
+            if( isset($metaData['SECTION']['SECTION_EXIT_CODE']) ){
+                $this->endTimedSection();
+            }
+
             $session->moveNext();
-            
+
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
