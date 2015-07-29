@@ -108,23 +108,10 @@ define([
             jump: function(position) {
                 var self = this,
                     action = 'jump',
-                    params = {position: position},
-                    items,
-                    isJumpToOtherSection = true;
+                    params = {position: position};
                 this.disableGui();
 
-                items = this.getCurrentSectionItems();
-                for(var i in items ) {
-                    if (!items.hasOwnProperty(i)) {
-                        continue;
-                    }
-                    if( items[i].position == position ){
-                        isJumpToOtherSection = false;
-                        break;
-                    }
-                }
-
-                if( isJumpToOtherSection  && this.isCurrentItemActive() && this.isTimedSection() ){
+                if( this.isJumpOutOfSection(position)  && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action, params);
                 } else {
                     this.itemServiceApi.kill(function() {
@@ -164,17 +151,11 @@ define([
 
             moveForward: function () {
                 var self = this,
-                    action = 'moveForward',
-                    metaData,
-                    isTimedSection = false,
-                    lastInSection,
-                    isItemActive;
+                    action = 'moveForward';
+
                 this.disableGui();
 
-                lastInSection = ((this.testContext.itemPositionSection + 1) === this.testContext.numberItemsSection)
-                                && (this.testContext.itemSessionState < TestRunner.TEST_STATE_CLOSED);
-
-                if(lastInSection && this.isCurrentItemActive()){
+                if(this.isJumpOutOfSection(this.testContext.itemPosition+1) && this.isCurrentItemActive()){
                     if( this.isTimedSection() ){
                         this.exitTimedSection(action);
                     } else {
@@ -182,9 +163,46 @@ define([
                     }
                 } else {
                     this.itemServiceApi.kill(function () {
-                        self.actionCall(action, metaData);
+                        self.actionCall(action);
                     });
                 }
+            },
+
+            moveBackward: function () {
+                var self = this,
+                    action = 'moveBackward';
+
+                this.disableGui();
+
+                if( this.isJumpOutOfSection(this.testContext.itemPosition-1)  && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action);
+                } else {
+                    this.itemServiceApi.kill(function() {
+                        self.actionCall(action);
+                    });
+                }
+            },
+
+            isJumpOutOfSection: function(jumpPosition){
+                var items = this.getCurrentSectionItems(),
+                    isJumpToOtherSection = true,
+                    isValidPosition = (jumpPosition >= 0) && ( jumpPosition < this.testContext.numberItems );
+
+                if( isValidPosition){
+                    for(var i in items ) {
+                        if (!items.hasOwnProperty(i)) {
+                            continue;
+                        }
+                        if( items[i].position == jumpPosition ){
+                            isJumpToOtherSection = false;
+                            break;
+                        }
+                    }
+                } else {
+                    isJumpToOtherSection = false;
+                }
+
+                return isJumpToOtherSection;
             },
 
             exitSection: function(action, params){
@@ -282,15 +300,6 @@ define([
                 }
 
                 return sectionItems;
-            },
-
-            moveBackward: function () {
-                var self = this;
-
-                this.disableGui();
-                this.itemServiceApi.kill(function () {
-                    self.actionCall('moveBackward');
-                });
             },
 
             skip: function () {

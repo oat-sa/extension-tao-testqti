@@ -349,14 +349,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function jumpTo() {
         $this->beforeAction();
         $session = $this->getTestSession();
-        $metaData = $this->getRequestParameter('metaData');
+        $nextPosition = intval($this->getRequestParameter('position'));
 
         try {
-            if( isset($metaData['SECTION']['SECTION_EXIT_CODE']) ){
-                $this->endTimedSection();
-            }
+            $this->endTimedSection($nextPosition);
 
-            $session->jumpTo(intval($this->getRequestParameter('position')));
+            $session->jumpTo($nextPosition);
 
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
@@ -369,15 +367,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->afterAction();
     }
 
-    protected function endTimedSection()
+    protected function endTimedSection($nextPosition)
     {
+        $isJumpOutOfSection = false;
         $session = $this->getTestSession();
-
         $section = $session->getCurrentAssessmentSection();
+
+        $route = $session->getRoute();
+
+        if( ($nextPosition >= 0) && ($nextPosition < $route->count()) ){
+            $nextSection = $route->getRouteItemAt($nextPosition);
+
+            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+        }
+
         $limits = $section->getTimeLimits();
 
-        //ensure that session is timed
-        if( $limits->hasMaxTime() ) {
+        //ensure that jumping out and section is timed
+        if( $isJumpOutOfSection && $limits->hasMaxTime() ) {
             $components = $section->getComponents();
 
             foreach( $components as $object ){
@@ -389,7 +396,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                             $item->endItemSession();
                         }
                     }
-
                 }
             }
         }
@@ -402,12 +408,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveForward() {
         $this->beforeAction();
         $session = $this->getTestSession();
-        $metaData = $this->getRequestParameter('metaData');
+        $nextPosition = $session->getRoute()->getPosition() + 1;
 
         try {
-            if( isset($metaData['SECTION']['SECTION_EXIT_CODE']) ){
-                $this->endTimedSection();
-            }
+            $this->endTimedSection($nextPosition);
 
             $session->moveNext();
 
@@ -429,8 +433,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveBackward() {
 	    $this->beforeAction();
 	    $session = $this->getTestSession();
+        $nextPosition = $session->getRoute()->getPosition() - 1;
 	    
 	    try {
+            $this->endTimedSection($nextPosition);
+
 	        $session->moveBack();
 	        
 	        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
