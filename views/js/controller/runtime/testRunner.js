@@ -491,7 +491,10 @@ define([
              * Updates the test taker review screen
              */
             updateTestReview: function() {
+                var considerProgress = this.testContext.considerProgress === true;
+
                 if (this.testReview) {
+                    this.testReview.toggle(considerProgress);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -500,11 +503,11 @@ define([
              * Updates the progress bar
              */
             updateProgress: function () {
-                var considerProgress = this.testContext.considerProgress;
+                var considerProgress = this.testContext.considerProgress === true;
 
-                $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+                $controls.$progressBox.css('visibility', considerProgress ? 'visible' : 'hidden');
 
-                if (considerProgress === true) {
+                if (considerProgress) {
                     this.progressUpdater.update(this.testContext);
                 }
             },
