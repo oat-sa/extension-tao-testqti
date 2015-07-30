@@ -661,6 +661,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
 	        $this->setTestSession($qtiStorage->retrieve($this->getTestDefinition(), $sessionId));
 	    }
+
+        $this->preserveOutcomes();
     }
     
     /**
@@ -707,5 +709,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 }
             }
         }
+    }
+
+    /**
+     * Preserve the outcomes variables set in the "rdfOutcomeMap" config
+     * This is required to prevent those special outcomes from being reset before every outcome processing
+     */
+    protected function preserveOutcomes(){
+
+        //preserve the special outcomes defined in the rdfOutcomeMap config
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        $this->getTestSession()->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
     }
 }
