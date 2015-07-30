@@ -36,10 +36,9 @@ define([
     'moment',
     'ui/modal',
     'ui/progressbar'
-],
-    function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+], function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
-        'use strict';
+    'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -149,11 +148,10 @@ define([
                 this.itemServiceApi.kill(function () {
                     var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
                         metaData;
-                        
+
                     if (lastInSection) {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
                     }
-                    
                     self.actionCall('moveForward', metaData);
                 });
             },
@@ -168,8 +166,16 @@ define([
             },
 
             skip: function () {
+                var self = this,
+                    lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
+                    metaData;
+                    
                 this.disableGui();
-                this.actionCall('skip');
+                
+                if (lastInSection) {
+                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                }
+                this.actionCall('skip', metaData);
             },
 
             timeout: function () {
