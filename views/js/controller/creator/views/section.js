@@ -140,18 +140,25 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                 var selection = Array.prototype.slice.call(arguments, 1);
                 var $placeholder = $('.itemref-placeholder', $section);
                 var $placeholders = $('.itemref-placeholder');
-
+                
                 if(selection.length > 0){
                     $placeholder.show().off('click').on('click', function(e){
-
+                        
+                        //prepare the item data 
+                        var defaultItemData = {};
+                        if(model.itemSessionControl && !_.isUndefined(model.itemSessionControl.maxAttempts)){
+                            //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
+                            defaultItemData.itemSessionControl = _.clone(model.itemSessionControl);
+                        }
+                        
                         _.forEach(selection, function(item){
                             var $item = $(item);
 
-                            addItemRef($('.itemrefs', $section), undefined, {
+                            addItemRef($('.itemrefs', $section), undefined, _.defaults({
                                 href        : uri.decode($item.data('uri')),
                                 label       : $.trim($item.clone().children().remove().end().text()),
                                 'qti-type'  : 'assessmentItemRef'
-                            });
+                            }, defaultItemData));
                         });
 
                         //reset the current selection
