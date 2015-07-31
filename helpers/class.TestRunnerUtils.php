@@ -392,8 +392,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Number of items presented during the test session.
             $context['numberPresented'] = $session->numberPresented();
             
-            // Whether or not the progress of the test can be infered.
-            $context['considerProgress'] = self::considerProgress($testMeta);
+            // Whether or not the progress of the test can be inferred.
+            $context['considerProgress'] = self::considerProgress($session, $testMeta, $config);
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
@@ -410,7 +410,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['jumps'] = self::buildPossibleJumps($session);
 
             // The test review screen setup
-            if (!empty($config['test-taker-review'])) {
+            if (!empty($config['test-taker-review']) && $context['considerProgress']) {
                 // The navigation map in order to build the test navigator
                 $navigator = self::getNavigatorMap($session);
                 if ($navigator !== NavigationMode::LINEAR) {
@@ -1008,17 +1008,43 @@ class taoQtiTest_helpers_TestRunnerUtils {
         
         return $completed;
     }
-    
-    static public function considerProgress(array $testMeta) {
+
+    /**
+     * Checks if the current test allows the progress bar to be displayed
+     * @param AssessmentTestSession $session
+     * @param array $testMeta
+     * @param array $config
+     * @return bool
+     */
+    static public function considerProgress(AssessmentTestSession $session, array $testMeta, array $config = array()) {
         $considerProgress = true;
-        
-        if ($testMeta['preConditions'] === true) {
-            $considerProgress = false;
+
+        if (!empty($config['progress-indicator-forced'])) {
+            // Caution: this piece of code can introduce a heavy load on very large tests
+            // The local optimisation made here concerns:
+            // - only check the part branchRules if the progress indicator must be forced for all tests
+            // - branchRules check is ignored when the navigation mode is non linear.
+            //
+            // TODO: Perform this check at compilation time and store a map of parts options.
+            //       This can be also done for navigation map (see getNavigatorMap and getJumpsMap)
+
+            $testPart = $session->getCurrentTestPart();
+            if ($testPart->getNavigationMode() !== NavigationMode::NONLINEAR) {
+                $branchings = $testPart->getComponentsByClassName('branchRule');
+
+                if (count($branchings) > 0) {
+                    $considerProgress = false;
+                }
+            }
+        } else {
+            if ($testMeta['preConditions'] === true) {
+                $considerProgress = false;
+            }
+            else if ($testMeta['branchRules'] === true) {
+                $considerProgress = false;
+            }
         }
-        else if ($testMeta['branchRules'] === true) {
-            $considerProgress = false;
-        }
-        
+
         return $considerProgress;
     }
 }
