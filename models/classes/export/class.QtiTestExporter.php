@@ -156,26 +156,30 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      * the related ZIP archive.
      * 
      * @param array $options An array of options (not used by this implementation).
+     * @return common_report_Report
      */
     public function export($options = array()) {
-        
+
         // 1. Export the items bound to the test.
-        $itemIdentifiers = $this->exportItems();
-        
+        $report = $this->exportItems();
+        $itemIdentifiers = $report->getData();
+
         // 2. Export the test definition itself.
         $this->exportTest($itemIdentifiers);
-        
+
         // 3. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
+        return $report;
     }
     
     /**
      * Export the dependent items into the ZIP archive.
      * 
-     * @return array An array of identifiers that were assigned to exported items into the IMS Manifest.
+     * @return common_report_Report that contains An array of identifiers that were assigned to exported items into the IMS Manifest.
      */
     protected function exportItems() { 
-        
+
+        $report = common_report_Report::createSuccess();
         $identifiers = array();
         $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
         $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '', $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
@@ -195,16 +199,17 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
-            $itemExporter->export();
+            $subReport = $itemExporter->export();
             
             // Modify the reference to the item in the test definition.
             $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
             $identifiers[] = $itemExporter->buildIdentifier();
+            $report->add($subReport);
         }
-        
-        return $identifiers;
+        $report->setData($identifiers);
+        return $report;
     }
     
     /**

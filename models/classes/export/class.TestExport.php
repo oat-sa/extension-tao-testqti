@@ -57,7 +57,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
      * @see tao_models_classes_export_ExportHandler::export()
      */
     public function export($formValues, $destination) {
-    	$file = null;
+    	$report = common_report_Report::createSuccess();
     	
     	if (isset($formValues['filename']) === true) {
     	    
@@ -83,10 +83,11 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 			        $testResource = new core_kernel_classes_Resource($instance);
 			        $testExporter = new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
 			        common_Logger::d('Export ' . $instance);
-			        $testExporter->export();
+			        $subReport = $testExporter->export();
+                    $report->add($subReport);
 			    }
 			    
-				$file = $path;
+				$report->setData($path);
 				$zip->close();
 				
 			}
@@ -99,6 +100,6 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 			common_Logger::w("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.");
 		}
 		
-		return $file;
+		return $report;
     }
 }
