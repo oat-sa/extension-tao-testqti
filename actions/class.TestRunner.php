@@ -384,7 +384,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $limits = $section->getTimeLimits();
 
         //ensure that jumping out and section is timed
-        if( $isJumpOutOfSection && $limits->hasMaxTime() ) {
+        if( $isJumpOutOfSection && $limits != null && $limits->hasMaxTime() ) {
             $components = $section->getComponents();
 
             foreach( $components as $object ){
