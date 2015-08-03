@@ -155,7 +155,7 @@ define([
 
                 this.disableGui();
 
-                if(this.isJumpOutOfSection(this.testContext.itemPosition+1) && this.isCurrentItemActive()){
+                if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
                     if( this.isTimedSection() ){
                         this.exitTimedSection(action);
                     } else {
@@ -174,7 +174,7 @@ define([
 
                 this.disableGui();
 
-                if( this.isJumpOutOfSection(this.testContext.itemPosition-1)  && this.isCurrentItemActive() && this.isTimedSection() ){
+                if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
                     this.itemServiceApi.kill(function() {
@@ -218,23 +218,8 @@ define([
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
                     message,
-                    items,
-                    unansweredCount=0,
-                    flaggedCount=0;
-
-                items = this.getCurrentSectionItems();
-                for(var i in items ){
-                    if( !items.hasOwnProperty(i) ){
-                        continue;
-                    }
-
-                    if( items[i].answered === false ){
-                        unansweredCount++;
-                    }
-                    if( items[i].flagged === true ){
-                        flaggedCount++;
-                    }
-                }
+                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
+                    flaggedCount=this.testContext.numberFlaggedSection;
 
                 message = __(
                     "You have %s unanswered question(s) and have %s item(s) marked for review. " +
