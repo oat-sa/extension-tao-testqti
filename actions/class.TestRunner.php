@@ -719,6 +719,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         //preserve the special outcomes defined in the rdfOutcomeMap config
         $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
-        $this->getTestSession()->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
+        if (is_array($rdfOutcomeMap) === true) {
+            $this->getTestSession()->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
+        }
     }
 }
