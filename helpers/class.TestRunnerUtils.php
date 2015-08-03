@@ -436,9 +436,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
                 $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
                 $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            } else if (isset($config['progress-indicator']) && 'position' == $config['progress-indicator']) {
-                // Setup of the progress bar when displaying position
+            } else {
+                // Setup data for progress bar when displaying position and timed section exit control
                 $numberItems = self::countItems($session);
+                $context['numberCompletedPart'] = $numberItems['numberCompletedPart'];
+                $context['numberCompletedSection'] = $numberItems['numberCompletedSection'];
                 $context['numberItemsSection'] = $numberItems['numberItemsSection'];
                 $context['numberItemsPart'] = $numberItems['numberItemsPart'];
                 $context['itemPositionPart'] = $numberItems['itemPositionPart'];

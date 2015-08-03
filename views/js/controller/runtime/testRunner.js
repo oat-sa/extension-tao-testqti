@@ -218,11 +218,17 @@ define([
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
                     message,
+                    messageFlagged = '',
                     unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
                     flaggedCount=this.testContext.numberFlaggedSection;
 
+
+                if( flaggedCount !== undefined ){
+                    messageFlagged = " and have %s item(s) marked for review";
+                }
+
                 message = __(
-                    "You have %s unanswered question(s) and have %s item(s) marked for review. " +
+                    "You have %s unanswered question(s)" + messageFlagged + ". " +
                     "After you complete the section it would be impossible to return to this section to make changes.  " +
                     "Are you sure you want to end the section?",
                     (unansweredCount || 0).toString(),
