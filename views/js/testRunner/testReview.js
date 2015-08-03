@@ -521,11 +521,8 @@ define([
          * @param {Object} testContext The progression context
          */
         _updateInfos: function(testContext) {
-            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test';
-            var progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope);
-            var getProgression = this[progressInfoMethod] || this._getProgressionOfTest;
-            var progression = getProgression && getProgression(testContext) || {};
-            var unanswered = Number(progression.total) - Number(progression.answered);
+            var progression = this.getProgression(testContext),
+                unanswered = Number(progression.total) - Number(progression.answered);
 
             // update the info panel
             this.$infoAnswered.text(progression.answered + '/' + progression.total);
@@ -621,7 +618,21 @@ define([
             // apply again the current filter
             this._filter(this.$filters.filter(_selectors.actives).data('mode'));
         },
-
+        
+        /**
+         * Get progression
+         * @param {Object} testContext The progression context
+         * @returns {object} progression
+         */
+        getProgression: function getProgression(testContext) {
+            var reviewScope = _reviewScopes[this.options.reviewScope] || 'test',
+                progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope),
+                getProgression = this[progressInfoMethod] || this._getProgressionOfTest,
+                progression = getProgression && getProgression(testContext) || {};
+            
+            return progression;
+        },
+        
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context

@@ -85,7 +85,7 @@ define([
      * @returns {Boolean}
      */
     var isVisibleCollapseButton = function isVisibleCollapseButton(config, testContext) {
-        return !!testContext.reviewScreen;
+        return !!testContext.reviewScreen && !!testContext.considerProgress;
     };
 
     return {

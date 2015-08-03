@@ -24,7 +24,7 @@ return array(
 
 
     //Show warning message if time remaining less than defined (in seconds)
-   'timerWarning' => array(
+    'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => null,
         'testPart'          => null
@@ -47,6 +47,12 @@ return array(
      * @type string
      */
     'progress-indicator-scope' => 'testSection',
+
+    /**
+     * Force the progress indicator to be always displayed
+     * @type string
+     */
+    'progress-indicator-forced' => false,
 
     /**
      * Enables the test taker review screen
