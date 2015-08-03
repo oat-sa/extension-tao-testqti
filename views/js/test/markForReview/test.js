@@ -57,6 +57,7 @@ define([
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
             reviewScreen: true,
+            considerProgress: true,
             navigatorMap: []
         };
 
@@ -82,6 +83,7 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
+            considerProgress: true,
             navigatorMap: []
         };
 
@@ -110,6 +112,7 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
+            considerProgress: true,
             navigatorMap: [],
             itemFlagged: true
         };
@@ -143,6 +146,7 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
+            considerProgress: true,
             navigatorMap: [],
             itemFlagged: false,
             itemPosition: 1
