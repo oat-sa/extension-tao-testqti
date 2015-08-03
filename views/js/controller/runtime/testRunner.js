@@ -259,7 +259,7 @@ define([
             },
 
             isCurrentItemActive: function(){
-                return (!this.testContext.isTimeout == false) && (this.testContext.remainingAttempts != 0);
+                return (this.testContext.isTimeout === false) && (this.testContext.remainingAttempts != 0) && (this.testContext.itemSessionState != 4);
             },
 
             isTimedSection: function(){
