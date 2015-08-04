@@ -56,7 +56,8 @@ define([
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            considerProgress: true
         };
 
         assert.ok(collapseReview.isVisible(configMock, testContextMock), 'The collapseReview button is visible when the test taker screen is enabled');
@@ -82,7 +83,8 @@ define([
         };
 
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            considerProgress: true
         };
 
         var $btn = $('#mark-for-review-1');
@@ -113,7 +115,8 @@ define([
         };
 
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            considerProgress: true
         };
 
         var $btn = $('#mark-for-review-2');
@@ -146,7 +149,8 @@ define([
         };
 
         var testContextMock = {
-            reviewScreen: true
+            reviewScreen: true,
+            considerProgress: true
         };
 
         var $btn = $('#mark-for-review-4');
