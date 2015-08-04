@@ -254,7 +254,8 @@ define([
                 this.updateRubrics();
                 this.updateTools(testContext);
                 this.updateTimer();
-
+                this.updateExitButton();
+                
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
@@ -518,7 +519,13 @@ define([
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-
+            
+            updateExitButton : function(){
+                
+                $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
+                $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
+            },
+            
             adjustFrame: function () {
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
@@ -694,10 +701,7 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-
-                $controls.$logout.toggleClass('hidden', testContext.exitButton);
-                $controls.$exit.toggleClass('hidden', !testContext.exitButton);
-
+                
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 

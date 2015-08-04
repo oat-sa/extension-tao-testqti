@@ -472,10 +472,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             $context['rubrics'] = $rubrics;
              
-            // Comment allowed? Skipping allowed? Exit allowed ?
+            // Comment allowed? Skipping allowed? Logout or Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             $context['exitButton'] = self::doesAllowExit($session);
+            $context['logoutButton'] = self::doesAllowLogout($session);
 
             // loads the specific config into the context object
             $configMap = array(
@@ -1049,9 +1050,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     static public function doesAllowExit(AssessmentTestSession $session){
-        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $categories = $session->getCurrentAssessmentItemRef()->getCategories();
-        \common_Logger::w( (string) $categories);
-        return (isset($config['exitButton']) && $config['exitButton'] && $categories->contains('tao-exit'));//x-tao-option-exit
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $exitButton = (isset($config['exitButton']) && $config['exitButton']);
+        return ($exitButton && $categories->contains('tao-exit'));//x-tao-option-exit
+    }
+
+    static public function doesAllowLogout(AssessmentTestSession $session){
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        return !(isset($config['exitButton']) && $config['exitButton']);
     }
 }
