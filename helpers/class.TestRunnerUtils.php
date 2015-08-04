@@ -1049,6 +1049,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
         return $considerProgress;
     }
 
+    /**
+     * Checks if the current session can be exited
+     *
+     * @param AssessmentTestSession $session
+     * @return bool
+     */
     static public function doesAllowExit(AssessmentTestSession $session){
         $categories = $session->getCurrentAssessmentItemRef()->getCategories();
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
@@ -1056,6 +1062,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
         return ($exitButton && $categories->contains('tao-exit'));//x-tao-option-exit
     }
 
+    /**
+     * Checks if the test taker can logout
+     * 
+     * @param AssessmentTestSession $session
+     * @return type
+     */
     static public function doesAllowLogout(AssessmentTestSession $session){
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         return !(isset($config['exitButton']) && $config['exitButton']);
