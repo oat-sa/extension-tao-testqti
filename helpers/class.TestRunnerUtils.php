@@ -472,14 +472,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             $context['rubrics'] = $rubrics;
              
-            // Comment allowed? Skipping allowed?
+            // Comment allowed? Skipping allowed? Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
-            
+            $context['exitButton'] = self::doesAllowExit($session);
+
             // loads the specific config into the context object
             $configMap = array(
                 // name in config                   => name in context object
-                'exitButton'                        => 'exitButton',
                 'timerWarning'                      => 'timerWarning',
                 'progress-indicator'                => 'progressIndicator',
                 'progress-indicator-scope'          => 'progressIndicatorScope',
@@ -1046,5 +1046,12 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
 
         return $considerProgress;
+    }
+
+    static public function doesAllowExit(AssessmentTestSession $session){
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $categories = $session->getCurrentAssessmentItemRef()->getCategories();
+        \common_Logger::w( (string) $categories);
+        return (isset($config['exitButton']) && $config['exitButton'] && $categories->contains('tao-exit'));//x-tao-option-exit
     }
 }
