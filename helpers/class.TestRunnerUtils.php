@@ -1059,7 +1059,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $categories = $session->getCurrentAssessmentItemRef()->getCategories();
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $exitButton = (isset($config['exitButton']) && $config['exitButton']);
-        return ($exitButton && $categories->contains('tao-exit'));//x-tao-option-exit
+        return ($exitButton && $categories->contains('x-tao-option-exit'));
     }
 
     /**
