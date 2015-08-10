@@ -343,6 +343,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
         $qtiManifestParser->validate();
+        
+        // Prepare Metadata mechanisms.
+        $metadataMapping = oat\taoQtiItem\model\qti\Service::singleton()->getMetadataRegistry()->getMapping();
+        $metadataInjectors = array();
+        $metadataValues = array();
+        $domManifest = new DOMDocument('1.0', 'UTF-8');
+        $domManifest->load($folder . 'imsmanifest.xml');
+        
+        foreach ($metadataMapping['injectors'] as $injector) {
+            $metadataInjectors[] = new $injector();
+        }
+        
+        foreach ($metadataMapping['extractors'] as $extractor) {
+            $metadataExtractor = new $extractor();
+            $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
+        }
 
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
@@ -411,6 +427,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                             }
                                         }
 
+                                        // Import metadata.
+                                        $itemImportService->importItemMetadata($metadataValues, $qtiDependency, $rdfItem, $metadataInjectors);
+                                        
                                         $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                         $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
                                         $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
