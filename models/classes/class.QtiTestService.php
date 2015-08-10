@@ -347,12 +347,17 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // Prepare Metadata mechanisms.
         $metadataMapping = oat\taoQtiItem\model\qti\Service::singleton()->getMetadataRegistry()->getMapping();
         $metadataInjectors = array();
+        $metadataGuardians = array();
         $metadataValues = array();
         $domManifest = new DOMDocument('1.0', 'UTF-8');
         $domManifest->load($folder . 'imsmanifest.xml');
         
         foreach ($metadataMapping['injectors'] as $injector) {
             $metadataInjectors[] = new $injector();
+        }
+        
+        foreach ($metadataMapping['guardians'] as $guardian) {
+            $metadataGuardians[] = new $guardian();
         }
         
         foreach ($metadataMapping['extractors'] as $extractor) {
@@ -398,6 +403,23 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                         if ($qtiDependency !== false) {
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
+                                
+                                // Check if the item is already stored in the bank.
+                                foreach ($metadataGuardians as $guardian) {
+                                    $resourceIdentifier = $qtiDependency->getIdentifier();
+                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
+                                        if (($guard = $guardian->guard($metadataValues[$resourceIdentifier])) !== false) {
+                                            common_Logger::i("Item with identifier '${resourceIdentifier}' already in Item Bank.");
+                                            $msg = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
+                                            $report->add(common_report_Report::createInfo($msg, $guard));
+                                            
+                                            $reportCtx->items[$assessmentItemRefId] = $guard;
+                                            
+                                            // Simply do not import again.
+                                            continue 2;
+                                        }
+                                    }
+                                }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
