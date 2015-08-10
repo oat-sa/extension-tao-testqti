@@ -172,7 +172,7 @@ class taoQtiTest_helpers_Utils {
     static public function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath) {
         $assessmentItemRefs = $test->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $map = array();
-        $itemResources = $manifestParser->getResources('imsqti_item_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
+        $itemResources = $manifestParser->getResources(array('imsqti_item_xmlv2p1', 'imsqti_apipitem_xmlv2p1'), taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
         
         // cleanup $basePath.
         $basePath = rtrim($basePath, "/\\");
@@ -183,6 +183,7 @@ class taoQtiTest_helpers_Utils {
         $testBasePath = tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
         
         foreach ($assessmentItemRefs as $itemRef) {
+
             // Find the QTI Resource (in IMS Manifest) related to the item ref.
             // To achieve this, we compare their path.
             $itemRefRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemRef->getHref());

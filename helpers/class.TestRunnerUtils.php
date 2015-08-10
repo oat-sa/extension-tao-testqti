@@ -474,14 +474,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             $context['rubrics'] = $rubrics;
              
-            // Comment allowed? Skipping allowed?
+            // Comment allowed? Skipping allowed? Logout or Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
-            
+            $context['exitButton'] = self::doesAllowExit($session);
+            $context['logoutButton'] = self::doesAllowLogout($session);
+
             // loads the specific config into the context object
             $configMap = array(
                 // name in config                   => name in context object
-                'exitButton'                        => 'exitButton',
                 'timerWarning'                      => 'timerWarning',
                 'progress-indicator'                => 'progressIndicator',
                 'progress-indicator-scope'          => 'progressIndicatorScope',
@@ -1048,5 +1049,29 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
 
         return $considerProgress;
+    }
+
+    /**
+     * Checks if the current session can be exited
+     *
+     * @param AssessmentTestSession $session
+     * @return bool
+     */
+    static public function doesAllowExit(AssessmentTestSession $session){
+        $categories = $session->getCurrentAssessmentItemRef()->getCategories();
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $exitButton = (isset($config['exitButton']) && $config['exitButton']);
+        return ($exitButton && $categories->contains('x-tao-option-exit'));
+    }
+
+    /**
+     * Checks if the test taker can logout
+     * 
+     * @param AssessmentTestSession $session
+     * @return type
+     */
+    static public function doesAllowLogout(AssessmentTestSession $session){
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        return !(isset($config['exitButton']) && $config['exitButton']);
     }
 }
