@@ -1,5 +1,4 @@
 <?php
-$GLOBALS['__l10n']["\"list saved\""]="\"listi vistaður\"";
 $GLOBALS['__l10n']["%d day"]="%d dagur";
 $GLOBALS['__l10n']["%d days"]="%d dagar";
 $GLOBALS['__l10n']["%h hour"]="%h klukkutími";
@@ -44,8 +43,8 @@ $GLOBALS['__l10n']["Cancel"]="Hætta við";
 $GLOBALS['__l10n']["Cannot be edited"]="Ekki hægt að breyta";
 $GLOBALS['__l10n']["Change password"]="Breyta lykilorði";
 $GLOBALS['__l10n']["Change the password"]="Breyta lykilorðinu";
-$GLOBALS['__l10n']["Check All"]="Merkja við allt";
 $GLOBALS['__l10n']["Check all"]="Merkja við allt";
+$GLOBALS['__l10n']["Check All"]="Merkja við allt";
 $GLOBALS['__l10n']["Choose export format"]="Veldu útflutningssnið";
 $GLOBALS['__l10n']["Choose import format"]="Veldu innflutningssnið";
 $GLOBALS['__l10n']["class selected"]="flokkur valinn";
