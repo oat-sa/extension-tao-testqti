@@ -179,7 +179,7 @@ class taoQtiTest_helpers_Utils {
         $basePath = helpers_File::truePath($basePath);
         $basePath .= DIRECTORY_SEPARATOR;
         
-        $documentURI = ltrim($test->getDomDocument()->documentURI, 'file:/');
+        $documentURI = preg_replace('/^file:\//', '', $test->getDomDocument()->documentURI);
         $testPathInfo = pathinfo($documentURI);
         $testBasePath = tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
         
