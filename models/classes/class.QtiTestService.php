@@ -437,6 +437,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                     if (isset($metadataValues[$resourceIdentifier]) === true) {
                                         if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
                                             break;
+                                        } else {
+                                            $lookupTargetClass = null;
                                         }
                                     }
                                 }
