@@ -432,13 +432,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // This is applied to items, not for test definitions.
                                 // The test definitions' target class will not be affected
                                 // by class lookups.
-                                $lookupTargetClass = null;
+                                $lookupTargetClass = false;
                                 foreach ($metadataClassLookups as $classLookup) {
                                     if (isset($metadataValues[$resourceIdentifier]) === true) {
                                         if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
                                             break;
-                                        } else {
-                                            $lookupTargetClass = null;
                                         }
                                     }
                                 }
@@ -449,7 +447,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== null) ? $lookupTargetClass : $targetClass), true, null, $isApip);
+                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), true, null, $isApip);
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
