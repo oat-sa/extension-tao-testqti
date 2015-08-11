@@ -348,6 +348,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $metadataMapping = oat\taoQtiItem\model\qti\Service::singleton()->getMetadataRegistry()->getMapping();
         $metadataInjectors = array();
         $metadataGuardians = array();
+        $metadataClassLookups = array();
         $metadataValues = array();
         $domManifest = new DOMDocument('1.0', 'UTF-8');
         $domManifest->load($folder . 'imsmanifest.xml');
@@ -358,6 +359,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         
         foreach ($metadataMapping['guardians'] as $guardian) {
             $metadataGuardians[] = new $guardian();
+        }
+        
+        foreach ($metadataMapping['classLookups'] as $classLookup) {
+            $metadataClassLookups[] = new $classLookup();
         }
         
         foreach ($metadataMapping['extractors'] as $extractor) {
@@ -404,9 +409,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
                                 
+                                $resourceIdentifier = $qtiDependency->getIdentifier();
+                                
                                 // Check if the item is already stored in the bank.
                                 foreach ($metadataGuardians as $guardian) {
-                                    $resourceIdentifier = $qtiDependency->getIdentifier();
+                                    
                                     if (isset($metadataValues[$resourceIdentifier]) === true) {
                                         if (($guard = $guardian->guard($metadataValues[$resourceIdentifier])) !== false) {
                                             common_Logger::i("Item with identifier '${resourceIdentifier}' already in Item Bank.");
@@ -420,6 +427,19 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         }
                                     }
                                 }
+                                
+                                // Determine target class from metadata, if possible.
+                                // This is applied to items, not for test definitions.
+                                // The test definitions' target class will not be affected
+                                // by class lookups.
+                                $lookupTargetClass = null;
+                                foreach ($metadataClassLookups as $classLookup) {
+                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
+                                        if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
+                                            break;
+                                        }
+                                    }
+                                }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
@@ -427,7 +447,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, $targetClass, true, null, $isApip);
+                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== null) ? $lookupTargetClass : $targetClass), true, null, $isApip);
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
@@ -454,6 +474,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         
                                         $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                         $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
+
                                         $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
                                     }
                                     else {
@@ -493,6 +514,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $testTitle = $testDefinition->getDocumentComponent()->getTitle();
                             $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            
+                            // 4. if $targetClass does not contain any instances (because everything resolved by class lookups),
+                            // Just delete it.
+                            if ($targetClass->countInstances() == 0) {
+                                $targetClass->delete();
+                            }
                         }
                     }
                     else {
