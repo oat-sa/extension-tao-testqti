@@ -127,6 +127,11 @@ define([
              */
             markForReview: function(flag, position) {
                 var self = this;
+
+                // Ask the top window to start the loader.
+                iframeNotifier.parent('loading');
+
+                // Disable buttons.
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
@@ -143,7 +148,14 @@ define([
                         success: function(testContext) {
                             self.setTestContext(testContext);
                             self.updateTestReview();
+                            self.itemServiceApi.connect($controls.$itemFrame[0]);
+
+                            // Enable buttons.
                             self.enableGui();
+
+                            //ask the top window to stop the loader
+                            iframeNotifier.parent('unloading');
+
                         }
                     });
                 });
@@ -416,7 +428,7 @@ define([
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
-                    $doc.on('serviceloaded', function () {
+                    $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
                         self.adjustFrame();
                         $controls.$itemFrame.css({visibility: 'visible'});
