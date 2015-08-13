@@ -411,16 +411,16 @@ msgid "Simultaneous"
 msgstr ""
 
 msgid "Skip"
-msgstr ""
+msgstr "Pasar"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "Pasar y Finalizar Prueba"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "Pasar e ir al final de la prueba"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "Pasar al ítem siguiente"
 
 msgid "Start Test-part"
 msgstr ""
