@@ -226,6 +226,8 @@ define([
                     unansweredCount--;
                 }
 
+                this.getQtiRunner().updateItemApi();
+
                 if( flaggedCount !== undefined ){
                     messageFlagged = " and have %s item(s) marked for review";
                 }
@@ -257,13 +259,10 @@ define([
             },
 
             isCurrentItemAnswered: function(){
-                var itemWindow, itemContainerWindow, responseObj,
+                var responseObj,
                     returnValue = false;
 
-                itemWindow = $('#qti-item')[0].contentWindow;
-                itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
-                responseObj = itemContainerWindow.qtiRunner.getResponses();
-
+                responseObj = this.getQtiRunner().getResponses();
 
                 if( responseObj.RESPONSE !== undefined ){
                     if( responseObj.RESPONSE.base !== null ){
@@ -272,6 +271,15 @@ define([
                 }
 
                 return returnValue;
+            },
+
+            getQtiRunner: function(){
+                var itemWindow, itemContainerWindow;
+
+                itemWindow = $('#qti-item')[0].contentWindow;
+                itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
+
+                return itemContainerWindow.qtiRunner;
             },
 
             isTimedSection: function(){
