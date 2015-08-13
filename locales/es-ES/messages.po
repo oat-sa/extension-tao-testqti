@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-08-13T13:27:59\n"
+"PO-Revision-Date: 2015-08-13T16:48:52\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -594,7 +594,13 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
+msgstr "Sí"
+
+msgid "You have %s unanswered question(s) %s. After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
 msgstr ""
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?"
+msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión. ¿Está seguro(a) de que desea finalizar la prueba?"
 
 msgid "Your comment…"
 msgstr ""

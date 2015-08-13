@@ -239,10 +239,8 @@ define([
                     messageFlagged = " and have %s item(s) marked for review";
                 }
 
-                message = __(
-                    "You have %s unanswered question(s)" + messageFlagged + ". " +
-                    "After you complete the section it would be impossible to return to this section to make changes.  " +
-                    "Are you sure you want to end the section?",
+                message = __("You have %s unanswered question(s) %s. After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?",
+                    messageFlagged,
                     (unansweredCount || 0).toString(),
                     (flaggedCount || 0).toString()
                 );
@@ -768,8 +766,7 @@ define([
                             answered : self.testContext.numberCompleted,
                             flagged : self.testContext.numberFlagged || 0
                         },
-                    message = __(
-                        "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
+                    message = __("You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (testProgression.total - testProgression.answered).toString(),
                         (testProgression.flagged).toString()
                     ),
