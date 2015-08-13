@@ -347,12 +347,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // Prepare Metadata mechanisms.
         $metadataMapping = oat\taoQtiItem\model\qti\Service::singleton()->getMetadataRegistry()->getMapping();
         $metadataInjectors = array();
+        $metadataGuardians = array();
+        $metadataClassLookups = array();
         $metadataValues = array();
         $domManifest = new DOMDocument('1.0', 'UTF-8');
         $domManifest->load($folder . 'imsmanifest.xml');
         
         foreach ($metadataMapping['injectors'] as $injector) {
             $metadataInjectors[] = new $injector();
+        }
+        
+        foreach ($metadataMapping['guardians'] as $guardian) {
+            $metadataGuardians[] = new $guardian();
+        }
+        
+        foreach ($metadataMapping['classLookups'] as $classLookup) {
+            $metadataClassLookups[] = new $classLookup();
         }
         
         foreach ($metadataMapping['extractors'] as $extractor) {
@@ -398,6 +408,38 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                         if ($qtiDependency !== false) {
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
+                                
+                                $resourceIdentifier = $qtiDependency->getIdentifier();
+                                
+                                // Check if the item is already stored in the bank.
+                                foreach ($metadataGuardians as $guardian) {
+                                    
+                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
+                                        if (($guard = $guardian->guard($metadataValues[$resourceIdentifier])) !== false) {
+                                            common_Logger::i("Item with identifier '${resourceIdentifier}' already in Item Bank.");
+                                            $msg = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
+                                            $report->add(common_report_Report::createInfo($msg, $guard));
+                                            
+                                            $reportCtx->items[$assessmentItemRefId] = $guard;
+                                            
+                                            // Simply do not import again.
+                                            continue 2;
+                                        }
+                                    }
+                                }
+                                
+                                // Determine target class from metadata, if possible.
+                                // This is applied to items, not for test definitions.
+                                // The test definitions' target class will not be affected
+                                // by class lookups.
+                                $lookupTargetClass = false;
+                                foreach ($metadataClassLookups as $classLookup) {
+                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
+                                        if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
+                                            break;
+                                        }
+                                    }
+                                }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
@@ -405,7 +447,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, $targetClass, true, null, $isApip);
+                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), true, null, $isApip);
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
@@ -432,6 +474,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         
                                         $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                         $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
+
                                         $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
                                     }
                                     else {
@@ -471,6 +514,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $testTitle = $testDefinition->getDocumentComponent()->getTitle();
                             $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            
+                            // 4. if $targetClass does not contain any instances (because everything resolved by class lookups),
+                            // Just delete it.
+                            if ($targetClass->countInstances() == 0) {
+                                $targetClass->delete();
+                            }
                         }
                     }
                     else {

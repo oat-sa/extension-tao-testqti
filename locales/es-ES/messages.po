@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v3.1.0-sprint03\n"
-"PO-Revision-Date: 2015-07-21T16:37:16\n"
+"Project-Id-Version: TAO 3.1.0-sprint03\n"
+"PO-Revision-Date: 2015-08-11T13:57:06\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -38,7 +38,7 @@ msgid "Add the source file"
 msgstr ""
 
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 msgid "Allow Comment"
 msgstr ""
@@ -68,7 +68,7 @@ msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr ""
 
 msgid "Answered"
-msgstr ""
+msgstr "Respondido(s)"
 
 msgid "Author"
 msgstr ""
@@ -92,7 +92,7 @@ msgid "Comment"
 msgstr "Comentario"
 
 msgid "Completed items"
-msgstr ""
+msgstr "Ítems completados"
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr ""
@@ -104,7 +104,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr ""
+msgstr "Finalizar prueba"
 
 msgid "Enter a category"
 msgstr ""
@@ -141,7 +141,7 @@ msgid "Fixed position in a shuffled the selection."
 msgstr ""
 
 msgid "Flagged"
-msgstr ""
+msgstr "Marcado"
 
 msgid "Identifier"
 msgstr ""
@@ -177,7 +177,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr ""
 
 msgid "In this part of the test navigation is not allowed."
-msgstr ""
+msgstr "En esta parte de la prueba no se permite navegar"
 
 msgid "Inconsistency at line %1d:"
 msgstr ""
@@ -192,7 +192,7 @@ msgid "is not a valid identifier (alphanum, underscore, dash and dots.)"
 msgstr ""
 
 msgid "Item %d of %d"
-msgstr ""
+msgstr "Ítem %d de %d"
 
 msgid "Item Reference Properties"
 msgstr ""
@@ -210,7 +210,7 @@ msgid "Items Compilation"
 msgstr ""
 
 msgid "Items marked for later review"
-msgstr ""
+msgstr "Ítems marcados para revisión posterior"
 
 msgid "Keep Together"
 msgstr ""
@@ -282,13 +282,13 @@ msgid "Next"
 msgstr "Siguiente"
 
 msgid "No"
-msgstr ""
+msgstr "No"
 
 msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "No se permiten más intentos para el ítem \"%s\"."
 
 msgid "No reference to any IMS QTI Item found."
 msgstr ""
@@ -300,16 +300,16 @@ msgid "Not shuffled, the position remains fixed."
 msgstr ""
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr ""
+msgstr "Mostrar solo los ítems marcados para revisión"
 
 msgid "Only display the unanswered items"
-msgstr ""
+msgstr "Mostrar solo los ítems sin respuesta"
 
 msgid "Ordering"
 msgstr ""
@@ -318,7 +318,7 @@ msgid "Part %d"
 msgstr ""
 
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 msgid "Proctor"
 msgstr ""
@@ -360,7 +360,7 @@ msgid "Required field"
 msgstr ""
 
 msgid "Reset filters"
-msgstr ""
+msgstr "Restaurar filtros"
 
 msgid "Rubric Block"
 msgstr ""
@@ -426,13 +426,13 @@ msgid "Submission"
 msgstr ""
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "Enviar e ir al final de la prueba"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "Enviar e ir al ítem siguiente"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "Enviar e ir al ítem anterior"
 
 msgid "Test"
 msgstr ""
@@ -444,7 +444,7 @@ msgid "Test Saved"
 msgstr ""
 
 msgid "Test status"
-msgstr ""
+msgstr "Estado de la prueba"
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr ""
@@ -516,10 +516,10 @@ msgid "This constraint controls whether or not the candidate is allowed to provi
 msgstr ""
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "Alcanzó el límite de tiempo para el ítem \"%s\""
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "Alcanzó el límite de tiempo. Esta parte de la prueba ha finalizado."
 
 msgid "Time Limits"
 msgstr ""
@@ -531,10 +531,10 @@ msgid "Tutor"
 msgstr ""
 
 msgid "Unanswered"
-msgstr ""
+msgstr "Sin respuesta"
 
 msgid "Unanswered items"
-msgstr ""
+msgstr "Ítems sin respuesta"
 
 msgid "Unknown error."
 msgstr ""
@@ -549,10 +549,10 @@ msgid "Validate Responses"
 msgstr ""
 
 msgid "Viewed"
-msgstr ""
+msgstr "Visto"
 
 msgid "Viewed items"
-msgstr ""
+msgstr "Ítems vistos"
 
 msgid "Views"
 msgstr ""
@@ -561,7 +561,7 @@ msgid "Visible"
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr ""
+msgstr "Advertencia – Le quedan %s minutos para completar la prueba."
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr ""
