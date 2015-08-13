@@ -401,9 +401,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 // discover test's base path.
                 $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
                 
-                if (count($dependencies) > 0) {
+                if (count($dependencies['items']) > 0) {
 
-                    foreach ($dependencies as $assessmentItemRefId => $qtiDependency) {
+                    foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
 
                         if ($qtiDependency !== false) {
 
@@ -447,7 +447,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQtiItem($folder, $qtiDependency, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), false, false, $isApip);
+                                    $itemReport = $itemImportService->importQtiItem($folder, $qtiDependency, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), $isApip, $dependencies['dependencies']);
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
