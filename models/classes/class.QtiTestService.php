@@ -447,31 +447,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), true, null, $isApip);
+                                    $itemReport = $itemImportService->importQtiItem($folder, $qtiDependency, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), false, false, $isApip);
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
-                                        $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
-
-                                        foreach ($qtiDependency->getAuxiliaryFiles() as $auxResource) {
-                                            // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                            $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
-
-                                            // does the file referenced by $auxPath exist?
-                                            if (is_readable($auxPath) === true) {
-                                                $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
-                                                $destPath = $itemPath . $relPath;
-                                                tao_helpers_File::copy($auxPath, $destPath, true);
-                                            }
-                                            else {
-                                                $msg = __('Auxiliary file not found at location "%s".', $auxResource);
-                                                $itemReport->add(new common_report_Report(common_report_Report::TYPE_WARNING,$msg));
-                                            }
-                                        }
-
-                                        // Import metadata.
-                                        $itemImportService->importItemMetadata($metadataValues, $qtiDependency, $rdfItem, $metadataInjectors);
-                                        
                                         $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                         $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
 
