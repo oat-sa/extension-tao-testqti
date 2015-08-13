@@ -241,11 +241,23 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $metaData = $this->getSessionMetaData();
-        $this->testSessionMetaData = new TestSessionMetaData($this->getTestSession());
+        $metaData = $this->getSessionMeta();
         if (!empty($metaData)) {
-            $this->testSessionMetaData->save($metaData);
+            $this->getTestSessionMetaData()->save($metaData);
         }
+    }
+    
+    /**
+     * Get session metadata manager
+     * 
+     * @return array test session meta data.
+     */
+    protected function getTestSessionMetaData()
+    {
+        if ($this->testSessionMetaData === null) {
+            $this->testSessionMetaData = new TestSessionMetaData($this->getTestSession());
+        }
+        return $this->testSessionMetaData;
     }
     
     /**
@@ -253,7 +265,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * 
      * @return array test session meta data.
      */
-    protected function getSessionMetaData()
+    protected function getSessionMeta()
     {
         $fromRequest = $this->getRequestParameter('metaData');
         $data = empty($fromRequest) ? array() : $fromRequest;
@@ -266,8 +278,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         return $data;
     }
-
-
+    
+    /**
+     * Save metadata of session. Method implemented for backward compatibility.
+     * 
+     * @todo check usages and remove after merge {@link https://github.com/oat-sa/extension-tao-testqti/pull/135} pull request
+     * @see oat\taoQtiTest\models\TestSessionMetaData
+     * @param array $metaData Meta data array to be saved.
+     */
+    private function saveMetaData(array $metaData)
+    {
+        $this->getTestSessionMetaData()->save($metaData);
+    } 
+    
     protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
         $sessionId = $testSession->getSessionId();
