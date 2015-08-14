@@ -1007,6 +1007,7 @@ define([
                 deleter($('#feedback-box'));
                 modal($('body'));
                 
+                //listen to state change in the current item
                 $(document).on('responsechange', function(e, responseId, response){
                     if(responseId && response){
                         TestRunner.setCurrentItemState(responseId, {response:response});
