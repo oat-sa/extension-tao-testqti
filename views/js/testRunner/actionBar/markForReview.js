@@ -83,7 +83,7 @@ define([
      * @returns {Boolean}
      */
     var isVisibleFlagButton = function isVisibleFlagButton(config, testContext) {
-        return !!testContext.reviewScreen && !!testContext.navigatorMap;
+        return !!testContext.reviewScreen && !!testContext.navigatorMap && !!testContext.considerProgress;
     };
 
     return {
