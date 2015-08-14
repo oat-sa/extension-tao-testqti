@@ -238,6 +238,8 @@ define([
                     unansweredCount--;
                 }
 
+                this.getQtiRunner().updateItemApi();
+
                 if( flaggedCount !== undefined ){
                     messageFlagged = " and have %s item(s) marked for review";
                 }
@@ -263,29 +265,37 @@ define([
                     self.exitSection(action, params);
                 });
             },
-
+            
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
             },
-
+            
+            /**
+             * Tells is the current item has been answered or not
+             * The item is considered answered when at least one response has been set to not empty {base : null}
+             * 
+             * @returns {Boolean}
+             */
             isCurrentItemAnswered: function(){
-                var itemWindow, itemContainerWindow, responseObj,
-                    returnValue = false;
+                var answered = false;
+                _.each(this.getCurrentItemState(), function(state){
+                    if(state && _.isObject(state.response) && state.response.base !== null){
+                        answered = true;//at least one response is not null so consider the item answered
+                        return false;
+                    }
+                });
+                return answered;
+            },
+            
+            getQtiRunner: function(){
+                var itemWindow, itemContainerWindow;
 
                 itemWindow = $('#qti-item')[0].contentWindow;
                 itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
-                responseObj = itemContainerWindow.qtiRunner.getResponses();
 
-
-                if( responseObj.RESPONSE !== undefined ){
-                    if( responseObj.RESPONSE.base !== null ){
-                        returnValue = true;
-                    }
-                }
-
-                return returnValue;
+                return itemContainerWindow.qtiRunner;
             },
-
+            
             isTimedSection: function(){
                 var timeConstraints = this.testContext.timeConstraints,
                     isTimedSection = false;
@@ -414,6 +424,7 @@ define([
                 this.updateTools(testContext);
                 this.updateTimer();
                 this.updateExitButton();
+                this.resetCurrentItemState();
                 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
@@ -812,6 +823,30 @@ define([
                         self.actionCall('endTestSession', metaData);
                     });
                 });
+            },
+            /**
+             * Set the state of the current item in the test runner
+             * 
+             * @param {string} id
+             * @param {object} state
+             */
+            setCurrentItemState : function(id, state){
+                if(id){
+                    this.currentItemState[id] = state;
+                }
+            },
+            /**
+             * Reset the state of the current item in the test runner
+             */
+            resetCurrentItemState : function(){
+                this.currentItemState = {};
+            },
+            /**
+             * Get the state of the current item as stored in the test runner
+             * @returns {Object}
+             */
+            getCurrentItemState : function(){
+                return this.currentItemState;
             }
         };
 
@@ -971,6 +1006,18 @@ define([
 
                 deleter($('#feedback-box'));
                 modal($('body'));
+                
+                //listen to state change in the current item
+                $(document).on('responsechange', function(e, responseId, response){
+                    if(responseId && response){
+                        TestRunner.setCurrentItemState(responseId, {response:response});
+                    }
+                }).on('stateready', function(e, id, state){
+                    if(id && state){
+                        TestRunner.setCurrentItemState(id, state);
+                    }
+                });
+                
             }
         };
     });
