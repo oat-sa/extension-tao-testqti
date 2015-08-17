@@ -158,13 +158,7 @@ define([
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
-                    var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
-                        metaData;
-
-                    if (lastInSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
-                    }
-                    self.actionCall('moveForward', metaData);
+                    self.actionCall('moveForward');
                 });
             },
 
@@ -178,16 +172,9 @@ define([
             },
 
             skip: function () {
-                var self = this,
-                    lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
-                    metaData;
-                    
                 this.disableGui();
                 
-                if (lastInSection) {
-                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
-                }
-                this.actionCall('skip', metaData);
+                this.actionCall('skip');
             },
 
             timeout: function () {

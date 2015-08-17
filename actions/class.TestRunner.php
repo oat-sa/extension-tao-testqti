@@ -272,8 +272,20 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $resolver = new Resolver();
         
-        if ($this->getTestSession()->getRoute()->isLast() && in_array($resolver->getAction(), array('moveForward', 'skip') )) {
-            $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
+        if (in_array($resolver->getAction(), array('moveForward', 'skip'))) {
+            $route = $this->getTestSession()->getRoute();
+            if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
+                $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
+                $lastInSection = $route->isLast() || 
+                    ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
+
+                if ($lastInSection) {
+                    $data['SECTION']['SECTION_EXIT_CODE'] = TestSessionMetaData::SECTION_CODE_COMPLETED_NORMALLY;
+                }
+            }
+            if ($route->isLast()) {
+                $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
+            }
         }
         
         return $data;
