@@ -68,7 +68,7 @@ msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr ""
 
 msgid "Answered"
-msgstr "Respondido(s)"
+msgstr "Respondido"
 
 msgid "Author"
 msgstr ""
