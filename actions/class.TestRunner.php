@@ -272,6 +272,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $resolver = new Resolver();
         
+        if (in_array($resolver->getAction(), array('index'))) {
+            $data['TEST']['TAO_VERSION'] = TAO_VERSION;
+        }
+        
         if (in_array($resolver->getAction(), array('moveForward', 'skip'))) {
             $route = $this->getTestSession()->getRoute();
             if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
