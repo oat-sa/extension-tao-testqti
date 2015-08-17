@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-08-13T16:48:52\n"
+"PO-Revision-Date: 2015-08-17T14:33:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -36,6 +36,9 @@ msgstr ""
 
 msgid "Add the source file"
 msgstr ""
+
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr "Después de finalizar la sección, no es posible volver a esta sección para hacer cambios. ¿Está seguro(a) de que desea finalizar la sección?"
 
 msgid "All"
 msgstr "Todos"
@@ -596,8 +599,8 @@ msgstr ""
 msgid "Yes"
 msgstr "Sí"
 
-msgid "You have %s unanswered question(s) %s. After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgid "You have %s item(s) marked for review."
+msgstr "Tiene %s ítem(s) marcado(s) para revisión."
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?"
 msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión. ¿Está seguro(a) de que desea finalizar la prueba?"

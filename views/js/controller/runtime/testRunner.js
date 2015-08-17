@@ -229,21 +229,12 @@ define([
             exitTimedSection: function(action, params){
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
-                    message,
-                    messageFlagged = '',
-                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
+                    message = __("After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"),
                     flaggedCount=this.testContext.numberFlaggedSection;
 
-
                 if( flaggedCount !== undefined ){
-                    messageFlagged = " and have %s item(s) marked for review";
+                    message = __("You have %s item(s) marked for review.", flaggedCount.toString()) + ' ' + message;
                 }
-
-                message = __("You have %s unanswered question(s) %s. After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?",
-                    messageFlagged,
-                    (unansweredCount || 0).toString(),
-                    (flaggedCount || 0).toString()
-                );
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
@@ -319,13 +310,13 @@ define([
                         testContext = self.testContext,
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
                         metaData = {};
-                        
+
                     if (testContext.numberCompletedSection === testContext.numberItemsSection) {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
                     } else {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
                     }
-                    
+
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -391,7 +382,7 @@ define([
                 this.updateTools(testContext);
                 this.updateTimer();
                 this.updateExitButton();
-                
+
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
@@ -655,13 +646,13 @@ define([
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-            
+
             updateExitButton : function(){
-                
+
                 $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
                 $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
             },
-            
+
             adjustFrame: function () {
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
@@ -760,7 +751,7 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
-                    testProgression = TestRunner.testReview ? 
+                    testProgression = TestRunner.testReview ?
                         TestRunner.testReview.getProgression(self.testContext) : {
                             total : self.testContext.numberItems,
                             answered : self.testContext.numberCompleted,
@@ -836,7 +827,7 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-                
+
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
