@@ -195,13 +195,15 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+            if(!in_array($itemExporter->buildIdentifier(), $identifiers)){
+                $identifiers[] = $itemExporter->buildIdentifier();
+            }
             $itemExporter->export();
             
             // Modify the reference to the item in the test definition.
             $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
-            $identifiers[] = $itemExporter->buildIdentifier();
         }
         
         return $identifiers;
@@ -251,7 +253,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     protected function referenceTest($href, array $itemIdentifiers) {
         $identifier = tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
-        $items = $this->getItems();
         $manifest = $this->getManifest();
         
         // Identifiy the target node.
