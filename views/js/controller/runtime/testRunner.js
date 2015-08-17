@@ -234,6 +234,9 @@ define([
                     unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
                     flaggedCount=this.testContext.numberFlaggedSection;
 
+                if( this.isCurrentItemAnswered() ){
+                    unansweredCount--;
+                }
 
                 if( flaggedCount !== undefined ){
                     messageFlagged = " and have %s item(s) marked for review";
@@ -261,6 +264,24 @@ define([
 
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
+            },
+
+            isCurrentItemAnswered: function(){
+                var itemWindow, itemContainerWindow, responseObj,
+                    returnValue = false;
+
+                itemWindow = $('#qti-item')[0].contentWindow;
+                itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
+                responseObj = itemContainerWindow.qtiRunner.getResponses();
+
+
+                if( responseObj.RESPONSE !== undefined ){
+                    if( responseObj.RESPONSE.base !== null ){
+                        returnValue = true;
+                    }
+                }
+
+                return returnValue;
             },
 
             isTimedSection: function(){
