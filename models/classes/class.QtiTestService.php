@@ -882,17 +882,24 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function createContent( core_kernel_classes_Resource $test, $createTestFile = true) {
 
-    	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
-				PROPERTY_FILE_FILESYSTEM,
-				PROPERTY_FILE_FILEPATH
-			));
+        $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $props = self::getQtiTestDirectory()->getPropertiesValues(array(
+                    PROPERTY_FILE_FILESYSTEM,
+                    PROPERTY_FILE_FILEPATH
+                ));
 
-        $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
-        $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
+            $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
+            $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
 
-        // $directory is the directory where test related resources will be stored.
-        $directory = $repository->createFile('', $path .DIRECTORY_SEPARATOR. md5($test->getUri()) . DIRECTORY_SEPARATOR);
-        $dirPath = $directory->getAbsolutePath().DIRECTORY_SEPARATOR;
+            // $directory is the directory where test related resources will be stored.
+            $directory = $repository->createFile('', $path .DIRECTORY_SEPARATOR. md5($test->getUri()) . DIRECTORY_SEPARATOR);
+            $dirPath = $directory->getAbsolutePath().DIRECTORY_SEPARATOR;
+        } else {
+            $directory = new core_kernel_file_File($dir);
+            $dirPath = $directory->getAbsolutePath().DIRECTORY_SEPARATOR;
+        }
+
 
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0770, true);
