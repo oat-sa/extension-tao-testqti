@@ -287,7 +287,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             if ($route->isLast()) {
                 $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
             }
-
+        }
+        
+        if (in_array($action, array('moveForward', 'skip', 'jumpTo', 'moveBackward', 'onTimeout'))) {
             $data['ITEM']['ITEM_END_TIME_SERVER'] = microtime(true);
         }
  
@@ -341,9 +343,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
             $session->beginTestSession();
-            $this->getTestSessionMetaData()->save(array(
-                'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
-            ));
             common_Logger::i("Assessment Test Session begun.");
         }
 	    
@@ -431,9 +430,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
-                $this->getTestSessionMetaData()->save(array(
-                    'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
-                ));
             }
         }
         catch (AssessmentTestSessionException $e) {

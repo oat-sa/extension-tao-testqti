@@ -27,6 +27,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
+use oat\taoQtiTest\models\TestSessionMetaData;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -190,6 +191,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Begin the very first attempt.
             $session->beginAttempt();
         }
+        
+        $getTestSessionMetaData = new TestSessionMetaData($session);
+        $getTestSessionMetaData->save(array(
+            'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
+        ));
         // Otherwise, the item is not attemptable bt the candidate.
     }
     
