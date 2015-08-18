@@ -36,10 +36,9 @@ define([
     'moment',
     'ui/modal',
     'ui/progressbar'
-],
-    function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+], function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
-        'use strict';
+    'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -120,6 +119,11 @@ define([
              */
             markForReview: function(flag, position) {
                 var self = this;
+
+                // Ask the top window to start the loader.
+                iframeNotifier.parent('loading');
+
+                // Disable buttons.
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
@@ -136,7 +140,14 @@ define([
                         success: function(testContext) {
                             self.setTestContext(testContext);
                             self.updateTestReview();
+                            self.itemServiceApi.connect($controls.$itemFrame[0]);
+
+                            // Enable buttons.
                             self.enableGui();
+
+                            //ask the top window to stop the loader
+                            iframeNotifier.parent('unloading');
+
                         }
                     });
                 });
@@ -147,14 +158,7 @@ define([
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
-                    var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
-                        metaData;
-                        
-                    if (lastInSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
-                    }
-                    
-                    self.actionCall('moveForward', metaData);
+                    self.actionCall('moveForward');
                 });
             },
 
@@ -169,6 +173,7 @@ define([
 
             skip: function () {
                 this.disableGui();
+                
                 this.actionCall('skip');
             },
 
@@ -254,13 +259,14 @@ define([
                 this.updateRubrics();
                 this.updateTools(testContext);
                 this.updateTimer();
-
+                this.updateExitButton();
+                
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
-                    $doc.on('serviceloaded', function () {
+                    $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
                         self.adjustFrame();
                         $controls.$itemFrame.css({visibility: 'visible'});
@@ -491,7 +497,10 @@ define([
              * Updates the test taker review screen
              */
             updateTestReview: function() {
+                var considerProgress = this.testContext.considerProgress === true;
+
                 if (this.testReview) {
+                    this.testReview.toggle(considerProgress);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -500,11 +509,11 @@ define([
              * Updates the progress bar
              */
             updateProgress: function () {
-                var considerProgress = this.testContext.considerProgress;
+                var considerProgress = this.testContext.considerProgress === true;
 
-                $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+                $controls.$progressBox.css('visibility', considerProgress ? 'visible' : 'hidden');
 
-                if (considerProgress === true) {
+                if (considerProgress) {
                     this.progressUpdater.update(this.testContext);
                 }
             },
@@ -515,7 +524,13 @@ define([
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-
+            
+            updateExitButton : function(){
+                
+                $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
+                $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
+            },
+            
             adjustFrame: function () {
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
@@ -614,10 +629,16 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
+                    testProgression = TestRunner.testReview ? 
+                        TestRunner.testReview.getProgression(self.testContext) : {
+                            total : self.testContext.numberItems,
+                            answered : self.testContext.numberCompleted,
+                            flagged : self.testContext.numberFlagged || 0
+                        },
                     message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        (self.testContext.numberFlagged || 0).toString()
+                        (testProgression.total - testProgression.answered).toString(),
+                        (testProgression.flagged).toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
@@ -685,10 +706,7 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-
-                $controls.$logout.toggleClass('hidden', testContext.exitButton);
-                $controls.$exit.toggleClass('hidden', !testContext.exitButton);
-
+                
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 

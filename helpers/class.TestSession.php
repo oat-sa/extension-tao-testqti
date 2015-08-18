@@ -221,48 +221,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         }
     }
     
-    /**
-     * Save metadata (given from GET['metaData'] parameter).
-     * 
-     * @param array $metaData Meta data array to be saved.
-     * Example:
-     * array(
-     *   'TEST' => array('TEST_EXIT_CODE' => 'IC'),
-     *   'SECTION' => array('SECTION_EXIT_CODE' => 701),
-     * )
-     */
-    public function saveMetaData(array $metaData)
-    {
-        $sessionId = $this->getSessionId();
-        $testUri = $this->getTest()->getUri();
-        $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $assessmentSectionId = $this->getCurrentAssessmentSection()->getIdentifier();
-
-        foreach ($metaData as $type => $data) {
-            foreach ($data as $key => $value) {
-                $metaVariable = new \taoResultServer_models_classes_TraceVariable();
-                $metaVariable->setIdentifier($key);
-                $metaVariable->setBaseType('string');
-                $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-                $metaVariable->setTrace($value);
-
-                if (strcasecmp($type, 'ITEM') === 0) {
-                    $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($this);
-                    $occurence = $this->getCurrentAssessmentItemRefOccurence();
-                    $transmissionId = "${sessionId}.${item}.${occurence}";
-                    $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
-                } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                } elseif (strcasecmp($type, 'SECTION') === 0) {
-                    //suffix section variables with _{SECTION_IDENTIFIER}
-                    $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-                }
-            }
-        }
-    }
-    
-    
     protected function submitTestResults() {
         $testUri = $this->getTest()->getUri();
         $sessionId = $this->getSessionId();
