@@ -167,13 +167,14 @@ class taoQtiTest_helpers_Utils {
      * @param XmlDocument $test A QTI Test Definition.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser A Manifest Parser.
      * @param string $basePath The base path of the folder the IMS archive is exposed as a file system component.
-     * @return array An array where keys are identifiers and values are oat\taoQtiItem\model\qti\Resource objects or false.
+     * @return array An array containing two arrays (items and dependencies) where keys are identifiers and values are oat\taoQtiItem\model\qti\Resource objects or false.
      */
     static public function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath) {
         $assessmentItemRefs = $test->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
-        $map = array();
+        $map = array('items' => array(), 'dependencies' => array());
         $itemResources = $manifestParser->getResources(array('imsqti_item_xmlv2p1', 'imsqti_apipitem_xmlv2p1'), taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
-        
+        $allResources = $manifestParser->getResources();
+
         // cleanup $basePath.
         $basePath = rtrim($basePath, "/\\");
         $basePath = helpers_File::truePath($basePath);
@@ -190,7 +191,7 @@ class taoQtiTest_helpers_Utils {
             $itemRefRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemRef->getHref());
             $itemRefRelativeHref = ltrim($itemRefRelativeHref, "/\\");
             $itemRefCanonicalHref = helpers_File::truePath($testBasePath . $itemRefRelativeHref);
-            $map[$itemRef->getIdentifier()] = false;
+            $map['items'][$itemRef->getIdentifier()] = false;
             
             // Compare with items referenced in the manifest.
             foreach ($itemResources as $itemResource) {
@@ -218,12 +219,24 @@ class taoQtiTest_helpers_Utils {
                 
                 if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref)) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
-                    $map[$itemRef->getIdentifier()] = $itemResource;
+                    $map['items'][$itemRef->getIdentifier()] = $itemResource;
+
+                    //get dependencies for each item
+                    foreach($itemResource->getDependencies() as $dependencyIdentifier){
+                        /** @var taoQtiTest_models_classes_QtiResource $resource */
+                        foreach($allResources as $resource){
+                            if($dependencyIdentifier == $resource->getIdentifier()){
+                                $map['dependencies'][$dependencyIdentifier] = $resource;
+                                break;
+                            }
+                        }
+                    }
                     break;
                 }
             }
-        }
 
+
+        }
         return $map;
     }
     

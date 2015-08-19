@@ -115,7 +115,7 @@ define([
                     this.exitTimedSection(action, params);
                 } else {
                     this.itemServiceApi.kill(function() {
-                        self.actionCall(action, null, params);
+                            self.actionCall(action, null, params);
                     });
                 }
             },
@@ -174,7 +174,7 @@ define([
                         this.exitSection(action);
                     }
                 } else {
-                    this.itemServiceApi.kill(function () {
+                this.itemServiceApi.kill(function () {
                         self.actionCall(action);
                     });
                 }
@@ -189,7 +189,7 @@ define([
                 if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
-                    this.itemServiceApi.kill(function() {
+                this.itemServiceApi.kill(function () {
                         self.actionCall(action);
                     });
                 }
@@ -824,6 +824,7 @@ define([
                     });
                 });
             },
+
             /**
              * Set the state of the current item in the test runner
              * 
@@ -835,12 +836,14 @@ define([
                     this.currentItemState[id] = state;
                 }
             },
+
             /**
              * Reset the state of the current item in the test runner
              */
             resetCurrentItemState : function(){
                 this.currentItemState = {};
             },
+
             /**
              * Get the state of the current item as stored in the test runner
              * @returns {Object}
