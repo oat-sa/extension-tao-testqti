@@ -267,9 +267,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
     protected function getSessionMeta()
     {
-        $fromRequest = $this->getRequestParameter('metaData');
-        $data = empty($fromRequest) ? array() : $fromRequest;
-        
+        $data = $this->hasRequestParameter('metaData') ? $this->getRequestParameter('metaData') : array();
         $action = Context::getInstance()->getActionName();
         $route = $this->getTestSession()->getRoute();
         

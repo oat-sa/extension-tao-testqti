@@ -192,8 +192,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $session->beginAttempt();
         }
         
-        $getTestSessionMetaData = new TestSessionMetaData($session);
-        $getTestSessionMetaData->save(array(
+        $testSessionMetaData = new TestSessionMetaData($session);
+        $testSessionMetaData->save(array(
             'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
         ));
         // Otherwise, the item is not attemptable bt the candidate.
