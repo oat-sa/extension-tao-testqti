@@ -267,17 +267,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
     protected function getSessionMeta()
     {
-        $fromRequest = $this->getRequestParameter('metaData');
-        $data = empty($fromRequest) ? array() : $fromRequest;
-        
-        $resolver = new Resolver();
-        
-        if (in_array($resolver->getAction(), array('index'))) {
+        $data = $this->hasRequestParameter('metaData') ? $this->getRequestParameter('metaData') : array();
+        $action = Context::getInstance()->getActionName();
+        $route = $this->getTestSession()->getRoute();
+
+		if (in_array($action, array('index'))) {
             $data['TEST']['TAO_VERSION'] = TAO_VERSION;
         }
         
-        if (in_array($resolver->getAction(), array('moveForward', 'skip'))) {
-            $route = $this->getTestSession()->getRoute();
+        if (in_array($action, array('moveForward', 'skip'))) {
             if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
                 $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
                 $lastInSection = $route->isLast() || 
@@ -287,11 +285,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                     $data['SECTION']['SECTION_EXIT_CODE'] = TestSessionMetaData::SECTION_CODE_COMPLETED_NORMALLY;
                 }
             }
+
             if ($route->isLast()) {
                 $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
             }
         }
         
+        if (in_array($action, array('moveForward', 'skip', 'jumpTo', 'moveBackward', 'onTimeout'))) {
+            $data['ITEM']['ITEM_END_TIME_SERVER'] = microtime(true);
+        }
+ 
         return $data;
     }
     
@@ -401,9 +404,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function jumpTo() {
         $this->beforeAction();
         $session = $this->getTestSession();
+        $nextPosition = intval($this->getRequestParameter('position'));
 
         try {
-            $session->jumpTo(intval($this->getRequestParameter('position')));
+            $this->endTimedSection($nextPosition);
+
+            $session->jumpTo($nextPosition);
 
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
@@ -415,7 +421,41 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         $this->afterAction();
     }
-	
+
+    protected function endTimedSection($nextPosition)
+    {
+        $isJumpOutOfSection = false;
+        $session = $this->getTestSession();
+        $section = $session->getCurrentAssessmentSection();
+
+        $route = $session->getRoute();
+
+        if( ($nextPosition >= 0) && ($nextPosition < $route->count()) ){
+            $nextSection = $route->getRouteItemAt($nextPosition);
+
+            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+        }
+
+        $limits = $section->getTimeLimits();
+
+        //ensure that jumping out and section is timed
+        if( $isJumpOutOfSection && $limits != null && $limits->hasMaxTime() ) {
+            $components = $section->getComponents();
+
+            foreach( $components as $object ){
+                if( $object instanceof \qtism\data\ExtendedAssessmentItemRef ){
+                    $items = $session->getAssessmentItemSessions( $object->getIdentifier() );
+
+                    foreach ($items as $item) {
+                        if( $item instanceof \qtism\runtime\tests\AssessmentItemSession ){
+                            $item->endItemSession();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 	/**
 	 * Move forward in the Assessment Test Session flow.
 	 *
@@ -423,10 +463,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveForward() {
         $this->beforeAction();
         $session = $this->getTestSession();
-        
+        $nextPosition = $session->getRoute()->getPosition() + 1;
+
         try {
+            $this->endTimedSection($nextPosition);
+
             $session->moveNext();
-            
+
             if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
@@ -445,8 +488,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function moveBackward() {
 	    $this->beforeAction();
 	    $session = $this->getTestSession();
+        $nextPosition = $session->getRoute()->getPosition() - 1;
 	    
 	    try {
+            $this->endTimedSection($nextPosition);
+
 	        $session->moveBack();
 	        
 	        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
