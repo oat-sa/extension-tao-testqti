@@ -267,13 +267,11 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
     protected function getSessionMeta()
     {
-        $fromRequest = $this->getRequestParameter('metaData');
-        $data = empty($fromRequest) ? array() : $fromRequest;
+        $data = $this->hasRequestParameter('metaData') ? $this->getRequestParameter('metaData') : array();
+        $action = Context::getInstance()->getActionName();
+        $route = $this->getTestSession()->getRoute();
         
-        $resolver = new Resolver();
-        
-        if (in_array($resolver->getAction(), array('moveForward', 'skip'))) {
-            $route = $this->getTestSession()->getRoute();
+        if (in_array($action, array('moveForward', 'skip'))) {
             if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
                 $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
                 $lastInSection = $route->isLast() || 
@@ -283,11 +281,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                     $data['SECTION']['SECTION_EXIT_CODE'] = TestSessionMetaData::SECTION_CODE_COMPLETED_NORMALLY;
                 }
             }
+
             if ($route->isLast()) {
                 $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
             }
         }
         
+        if (in_array($action, array('moveForward', 'skip', 'jumpTo', 'moveBackward', 'onTimeout'))) {
+            $data['ITEM']['ITEM_END_TIME_SERVER'] = microtime(true);
+        }
+ 
         return $data;
     }
     

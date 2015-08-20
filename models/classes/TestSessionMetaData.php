@@ -106,9 +106,12 @@ class TestSessionMetaData
                 $metaVariable = $this->getVariable($key, $value);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
-                    $itemUri = \taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($this);
+                    $itemUri = \taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($this->session);
+                    $itemRef = $this->session->getCurrentAssessmentItemRef();
                     $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
-                    $transmissionId = "${sessionId}.${item}.${occurence}";
+                    $sessionId = $this->session->getSessionId();
+                    
+                    $transmissionId = "${sessionId}.${itemRef}.${occurence}";
                     $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
                     $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
