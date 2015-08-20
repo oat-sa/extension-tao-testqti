@@ -270,6 +270,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $data = $this->hasRequestParameter('metaData') ? $this->getRequestParameter('metaData') : array();
         $action = Context::getInstance()->getActionName();
         $route = $this->getTestSession()->getRoute();
+
+		if (in_array($action, array('index'))) {
+            $data['TEST']['TAO_VERSION'] = TAO_VERSION;
+        }
         
         if (in_array($action, array('moveForward', 'skip'))) {
             if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
