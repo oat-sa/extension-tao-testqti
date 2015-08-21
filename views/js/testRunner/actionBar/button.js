@@ -112,6 +112,7 @@ define([
                 if ($menuItem && $menuItem.length) {
                     id = $menuItem.data('control');
 
+                    self.setActiveMenu(id);
                     self.menuAction(id, $menuItem);
                     self.closeMenu();
 
@@ -288,6 +289,42 @@ define([
         setActive : function setActive(active) {
             this.$button.toggleClass('active', active);
 
+            return this;
+        },
+
+        /**
+         * Gets the id of the selected menu entry
+         * @returns {String|null}
+         */
+        getActiveMenu : function getActiveMenu() {
+            var selected;
+            if (this.hasMenu()) {
+                selected = this.$menu.find('.selected').data('control');
+            }
+            return selected || null;
+        },
+
+        /**
+         * Sets the selected menu entry
+         * @param {String} id
+         * @returns {button}
+         */
+        setActiveMenu : function setActiveMenu(id) {
+            if (this.hasMenu()) {
+                this.clearActiveMenu();
+                this.$menu.find('[data-control="'+ id + '"]').addClass('selected');
+            }
+            return this;
+        },
+
+        /**
+         * Clears the menu selection
+         * @returns {button}
+         */
+        clearActiveMenu : function setActiveMenu() {
+            if (this.hasMenu()) {
+                this.$menu.find('.selected').removeClass('selected');
+            }
             return this;
         },
 

@@ -230,7 +230,7 @@ define([
         var $menu;
         var $menuItem;
 
-        QUnit.expect(36);
+        QUnit.expect(37);
         QUnit.stop(7);
 
         instance.init(data.id, data.config, data.testContext, data.testRunner);
@@ -291,6 +291,41 @@ define([
         $button.click();
         $menuItem = $menu.find('.action').first();
         $menuItem.click();
+
+        assert.equal(instance.getActiveMenu(), expectedMenuConfig.id, 'The selected menu must the right one');
+    });
+
+    QUnit.test('menu selection', function(assert) {
+        var instance = button();
+        var data = buttons[3];
+        var expectedMenuConfig = data.config.items[0];
+        var expectedMenuId = 'entry-3';
+        var $container = $('#button-3');
+        var $button;
+        var $menu;
+        var $menuItem;
+
+
+        instance.init(data.id, data.config, data.testContext, data.testRunner);
+
+        $button = instance.render();
+        $menu = $button.find('.menu');
+        $container.append($button);
+
+        assert.equal($menu.length, 1, 'The button must contain a menu');
+
+        $menuItem = $menu.find('.action').first();
+        $menuItem.click();
+
+        assert.equal(instance.getActiveMenu(), expectedMenuConfig.id, 'The selected menu must the right one');
+
+        instance.setActiveMenu(expectedMenuId);
+
+        assert.equal(instance.getActiveMenu(), expectedMenuId, 'The new selected menu must the right one');
+
+        instance.clearActiveMenu();
+
+        assert.strictEqual(instance.getActiveMenu(), null, 'The menu selection must cleared');
     });
 
 });
