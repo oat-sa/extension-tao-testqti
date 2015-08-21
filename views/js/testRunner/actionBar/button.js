@@ -46,7 +46,9 @@ define([
          * @returns {button}
          */
         init : function init(id, config, testContext, testRunner) {
-            this.config = _.cloneDeep(config);
+            this.config = _.omit(config, function(value) {
+                return value === undefined || value === null;
+            });
             this.config.id = id;
 
             this.testContext = testContext;
