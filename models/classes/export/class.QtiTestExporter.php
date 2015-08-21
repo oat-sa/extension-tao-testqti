@@ -197,8 +197,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
             if(!in_array($itemExporter->buildIdentifier(), $identifiers)){
                 $identifiers[] = $itemExporter->buildIdentifier();
+                $itemExporter->export();
             }
-            $itemExporter->export();
             
             // Modify the reference to the item in the test definition.
             $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
