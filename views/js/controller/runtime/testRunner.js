@@ -230,21 +230,12 @@ define([
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
                     message = __("After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"),
-                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
                     flaggedCount=this.testContext.numberFlaggedSection;
-
-                if( this.isCurrentItemAnswered() ){
-                    unansweredCount--;
-                }
 
                 this.getQtiRunner().updateItemApi();
 
                 if( flaggedCount !== undefined ){
                     message = __("You have %s item(s) marked for review.", flaggedCount.toString()) + ' ' + message;
-                }
-
-                if( unansweredCount !== undefined ){
-                    message = __("You have %s unanswered question(s).", unansweredCount.toString()) + ' ' + message;
                 }
 
                 $confirmBox.find('.message').html(message);
