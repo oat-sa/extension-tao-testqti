@@ -68,7 +68,7 @@ define([
 
 				var order = _.parseInt(toolconfig.order);
 		        if(_.isNaN(order)){
-		            order = 0;
+		            order = '';
 		        }
                 var tplData = {
                     id : id,
@@ -124,21 +124,22 @@ define([
     function _appendInOrder($container, $button){
 
         var $after, $before;
-        var order = parseInt($button.data('order'), 10);
-
-        if(order){
+        var order = _.parseInt($button.data('order'));
+        
+        if(!_.isNaN(order)){
 
             $container.children('.action').each(function(){
 
                 var $btn = $(this),
-                    _order = parseInt($btn.data('order'), 10);
-
-                if(_order === order){
-                    $after = $btn;
-                    return false;//stops
-                }else if(_order > order){
+                    _order = _.parseInt($btn.data('order'));
+                
+                if(_.isNaN(_order) || _order > order){
                     $before = $btn;
                     $after = null;
+                    //stops here because $container children returns the dom elements in the dom order
+                    return false;
+                }else if(_order === order){
+                    $after = $btn;
                 }else if(_order < order){
                     $after = $btn;
                     $before = null;
