@@ -125,7 +125,7 @@ define([
         var $after, $before;
         var order = $button.data('order');
 
-        if ('last' === order || (!order && 0 !== order)) {
+        if ('last' === order) {
 
             $container.append($button);
 
@@ -135,48 +135,54 @@ define([
 
         } else {
 
-            if (_.isNaN(order)) {
-                order = parseInt(order, 10);
-            }
+            order = _.parseInt(order);
+            if (!_.isNaN(order)) {
 
-            $container.children('.action').each(function () {
+                $container.children('.action').each(function () {
 
-                var $btn = $(this),
-                    _order = $btn.data('order');
+                    var $btn = $(this),
+                        _order = $btn.data('order');
 
-                if ('last' === _order || (!_order && 0 !== _order)) {
-                    $before = $btn;
-                    $after = null;
-                    return false;//stops
-                }
+                    if ('last' === _order) {
 
-                if ('first' === _order) {
-                    $before = null;
-                    $after = $btn;
-                } else {
-                    if (_.isNaN(_order)) {
-                        _order = parseInt(_order, 10);
-                    }
-
-                    if (_order === order) {
-                        $after = $btn;
-                        return false;//stops
-                    } else if (_order > order) {
                         $before = $btn;
                         $after = null;
-                    } else if (_order < order) {
-                        $after = $btn;
+
+                    } else if ('first' === _order) {
+
                         $before = null;
+                        $after = $btn;
+
+                    } else {
+
+                        _order = _.parseInt(_order);
+
+                        if (_.isNaN(_order) || _order > order) {
+                            $before = $btn;
+                            $after = null;
+                            //stops here because $container children returns the dom elements in the dom order
+                            return false;
+                        } else if (_order === order) {
+                            $after = $btn;
+                        } else if (_order < order) {
+                            $after = $btn;
+                            $before = null;
+                        }
+
                     }
+
+                });
+
+                if ($after) {
+                    $after.after($button);
+                } else if ($before) {
+                    $before.before($button);
+                } else {
+                    $container.append($button);
                 }
 
-            });
-
-            if ($after) {
-                $after.after($button);
-            } else if ($before) {
-                $before.before($button);
             } else {
+                //unordered buttons are append at the end (including when order equals 0)
                 $container.append($button);
             }
         }
