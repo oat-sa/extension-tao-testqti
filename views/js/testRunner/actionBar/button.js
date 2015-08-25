@@ -70,6 +70,8 @@ define([
         clear : function clear() {
             this.unbindEvents();
 
+            this.tearDown();
+
             return this;
         },
 
@@ -334,6 +336,13 @@ define([
          * Additional setup onto the button config set
          */
         setup : function setup() {
+            // just a template method to be overloaded
+        },
+
+        /**
+         * Additional cleaning while uninstalling the button
+         */
+        tearDown : function tearDown() {
             // just a template method to be overloaded
         },
 
