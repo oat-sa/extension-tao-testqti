@@ -370,6 +370,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
         }
 
+        $metadataCount = count($metadataValues, COUNT_RECURSIVE);
+        \common_Logger::i("${metadataCount} Metadata Values found in manifest by extractor(s).");
+
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
         $reportCtx->manifestResource = $qtiTestResource;
@@ -447,7 +450,19 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQtiItem($folder, $qtiDependency, (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), $isApip, $dependencies['dependencies']);
+
+                                    $itemReport = $itemImportService->importQtiItem(
+                                        $folder, 
+                                        $qtiDependency, 
+                                        (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), 
+                                        $isApip,
+                                        $dependencies['dependencies'],
+                                        $metadataValues,
+                                        $metadataInjectors,
+                                        $metadataGuardians,
+                                        $metadataClassLookups
+                                    );
+
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
