@@ -229,7 +229,7 @@ define([
         ];
 
         var $container = $('#' + containerId);
-        actionBarHook.initQtiTool($container, 'toolY', samples[6], {});
+        actionBarHook.initQtiTool($container, 'toolY', samples[7], {});
         actionBarHook.initQtiTool($container, 'toolB', samples[1], {});
         actionBarHook.initQtiTool($container, 'toolA', samples[0], {});
         actionBarHook.initQtiTool($container, 'toolX', samples[6], {});
