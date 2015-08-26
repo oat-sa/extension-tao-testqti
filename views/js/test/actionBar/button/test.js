@@ -530,4 +530,71 @@ define([
 
     });
 
+
+    QUnit.asyncTest('disable/enable', function(assert) {
+        var instance = button();
+        var data = buttons[0];
+        var $container = $('#button-6');
+        var $button;
+        var actionEnabled = true;
+        var callCount = 0;
+
+        instance.init(data.id, data.config, data.testContext, data.testRunner);
+
+        $button = instance.render();
+        $container.append($button);
+
+        instance.action = function(id, $btn) {
+            callCount ++;
+
+            assert.equal(true, actionEnabled, 'The action method has been called');
+            assert.equal(id, data.id, 'The action method provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action method provide a button element');
+            assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
+            QUnit.start();
+        };
+
+        instance.on('action', function(e, id, $btn, btn) {
+            callCount ++;
+
+            assert.equal(true, actionEnabled, 'The action event has been triggered');
+            assert.equal(id, data.id, 'The action event provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action event provide a button element');
+            assert.ok(!!$btn.jquery, 'The action event provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action event provide the right button element');
+            assert.strictEqual(btn, instance, 'The action event provide the right button instance');
+            QUnit.start();
+        });
+
+        QUnit.expect(32);
+        QUnit.stop(3);
+
+        assert.ok(!$button.hasClass('disabled'), 'This button is enabled');
+
+        $button.click();
+
+        assert.equal(callCount, 2, 'Action can be called when button is enabled');
+
+        instance.disable();
+        actionEnabled = false;
+
+        assert.ok($button.hasClass('disabled'), 'This button is disabled');
+
+        $button.click();
+
+        assert.equal(callCount, 2, 'No action called when button is disabled');
+
+        instance.enable();
+        actionEnabled = true;
+
+        assert.ok(!$button.hasClass('disabled'), 'This button is enabled');
+
+        $button.click();
+
+        assert.equal(callCount, 4, 'Action can be called when button is enabled');
+    });
+
 });
