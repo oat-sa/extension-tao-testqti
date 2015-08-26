@@ -1,4 +1,4 @@
-<li data-control="{{id}}" class="small btn-info action type-{{type}}{{#if is.button}} action-button{{/if}}{{#if active}} active{{/if}}"{{#if title}} title="{{title}}"{{/if}} data-order="{{order}}">
+<li data-control="{{id}}" class="small btn-info action btn-{{type}}{{#if is.button}} action-button{{/if}}{{#if active}} active{{/if}}"{{#if title}} title="{{title}}"{{/if}} data-order="{{order}}">
     {{#if is.button}}
     <a class="li-inner" href="#">
         {{#if icon}}<span class="icon icon-{{icon}}"></span>{{/if}}
