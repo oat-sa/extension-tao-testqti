@@ -65,9 +65,14 @@ define([
 
         /**
          * Uninstalls the button
+         * @param {jQuery|String|HTMLElement} [dom] - A DOM element to bind before clearing
          * @returns {button}
          */
-        clear : function clear() {
+        clear : function clear(dom) {
+            if (dom) {
+                this.bindTo(dom);
+            }
+
             this.unbindEvents();
 
             this.tearDown();
