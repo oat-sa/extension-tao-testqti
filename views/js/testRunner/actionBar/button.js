@@ -177,40 +177,43 @@ define([
                 var $action;
                 var id;
 
-                if ($menuItem && $menuItem.length) {
-                    id = $menuItem.data('control');
+                if (!self.$button.hasClass('disabled')) {
+                    if ($menuItem && $menuItem.length) {
+                        id = $menuItem.data('control');
 
-                    self.setActiveMenu(id);
-                    self.menuAction(id, $menuItem);
-                    self.closeMenu();
+                        self.setActiveMenu(id);
+                        self.menuAction(id, $menuItem);
+                        self.closeMenu();
 
-                    /**
-                     * Triggers a menuaction event
-                     * @event button#menuaction
-                     * @param {String} id - The menu item identifier
-                     * @param {jQuery} $menuItem - The menu button
-                     * @param {button} button - The button instance
-                     */
-                    self.$button.trigger('menuaction', [id, $menuItem, self]);
-                } else {
-                    $action = $target.closest('.action-button');
-                    id = $action.data('control');
+                        /**
+                         * Triggers a menuaction event
+                         * @event button#menuaction
+                         * @param {String} id - The menu item identifier
+                         * @param {jQuery} $menuItem - The menu button
+                         * @param {button} button - The button instance
+                         */
+                        self.$button.trigger('menuaction', [id, $menuItem, self]);
+                    } else {
+                        $action = $target.closest('.action-button');
+                        id = $action.data('control');
 
-                    self.action(id, $action);
+                        self.action(id, $action);
 
-                    if (hasMenu) {
-                        self.toggleMenu();
+                        if (hasMenu) {
+                            self.toggleMenu();
+                        }
+
+                        /**
+                         * Triggers a action event
+                         * @event button#action
+                         * @param {String} id - The button identifier
+                         * @param {jQuery} $button - The button
+                         * @param {button} button - The button instance
+                         */
+                        self.$button.trigger('action', [id, $action, self]);
                     }
-
-                    /**
-                     * Triggers a action event
-                     * @event button#action
-                     * @param {String} id - The button identifier
-                     * @param {jQuery} $button - The button
-                     * @param {button} button - The button instance
-                     */
-                    self.$button.trigger('action', [id, $action, self]);
                 }
+
             });
 
             return this;
@@ -358,6 +361,26 @@ define([
             if (dom) {
                 dom.trigger(eventName, extraParameters);
             }
+
+            return this;
+        },
+
+        /**
+         * Disables the button
+         * @returns {button}
+         */
+        disable : function disable() {
+            this.$button.addClass('disabled');
+
+            return this;
+        },
+
+        /**
+         * Enables the button
+         * @returns {button}
+         */
+        enable : function enable() {
+            this.$button.removeClass('disabled');
 
             return this;
         },
