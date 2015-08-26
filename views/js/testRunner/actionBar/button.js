@@ -80,13 +80,32 @@ define([
          * @returns {jQuery}
          */
         render : function render() {
-            this.bindTo(buttonTpl(this.config));
+            var dom = this.renderTemplate();
+
+            this.bindTo(dom);
 
             this.afterRender();
 
             this.bindEvents();
 
             return this.$button;
+        },
+
+        /**
+         * Gets the template renderer
+         * @returns {jQuery}
+         */
+        getTemplate : function getTemplate() {
+            return buttonTpl;
+        },
+
+        /**
+         * Renders the button template
+         * @returns {jQuery}
+         */
+        renderTemplate : function renderTemplate() {
+            var template = this.getTemplate();
+            return template(this.config);
         },
 
         /**
