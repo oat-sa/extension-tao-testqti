@@ -607,7 +607,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
         // Bind the newly created test content to the Test Resource in database.
         $ds = DIRECTORY_SEPARATOR;
-        $testContent = $this->createContent($testResource);
+        $testContent = $this->getTestFile($testResource);
+        if (is_null($testContent)) {
+            $testContent = $this->createContent($testResource);
+        }
+
         $testPath = $testContent->getAbsolutePath();
         $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, TAOQTITEST_FILENAME);
 
@@ -690,12 +694,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDoc(core_kernel_classes_Resource $test) {
 
         $doc = new XmlDocument('2.1');
-        $dir = $this->getTestFile($test);
-        if (is_null($dir)) {
-            $dir = $this->createContent($test);
-        } else {
-            $dir = new core_kernel_file_File($dir);
-        }
 
         try {
             $filePath = $this->getDocPath($test);
@@ -720,6 +718,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDocPath(core_kernel_classes_Resource $test)
     {
         $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $dir = $this->createContent($test);
+        }
         $testPath = $dir->getAbsolutePath();
         $files = tao_helpers_File::scandir($testPath, array(
             'recursive' => true,
