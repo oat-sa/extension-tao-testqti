@@ -28,9 +28,6 @@ class taoQtiTest_helpers_ResourceManager
    
     public static function getBaseDir(core_kernel_classes_Resource $test){
         $testFile = taoQtiTest_models_classes_QtiTestService::singleton()->getTestFile($test);
-        if(is_null($testFile)){
-            throw new common_Exception('No test folder found for ' . $test->getUri());;
-        }
         $baseDir = $testFile->getAbsolutePath() . '/';
         return $baseDir; 
     }
