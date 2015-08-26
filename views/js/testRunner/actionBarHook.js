@@ -83,8 +83,7 @@ define([
                     //if an instance of the tool is already attached, remove it:
                     $existingBtn = $toolsContainer.children('[data-control="' + id + '"]');
                     if ($existingBtn.length) {
-                        hook.bindTo($existingBtn);
-                        hook.clear();
+                        hook.clear($existingBtn);
                         $existingBtn.remove();
                     }
 
@@ -198,7 +197,7 @@ define([
      * @returns {Boolean}
      */
     function isValidHook(hook) {
-        return (_.isObject(hook) && _(['init', 'render', 'clear', 'isVisible', 'bindTo']).reduce(function (result, method) {
+        return (_.isObject(hook) && _(['init', 'render', 'clear', 'isVisible']).reduce(function (result, method) {
             return result && _.isFunction(hook[method]);
         }, true));
     }

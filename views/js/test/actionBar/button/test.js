@@ -51,7 +51,7 @@ define([
         testRunner: {},
         config: {}
     }, {
-        title: 'button with menu',
+        title: 'button with menu (inferred type)',
         id: 'menu',
         testContext: {},
         testRunner: {},
@@ -59,6 +59,74 @@ define([
             label: 'My menu',
             title: 'A test menu',
             icon: 'menu',
+            order: 2,
+            items: [{
+                id: 'entry-1',
+                label: 'Item 1',
+                title: 'Menu entry #1',
+                icon: 'style'
+            }, {
+                id: 'entry-2',
+                label: 'Item 2',
+                title: 'Menu entry #2',
+                icon: 'add'
+            }, {
+                id: 'entry-3',
+                label: 'Item 3',
+                title: 'Menu entry #3',
+                icon: 'remove'
+            }]
+        }
+    }, {
+        title: 'full button (specified type)',
+        id: 'full',
+        testContext: {},
+        testRunner: {},
+        config: {
+            type: 'button',
+            label: 'My button',
+            title: 'A test button',
+            icon: 'test',
+            order: 1
+        }
+    }, {
+        title: 'button with menu (specified type)',
+        id: 'menu',
+        testContext: {},
+        testRunner: {},
+        config: {
+            type: 'menu',
+            label: 'My menu',
+            title: 'A test menu',
+            icon: 'menu',
+            order: 2,
+            items: [{
+                id: 'entry-1',
+                label: 'Item 1',
+                title: 'Menu entry #1',
+                icon: 'style'
+            }, {
+                id: 'entry-2',
+                label: 'Item 2',
+                title: 'Menu entry #2',
+                icon: 'add'
+            }, {
+                id: 'entry-3',
+                label: 'Item 3',
+                title: 'Menu entry #3',
+                icon: 'remove'
+            }]
+        }
+    }, {
+        title: 'group of buttons',
+        id: 'group',
+        testContext: {},
+        testRunner: {},
+        config: {
+            type: 'group',
+            label: 'Unused label',
+            title: 'Unused title',
+            icon: 'unused icon',
             order: 2,
             items: [{
                 id: 'entry-1',
@@ -139,50 +207,91 @@ define([
             assert.ok(!!$button.jquery, 'The rendered content is a jQuery selection');
             assert.equal($button.length, 1, 'The rendered content is one DOM element');
 
-            if (data.config.label !== undefined) {
-                assert.equal($button.find('>a .label').text(), data.config.label, 'The label must be displayed');
+            if (instance.is('button')) {
+                assert.equal($button.data('control'), data.id, 'The button must have the right identifier');
+                assert.ok($button.hasClass('action-button'), 'The button must be a class of action-button');
+            }
 
-                if (!data.config.title) {
-                    assert.equal($button.attr('title'), data.config.label, 'The title must be equal to the label');
+            if (data.config.label !== undefined) {
+                if (instance.is('button')) {
+                    assert.equal($button.find('>a .label').text(), data.config.label, 'The label must be displayed');
+
+                    if (!data.config.title) {
+                        assert.equal($button.attr('title'), data.config.label, 'The title must be equal to the label');
+                    }
+                } else {
+                    assert.notEqual($button.find('.label').first().text(), data.config.label, 'No label must be displayed');
                 }
+
             }
 
             if (data.config.title !== undefined) {
-                assert.equal($button.attr('title'), data.config.title, 'The title must be set with the correct value');
+                if (instance.is('button')) {
+                    assert.equal($button.attr('title'), data.config.title, 'The title must be set with the correct value');
+                } else {
+                    assert.equal($button.attr('title'), undefined, 'The title must not be set');
+                }
             }
 
             if (data.config.order !== undefined) {
                 assert.equal($button.data('order'), data.config.order, 'The order data must be set with the correct value');
             }
 
-            if (data.config.icon !== undefined) {
+            if (data.config.icon !== undefined && !instance.is('group')) {
                 assert.ok($button.find('>a .icon').hasClass('icon-' + data.config.icon), 'The icon must be set with the correct class');
             }
 
             if (data.config.items !== undefined) {
-                assert.equal($button.find('.menu').length, 1, 'The button must contain a menu');
-                assert.equal($button.find('.menu-item').length, data.config.items.length, 'The button menu must contain the exact number of entries');
+                if (instance.is('menu')) {
+                    assert.equal($button.find('.menu').length, 1, 'The button must contain a menu');
+                    assert.equal($button.find('.menu-item').length, data.config.items.length, 'The button menu must contain the exact number of entries');
 
-                data.config.items.forEach(function(item) {
-                    var $item = $button.find('[data-control="' + item.id + '"]');
-                    assert.equal($item.length, 1, "The button menu must contain the entry " + item.id);
+                    data.config.items.forEach(function(item) {
+                        var $item = $button.find('[data-control="' + item.id + '"]');
+                        assert.equal($item.length, 1, "The button menu must contain the entry " + item.id);
 
-                    if (item.label !== undefined) {
-                        assert.equal($item.find('>a .label').text(), item.label, 'The menu item label must be displayed');
+                        if (item.label !== undefined) {
+                            assert.equal($item.find('>a .label').text(), item.label, 'The menu item label must be displayed');
 
-                        if (!item.title) {
-                            assert.equal($item.attr('title'), item.label, 'The menu item title must be equal to the label');
+                            if (!item.title) {
+                                assert.equal($item.attr('title'), item.label, 'The menu item title must be equal to the label');
+                            }
                         }
-                    }
 
-                    if (item.title !== undefined) {
-                        assert.equal($item.attr('title'), item.title, 'The menu item title must be set with the correct value');
-                    }
+                        if (item.title !== undefined) {
+                            assert.equal($item.attr('title'), item.title, 'The menu item title must be set with the correct value');
+                        }
 
-                    if (item.icon !== undefined) {
-                        assert.ok($item.find('>a .icon').hasClass('icon-' + item.icon), 'The menu item icon must be set with the correct class');
-                    }
-                });
+                        if (item.icon !== undefined) {
+                            assert.ok($item.find('>a .icon').hasClass('icon-' + item.icon), 'The menu item icon must be set with the correct class');
+                        }
+                    });
+                }
+
+                if (instance.is('group')) {
+                    assert.equal($button.find('.action-button').length, data.config.items.length, 'The buttons group must contain the exact number of entries');
+
+                    data.config.items.forEach(function(btn) {
+                        var $btn = $button.find('[data-control="' + btn.id + '"]');
+                        assert.equal($btn.length, 1, "The group button must contain the entry " + btn.id);
+
+                        if (btn.label !== undefined) {
+                            assert.equal($btn.find('.label').text(), btn.label, 'The group button label must be displayed');
+
+                            if (!btn.title) {
+                                assert.equal($btn.attr('title'), btn.label, 'The group button title must be equal to the label');
+                            }
+                        }
+
+                        if (btn.title !== undefined) {
+                            assert.equal($btn.attr('title'), btn.title, 'The group button title must be set with the correct value');
+                        }
+
+                        if (btn.icon !== undefined) {
+                            assert.ok($btn.find('.icon').hasClass('icon-' + btn.icon), 'The group button icon must be set with the correct class');
+                        }
+                    });
+                }
             } else {
                 assert.equal($button.find('.menu').length, 0, 'The button must nost contain a menu');
                 assert.equal($button.find('.menu-item').length, 0, 'There is not button menu entries');
@@ -203,19 +312,28 @@ define([
         $button = instance.render();
         $container.append($button);
 
-        instance.action = function() {
+        instance.action = function(id, $btn) {
             assert.ok(true, 'The action method has been called');
+            assert.equal(id, data.id, 'The action method provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action method provide a button element');
+            assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
             QUnit.start();
         };
 
-        instance.on('action', function(e, id, btn) {
+        instance.on('action', function(e, id, $btn, btn) {
             assert.ok(true, 'The action event has been triggered');
             assert.equal(id, data.id, 'The action event provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action event provide a button element');
+            assert.ok(!!$btn.jquery, 'The action event provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action event provide the right button element');
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
             QUnit.start();
         });
 
-        QUnit.expect(4);
+        QUnit.expect(13);
         QUnit.stop();
         $button.click();
     });
@@ -230,7 +348,7 @@ define([
         var $menu;
         var $menuItem;
 
-        QUnit.expect(37);
+        QUnit.expect(66);
         QUnit.stop(7);
 
         instance.init(data.id, data.config, data.testContext, data.testRunner);
@@ -241,8 +359,13 @@ define([
 
         assert.equal($menu.length, 1, 'The button must contain a menu');
 
-        instance.action = function() {
+        instance.action = function(id, $btn) {
             assert.ok(true, 'The action method has been called');
+            assert.equal(id, data.id, 'The action method provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action method provide a button element');
+            assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
             QUnit.start();
         };
 
@@ -252,13 +375,18 @@ define([
             assert.equal(typeof $item, 'object', 'The menuAction method provide a button element');
             assert.ok(!!$item.jquery, 'The menuAction method provide a button element as a jQuery selection');
             assert.ok($item.is('.menu-item'), 'The menuAction method provide the right button element');
+            assert.equal($item.data('control'), expectedMenuConfig.id, 'The menuAction method provide the right button element');
 
             QUnit.start();
         };
 
-        instance.on('action', function(e, id, btn) {
+        instance.on('action', function(e, id, $btn, btn) {
             assert.ok(true, 'The action event has been triggered');
             assert.equal(id, data.id, 'The action event provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action event provide a button element');
+            assert.ok(!!$btn.jquery, 'The action event provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
+            assert.equal($btn.data('control'), data.id, 'The action event provide the right button element');
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
 
             expectedMenuOpenState = !expectedMenuOpenState;
@@ -275,6 +403,7 @@ define([
             assert.equal(typeof $item, 'object', 'The menuaction event provide a button element');
             assert.ok(!!$item.jquery, 'The menuaction event provide a button element as a jQuery selection');
             assert.ok($item.is('.menu-item'), 'The menuaction event provide the right button element');
+            assert.equal($item.data('control'), expectedMenuConfig.id, 'The menuaction event provide the right button element');
 
             expectedMenuOpenState = !expectedMenuOpenState;
             assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be ' + (expectedMenuOpenState ? 'open' : 'closed'))
@@ -295,12 +424,52 @@ define([
         assert.equal(instance.getActiveMenu(), expectedMenuConfig.id, 'The selected menu must the right one');
     });
 
+
+    QUnit.asyncTest('events [group]', function(assert) {
+        var instance = button();
+        var data = buttons[6];
+        var expectedButtonConfig = data.config.items[1];
+        var $container = $('#button-3');
+        var $button;
+
+        instance.init(data.id, data.config, data.testContext, data.testRunner);
+
+        $button = instance.render();
+        $container.append($button);
+
+        instance.action = function(id, $btn) {
+            assert.ok(true, 'The action method has been called');
+            assert.equal(id, expectedButtonConfig.id, 'The action method provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action method provide a button element');
+            assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
+            assert.equal($btn.data('control'), expectedButtonConfig.id, 'The action method provide the right button element');
+            QUnit.start();
+        };
+
+        instance.on('action', function(e, id, $btn, btn) {
+            assert.ok(true, 'The action event has been triggered');
+            assert.equal(id, expectedButtonConfig.id, 'The action event provide the right button id');
+            assert.equal(typeof $btn, 'object', 'The action event provide a button element');
+            assert.ok(!!$btn.jquery, 'The action event provide a button element as a jQuery selection');
+            assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
+            assert.equal($btn.data('control'), expectedButtonConfig.id, 'The action event provide the right button element');
+            assert.strictEqual(btn, instance, 'The action event provide the right button instance');
+            QUnit.start();
+        });
+
+        QUnit.expect(13);
+        QUnit.stop();
+        $button.children().eq(1).click();
+    });
+
+
     QUnit.test('menu selection', function(assert) {
         var instance = button();
         var data = buttons[3];
         var expectedMenuConfig = data.config.items[0];
         var expectedMenuId = 'entry-3';
-        var $container = $('#button-3');
+        var $container = $('#button-4');
         var $button;
         var $menu;
         var $menuItem;
@@ -326,6 +495,39 @@ define([
         instance.clearActiveMenu();
 
         assert.strictEqual(instance.getActiveMenu(), null, 'The menu selection must cleared');
+    });
+
+
+    QUnit.test('group selection', function(assert) {
+        var instance = button();
+        var data = buttons[6];
+        var expectedMenuConfig = data.config.items[1];
+        var $container = $('#button-5');
+        var $button;
+        var $btn;
+
+        instance.init(data.id, data.config, data.testContext, data.testRunner);
+
+        $button = instance.render();
+        $container.append($button);
+
+        assert.equal($button.find('.action-button').length, data.config.items.length, 'The buttons group must contain the exact number of entries');
+
+        $btn = $button.find('.action-button').eq(1);
+
+        assert.ok(!$btn.hasClass('active'), 'The button must not be selected');
+        assert.equal($button.find('.active').length, 0, 'The number of active buttons must be 0');
+
+        instance.setActive(true, expectedMenuConfig.id);
+
+        assert.ok($btn.hasClass('active'), 'The button must be selected');
+        assert.equal($button.find('.active').length, 1, 'The number of active buttons must be 1');
+
+        instance.setActive(false, expectedMenuConfig.id);
+
+        assert.ok(!$btn.hasClass('active'), 'The button must not be selected');
+        assert.equal($button.find('.active').length, 0, 'The number of active buttons must be 0');
+
     });
 
 });
