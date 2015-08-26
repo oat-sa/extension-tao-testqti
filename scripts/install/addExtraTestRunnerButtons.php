@@ -23,15 +23,11 @@
 $registry = oat\taoQtiTest\models\TestRunnerClientConfigRegistry::getRegistry();
 
 $registry->registerQtiTools('markForReview', array(
-    'label' => 'Mark for review',
-    'icon' => 'anchor',
-    'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
+    'hook' => 'taoQtiTest/testRunner/actionBar/markForReview',
+    'order' => 'last'
 ));
 
 $registry->registerQtiTools('collapseReview', array(
-    'title' => 'Show/Hide the review screen',
-    'label' => 'Review',
-    'icon' => 'mobile-menu',
     'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
-    'order' => -1
+    'order' => 'first'
 ));

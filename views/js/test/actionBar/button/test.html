@@ -2,22 +2,28 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Action bar hook test</title>
-        <base href="../../../../../../tao/views/" />
-
+        <title>Ui Test - Test Runner - Action Bar Button</title>
+        <base href="../../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
-        <link rel="stylesheet" type="text/css" href="css/tao-main-style.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-only="actionBarHook.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-only="actionBar/button.js"></script>
 
         <script  type="text/javascript">
+            var taobase_www = '../../../../../../../../../tao/views/';
+            var base_lang = 'en';
 
+             //don't start the test now
             QUnit.config.autostart = false;
+
+            //load the config
             require(['/tao/ClientConfig/config'], function(){
-                require(['taoQtiTest/test/actionBarHook/test'], function(){
-                    QUnit.config.reorder = false;
+
+                //load the test
+                require(['taoQtiTest/test/actionBar/button/test'], function(){
+
+                    //Tests loaded, run tests
                     QUnit.start();
                 });
             });
@@ -26,7 +32,9 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture">
-            <div id="tools-container"></div>
+            <div id="button-1"></div>
+            <div id="button-2"></div>
+            <div id="button-3"></div>
         </div>
     </body>
 </html>

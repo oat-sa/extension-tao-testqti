@@ -19,78 +19,59 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery'
-], function ($) {
+    'lodash',
+    'i18n',
+    'taoQtiTest/testRunner/actionBar/button'
+], function (_, __, button) {
     'use strict';
 
     /**
-     * The local namespace used to isolate events related to this component
-     * @type {String}
-     * @private
+     * Defines an action bar button that collapse the test taker review screen
+     * @type {Object}
      */
-    var _ns = '.collapseReview';
-
-    /**
-     * The DOM element representing the handled button
-     * @type {jQuery}
-     * @private
-     */
-    var $button = null;
-
-    /**
-     * Sets the visual state of the button
-     * @param {Boolean} flagged
-     * @private
-     */
-    var _setCollapseButtonState = function(flagged) {
-        $button.toggleClass('active', flagged);
-    };
-
-    /**
-     * Installs the button
-     *
-     * @param {jQuery|String|HTMLElement} $btn The DOM element representing the button to handle
-     * @param {Object} config The button related config
-     * @param {Object} testContext The assessment test context object
-     * @param {Object} testRunner The test runner instance
-     */
-    var initCollapseButton = function initCollapseButton($btn, config, testContext, testRunner) {
-        $button = $($btn)
-            .on('click' + _ns, function() {
-                var testReview = testRunner.testReview;
-                if (testReview) {
-                    testReview.toggle();
-                    _setCollapseButtonState(!testReview.hidden);
-                }
+    var collapseReview = {
+        /**
+         * Additional setup onto the button config set
+         */
+        setup : function setup() {
+            _.defaults(this.config, {
+                label : __('Review'),
+                title : __('Show/Hide the review screen'),
+                icon : 'mobile-menu',
+                order : 'first'
             });
+        },
 
-        if (testRunner.testReview) {
-            _setCollapseButtonState(!testRunner.testReview.hidden);
+        /**
+         * Additional DOM rendering
+         */
+        afterRender : function afterRender() {
+            var testReview = this.testRunner && this.testRunner.testReview;
+            if (testReview) {
+                this.setActive(!testReview.hidden);
+            }
+        },
+
+        /**
+         * Action called when the button is clicked
+         */
+        action : function action() {
+            var testReview = this.testRunner && this.testRunner.testReview;
+            if (testReview) {
+                testReview.toggle();
+                this.setActive(!testReview.hidden);
+            }
+        },
+
+        /**
+         * Tells if the button is visible and can be rendered
+         * @returns {Boolean}
+         */
+        isVisible : function isVisible() {
+            var testContext = this.testContext;
+            return testContext && !!testContext.reviewScreen && !!testContext.considerProgress;
         }
     };
 
-    /**
-     * Uninstalls the button
-     */
-    var clearCollapseButton = function clearCollapseButton() {
-        $button && $button.off(_ns);
-        $button = null;
-    };
-
-    /**
-     * Tells whether the button is visible or not
-     * @param {Object} config The button related config
-     * @param {Object} testContext The assessment test context object
-     * @param {Object} testRunner The test runner instance
-     * @returns {Boolean}
-     */
-    var isVisibleCollapseButton = function isVisibleCollapseButton(config, testContext) {
-        return !!testContext.reviewScreen && !!testContext.considerProgress;
-    };
-
-    return {
-        init : initCollapseButton,
-        clear : clearCollapseButton,
-        isVisible : isVisibleCollapseButton
-    };
+    return _.assign(button(), collapseReview);
 });

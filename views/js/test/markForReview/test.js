@@ -41,14 +41,30 @@ define([
     });
 
 
-    var testReviewApi = [
+    var markForReviewApi = [
         { name : 'init', title : 'init' },
         { name : 'clear', title : 'clear' },
-        { name : 'isVisible', title : 'isVisible' }
+        { name : 'render', title : 'render' },
+        { name : 'bindTo', title : 'bindTo' },
+        { name : 'bindEvents', title : 'bindEvents' },
+        { name : 'unbindEvents', title : 'unbindEvents' },
+        { name : 'isVisible', title : 'isVisible' },
+        { name : 'hasMenu', title : 'hasMenu' },
+        { name : 'isMenuOpen', title : 'isMenuOpen' },
+        { name : 'closeMenu', title : 'closeMenu' },
+        { name : 'openMenu', title : 'openMenu' },
+        { name : 'toggleMenu', title : 'toggleMenu' },
+        { name : 'setActive', title : 'setActive' },
+        { name : 'trigger', title : 'trigger' },
+        { name : 'on', title : 'on' },
+        { name : 'off', title : 'off' },
+        { name : 'setup', title : 'setup' },
+        { name : 'action', title : 'action' },
+        { name : 'menuAction', title : 'menuAction' }
     ];
 
     QUnit
-        .cases(testReviewApi)
+        .cases(markForReviewApi)
         .test('API ', function(data, assert) {
             assert.equal(typeof markForReview[data.name], 'function', 'The markForReview module exposes a "' + data.title + '" function');
         });
@@ -61,10 +77,12 @@ define([
             navigatorMap: []
         };
 
-        assert.ok(markForReview.isVisible(configMock, testContextMock), 'The markForReview button is visible when the test taker screen is enabled');
+        markForReview.init('markForReview', configMock, testContextMock, {});
+        assert.ok(markForReview.isVisible(), 'The markForReview button is visible when the test taker screen is enabled');
 
         testContextMock.reviewScreen = false;
-        assert.ok(!markForReview.isVisible(configMock, testContextMock), 'The markForReview button is not visible when the test taker screen is disabled');
+        markForReview.init('markForReview', configMock, testContextMock, {});
+        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled');
     });
 
 
@@ -87,9 +105,12 @@ define([
             navigatorMap: []
         };
 
-        var $btn = $('#mark-for-review-1');
+        var $container = $('#mark-for-review-1');
+        var $btn;
 
-        markForReview.init($btn, configMock, testContextMock, testRunnerMock);
+        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        $btn = markForReview.render();
+        $container.append($btn);
 
         $btn.click();
 
@@ -117,16 +138,22 @@ define([
             itemFlagged: true
         };
 
-        var $btn = $('#mark-for-review-2');
+        var $container = $('#mark-for-review-2');
+        var $btn;
 
-        markForReview.init($btn, configMock, testContextMock, testRunnerMock);
+        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        $btn = markForReview.render();
+        $container.append($btn);
+
         assert.ok($btn.hasClass('active'), 'The markForReview button is activated when the current item is flagged');
 
-
-        $btn = $('#mark-for-review-3');
+        $container = $('#mark-for-review-3');
 
         testContextMock.itemFlagged = false;
-        markForReview.init($btn, configMock, testContextMock, testRunnerMock);
+        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        $btn = markForReview.render();
+        $container.append($btn);
+
         assert.ok(!$btn.hasClass('active'), 'The markForReview button is idled when the current item is not flagged');
     });
 
@@ -152,9 +179,13 @@ define([
             itemPosition: 1
         };
 
-        var $btn = $('#mark-for-review-4');
+        var $container = $('#mark-for-review-4');
+        var $btn;
 
-        markForReview.init($btn, configMock, testContextMock, testRunnerMock);
+        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        $btn = markForReview.render();
+        $container.append($btn);
+
         assert.ok(!$btn.hasClass('active'), 'The markForReview button is idled when the current item is not flagged');
 
         $btn.click();

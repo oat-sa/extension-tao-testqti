@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-08-13T13:27:59\n"
+"Project-Id-Version: TAO 3.1.0-sprint05\n"
+"PO-Revision-Date: 2015-08-21T16:30:29\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -230,6 +230,9 @@ msgstr ""
 msgid "Manage Tests"
 msgstr ""
 
+msgid "Mark for review"
+msgstr "Marcar para revisión"
+
 msgid "Max Attempts"
 msgstr ""
 
@@ -365,6 +368,9 @@ msgstr ""
 msgid "Reset filters"
 msgstr "Restaurar filtros"
 
+msgid "Review"
+msgstr "Revisión"
+
 msgid "Rubric Block"
 msgstr ""
 
@@ -403,6 +409,9 @@ msgstr ""
 
 msgid "Show the solution once the answer is submitted."
 msgstr ""
+
+msgid "Show/Hide the review screen"
+msgstr "Mostrar/esconder la pantalla de revisión"
 
 msgid "Shuffle"
 msgstr ""

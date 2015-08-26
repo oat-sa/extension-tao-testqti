@@ -38,6 +38,61 @@
                 white-space: nowrap;
             }
         }
+        .tools-box {
+            .action {
+                position: relative;
+                overflow: visible;
+            }
+
+            .menu {
+                @include simple-border();
+                @include border-radius(1);
+                color: $textColor;
+                background: $canvas;
+                overflow: auto;
+                list-style: none;
+                min-width: 150px;
+
+                margin: 0;
+                padding: 0;
+
+                position: absolute;
+                bottom: 24px;
+                left: 0;
+
+                .action {
+                    display: inline-block;
+                    text-align: left;
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    color: $textColor;
+                    margin: 0;
+
+                    &.selected {
+                        background-color: whiten($info, .2);
+                        color: $textHighlight;
+                        .label, .icon {
+                            color: $textHighlight;
+                        }
+                    }
+                    &:hover {
+                        background-color: $info;
+                        color: $textHighlight;
+                        .label, .icon {
+                            color: $textHighlight;
+                        }
+                    }
+
+                    .label, .icon {
+                        @include font-size(14);
+                        text-shadow: none;
+                        color: $textColor;
+                    }
+                }
+            }
+        }
+
         &.bottom-action-bar {
             overflow: visible;
         }

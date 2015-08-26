@@ -19,76 +19,63 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery'
-], function ($) {
+    'lodash',
+    'i18n',
+    'taoQtiTest/testRunner/actionBar/button'
+], function (_, __, button) {
     'use strict';
 
     /**
-     * The local namespace used to isolate events related to this component
-     * @type {String}
-     * @private
+     * Defines an action bar button that mark for review the current assessment item
+     * @type {Object}
      */
-    var _ns = '.markForReview';
-
-    /**
-     * The DOM element representing the handled button
-     * @type {jQuery}
-     * @private
-     */
-    var $button = null;
-
-    /**
-     * Sets the visual state of the flag button
-     * @param {Boolean} flagged
-     * @private
-     */
-    var _setFlagButtonState = function(flagged) {
-        $button.toggleClass('active', flagged);
-    };
-
-    /**
-     * Installs the button
-     *
-     * @param {jQuery|String|HTMLElement} $btn The DOM element representing the button to handle
-     * @param {Object} config The button related config
-     * @param {Object} testContext The assessment test context object
-     * @param {Object} testRunner The test runner instance
-     */
-    var initFlagButton = function initFlagButton($btn, config, testContext, testRunner) {
-        var flagged = !!testContext.itemFlagged;
-
-        $button = $($btn)
-            .on('click' + _ns, function() {
-                flagged = !flagged;
-                testRunner.markForReview(flagged, testContext.itemPosition);
-                _setFlagButtonState(flagged);
+    var markForReview = {
+        /**
+         * Additional setup onto the button config set
+         */
+        setup : function setup() {
+            _.defaults(this.config, {
+                label : __('Mark for review'),
+                icon : 'anchor'
             });
+        },
 
-        _setFlagButtonState(flagged);
+        /**
+         * Additional DOM rendering
+         */
+        afterRender : function afterRender() {
+            var itemFlagged = this.testContext && this.testContext.itemFlagged;
+            this.setActive(itemFlagged);
+        },
+
+        /**
+         * Action called when the button is clicked
+         */
+        action : function action() {
+            var testContext = this.testContext;
+            var testRunner = this.testRunner;
+            var itemFlagged;
+
+            if (testContext) {
+                itemFlagged = !testContext.itemFlagged;
+                testContext.itemFlagged = itemFlagged;
+
+                if (testRunner) {
+                    testRunner.markForReview(itemFlagged, testContext.itemPosition);
+                    this.setActive(itemFlagged);
+                }
+            }
+        },
+
+        /**
+         * Tells if the button is visible and can be rendered
+         * @returns {Boolean}
+         */
+        isVisible : function isVisible() {
+            var testContext = this.testContext;
+            return testContext && !!testContext.reviewScreen && !!testContext.navigatorMap && !!testContext.considerProgress;
+        }
     };
 
-    /**
-     * Uninstalls the button
-     */
-    var clearFlagButton = function clearFlagButton() {
-        $button && $button.off(_ns);
-        $button = null;
-    };
-
-    /**
-     * Tells whether the button is visible or not
-     * @param {Object} config The button related config
-     * @param {Object} testContext The assessment test context object
-     * @param {Object} testRunner The test runner instance
-     * @returns {Boolean}
-     */
-    var isVisibleFlagButton = function isVisibleFlagButton(config, testContext) {
-        return !!testContext.reviewScreen && !!testContext.navigatorMap && !!testContext.considerProgress;
-    };
-
-    return {
-        init : initFlagButton,
-        clear : clearFlagButton,
-        isVisible : isVisibleFlagButton
-    };
+    return _.assign(button(), markForReview);
 });
