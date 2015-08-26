@@ -45,8 +45,6 @@
             }
 
             .menu {
-                @include simple-border();
-                @include border-radius(1);
                 color: $textColor;
                 background: $canvas;
                 overflow: auto;
@@ -68,6 +66,7 @@
                     overflow: hidden;
                     color: $textColor;
                     margin: 0;
+                    @include border-radius(0);
 
                     &.selected {
                         background-color: whiten($info, .2);

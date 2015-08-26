@@ -40,27 +40,65 @@ define([
          * @param {String} [config.label] - the label to be displayed in the button
          * @param {String} [config.icon] - the icon to be displayed in the button
          * @param {String} [config.title] - the title to be displayed in the button
+         * @param {String} [config.type] - the type of button (button, menu, group)
          * @param {Array} [config.items] - an optional list of menu items
          * @param {Object} testContext - the complete state of the test
          * @param {Object} testRunner - the test runner instance
          * @returns {button}
          */
         init : function init(id, config, testContext, testRunner) {
-            this.config = _.omit(config, function(value) {
+            this.config = _.omit(config || {}, function(value) {
                 return value === undefined || value === null;
             });
             this.config.id = id;
+            this.config.is = {};
 
             this.testContext = testContext;
             this.testRunner = testRunner;
 
             this.setup();
 
+            this.assumeType();
+
             if (!this.config.title && this.config.label) {
                 this.config.title = this.config.label;
             }
 
             return this;
+        },
+
+        /**
+         * Assumes the right button type is set
+         */
+        assumeType : function assumeType() {
+            if (!this.config.type) {
+                if (this.config.items) {
+                    this.config.type = 'menu';
+                } else {
+                    this.config.type = 'button';
+                }
+            }
+
+            switch (this.config.type) {
+                case 'menu':
+                    this.config.is.menu = true;
+                    this.config.is.button = true;
+                    break;
+
+                case 'group':
+                    this.config.is.group = true;
+                    this.config.is.button = false;
+                    this.config.title = '';
+                    this.config.label = '';
+                    this.config.icon = '';
+                    break;
+
+                case 'button':
+                default:
+                    this.config.type = 'button';
+                    this.config.is.button = true;
+                    break;
+            }
         },
 
         /**
@@ -134,8 +172,10 @@ define([
 
             this.$button.on('click' + _ns, function(e) {
                 var hasMenu = self.hasMenu();
-                var $menuItem = hasMenu && $(e.target).closest('.menu-item');
-                var id = self.config.id;
+                var $target = $(e.target);
+                var $menuItem = hasMenu && $target.closest('.menu-item');
+                var $action;
+                var id;
 
                 if ($menuItem && $menuItem.length) {
                     id = $menuItem.data('control');
@@ -153,7 +193,10 @@ define([
                      */
                     self.$button.trigger('menuaction', [id, $menuItem, self]);
                 } else {
-                    self.action();
+                    $action = $target.closest('.action-button');
+                    id = $action.data('control');
+
+                    self.action(id, $action);
 
                     if (hasMenu) {
                         self.toggleMenu();
@@ -163,9 +206,10 @@ define([
                      * Triggers a action event
                      * @event button#action
                      * @param {String} id - The button identifier
+                     * @param {jQuery} $button - The button
                      * @param {button} button - The button instance
                      */
-                    self.$button.trigger('action', [id, self]);
+                    self.$button.trigger('action', [id, $action, self]);
                 }
             });
 
@@ -182,6 +226,15 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Tells if the button has the wanted type
+         * @param {String} type
+         * @returns {Boolean}
+         */
+        is : function is(type) {
+            return !!this.config.is[type];
         },
 
         /**
@@ -312,10 +365,17 @@ define([
         /**
          * Sets the button active state
          * @param {Boolean} active
+         * @param {String} [id]
          * @returns {button}
          */
-        setActive : function setActive(active) {
-            this.$button.toggleClass('active', active);
+        setActive : function setActive(active, id) {
+            var $target = this.$button;
+
+            if (id && id !== this.config.id) {
+                $target = this.$button.find('[data-control="' + id + '"]');
+            }
+
+            $target.toggleClass('active', active);
 
             return this;
         },
@@ -379,8 +439,10 @@ define([
 
         /**
          * Action called when the button is clicked
+         * @param {String} id
+         * @param {jQuery} $action
          */
-        action : function action() {
+        action : function action(id, $action) {
             // just a template method to be overloaded
         },
 
