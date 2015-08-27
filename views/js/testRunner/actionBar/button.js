@@ -536,6 +536,13 @@ define([
          */
         menuAction : function menuAction(id, $menuItem) {
             // just a template method to be overloaded
+        },
+
+        /**
+         * Action called when the assessment item has been loaded
+         */
+        itemLoaded : function() {
+            // just a template method to be overloaded
         }
     };
 

@@ -29,7 +29,19 @@ define([
 
     'use strict';
 
+    /**
+     * Events namespace
+     * @type {String}
+     * @private
+     */
     var _ns = '.actionBarHook';
+
+    /**
+     * We need to access the root document to listen for some events
+     * @type {jQuery}
+     * @private
+     */
+    var $doc = $(document);
 
     /**
      * Check that the toolConfig is correct
@@ -63,11 +75,22 @@ define([
      */
     function initQtiTool($toolsContainer, id, toolconfig, testContext, testRunner) {
 
+        var tools = [];
+
         if (_.isString(toolconfig)) {
             toolconfig = {
                 hook: toolconfig
             };
         }
+
+        // catch the item loaded event
+        $doc.off(_ns).on('serviceloaded' + _ns, function() {
+            _.forEach(tools, function(tool) {
+                if (tool && tool.itemLoaded) {
+                    tool.itemLoaded();
+                }
+            });
+        });
 
         if (isValidConfig(toolconfig)) {
 
@@ -89,6 +112,9 @@ define([
 
                     //check if the tool is to be available
                     if (hook.isVisible()) {
+                        //keep access to the tool
+                        tools.push(hook);
+
                         // renders the button from the config
                         $button = hook.render();
 
