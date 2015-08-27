@@ -445,6 +445,20 @@ define([
         },
 
         /**
+         * Removes the button active state
+         * @returns {button}
+         */
+        clearActive : function clearActive() {
+            if (this.is('button')) {
+                this.$button.removeClass('active');
+            } else {
+                this.$button.find('.active').removeClass('active');
+            }
+
+            return this;
+        },
+
+        /**
          * Gets the id of the selected menu entry
          * @returns {String|null}
          */
