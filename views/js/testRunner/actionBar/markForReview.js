@@ -77,5 +77,5 @@ define([
         }
     };
 
-    return _.assign(button(), markForReview);
+    return button(markForReview);
 });

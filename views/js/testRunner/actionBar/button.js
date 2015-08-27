@@ -550,8 +550,8 @@ define([
      * Builds a button instance
      * @returns {button}
      */
-    var buttonFactory = function buttonFactory() {
-        return _.clone(button);
+    var buttonFactory = function buttonFactory(properties) {
+        return _.assign(_.clone(button), properties);
     };
 
     return buttonFactory;
