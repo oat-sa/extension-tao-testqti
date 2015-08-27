@@ -548,10 +548,11 @@ define([
 
     /**
      * Builds a button instance
+     * @param {Object} properties
      * @returns {button}
      */
     var buttonFactory = function buttonFactory(properties) {
-        return _.assign(_.clone(button), properties);
+        return _.defaults(properties || {}, button);
     };
 
     return buttonFactory;
