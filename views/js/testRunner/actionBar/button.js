@@ -22,11 +22,31 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'util/capitalize',
     'tpl!taoQtiTest/testRunner/tpl/button'
-], function ($, _, __, buttonTpl) {
+], function ($, _, __, capitalize, buttonTpl) {
     'use strict';
 
+    /**
+     * Events namespace
+     * @type {String}
+     * @private
+     */
     var _ns = '.actionBarButton';
+
+    /**
+     * Default type of button
+     * @type {String}
+     * @private
+     */
+    var _defaultButtonType = 'button';
+
+    /**
+     * Default type of button when items are presents
+     * @type {String}
+     * @private
+     */
+    var _defaultItemsType = 'menu';
 
     /**
      * Defines an action bar button
@@ -69,36 +89,55 @@ define([
 
         /**
          * Assumes the right button type is set
+         * @private
          */
         assumeType : function assumeType() {
-            if (!this.config.type) {
+            var type = this.config.type;
+            var setType;
+
+            if (!type) {
                 if (this.config.items) {
-                    this.config.type = 'menu';
+                    type = _defaultItemsType;
                 } else {
-                    this.config.type = 'button';
+                    type = _defaultButtonType;
                 }
             }
 
-            switch (this.config.type) {
-                case 'menu':
-                    this.config.is.menu = true;
-                    this.config.is.button = true;
-                    break;
+            setType = this['setType' + capitalize(type)] || this.setTypeButton;
 
-                case 'group':
-                    this.config.is.group = true;
-                    this.config.is.button = false;
-                    this.config.title = '';
-                    this.config.label = '';
-                    this.config.icon = '';
-                    break;
+            setType.call(this);
+        },
 
-                case 'button':
-                default:
-                    this.config.type = 'button';
-                    this.config.is.button = true;
-                    break;
-            }
+        /**
+         * Sets the button type to standard button
+         * @private
+         */
+        setTypeButton : function assumeTypeButton() {
+            this.config.type = 'button';
+            this.config.is.button = true;
+        },
+
+        /**
+         * Sets the button type to button with menu
+         * @private
+         */
+        setTypeMenu : function assumeTypeButton() {
+            this.config.type = 'menu';
+            this.config.is.menu = true;
+            this.config.is.button = true;
+        },
+
+        /**
+         * Sets the button type to group of buttons
+         * @private
+         */
+        setTypeGroup : function assumeTypeButton() {
+            this.config.type = 'group';
+            this.config.is.group = true;
+            this.config.is.button = false;
+            this.config.title = '';
+            this.config.label = '';
+            this.config.icon = '';
         },
 
         /**
@@ -166,6 +205,7 @@ define([
         /**
          * Binds the events onto the button DOM
          * @returns {button}
+         * @private
          */
         bindEvents : function bindEvents() {
             var self = this;
@@ -222,6 +262,7 @@ define([
         /**
          * Removes events listeners from the button DOM
          * @returns {button}
+         * @private
          */
         unbindEvents : function unbindEvents() {
             if (this.$button) {
@@ -441,6 +482,7 @@ define([
 
         /**
          * Additional setup onto the button config set
+         * @private
          */
         setup : function setup() {
             // just a template method to be overloaded
@@ -448,6 +490,7 @@ define([
 
         /**
          * Additional cleaning while uninstalling the button
+         * @private
          */
         tearDown : function tearDown() {
             // just a template method to be overloaded
@@ -455,6 +498,7 @@ define([
 
         /**
          * Additional DOM rendering
+         * @private
          */
         afterRender : function afterRender() {
             // just a template method to be overloaded
@@ -464,6 +508,7 @@ define([
          * Action called when the button is clicked
          * @param {String} id
          * @param {jQuery} $action
+         * @private
          */
         action : function action(id, $action) {
             // just a template method to be overloaded
@@ -473,6 +518,7 @@ define([
          * Action called when a menu item is clicked
          * @param {String} id
          * @param {jQuery} $menuItem
+         * @private
          */
         menuAction : function menuAction(id, $menuItem) {
             // just a template method to be overloaded
