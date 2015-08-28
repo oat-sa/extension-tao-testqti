@@ -134,30 +134,25 @@ define([
                 // Disable buttons.
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    $.ajax({
-                        url: self.testContext.markForReviewUrl,
-                        cache: false,
-                        async: true,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            flag: flag,
-                            position: position
-                        },
-                        success: function(testContext) {
-                            self.setTestContext(testContext);
-                            self.updateTestReview();
-                            self.itemServiceApi.connect($controls.$itemFrame[0]);
+                $.ajax({
+                    url: self.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        flag: flag,
+                        position: position
+                    },
+                    success: function(testContext) {
+                        self.updateTestReview();
 
-                            // Enable buttons.
-                            self.enableGui();
+                        // Enable buttons.
+                        self.enableGui();
 
-                            //ask the top window to stop the loader
-                            iframeNotifier.parent('unloading');
-
-                        }
-                    });
+                        //ask the top window to stop the loader
+                        iframeNotifier.parent('unloading');
+                    }
                 });
             },
 
