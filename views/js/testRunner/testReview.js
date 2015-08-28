@@ -126,7 +126,7 @@ define([
 
     /**
      * Provides a test review manager
-     * @type {{init: Function, update: Function, enable: Function, disable: Function, hide: Function, show: Function, toggle: Function, on: Function, off: Function, trigger: Function}}
+     * @type {Object}
      */
     var testReview = {
         /**
@@ -427,6 +427,17 @@ define([
         },
 
         /**
+         * Toggle the marked state of an item
+         * @param {jQuery} $item
+         * @param {Boolean} [flag]
+         * @private
+         */
+        _toggleFlag: function($item, flag) {
+            $item.toggleClass(_cssCls.flagged, flag);
+            this._adjustItemIcon($item);
+        },
+
+        /**
          * Marks an item for later review
          * @param {jQuery} $item
          * @private
@@ -436,8 +447,7 @@ define([
             var itemPosition = $item.data('position');
             var flag = !$item.hasClass(_cssCls.flagged);
 
-            $item.toggleClass(_cssCls.flagged);
-            this._adjustItemIcon($item);
+            this._toggleFlag($item);
 
             /**
              * A storage of the flag is required
@@ -618,7 +628,17 @@ define([
             // apply again the current filter
             this._filter(this.$filters.filter(_selectors.actives).data('mode'));
         },
-        
+
+        /**
+         * Set the marked state of an item
+         * @param {Number|String|jQuery} position
+         * @param {Boolean} flag
+         */
+        setItemFlag: function setItemFlag(position, flag) {
+            var $item = position && position.jquery ? position : this.$tree.find('[data-position=' + position + ']');
+            this._toggleFlag($item, flag);
+        },
+
         /**
          * Get progression
          * @param {Object} testContext The progression context
@@ -629,10 +649,10 @@ define([
                 progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope),
                 getProgression = this[progressInfoMethod] || this._getProgressionOfTest,
                 progression = getProgression && getProgression(testContext) || {};
-            
+
             return progression;
         },
-        
+
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context
