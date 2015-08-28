@@ -59,6 +59,16 @@ define([
     }
 
     /**
+     * Triggers the itemLoaded event inside the provided actionBar hook
+     * @param {Object} tool
+     */
+    function triggerItemLoaded(tool) {
+        if (tool && tool.itemLoaded) {
+            tool.itemLoaded();
+        }
+    }
+
+    /**
      * Init a test runner button from its config
      *
      * @param {String} id
@@ -76,6 +86,7 @@ define([
     function initQtiTool($toolsContainer, id, toolconfig, testContext, testRunner) {
 
         var tools = [];
+        var itemIsLoaded = false;
 
         if (_.isString(toolconfig)) {
             toolconfig = {
@@ -85,10 +96,9 @@ define([
 
         // catch the item loaded event
         $doc.off(_ns).on('serviceloaded' + _ns, function() {
+            itemIsLoaded = true;
             _.forEach(tools, function(tool) {
-                if (tool && tool.itemLoaded) {
-                    tool.itemLoaded();
-                }
+                triggerItemLoaded(tool);
             });
         });
 
@@ -123,6 +133,11 @@ define([
 
                         //ready !
                         $button.trigger('ready' + _ns);
+
+                        //fires the itemLoaded event if the item has already been loaded
+                        if (itemIsLoaded) {
+                            triggerItemLoaded(hook);
+                        }
                     }
 
                 } else {
