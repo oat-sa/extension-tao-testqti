@@ -73,5 +73,5 @@ define([
         }
     };
 
-    return _.assign(button(), collapseReview);
+    return button(collapseReview);
 });

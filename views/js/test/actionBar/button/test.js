@@ -151,10 +151,21 @@ define([
     QUnit.module('button');
 
 
-    QUnit.test('module', 3, function(assert) {
+    QUnit.test('module', 7, function(assert) {
         assert.equal(typeof button, 'function', "The button module exposes a function");
         assert.equal(typeof button(), 'object', "The button factory produces an object");
         assert.notStrictEqual(button(), button(), "The button factory provides a different object on each call");
+        assert.strictEqual(button().init, button().init, "The button factory provides a different object on each call, but the same methods");
+
+        var customInit = function() {};
+        var customFn = function() {};
+        var btn = button({
+            init : customInit,
+            myCustomFn : customFn
+        });
+        assert.notStrictEqual(btn.init, button().init, "The button factory enable to overwrite methods and properties");
+        assert.strictEqual(btn.init, customInit, "The button factory enable to overwrite methods and properties");
+        assert.strictEqual(btn.myCustomFn, customFn, "The button factory enable to set custom methods and properties");
     });
 
 
