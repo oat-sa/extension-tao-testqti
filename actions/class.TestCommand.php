@@ -22,6 +22,7 @@
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use \taoQtiTest_actions_TestRunner as TestRunner;
+use \oat\taoQtiTest\models\TestSessionMetaData;
 
 /**
  * taoQtiTest_actions_TestCommand represents an executable commands. 
@@ -68,14 +69,17 @@ class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
             $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
             $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getUri());
             
-            
+            if ($session->isRunning() === false) {
+                continue;
+            }
             try {
                 $session->checkTimeLimits(false, false, false);
             } catch (AssessmentTestSessionException $e) {
                 if (AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW){
-                    $session->saveMetaData(array(
-                       'TEST' => array('TEST_EXIT_CODE' => TestRunner::TEST_CODE_INCOMPLETE),
-                       'SECTION' => array('SECTION_EXIT_CODE' => TestRunner::SECTION_CODE_TIMEOUT),
+                    $testSessionMetaData = new TestSessionMetaData($session);
+                    $testSessionMetaData->save(array(
+                       'TEST' => array('TEST_EXIT_CODE' => TestSessionMetaData::TEST_CODE_INCOMPLETE),
+                       'SECTION' => array('SECTION_EXIT_CODE' => TestSessionMetaData::SECTION_CODE_TIMEOUT),
                     ));
                     $session->endTestSession();
                     $deliveryExecution->setState(INSTANCE_DELIVERYEXEC_FINISHED);

@@ -128,8 +128,11 @@ class taoQtiTest_models_classes_ManifestParser
                 
                 if (preg_match("/\.xml$/", $fileHref)){
                     
-                    if (empty($href)) {
+                    if (empty($href) || $href === $fileHref) {
                         $xmlFiles[] = $fileHref;
+                    }
+                    else{
+                        $auxFiles[] = $fileHref;
                     }
                 }
                 else {

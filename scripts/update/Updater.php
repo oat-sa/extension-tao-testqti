@@ -104,7 +104,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.6.4';
         }
 
-         if ($currentVersion == '2.6.4') {
+        if ($currentVersion == '2.6.4') {
             $currentVersion = '2.7.0';
         }
 
@@ -163,11 +163,44 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.11.0';
         }
-        
-        if ($currentVersion == '2.7.0') {
+
+        if ($currentVersion == '2.11.0') {
             // correct access roles
             AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('act'=>'taoQtiTest', 'mod' => 'TestCommand')));
-            $currentVersion = '2.7.1';
+            $currentVersion = '2.11.1';
+        }
+
+        // adjust testrunner config: set the force progress indicator display
+        if ($currentVersion == '2.11.1') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-indicator-forced'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.12.0';
+        }
+        
+        // update the test taker review action buttons
+        if ($currentVersion == '2.12.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+
+            $registry->registerQtiTools('collapseReview', array(
+                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+                'order' => 'first',
+                'title' => null,
+                'label' => null,
+                'icon' => null,
+            ));
+
+            $registry->registerQtiTools('markForReview', array(
+                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview',
+                'order' => 'last',
+                'title' => null,
+                'label' => null,
+                'icon' => null,
+            ));
+
+            $currentVersion = '2.13.0';
         }
         
         return $currentVersion;

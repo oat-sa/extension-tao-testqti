@@ -27,6 +27,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
+use oat\taoQtiTest\models\TestSessionMetaData;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -190,6 +191,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Begin the very first attempt.
             $session->beginAttempt();
         }
+        
+        $testSessionMetaData = new TestSessionMetaData($session);
+        $testSessionMetaData->save(array(
+            'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
+        ));
         // Otherwise, the item is not attemptable bt the candidate.
     }
     
@@ -392,8 +398,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Number of items presented during the test session.
             $context['numberPresented'] = $session->numberPresented();
             
-            // Whether or not the progress of the test can be infered.
-            $context['considerProgress'] = self::considerProgress($testMeta);
+            // Whether or not the progress of the test can be inferred.
+            $context['considerProgress'] = self::considerProgress($session, $testMeta, $config);
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
@@ -410,7 +416,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['jumps'] = self::buildPossibleJumps($session);
 
             // The test review screen setup
-            if (!empty($config['test-taker-review'])) {
+            if (!empty($config['test-taker-review']) && $context['considerProgress']) {
                 // The navigation map in order to build the test navigator
                 $navigator = self::getNavigatorMap($session);
                 if ($navigator !== NavigationMode::LINEAR) {
@@ -436,9 +442,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
                 $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
                 $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            } else if (isset($config['progress-indicator']) && 'position' == $config['progress-indicator']) {
-                // Setup of the progress bar when displaying position
+            } else {
+                // Setup data for progress bar when displaying position and timed section exit control
                 $numberItems = self::countItems($session);
+                $context['numberCompletedPart'] = $numberItems['numberCompletedPart'];
+                $context['numberCompletedSection'] = $numberItems['numberCompletedSection'];
                 $context['numberItemsSection'] = $numberItems['numberItemsSection'];
                 $context['numberItemsPart'] = $numberItems['numberItemsPart'];
                 $context['itemPositionPart'] = $numberItems['itemPositionPart'];
@@ -472,14 +480,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
              
             $context['rubrics'] = $rubrics;
              
-            // Comment allowed? Skipping allowed?
+            // Comment allowed? Skipping allowed? Logout or Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
             $context['allowSkipping'] = self::doesAllowSkipping($session);
-            
+            $context['exitButton'] = self::doesAllowExit($session);
+            $context['logoutButton'] = self::doesAllowLogout($session);
+
             // loads the specific config into the context object
             $configMap = array(
                 // name in config                   => name in context object
-                'exitButton'                        => 'exitButton',
                 'timerWarning'                      => 'timerWarning',
                 'progress-indicator'                => 'progressIndicator',
                 'progress-indicator-scope'          => 'progressIndicatorScope',
@@ -1008,17 +1017,67 @@ class taoQtiTest_helpers_TestRunnerUtils {
         
         return $completed;
     }
-    
-    static public function considerProgress(array $testMeta) {
+
+    /**
+     * Checks if the current test allows the progress bar to be displayed
+     * @param AssessmentTestSession $session
+     * @param array $testMeta
+     * @param array $config
+     * @return bool
+     */
+    static public function considerProgress(AssessmentTestSession $session, array $testMeta, array $config = array()) {
         $considerProgress = true;
-        
-        if ($testMeta['preConditions'] === true) {
-            $considerProgress = false;
+
+        if (!empty($config['progress-indicator-forced'])) {
+            // Caution: this piece of code can introduce a heavy load on very large tests
+            // The local optimisation made here concerns:
+            // - only check the part branchRules if the progress indicator must be forced for all tests
+            // - branchRules check is ignored when the navigation mode is non linear.
+            //
+            // TODO: Perform this check at compilation time and store a map of parts options.
+            //       This can be also done for navigation map (see getNavigatorMap and getJumpsMap)
+
+            $testPart = $session->getCurrentTestPart();
+            if ($testPart->getNavigationMode() !== NavigationMode::NONLINEAR) {
+                $branchings = $testPart->getComponentsByClassName('branchRule');
+
+                if (count($branchings) > 0) {
+                    $considerProgress = false;
+                }
+            }
+        } else {
+            if ($testMeta['preConditions'] === true) {
+                $considerProgress = false;
+            }
+            else if ($testMeta['branchRules'] === true) {
+                $considerProgress = false;
+            }
         }
-        else if ($testMeta['branchRules'] === true) {
-            $considerProgress = false;
-        }
-        
+
         return $considerProgress;
+    }
+
+    /**
+     * Checks if the current session can be exited
+     *
+     * @param AssessmentTestSession $session
+     * @return bool
+     */
+    static public function doesAllowExit(AssessmentTestSession $session){
+        $categories = $session->getCurrentAssessmentItemRef()->getCategories();
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $exitButton = (isset($config['exitButton']) && $config['exitButton']);
+        return ($exitButton && $categories->contains('x-tao-option-exit'));
+    }
+
+    /**
+     * Checks if the test taker can logout
+     * 
+     * @param AssessmentTestSession $session
+     * @return type
+     */
+    static public function doesAllowLogout(AssessmentTestSession $session){
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        return !(isset($config['exitButton']) && $config['exitButton']);
     }
 }

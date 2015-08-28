@@ -106,11 +106,18 @@ define([
              * @param {Number} position The position of the item within the test
              */
             jump: function(position) {
-                var self = this;
+                var self = this,
+                    action = 'jump',
+                    params = {position: position};
                 this.disableGui();
-                this.itemServiceApi.kill(function() {
-                    self.actionCall('jump', null, {position: position});
-                });
+
+                if( this.isJumpOutOfSection(position)  && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action, params);
+                } else {
+                    this.itemServiceApi.kill(function() {
+                            self.actionCall(action, null, params);
+                    });
+                }
             },
 
             /**
@@ -120,6 +127,11 @@ define([
              */
             markForReview: function(flag, position) {
                 var self = this;
+
+                // Ask the top window to start the loader.
+                iframeNotifier.parent('loading');
+
+                // Disable buttons.
                 this.disableGui();
 
                 this.itemServiceApi.kill(function () {
@@ -136,35 +148,192 @@ define([
                         success: function(testContext) {
                             self.setTestContext(testContext);
                             self.updateTestReview();
+                            self.itemServiceApi.connect($controls.$itemFrame[0]);
+
+                            // Enable buttons.
                             self.enableGui();
+
+                            //ask the top window to stop the loader
+                            iframeNotifier.parent('unloading');
+
                         }
                     });
                 });
             },
 
             moveForward: function () {
-                var self = this;
+                var self = this,
+                    action = 'moveForward';
+
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    var lastInSection = (self.testContext.itemPositionSection + 1) === self.testContext.numberItemsSection,
-                        metaData;
-                        
-                    if (lastInSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
+                    if( this.isTimedSection() ){
+                        this.exitTimedSection(action);
+                    } else {
+                        this.exitSection(action);
                     }
-                    
-                    self.actionCall('moveForward', metaData);
-                });
+                } else {
+                this.itemServiceApi.kill(function () {
+                        self.actionCall(action);
+                    });
+                }
             },
 
             moveBackward: function () {
-                var self = this;
+                var self = this,
+                    action = 'moveBackward';
 
                 this.disableGui();
+
+                if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action);
+                } else {
                 this.itemServiceApi.kill(function () {
-                    self.actionCall('moveBackward');
+                        self.actionCall(action);
+                    });
+                }
+            },
+
+            isJumpOutOfSection: function(jumpPosition){
+                var items = this.getCurrentSectionItems(),
+                    isJumpToOtherSection = true,
+                    isValidPosition = (jumpPosition >= 0) && ( jumpPosition < this.testContext.numberItems );
+
+                if( isValidPosition){
+                    for(var i in items ) {
+                        if (!items.hasOwnProperty(i)) {
+                            continue;
+                        }
+                        if( items[i].position == jumpPosition ){
+                            isJumpToOtherSection = false;
+                            break;
+                        }
+                    }
+                } else {
+                    isJumpToOtherSection = false;
+                }
+
+                return isJumpToOtherSection;
+            },
+
+            exitSection: function(action, params){
+                var self = this,
+                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+
+                self.itemServiceApi.kill(function () {
+                    self.actionCall(action, metaData, params);
                 });
+            },
+
+            exitTimedSection: function(action, params){
+                var self = this,
+                    $confirmBox = $('.exit-modal-feedback'),
+                    message,
+                    messageFlagged = '',
+                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
+                    flaggedCount=this.testContext.numberFlaggedSection;
+
+                if( this.isCurrentItemAnswered() ){
+                    unansweredCount--;
+                }
+
+                this.getQtiRunner().updateItemApi();
+
+                if( flaggedCount !== undefined ){
+                    messageFlagged = " and have %s item(s) marked for review";
+                }
+
+                message = __(
+                    "You have %s unanswered question(s)" + messageFlagged + ". " +
+                    "After you complete the section it would be impossible to return to this section to make changes.  " +
+                    "Are you sure you want to end the section?",
+                    (unansweredCount || 0).toString(),
+                    (flaggedCount || 0).toString()
+                );
+
+                $confirmBox.find('.message').html(message);
+                $confirmBox.modal({ width: 500 });
+
+                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
+                    self.enableGui();
+                    $confirmBox.modal('close');
+                });
+
+                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                    self.exitSection(action, params);
+                });
+            },
+            
+            isCurrentItemActive: function(){
+                return (this.testContext.itemSessionState != 4);
+            },
+            
+            /**
+             * Tells is the current item has been answered or not
+             * The item is considered answered when at least one response has been set to not empty {base : null}
+             * 
+             * @returns {Boolean}
+             */
+            isCurrentItemAnswered: function(){
+                var answered = false;
+                _.each(this.getCurrentItemState(), function(state){
+                    if(state && _.isObject(state.response) && state.response.base !== null){
+                        answered = true;//at least one response is not null so consider the item answered
+                        return false;
+                    }
+                });
+                return answered;
+            },
+            
+            getQtiRunner: function(){
+                var itemWindow, itemContainerWindow;
+
+                itemWindow = $('#qti-item')[0].contentWindow;
+                itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
+
+                return itemContainerWindow.qtiRunner;
+            },
+            
+            isTimedSection: function(){
+                var timeConstraints = this.testContext.timeConstraints,
+                    isTimedSection = false;
+                for( var index in timeConstraints ){
+                    if(    timeConstraints.hasOwnProperty(index)
+                        && timeConstraints[index].qtiClassName == 'assessmentSection' ){
+                        isTimedSection = true;
+                    }
+                }
+
+                return isTimedSection;
+            },
+
+            getCurrentSectionItems: function(){
+                var partId  = this.testContext.testPartId,
+                    navMap  = this.testContext.navigatorMap,
+                    sectionItems;
+
+                for( var partIndex in navMap ){
+                    if( !navMap.hasOwnProperty(partIndex)){
+                        continue;
+                    }
+                    if( navMap[partIndex].id !== partId ){
+                        continue;
+                    }
+
+                    for(var sectionIndex in navMap[partIndex].sections){
+                        if( !navMap[partIndex].sections.hasOwnProperty(sectionIndex)){
+                            continue;
+                        }
+                        if( navMap[partIndex].sections[sectionIndex].active === true ){
+                            sectionItems = navMap[partIndex].sections[sectionIndex].items;
+                            break;
+                        }
+                    }
+                }
+
+                return sectionItems;
             },
 
             skip: function () {
@@ -254,13 +423,15 @@ define([
                 this.updateRubrics();
                 this.updateTools(testContext);
                 this.updateTimer();
-
+                this.updateExitButton();
+                this.resetCurrentItemState();
+                
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
-                    $doc.on('serviceloaded', function () {
+                    $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
                         self.adjustFrame();
                         $controls.$itemFrame.css({visibility: 'visible'});
@@ -491,7 +662,10 @@ define([
              * Updates the test taker review screen
              */
             updateTestReview: function() {
+                var considerProgress = this.testContext.considerProgress === true;
+
                 if (this.testReview) {
+                    this.testReview.toggle(considerProgress);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -500,11 +674,11 @@ define([
              * Updates the progress bar
              */
             updateProgress: function () {
-                var considerProgress = this.testContext.considerProgress;
+                var considerProgress = this.testContext.considerProgress === true;
 
-                $controls.$progressBox.css('visibility', (considerProgress === true) ? 'visible' : 'hidden');
+                $controls.$progressBox.css('visibility', considerProgress ? 'visible' : 'hidden');
 
-                if (considerProgress === true) {
+                if (considerProgress) {
                     this.progressUpdater.update(this.testContext);
                 }
             },
@@ -515,7 +689,13 @@ define([
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-
+            
+            updateExitButton : function(){
+                
+                $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
+                $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
+            },
+            
             adjustFrame: function () {
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
@@ -614,10 +794,16 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
+                    testProgression = TestRunner.testReview ? 
+                        TestRunner.testReview.getProgression(self.testContext) : {
+                            total : self.testContext.numberItems,
+                            answered : self.testContext.numberCompleted,
+                            flagged : self.testContext.numberFlagged || 0
+                        },
                     message = __(
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (self.testContext.numberItems - self.testContext.numberCompleted).toString(),
-                        (self.testContext.numberFlagged || 0).toString()
+                        (testProgression.total - testProgression.answered).toString(),
+                        (testProgression.flagged).toString()
                     ),
                     metaData = {
                         "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
@@ -637,6 +823,33 @@ define([
                         self.actionCall('endTestSession', metaData);
                     });
                 });
+            },
+
+            /**
+             * Set the state of the current item in the test runner
+             * 
+             * @param {string} id
+             * @param {object} state
+             */
+            setCurrentItemState : function(id, state){
+                if(id){
+                    this.currentItemState[id] = state;
+                }
+            },
+
+            /**
+             * Reset the state of the current item in the test runner
+             */
+            resetCurrentItemState : function(){
+                this.currentItemState = {};
+            },
+
+            /**
+             * Get the state of the current item as stored in the test runner
+             * @returns {Object}
+             */
+            getCurrentItemState : function(){
+                return this.currentItemState;
             }
         };
 
@@ -685,10 +898,7 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-
-                $controls.$logout.toggleClass('hidden', testContext.exitButton);
-                $controls.$exit.toggleClass('hidden', !testContext.exitButton);
-
+                
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
@@ -799,6 +1009,18 @@ define([
 
                 deleter($('#feedback-box'));
                 modal($('body'));
+                
+                //listen to state change in the current item
+                $(document).on('responsechange', function(e, responseId, response){
+                    if(responseId && response){
+                        TestRunner.setCurrentItemState(responseId, {response:response});
+                    }
+                }).on('stateready', function(e, id, state){
+                    if(id && state){
+                        TestRunner.setCurrentItemState(id, state);
+                    }
+                });
+                
             }
         };
     });
