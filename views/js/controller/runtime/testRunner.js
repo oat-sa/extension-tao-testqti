@@ -144,8 +144,15 @@ define([
                         flag: flag,
                         position: position
                     },
-                    success: function(testContext) {
-                        self.updateTestReview();
+                    success: function(data) {
+                        // update the item flagged state
+                        if (self.testReview) {
+                            self.testReview.setItemFlag(position, flag);
+                            if (self.testContext.itemPosition === position) {
+                                self.testContext.itemFlagged = flag;
+                            }
+                            self.updateTools(self.testContext);
+                        }                    
 
                         // Enable buttons.
                         self.enableGui();
