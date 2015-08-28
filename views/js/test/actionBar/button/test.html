@@ -2,13 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Ui Test - Test Taker Review Screen - Mark for Review Button</title>
+        <title>Ui Test - Test Runner - Action Bar Button</title>
         <base href="../../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js"  data-cover-flag="branchTracking"  data-cover-only="markForReview.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="actionBar/button.js"></script>
 
         <script  type="text/javascript">
 
@@ -19,7 +19,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/markForReview/test'], function(){
+                require(['taoQtiTest/test/actionBar/button/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();
@@ -30,10 +30,12 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture">
-            <div id="mark-for-review-1"></div>
-            <div id="mark-for-review-2"></div>
-            <div id="mark-for-review-3"></div>
-            <div id="mark-for-review-4"></div>
+            <div id="button-1"></div>
+            <div id="button-2"></div>
+            <div id="button-3"></div>
+            <div id="button-4"></div>
+            <div id="button-5"></div>
+            <div id="button-6"></div>
         </div>
     </body>
 </html>

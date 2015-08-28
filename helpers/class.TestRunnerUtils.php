@@ -27,6 +27,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
+use oat\taoQtiTest\models\TestSessionMetaData;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -190,6 +191,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // Begin the very first attempt.
             $session->beginAttempt();
         }
+        
+        $testSessionMetaData = new TestSessionMetaData($session);
+        $testSessionMetaData->save(array(
+            'ITEM'=>array('ITEM_START_TIME_SERVER' => microtime(true))
+        ));
         // Otherwise, the item is not attemptable bt the candidate.
     }
     
@@ -436,9 +442,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
                 $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
                 $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            } else if (isset($config['progress-indicator']) && 'position' == $config['progress-indicator']) {
-                // Setup of the progress bar when displaying position
+            } else {
+                // Setup data for progress bar when displaying position and timed section exit control
                 $numberItems = self::countItems($session);
+                $context['numberCompletedPart'] = $numberItems['numberCompletedPart'];
+                $context['numberCompletedSection'] = $numberItems['numberCompletedSection'];
                 $context['numberItemsSection'] = $numberItems['numberItemsSection'];
                 $context['numberItemsPart'] = $numberItems['numberItemsPart'];
                 $context['itemPositionPart'] = $numberItems['itemPositionPart'];

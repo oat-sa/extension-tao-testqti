@@ -180,6 +180,29 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.12.0';
         }
         
+        // update the test taker review action buttons
+        if ($currentVersion == '2.12.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+
+            $registry->registerQtiTools('collapseReview', array(
+                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
+                'order' => 'first',
+                'title' => null,
+                'label' => null,
+                'icon' => null,
+            ));
+
+            $registry->registerQtiTools('markForReview', array(
+                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview',
+                'order' => 'last',
+                'title' => null,
+                'label' => null,
+                'icon' => null,
+            ));
+
+            $currentVersion = '2.13.0';
+        }
+        
         return $currentVersion;
     }
 }
