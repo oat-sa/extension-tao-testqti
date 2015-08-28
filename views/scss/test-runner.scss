@@ -1,5 +1,4 @@
 @import "inc/bootstrap";
-
 @import "inc/loading-bar";
 @import "inc/action-bars";
 @import "inc/section-container";
@@ -8,50 +7,138 @@
 .qti-test-scope {
 
     // action bars
-    .horizontal-action-bar {
-        opacity: 0;
-
-        .progress-box, .timer-box, .title-box {
-            padding-top: 4px
-        }
-        .progressbar {
-            margin-top: 5px;
-            min-width: 150px;
-            height: 0.6em;
-        }
-        & > .control-box {
-            color: white(.9);
-            text-shadow: 1px 1px 0 black;
-            .lft, .rgt {
-                padding-left: 20px;
-                &:first-child {
-                    padding-left: 0;
-                }
-                &:last-child {
-                    //text-align: right;
-                    ul {
+    .action-bar {
+        li {
+            margin: 0 5px;
+            &.btn-info {
+                &.btn-group {
+                    border:none !important;
+                    overflow:hidden;
+                    padding:0;
+                    a {
+                        float:left;
+                        margin: 0 2px;
+                        padding: 0 15px;
+                        border: 1px solid transparent;
+                        border-radius: 0px;
                         display: inline-block;
+                        height: inherit;
+                        &:first-of-type {
+                            border-top-left-radius: 3px;
+                            border-bottom-left-radius: 3px;
+                            margin-left: 0;
+                        }
+                        &:last-of-type {
+                            border-top-right-radius: 3px;
+                            border-bottom-right-radius: 3px;
+                            margin-right: 0;
+                        }
+                        &:hover, &.active {
+                            border-color: white(.3);
+                        }
                     }
                 }
             }
-            [class^="btn-"], [class*=" btn-"] {
-                white-space: nowrap;
-            }
         }
-        &.bottom-action-bar {
-            overflow: visible;
-        }
-        &.has-timers {
-            height: 47px;
-            .progress-box,
-            .title-box {
-                padding-top: 10px;
-            }
-        }
+        &.horizontal-action-bar {
+            opacity: 0;
 
-        // navigation elements
-        .bottom-action-bar .action {
-            display:none;
+            .progress-box, .timer-box, .title-box {
+                padding-top: 4px
+            }
+            .progressbar {
+                margin-top: 5px;
+                min-width: 150px;
+                height: 0.6em;
+            }
+            & > .control-box {
+                color: white(.9);
+                text-shadow: 1px 1px 0 black;
+                .lft, .rgt {
+                    padding-left: 20px;
+                    &:first-child {
+                        padding-left: 0;
+                    }
+                    &:last-child {
+                        //text-align: right;
+                        ul {
+                            display: inline-block;
+                        }
+                    }
+                }
+                [class^="btn-"], [class*=" btn-"] {
+                    white-space: nowrap;
+                }
+            }
+            .tools-box {
+                .action {
+                    position: relative;
+                    overflow: visible;
+                }
+
+                .menu {
+                    color: $textColor;
+                    background: $canvas;
+                    overflow: auto;
+                    list-style: none;
+                    min-width: 150px;
+
+                    margin: 0;
+                    padding: 0;
+
+                    position: absolute;
+                    bottom: 24px;
+                    left: 0;
+
+                    .action {
+                        display: inline-block;
+                        text-align: left;
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        color: $textColor;
+                        margin: 0;
+                        @include border-radius(0);
+
+                        &.selected {
+                            background-color: whiten($info, .2);
+                            color: $textHighlight;
+                            .label, .icon {
+                                color: $textHighlight;
+                            }
+                        }
+                        &:hover {
+                            background-color: $info;
+                            color: $textHighlight;
+                            .label, .icon {
+                                color: $textHighlight;
+                            }
+                        }
+
+                        .label, .icon {
+                            @include font-size(14);
+                            text-shadow: none;
+                            color: $textColor;
+                        }
+                    }
+                }
+            }
+
+            &.bottom-action-bar {
+                overflow: visible;
+            }
+            &.has-timers {
+                height: 47px;
+                .progress-box,
+                .title-box {
+                    padding-top: 10px;
+                }
+            }
+
+            // navigation elements
+            .bottom-action-bar .action {
+                display:none;
+            }
         }
     }
 
