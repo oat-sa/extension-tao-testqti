@@ -37,6 +37,9 @@
                         &:hover, &.active {
                             border-color: white(.8);
                         }
+                        .no-label {
+                            padding-right: 0;
+                        }
                     }
                 }
                 &:hover, &.active {
