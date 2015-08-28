@@ -44,6 +44,28 @@ define([
     var $doc = $(document);
 
     /**
+     * List of loaded and visible hooks
+     * @type {Object}
+     * @private
+     */
+    var tools = {};
+
+    /**
+     * Flag set to true when the item is loaded
+     * @type {Boolean}
+     * @private
+     */
+    var itemIsLoaded = false;
+
+    // catch the item loaded event
+    $doc.off(_ns).on('serviceloaded' + _ns, function() {
+        itemIsLoaded = true;
+        _.forEach(tools, function(tool) {
+            triggerItemLoaded(tool);
+        });
+    });
+
+    /**
      * Check that the toolConfig is correct
      *
      * @param {Object} toolconfig
@@ -85,22 +107,15 @@ define([
      */
     function initQtiTool($toolsContainer, id, toolconfig, testContext, testRunner) {
 
-        var tools = [];
-        var itemIsLoaded = false;
+        // the tool is always initialized before the item is loaded, so we can safely false the flag
+        itemIsLoaded = false;
+        tools[id] = null;
 
         if (_.isString(toolconfig)) {
             toolconfig = {
                 hook: toolconfig
             };
         }
-
-        // catch the item loaded event
-        $doc.off(_ns).on('serviceloaded' + _ns, function() {
-            itemIsLoaded = true;
-            _.forEach(tools, function(tool) {
-                triggerItemLoaded(tool);
-            });
-        });
 
         if (isValidConfig(toolconfig)) {
 
@@ -123,7 +138,7 @@ define([
                     //check if the tool is to be available
                     if (hook.isVisible()) {
                         //keep access to the tool
-                        tools.push(hook);
+                        tools[id] = hook;
 
                         // renders the button from the config
                         $button = hook.render();
@@ -132,7 +147,7 @@ define([
                         _appendInOrder($toolsContainer, $button);
 
                         //ready !
-                        $button.trigger('ready' + _ns);
+                        $button.trigger('ready' + _ns, [hook]);
 
                         //fires the itemLoaded event if the item has already been loaded
                         if (itemIsLoaded) {
