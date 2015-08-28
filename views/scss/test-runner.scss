@@ -11,6 +11,7 @@
         li {
             margin: 0 5px;
             &.btn-info {
+                border-color: white(.3);
                 &.btn-group {
                     border:none !important;
                     overflow:hidden;
@@ -19,7 +20,7 @@
                         float:left;
                         margin: 0 2px;
                         padding: 0 15px;
-                        border: 1px solid transparent;
+                        border: 1px solid white(.3);
                         border-radius: 0px;
                         display: inline-block;
                         height: inherit;
@@ -34,9 +35,12 @@
                             margin-right: 0;
                         }
                         &:hover, &.active {
-                            border-color: white(.3);
+                            border-color: white(.8);
                         }
                     }
+                }
+                &:hover, &.active {
+                    border-color: white(.8);
                 }
             }
         }
