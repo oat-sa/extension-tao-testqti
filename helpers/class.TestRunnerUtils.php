@@ -528,15 +528,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
         
     /**
-     * Gets a call identifier for a particular item in the test
+     * Gets the item reference for a particular item in the test
+     * 
      * @param AssessmentTestSession $session
      * @param string|Jump|RouteItem $itemPosition
      * @return null|string
      */
-    static public function getItemCallId(AssessmentTestSession $session, $itemPosition) {
+    static public function getItemRef(AssessmentTestSession $session, $itemPosition) {
         $sessionId = $session->getSessionId();
 
-        $transmissionId = null;
+        $itemRef = null;
         $routeItem = null;
         
         if ($itemPosition && is_object($itemPosition)) {
@@ -556,34 +557,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
         }
         
         if ($routeItem) {
-            $itemRef = $routeItem->getAssessmentItemRef();
-            $occurrence = $routeItem->getOccurence();
-            $transmissionId = "${sessionId}.${itemRef}.${occurrence}";
+            $itemRef = (string)$routeItem->getAssessmentItemRef();
         }
         
-        return $transmissionId;
-    }
-
-    /**
-     * Gets the state of a particular item
-     * @param string $serviceCallId
-     * @return array
-     * @throws common_exception_Error
-     */
-    static public function getItemState($serviceCallId) {
-        
-        $state = tao_models_classes_service_StateStorage::singleton()->get(
-            common_session_SessionManager::getSession()->getUserUri(),
-            $serviceCallId
-        );
-        
-        if ($state) {
-            $state = json_decode($state, true);
-        } else {
-            $state = array();
-        }
-        
-        return $state;
+        return $itemRef;
     }
 
     /**
@@ -596,8 +573,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
         
-        $serviceCallId = self::getItemCallId($session, $itemPosition);
-        $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $serviceCallId, $flag);
+        $itemRef = self::getItemRef($session, $itemPosition);
+        $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $itemRef, $flag);
         
         return $result;
     }
@@ -612,14 +589,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function getItemFlag(AssessmentTestSession $session, $itemPosition) {
         $result = false;
 
-        $serviceCallId = self::getItemCallId($session, $itemPosition);
-        if ($serviceCallId) {
-            $state = self::getItemState($serviceCallId);
-            if (isset($state['markForReview'])) {
-                $result = $state['markForReview'];
-            } else {
-                $result = self::getExtendedStateService()->getItemFlag($session->getSessionId(), $serviceCallId);
-            }
+        $itemRef = self::getItemRef($session, $itemPosition);
+        if ($itemRef) {
+            $result = self::getExtendedStateService()->getItemFlag($session->getSessionId(), $itemRef);
         }
         
         return $result;
