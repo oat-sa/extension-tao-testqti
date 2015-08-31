@@ -134,30 +134,32 @@ define([
                 // Disable buttons.
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    $.ajax({
-                        url: self.testContext.markForReviewUrl,
-                        cache: false,
-                        async: true,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            flag: flag,
-                            position: position
-                        },
-                        success: function(testContext) {
-                            self.setTestContext(testContext);
-                            self.updateTestReview();
-                            self.itemServiceApi.connect($controls.$itemFrame[0]);
+                $.ajax({
+                    url: self.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        flag: flag,
+                        position: position
+                    },
+                    success: function(data) {
+                        // update the item flagged state
+                        if (self.testReview) {
+                            self.testReview.setItemFlag(position, flag);
+                            if (self.testContext.itemPosition === position) {
+                                self.testContext.itemFlagged = flag;
+                            }
+                            self.updateTools(self.testContext);
+                        }                    
 
-                            // Enable buttons.
-                            self.enableGui();
+                        // Enable buttons.
+                        self.enableGui();
 
-                            //ask the top window to stop the loader
-                            iframeNotifier.parent('unloading');
-
-                        }
-                    });
+                        //ask the top window to stop the loader
+                        iframeNotifier.parent('unloading');
+                    }
                 });
             },
 

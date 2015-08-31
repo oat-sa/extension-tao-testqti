@@ -371,6 +371,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     public function markForReview() {
         $this->beforeAction();
         $testSession = $this->getTestSession();
+        $sessionId = $testSession->getSessionId();
 
         try {
             if ($this->hasRequestParameter('position')) {
@@ -389,12 +390,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 $flag = true;
             }
             taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+
+            $this->returnJson(array(
+                'success' => true,
+                'position' => $itemPosition,
+                'flag' => $flag
+            ));
         }
         catch (AssessmentTestSessionException $e) {
             $this->handleAssessmentTestSessionException($e);
         }
 
-        $this->afterAction();
+        common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
+        $this->getStorage()->persist($testSession);
     }
 
     /**
