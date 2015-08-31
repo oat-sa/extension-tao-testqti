@@ -406,26 +406,68 @@ define([
             return this;
         },
 
+
+        /**
+         * Target the element, either the button or a button in a group
+         * @param {String} [id] - the button id in case of groups
+         * @returns {jQueryElement} the target
+         */
+        _target : function _target(id){
+            var $target = this.$button;
+
+            if (id && id !== this.config.id) {
+                $target = this.$button.find('[data-control="' + id + '"]');
+            }
+            return $target;
+        },
+
         /**
          * Disables the button
+         * @param {String} [id] - the button id in case of groups
          * @returns {button}
          */
-        disable : function disable() {
-            this.$button.addClass('disabled');
+        disable : function disable(id) {
+
+            this._target(id).addClass('disabled');
 
             return this;
         },
 
         /**
          * Enables the button
+         * @param {String} [id] - the button id in case of groups
          * @returns {button}
          */
-        enable : function enable() {
-            this.$button.removeClass('disabled');
+        enable : function enable(id) {
+
+            this._target(id).removeClass('disabled');
 
             return this;
         },
 
+        /**
+         * Hide a button
+         * @param {String} [id] - the button id in case of groups
+         * @returns {button} chains
+         */
+        hide : function hide(id) {
+
+            this._target(id).hide();
+
+            return this;
+        },
+
+        /**
+         * Show a button
+         * @param {String} [id] - the button id in case of groups
+         * @returns {button} chains
+         */
+        show : function show(id) {
+
+            this._target(id).show();
+
+            return this;
+        },
         /**
          * Sets the button active state
          * @param {Boolean} active
@@ -433,13 +475,8 @@ define([
          * @returns {button}
          */
         setActive : function setActive(active, id) {
-            var $target = this.$button;
 
-            if (id && id !== this.config.id) {
-                $target = this.$button.find('[data-control="' + id + '"]');
-            }
-
-            $target.toggleClass('active', active);
+            this._target(id).toggleClass('active', active);
 
             return this;
         },
