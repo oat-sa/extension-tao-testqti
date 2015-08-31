@@ -188,7 +188,11 @@ define([
         { name : 'off', title : 'off' },
         { name : 'setup', title : 'setup' },
         { name : 'action', title : 'action' },
-        { name : 'menuAction', title : 'menuAction' }
+        { name : 'menuAction', title : 'menuAction' },
+        { name : 'enable', title : 'enable' },
+        { name : 'disable', title : 'disable' },
+        { name : 'show', title : 'show' },
+        { name : 'hide', title : 'hide' }
     ];
 
     QUnit
@@ -401,9 +405,9 @@ define([
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
 
             expectedMenuOpenState = !expectedMenuOpenState;
-            assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be ' + (expectedMenuOpenState ? 'open' : 'closed'))
-            assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'))
-            assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'))
+            assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
+            assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
+            assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'));
 
             QUnit.start();
         });
@@ -417,9 +421,9 @@ define([
             assert.equal($item.data('control'), expectedMenuConfig.id, 'The menuaction event provide the right button element');
 
             expectedMenuOpenState = !expectedMenuOpenState;
-            assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be ' + (expectedMenuOpenState ? 'open' : 'closed'))
-            assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'))
-            assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'))
+            assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
+            assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
+            assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'));
 
             QUnit.start();
         });
@@ -542,7 +546,7 @@ define([
     });
 
 
-    QUnit.asyncTest('disable/enable', function(assert) {
+    QUnit.asyncTest('enable/disable', function(assert) {
         var instance = button();
         var data = buttons[0];
         var $container = $('#button-6');
@@ -607,5 +611,35 @@ define([
 
         assert.equal(callCount, 4, 'Action can be called when button is enabled');
     });
+
+    QUnit.asyncTest('show/hide', 4, function(assert) {
+        var instance = button();
+        var data = buttons[0];
+        var $container = $('#button-7');
+        var $button;
+
+        instance.init(data.id, data.config, data.testContext, data.testRunner);
+
+        $button = instance.render();
+        $container.append($button);
+
+        assert.equal($button.length, 1, 'the button exists');
+        assert.notEqual($button.css('display'), 'none', 'the button is displayed');
+
+        instance.hide();
+
+        _.defer(function(){
+            assert.equal($button.css('display'), 'none', 'the button is hidden');
+
+            instance.show();
+
+            _.defer(function(){
+                assert.notEqual($button.css('display'), 'none', 'the button is back');
+
+                QUnit.start();
+            });
+        });
+    });
+
 
 });
