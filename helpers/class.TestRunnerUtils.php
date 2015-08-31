@@ -28,6 +28,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\TestSessionMetaData;
+use oat\taoQtiTest\models\ExtendedStateService;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -36,6 +37,24 @@ use oat\taoQtiTest\models\TestSessionMetaData;
 *
 */
 class taoQtiTest_helpers_TestRunnerUtils {
+    
+    /**
+     * temporary variable until proper servicemanager integration
+     * @var ExtendedStateService
+     */
+    private static $extendedStateService;
+
+    /**
+     * temporary helper until proper servicemanager integration
+     * @return ExtendedStateService
+     */
+    static protected function getExtendedStateService()
+    {
+        if (!isset(self::$extendedStateService)) {
+            self::$extendedStateService = new ExtendedStateService();
+        }
+        return self::$extendedStateService;
+    }
     
     /**
      * Get the ServiceCall object representing how to call the current Assessment Item to be
@@ -552,6 +571,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @throws common_exception_Error
      */
     static public function getItemState($serviceCallId) {
+        
         $state = tao_models_classes_service_StateStorage::singleton()->get(
             common_session_SessionManager::getSession()->getUserUri(),
             $serviceCallId
@@ -567,20 +587,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
-     * Sets the state of a particular item
-     * @param string $serviceCallId
-     * @param array $state
-     * @throws common_exception_Error
-     */
-    static public function setItemState($serviceCallId, $state) {
-        tao_models_classes_service_StateStorage::singleton()->set(
-            common_session_SessionManager::getSession()->getUserUri(),
-            $serviceCallId,
-            json_encode($state)
-        );
-    }
-
-    /**
      * Sets an item to be reviewed
      * @param AssessmentTestSession $session
      * @param string|Jump|RouteItem $itemPosition
@@ -589,15 +595,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @throws common_exception_Error
      */
     static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
-        $result = false;
         
         $serviceCallId = self::getItemCallId($session, $itemPosition);
-        if ($serviceCallId) {
-            $state = self::getItemState($serviceCallId);
-            $state['markForReview'] = $flag;
-            self::setItemState($serviceCallId, $state);
-            $result = true;
-        }
+        $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $serviceCallId, $flag);
         
         return $result;
     }
@@ -617,6 +617,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $state = self::getItemState($serviceCallId);
             if (isset($state['markForReview'])) {
                 $result = $state['markForReview'];
+            } else {
+                $result = self::getExtendedStateService()->getItemFlag($session->getSessionId(), $serviceCallId);
             }
         }
         
