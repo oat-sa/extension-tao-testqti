@@ -355,18 +355,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         
         foreach ($metadataMapping['injectors'] as $injector) {
             $metadataInjectors[] = new $injector();
+            \common_Logger::i("Metadata Injector '${injector}' registered.");
         }
         
         foreach ($metadataMapping['guardians'] as $guardian) {
             $metadataGuardians[] = new $guardian();
+            \common_Logger::i("Metadata Guardian '${guardian}' registered.");
         }
         
         foreach ($metadataMapping['classLookups'] as $classLookup) {
             $metadataClassLookups[] = new $classLookup();
+            \common_Logger::i("Metadata Class Lookup '{$classLookup}' registered.");
         }
         
         foreach ($metadataMapping['extractors'] as $extractor) {
             $metadataExtractor = new $extractor();
+            \common_Logger::i("Metatada Extractor '${extractor}' registered.");
             $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
         }
 
