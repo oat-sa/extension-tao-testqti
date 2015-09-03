@@ -10,19 +10,19 @@ define([
     var qtiTools = {
         tool1 : {
             'label' : 'tool 1',
-            'hook' : 'taoQtiTest/test/actionBarTools/hooks/validHook'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
         },
         tool2 : {
             'label' : 'tool 2',
-            'hook' : 'taoQtiTest/test/actionBarTools/hooks/validHookHidden'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHookHidden'
         },
         tool3 : {
             'label' : 'tool 3',
-            'hook' : 'taoQtiTest/test/actionBarTools/hooks/validHook'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
         },
         tool4 : {
             'label' : 'tool 4',
-            'hook' : 'taoQtiTest/test/actionBarTools/hooks/invalidHookMissingMethod'
+            'hook' : 'taoQtiTest/test/samples/hooks/invalidHookMissingMethod'
         }
     };
 
