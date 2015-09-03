@@ -846,13 +846,13 @@ define([
             }
         };
 
+        var config = module.config();
+        if (config) {
+            actionBarTools.register(config.qtiTools);
+        }
+
         return {
             start: function (testContext) {
-
-                var config = module.config();
-                if (config) {
-                    actionBarTools.register(config.qtiTools);
-                }
 
                 $controls = {
                     // navigation
