@@ -178,6 +178,7 @@ define([
         { name : 'unbindEvents', title : 'unbindEvents' },
         { name : 'is', title : 'is' },
         { name : 'getId', title : 'getId' },
+        { name : 'getLabel', title : 'getLabel' },
         { name : 'isVisible', title : 'isVisible' },
         { name : 'hasMenu', title : 'hasMenu' },
         { name : 'isMenuOpen', title : 'isMenuOpen' },

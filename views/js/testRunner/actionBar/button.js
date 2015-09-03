@@ -279,6 +279,14 @@ define([
         },
 
         /**
+         * Gets the button label
+         * @returns {String}
+         */
+        getLabel : function getLabel() {
+            return this.config.label;
+        },
+
+        /**
          * Tells if the button has the wanted type
          * @param {String} type
          * @returns {Boolean}
