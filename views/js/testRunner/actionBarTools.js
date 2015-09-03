@@ -104,19 +104,22 @@ define([
                 promises.push(actionBarHook.initQtiTool($container, id, toolconfig, testContext, testRunner));
             });
 
-            Promise.all(promises).then(function() {
+            Promise.all(promises).then(function(values) {
+                var tools = _.compact(values);
+
                 if (_.isFunction(callback)) {
-                    callback.call(self, $container, testContext, testRunner, self);
+                    callback.call(self, tools, $container, testContext, testRunner, self);
                 }
 
                 /**
                  * @event actionBarTools#afterrender
+                 * @param {Array} tools
                  * @param {jQuery} $container
                  * @param {Object} testContext
                  * @param {Object} testRunner
                  * @param {actionBarTools} this
                  */
-                self.trigger('afterrender', $container, testContext, testRunner, self);
+                self.trigger('afterrender', tools, $container, testContext, testRunner, self);
             });
         }
     };

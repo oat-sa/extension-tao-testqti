@@ -67,7 +67,12 @@ define([
         var mockTestRunner = {};
 
         actionBarTools.register(qtiTools);
-        actionBarTools.render($container, mockTestContext, mockTestRunner, function($ctnr, testContext, testRunner, obj) {
+        actionBarTools.render($container, mockTestContext, mockTestRunner, function(tools, $ctnr, testContext, testRunner, obj) {
+            assert.ok(_.isArray(tools), 'The render method must provide the list of tools');
+            assert.equal(tools.length, 3, 'The render method must only provide the valid tools');
+            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool2'}), 'The render method must provide the tool2 instance');
+            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool3'}), 'The render method must provide the tool3 instance');
+
             assert.strictEqual(this, actionBarTools, 'The render method fires the callback inside the actionBarTools context');
             assert.equal($ctnr && $ctnr.length, 1, 'The render method must provide a jQuery element');
             assert.ok($ctnr.is(containerSelector), 'The render method must provide the container element');
@@ -84,7 +89,7 @@ define([
     });
 
 
-    QUnit.asyncTest('events', 17, function(assert) {
+    QUnit.asyncTest('events', 21, function(assert) {
         var $container = $(containerSelector);
         var mockTestContext = {};
         var mockTestRunner = {};
@@ -108,7 +113,12 @@ define([
             assert.strictEqual(obj, actionBarTools, 'The beforerender event must provide the actionBarTools instance');
             QUnit.start();
         });
-        actionBarTools.on('afterrender', function($ctnr, testContext, testRunner, obj) {
+        actionBarTools.on('afterrender', function(tools, $ctnr, testContext, testRunner, obj) {
+            assert.ok(_.isArray(tools), 'The afterrender event must provide the list of tools');
+            assert.equal(tools.length, 3, 'The afterrender event must only provide the valid tools');
+            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool2'}), 'The afterrender event must provide the tool2 instance');
+            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool3'}), 'The afterrender event must provide the tool3 instance');
+
             assert.equal($ctnr && $ctnr.length, 1, 'The afterrender event must provide a jQuery element');
             assert.ok($ctnr.is(containerSelector), 'The afterrender event must provide the container element');
             assert.strictEqual(testContext, mockTestContext, 'The afterrender event must provide the testContext object');
