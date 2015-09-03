@@ -16,13 +16,8 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  *
  */
-define([
-    'lodash',
-    'taoQtiTest/testRunner/actionBar/button'
-], function(_, button) {
-    return button({
-        isVisible : function(){
-            return true;
-        }
-    });
+define({
+    init : function init($btn, config, assessmentTestContext){
+
+    }
 });

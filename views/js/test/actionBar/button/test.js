@@ -176,6 +176,8 @@ define([
         { name : 'bindTo', title : 'bindTo' },
         { name : 'bindEvents', title : 'bindEvents' },
         { name : 'unbindEvents', title : 'unbindEvents' },
+        { name : 'is', title : 'is' },
+        { name : 'getId', title : 'getId' },
         { name : 'isVisible', title : 'isVisible' },
         { name : 'hasMenu', title : 'hasMenu' },
         { name : 'isMenuOpen', title : 'isMenuOpen' },

@@ -273,6 +273,14 @@ define([
         },
 
         /**
+         * Gets the button identifier
+         * @returns {String}
+         */
+        getId : function getId() {
+            return this.config.id;
+        },
+
+        /**
          * Tells if the button has the wanted type
          * @param {String} type
          * @returns {Boolean}
