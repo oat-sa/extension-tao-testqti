@@ -83,6 +83,7 @@ define([
         collapsiblePanels : '.collapsible-panel',
         unseen : '.unseen',
         answered : '.answered',
+        flagged : '.flagged',
         notFlagged : ':not(.flagged)',
         notAnswered : ':not(.answered)',
         masked : '.masked'
@@ -484,6 +485,7 @@ define([
          * @param {Boolean} filtered
          */
         _updateSectionCounters: function(filtered) {
+            var self = this;
             var filter = _filterMap[filtered ? 'filtered' : 'answered'];
             this.$tree.find(_selectors.sections).each(function() {
                 var $section = $(this);
@@ -491,7 +493,7 @@ define([
                 var $filtered = $items.filter(filter);
                 var total = $items.length;
                 var nb = total - $filtered.length;
-                $section.find(_selectors.counters).html(nb + '/' + total);
+                self._writeCount($section.find(_selectors.counters), nb, total);
             });
         },
 
@@ -528,17 +530,27 @@ define([
 
         /**
          * Updates the info panel
-         * @param {Object} testContext The progression context
          */
-        _updateInfos: function(testContext) {
-            var progression = this.getProgression(testContext),
+        _updateInfos: function() {
+            var progression = this.progression,
                 unanswered = Number(progression.total) - Number(progression.answered);
 
             // update the info panel
-            this.$infoAnswered.text(progression.answered + '/' + progression.total);
-            this.$infoUnanswered.text(unanswered + '/' + progression.total);
-            this.$infoViewed.text(progression.viewed + '/' + progression.total);
-            this.$infoFlagged.text(progression.flagged + '/' + progression.total);
+            this._writeCount(this.$infoAnswered, progression.answered, progression.total);
+            this._writeCount(this.$infoUnanswered, unanswered, progression.total);
+            this._writeCount(this.$infoViewed, progression.viewed, progression.total);
+            this._writeCount(this.$infoFlagged, progression.flagged, progression.total);
+        },
+
+        /**
+         * Updates a counter
+         * @param {jQuery} $place
+         * @param {Number} count
+         * @param {Number} total
+         * @private
+         */
+        _writeCount: function($place, count, total) {
+            $place.text(count + '/' + total);
         },
 
         /**
@@ -636,7 +648,14 @@ define([
          */
         setItemFlag: function setItemFlag(position, flag) {
             var $item = position && position.jquery ? position : this.$tree.find('[data-position=' + position + ']');
+            var progression = this.progression;
+
+            // update the item flag
             this._toggleFlag($item, flag);
+
+            // update the info panel
+            progression.flagged = this.$tree.find(_selectors.flagged).length;
+            this._writeCount(this.$infoFlagged, progression.flagged, progression.total);
         },
 
         /**
@@ -659,10 +678,11 @@ define([
          * @returns {testReview}
          */
         update: function update(testContext) {
+            this.progression = this.getProgression(testContext);
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
-            this._updateDisplayOptions();
+            this._updateDisplayOptions(testContext);
             return this;
         },
 
