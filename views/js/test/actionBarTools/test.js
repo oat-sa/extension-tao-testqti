@@ -36,6 +36,9 @@ define([
 
     var actionBarToolsApi = [
         { name : 'register', title : 'register' },
+        { name : 'getRegisteredTools', title : 'getRegisteredTools' },
+        { name : 'getRegistered', title : 'getRegistered' },
+        { name : 'isRegistered', title : 'isRegistered' },
         { name : 'get', title : 'get' },
         { name : 'list', title : 'list' },
         { name : 'render', title : 'render' }
@@ -43,25 +46,29 @@ define([
 
     QUnit
         .cases(actionBarToolsApi)
-        .test('module API ', function(data, assert) {
+        .test('module API ', 1, function(data, assert) {
             assert.equal(typeof actionBarTools[data.name], 'function', 'The actionBarTools module exposes a "' + data.title + '" function');
         });
 
 
-    QUnit.test('register', function(assert) {
+    QUnit.test('register', 8, function(assert) {
         actionBarTools.register(null);
-        assert.equal(typeof actionBarTools.list(), 'object', 'The actionBarTools must provide a list');
-        assert.ok(actionBarTools.list(), 'The actionBarTools must provide a list');
+        assert.equal(typeof actionBarTools.getRegisteredTools(), 'object', 'The actionBarTools.getRegisteredTools() method  must provide a list, even if no list is provided');
+        assert.equal(_.values(actionBarTools.getRegisteredTools()).length, 0, 'The actionBarTools.getRegisteredTools() method must provide an empty list of registered configs when not list is provided');
 
         actionBarTools.register(qtiTools);
-        assert.strictEqual(actionBarTools.list(), qtiTools, 'The actionBarTools must provide the registered list');
+        assert.strictEqual(actionBarTools.getRegisteredTools(), qtiTools, 'The actionBarTools.getRegisteredTools() method must provide the registered list');
 
-        assert.strictEqual(actionBarTools.get('tool1'), qtiTools.tool1, 'The actionBarTools.get() method must return the right tool');
-        assert.ok(!actionBarTools.get('notExist'), 'The actionBarTools.get() method cannot return an unknown tool');
+        assert.strictEqual(actionBarTools.getRegistered('tool1'), qtiTools.tool1, 'The actionBarTools.getRegistered() method must return the right tool config');
+        assert.ok(!actionBarTools.getRegistered('notExist'), 'The actionBarTools.getRegistered() method cannot return an unknown tool');
+
+        assert.ok(_.isArray(actionBarTools.list()), 'The actionBarTools.list() method must return a list, even if no tool is rendered');
+        assert.equal(actionBarTools.list().length, 0, 'The actionBarTools.list() method must return an empty list when no tool is rendered');
+        assert.ok(!actionBarTools.get('tool1'), 'No tool is rendered before the actionBarTools.render() method is called');
     });
 
 
-    QUnit.asyncTest('render', function(assert) {
+    QUnit.asyncTest('render', 17, function(assert) {
         var $container = $(containerSelector);
         var mockTestContext = {};
         var mockTestRunner = {};
@@ -83,6 +90,11 @@ define([
             assert.equal($container.find('.action').length, 2, 'The render method must renders the buttons');
             assert.equal($container.find('[data-control="tool1"]').length, 1, 'The render method must renders the tool1 button');
             assert.equal($container.find('[data-control="tool3"]').length, 1, 'The render method must renders the tool3 button');
+
+            assert.ok(_.isArray(actionBarTools.list()), 'The actionBarTools.list() method must return a list');
+            assert.equal(actionBarTools.list().length, 2, 'The actionBarTools.list() method must return a filled list when tools are rendered');
+            assert.ok(actionBarTools.get('tool2'), 'The tool tool2 must exist');
+            assert.ok(actionBarTools.get('tool3'), 'The tool tool3 must exist');
 
             QUnit.start();
         });

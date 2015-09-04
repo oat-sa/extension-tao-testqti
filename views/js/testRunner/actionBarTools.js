@@ -31,6 +31,12 @@ define([
      * The list of registered actionBar tools
      * @type {Object}
      */
+    var registeredQtiTools;
+
+    /**
+     * The list of actionBar tools instances
+     * @type {Object}
+     */
     var qtiTools;
 
     /**
@@ -52,7 +58,7 @@ define([
              */
             this.trigger('beforeregister', registerTools, this);
 
-            qtiTools = registerTools;
+            registeredQtiTools = registerTools;
 
             /**
              * @event actionBarTools#afterregister
@@ -60,6 +66,32 @@ define([
              * @param {actionBarTools} this
              */
             this.trigger('afterregister', registerTools, this);
+        },
+
+        /**
+         * Gets the list of registered tools
+         * @returns {Object}
+         */
+        getRegisteredTools : function getRegisteredTools() {
+            return registeredQtiTools || {};
+        },
+
+        /**
+         * Gets a particular tool config
+         * @param {String} id
+         * @returns {Object}
+         */
+        getRegistered : function getRegistered(id) {
+            return registeredQtiTools && registeredQtiTools[id];
+        },
+
+        /**
+         * Checks if a particular tool is registered
+         * @param {String} id
+         * @returns {Boolean}
+         */
+        isRegistered : function isRegistered(id) {
+            return !!(registeredQtiTools && registeredQtiTools[id]);
         },
 
         /**
@@ -72,11 +104,11 @@ define([
         },
 
         /**
-         * Gets the list of registered tools
-         * @returns {Object}
+         * Gets the list of tools instances
+         * @returns {Array}
          */
         list : function list() {
-            return qtiTools || {};
+            return _.values(qtiTools || {});
         },
 
         /**
@@ -100,12 +132,20 @@ define([
              */
             this.trigger('beforerender', $container, testContext, testRunner, this);
 
-            _.forIn(this.list(), function(toolconfig, id){
+            _.forIn(this.getRegisteredTools(), function(toolconfig, id){
                 promises.push(actionBarHook.initQtiTool($container, id, toolconfig, testContext, testRunner));
             });
 
             Promise.all(promises).then(function(values) {
-                var tools = _.compact(values);
+                var tools = [];
+                qtiTools = {};
+
+                _.forEach(values, function(tool) {
+                    if (tool) {
+                        tools.push(tool);
+                        qtiTools[tool.getId()] = tool;
+                    }
+                });
 
                 if (_.isFunction(callback)) {
                     callback.call(self, tools, $container, testContext, testRunner, self);
