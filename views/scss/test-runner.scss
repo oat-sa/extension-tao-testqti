@@ -94,7 +94,7 @@
                     padding: 0;
 
                     position: absolute;
-                    bottom: 24px;
+                    bottom: 30px;
                     left: 0;
 
                     .action {
@@ -106,6 +106,9 @@
                         color: $textColor;
                         margin: 0;
                         @include border-radius(0);
+                        height: 32px;
+                        padding: 6px 15px;
+                        line-height: 1;
 
                         &.selected {
                             background-color: whiten($info, .2);
@@ -133,6 +136,9 @@
 
             &.bottom-action-bar {
                 overflow: visible;
+                .action {
+                    line-height: 1.6;
+                }
             }
             &.has-timers {
                 height: 47px;
