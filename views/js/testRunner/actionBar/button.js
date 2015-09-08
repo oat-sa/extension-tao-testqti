@@ -80,7 +80,7 @@ define([
 
             this.assumeType();
 
-            if (!this.config.title && this.config.label) {
+            if (!this.config.title && this.config.label && this.is('button')) {
                 this.config.title = this.config.label;
             }
 
@@ -136,8 +136,6 @@ define([
             this.config.is.group = true;
             this.config.is.button = false;
             this.config.title = '';
-            this.config.label = '';
-            this.config.icon = '';
         },
 
         /**
@@ -270,6 +268,22 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Gets the button identifier
+         * @returns {String}
+         */
+        getId : function getId() {
+            return this.config.id;
+        },
+
+        /**
+         * Gets the button label
+         * @returns {String}
+         */
+        getLabel : function getLabel() {
+            return this.config.label;
         },
 
         /**

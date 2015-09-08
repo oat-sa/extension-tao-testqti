@@ -14,7 +14,7 @@ define([
     var tools = [{
         tool : {
             'label' : 'tool 1',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
         },
         title : 'valid tool',
         expected : true
@@ -22,12 +22,12 @@ define([
         tool : {
             'title' : 'my tool 1 does amazing stuff',
             'label' : 'tool 1',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
         },
         title : 'valid tool',
         expected : true
     }, {
-        tool : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+        tool : 'taoQtiTest/test/samples/hooks/validHook',
         title : 'invalid tool',
         expected : false
     }, {
@@ -40,28 +40,28 @@ define([
     }, {
         tool : {
             'title' : 'my tool 1 does amazing stuff',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
         },
         title : 'valid tool',
         expected : true
     }, {
         tool : {
             'label' : 'tool X',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/invalidHookMissingMethod'
+            'hook' : 'taoQtiTest/test/samples/hooks/invalidHookMissingMethod'
         },
         title : 'valid tool',
         expected : true
     }, {
         tool : {
             'label' : 'tool X',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/noexisting'
+            'hook' : 'taoQtiTest/test/samples/hooks/noexisting'
         },
         title : 'valid tool',
         expected : true
     }, {
         tool : {
             'label' : 'hidden tool',
-            'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHookHidden'
+            'hook' : 'taoQtiTest/test/samples/hooks/validHookHidden'
         },
         title : 'valid tool',
         expected : true
@@ -170,60 +170,60 @@ define([
             {
                 'title' : 'tool A in position 1',
                 'label' : 'tool A',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 1
             },
             {
                 'title' : 'tool B in position 2',
                 'label' : 'tool B',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 2
             },
             {
                 'title' : 'tool A1 in position 1',
                 'label' : 'tool A1',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 1
             },
             {
                 'title' : 'tool C in position -1',
                 'label' : 'tool C',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : -1
             },
             {
                 'title' : 'tool D in position 0',
                 'label' : 'tool D',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 0
             },
             {
                 'title' : 'tool B2 in position 2',
                 'label' : 'tool B2',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 2
             },
             {
                 'title' : 'tool AX in invalid position',
                 'label' : 'tool AX',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 'X'
             },
             {
                 'title' : 'tool AY in unknown position',
                 'label' : 'tool AY',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook'
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook'
             },
             {
                 'title' : 'tool E in first position',
                 'label' : 'tool E',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 'first'
             },
             {
                 'title' : 'tool F in last position',
                 'label' : 'tool F',
-                'hook' : 'taoQtiTest/test/actionBarHook/hooks/validHook',
+                'hook' : 'taoQtiTest/test/samples/hooks/validHook',
                 'order' : 'last'
             }
         ];

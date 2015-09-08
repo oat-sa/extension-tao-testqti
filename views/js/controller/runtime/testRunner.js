@@ -21,7 +21,7 @@ define([
     'jquery',
     'lodash',
     'module',
-    'taoQtiTest/testRunner/actionBarHook',
+    'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
     'taoQtiTest/testRunner/progressUpdater',
     'serviceApi/ServiceApi',
@@ -37,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -152,7 +152,7 @@ define([
                                 self.testContext.itemFlagged = flag;
                             }
                             self.updateTools(self.testContext);
-                        }                    
+                        }
 
                         // Enable buttons.
                         self.enableGui();
@@ -267,15 +267,15 @@ define([
                     self.exitSection(action, params);
                 });
             },
-            
+
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
             },
-            
+
             /**
              * Tells is the current item has been answered or not
              * The item is considered answered when at least one response has been set to not empty {base : null}
-             * 
+             *
              * @returns {Boolean}
              */
             isCurrentItemAnswered: function(){
@@ -288,7 +288,7 @@ define([
                 });
                 return answered;
             },
-            
+
             getQtiRunner: function(){
                 var itemWindow, itemContainerWindow;
 
@@ -297,7 +297,7 @@ define([
 
                 return itemContainerWindow.qtiRunner;
             },
-            
+
             isTimedSection: function(){
                 var timeConstraints = this.testContext.timeConstraints,
                     isTimedSection = false;
@@ -354,13 +354,13 @@ define([
                         testContext = self.testContext,
                         confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
                         metaData = {};
-                        
+
                     if (testContext.numberCompletedSection === testContext.numberItemsSection) {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
                     } else {
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
                     }
-                    
+
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
@@ -427,7 +427,7 @@ define([
                 this.updateTimer();
                 this.updateExitButton();
                 this.resetCurrentItemState();
-                
+
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
                 iframeResizer.autoHeight($controls.$itemFrame, 'body');
@@ -462,10 +462,6 @@ define([
             },
 
             updateTools: function updateTools(testContext) {
-
-				var $toolsContainer,
-                    config = module.config();
-
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         $controls.$skip.show();
@@ -481,12 +477,7 @@ define([
                     $controls.$skipEnd.hide();
                 }
 
-                if(config && config.qtiTools){
-                    $toolsContainer = $('.tools-box-list');
-                    _.forIn(config.qtiTools, function(toolconfig, id){
-                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext, TestRunner);
-                    });
-                }
+                actionBarTools.render('.tools-box-list', testContext, TestRunner);
             },
 
             createTimer: function(cst) {
@@ -691,13 +682,13 @@ define([
                 $controls.$position.text(' - ' + this.testContext.sectionTitle);
                 $controls.$titleGroup.show();
             },
-            
+
             updateExitButton : function(){
-                
+
                 $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
                 $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
             },
-            
+
             adjustFrame: function () {
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
@@ -796,7 +787,7 @@ define([
             exit: function () {
                 var self = this,
                     $confirmBox = $('.exit-modal-feedback'),
-                    testProgression = TestRunner.testReview ? 
+                    testProgression = TestRunner.testReview ?
                         TestRunner.testReview.getProgression(self.testContext) : {
                             total : self.testContext.numberItems,
                             answered : self.testContext.numberCompleted,
@@ -829,7 +820,7 @@ define([
 
             /**
              * Set the state of the current item in the test runner
-             * 
+             *
              * @param {string} id
              * @param {object} state
              */
@@ -854,6 +845,11 @@ define([
                 return this.currentItemState;
             }
         };
+
+        var config = module.config();
+        if (config) {
+            actionBarTools.register(config.qtiTools);
+        }
 
         return {
             start: function (testContext) {
@@ -900,7 +896,7 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-                
+
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
@@ -1011,7 +1007,7 @@ define([
 
                 deleter($('#feedback-box'));
                 modal($('body'));
-                
+
                 //listen to state change in the current item
                 $(document).on('responsechange', function(e, responseId, response){
                     if(responseId && response){
@@ -1022,7 +1018,7 @@ define([
                         TestRunner.setCurrentItemState(id, state);
                     }
                 });
-                
+
             }
         };
     });

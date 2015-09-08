@@ -20,9 +20,9 @@ define([
     'lodash',
     'taoQtiTest/testRunner/actionBar/button'
 ], function(_, button) {
-    return _.assign(button(), {
+    return button({
         isVisible : function(){
-            return true;
+            return false;
         }
     });
 });

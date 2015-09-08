@@ -24,8 +24,9 @@
 define([
     'jquery',
     'lodash',
-    'core/errorHandler'
-], function ($, _, errorHandler) {
+    'core/errorHandler',
+    'core/promise'
+], function ($, _, errorHandler, Promise) {
 
     'use strict';
 
@@ -103,7 +104,7 @@ define([
      * @param {Object} testContext - the complete state of the test
      * @param {Object} testRunner - the test runner instance
      * @fires ready.actionBarHook when the hook has been initialized
-     * @returns {undefined}
+     * @returns {Promise}
      */
     function initQtiTool($toolsContainer, id, toolconfig, testContext, testRunner) {
 
@@ -117,55 +118,61 @@ define([
             };
         }
 
-        if (isValidConfig(toolconfig)) {
+        return new Promise(function(resolve) {
+            if (isValidConfig(toolconfig)) {
 
-            require([toolconfig.hook], function (hook) {
+                require([toolconfig.hook], function (hook) {
 
-                var $button;
-                var $existingBtn;
+                    var $button;
+                    var $existingBtn;
 
-                if (isValidHook(hook)) {
-                    //init the control
-                    hook.init(id, toolconfig, testContext, testRunner);
+                    if (isValidHook(hook)) {
+                        //init the control
+                        hook.init(id, toolconfig, testContext, testRunner);
 
-                    //if an instance of the tool is already attached, remove it:
-                    $existingBtn = $toolsContainer.children('[data-control="' + id + '"]');
-                    if ($existingBtn.length) {
-                        hook.clear($existingBtn);
-                        $existingBtn.remove();
-                    }
-
-                    //check if the tool is to be available
-                    if (hook.isVisible()) {
-                        //keep access to the tool
-                        tools[id] = hook;
-
-                        // renders the button from the config
-                        $button = hook.render();
-
-                        //only attach the button to the dom when everything is ready
-                        _appendInOrder($toolsContainer, $button);
-
-                        //ready !
-                        $button.trigger('ready' + _ns, [hook]);
-
-                        //fires the itemLoaded event if the item has already been loaded
-                        if (itemIsLoaded) {
-                            triggerItemLoaded(hook);
+                        //if an instance of the tool is already attached, remove it:
+                        $existingBtn = $toolsContainer.children('[data-control="' + id + '"]');
+                        if ($existingBtn.length) {
+                            hook.clear($existingBtn);
+                            $existingBtn.remove();
                         }
+
+                        //check if the tool is to be available
+                        if (hook.isVisible()) {
+                            //keep access to the tool
+                            tools[id] = hook;
+
+                            // renders the button from the config
+                            $button = hook.render();
+
+                            //only attach the button to the dom when everything is ready
+                            _appendInOrder($toolsContainer, $button);
+
+                            //ready !
+                            $button.trigger('ready' + _ns, [hook]);
+
+                            //fires the itemLoaded event if the item has already been loaded
+                            if (itemIsLoaded) {
+                                triggerItemLoaded(hook);
+                            }
+                        }
+
+                        resolve(hook);
+                    } else {
+                        errorHandler.throw(_ns, 'invalid hook format');
+                        resolve(null);
                     }
 
-                } else {
-                    errorHandler.throw(_ns, 'invalid hook format');
-                }
-            }, function (e) {
-                errorHandler.throw(_ns, 'the hook amd module cannot be found');
-            });
+                }, function (e) {
+                    errorHandler.throw(_ns, 'the hook amd module cannot be found');
+                    resolve(null);
+                });
 
-        } else {
-            errorHandler.throw(_ns, 'invalid tool config format');
-        }
-
+            } else {
+                errorHandler.throw(_ns, 'invalid tool config format');
+                resolve(null);
+            }
+        });
     }
 
     /**
