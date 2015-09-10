@@ -613,7 +613,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * Action called when a QTI Item embedded in a QTI Test submit responses.
 	 * 
 	 */
-	public function storeItemVariableSet() {
+	public function storeItemVariableSet()
+	{
 	    $this->beforeAction();
 	    
 	    // --- Deal with provided responses.
@@ -633,21 +634,25 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    
 	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
 	    
-	    foreach ($jsonPayload as $id => $response) {
-	        try {
-	            $var = $filler->fill($id, $response);
-	            // Do not take into account QTI File placeholders.
-	            if (taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
-	                $responses->setVariable($var);
-	            }
-	        }
-	        catch (OutOfRangeException $e) {
-	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
-	        }
-	        catch (OutOfBoundsException $e) {
-	            common_Logger::d("Could not find variable with identifier '${id}' in current item.");
-	        }
-	    }
+        if (is_array($jsonPayload)) {
+    	    foreach ($jsonPayload as $id => $response) {
+    	        try {
+    	            $var = $filler->fill($id, $response);
+    	            // Do not take into account QTI File placeholders.
+    	            if (taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
+    	                $responses->setVariable($var);
+    	            }
+    	        }
+    	        catch (OutOfRangeException $e) {
+    	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
+    	        }
+    	        catch (OutOfBoundsException $e) {
+    	            common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+    	        }
+    	    }
+        } else {
+            common_Logger::e('Invalid json payload');
+        }
 	    
 	    $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
 	    $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
