@@ -20,8 +20,8 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 
-'taoQtiTest/controller/creator/views/property'], 
+'jquery',
+'taoQtiTest/controller/creator/views/property'],
 function($, propertyView){
     'use strict';
 
@@ -35,7 +35,7 @@ function($, propertyView){
      * @param {String} template - the name of the template to give to the propertyView
      * @param {Object} model - the model to bind
      * @param {PropertyViewCallback} cb - execute at view setup phase
-     */ 
+     */
     function properties ($container, template, model, cb) {
         var propView = null;
         $container.find('.property-toggler').on('click', function(e){
@@ -52,7 +52,7 @@ function($, propertyView){
 
                     propView = propertyView(template, model);
                     propView.open();
-                    
+
                     propView.onOpen(function(){
                         $container.addClass(activeClass);
                         $elt.addClass(btnOnClass);
@@ -65,9 +65,9 @@ function($, propertyView){
                     if(typeof cb === 'function'){
                         cb(propView);
                     }
-                } else { 
+                } else {
                     propView.toggle();
-                } 
+                }
             }
         });
     }
@@ -77,29 +77,27 @@ function($, propertyView){
      * Enable to move an element
      * @param {jQueryElement} $actionContainer - where the mover is
      * @param {String} containerClass - the cssClass of the element container
-     * @param {String} elementClass - the cssClass to identify elements 
-     */ 
+     * @param {String} elementClass - the cssClass to identify elements
+     */
     function move ($actionContainer, containerClass, elementClass) {
         var $element = $actionContainer.parents('.' + elementClass);
-        var $container = $element.parents('.' + containerClass ); 
-   
+        var $container = $element.parents('.' + containerClass );
+
         //move up an element
         $('.move-up', $actionContainer).click(function(e){
             var $elements, index;
-    
+
             //prevent default and click during animation
             e.preventDefault();
             if($element.is(':animated')){
                 return false;
             }
-    
+
             //get the position
             $elements = $('.' + elementClass, $container);
-            console.log($elements.length);
             index = $elements.index($element);
             if (index > 0) {
                 $element.fadeOut(200, function(){
-                    console.log('.' + elementClass + ' :eq(' + (index - 1) + ')');
                     $element
                         .insertBefore($('.' + elementClass + ' :eq(' + (index - 1) + ')', $container))
                         .fadeIn(400, function(){
@@ -112,7 +110,7 @@ function($, propertyView){
         //move down an element
         $('.move-down', $actionContainer).click(function(e){
             var $elements, index;
-    
+
             //prevent default and click during animation
             e.preventDefault();
             if($element.is(':animated')){
@@ -121,11 +119,8 @@ function($, propertyView){
 
             //get the position
             $elements = $('.' + elementClass, $container);
-            console.log($elements.length);
             index = $elements.index($element);
             if (index < ($elements.length - 1) && $elements.length > 1) {
-
-                console.log('.' + elementClass + ' :eq(' + (index + 1) + ')');
                 $element.fadeOut(200, function(){
                     $element
                         .insertAfter($('.' + elementClass + ' :eq(' + (index + 1) + ')', $container))
@@ -136,13 +131,13 @@ function($, propertyView){
             }
         });
     }
-   
+
     /**
      * Update the movable state of an element
-     * @param {jQueryElement} $container - the movable elements (scopped) 
-     * @param {String} elementClass - the cssClass to identify elements 
-     * @param {String} actionContainerElt - the element name that contains the actions 
-     */ 
+     * @param {jQueryElement} $container - the movable elements (scopped)
+     * @param {String} elementClass - the cssClass to identify elements
+     * @param {String} actionContainerElt - the element name that contains the actions
+     */
     function movable ($container, elementClass, actionContainerElt){
         $container.each(function(){
             var $elt = $(this);
@@ -151,8 +146,8 @@ function($, propertyView){
             var index = $container.index($elt);
             var $moveUp = $('.move-up', $actionContainer);
             var $moveDown = $('.move-down', $actionContainer);
-            
-            //only one test part, no moving               
+
+            //only one test part, no moving
             if( $container.length === 1 ){
                 $moveUp.addClass(disabledClass);
                 $moveDown.addClass(disabledClass);
@@ -166,7 +161,7 @@ function($, propertyView){
             } else if ( index >= ($container.length - 1) ) {
                 $moveDown.addClass(disabledClass);
                 $moveUp.removeClass(disabledClass);
-            
+
             //or enable moving top/bottom
             } else {
                 $moveUp.removeClass(disabledClass);
@@ -178,8 +173,8 @@ function($, propertyView){
     /**
      * Update the removable state of an element
      * @param {jQueryElement} $container - that contains the removable action
-     * @param {String} actionContainerElt - the element name that contains the actions 
-     */ 
+     * @param {String} actionContainerElt - the element name that contains the actions
+     */
     function removable ($container, actionContainerElt){
         $container.each(function(){
             var $elt = $(this);
@@ -197,24 +192,24 @@ function($, propertyView){
     /**
      * Disable all the actions of the target
      * @param {jQueryElement} $container - that contains the the actions
-     * @param {String} actionContainerElt - the element name that contains the actions 
-     */ 
+     * @param {String} actionContainerElt - the element name that contains the actions
+     */
     function disable($container, actionContainerElt){
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);    
-    }
-    
-    /**
-     * Enable all the actions of the target
-     * @param {jQueryElement} $container - that contains the the actions
-     * @param {String} actionContainerElt - the element name that contains the actions 
-     */ 
-    function enable($container, actionContainerElt){
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);    
+        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
     }
 
     /**
-     * The actions gives you shared behavior for some actions. 
-     * 
+     * Enable all the actions of the target
+     * @param {jQueryElement} $container - that contains the the actions
+     * @param {String} actionContainerElt - the element name that contains the actions
+     */
+    function enable($container, actionContainerElt){
+        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
+    }
+
+    /**
+     * The actions gives you shared behavior for some actions.
+     *
      * @exports taoQtiTest/controller/creator/views/actions
      */
     return {
