@@ -50,24 +50,21 @@ class taoQtiTest_actions_TestCommand extends \tao_actions_ServiceModule
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
             
-            $subjectProp = new \core_kernel_classes_Property(PROPERTY_DELVIERYEXECUTION_SUBJECT);
-            $delvieryExecutionSubject = $deliveryExecution->getOnePropertyValue($subjectProp);
-            
             $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
             
             $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
                 $sessionManager, 
                 new BinaryAssessmentTestSeeker($testDefinition), 
-                $delvieryExecutionSubject->getUri()
+                $deliveryExecution->getUserIdentifier()
             );
             
-            $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getUri());
+            $session = $qtiStorage->retrieve($testDefinition, $deliveryExecution->getIdentifier());
             $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
             $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
             
             $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
             $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
-            $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getUri());
+            $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getIdentifier());
             
             if ($session->isRunning() === false) {
                 continue;
