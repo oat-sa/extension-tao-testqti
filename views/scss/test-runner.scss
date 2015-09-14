@@ -50,13 +50,40 @@
         &.horizontal-action-bar {
             opacity: 0;
 
-            .progress-box, .timer-box, .title-box {
-                padding-top: 4px
+            .title-box {
+                padding-top: 4px;
+                overflow: hidden;
+                white-space: nowrap;
+                max-width: 100%;
+            }
+            .progress-box, .timer-box, .item-number-box {
+                padding-top: 4px;
+                display: inline-block;
+                vertical-align: top;
+                float: right;
             }
             .progressbar {
                 margin-top: 5px;
                 min-width: 150px;
                 height: 0.6em;
+            }
+            &.top-action-bar > .control-box {
+                position: relative;
+                & .control-box-group {
+                    position: absolute;
+                    top: 0;
+                    right: -5px;
+                    padding-right: 5px;
+
+                    background: -moz-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
+                    background: -webkit-gradient(linear, left top, right top, color-stop(0%, transparent), color-stop(30px, whiten($info, .1)));
+                    background: -webkit-linear-gradient(left,  transparent 0%,whiten($info, .1) 30px);
+                    background: -o-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
+                    background: -ms-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
+                    background: linear-gradient(to right,  transparent 0%, whiten($info, .1) 30px);
+                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00266d9c', endColorstr='#266d9c',GradientType=1 );
+
+                }
             }
             & > .control-box {
                 color: white(.9);
