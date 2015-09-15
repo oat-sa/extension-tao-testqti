@@ -20,14 +20,17 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery', 'lodash', 'uri',
+    'jquery',
+    'lodash',
+    'uri',
+    'i18n',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
-function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
+function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
     'use strict';
 
    /**
@@ -42,7 +45,7 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
         var $actionContainer = $('h2', $section);
 
-
+        console.log('setup section', model);
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();
@@ -60,35 +63,37 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
         function propHandler (propView) {
 
             var $view = propView.getView();
+            var $category = $('[name=section-category]', $view);
+            var _categories = {};
+            
+            //enable/disable selection
+            var $selectionSwitcher = $('[name=section-enable-selection]', $view);
+            var $selectionSelect = $('[name=section-select]', $view);
+            var $selectionWithRep = $('[name=section-with-replacement]', $view);
 
-           //enable/disable selection
-           var $selectionSwitcher = $('[name=section-enable-selection]', $view);
-           var $selectionSelect = $('[name=section-select]', $view);
-           var $selectionWithRep = $('[name=section-with-replacement]', $view);
+            var switchSelection = function switchSelection(){
+                 if($selectionSwitcher.prop('checked') === true){
+                    $selectionSelect.incrementer('enable');
+                    $selectionWithRep.removeClass('disabled');
+                 } else {
+                    $selectionSelect.incrementer('disable');
+                    $selectionWithRep.addClass('disabled');
+                 }
+            };
+            $selectionSwitcher.on('change', switchSelection);
+            $selectionSwitcher.on('change', function updateModel(){
+                 if(!$selectionSwitcher.prop('checked')){
+                     $selectionSelect.val(0);
+                     $selectionWithRep.prop('checked', false);
+                     delete model.selection;
+                 }
+            });
 
-           var switchSelection = function switchSelection(){
-                if($selectionSwitcher.prop('checked') === true){
-                   $selectionSelect.incrementer('enable');
-                   $selectionWithRep.removeClass('disabled');
-                } else {
-                   $selectionSelect.incrementer('disable');
-                   $selectionWithRep.addClass('disabled');
-                }
-           };
-           $selectionSwitcher.on('change', switchSelection);
-           $selectionSwitcher.on('change', function updateModel(){
-                if(!$selectionSwitcher.prop('checked')){
-                    $selectionSelect.val(0);
-                    $selectionWithRep.prop('checked', false);
-                    delete model.selection;
-                }
-           });
+            $selectionSwitcher.prop('checked', !!model.selection).trigger('change');
 
-           $selectionSwitcher.prop('checked', !!model.selection).trigger('change');
-
-           //listen for databinder change to update the test part title
-           var $title =  $('[data-bind=title]', $section);
-           $view.on('change.binder', function(e, model){
+            //listen for databinder change to update the test part title
+            var $title =  $('[data-bind=title]', $section);
+            $view.on('change.binder', function(e, model){
                 if(e.namespace === 'binder' && model['qti-type'] === 'assessmentSection'){
                     $title.text(model.title);
                 }
@@ -96,14 +101,44 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
 
             $section.parents('.testpart').on('deleted.deleter', removePropHandler);
             $section.on('deleted.deleter', removePropHandler);
-
+            
+            //section level category configuration
+            $category.val('AAA,BBB,CDFRE');
+            categoriesProperty($category);
+            $category.on('change', function(e){
+                console.log('cat change', arguments);
+                var values = e.val;
+                
+                //set categories to items
+                _.each(values, function(value){
+                    //only new category need to be assigned to itemrefs
+                    if(true){
+                        console.log('assign to ', value, model);
+                    }
+                });
+            });
+            _.delay(function(){
+                $category.select2('val', ['EE', 'RR']);
+            },1000);
+            $view.on('propopen.propview', function(){
+                console.log('prop')
+            });
+            
+            function initCategories(){
+                _categories = getCategories();
+            }
+            
+            function setCategories(categories){
+                _categories
+            }
+            
             function removePropHandler(){
                 if(propView !== null){
                     propView.destroy();
                 }
             }
         }
-
+        
         /**
          * Set up the item refs that already belongs to the section
          * @private
@@ -147,8 +182,12 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                         //prepare the item data 
                         var defaultItemData = {};
                         if(model.itemSessionControl && !_.isUndefined(model.itemSessionControl.maxAttempts)){
+                            
                             //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
                             defaultItemData.itemSessionControl = _.clone(model.itemSessionControl);
+                            
+                            //the itemRef should also "inherit" the categories set at the item level
+                            
                         }
                         
                         _.forEach(selection, function(item){
@@ -263,6 +302,24 @@ function($, _, uri, actions, itemRefView, rubricBlockView, templates, qtiTestHel
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
                 }
+            });
+        }
+        
+        /**
+         * Set up the category property
+         * @private
+         * @param {jQueryElement} $select - the select box to set up
+         */
+        function categoriesProperty($select){
+            $select.select2({
+                width: '100%',
+                tags : [],
+                multiple : true,
+                tokenSeparators: [",", " ", ";"],
+                formatNoMatches : function(){
+                    return __('Enter a category');
+                },
+                maximumInputLength : 32
             });
         }
    };
