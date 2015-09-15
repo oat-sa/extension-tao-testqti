@@ -360,6 +360,7 @@ define([
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
                     }
 
+                    self.enableGui();
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
