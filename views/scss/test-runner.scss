@@ -75,14 +75,7 @@
                     right: -5px;
                     padding-right: 5px;
 
-                    background: -moz-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
-                    background: -webkit-gradient(linear, left top, right top, color-stop(0%, transparent), color-stop(30px, whiten($info, .1)));
-                    background: -webkit-linear-gradient(left,  transparent 0%,whiten($info, .1) 30px);
-                    background: -o-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
-                    background: -ms-linear-gradient(left,  transparent 0%, whiten($info, .1) 30px);
-                    background: linear-gradient(to right,  transparent 0%, whiten($info, .1) 30px);
-                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00266d9c', endColorstr='#266d9c',GradientType=1 );
-
+                    @include linear-gradient((transparent 0, whiten($info, .1) 30px));
                 }
             }
             & > .control-box {
