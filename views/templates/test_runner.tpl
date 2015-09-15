@@ -35,7 +35,7 @@ use oat\tao\helpers\Layout;
 <div class="section-container">
     <div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft title-box">
+            <div class="lft title-box truncate">
                 <span data-control="qti-test-title" class="qti-controls"></span>
                 <span data-control="qti-test-position" class="qti-controls"></span>
             </div>

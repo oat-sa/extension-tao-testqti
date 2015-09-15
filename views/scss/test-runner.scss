@@ -55,6 +55,7 @@
                 overflow: hidden;
                 white-space: nowrap;
                 max-width: 100%;
+                display: none;
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
@@ -67,15 +68,13 @@
                 min-width: 150px;
                 height: 0.6em;
             }
+            .timer-box {
+                padding-top: 0;
+            }
             &.top-action-bar > .control-box {
-                position: relative;
                 & .control-box-group {
-                    position: absolute;
-                    top: 0;
-                    right: -5px;
-                    padding-right: 5px;
-
-                    @include linear-gradient((transparent 0, whiten($info, .1) 30px));
+                    display: inline-block;
+                    float: right;
                 }
             }
             & > .control-box {
