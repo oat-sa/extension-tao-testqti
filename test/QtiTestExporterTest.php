@@ -180,8 +180,11 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testExportFormSubmit($testExport, $form)
     {
-        $file = $testExport->export($form->getValues(), $this->outputDir);
+        $report = $testExport->export($form->getValues(), $this->outputDir);
 
+        $this->assertInstanceOf('common_report_Report', $report);
+        $file = $report->getData();
+        
         $this->assertInternalType('string', $file);
         $this->assertFileExists($file);
         $this->assertStringStartsWith($this->outputDir, $file);
