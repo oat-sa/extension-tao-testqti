@@ -62,9 +62,9 @@ define([
             var partial = _.without.apply(null, _argsWithout);
             
             return {
-                all : union,
-                propagated : propagated,
-                partial : partial
+                all : union.sort(),
+                propagated : propagated.sort(),
+                partial : partial.sort()
             };
         }else{
             errorHandler.throw(_ns, 'invalid tool config format');
@@ -102,7 +102,7 @@ define([
         isValidSectionModel : isValidSectionModel,
         setCategories : setCategories,
         getCategories : getCategories,
-        propagateCategories : addCategories,
+        addCategories : addCategories,
         removeCategories : removeCategories
     };
 });
