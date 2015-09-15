@@ -242,9 +242,9 @@ define([
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
+                this.enableGui();
 
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
-                    self.enableGui();
                     $confirmBox.modal('close');
                 });
 
