@@ -48,5 +48,12 @@ define([
         }));
         
     });
-
+    
+    QUnit.test('getCategories', function(assert){
+       
+       var categories = sectionCategory.getCategories(_sectionModel);
+       assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
+       assert.deepEqual(categories.propagated, ['A', 'B'], 'propagated categories found');
+       assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
+    });
 });
