@@ -85,12 +85,23 @@ define([
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
-
+    
+    /**
+     * 
+     * @param {object} model
+     * @param {array} categories
+     */
     function removeCategories(model, categories){
         if(isValidSectionModel(model)){
             _.each(model.sectionParts, function (itemRef){
                 if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
-                    _.pull(itemRef.categories, [categories]);
+                    
+                    console.log(_(itemRef.categories));
+                    console.log(_.pull.apply(itemRef.categories, categories));
+                    
+                    var pullArgs = _.clone(categories);
+                    pullArgs.unshift(itemRef.categories);
+                    _.pull.apply(null, pullArgs);
                 }
             });
         }else{
