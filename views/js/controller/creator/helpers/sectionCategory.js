@@ -32,9 +32,9 @@ define([
 
         var oldCategories = getCategories(model);
         //the categories that are no longer in the new list of categories should be removed
-        var removed = _.without(oldCategories.all, categories);
+        var removed = _.without(oldCategories.all, categories);//@TODO
         //the categories that are not in the old categories collection should be propagated
-        var propagated = _.without(categories, oldCategories.all);
+        var propagated = _.without(categories, oldCategories.all);//@TODO
 
         //process the modification
         addCategories(model, propagated);
