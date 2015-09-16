@@ -63,7 +63,6 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         function propHandler (propView) {
 
             var $view = propView.getView();
-            var $category = $('[name=section-category]', $view);
             
             //enable/disable selection
             var $selectionSwitcher = $('[name=section-enable-selection]', $view);
@@ -102,37 +101,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             $section.on('deleted.deleter', removePropHandler);
             
             //section level category configuration
-            categoriesProperty($category);
-            
-            $category.on('change', function(e){
-                setCategories(e.val);
-            });
-            
-            initCategories();
-            $view.on('propopen.propview', function(){
-                initCategories();
-            });
-            
-            function initCategories(){
-                
-                var categories = sectionCategory.getCategories(model);
-                
-                //set categories found in the model in the select2 input
-                $category.select2('val', categories.all);
-                
-                //color partial categories
-                $category.siblings('.select2-container').find('.select2-search-choice').each(function(){
-                   var $li = $(this);
-                   var content = $li.find('div').text();
-                   if(_.indexOf(categories.partial, content) >= 0){
-                       $li.addClass('partial');
-                   }
-                });
-            }
-            
-            function setCategories(categories){
-                sectionCategory.setCategories(model, categories);
-            }
+            categoriesProperty($view);
             
             function removePropHandler(){
                 if(propView !== null){
@@ -310,9 +279,11 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         /**
          * Set up the category property
          * @private
-         * @param {jQueryElement} $select - the select box to set up
+         * @param {jQueryElement} $view - the $view object containing the $select
          */
-        function categoriesProperty($select){
+        function categoriesProperty($view){
+            
+            var $select = $('[name=section-category]', $view);
             $select.select2({
                 width: '100%',
                 tags : [],
@@ -322,7 +293,36 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                     return __('Enter a category');
                 },
                 maximumInputLength : 32
+            }).on('change', function(e){
+                setCategories(e.val);
             });
+            
+            initCategories();
+            $view.on('propopen.propview', function(){
+                initCategories();
+            });
+            
+            function initCategories(){
+                
+                var categories = sectionCategory.getCategories(model);
+                
+                //set categories found in the model in the select2 input
+                $select.select2('val', categories.all);
+                
+                //color partial categories
+                $select.siblings('.select2-container').find('.select2-search-choice').each(function(){
+                   var $li = $(this);
+                   var content = $li.find('div').text();
+                   if(_.indexOf(categories.partial, content) >= 0){
+                       $li.addClass('partial');
+                   }
+                });
+            }
+            
+            function setCategories(categories){
+                sectionCategory.setCategories(model, categories);
+            }
+            
         }
    };
 
