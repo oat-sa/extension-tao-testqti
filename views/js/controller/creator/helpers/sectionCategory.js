@@ -31,11 +31,12 @@ define([
     function setCategories(model, categories){
 
         var oldCategories = getCategories(model);
+        
         //the categories that are no longer in the new list of categories should be removed
-        var removed = _.without(oldCategories.all, categories);//@TODO
+        var removed = _.difference(oldCategories.all, categories);
         //the categories that are not in the old categories collection should be propagated
-        var propagated = _.without(categories, oldCategories.all);//@TODO
-
+        var propagated = _.difference(categories, oldCategories.all);
+        
         //process the modification
         addCategories(model, propagated);
         removeCategories(model, removed);
@@ -57,9 +58,7 @@ define([
             var propagated = _.intersection.apply(null, arrays);
             
             //the categories that are only partially covered on the section level : complementary of "propagated"
-            var _argsWithout = _.clone(propagated);
-            _argsWithout.unshift(union);
-            var partial = _.without.apply(null, _argsWithout);
+            var partial = _.difference(union, propagated);
             
             return {
                 all : union.sort(),
@@ -95,13 +94,7 @@ define([
         if(isValidSectionModel(model)){
             _.each(model.sectionParts, function (itemRef){
                 if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
-                    
-                    console.log(_(itemRef.categories));
-                    console.log(_.pull.apply(itemRef.categories, categories));
-                    
-                    var pullArgs = _.clone(categories);
-                    pullArgs.unshift(itemRef.categories);
-                    _.pull.apply(null, pullArgs);
+                    itemRef.categories = _.difference(itemRef.categories, categories);
                 }
             });
         }else{
