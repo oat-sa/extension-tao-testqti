@@ -105,7 +105,6 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             categoriesProperty($category);
             
             $category.on('change', function(e){
-                console.log('cat change', e.val);
                 setCategories(e.val);
             });
             
@@ -120,13 +119,11 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 
                 //set categories found in the model in the select2 input
                 $category.select2('val', categories.all);
-                console.log(categories);
                 
                 //color partial categories
                 $category.siblings('.select2-container').find('.select2-search-choice').each(function(){
                    var $li = $(this);
                    var content = $li.find('div').text();
-                   console.log(content);
                    if(_.indexOf(categories.partial, content) >= 0){
                        $li.addClass('partial');
                    }
