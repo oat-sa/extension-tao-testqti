@@ -28,9 +28,10 @@ define([
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
-    'taoQtiTest/controller/creator/helpers/qtiTest'
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/sectionCategory'
 ],
-function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper){
+function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory){
     'use strict';
 
    /**
@@ -45,7 +46,6 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
         var $actionContainer = $('h2', $section);
 
-        console.log('setup section', model);
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();
@@ -64,7 +64,6 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             var $view = propView.getView();
             var $category = $('[name=section-category]', $view);
-            var _categories = {};
             
             //enable/disable selection
             var $selectionSwitcher = $('[name=section-enable-selection]', $view);
@@ -103,33 +102,39 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             $section.on('deleted.deleter', removePropHandler);
             
             //section level category configuration
-            $category.val('AAA,BBB,CDFRE');
             categoriesProperty($category);
+            
             $category.on('change', function(e){
-                console.log('cat change', arguments);
-                var values = e.val;
-                
-                //set categories to items
-                _.each(values, function(value){
-                    //only new category need to be assigned to itemrefs
-                    if(true){
-                        console.log('assign to ', value, model);
-                    }
-                });
+                console.log('cat change', e.val);
+                setCategories(e.val);
             });
-            _.delay(function(){
-                $category.select2('val', ['EE', 'RR']);
-            },1000);
+            
+            initCategories();
             $view.on('propopen.propview', function(){
-                console.log('prop')
+                initCategories();
             });
             
             function initCategories(){
-                _categories = getCategories();
+                
+                var categories = sectionCategory.getCategories(model);
+                
+                //set categories found in the model in the select2 input
+                $category.select2('val', categories.all);
+                console.log(categories);
+                
+                //color partial categories
+                $category.siblings('.select2-container').find('.select2-search-choice').each(function(){
+                   var $li = $(this);
+                   var content = $li.find('div').text();
+                   console.log(content);
+                   if(_.indexOf(categories.partial, content) >= 0){
+                       $li.addClass('partial');
+                   }
+                });
             }
             
             function setCategories(categories){
-                _categories
+                sectionCategory.setCategories(model, categories);
             }
             
             function removePropHandler(){
