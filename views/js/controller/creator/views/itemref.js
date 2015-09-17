@@ -86,6 +86,10 @@ function($, _, __, actions){
                 initCategories();
             });
             
+            /**
+             * save the categories into the model
+             * @private
+             */
             function initCategories(){
                 $select.select2('val', model.categories);
             }

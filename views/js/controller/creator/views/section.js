@@ -302,6 +302,10 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 initCategories();
             });
             
+            /**
+             * Start the categories editing
+             * @private
+             */
             function initCategories(){
                 
                 var categories = sectionCategory.getCategories(model);
@@ -319,6 +323,10 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 });
             }
             
+            /**
+             * save the categories into the model
+             * @private
+             */
             function setCategories(categories){
                 sectionCategory.setCategories(model, categories);
             }

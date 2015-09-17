@@ -23,31 +23,51 @@ define([
     'use strict';
 
     var _ns = '.sectionCategory';
-
+    
+    /**
+     * Check if the given object is a valid assessmentSection model object
+     * 
+     * @param {object} model
+     * @returns {boolean}
+     */
     function isValidSectionModel(model){
         return (_.isObject(model) && model['qti-type'] === 'assessmentSection' && _.isArray(model.sectionParts));
     }
-
+    
+    /**
+     * Set an array of categories to the section model (affect the childen itemRef)
+     * 
+     * @param {object} model
+     * @param {array} categories
+     * @returns {undefined}
+     */
     function setCategories(model, categories){
 
         var oldCategories = getCategories(model);
         
         //the categories that are no longer in the new list of categories should be removed
         var removed = _.difference(oldCategories.all, categories);
-        //the categories that are not in the old categories collection should be propagated
+        
+        //the categories that are not in the old categories collection should be added to the children
         var propagated = _.difference(categories, oldCategories.all);
         
         //process the modification
         addCategories(model, propagated);
         removeCategories(model, removed);
     }
-
+    
+    /**
+     * Get the categories assign to the section model, infered by its interal itemRefs
+     * 
+     * @param {object} model
+     * @returns {object}
+     */
     function getCategories(model){
 
         if(isValidSectionModel(model)){
             var categories = _.map(model.sectionParts, function (itemRef){
                 if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
-                    return itemRef.categories;
+                    return _.compact(itemRef.categories);
                 }
             });
             //array of categories
@@ -69,7 +89,14 @@ define([
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
-
+    
+    /**
+     * Add an array of categories to a section model (affect the childen itemRef)
+     * 
+     * @param {object} model
+     * @param {array} categories
+     * @returns {undefined}
+     */
     function addCategories(model, categories){
         if(isValidSectionModel(model)){
             _.each(model.sectionParts, function (itemRef){
@@ -86,9 +113,11 @@ define([
     }
     
     /**
+     * Remove an array of categories from a section model (affect the childen itemRef)
      * 
      * @param {object} model
      * @param {array} categories
+     * @returns {undefined}
      */
     function removeCategories(model, categories){
         if(isValidSectionModel(model)){
