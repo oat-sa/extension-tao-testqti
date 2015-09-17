@@ -151,16 +151,19 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                     $placeholder.show().off('click').on('click', function(e){
                         
                         //prepare the item data 
-                        var defaultItemData = {};
+                        var categories, 
+                            defaultItemData = {};
+                            
                         if(model.itemSessionControl && !_.isUndefined(model.itemSessionControl.maxAttempts)){
                             
                             //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
                             defaultItemData.itemSessionControl = _.clone(model.itemSessionControl);
-                            
-                            //the itemRef should also "inherit" the categories set at the item level
-                            
                         }
                         
+                        //the itemRef should also "inherit" the categories set at the item level
+                        var categories = sectionCategory.getCategories(model);
+                        defaultItemData.categories = categories.propagated;
+                            
                         _.forEach(selection, function(item){
                             var $item = $(item);
 
