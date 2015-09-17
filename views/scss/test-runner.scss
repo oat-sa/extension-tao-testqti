@@ -54,29 +54,40 @@
                 padding-top: 4px;
                 overflow: hidden;
                 white-space: nowrap;
-                max-width: 100%;
-                display: none;
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
                 display: inline-block;
                 vertical-align: top;
-                float: right;
             }
             .progressbar {
                 margin-top: 5px;
                 min-width: 150px;
+                max-width: 200px;
                 height: 0.6em;
             }
             .timer-box {
                 padding-top: 0;
             }
-            &.top-action-bar > .control-box {
-                & .control-box-group {
-                    display: inline-block;
-                    float: right;
+
+            &.top-action-bar.has-timers > .control-box {
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: space-between;
+
+                .title-box {
+                    flex : 2 0 0;
+                }
+                 .progress-box {
+                    flex : 1 0 0;
+                    width:275px;
+                }
+                 .qti-timer{
+                    flex : 1 0 0;
+                    width:150px;
                 }
             }
+
             & > .control-box {
                 color: white(.9);
                 text-shadow: 1px 1px 0 black;
@@ -257,7 +268,7 @@
         position: relative;
         padding: 0 20px;
         .qti-timer_label {
-            max-width: 160px;
+            max-width: 130px;
             @include font-size(12);
         }
         &.qti-timer__warning {

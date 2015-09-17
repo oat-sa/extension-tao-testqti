@@ -702,12 +702,12 @@ define([
             },
 
             adjustTopToolbar: function () {
-                var controlBox = $controls.$topActionBar.find('.control-box'),
-                    controlBoxGroup = $controls.$topActionBar.find('.control-box-group'),
-                    title = $controls.$topActionBar.find('.title-box');
+                //var controlBox = $controls.$topActionBar.find('.control-box'),
+                    //controlBoxGroup = $controls.$topActionBar.find('.control-box-group'),
+                    //title = $controls.$topActionBar.find('.title-box');
 
-                controlBoxGroup.width(controlBoxGroup.width());
-                title.width(controlBox.width() - controlBoxGroup.width()).show();
+                //controlBoxGroup.width(controlBoxGroup.width());
+                //title.width(controlBox.width() - controlBoxGroup.width()).show();
             },
 
             disableGui: function () {
