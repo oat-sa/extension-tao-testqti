@@ -410,6 +410,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 
                 if (count($dependencies['items']) > 0) {
 
+                    $sharedFiles = array();
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
 
                         if ($qtiDependency !== false) {
@@ -464,7 +465,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $metadataValues,
                                         $metadataInjectors,
                                         $metadataGuardians,
-                                        $metadataClassLookups
+                                        $metadataClassLookups,
+                                        $sharedFiles
                                     );
 
                                     $rdfItem = $itemReport->getData();
