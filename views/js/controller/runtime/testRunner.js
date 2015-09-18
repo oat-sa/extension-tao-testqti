@@ -436,7 +436,6 @@ define([
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
                         self.adjustFrame();
-                        self.adjustTopToolbar();
                         $controls.$itemFrame.css({visibility: 'visible'});
                     });
 
@@ -699,15 +698,6 @@ define([
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
                 }
-            },
-
-            adjustTopToolbar: function () {
-                //var controlBox = $controls.$topActionBar.find('.control-box'),
-                    //controlBoxGroup = $controls.$topActionBar.find('.control-box-group'),
-                    //title = $controls.$topActionBar.find('.title-box');
-
-                //controlBoxGroup.width(controlBoxGroup.width());
-                //title.width(controlBox.width() - controlBoxGroup.width()).show();
             },
 
             disableGui: function () {
@@ -977,7 +967,6 @@ define([
 
                 $(window).bind('resize', function () {
                     TestRunner.adjustFrame();
-                    TestRunner.adjustTopToolbar();
                     $controls.$titleGroup.show();
                 });
 

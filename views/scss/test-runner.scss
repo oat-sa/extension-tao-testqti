@@ -52,13 +52,17 @@
 
             .title-box {
                 padding-top: 4px;
-                overflow: hidden;
-                white-space: nowrap;
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
-                display: inline-block;
-                vertical-align: top;
+                display: table;
+                white-space: nowrap;
+                -webkit-flex-shrink: 0;
+                .qti-controls {
+                    display: inline-block;
+                    margin-left: 20px;
+                    white-space: nowrap;
+                }
             }
             .progressbar {
                 margin-top: 5px;
@@ -66,26 +70,13 @@
                 max-width: 200px;
                 height: 0.6em;
             }
-            .timer-box {
-                padding-top: 0;
-            }
 
             &.top-action-bar.has-timers > .control-box {
-                display: flex;
-                flex-flow: row nowrap;
-                justify-content: space-between;
+                display: -webkit-flex;
+                -webkit-justify-content: space-between; // Safari
 
-                .title-box {
-                    flex : 2 0 0;
-                }
-                 .progress-box {
-                    flex : 1 0 0;
-                    width:275px;
-                }
-                 .qti-timer{
-                    flex : 1 0 0;
-                    width:150px;
-                }
+                display: flex;
+                justify-content: space-between;
             }
 
             & > .control-box {
