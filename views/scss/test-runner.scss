@@ -55,7 +55,7 @@
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
-                display: table;
+                display: inline-block;
                 white-space: nowrap;
                 -webkit-flex-shrink: 0;
                 .qti-controls {
