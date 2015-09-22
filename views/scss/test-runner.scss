@@ -57,7 +57,8 @@
                 padding-top: 4px;
                 display: inline-block;
                 white-space: nowrap;
-                -webkit-flex-shrink: 0;
+                -webkit-flex: 0 0 auto;
+                flex: 0 1 auto;
                 .qti-controls {
                     display: inline-block;
                     margin-left: 20px;
