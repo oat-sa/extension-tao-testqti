@@ -27,7 +27,6 @@ define([
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
-    'iframeResizer',
     'iframeNotifier',
     'i18n',
     'mathJax',
@@ -37,7 +36,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -430,7 +429,6 @@ define([
 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
-                iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
@@ -965,17 +963,17 @@ define([
                     TestRunner.exit();
                 });
 
-                $(window).bind('resize', function () {
+                $(window).on('resize', _.throttle(function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
-                });
+                }, 50));
 
-                $doc.bind('loading', function () {
+                $doc.on('loading', function () {
                     iframeNotifier.parent('loading');
                 });
 
 
-                $doc.bind('unloading', function () {
+                $doc.on('unloading', function () {
                     iframeNotifier.parent('unloading');
                 });
 
