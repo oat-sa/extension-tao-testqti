@@ -1,4 +1,4 @@
-module.exports = function(grunt) { 
+module.exports = function(grunt) {
 
     var requirejs   = grunt.config('requirejs') || {};
     var clean       = grunt.config('clean') || {};
@@ -13,20 +13,28 @@ module.exports = function(grunt) {
      * Remove bundled and bundling files
      */
     clean.taoqtitestbundle = [out];
-    
+
     /**
-     * Compile tao files into a bundle 
+     * Compile tao files into a bundle
      */
     requirejs.taoqtitestbundle = {
         options: {
             baseUrl : '../js',
             dir : out,
             mainConfigFile : './config/requirejs.build.js',
-            paths : { 'taoQtiTest' : root + '/taoQtiTest/views/js', 'taoQtiItem' : root + '/taoQtiItem/views/js' },
+            paths : {
+                'taoQtiTest' : root + '/taoQtiTest/views/js',
+                'taoQtiItem' : root + '/taoQtiItem/views/js'
+            },
             modules : [{
                 name: 'taoQtiTest/controller/routes',
                 include : ext.getExtensionsControllers(['taoQtiTest']),
                 exclude : ['mathJax', 'mediaElement'].concat(libs)
+            }, {
+                name: 'taoQtiTest/controller/runtime/testRunner',
+                include: ['lib/require', 'taoQtiTest/testRunner'],
+                exclude : ['json!i18ntr/messages.json'],
+                excludeShallow : ['mathJax']
             }]
         }
     };
@@ -37,8 +45,22 @@ module.exports = function(grunt) {
     copy.taoqtitestbundle = {
         files: [
             { src: [out + '/taoQtiTest/controller/routes.js'],  dest: root + '/taoQtiTest/views/js/controllers.min.js' },
-            { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' }
-        ]
+            { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' },
+            { src: [out + '/taoQtiTest/controller/runtime/testRunner.js'],  dest: root + '/taoQtiTest/views/js/testRunner.min.js' },
+            { src: [out + '/taoQtiTest/controller/runtime/testRunner.js.map'],  dest: root + '/taoQtiTest/views/js/testRunner.min.js.map' },
+        ],
+        options : {
+            process: function (content, srcpath) {
+                //because we change the bundle names during copy
+                if(/routes\.js$/.test(srcpath)){
+                    return content.replace('routes.js.map', 'controllers.min.js.map');
+                }
+                if(/testRunner\.js$/.test(srcpath)){
+                    return content.replace('testRunner.js.map', 'testRunner.min.js.map');
+                }
+                return content;
+            }
+        }
     };
 
     grunt.config('clean', clean);

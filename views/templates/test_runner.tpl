@@ -10,25 +10,17 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('test-runner.css', 'taoQtiTest') ?>"/>
+    <link rel="shortcut icon" href="<?= Template::img('favicon.ico', 'tao')?>"/>
 
     <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
         <link rel="stylesheet" href="<?= $themeUrl ?>"/>
     <?php endif; ?>
-    <script src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
-
     <script>
-        (function () {
-            requirejs.config({waitSeconds: <?=get_data('client_timeout')?> });
-            require(['<?=get_data('client_config_url')?>'], function () {
-                require(['taoQtiTest/controller/runtime/testRunner', 'mathJax'], function (testRunner, MathJax) {
-                    if (MathJax) {
-                        MathJax.Hub.Configured();
-                    }
-                    testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
-                });
-            });
-        }());
+    (function(){
+        window.testRunnerOptions = <?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>;
+    }());
     </script>
+    <?= Layout::getAmdLoader(Template::js('testRunner.js', 'taoQtiTest'), Template::js('testRunner.min.js', 'taoQtiTest'))  ?>
 </head>
 <body class="qti-test-scope">
 <div id="feedback-box"></div>
