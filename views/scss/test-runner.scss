@@ -72,12 +72,14 @@
                 height: 0.6em;
             }
 
-            &.top-action-bar.has-timers > .control-box {
+            &.top-action-bar > .control-box {
                 display: -webkit-flex;
                 -webkit-justify-content: space-between; // Safari
+                -webkit-flex-flow: row nowrap;
 
                 display: flex;
                 justify-content: space-between;
+                flex-flow: row nowrap;
             }
 
             & > .control-box {
