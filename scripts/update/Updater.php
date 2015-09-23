@@ -165,8 +165,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($currentVersion == '2.11.0') {
-            // correct access roles
-            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('act'=>'taoQtiTest', 'mod' => 'TestCommand')));
             $currentVersion = '2.11.1';
         }
 
