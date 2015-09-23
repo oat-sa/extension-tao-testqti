@@ -161,7 +161,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                         }
                         
                         //the itemRef should also "inherit" the categories set at the item level
-                        var categories = sectionCategory.getCategories(model);
+                        categories = sectionCategory.getCategories(model);
                         defaultItemData.categories = categories.propagated;
                             
                         _.forEach(selection, function(item){
