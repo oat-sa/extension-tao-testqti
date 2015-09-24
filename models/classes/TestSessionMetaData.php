@@ -126,6 +126,48 @@ class TestSessionMetaData
     }
     
     /**
+     * Register callbacks for all item sessions
+     */
+    public function registerItemCallbacks() 
+    {
+        $sessionItems = $this->session->getItemSubset();
+        foreach($sessionItems as $assesmentItem) {
+            $itemSessions = $this->session->getAssessmentItemSessions($assesmentItem->getIdentifier());
+            if (!empty($itemSessions)) {
+                foreach ($itemSessions as $itemSession) {
+                    $itemSession->registerCallback(
+                        'suspend',
+                        function ($item, $testSessionMetaData) {
+                            $testSessionMetaData->save(
+                                array('ITEM' => array('ITEM_END_TIME_SERVER' => microtime(true)))
+                            );
+                        },
+                        array($this)
+                    );
+                    $itemSession->registerCallback(
+                        'interact',
+                        function ($item, $testSessionMetaData) {
+                            $testSessionMetaData->save(
+                                array('ITEM' => array('ITEM_START_TIME_SERVER' => microtime(true)))
+                            );
+                        },
+                        array($this)
+                    );
+                    $itemSession->registerCallback(
+                        'beginAttempt',
+                        function ($item, $testSessionMetaData) {
+                            $testSessionMetaData->save(
+                                array('ITEM' => array('ITEM_START_TIME_SERVER' => microtime(true)))
+                            );
+                        },
+                        array($this)
+                    );
+                }
+            }
+        }
+    }
+    
+    /**
      * Get trace variable instance to save.
      * 
      * @param string $identifier
