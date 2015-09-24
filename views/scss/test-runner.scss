@@ -171,6 +171,11 @@
 
     .content-panel {
         height: auto !important;
+        overflow-y:auto;
+        font-size: 0; //avoid white spaces to screw the height
+        div {
+            font-size: 14px; //reset the font size
+        }
     }
 
     #qti-item {
