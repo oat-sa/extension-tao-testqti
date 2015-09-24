@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\models;
 
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
+use Context;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
@@ -168,8 +169,48 @@ class TestSessionMetaData
     }
     
     /**
+     * Get current test session meta data array
+     *
+     * @return array test session meta data.
+     */
+    public function getData()
+    {
+        $request = Context::getInstance()->getRequest();
+        $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : array();
+        $action = Context::getInstance()->getActionName();
+        $route = $this->getTestSession()->getRoute();
+
+        if (in_array($action, array('index'))) {
+            $data['TEST']['TAO_VERSION'] = TAO_VERSION;
+        }
+
+        if (in_array($action, array('moveForward', 'skip'))) {
+            if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
+                $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
+                $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
+                $lastInSection = $route->isLast() ||
+                    ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
+
+                if ($lastInSection && $timeOut) {
+                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
+                } elseif ($timeOut) {
+                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
+                } elseif ($lastInSection) {
+                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
+                }
+            }
+
+            if ($route->isLast()) {
+                $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Get trace variable instance to save.
-     * 
+     *
      * @param string $identifier
      * @param string $value
      * @return \taoResultServer_models_classes_TraceVariable variable instance to save.
@@ -181,7 +222,17 @@ class TestSessionMetaData
         $metaVariable->setBaseType('string');
         $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
         $metaVariable->setTrace($value);
-        
+
         return $metaVariable;
     }
+
+    /**
+     * Get test session instance
+     * @return AssessmentTestSession|\taoQtiTest_helpers_TestSession
+     */
+    private function getTestSession()
+    {
+        return $this->session;
+    }
+
 }
