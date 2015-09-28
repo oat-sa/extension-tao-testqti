@@ -113,7 +113,23 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="section-category">{{__ 'Categories'}}</label>
+        </div>
+        <div class="col-6">
+            <input type="text" name="section-category" />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <div class="tooltip-content">
+            {{__ 'Items can optionally be assigned to one or more categories.'}}
+            </div>
+        </div>
+    </div>
+    
     <h4 class="toggler closed" data-toggle="~ .section-selection">{{__ 'Selection'}}</h4>
 
 <!-- assessmentTest/testPart/assessmentSection/selection -->
@@ -334,7 +350,7 @@
         </div>
 --}}
     </div>
-
+    
     <h4 class="toggler closed" data-toggle="~ .section-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
