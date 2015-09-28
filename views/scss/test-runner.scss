@@ -50,14 +50,38 @@
         &.horizontal-action-bar {
             opacity: 0;
 
-            .progress-box, .timer-box, .title-box {
-                padding-top: 4px
+            .title-box {
+                padding-top: 4px;
+            }
+            .progress-box, .timer-box, .item-number-box {
+                padding-top: 4px;
+                display: inline-block;
+                white-space: nowrap;
+                -webkit-flex: 0 0 auto;
+                flex: 0 1 auto;
+                .qti-controls {
+                    display: inline-block;
+                    margin-left: 20px;
+                    white-space: nowrap;
+                }
             }
             .progressbar {
                 margin-top: 5px;
                 min-width: 150px;
+                max-width: 200px;
                 height: 0.6em;
             }
+
+            &.top-action-bar > .control-box {
+                display: -webkit-flex;
+                -webkit-justify-content: space-between; // Safari
+                -webkit-flex-flow: row nowrap;
+
+                display: flex;
+                justify-content: space-between;
+                flex-flow: row nowrap;
+            }
+
             & > .control-box {
                 color: white(.9);
                 text-shadow: 1px 1px 0 black;
@@ -235,7 +259,7 @@
         position: relative;
         padding: 0 20px;
         .qti-timer_label {
-            max-width: 160px;
+            max-width: 130px;
             @include font-size(12);
         }
         &.qti-timer__warning {

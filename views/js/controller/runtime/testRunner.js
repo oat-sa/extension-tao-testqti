@@ -169,7 +169,7 @@ define([
                 this.disableGui();
 
                 if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
-                    if( this.isTimedSection() ){
+                    if( this.isTimedSection() && !this.testContext.isTimeout){
                         this.exitTimedSection(action);
                     } else {
                         this.exitSection(action);
