@@ -101,7 +101,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * 
      * @var TestSessionMetaData
      */
-    private $testSessionMetaData;
+    private $metaDataHandler;
     
     /**
      * Get the current assessment test session.
@@ -241,74 +241,25 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $metaData = $this->getSessionMeta();
+        $this->getMetaDataHandler()->registerItemCallbacks();
+        $metaData = $this->getMetaDataHandler()->getData();
         if (!empty($metaData)) {
-            $this->getTestSessionMetaData()->save($metaData);
+            $this->getMetaDataHandler()->save($metaData);
         }
     }
     
     /**
-     * Get session metadata manager
+     * Get instance og session metadata handler
      * 
-     * @return array test session meta data.
+     * @return TestSessionMetaData
      */
-    protected function getTestSessionMetaData()
+    protected function getMetaDataHandler()
     {
-        if ($this->testSessionMetaData === null) {
-            $this->testSessionMetaData = new TestSessionMetaData($this->getTestSession());
+        if ($this->metaDataHandler === null) {
+            $this->metaDataHandler = new TestSessionMetaData($this->getTestSession());
         }
-        return $this->testSessionMetaData;
+        return $this->metaDataHandler;
     }
-    
-    /**
-     * Get current test session meta data array
-     * 
-     * @return array test session meta data.
-     */
-    protected function getSessionMeta()
-    {
-        $data = $this->hasRequestParameter('metaData') ? $this->getRequestParameter('metaData') : array();
-        $action = Context::getInstance()->getActionName();
-        $route = $this->getTestSession()->getRoute();
-
-		if (in_array($action, array('index'))) {
-            $data['TEST']['TAO_VERSION'] = TAO_VERSION;
-        }
-        
-        if (in_array($action, array('moveForward', 'skip'))) {
-            if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
-                $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
-                $lastInSection = $route->isLast() || 
-                    ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
-
-                if ($lastInSection) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = TestSessionMetaData::SECTION_CODE_COMPLETED_NORMALLY;
-                }
-            }
-
-            if ($route->isLast()) {
-                $data['TEST']['TEST_EXIT_CODE'] = TestSessionMetaData::TEST_CODE_COMPLETE;
-            }
-        }
-        
-        if (in_array($action, array('moveForward', 'skip', 'jumpTo', 'moveBackward', 'onTimeout'))) {
-            $data['ITEM']['ITEM_END_TIME_SERVER'] = microtime(true);
-        }
- 
-        return $data;
-    }
-    
-    /**
-     * Save metadata of session. Method implemented for backward compatibility.
-     * 
-     * @todo check usages and remove after merge {@link https://github.com/oat-sa/extension-tao-testqti/pull/135} pull request
-     * @see oat\taoQtiTest\models\TestSessionMetaData
-     * @param array $metaData Meta data array to be saved.
-     */
-    private function saveMetaData(array $metaData)
-    {
-        $this->getTestSessionMetaData()->save($metaData);
-    } 
     
     protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
@@ -345,6 +296,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
             $session->beginTestSession();
+            $this->getMetaDataHandler()->registerItemCallbacks();
             common_Logger::i("Assessment Test Session begun.");
         }
 	    
