@@ -81,6 +81,7 @@ define([
                 this.enableGui();
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
+                console.log('testRunner start time')
                 testMetaData.addData({
                     'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now()}
                 });
@@ -759,6 +760,7 @@ define([
                         success: function (testContext) {
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
+                                testMetaData.destroy();
                             }
                             else {
                                 self.update(testContext);
@@ -803,6 +805,7 @@ define([
                     $confirmBox.modal('close');
                     self.killItemSession(function () {
                         self.actionCall('endTestSession');
+                        testMetaData.destroy();
                     });
                 });
             },
@@ -907,6 +910,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
+                        testMetaData.destroy();
                     }
                     else {
                         TestRunner.update(testContext);

@@ -49,10 +49,12 @@ define([
 
     function setData(data) {
         _data = data;
+        //store to local storage
     }
 
     function addData( data) {
          _.merge(_data, data);
+        //store to local storage
     }
 
     function getData() {
@@ -63,6 +65,11 @@ define([
         _data = {};
     }
 
+    function destroy() {
+        console.log('destroy');
+        //remove from localstorage all data related to current ServiceCallId
+    }
+
     return {
         setData : setData,
         getData : getData,
@@ -70,6 +77,7 @@ define([
         clearData : clearData,
         getTestServiceCallId : setTestServiceCallId,
         setTestServiceCallId : setTestServiceCallId,
+        destroy : destroy,
         'SECTION_EXIT_CODE': {
             'COMPLETED_NORMALLY': 700,
             'QUIT': 701,
