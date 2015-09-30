@@ -114,7 +114,7 @@ define([
                     this.exitTimedSection(action, params);
                 } else {
                     this.itemServiceApi.kill(function() {
-                            self.actionCall(action, null, params);
+                        self.actionCall(action, null, params);
                     });
                 }
             },
@@ -175,7 +175,7 @@ define([
                         this.exitSection(action);
                     }
                 } else {
-                this.itemServiceApi.kill(function () {
+                    this.itemServiceApi.kill(function () {
                         self.actionCall(action);
                     });
                 }
@@ -190,7 +190,7 @@ define([
                 if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
-                this.itemServiceApi.kill(function () {
+                    this.itemServiceApi.kill(function() {
                         self.actionCall(action);
                     });
                 }
@@ -228,37 +228,80 @@ define([
             },
 
             exitTimedSection: function(action, params){
-                var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    message,
-                    messageFlagged = '',
-                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
-                    flaggedCount=this.testContext.numberFlaggedSection,
-                    qtiRunner = this.getQtiRunner();
-
-                if( this.isCurrentItemAnswered() ){
-                    unansweredCount--;
-                }
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
 
                 if (qtiRunner) {
                     qtiRunner.updateItemApi();
                 }
 
-                if( flaggedCount !== undefined ){
-                    messageFlagged = " and have %s item(s) marked for review";
+                this.displayExitMessage(
+                    __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                    function() {
+                        self.exitSection(action, params);
+                    },
+                    'testSection'
+                );
+
+                this.enableGui();
+            },
+
+            /**
+             * Gets the current progression within a particular scope
+             * @param {String} [scope]
+             * @returns {Object}
+             */
+            getProgression: function(scope) {
+                var scopeSuffixMap = {
+                    test : '',
+                    testPart : 'Part',
+                    testSection : 'Section'
+                };
+                var scopeSuffix = scope && scopeSuffixMap[scope] || '';
+
+                return {
+                    total : this.testContext['numberItems' + scopeSuffix] || 0,
+                    answered : this.testContext['numberCompleted' + scopeSuffix] || 0,
+                    viewed : this.testContext['numberPresented' + scopeSuffix] || 0,
+                    flagged : this.testContext['numberFlagged' + scopeSuffix] || 0
+                };
+            },
+
+            /**
+             * Displays an exit message for a particular scope
+             * @param {String} message
+             * @param {Function} [action]
+             * @param {String} [scope]
+             * @returns {jQuery} Returns the message box
+             */
+            displayExitMessage: function(message, action, scope) {
+                var self = this;
+                var $confirmBox = $('.exit-modal-feedback');
+                var progression = this.getProgression(scope);
+                var unansweredCount = (progression.total - progression.answered);
+                var flaggedCount = progression.flagged;
+
+                if (unansweredCount && this.isCurrentItemAnswered()) {
+                    unansweredCount--;
                 }
 
-                message = __(
-                    "You have %s unanswered question(s)" + messageFlagged + ". " +
-                    "After you complete the section it would be impossible to return to this section to make changes.  " +
-                    "Are you sure you want to end the section?",
-                    (unansweredCount || 0).toString(),
-                    (flaggedCount || 0).toString()
-                );
+                if (flaggedCount && unansweredCount) {
+                    message = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                        unansweredCount.toString(),
+                        flaggedCount.toString()
+                    ) + ' ' + message;
+                } else {
+                    if (flaggedCount) {
+                        message = __('You have %s item(s) marked for review.', flaggedCount.toString()) + ' ' + message;
+                    }
+
+                    if (unansweredCount) {
+                        message = __('You have %s unanswered question(s).', unansweredCount.toString()) + ' ' + message;
+                    }
+                }
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
-                this.enableGui();
 
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
                     $confirmBox.modal('close');
@@ -266,8 +309,12 @@ define([
 
                 $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
                     $confirmBox.modal('close');
-                    self.exitSection(action, params);
+                    if (_.isFunction(action)) {
+                        action.call(self);
+                    }
                 });
+
+                return $confirmBox;
             },
 
             isCurrentItemActive: function(){
@@ -370,6 +417,7 @@ define([
                     });
                 });
             },
+
             comment: function () {
                 if(!$controls.$commentArea.is(':visible')) {
                     $controls.$commentText.val('');
@@ -795,37 +843,20 @@ define([
              * @returns {undefined}
              */
             exit: function () {
-                var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    testProgression = TestRunner.testReview ?
-                        TestRunner.testReview.getProgression(self.testContext) : {
-                            total : self.testContext.numberItems,
-                            answered : self.testContext.numberCompleted,
-                            flagged : self.testContext.numberFlagged || 0
-                        },
-                    message = __(
-                        "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (testProgression.total - testProgression.answered).toString(),
-                        (testProgression.flagged).toString()
-                    ),
-                    metaData = {
-                        "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
-                        "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
-                    };
-
-                $confirmBox.find('.message').html(message);
-                $confirmBox.modal({ width: 500 });
-
-                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
-                    $confirmBox.modal('close');
-                });
-
-                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
-                    $confirmBox.modal('close');
-                    self.itemServiceApi.kill(function () {
-                        self.actionCall('endTestSession', metaData);
-                    });
-                });
+                var self = this;
+                var metaData = {
+                    "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
+                    "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
+                };
+                this.displayExitMessage(
+                    __('Are you sure you want to end the test?'),
+                    function() {
+                        self.itemServiceApi.kill(function () {
+                            self.actionCall('endTestSession', metaData);
+                        });
+                    },
+                    this.testReview ? this.testContext.reviewScope : null
+                );
             },
 
             /**
@@ -994,7 +1025,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        reviewScope: !!testContext.reviewScope,
+                        reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
                     }).on('jump', function(event, position) {

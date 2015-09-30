@@ -135,7 +135,7 @@ define([
          * @param {String|jQuery|HTMLElement} element The element on which install the component
          * @param {Object} [options] A list of extra options
          * @param {String} [options.region] The region on which put the component: left or right
-         * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+         * @param {String} [options.reviewScope] Limit the review screen to a particular scope:
          * the whole test, the current test part or the current test section)
          * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
          * @returns {testReview}
@@ -806,7 +806,7 @@ define([
      * @param {String|jQuery|HTMLElement} element The element on which install the component
      * @param {Object} [options] A list of extra options
      * @param {String} [options.region] The region on which put the component: left or right
-     * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+     * @param {String} [options.reviewScope] Limit the review screen to a particular scope:
      * the whole test, the current test part or the current test section)
      * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
      * @returns {testReview}
