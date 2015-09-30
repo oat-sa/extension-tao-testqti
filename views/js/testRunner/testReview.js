@@ -148,6 +148,7 @@ define([
             this.options = initOptions;
             this.disabled = false;
             this.hidden = false;
+            this.currentFilter = 'all';
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -320,6 +321,7 @@ define([
                 $items.filter(filter).addClass(_cssCls.masked);
             }
             this._updateSectionCounters(!!filter);
+            this.currentFilter = criteria;
         },
 
         /**
@@ -656,6 +658,7 @@ define([
             // update the info panel
             progression.flagged = this.$tree.find(_selectors.flagged).length;
             this._writeCount(this.$infoFlagged, progression.flagged, progression.total);
+            this._filter(this.currentFilter);
         },
 
         /**

@@ -151,6 +151,7 @@ define([
                                 self.testContext.itemFlagged = flag;
                             }
                             self.updateTools(self.testContext);
+                            self.updateFlaggedNumbers(position, flag);
                         }
 
                         // Enable buttons.
@@ -158,6 +159,72 @@ define([
 
                         //ask the top window to stop the loader
                         iframeNotifier.parent('unloading');
+                    }
+                });
+            },
+
+            /**
+             * Update the number of flagged items in the context
+             * @param {Number} position
+             * @param {Boolean} flag
+             */
+            updateFlaggedNumbers: function(position, flag) {
+                var fields = ['numberFlagged'];
+                var testContext = this.testContext;
+                var currentPosition = testContext.itemPosition;
+                var currentFound = false, currentSection = null, currentPart = null;
+                var itemFound = false, itemSection = null, itemPart = null;
+
+                if (this.testContext.navigatorMap) {
+                    // find the current item and the marked item inside the navigator map
+                    // check if the marked item is in the current section
+                    _.forEach(this.testContext.navigatorMap, function(part) {
+                        _.forEach(part && part.sections, function(section) {
+                            _.forEach(section && section.items, function(item) {
+                                if (item) {
+                                    if (item.position === position) {
+                                        itemPart = part;
+                                        itemSection = section;
+                                        itemFound = true;
+                                    }
+                                    if (item.position === currentPosition) {
+                                        currentPart = part;
+                                        currentSection = section;
+                                        currentFound = true;
+
+                                    }
+                                    if (itemFound && currentFound) {
+                                        return false;
+                                    }
+                                }
+                            });
+
+                            if (itemFound && currentFound) {
+                                return false;
+                            }
+                        });
+
+                        if (itemFound && currentFound) {
+                            return false;
+                        }
+                    });
+
+                    // select the context to update
+                    if (itemFound && currentPart === itemPart) {
+                        fields.push('numberFlaggedPart');
+                    }
+                    if (itemFound && currentSection === itemSection) {
+                        fields.push('numberFlaggedSection');
+                    }
+                } else {
+                    // no navigator map, the current the marked item is in the current section
+                    fields.push('numberFlaggedPart');
+                    fields.push('numberFlaggedSection');
+                }
+
+                _.forEach(fields, function(field) {
+                    if (field in testContext) {
+                        testContext[field] += flag ? 1 : -1;
                     }
                 });
             },
