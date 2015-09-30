@@ -171,7 +171,6 @@ define([
          */
         this.clearData = function clearData() {
             _data = {};
-            console.log(self.getLocalStorageKey());
             localStorage.removeItem(self.getLocalStorageKey());
         };
 

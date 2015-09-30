@@ -82,9 +82,8 @@ define([
                 this.enableGui();
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
-                console.log('testRunner start time')
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now()}
+                    'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now() / 1000}
                 });
             },
 
@@ -264,9 +263,8 @@ define([
              */
             killItemSession : function (callback) {
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now()}
+                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
                 });
-                console.log('testRunner end time')
                 if (typeof callback !== 'function') {
                     callback = _.noop;
                 }
