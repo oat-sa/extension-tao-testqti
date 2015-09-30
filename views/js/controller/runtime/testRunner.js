@@ -24,7 +24,7 @@ define([
     'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
     'taoQtiTest/testRunner/progressUpdater',
-    'taoQtiTest/testRunner/testMetaDataService',
+    'taoQtiTest/testRunner/testMetaData',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -37,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaData, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, TestMetaData, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -49,6 +49,7 @@ define([
         $timers,
         $controls,
         timerIndex,
+        testMetaData,
         $doc = $(document),
         TestRunner = {
             // Constants
@@ -256,6 +257,11 @@ define([
                     self.exitSection(action, params);
                 });
             },
+            /**
+             * Kill current item section and execute callback function given as first parameter.
+             * Item end execution time will be stored in metadata object to be sent to the server.
+             * @param {function} callback
+             */
             killItemSession : function (callback) {
                 testMetaData.addData({
                     'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now()}
@@ -446,8 +452,12 @@ define([
                     self.afterTransition();
                 }
 
-                testMetaData.clearData();
-                testMetaData.setTestServiceCallId(this.itemServiceApi.serviceCallId);
+                if (testMetaData) {
+                    testMetaData.clearData();
+                }
+                testMetaData = new TestMetaData({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
             },
 
             updateInformation: function () {
@@ -745,8 +755,6 @@ define([
                 var self = this,
                     params = {metaData : testMetaData.getData()};
 
-                testMetaData.clearData();
-
                 if (extraParams) {
                     params = _.assign(params, extraParams);
                 }
@@ -760,7 +768,7 @@ define([
                         success: function (testContext) {
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
-                                testMetaData.destroy();
+                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
