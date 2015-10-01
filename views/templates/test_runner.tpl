@@ -101,6 +101,12 @@ use oat\tao\helpers\Layout;
                             <span class="text"><?= __("End Test"); ?></span>
                         </a>
                     </li>
+                    <li data-control="next-section" class="small btn-info action" title="<?= __("Skip to the next section"); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-external"></span>
+                            <span class="text"><?= __("Next Section"); ?></span>
+                        </a>
+                    </li>
                     <li data-control="skip" class="small btn-info action skip" title="<?= __("Skip to the next item"); ?>">
                         <a class="li-inner" href="#">
                             <span class="icon-external"></span>

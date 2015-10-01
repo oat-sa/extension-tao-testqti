@@ -276,6 +276,28 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
             },
 
             /**
+             * Tries to leave the current section and go to the next
+             */
+            nextSection: function(){
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
+
+                if (qtiRunner) {
+                    qtiRunner.updateItemApi();
+                }
+
+                this.displayExitMessage(
+                    __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
+                    function() {
+                        self.exitSection('nextSection');
+                    },
+                    'testSection'
+                );
+
+                this.enableGui();
+            },
+
+            /**
              * Gets the current progression within a particular scope
              * @param {String} [scope]
              * @returns {Object}
@@ -589,10 +611,12 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                     if (this.testContext.isLast === false) {
                         $controls.$skip.show();
                         $controls.$skipEnd.hide();
+                        $controls.$nextSection.show();
                     }
                     else {
                         $controls.$skip.hide();
                         $controls.$skipEnd.show();
+                        $controls.$nextSection.hide();
                     }
                 }
                 else {
@@ -1009,6 +1033,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                     $moveForward: $('[data-control="move-forward"]'),
                     $moveEnd: $('[data-control="move-end"]'),
                     $moveBackward: $('[data-control="move-backward"]'),
+                    $nextSection: $('[data-control="next-section"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
                     $exit: $(window.parent.document).find('[data-control="exit"]'),
@@ -1093,6 +1118,12 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 $controls.$moveBackward.click(function () {
                     if (!$(this).hasClass('disabled')) {
                         TestRunner.moveBackward();
+                    }
+                });
+
+                $controls.$nextSection.click(function () {
+                    if (!$(this).hasClass('disabled')) {
+                        TestRunner.nextSection();
                     }
                 });
 
