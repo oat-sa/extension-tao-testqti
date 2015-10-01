@@ -36,9 +36,9 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
-        'use strict';
+    'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -76,6 +76,11 @@ define([
                 'INACTIVE': 'IA',
                 'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
             },
+
+            /**
+             * Prepare a transition to another item
+             * @param {Function} [callback]
+             */
             beforeTransition: function (callback) {
                 // Ask the top window to start the loader.
                 iframeNotifier.parent('loading');
@@ -93,6 +98,9 @@ define([
                 }
             },
 
+            /**
+             * Complete a transition to another item
+             */
             afterTransition: function () {
                 this.enableGui();
 
@@ -162,6 +170,9 @@ define([
                 });
             },
 
+            /**
+             * Move to the next available item
+             */
             moveForward: function () {
                 var self = this,
                     action = 'moveForward';
@@ -181,6 +192,9 @@ define([
                 }
             },
 
+            /**
+             * Move to the previous available item
+             */
             moveBackward: function () {
                 var self = this,
                     action = 'moveBackward';
@@ -196,6 +210,11 @@ define([
                 }
             },
 
+            /**
+             * Checks if a position is out of the current section
+             * @param {Number} jumpPosition
+             * @returns {Boolean}
+             */
             isJumpOutOfSection: function(jumpPosition){
                 var items = this.getCurrentSectionItems(),
                     isJumpToOtherSection = true,
@@ -218,6 +237,11 @@ define([
                 return isJumpToOtherSection;
             },
 
+            /**
+             * Exit from the current section. Set the exit code.de
+             * @param {String} action
+             * @param {Object} params
+             */
             exitSection: function(action, params){
                 var self = this,
                     metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
@@ -227,6 +251,11 @@ define([
                 });
             },
 
+            /**
+             * Tries to exit a timed section. Display a confirm message.
+             * @param {String} action
+             * @param {Object} params
+             */
             exitTimedSection: function(action, params){
                 var self = this;
                 var qtiRunner = this.getQtiRunner();
@@ -317,6 +346,10 @@ define([
                 return $confirmBox;
             },
 
+            /**
+             * Checks if the current item is active
+             * @returns {Boolean}
+             */
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
             },
@@ -338,6 +371,10 @@ define([
                 return answered;
             },
 
+            /**
+             * Gets access to the qtiRunner instance
+             * @returns {Object}
+             */
             getQtiRunner: function(){
                 var itemFrame = document.getElementById('qti-item');
                 var itemWindow = itemFrame && itemFrame.contentWindow;
@@ -346,6 +383,10 @@ define([
                 return itemContainerWindow && itemContainerWindow.qtiRunner;
             },
 
+            /**
+             * Checks if the current section is timed
+             * @returns {Boolean}
+             */
             isTimedSection: function(){
                 var timeConstraints = this.testContext.timeConstraints,
                     isTimedSection = false;
@@ -359,6 +400,10 @@ define([
                 return isTimedSection;
             },
 
+            /**
+             * Gets the list of items owned by the current section
+             * @returns {Array}
+             */
             getCurrentSectionItems: function(){
                 var partId  = this.testContext.testPartId,
                     navMap  = this.testContext.navigatorMap,
@@ -386,11 +431,17 @@ define([
                 return sectionItems;
             },
 
+            /**
+             * Skips the current item
+             */
             skip: function () {
                 this.disableGui();
                 this.actionCall('skip');
             },
 
+            /**
+             * Handles the timeout state
+             */
             timeout: function () {
                 var self = this;
                 this.disableGui();
@@ -418,6 +469,9 @@ define([
                 });
             },
 
+            /**
+             * Displays the "comment" form
+             */
             comment: function () {
                 if(!$controls.$commentArea.is(':visible')) {
                     $controls.$commentText.val('');
@@ -426,14 +480,23 @@ define([
                 $controls.$commentText.focus();
             },
 
+            /**
+             * Hides the "comment" form
+             */
             closeComment: function () {
                 $controls.$commentArea.hide();
             },
 
+            /**
+             * Cleans up the "comment "form
+             */
             emptyComment: function () {
                 $controls.$commentText.val('');
             },
 
+            /**
+             * Sends the comment to the server
+             */
             storeComment: function () {
                 var self = this;
                 var comment = $controls.$commentText.val();
@@ -459,6 +522,10 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+            /**
+             * Updates the GUI
+             * @param {Object} testContext
+             */
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -500,6 +567,9 @@ define([
                 }
             },
 
+            /**
+             * Displays feedback on the current state of the test
+             */
             updateInformation: function () {
 
                 if (this.testContext.isTimeout === true) {
@@ -510,6 +580,10 @@ define([
                 }
             },
 
+            /**
+             * Updates the displayed tools
+             * @param {Object} testContext
+             */
             updateTools: function updateTools(testContext) {
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
@@ -529,6 +603,11 @@ define([
                 actionBarTools.render('.tools-box-list', testContext, TestRunner);
             },
 
+            /**
+             * Displays a timer
+             * @param {Object} cst
+             * @returns {*|jQuery|HTMLElement}
+             */
             createTimer: function(cst) {
                 var $timer = $('<div>', {'class': 'qti-timer qti-timer__type-' + cst.qtiClassName }),
                     $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.label }),
@@ -539,6 +618,9 @@ define([
                 return $timer;
             },
 
+            /**
+             * Updates the timers
+             */
             updateTimer: function () {
                 var self = this;
                 var hasTimers;
@@ -646,6 +728,10 @@ define([
 
                 cst.warningTime = Number.NEGATIVE_INFINITY;
             },
+
+            /**
+             * Displays or hides the rubric block
+             */
             updateRubrics: function () {
                 $controls.$rubricBlocks.remove();
 
@@ -673,6 +759,9 @@ define([
                 }
             },
 
+            /**
+             * Updates the list of navigation buttons (previous, next, skip, etc.)
+             */
             updateNavigation: function () {
                 $controls.$exit.show();
 
@@ -725,6 +814,9 @@ define([
                 }
             },
 
+            /**
+             * Updates the test informations
+             */
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
@@ -732,12 +824,18 @@ define([
                 $controls.$titleGroup.show();
             },
 
+            /**
+             * Displays the right exit button
+             */
             updateExitButton : function(){
 
                 $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
                 $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
             },
 
+            /**
+             * Ensures the frame has the right size
+             */
             adjustFrame: function () {
                 var iframeHeight,
                     iframeContentHeight;
@@ -758,6 +856,9 @@ define([
                 }
             },
 
+            /**
+             * Locks the GUI
+             */
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
                 if (this.testReview) {
@@ -765,6 +866,9 @@ define([
                 }
             },
 
+            /**
+             * Unlocks the GUI
+             */
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
                 if (this.testReview) {
@@ -772,6 +876,11 @@ define([
                 }
             },
 
+            /**
+             * Formats a timer
+             * @param {Number} totalSeconds
+             * @returns {String}
+             */
             formatTime: function (totalSeconds) {
                 var sec_num = totalSeconds;
                 var hours = Math.floor(sec_num / 3600);
