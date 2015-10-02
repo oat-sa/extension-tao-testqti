@@ -40,6 +40,10 @@ define([
                 icon : 'mobile-menu',
                 order : 'first'
             });
+            var testReview = this.testRunner && this.testRunner.testReview;
+            if(testReview){
+                testReview.toggle((_.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0));
+            }
         },
 
         /**
@@ -69,7 +73,10 @@ define([
          */
         isVisible : function isVisible() {
             var testContext = this.testContext;
-            return testContext && !!testContext.reviewScreen && !!testContext.considerProgress;
+            return testContext &&
+                !!testContext.reviewScreen &&
+                !!testContext.considerProgress &&
+                (_.indexOf(testContext.categories, 'x-tao-option-reviewScreen') >= 0);
         }
     };
 
