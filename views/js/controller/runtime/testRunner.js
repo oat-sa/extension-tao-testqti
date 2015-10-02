@@ -430,7 +430,7 @@ define([
                 this.updateExitButton();
                 this.resetCurrentItemState();
 
-                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
@@ -691,6 +691,8 @@ define([
             },
 
             adjustFrame: function () {
+                var iframeHeight,
+                    iframeContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
@@ -698,6 +700,13 @@ define([
                         var $sideBar = $(this);
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
+                }
+                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                    iframeHeight = $controls.$itemFrame.height();
+                    iframeContentHeight = $controls.$itemFrame.contents().outerHeight();
+                    if(iframeContentHeight > 0 && iframeContentHeight > iframeHeight){
+                        $controls.$itemFrame.height(iframeContentHeight);
+                    }
                 }
             },
 
