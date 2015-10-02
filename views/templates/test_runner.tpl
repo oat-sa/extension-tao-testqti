@@ -35,19 +35,19 @@ use oat\tao\helpers\Layout;
 <div class="section-container">
     <div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft title-box">
+            <div class="title-box truncate">
                 <span data-control="qti-test-title" class="qti-controls"></span>
                 <span data-control="qti-test-position" class="qti-controls"></span>
             </div>
-            <div class="rgt progress-box">
-                <div data-control="progress-bar" class="qti-controls lft"></div>
-                <div data-control="progress-label" class="qti-controls lft"></div>
-            </div>
-            <div class="rgt item-number-box">
+            <div class="item-number-box">
                 <div data-control="item-number" class="qti-controls lft"></div>
             </div>
-            <div class="rgt timer-box">
-                <div data-control="qti-timers" class="qti-controls"></div>
+            <div class="timer-box">
+                <div data-control="qti-timers" class="qti-controls lft"></div>
+            </div>
+            <div class="progress-box">
+                <div data-control="progress-bar" class="qti-controls"></div>
+                <div data-control="progress-label" class="qti-controls"></div>
             </div>
         </div>
     </div>

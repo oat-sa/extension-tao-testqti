@@ -169,7 +169,7 @@ define([
                 this.disableGui();
 
                 if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
-                    if( this.isTimedSection() ){
+                    if( this.isTimedSection() && !this.testContext.isTimeout){
                         this.exitTimedSection(action);
                     } else {
                         this.exitSection(action);
@@ -233,13 +233,16 @@ define([
                     message,
                     messageFlagged = '',
                     unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
-                    flaggedCount=this.testContext.numberFlaggedSection;
+                    flaggedCount=this.testContext.numberFlaggedSection,
+                    qtiRunner = this.getQtiRunner();
 
                 if( this.isCurrentItemAnswered() ){
                     unansweredCount--;
                 }
 
-                this.getQtiRunner().updateItemApi();
+                if (qtiRunner) {
+                    qtiRunner.updateItemApi();
+                }
 
                 if( flaggedCount !== undefined ){
                     messageFlagged = " and have %s item(s) marked for review";
@@ -255,9 +258,9 @@ define([
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
+                this.enableGui();
 
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
-                    self.enableGui();
                     $confirmBox.modal('close');
                 });
 
@@ -289,12 +292,11 @@ define([
             },
 
             getQtiRunner: function(){
-                var itemWindow, itemContainerWindow;
-
-                itemWindow = $('#qti-item')[0].contentWindow;
-                itemContainerWindow = $(itemWindow.document).find('#item-container')[0].contentWindow;
-
-                return itemContainerWindow.qtiRunner;
+                var itemFrame = document.getElementById('qti-item');
+                var itemWindow = itemFrame && itemFrame.contentWindow;
+                var itemContainerFrame = itemWindow && itemWindow.document.getElementById('item-container');
+                var itemContainerWindow = itemContainerFrame && itemContainerFrame.contentWindow;
+                return itemContainerWindow && itemContainerWindow.qtiRunner;
             },
 
             isTimedSection: function(){
@@ -360,6 +362,7 @@ define([
                         metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
                     }
 
+                    self.enableGui();
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
