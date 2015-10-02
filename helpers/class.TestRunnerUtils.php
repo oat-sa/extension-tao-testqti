@@ -499,7 +499,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             $context['exitButton'] = self::doesAllowExit($session);
             $context['logoutButton'] = self::doesAllowLogout($session);
-            var_dump();
             $context['categories'] = self::getCategories($session);
 
             // loads the specific config into the context object
