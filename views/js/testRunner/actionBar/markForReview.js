@@ -73,7 +73,12 @@ define([
          */
         isVisible : function isVisible() {
             var testContext = this.testContext;
-            return testContext && !!testContext.reviewScreen && !!testContext.navigatorMap && !!testContext.considerProgress;
+            
+            return testContext &&
+                !!testContext.reviewScreen &&
+                !!testContext.navigatorMap &&
+                !!testContext.considerProgress &&
+                (_.indexOf(testContext.categories, 'x-tao-option-markReview') >= 0);
         }
     };
 
