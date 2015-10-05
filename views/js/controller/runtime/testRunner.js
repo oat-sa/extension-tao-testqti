@@ -607,22 +607,22 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              * @param {Object} testContext
              */
             updateTools: function updateTools(testContext) {
+                var showSkip = false;
+                var showSkipEnd = false;
+                var showNextSection = false;
+
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
-                        $controls.$skip.show();
-                        $controls.$skipEnd.hide();
-                        $controls.$nextSection.show();
-                    }
-                    else {
-                        $controls.$skip.hide();
-                        $controls.$skipEnd.show();
-                        $controls.$nextSection.hide();
+                        showSkip = true;
+                        showNextSection = !!this.testContext.nextSection;
+                    } else {
+                        showSkipEnd = true;
                     }
                 }
-                else {
-                    $controls.$skip.hide();
-                    $controls.$skipEnd.hide();
-                }
+
+                $controls.$skip.toggle(showSkip);
+                $controls.$skipEnd.toggle(showSkipEnd);
+                $controls.$nextSection.toggle(showNextSection);
 
                 actionBarTools.render('.tools-box-list', testContext, TestRunner);
             },
