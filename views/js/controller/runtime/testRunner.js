@@ -241,10 +241,15 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              * Exit from the current section. Set the exit code.de
              * @param {String} action
              * @param {Object} params
+             * @param {Number} [exitCode]
              */
-            exitSection: function(action, params){
+            exitSection: function(action, params, exitCode){
                 var self = this,
-                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                    metaData = {
+                        "SECTION" : {
+                            "SECTION_EXIT_CODE" : exitCode || TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY
+                        }
+                    };
 
                 self.itemServiceApi.kill(function () {
                     self.actionCall(action, metaData, params);
@@ -289,7 +294,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 this.displayExitMessage(
                     __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
                     function() {
-                        self.exitSection('nextSection');
+                        self.exitSection('nextSection', null, TestRunner.SECTION_EXIT_CODE.QUIT);
                     },
                     'testSection'
                 );

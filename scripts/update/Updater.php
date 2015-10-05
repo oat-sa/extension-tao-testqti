@@ -203,7 +203,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.13.0';
         }
 
-        // adjust testrunner config: set the force progress indicator display
+        // adjust testrunner config: set the next section button display
         if ($currentVersion == '2.13.0') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
