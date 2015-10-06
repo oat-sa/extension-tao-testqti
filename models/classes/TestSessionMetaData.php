@@ -20,6 +20,8 @@
 
 namespace oat\taoQtiTest\models;
 
+use oat\taoOutcomeUi\model\ResultsService;
+use qtism\common\datatypes\Duration;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
@@ -78,6 +80,7 @@ class TestSessionMetaData
      * @var AssessmentTestSession 
      */
     private $session;
+    private $resultService;
 
     /**
      * Constructor.
@@ -139,8 +142,58 @@ class TestSessionMetaData
                     $itemSession->registerCallback(
                         'suspend',
                         function ($item, $testSessionMetaData) {
+                            $time = microtime(true);
+                            /** @var $testSessionMetaData TestSessionMetaData */
+
+                            $itemResults = $testSessionMetaData->getItemResults();
+
+                            foreach ($itemResults['data'] as $itemResult) {
+                                if (is_array($itemResult) && isset( $itemResult['sortedVars'] ) && isset( $itemResult['sortedVars']['taoResultServer_models_classes_TraceVariable'] )) {
+                                    $sectionResult[] = $testSessionMetaData->getItemServerTime($itemResult['sortedVars']['taoResultServer_models_classes_TraceVariable']);;
+                                }
+                            }
+
+                            $session  = $testSessionMetaData->getTestSession();
+                            $section  = $session->getCurrentAssessmentSection();
+                            $testPart = $session->getCurrentTestPart();
+                            $test     = $session->getAssessmentTest();
+
+                            $testMaxTimeAllowed     = $test->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
+                            $testPartMaxTimeAllowed = $testPart->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
+                            $sectionMaxTimeAllowed  = $section->hasTimeLimits() ? $section->getTimeLimits()->getMaxTime() : null;
+                            $itemMaxTimeAllowed     = $item->hasTimeLimits() ? $item->getTimeLimits()->getMaxTime() : null;
+
+                            $timeLimits = array_filter(array(
+                                $testMaxTimeAllowed,
+                                $testPartMaxTimeAllowed,
+                                $sectionMaxTimeAllowed,
+                                $itemMaxTimeAllowed
+                            ));
+
+                            usort($timeLimits, function ($a, $b) {
+                                /** @var $a Duration */
+                                if ($a->equals($b)) {
+                                    return 0;
+                                };
+
+                                return $a->longerThanOrEquals($b) ? 1 : - 1;
+
+                            });
+
+                            $startTimeSection = min($sectionResult);//start time of first item in section
+
+                            if (isset( $timeLimits[count($timeLimits) - 1] )) {
+                                $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
+
+                                $latestPossibleSectionTime = $startTimeSection->add(new \DateInterval('PT' . $maxAllowedTime->getSeconds() . 'S'));
+
+                                if ($time > $latestPossibleSectionTime->getTimestamp()) {
+                                    $time = $latestPossibleSectionTime->getTimestamp();
+                                }
+                            }
+
                             $testSessionMetaData->save(
-                                array('ITEM' => array('ITEM_END_TIME_SERVER' => microtime(true)))
+                                array('ITEM' => array('ITEM_END_TIME_SERVER' => $time))
                             );
                         },
                         array($this)
@@ -230,9 +283,48 @@ class TestSessionMetaData
      * Get test session instance
      * @return AssessmentTestSession|\taoQtiTest_helpers_TestSession
      */
-    private function getTestSession()
+    public function getTestSession()
     {
         return $this->session;
+    }
+
+    /**
+     * Retrieve information about passed items
+     * @return array
+     * @throws \common_exception_Error
+     */
+    public function getItemResults()
+    {
+        $ssid              = $this->getTestSession()->getSessionId();
+        $deliveryExecution = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($ssid);
+
+        if (is_null($this->resultService)) {
+            $resultsService = ResultsService::singleton();
+            $implementation = $resultsService->getReadableImplementation($deliveryExecution->getDelivery());
+            $resultsService->setImplementation($implementation);
+            $this->resultService = $resultsService;
+        }
+
+        $itemResults = $this->resultService->getItemVariableDataStatsFromDeliveryResult($deliveryExecution,
+            'firstSubmitted');
+
+        return $itemResults;
+    }
+
+
+    /**
+     * Get server item time
+     * @param array $itemData
+     * @return \DateTime
+     */
+    public function getItemServerTime($itemData) {
+        if (isset( $itemData['ITEM_START_TIME_SERVER'] )) {
+            $epoch     = $itemData['ITEM_START_TIME_SERVER'][0]['var'];
+            $itemStart = (new \DateTime('now', new \DateTimeZone('UTC')));
+            $itemStart->setTimestamp($epoch->getValue());
+
+            return $itemStart;
+        }
     }
 
 }
