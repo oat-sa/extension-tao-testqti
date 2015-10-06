@@ -510,7 +510,6 @@ define([
 
                     hasTimers = !!this.testContext.timeConstraints.length;
                     $controls.$topActionBar.toggleClass('has-timers', hasTimers);
-                    self.adjustFrame();
 
                     if (hasTimers) {
 
@@ -691,8 +690,8 @@ define([
             },
 
             adjustFrame: function () {
-                var iframeHeight,
-                    iframeContentHeight;
+                var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
+                var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
@@ -701,12 +700,11 @@ define([
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
                 }
+
                 if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
-                    iframeHeight = $controls.$itemFrame.height();
-                    iframeContentHeight = $controls.$itemFrame.contents().outerHeight();
-                    if(iframeContentHeight > 0 && iframeContentHeight > iframeHeight){
-                        $controls.$itemFrame.height(iframeContentHeight);
-                    }
+                    frameContentHeight = Math.max($controls.$itemFrame.contents().outerHeight(true), finalHeight - rubricHeight);
+                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    $controls.$itemFrame.height(frameContentHeight);
                 }
             },
 
@@ -978,7 +976,7 @@ define([
                 $(window).on('resize', _.throttle(function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
-                }, 50));
+                }, 250));
 
                 $doc.on('loading', function () {
                     iframeNotifier.parent('loading');
