@@ -702,7 +702,15 @@ define([
                 }
 
                 if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
-                    frameContentHeight = Math.max($controls.$itemFrame.contents().outerHeight(true), finalHeight - rubricHeight);
+                    frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
+
+                    if (frameContentHeight < finalHeight) {
+                        if (rubricHeight) {
+                            frameContentHeight = Math.max(frameContentHeight, finalHeight - rubricHeight);
+                        } else {
+                            frameContentHeight = finalHeight;
+                        }
+                    }
                     $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
                     $controls.$itemFrame.height(frameContentHeight);
                 }
