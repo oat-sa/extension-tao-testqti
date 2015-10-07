@@ -499,6 +499,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['allowSkipping'] = self::doesAllowSkipping($session);
             $context['exitButton'] = self::doesAllowExit($session);
             $context['logoutButton'] = self::doesAllowLogout($session);
+            $context['categories'] = self::getCategories($session);
 
             // loads the specific config into the context object
             $configMap = array(
@@ -1033,10 +1034,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @return bool
      */
     static public function doesAllowExit(AssessmentTestSession $session){
-        $categories = $session->getCurrentAssessmentItemRef()->getCategories();
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $exitButton = (isset($config['exitButton']) && $config['exitButton']);
-        return ($exitButton && $categories->contains('x-tao-option-exit'));
+        $categories = self::getCategories($session);
+        return ($exitButton && in_array('x-tao-option-exit', $categories));
     }
 
     /**
@@ -1048,5 +1049,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function doesAllowLogout(AssessmentTestSession $session){
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         return !(isset($config['exitButton']) && $config['exitButton']);
+    }
+
+    /**
+     * Get the array of available categories for the current itemRef
+     * 
+     * @param \qtism\runtime\tests\AssessmentTestSession $session
+     * @return array
+     */
+    static public function getCategories(AssessmentTestSession $session){
+        return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
 }
