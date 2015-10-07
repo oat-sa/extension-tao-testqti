@@ -24,6 +24,7 @@ define([
     'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
     'taoQtiTest/testRunner/progressUpdater',
+    'taoQtiTest/testRunner/testMetaData',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -36,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -48,6 +49,7 @@ define([
         $timers,
         $controls,
         timerIndex,
+        testMetaData,
         $doc = $(document),
         TestRunner = {
             // Constants
@@ -59,23 +61,6 @@ define([
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-            'SECTION_EXIT_CODE': {
-                'COMPLETED_NORMALLY': 700,
-                'QUIT': 701,
-                'COMPLETE_TIMEOUT': 703,
-                'TIMEOUT': 704,
-                'FORCE_QUIT': 705,
-                'IN_PROGRESS': 706,
-                'ERROR': 300
-            },
-            'TEST_EXIT_CODE': {
-                'COMPLETE': 'C',
-                'TERMINATED': 'T',
-                'INCOMPLETE': 'IC',
-                'INCOMPLETE_QUIT': 'IQ',
-                'INACTIVE': 'IA',
-                'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
-            },
             beforeTransition: function (callback) {
                 // Ask the top window to start the loader.
                 iframeNotifier.parent('loading');
@@ -95,9 +80,11 @@ define([
 
             afterTransition: function () {
                 this.enableGui();
-
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
+                testMetaData.addData({
+                    'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now() / 1000}
+                });
             },
 
             /**
@@ -113,8 +100,8 @@ define([
                 if( this.isJumpOutOfSection(position)  && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action, params);
                 } else {
-                    this.itemServiceApi.kill(function() {
-                            self.actionCall(action, null, params);
+                    this.killItemSession(function() {
+                        self.actionCall(action, params);
                     });
                 }
             },
@@ -175,7 +162,7 @@ define([
                         this.exitSection(action);
                     }
                 } else {
-                this.itemServiceApi.kill(function () {
+                    this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
@@ -190,7 +177,7 @@ define([
                 if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
-                this.itemServiceApi.kill(function () {
+                this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
@@ -219,11 +206,11 @@ define([
             },
 
             exitSection: function(action, params){
-                var self = this,
-                    metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY}};
+                var self = this;
 
-                self.itemServiceApi.kill(function () {
-                    self.actionCall(action, metaData, params);
+                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                self.killItemSession(function () {
+                    self.actionCall(action, params);
                 });
             },
 
@@ -269,7 +256,20 @@ define([
                     self.exitSection(action, params);
                 });
             },
-
+            /**
+             * Kill current item section and execute callback function given as first parameter.
+             * Item end execution time will be stored in metadata object to be sent to the server.
+             * @param {function} callback
+             */
+            killItemSession : function (callback) {
+                testMetaData.addData({
+                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                });
+                if (typeof callback !== 'function') {
+                    callback = _.noop;
+                }
+                this.itemServiceApi.kill(callback);
+            },
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
             },
@@ -350,23 +350,22 @@ define([
                 this.testContext.isTimeout = true;
                 this.updateTimer();
 
-                this.itemServiceApi.kill(function () {
+                this.killItemSession(function () {
                     var confirmBox = $('.timeout-modal-feedback'),
                         testContext = self.testContext,
-                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
-                        metaData = {};
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close');
 
                     if (testContext.numberCompletedSection === testContext.numberItemsSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}});
                     } else {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.TIMEOUT}});
                     }
 
                     self.enableGui();
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        self.actionCall('timeout', metaData);
+                        self.actionCall('timeout');
                     });
                 });
             },
@@ -450,6 +449,13 @@ define([
                     // but do not load the item.
                     self.afterTransition();
                 }
+
+                if (testMetaData) {
+                    testMetaData.clearData();
+                }
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
             },
 
             updateInformation: function () {
@@ -755,24 +761,13 @@ define([
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
              * @param {String} action - Action name
-             * @param {Object} [metaData] - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example:
-             * <pre>
-             * {
-             *   "TEST" : {
-             *      "TEST_EXIT_CODE" : "T"
-             *   },
-             *   "SECTION" : {
-             *      "SECTION_EXIT_CODE" : 704
-             *   }
-             * }
-             * </pre>
              * @param {Object} [extraParams] - Additional parameters to be sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData, extraParams) {
+            actionCall: function (action, extraParams) {
                 var self = this,
-                    params = metaData ? {"metaData" : metaData} : {};
+                    params = {metaData : testMetaData.getData()};
+
                 if (extraParams) {
                     params = _.assign(params, extraParams);
                 }
@@ -786,6 +781,7 @@ define([
                         success: function (testContext) {
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
+                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
@@ -813,11 +809,11 @@ define([
                         "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
                         (testProgression.total - testProgression.answered).toString(),
                         (testProgression.flagged).toString()
-                    ),
-                    metaData = {
-                        "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
-                        "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
-                    };
+                    );
+                testMetaData.addData({
+                    "TEST" : {"TEST_EXIT_CODE" : testMetaData.TEST_EXIT_CODE.INCOMPLETE},
+                    "SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.QUIT}
+                });
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
@@ -828,8 +824,9 @@ define([
 
                 $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
                     $confirmBox.modal('close');
-                    self.itemServiceApi.kill(function () {
-                        self.actionCall('endTestSession', metaData);
+                    self.killItemSession(function () {
+                        self.actionCall('endTestSession');
+                        testMetaData.destroy();
                     });
                 });
             },
@@ -934,6 +931,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
+                        testMetaData.destroy();
                     }
                     else {
                         TestRunner.update(testContext);
