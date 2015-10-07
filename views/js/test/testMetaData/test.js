@@ -16,7 +16,7 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  *
  */
-require([
+define([
     'lodash',
     'jquery',
     'taoQtiTest/testRunner/testMetaData'
@@ -37,7 +37,6 @@ require([
         });
 
         assert.equal(testMetaData.getTestServiceCallId(), testServiceCallId);
-        testMetaData.clearData();
     });
 
     QUnit.test("setData", function (assert) {
@@ -64,7 +63,6 @@ require([
         //should not be overwritten
         testMetaData.setData(testObject2);
         assert.deepEqual(testMetaData.getData(), testObject2);
-        testMetaData.clearData();
     });
 
     QUnit.test("addData", function (assert) {
@@ -92,7 +90,6 @@ require([
         //should be overwritten
         testMetaData.addData(testObject2, true);
         assert.deepEqual(testMetaData.getData(), testObject2);
-        testMetaData.clearData();
     });
 
 
@@ -133,6 +130,7 @@ require([
         testMetaData3.clearData();
         assert.deepEqual(localStorage.getItem(testMetaData3.getLocalStorageKey()), null);
 
+        //new testMetaData object created with cleared testServiceCallId should has no data.
         var testMetaData4 = testMetaDataFactory({
             testServiceCallId : testServiceCallId
         });
