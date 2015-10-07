@@ -24,6 +24,7 @@ define([
     'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
     'taoQtiTest/testRunner/progressUpdater',
+    'taoQtiTest/testRunner/testMetaData',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
@@ -36,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
     'use strict';
 
@@ -48,6 +49,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
         $timers,
         $controls,
         timerIndex,
+        testMetaData,
         $doc = $(document),
         TestRunner = {
             // Constants
@@ -59,23 +61,6 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-            'SECTION_EXIT_CODE': {
-                'COMPLETED_NORMALLY': 700,
-                'QUIT': 701,
-                'COMPLETE_TIMEOUT': 703,
-                'TIMEOUT': 704,
-                'FORCE_QUIT': 705,
-                'IN_PROGRESS': 706,
-                'ERROR': 300
-            },
-            'TEST_EXIT_CODE': {
-                'COMPLETE': 'C',
-                'TERMINATED': 'T',
-                'INCOMPLETE': 'IC',
-                'INCOMPLETE_QUIT': 'IQ',
-                'INACTIVE': 'IA',
-                'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
-            },
 
             /**
              * Prepare a transition to another item
@@ -106,6 +91,9 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
 
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
+                testMetaData.addData({
+                    'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now() / 1000}
+                });
             },
 
             /**
@@ -121,8 +109,8 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 if( this.isJumpOutOfSection(position)  && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action, params);
                 } else {
-                    this.itemServiceApi.kill(function() {
-                        self.actionCall(action, null, params);
+                    this.killItemSession(function() {
+                        self.actionCall(action, params);
                     });
                 }
             },
@@ -186,7 +174,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                         this.exitSection(action);
                     }
                 } else {
-                    this.itemServiceApi.kill(function () {
+                    this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
@@ -204,7 +192,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
-                    this.itemServiceApi.kill(function() {
+                    this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
@@ -244,15 +232,10 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              * @param {Number} [exitCode]
              */
             exitSection: function(action, params, exitCode){
-                var self = this,
-                    metaData = {
-                        "SECTION" : {
-                            "SECTION_EXIT_CODE" : exitCode || TestRunner.SECTION_EXIT_CODE.COMPLETED_NORMALLY
-                        }
-                    };
-
-                self.itemServiceApi.kill(function () {
-                    self.actionCall(action, metaData, params);
+                var self = this;
+                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                self.killItemSession(function () {
+                    self.actionCall(action, params);
                 });
             },
 
@@ -294,7 +277,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 this.displayExitMessage(
                     __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
                     function() {
-                        self.exitSection('nextSection', null, TestRunner.SECTION_EXIT_CODE.QUIT);
+                        self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
                     },
                     'testSection'
                 );
@@ -371,6 +354,21 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 });
 
                 return $confirmBox;
+            },
+
+            /**
+             * Kill current item section and execute callback function given as first parameter.
+             * Item end execution time will be stored in metadata object to be sent to the server.
+             * @param {function} callback
+             */
+            killItemSession : function (callback) {
+                testMetaData.addData({
+                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                });
+                if (typeof callback !== 'function') {
+                    callback = _.noop;
+                }
+                this.itemServiceApi.kill(callback);
             },
 
             /**
@@ -475,23 +473,22 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 this.testContext.isTimeout = true;
                 this.updateTimer();
 
-                this.itemServiceApi.kill(function () {
+                this.killItemSession(function () {
                     var confirmBox = $('.timeout-modal-feedback'),
                         testContext = self.testContext,
-                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
-                        metaData = {};
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close');
 
                     if (testContext.numberCompletedSection === testContext.numberItemsSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}});
                     } else {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.TIMEOUT}});
                     }
 
                     self.enableGui();
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        self.actionCall('timeout', metaData);
+                        self.actionCall('timeout');
                     });
                 });
             },
@@ -592,6 +589,13 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                     // but do not load the item.
                     self.afterTransition();
                 }
+
+                if (testMetaData) {
+                    testMetaData.clearData();
+                }
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
             },
 
             /**
@@ -669,7 +673,6 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
 
                     hasTimers = !!this.testContext.timeConstraints.length;
                     $controls.$topActionBar.toggleClass('has-timers', hasTimers);
-                    self.adjustFrame();
 
                     if (hasTimers) {
 
@@ -866,8 +869,8 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              * Ensures the frame has the right size
              */
             adjustFrame: function () {
-                var iframeHeight,
-                    iframeContentHeight;
+                var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
+                var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
@@ -876,12 +879,19 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
                 }
+
                 if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
-                    iframeHeight = $controls.$itemFrame.height();
-                    iframeContentHeight = $controls.$itemFrame.contents().outerHeight();
-                    if(iframeContentHeight > 0 && iframeContentHeight > iframeHeight){
-                        $controls.$itemFrame.height(iframeContentHeight);
+                    frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
+
+                    if (frameContentHeight < finalHeight) {
+                        if (rubricHeight) {
+                            frameContentHeight = Math.max(frameContentHeight, finalHeight - rubricHeight);
+                        } else {
+                            frameContentHeight = finalHeight;
+                        }
                     }
+                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    $controls.$itemFrame.height(frameContentHeight);
                 }
             },
 
@@ -935,24 +945,13 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
              * @param {String} action - Action name
-             * @param {Object} [metaData] - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example:
-             * <pre>
-             * {
-             *   "TEST" : {
-             *      "TEST_EXIT_CODE" : "T"
-             *   },
-             *   "SECTION" : {
-             *      "SECTION_EXIT_CODE" : 704
-             *   }
-             * }
-             * </pre>
              * @param {Object} [extraParams] - Additional parameters to be sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData, extraParams) {
+            actionCall: function (action, extraParams) {
                 var self = this,
-                    params = metaData ? {"metaData" : metaData} : {};
+                    params = {metaData : testMetaData.getData()};
+
                 if (extraParams) {
                     params = _.assign(params, extraParams);
                 }
@@ -966,6 +965,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                         success: function (testContext) {
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
+                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
@@ -982,15 +982,16 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
              */
             exit: function () {
                 var self = this;
-                var metaData = {
-                    "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
-                    "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
-                };
+                testMetaData.addData({
+                    "TEST" : {"TEST_EXIT_CODE" : testMetaData.TEST_EXIT_CODE.INCOMPLETE},
+                    "SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.QUIT}
+                });
                 this.displayExitMessage(
                     __('Are you sure you want to end the test?'),
                     function() {
-                        self.itemServiceApi.kill(function () {
-                            self.actionCall('endTestSession', metaData);
+                        self.killItemSession(function () {
+                            self.actionCall('endTestSession');
+                            testMetaData.destroy();
                         });
                     },
                     this.testReview ? this.testContext.reviewScope : null
@@ -1098,6 +1099,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
+                        testMetaData.destroy();
                     }
                     else {
                         TestRunner.update(testContext);
@@ -1154,7 +1156,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, ServiceApi,
                 $(window).on('resize', _.throttle(function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
-                }, 50));
+                }, 250));
 
                 $doc.on('loading', function () {
                     iframeNotifier.parent('loading');

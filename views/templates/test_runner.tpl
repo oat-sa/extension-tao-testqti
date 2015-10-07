@@ -1,6 +1,7 @@
 <?php
 use oat\tao\helpers\Template;
 use oat\tao\helpers\Layout;
+use oat\tao\model\theme\Theme;
 ?><!doctype html>
 <html class="no-js" lang="<?= tao_helpers_I18n::getLangCode() ?>">
 <head>
@@ -10,12 +11,8 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('test-runner.css', 'taoQtiTest') ?>"/>
-
-    <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
-        <link rel="stylesheet" href="<?= $themeUrl ?>"/>
-    <?php endif; ?>
+    <link rel="stylesheet" href="<?= Layout::getThemeStylesheet(Theme::CONTEXT_FRONTOFFICE) ?>" />
     <script src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
-
     <script>
         (function () {
             requirejs.config({waitSeconds: <?=get_data('client_timeout')?> });

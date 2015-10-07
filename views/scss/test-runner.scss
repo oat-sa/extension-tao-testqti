@@ -195,8 +195,8 @@
 
     .content-panel {
         height: auto !important;
-        overflow-y:auto;
         #qti-content{
+            overflow-y:auto;
             font-size: 0; //avoid white spaces to screw the height
             #qti-rubrics {
                 font-size: 14px; //avoid white spaces to screw the height
@@ -206,7 +206,7 @@
 
     #qti-item {
         width: 100%;
-        min-height: 100%;
+        min-width: 100%;
         height: auto;
         overflow: visible;
     }
