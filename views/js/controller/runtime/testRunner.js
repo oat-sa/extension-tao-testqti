@@ -37,7 +37,7 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, TestMetaData, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
         'use strict';
 
@@ -453,7 +453,7 @@ define([
                 if (testMetaData) {
                     testMetaData.clearData();
                 }
-                testMetaData = new TestMetaData({
+                testMetaData = testMetaDataFactory({
                     testServiceCallId : this.itemServiceApi.serviceCallId
                 });
             },
