@@ -21,7 +21,7 @@
  * Metadata to be sent to the server. Will be saved in result storage as a trace variable.
  * Usage example:
  * <pre>
- * var testMetaData = new TestMetaData({
+ * var testMetaData = testMetaDataFactory({
  *   testServiceCallId : this.itemServiceApi.serviceCallId
  * });
  *
@@ -52,14 +52,11 @@ define([
     'use strict';
 
     /**
-     *
      * @param {Object} options
      * @param {string} options.testServiceCallId - test call id.
-     * @constructor
      */
-    function TestMetaData(options) {
-        var self = this,
-            _testServiceCallId,
+     var testMetaDataFactory = function testMetaDataFactory(options) {
+        var _testServiceCallId,
             _storageKeyPrefix = 'testMetaData_',
             _data = {};
 
@@ -67,22 +64,89 @@ define([
             throw new TypeError("testServiceCallId option is required");
         }
 
-        this.SECTION_EXIT_CODE = {
-            'COMPLETED_NORMALLY': 700,
-            'QUIT': 701,
-            'COMPLETE_TIMEOUT': 703,
-            'TIMEOUT': 704,
-            'FORCE_QUIT': 705,
-            'IN_PROGRESS': 706,
-            'ERROR': 300
-        };
-        this.TEST_EXIT_CODE = {
-            'COMPLETE': 'C',
-            'TERMINATED': 'T',
-            'INCOMPLETE': 'IC',
-            'INCOMPLETE_QUIT': 'IQ',
-            'INACTIVE': 'IA',
-            'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
+        var testMetaData = {
+            SECTION_EXIT_CODE : {
+                'COMPLETED_NORMALLY': 700,
+                'QUIT': 701,
+                'COMPLETE_TIMEOUT': 703,
+                'TIMEOUT': 704,
+                'FORCE_QUIT': 705,
+                'IN_PROGRESS': 706,
+                'ERROR': 300
+            },
+            TEST_EXIT_CODE : {
+                'COMPLETE': 'C',
+                'TERMINATED': 'T',
+                'INCOMPLETE': 'IC',
+                'INCOMPLETE_QUIT': 'IQ',
+                'INACTIVE': 'IA',
+                'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
+            },
+            /**
+             * Return test call id.
+             * @returns {string}- Test call id
+             */
+            getTestServiceCallId : function getTestServiceCallId () {
+                return _testServiceCallId;
+            },
+
+            /**
+             * Set test call id.
+             * @param {string} value
+             */
+            setTestServiceCallId : function setTestServiceCallId (value) {
+                _testServiceCallId = value;
+            },
+
+            /**
+             * Set meta data. Current data object will be overwritten.
+             * @param {Object} data - metadata object
+             */
+            setData : function setData(data) {
+                _data = data;
+                setLocalStorageData(JSON.stringify(_data));
+            },
+
+            /**
+             * Add data.
+             * @param {Object} data - metadata object
+             * @param {Boolean} overwrite - whether the same data should be overwritten. Default - <i>false</i>
+             */
+            addData : function addData(data, overwrite) {
+                data = _.clone(data);
+                if (overwrite === undefined) {
+                    overwrite = false;
+                }
+
+                if (overwrite) {
+                    _.merge(_data, data);
+                } else {
+                    _data = _.merge(data, _data);
+                }
+                setLocalStorageData(JSON.stringify(_data));
+            },
+
+            /**
+             * Get the saved data.
+             * The cloned object will be returned to avoid unwanted affecting of the original data.
+             * @returns {Object} - metadata object.
+             */
+            getData : function getData() {
+                return _.clone(_data);
+            },
+
+            /**
+             * Clear all data saved in current object and in local storage related to current test call id.
+             * @returns {Object} - metadata object.
+             */
+            clearData : function clearData() {
+                _data = {};
+                window.localStorage.removeItem(testMetaData.getLocalStorageKey());
+            },
+
+            getLocalStorageKey : function getLocalStorageKey () {
+                return _storageKeyPrefix + _testServiceCallId;
+            }
         };
 
         /**
@@ -90,7 +154,7 @@ define([
          */
         function init() {
             _testServiceCallId = options.testServiceCallId;
-            self.setData(getLocalStorageData());
+            testMetaData.setData(getLocalStorageData());
         }
 
         /**
@@ -98,7 +162,7 @@ define([
          * @param {* }val - data to be stored.
          */
         function setLocalStorageData(val) {
-            localStorage.setItem(self.getLocalStorageKey(), val);
+            window.localStorage.setItem(testMetaData.getLocalStorageKey(), val);
         }
 
         /**
@@ -106,80 +170,16 @@ define([
          * @returns {*} saved data or empty object
          */
         function getLocalStorageData() {
-            var data = localStorage.getItem(self.getLocalStorageKey()),
+            var data = window.localStorage.getItem(testMetaData.getLocalStorageKey()),
                 result = JSON.parse(data) || {};
 
             return result;
         }
 
-        /**
-         * Return test call id.
-         * @returns {string}- Test call id
-         */
-        this.getTestServiceCallId =  function getTestServiceCallId () {
-            return _testServiceCallId;
-        };
-
-        /**
-         * Set test call id.
-         * @param {string} value
-         */
-        this.setTestServiceCallId = function setTestServiceCallId (value) {
-            _testServiceCallId = value;
-        };
-
-        /**
-         * Set meta data. Current data object will be overwritten.
-         * @param {Object} data - metadata object
-         */
-        this.setData = function setData(data) {
-            _data = data;
-            setLocalStorageData(JSON.stringify(_data));
-        };
-
-        /**
-         * Add data.
-         * @param {Object} data - metadata object
-         * @param {Boolean} overwrite - whether the same data should be overwritten. Default - <i>false</i>
-         */
-        this.addData = function addData(data, overwrite) {
-            data = _.clone(data);
-            if (overwrite === undefined) {
-                overwrite = false;
-            }
-
-            if (overwrite) {
-                _.merge(_data, data);
-            } else {
-                _data = _.merge(data, _data);
-            }
-            setLocalStorageData(JSON.stringify(_data));
-        };
-
-        /**
-         * Get the saved data.
-         * The cloned object will be returned to avoid unwanted affecting of the original data.
-         * @returns {Object} - metadata object.
-         */
-        this.getData = function getData() {
-            return _.clone(_data);
-        };
-
-        /**
-         * Clear all data saved in current object and in local storage related to current test call id.
-         * @returns {Object} - metadata object.
-         */
-        this.clearData = function clearData() {
-            _data = {};
-            localStorage.removeItem(self.getLocalStorageKey());
-        };
-
-        this.getLocalStorageKey = function getLocalStorageKey () {
-            return _storageKeyPrefix + _testServiceCallId;
-        }
-
         init();
-    }
 
-    return TestMetaData;
+        return testMetaData;
+    };
+
+    return testMetaDataFactory;
 });
