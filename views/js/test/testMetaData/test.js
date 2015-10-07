@@ -40,6 +40,8 @@ define([
     });
 
     QUnit.test("setData", function (assert) {
+        console.log(this);
+        console.log(arguments);
         var testServiceCallId, testObject1, testObject2;
         testServiceCallId = "http://sample/first.rdf#i14435993288775133.item-2.0";
         testObject1 = {
