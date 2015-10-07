@@ -36,7 +36,7 @@ require([
             testServiceCallId : testServiceCallId
         });
 
-        equal(testMetaData.getTestServiceCallId(), testServiceCallId);
+        assert.equal(testMetaData.getTestServiceCallId(), testServiceCallId);
         testMetaData.clearData();
     });
 
