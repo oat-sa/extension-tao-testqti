@@ -664,7 +664,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress);
+                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -998,6 +998,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
+                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
                         reviewScope: !!testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
