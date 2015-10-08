@@ -17,104 +17,98 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
-namespace oat\taoAct\model\export;
+namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoFrontOffice\model\Delivery;
-use oat\taoOutcomeUi\model\ResultsService;
+use qtism\runtime\tests\AssessmentTestSession;
+
 /**
- * The OdsFactory
+ * The SessionStateService
+ *
+ * Service used for pausing and resuming the delivery execution.
+ * All timers in paused session will be paused.
+ *
+ * Usage example:
+ * <pre>
+ * //Pause session:
+ * $sessionStateService = ServiceManager::getServiceManager()->get('taoQtiTest/SessionStateService');
+ * $sessionStateService->pauseSession($session);
+ *
+ * //resume session:
+ * $sessionStateService = ServiceManager::getServiceManager()->get('taoQtiTest/SessionStateService');
+ * $sessionStateService->resumeSession($session);
+ * </pre>
+ * @author Aleh Hutnikau <hutnikau@1pt.com>
  */
-class OdsFactory extends ConfigurableService
+class SessionStateService extends ConfigurableService
 {
-    const OPTION_STORAGE = 'storage';
-    
-    const KEY_CACHEINFO_PREFIX = 'ods_cacheinfo_';
-    
     /**
-     * Returns the date of the last data generation
-     * 
-     * @param Delivery $delivery
-     * @return string timestamp UTC
+     * @var \taoDelivery_models_classes_execution_ServiceProxy
      */
-    public function getCacheDate(Delivery $delivery)
+    private $deliveryExecutionService;
+
+    public function __construct(array $options = array())
     {
-        $date = $this->getStorage()->get(self::KEY_CACHEINFO_PREFIX.$delivery->getId());
-        return $date;
+        $this->deliveryExecutionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
+        parent::__construct($options);
     }
 
-    public function getDelivery(Delivery $delivery)
-    {
-        \helpers_TimeOutHelper::setTimeOutLimit(\helpers_TimeOutHelper::LONG);
-        $results = array();
-        foreach ($this->getFinishedExecutions($delivery) as $deliveryExecution) {
-            try {
-                $results[] = OdsPayload::loadFromStorage($this->getStorage(), $deliveryExecution);
-            } catch (\common_cache_NotFoundException $e) {
-                // delivery execution not cached
-            }
-        }
-        return $results;
-        \helpers_TimeOutHelper::reset();
-    }
-    
     /**
-     * @param taoDelivery_models_classes_execution_OntologyDeliveryExecution[] $deliveryExecutons
-     * @return \oat\taoAct\model\export\OdsPayload
+     * Pause delivery execution.
+     * @param AssessmentTestSession $session
+     * @return boolean success
      */
-    private function generatePayload(array $deliveryExecutons)
-    {
-        $cache = $this->getStorage();
-        $result = array();
-        foreach ($deliveryExecutons as $deliveryExecuton) {
-            $payload = new OdsPayload($deliveryExecuton);
-            $payload->setStorage($cache);
-            $payload->getPayload();
-            $result[] = $payload;
-        }
-        return $result;
-    }
-    
-    public function generatePayloadForDelivery(Delivery $delivery)
-    {
-        $storage = $this->getStorage();
-        $deliveryExecutions = $this->getFinishedExecutions($delivery);
-        if (!empty($deliveryExecutions)) {
-            foreach ($deliveryExecutions as $deliveryExecuton) {
-                $payload = new OdsPayload($deliveryExecuton);
-                $payload->setStorage($storage);
-                // get or generates the storage
-                $payload->getPayload();
-            }
-            $this->getStorage()->set(self::KEY_CACHEINFO_PREFIX.$delivery->getId(), time());
-        }
-        return true;
-    }
-    
-    protected function getFinishedExecutions(Delivery $delivery)
-    {
-        // use result service to find delivery executions
-        $resultsService = ResultsService::singleton()->getReadableImplementation($delivery);
-        $deliveryExecutionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
-        
-        $deliveryExecutions = array();
-        foreach ($resultsService->getResultByDelivery(array($delivery->getUri())) as $result) {
-            $de = $deliveryExecutionService->getDeliveryExecution($result['deliveryResultIdentifier']);
-            if ($de->getState()->getUri() == INSTANCE_DELIVERYEXEC_FINISHED) {
-                $deliveryExecutions[] = $de;
-            }
-        }
-        
-        return $deliveryExecutions;
-    }
-    
-    /**
-     * Get the ods payload storage
-     * 
-     * @return \common_persistence_KeyValuePersistence
-     */
-    protected function getStorage() {
-        return \common_persistence_KeyValuePersistence::getPersistence($this->getOption(self::OPTION_STORAGE));
+    public function pauseSession(AssessmentTestSession $session) {
+        $session->updateDuration();
+        return $this->getDeliveryExecution($session)->setState(INSTANCE_DELIVERYEXEC_PAUSED);
     }
 
+    /**
+     * Resume delivery execution
+     * @param AssessmentTestSession $session
+     */
+    public function resumeSession(AssessmentTestSession $session) {
+        $deliveryExecutionState = $this->getSessionState($session);
+        if ($deliveryExecutionState === INSTANCE_DELIVERYEXEC_PAUSED) {
+            $this->updateTimeReference($session);
+            $this->getDeliveryExecution($session)->setState(INSTANCE_DELIVERYEXEC_ACTIVE);
+        }
+    }
+
+    /**
+     * Get delivery execution state
+     * @param AssessmentTestSession $session
+     * @return string
+     */
+    public function getSessionState(AssessmentTestSession $session) {
+        $deliveryExecution = $this->getDeliveryExecution($session);
+        return $deliveryExecution->getState()->getUri();
+    }
+
+    /**
+     * Set time reference of current assessment item session to <i>now</i> instead of time of last update.
+     * This ensures that time when delivery execution was paused will not be taken in account.
+     * Make sure that method invoked right after retrieving assessment test session
+     * and before the first AssessmentTestSession::updateDuration method call
+     * @param AssessmentTestSession $session
+     * @param \DateTime|null $time Time to be specified. Current time by default. Make sure that $time has UTC timezone.
+     */
+    public function updateTimeReference(AssessmentTestSession $session, \DateTime $time = null) {
+        if ($time === null) {
+            $time = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+        $itemSession = $session->getCurrentAssessmentItemSession();
+        if ($itemSession) {
+            $itemSession->setTimeReference($time);
+            $session->updateDuration();
+        }
+    }
+
+    /**
+     * @param AssessmentTestSession $session
+     * @return \taoDelivery_models_classes_execution_DeliveryExecution
+     */
+    private function getDeliveryExecution(AssessmentTestSession $session) {
+        return $this->deliveryExecutionService->getDeliveryExecution($session->getSessionId());
+    }
 }
