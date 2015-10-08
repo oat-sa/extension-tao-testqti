@@ -433,6 +433,10 @@ define([
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
+                
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
@@ -454,9 +458,6 @@ define([
                 if (testMetaData) {
                     testMetaData.clearData();
                 }
-                testMetaData = testMetaDataFactory({
-                    testServiceCallId : this.itemServiceApi.serviceCallId
-                });
             },
 
             updateInformation: function () {
