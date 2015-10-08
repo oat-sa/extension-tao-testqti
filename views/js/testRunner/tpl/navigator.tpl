@@ -1,4 +1,4 @@
-        <aside class="test-sidebar test-sidebar-{{region}} flex-container-navi qti-navigator">
+        <aside class="test-sidebar test-sidebar-{{region}} flex-container-navi qti-navigator{{#if hidden}} masked{{/if}}">
             <div class="qti-navigator-collapsible">
                 <span class="qti-navigator-collapse icon icon-left" title="{{__ 'Collapse the review panel'}}"></span>
                 <span class="qti-navigator-expand icon icon-right" title="{{__ 'Expand the review panel'}}"></span>
