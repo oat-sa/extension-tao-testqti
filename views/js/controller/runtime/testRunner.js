@@ -134,6 +134,7 @@ define([
                         // update the item flagged state
                         if (self.testReview) {
                             self.testReview.setItemFlag(position, flag);
+                            self.testReview.updateNumberFlagged(self.testContext, position, flag);
                             if (self.testContext.itemPosition === position) {
                                 self.testContext.itemFlagged = flag;
                             }
