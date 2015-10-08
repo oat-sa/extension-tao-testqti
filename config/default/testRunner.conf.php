@@ -108,4 +108,10 @@ return array(
      * @type boolean
      */
     'exitButton' => false,
+
+    /**
+     * Allows the next section button...
+     * @type boolean
+     */
+    'next-section' => false,
 );
