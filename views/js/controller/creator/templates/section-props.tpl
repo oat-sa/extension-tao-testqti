@@ -125,7 +125,7 @@
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
             <div class="tooltip-content">
-            {{__ 'Items can optionally be assigned to one or more categories.'}}
+            {{__ 'Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category.'}}
             </div>
         </div>
     </div>
