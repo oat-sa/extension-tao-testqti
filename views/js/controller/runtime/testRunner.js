@@ -37,9 +37,9 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
 
-    'use strict';
+        'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -143,6 +143,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                         // update the item flagged state
                         if (self.testReview) {
                             self.testReview.setItemFlag(position, flag);
+                            self.testReview.updateNumberFlagged(self.testContext, position, flag);
                             if (self.testContext.itemPosition === position) {
                                 self.testContext.itemFlagged = flag;
                             }
@@ -192,7 +193,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
                     this.exitTimedSection(action);
                 } else {
-                    this.killItemSession(function () {
+                this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
@@ -572,6 +573,10 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
+
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
@@ -593,9 +598,6 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 if (testMetaData) {
                     testMetaData.clearData();
                 }
-                testMetaData = testMetaDataFactory({
-                    testServiceCallId : this.itemServiceApi.serviceCallId
-                });
             },
 
             /**
@@ -828,7 +830,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress);
+                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -989,10 +991,10 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 this.displayExitMessage(
                     __('Are you sure you want to end the test?'),
                     function() {
-                        self.killItemSession(function () {
-                            self.actionCall('endTestSession');
-                            testMetaData.destroy();
-                        });
+                    self.killItemSession(function () {
+                        self.actionCall('endTestSession');
+                        testMetaData.destroy();
+                    });
                     },
                     this.testReview ? this.testContext.reviewScope : null
                 );
@@ -1172,6 +1174,7 @@ function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDat
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
+                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
                         reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
