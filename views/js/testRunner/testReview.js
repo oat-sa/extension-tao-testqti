@@ -147,7 +147,7 @@ define([
 
             this.options = initOptions;
             this.disabled = false;
-            this.hidden = false;
+            this.hidden = !!initOptions.hidden;
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -159,7 +159,8 @@ define([
             insertMethod = this.$container[insertMethod];
             if (insertMethod) {
                 insertMethod.call(this.$container, navigatorTpl({
-                    region: putOnRight ? 'right' : 'left'
+                    region: putOnRight ? 'right' : 'left',
+                    hidden: this.hidden
                 }));
             } else {
                 throw new Error("Unable to inject the component structure into the DOM");

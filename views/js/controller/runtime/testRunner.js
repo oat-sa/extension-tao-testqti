@@ -429,7 +429,7 @@ define([
                 this.updateExitButton();
                 this.resetCurrentItemState();
 
-                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
@@ -516,7 +516,6 @@ define([
 
                     hasTimers = !!this.testContext.timeConstraints.length;
                     $controls.$topActionBar.toggleClass('has-timers', hasTimers);
-                    self.adjustFrame();
 
                     if (hasTimers) {
 
@@ -665,7 +664,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress);
+                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
                     this.testReview.update(this.testContext);
                 }
             },
@@ -697,6 +696,8 @@ define([
             },
 
             adjustFrame: function () {
+                var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
+                var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
@@ -704,6 +705,20 @@ define([
                         var $sideBar = $(this);
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
+                }
+
+                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                    frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
+
+                    if (frameContentHeight < finalHeight) {
+                        if (rubricHeight) {
+                            frameContentHeight = Math.max(frameContentHeight, finalHeight - rubricHeight);
+                        } else {
+                            frameContentHeight = finalHeight;
+                        }
+                    }
+                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    $controls.$itemFrame.height(frameContentHeight);
                 }
             },
 
@@ -967,7 +982,7 @@ define([
                 $(window).on('resize', _.throttle(function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
-                }, 50));
+                }, 250));
 
                 $doc.on('loading', function () {
                     iframeNotifier.parent('loading');
@@ -983,6 +998,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
+                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
                         reviewScope: !!testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
