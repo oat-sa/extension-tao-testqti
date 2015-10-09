@@ -158,7 +158,7 @@ class TestSessionMetaData
                             $testPart = $session->getCurrentTestPart();
                             $test     = $session->getAssessmentTest();
 
-                            $testMaxTimeAllowed     = $test->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
+                            $testMaxTimeAllowed     = $test->hasTimeLimits() ? $test->getTimeLimits()->getMaxTime() : null;
                             $testPartMaxTimeAllowed = $testPart->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
                             $sectionMaxTimeAllowed  = $section->hasTimeLimits() ? $section->getTimeLimits()->getMaxTime() : null;
                             $itemMaxTimeAllowed     = $item->hasTimeLimits() ? $item->getTimeLimits()->getMaxTime() : null;
