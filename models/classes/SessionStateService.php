@@ -111,4 +111,18 @@ class SessionStateService extends ConfigurableService
     private function getDeliveryExecution(AssessmentTestSession $session) {
         return $this->deliveryExecutionService->getDeliveryExecution($session->getSessionId());
     }
+
+    /**
+     * Returns appropriate JS service implementation for testRunner
+     *
+     * @param boolean $resetTimerAfterResume
+     *
+     * @return string
+     */
+    public function getClientImplementation($resetTimerAfterResume = false){
+        if ($resetTimerAfterResume) {
+            return 'taoQtiTest/testRunner/resumingStrategy/keepAfterResume';
+        }
+        return 'taoQtiTest/testRunner/resumingStrategy/resetAfterResume';
+    }
 }

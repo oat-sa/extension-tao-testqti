@@ -50,6 +50,7 @@ define([
         $controls,
         timerIndex,
         testMetaData,
+        sessionStateService,
         $doc = $(document),
         TestRunner = {
             // Constants
@@ -103,6 +104,19 @@ define([
                     this.killItemSession(function() {
                         self.actionCall(action, params);
                     });
+                }
+            },
+
+            /**
+             * Push to server how long user seen that item before to track duration
+             * @param {Number} duration
+             */
+            keepItemTimed: function(duration){
+                if (duration) {
+                    var self = this,
+                        action = 'keepItemTimed',
+                        params = {duration: duration};
+                    self.actionCall(action, params);
                 }
             },
 
@@ -410,12 +424,25 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+            /**
+             * Retrieve service responsible for broken session tracking
+             * @returns {*}
+             */
+            getSessionStateService: function () {
+                if (!sessionStateService) {
+                    sessionStateService = this.testContext.sessionStateService({accuracy: 1000});
+                }
+                return sessionStateService;
+            },
+
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
 
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
+
+                this.getSessionStateService().restart();
 
                 this.setTestContext(testContext);
                 this.updateContext();
@@ -766,7 +793,7 @@ define([
              */
             actionCall: function (action, extraParams) {
                 var self = this,
-                    params = {metaData : testMetaData.getData()};
+                    params = {metaData: testMetaData ? testMetaData.getData() : {}};
 
                 if (extraParams) {
                     params = _.assign(params, extraParams);
@@ -941,6 +968,9 @@ define([
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
+
+                TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
+                TestRunner.getSessionStateService().restart();
 
                 $controls.$skipButtons.click(function () {
                     if (!$(this).hasClass('disabled')) {

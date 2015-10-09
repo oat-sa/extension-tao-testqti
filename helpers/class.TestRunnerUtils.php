@@ -422,7 +422,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['endTestSessionUrl'] = self::buildActionCallUrl($session, 'endTestSession', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-             
+            $context['keepItemTimedUrl'] = self::buildActionCallUrl($session, 'keepItemTimed', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             // If the candidate is allowed to move backward e.g. first item of the test.
             $context['canMoveBackward'] = $session->canMoveBackward();
              
