@@ -215,11 +215,6 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $this->getServiceManager()->register('taoQtiTest/SessionStateService', $sessionStateService);
             }
 
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['reset-timer-after-resume'] = false;
-            $extension->setConfig('testRunner', $config);
-
             $currentVersion = '2.13.1';
         }
 
