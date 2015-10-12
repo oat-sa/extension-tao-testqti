@@ -594,10 +594,6 @@ define([
                     // but do not load the item.
                     self.afterTransition();
                 }
-
-                if (testMetaData) {
-                    testMetaData.clearData();
-                }
             },
 
             /**
@@ -967,11 +963,11 @@ define([
                         success: function (testContext) {
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
-                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
                             }
+                            testMetaData.clearData();
                         }
                     });
                 });
