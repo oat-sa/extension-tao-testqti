@@ -110,8 +110,14 @@ return array(
     'exitButton' => false,
 
     /**
+     * Allows the next section button...
+     * @type boolean
+     */
+    'next-section' => false,
+
+   /**
      * After resuming test session timers will be reset to the time when the last item has been submitted.
      * @type boolean
      */
-    'reset-timer-after-resume' => false
+    'reset-timer-after-resume' => false,
 );
