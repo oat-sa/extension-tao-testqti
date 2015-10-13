@@ -51,6 +51,9 @@ define([
         timerIndex,
         testMetaData,
         $doc = $(document),
+        optionNextSection = 'x-tao-option-nextSection',
+        optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
+        optionReviewScreen = 'x-tao-option-reviewScreen',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -270,18 +273,23 @@ define([
             nextSection: function(){
                 var self = this;
                 var qtiRunner = this.getQtiRunner();
+                var doNextSection = function() {
+                    self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
+                };
 
                 if (qtiRunner) {
                     qtiRunner.updateItemApi();
                 }
 
-                this.displayExitMessage(
-                    __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
-                    function() {
-                        self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
-                    },
-                    'testSection'
-                );
+                if (this.hasOption(optionNextSectionWarning)) {
+                    this.displayExitMessage(
+                        __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
+                        doNextSection,
+                        'testSection'
+                    );
+                } else {
+                    doNextSection();
+                }
 
                 this.enableGui();
             },
@@ -395,6 +403,15 @@ define([
                     }
                 });
                 return answered;
+            },
+
+            /**
+             * Checks if a particular option is enabled for the current item
+             * @param {String} option
+             * @returns {Boolean}
+             */
+            hasOption: function(option) {
+                return _.indexOf(this.testContext.categories, option) >= 0
             },
 
             /**
@@ -620,12 +637,11 @@ define([
             updateTools: function updateTools(testContext) {
                 var showSkip = false;
                 var showSkipEnd = false;
-                var showNextSection = false;
+                var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
 
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         showSkip = true;
-                        showNextSection = !!this.testContext.nextSection;
                     } else {
                         showSkipEnd = true;
                     }
@@ -830,7 +846,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
+                    this.testReview.toggle(considerProgress && this.hasOption(optionReviewScreen));
                     this.testReview.update(this.testContext);
                 }
             },
@@ -1174,7 +1190,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
+                        hidden: !TestRunner.hasOption(optionReviewScreen),
                         reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
