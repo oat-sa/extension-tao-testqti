@@ -52,6 +52,7 @@ define([
         testMetaData,
         $doc = $(document),
         optionNextSection = 'x-tao-option-nextSection',
+        optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
         optionReviewScreen = 'x-tao-option-reviewScreen',
         TestRunner = {
             // Constants
@@ -280,7 +281,7 @@ define([
                     qtiRunner.updateItemApi();
                 }
 
-                if (this.testContext.navigationMode === this.TEST_NAVIGATION_LINEAR) {
+                if (this.hasOption(optionNextSectionWarning)) {
                     this.displayExitMessage(
                         __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
                         doNextSection,
@@ -636,7 +637,7 @@ define([
             updateTools: function updateTools(testContext) {
                 var showSkip = false;
                 var showSkipEnd = false;
-                var showNextSection = !!testContext.nextSection && this.hasOption(optionNextSection);
+                var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
 
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
