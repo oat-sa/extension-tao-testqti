@@ -283,7 +283,7 @@ define([
 
                 if (this.hasOption(optionNextSectionWarning)) {
                     this.displayExitMessage(
-                        __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
+                        __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
                         doNextSection,
                         'testSection'
                     );
