@@ -886,6 +886,7 @@ define([
                 var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
                 var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
+                var itemFrame = $controls.$itemFrame.get(0);
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.each(function() {
@@ -894,7 +895,7 @@ define([
                     });
                 }
 
-                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                if(itemFrame && itemFrame.contentWindow){
                     frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
 
                     if (frameContentHeight < finalHeight) {
@@ -904,7 +905,9 @@ define([
                             frameContentHeight = finalHeight;
                         }
                     }
-                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    if (itemFrame.contentWindow.$) {
+                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    }
                     $controls.$itemFrame.height(frameContentHeight);
                 }
             },
