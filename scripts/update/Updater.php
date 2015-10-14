@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\oatbox\service\ServiceNotFoundException;
+use oat\taoQtiTest\models\SessionStateService;
 
 /**
  *
@@ -211,6 +213,19 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.14.0';
         }
         
+        if ($currentVersion === '2.14.0') {
+            try {
+                $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+            } catch (ServiceNotFoundException $e) {
+                $sessionStateService = new SessionStateService();
+                $sessionStateService->setServiceManager($this->getServiceManager());
+
+                $this->getServiceManager()->register('taoQtiTest/SessionStateService', $sessionStateService);
+            }
+
+            $currentVersion = '2.15.0';
+        }
+
         return $currentVersion;
     }
 }
