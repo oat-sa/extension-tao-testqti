@@ -223,7 +223,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $this->getServiceManager()->register('taoQtiTest/SessionStateService', $sessionStateService);
             }
 
-            $currentVersion = '2.14.1';
+            $currentVersion = '2.15.0';
         }
 
         return $currentVersion;
