@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\oatbox\service\ServiceNotFoundException;
+use oat\taoQtiTest\models\SessionStateService;
 
 /**
  *
@@ -165,8 +167,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($currentVersion == '2.11.0') {
-            // correct access roles
-            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('act'=>'taoQtiTest', 'mod' => 'TestCommand')));
             $currentVersion = '2.11.1';
         }
 
@@ -202,7 +202,30 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.13.0';
         }
+
+        // adjust testrunner config: set the next section button display
+        if ($currentVersion == '2.13.0') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['next-section'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.14.0';
+        }
         
+        if ($currentVersion === '2.14.0') {
+            try {
+                $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+            } catch (ServiceNotFoundException $e) {
+                $sessionStateService = new SessionStateService();
+                $sessionStateService->setServiceManager($this->getServiceManager());
+
+                $this->getServiceManager()->register('taoQtiTest/SessionStateService', $sessionStateService);
+            }
+
+            $currentVersion = '2.15.0';
+        }
+
         return $currentVersion;
     }
 }

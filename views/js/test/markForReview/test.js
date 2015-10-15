@@ -72,17 +72,30 @@ define([
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
-            reviewScreen: true,
+            reviewScreen: false,
             considerProgress: true,
-            navigatorMap: []
+            navigatorMap: [],
+            categories : []
         };
-
+        
+        testContextMock.reviewScreen = true;
         markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(markForReview.isVisible(), 'The markForReview button is visible when the test taker screen is enabled');
+        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is enabled and the right itemRef category is not set');
 
         testContextMock.reviewScreen = false;
         markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled');
+        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is not set');
+        
+        //add special category to enable markForReview
+        testContextMock.categories.push('x-tao-option-markReview');
+        
+        testContextMock.reviewScreen = true;
+        markForReview.init('markForReview', configMock, testContextMock, {});
+        assert.ok(markForReview.isVisible(), 'The markForReview button is visible when the test taker screen is enabled and the right itemRef category is set');
+
+        testContextMock.reviewScreen = false;
+        markForReview.init('markForReview', configMock, testContextMock, {});
+        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is set');
     });
 
 
