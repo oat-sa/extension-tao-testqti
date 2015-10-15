@@ -685,7 +685,11 @@ define([
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+                
+                // Visibility of section?
+                var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
+                
+                $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
 
