@@ -78,6 +78,9 @@ define([
          * @private
          */
         tearDown : function tearDown() {
+            if (this.$form) {
+                this.closeForm();
+            }
             if (this.$cancel) {
                 this.$cancel.off(_ns);
             }
@@ -99,7 +102,7 @@ define([
             if (this.$form) {
                 this.$form.toggleClass('hidden');
 
-                visible = this.$form.is(':visible');
+                visible = !this.$form.hasClass('hidden');
                 this.setActive(visible);
 
                 if (visible) {
