@@ -62,6 +62,8 @@ define([
          * @param {String} [config.title] - the title to be displayed in the button
          * @param {String} [config.type] - the type of button (button, menu, group)
          * @param {Array} [config.items] - an optional list of menu items
+         * @param {String} [config.content] - an optional content to place just after the button
+         * @param {String} [config.discard] - an optional CSS selector to discard from the click event
          * @param {Object} testContext - the complete state of the test
          * @param {Object} testRunner - the test runner instance
          * @returns {button}
@@ -212,10 +214,11 @@ define([
                 var hasMenu = self.hasMenu();
                 var $target = $(e.target);
                 var $menuItem = hasMenu && $target.closest('.menu-item');
+                var discard = self.config.discard && $target.closest(self.config.discard).length;
                 var $action;
                 var id;
 
-                if (!self.$button.hasClass('disabled')) {
+                if (!self.$button.hasClass('disabled') && !discard) {
                     if ($menuItem && $menuItem.length) {
                         id = $menuItem.data('control');
 
@@ -482,6 +485,16 @@ define([
 
             return this;
         },
+
+        /**
+         * Tells if the button is active
+         * @param {String} [id]
+         * @returns {Boolean}
+         */
+        isActive : function isActive(id) {
+            return this._target(id).hasClass('active');
+        },
+
         /**
          * Sets the button active state
          * @param {Boolean} active
