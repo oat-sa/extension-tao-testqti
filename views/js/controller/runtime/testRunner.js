@@ -512,50 +512,6 @@ define([
             },
 
             /**
-             * Displays the "comment" form
-             */
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            /**
-             * Hides the "comment" form
-             */
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            /**
-             * Cleans up the "comment "form
-             */
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            /**
-             * Sends the comment to the server
-             */
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
-                });
-            },
-
-            /**
              * Sets the assessment test context object
              * @param {Object} testContext
              */
@@ -1069,13 +1025,6 @@ define([
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
 
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
-
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
@@ -1101,11 +1050,6 @@ define([
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
-
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -1153,20 +1097,6 @@ define([
                     if (!$(this).hasClass('disabled')) {
                         TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentToggle.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
-                    }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {
