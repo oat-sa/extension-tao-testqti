@@ -374,7 +374,7 @@ define([
                 testMetaData.addData({
                     'ITEM' : {
                         'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
-                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z') + ' ' + /\((.*)\)/.exec(new Date().toString())[1]
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
                     }
                 });
                 if (typeof callback !== 'function') {
