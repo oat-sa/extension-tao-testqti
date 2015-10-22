@@ -943,13 +943,13 @@ define([
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
+                            testMetaData.clearData();
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
                             }
                             else {
                                 self.update(testContext);
                             }
-                            testMetaData.clearData();
                         }
                     });
                 });
@@ -971,7 +971,7 @@ define([
                     function() {
                     self.killItemSession(function () {
                         self.actionCall('endTestSession');
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     });
                     },
                     this.testReview ? this.testContext.reviewScope : null
@@ -1067,7 +1067,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     }
                     else {
                         TestRunner.update(testContext);

@@ -162,7 +162,27 @@ define([
          * @param {* }val - data to be stored.
          */
         function setLocalStorageData(val) {
-            window.localStorage.setItem(testMetaData.getLocalStorageKey(), val);
+            var currentKey = testMetaData.getLocalStorageKey();
+            try {
+                window.localStorage.setItem(currentKey, val);
+            } catch(domException) {
+                if (domException.name === 'QuotaExceededError' ||
+                    domException.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    var removed = 0;
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var key  = localStorage.key(i);
+                        if (/^testMetaData_.*/.test(key) && key !== currentKey) {
+                            window.localStorage.removeItem(key);
+                            removed++;
+                        }
+                    }
+                    if (removed) {
+                        testMetaData.setLocalStorageData(val);
+                    } else {
+                        throw domException;
+                    }
+                }
+            }
         }
 
         /**
