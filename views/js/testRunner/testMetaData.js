@@ -177,7 +177,7 @@ define([
                         }
                     }
                     if (removed) {
-                        testMetaData.setLocalStorageData(val);
+                        setLocalStorageData(val);
                     } else {
                         throw domException;
                     }
