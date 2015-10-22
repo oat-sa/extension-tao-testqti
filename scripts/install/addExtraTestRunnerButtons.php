@@ -31,3 +31,7 @@ $registry->registerQtiTools('collapseReview', array(
     'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
     'order' => 'first'
 ));
+
+$registry->registerQtiTools('comment', array(
+    'hook' => 'taoQtiTest/testRunner/actionBar/comment'
+));

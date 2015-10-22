@@ -515,50 +515,6 @@ define([
             },
 
             /**
-             * Displays the "comment" form
-             */
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            /**
-             * Hides the "comment" form
-             */
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            /**
-             * Cleans up the "comment "form
-             */
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            /**
-             * Sends the comment to the server
-             */
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
-                });
-            },
-
-            /**
              * Sets the assessment test context object
              * @param {Object} testContext
              */
@@ -869,7 +825,11 @@ define([
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+                
+                // Visibility of section?
+                var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
+                
+                $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
 
@@ -889,6 +849,7 @@ define([
                 var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
                 var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
+                var itemFrame = $controls.$itemFrame.get(0);
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.each(function() {
@@ -897,7 +858,7 @@ define([
                     });
                 }
 
-                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                if(itemFrame && itemFrame.contentWindow){
                     frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
 
                     if (frameContentHeight < finalHeight) {
@@ -907,7 +868,9 @@ define([
                             frameContentHeight = finalHeight;
                         }
                     }
-                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    if (itemFrame.contentWindow.$) {
+                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    }
                     $controls.$itemFrame.height(frameContentHeight);
                 }
             },
@@ -1065,13 +1028,6 @@ define([
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
 
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
-
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
@@ -1097,11 +1053,6 @@ define([
 
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
-
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -1149,20 +1100,6 @@ define([
                     if (!$(this).hasClass('disabled')) {
                         TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentToggle.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
-                    }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {

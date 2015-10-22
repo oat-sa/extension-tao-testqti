@@ -414,6 +414,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
             
             // Whether or not the progress of the test can be inferred.
             $context['considerProgress'] = self::considerProgress($session, $testMeta, $config);
+            
+            // Whether or not the deepest current section is visible.
+            $context['isDeepestSectionVisible'] = $session->getCurrentAssessmentSection()->isVisible();
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
