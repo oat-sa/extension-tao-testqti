@@ -372,7 +372,10 @@ define([
              */
             killItemSession : function (callback) {
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                    'ITEM' : {
+                        'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
+                    }
                 });
                 if (typeof callback !== 'function') {
                     callback = _.noop;
