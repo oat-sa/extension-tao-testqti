@@ -181,6 +181,8 @@ define([
                     } else {
                         throw domException;
                     }
+                } else {
+                    throw domException;
                 }
             }
         }
