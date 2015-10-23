@@ -41,6 +41,7 @@ use qtism\runtime\common\OutcomeVariable;
 use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -49,7 +50,9 @@ use qtism\common\enums\Cardinality;
  *
  */
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
-    
+
+    const EVENT_PREFIX = 'taoQtiTest_helpers_TestSession_';
+
     /**
      * The ResultServer to be used to transmit Item and Test results.
      * 
@@ -210,6 +213,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
             
             $this->unsetVariable('LtiOutcome');
+            $this->triggerEvent(__FUNCTION__, array('session' => $this));
         }
         catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -265,5 +269,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $divide = new Divide(new ExpressionCollection(array($numberCorrect, $numberPresented)));
         $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
         return new OutcomeProcessing(new OutcomeRuleCollection(array($outcomeRule)));
+    }
+
+    /**
+     * @param string $name event name. Will be prefixed by self::EVENT_PREFIX
+     * @param array $params list of parameters
+     */
+    protected function triggerEvent($name, $params)
+    {
+        $eventManager = ServiceManager::getServiceManager()->get(oat\oatbox\event\EventManager::CONFIG_ID);
+        $event = new oat\oatbox\event\GenericEvent(
+            self::EVENT_PREFIX.$name,
+            $params
+        );
+        $eventManager->trigger($event);
     }
 }
