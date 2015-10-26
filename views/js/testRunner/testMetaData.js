@@ -159,7 +159,7 @@ define([
 
         /**
          * Set data to local storage
-         * @param {* }val - data to be stored.
+         * @param {string} val - data to be stored.
          */
         function setLocalStorageData(val) {
             var currentKey = testMetaData.getLocalStorageKey();
@@ -168,9 +168,11 @@ define([
             } catch(domException) {
                 if (domException.name === 'QuotaExceededError' ||
                     domException.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                    var removed = 0;
-                    for (var i = 0; i < localStorage.length; i++) {
-                        var key  = localStorage.key(i);
+                    var removed = 0,
+                        i = window.localStorage.length,
+                        key;
+                    while (i--) {
+                        key  = localStorage.key(i);
                         if (/^testMetaData_.*/.test(key) && key !== currentKey) {
                             window.localStorage.removeItem(key);
                             removed++;
