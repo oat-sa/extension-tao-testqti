@@ -43,6 +43,8 @@ use oat\taoFrontOffice\model\interfaces\DeliveryExecution;
  */
 class SessionStateService extends ConfigurableService
 {
+    const CONFIG_ID = 'taoQtiTest/SessionStateService';
+
     /**
      * @var \taoDelivery_models_classes_execution_ServiceProxy
      */
