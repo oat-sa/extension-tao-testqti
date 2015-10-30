@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\models;
 
 use alroniks\dtms\DateTime;
 use qtism\common\datatypes\Duration;
+use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
@@ -82,7 +83,6 @@ class TestSessionMetaData
      * @var AssessmentTestSession 
      */
     private $session;
-    private $resultService;
 
     /**
      * Constructor.
@@ -174,7 +174,7 @@ class TestSessionMetaData
 
                             });
 
-                            $startTimeSection = $testSessionMetaData->getStartSectionTime();;//start time of first item in section
+                            $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
 
                             if (isset( $timeLimits[count($timeLimits) - 1] )) {
                                 $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
@@ -182,7 +182,12 @@ class TestSessionMetaData
                                 $latestPossibleSectionTime = $startTimeSection->add(new \DateInterval('PT' . $maxAllowedTime->getSeconds() . 'S'));
 
                                 if ($time > $latestPossibleSectionTime->getTimestamp()) {
-                                    $time = $latestPossibleSectionTime->getTimestamp();
+                                    $currentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
+                                    if ($itemMaxTimeAllowed) {
+                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new \DateInterval('PT' . $itemMaxTimeAllowed->getSeconds() . 'S'))->getTimestamp();
+                                    } else {
+                                        $time = $latestPossibleSectionTime->getTimestamp();
+                                    }
                                 }
                             }
 
@@ -290,18 +295,34 @@ class TestSessionMetaData
     public function getStartSectionTime()
     {
         $itemResults        = array();
-        $ssid               = $this->getTestSession()->getSessionId();
         $assessmentItemsRef = $this->getTestSession()->getCurrentAssessmentSection()->getComponentsByClassName('assessmentItemRef');
 
-        $resultServer       = \taoResultServer_models_classes_ResultServerStateFull::singleton();
         /** @var ExtendedAssessmentItemRef $itemRef */
         foreach ($assessmentItemsRef as $itemRef) {
-            $collection = $resultServer->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
-            foreach ($collection as $vars) {
-                foreach ($vars as $var) {
-                    if ($var->variable instanceof taoResultServer_models_classes_TraceVariable && $var->variable->getIdentifier() === 'ITEM_START_TIME_SERVER') {
-                        $itemResults[] = $var->variable->getValue();
-                    }
+            $itemResults[] = $this->getItemStartTime($itemRef);
+        }
+        $sectionStart = min($itemResults);
+
+        return $sectionStart;
+    }
+
+    /**
+     * @param AssessmentItemRef $itemRef
+     *
+     * @return DateTime
+     */
+    public function getItemStartTime($itemRef)
+    {
+        $itemResults = array();
+
+        $ssid         = $this->getTestSession()->getSessionId();
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $collection   = $resultServer->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
+
+        foreach ($collection as $vars) {
+            foreach ($vars as $var) {
+                if ($var->variable instanceof taoResultServer_models_classes_TraceVariable && $var->variable->getIdentifier() === 'ITEM_START_TIME_SERVER') {
+                    $itemResults[] = $var->variable->getValue();
                 }
             }
         }
@@ -313,8 +334,8 @@ class TestSessionMetaData
             return $itemStart;
         }, $itemResults);
 
-        $sectionStart = min($itemResults);
+        $itemStartTime = min($itemResults);
 
-        return $sectionStart;
+        return $itemStartTime;
     }
 }
