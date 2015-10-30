@@ -20,7 +20,7 @@
 
 namespace oat\taoQtiTest\models;
 
-use alroniks\dtms\DateTime;
+use DateTime;
 use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
@@ -301,7 +301,7 @@ class TestSessionMetaData
         foreach ($assessmentItemsRef as $itemRef) {
             $itemResults[] = $this->getItemStartTime($itemRef);
         }
-        $sectionStart = min($itemResults);
+        $sectionStart = min(array_filter($itemResults));
 
         return $sectionStart;
     }
@@ -313,7 +313,8 @@ class TestSessionMetaData
      */
     public function getItemStartTime($itemRef)
     {
-        $itemResults = array();
+        $itemResults   = array();
+        $itemStartTime = null;
 
         $ssid         = $this->getTestSession()->getSessionId();
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
@@ -334,7 +335,9 @@ class TestSessionMetaData
             return $itemStart;
         }, $itemResults);
 
-        $itemStartTime = min($itemResults);
+        if ( ! empty( $itemResults )) {
+            $itemStartTime = min($itemResults);
+        }
 
         return $itemStartTime;
     }
