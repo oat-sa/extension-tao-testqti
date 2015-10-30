@@ -372,7 +372,10 @@ define([
              */
             killItemSession : function (callback) {
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                    'ITEM' : {
+                        'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
+                    }
                 });
                 if (typeof callback !== 'function') {
                     callback = _.noop;
@@ -508,50 +511,6 @@ define([
                         confirmBox.modal('close');
                         self.actionCall('timeout');
                     });
-                });
-            },
-
-            /**
-             * Displays the "comment" form
-             */
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            /**
-             * Hides the "comment" form
-             */
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            /**
-             * Cleans up the "comment "form
-             */
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            /**
-             * Sends the comment to the server
-             */
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
                 });
             },
 
@@ -866,7 +825,11 @@ define([
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+                
+                // Visibility of section?
+                var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
+                
+                $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
 
@@ -980,13 +943,13 @@ define([
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
+                            testMetaData.clearData();
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
                             }
                             else {
                                 self.update(testContext);
                             }
-                            testMetaData.clearData();
                         }
                     });
                 });
@@ -1008,7 +971,7 @@ define([
                     function() {
                     self.killItemSession(function () {
                         self.actionCall('endTestSession');
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     });
                     },
                     this.testReview ? this.testContext.reviewScope : null
@@ -1065,13 +1028,6 @@ define([
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
 
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
-
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
@@ -1098,11 +1054,6 @@ define([
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
-
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
                         iframeNotifier.parent('serviceforbidden');
@@ -1116,7 +1067,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     }
                     else {
                         TestRunner.update(testContext);
@@ -1149,20 +1100,6 @@ define([
                     if (!$(this).hasClass('disabled')) {
                         TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentToggle.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
-                    }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {

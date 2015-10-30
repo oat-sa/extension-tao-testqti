@@ -226,6 +226,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.15.0';
         }
 
+        if ($currentVersion === '2.15.0') {
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            $registry->registerQtiTools('comment', array(
+                'hook' => 'taoQtiTest/testRunner/actionBar/comment'
+            ));
+
+            $currentVersion = '2.16.0';
+        }
+
         return $currentVersion;
     }
 }
