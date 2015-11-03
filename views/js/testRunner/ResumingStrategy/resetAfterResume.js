@@ -31,7 +31,7 @@ define([], function () {
                 return 0;
             },
 
-            reset: function reset() {
+            restart: function restart() {
             }
 
         };

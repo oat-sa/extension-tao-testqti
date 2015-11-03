@@ -34,35 +34,34 @@ define([
 
         var sessionState = {
 
-            start: function start() {
-                if (null !== _interval) {
-                    throw TypeError('Tracking is already started');
-                }
-                _interval = setInterval(function () {
-                    setLocalStorageData(getLocalStorageData() + _accuracy);
-                }, _accuracy)
-            },
-
-            stop: function stop() {
-                clearInterval(_interval);
-                _interval = null;
+            restart: function restart(){
+                reset();
+                start();
             },
 
             getDuration: function getDuration() {
                 return getLocalStorageData();
-            },
-
-            reset: function reset() {
-                this.stop();
-                clearLocalStorage();
-            },
-
-            restart: function restart(){
-                this.reset();
-                this.start();
             }
-
         };
+
+        function start() {
+            if (null !== _interval) {
+                throw TypeError('Tracking is already started');
+            }
+            _interval = setInterval(function () {
+                setLocalStorageData(getLocalStorageData() + _accuracy);
+            }, _accuracy)
+        }
+
+        function stop() {
+            clearInterval(_interval);
+            _interval = null;
+        }
+
+        function reset() {
+            stop();
+            clearLocalStorage();
+        }
 
         function init() {
             _accuracy = options.accuracy || 1000;
