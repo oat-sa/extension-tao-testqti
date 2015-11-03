@@ -50,7 +50,11 @@ define([
         $controls,
         timerIndex,
         testMetaData,
+        sessionStateService,
         $doc = $(document),
+        optionNextSection = 'x-tao-option-nextSection',
+        optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
+        optionReviewScreen = 'x-tao-option-reviewScreen',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -112,6 +116,19 @@ define([
                     this.killItemSession(function() {
                         self.actionCall(action, params);
                     });
+                }
+            },
+
+            /**
+             * Push to server how long user seen that item before to track duration
+             * @param {Number} duration
+             */
+            keepItemTimed: function(duration){
+                if (duration) {
+                    var self = this,
+                        action = 'keepItemTimed',
+                        params = {duration: duration};
+                    self.actionCall(action, params);
                 }
             },
 
@@ -270,18 +287,23 @@ define([
             nextSection: function(){
                 var self = this;
                 var qtiRunner = this.getQtiRunner();
+                var doNextSection = function() {
+                    self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
+                };
 
                 if (qtiRunner) {
                     qtiRunner.updateItemApi();
                 }
 
-                this.displayExitMessage(
-                    __('Once you move to the next section, no further changes to this section will be permitted. Are you sure you want to complete this section and move to the next?'),
-                    function() {
-                        self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
-                    },
-                    'testSection'
-                );
+                if (this.hasOption(optionNextSectionWarning)) {
+                    this.displayExitMessage(
+                        __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                        doNextSection,
+                        'testSection'
+                    );
+                } else {
+                    doNextSection();
+                }
 
                 this.enableGui();
             },
@@ -364,7 +386,10 @@ define([
              */
             killItemSession : function (callback) {
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                    'ITEM' : {
+                        'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
+                    }
                 });
                 if (typeof callback !== 'function') {
                     callback = _.noop;
@@ -395,6 +420,15 @@ define([
                     }
                 });
                 return answered;
+            },
+
+            /**
+             * Checks if a particular option is enabled for the current item
+             * @param {String} option
+             * @returns {Boolean}
+             */
+            hasOption: function(option) {
+                return _.indexOf(this.testContext.categories, option) >= 0
             },
 
             /**
@@ -495,50 +529,6 @@ define([
             },
 
             /**
-             * Displays the "comment" form
-             */
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            /**
-             * Hides the "comment" form
-             */
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            /**
-             * Cleans up the "comment "form
-             */
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            /**
-             * Sends the comment to the server
-             */
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
-                });
-            },
-
-            /**
              * Sets the assessment test context object
              * @param {Object} testContext
              */
@@ -547,6 +537,18 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+
+            /**
+             * Retrieve service responsible for broken session tracking
+             * @returns {*}
+             */
+            getSessionStateService: function () {
+                if (!sessionStateService) {
+                    sessionStateService = this.testContext.sessionStateService({accuracy: 1000});
+                }
+                return sessionStateService;
+            },
+            
             /**
              * Updates the GUI
              * @param {Object} testContext
@@ -557,6 +559,8 @@ define([
 
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
+
+                this.getSessionStateService().restart();
 
                 this.setTestContext(testContext);
                 this.updateContext();
@@ -594,10 +598,6 @@ define([
                     // but do not load the item.
                     self.afterTransition();
                 }
-
-                if (testMetaData) {
-                    testMetaData.clearData();
-                }
             },
 
             /**
@@ -620,12 +620,11 @@ define([
             updateTools: function updateTools(testContext) {
                 var showSkip = false;
                 var showSkipEnd = false;
-                var showNextSection = false;
+                var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
 
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         showSkip = true;
-                        showNextSection = !!this.testContext.nextSection;
                     } else {
                         showSkipEnd = true;
                     }
@@ -830,7 +829,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
+                    this.testReview.toggle(considerProgress && this.hasOption(optionReviewScreen));
                     this.testReview.update(this.testContext);
                 }
             },
@@ -854,7 +853,11 @@ define([
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+                
+                // Visibility of section?
+                var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
+                
+                $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
 
@@ -874,6 +877,7 @@ define([
                 var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
                 var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
+                var itemFrame = $controls.$itemFrame.get(0);
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.each(function() {
@@ -882,7 +886,7 @@ define([
                     });
                 }
 
-                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                if(itemFrame && itemFrame.contentWindow){
                     frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
 
                     if (frameContentHeight < finalHeight) {
@@ -892,7 +896,9 @@ define([
                             frameContentHeight = finalHeight;
                         }
                     }
-                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    if (itemFrame.contentWindow.$) {
+                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    }
                     $controls.$itemFrame.height(frameContentHeight);
                 }
             },
@@ -952,7 +958,7 @@ define([
              */
             actionCall: function (action, extraParams) {
                 var self = this,
-                    params = {metaData : testMetaData.getData()};
+                    params = {metaData: testMetaData ? testMetaData.getData() : {}};
 
                 if (extraParams) {
                     params = _.assign(params, extraParams);
@@ -965,9 +971,9 @@ define([
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
+                            testMetaData.clearData();
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
-                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
@@ -993,7 +999,7 @@ define([
                     function() {
                     self.killItemSession(function () {
                         self.actionCall('endTestSession');
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     });
                     },
                     this.testReview ? this.testContext.reviewScope : null
@@ -1050,13 +1056,6 @@ define([
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
 
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
-
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
                     $progressLabel: $('[data-control="progress-label"]'),
@@ -1083,11 +1082,6 @@ define([
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
-
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
                         iframeNotifier.parent('serviceforbidden');
@@ -1101,7 +1095,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     }
                     else {
                         TestRunner.update(testContext);
@@ -1111,6 +1105,9 @@ define([
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
+
+                TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
+                TestRunner.getSessionStateService().restart();
 
                 $controls.$skipButtons.click(function () {
                     if (!$(this).hasClass('disabled')) {
@@ -1134,20 +1131,6 @@ define([
                     if (!$(this).hasClass('disabled')) {
                         TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentToggle.click(function () {
-                    if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
-                    }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {
@@ -1174,7 +1157,7 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
+                        hidden: !TestRunner.hasOption(optionReviewScreen),
                         reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse

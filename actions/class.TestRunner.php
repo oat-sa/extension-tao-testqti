@@ -298,10 +298,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
 	    $session = $this->getTestSession();
 
-        if (isset($config['reset-timer-after-resume']) && $config['reset-timer-after-resume']) {
-            $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+        /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+        $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+        $resetTimerAfterResume = isset($config['reset-timer-after-resume']) && $config['reset-timer-after-resume'];
+        if ($resetTimerAfterResume) {
             $sessionStateService->updateTimeReference($session);
         }
+        $this->setData('client_session_state_service',
+            $sessionStateService->getClientImplementation($resetTimerAfterResume));
 
 	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
@@ -324,6 +328,35 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+
+    /**
+     * Keep item activity time up to date
+     * @throws \oat\oatbox\service\ServiceNotFoundException
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
+     */
+    public function keepItemTimed(){
+        $this->beforeAction();
+
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+        if (isset( $config['reset-timer-after-resume'] ) && $config['reset-timer-after-resume'] && $this->hasRequestParameter('duration')) {
+
+            $session = $this->getTestSession();
+
+            // originally in milliseconds, but we have to convert to seconds now
+            $durationInSeconds = (int) ($this->getRequestParameter('duration') / 1000);
+
+            $time = new \DateTime('now', new \DateTimeZone('UTC'));
+            $duration = new DateInterval('PT' . $durationInSeconds . 'S');
+            $time->sub($duration);
+
+            /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+            $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+            $sessionStateService->updateTimeReference($session, $time);
+            $this->afterAction();
+        }
+    }
     
     /**
      * Mark an item for review in the Assessment Test Session flow.
