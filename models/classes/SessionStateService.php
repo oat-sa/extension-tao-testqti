@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use qtism\runtime\tests\AssessmentTestSession;
+use oat\taoFrontOffice\model\interfaces\DeliveryExecution;
 
 /**
  * The SessionStateService
@@ -60,7 +61,7 @@ class SessionStateService extends ConfigurableService
      */
     public function pauseSession(AssessmentTestSession $session) {
         $session->updateDuration();
-        return $this->getDeliveryExecution($session)->setState(INSTANCE_DELIVERYEXEC_PAUSED);
+        return $this->getDeliveryExecution($session)->setState(DeliveryExecution::STATE_PAUSED);
     }
 
     /**
@@ -69,9 +70,9 @@ class SessionStateService extends ConfigurableService
      */
     public function resumeSession(AssessmentTestSession $session) {
         $deliveryExecutionState = $this->getSessionState($session);
-        if ($deliveryExecutionState === INSTANCE_DELIVERYEXEC_PAUSED) {
+        if ($deliveryExecutionState === DeliveryExecution::STATE_PAUSED) {
             $this->updateTimeReference($session);
-            $this->getDeliveryExecution($session)->setState(INSTANCE_DELIVERYEXEC_ACTIVE);
+            $this->getDeliveryExecution($session)->setState(DeliveryExecution::STATE_ACTIVE);
         }
     }
 

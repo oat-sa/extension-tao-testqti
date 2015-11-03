@@ -68,19 +68,7 @@ use oat\tao\model\theme\Theme;
     <div class="plain action-bar content-action-bar horizontal-action-bar bottom-action-bar">
         <div class="control-box size-wrapper">
             <div class="lft tools-box">
-                <ul class="plain tools-box-list">
-                    <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
-                        <a class="li-inner" href="#">
-                            <span class="icon-tag"></span>
-                            <?= __("Comment"); ?>
-                        </a>
-                    </li>
-                </ul>
-                <div data-control="qti-comment">
-                    <textarea data-control="qti-comment-text" placeholder="<?= __('Your comment…') ?>"></textarea>
-                    <button data-control="qti-comment-cancel" class="btn-info small"></span><?= __("Cancel"); ?></button>
-                    <button data-control="qti-comment-send" class="btn-info small"><?= __("Send"); ?></button>
-                </div>
+                <ul class="plain tools-box-list"></ul>
             </div>
             <div class="rgt navi-box">
                 <ul class="plain navi-box-list">
@@ -100,6 +88,12 @@ use oat\tao\model\theme\Theme;
                         <a class="li-inner" href="#">
                             <span class="icon-fast-forward"></span>
                             <span class="text"><?= __("End Test"); ?></span>
+                        </a>
+                    </li>
+                    <li data-control="next-section" class="small btn-info action" title="<?= __("Skip to the next section"); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-external"></span>
+                            <span class="text"><?= __("Next Section"); ?></span>
                         </a>
                     </li>
                     <li data-control="skip" class="small btn-info action skip" title="<?= __("Skip to the next item"); ?>">

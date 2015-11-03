@@ -414,10 +414,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
             
             // Whether or not the progress of the test can be inferred.
             $context['considerProgress'] = self::considerProgress($session, $testMeta, $config);
+            
+            // Whether or not the deepest current section is visible.
+            $context['isDeepestSectionVisible'] = $session->getCurrentAssessmentSection()->isVisible();
              
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
             $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri , $qtiTestCompilationUri, $standalone);
             $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['nextSectionUrl'] = self::buildActionCallUrl($session, 'nextSection', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
             $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
@@ -512,6 +516,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 'test-taker-review-scope'           => 'reviewScope',
                 'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
                 'test-taker-review-can-collapse'    => 'reviewCanCollapse',
+                'next-section'                      => 'nextSection',
             );
             foreach ($configMap as $configKey => $contextKey) {
                 if (isset($config[$configKey])) {
