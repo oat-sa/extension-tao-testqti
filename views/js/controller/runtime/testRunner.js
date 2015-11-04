@@ -539,6 +539,15 @@ define([
 
 
             /**
+             * Handles Metadata initialization
+             */
+            initMetadata: function (){
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId: this.itemServiceApi.serviceCallId
+                });
+            },
+
+            /**
              * Retrieve service responsible for broken session tracking
              * @returns {*}
              */
@@ -573,13 +582,10 @@ define([
                 this.updateTimer();
                 this.updateExitButton();
                 this.resetCurrentItemState();
+                this.initMetadata();
 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
-
-                testMetaData = testMetaDataFactory({
-                    testServiceCallId : this.itemServiceApi.serviceCallId
-                });
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
@@ -1098,16 +1104,21 @@ define([
                         testMetaData.clearData();
                     }
                     else {
-                        TestRunner.update(testContext);
+
+                        if (TestRunner.getSessionStateService().getDuration()) {
+                            TestRunner.setTestContext(testContext);
+                            TestRunner.initMetadata();
+
+                            TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
+                            TestRunner.getSessionStateService().restart();
+                        } else {
+                            TestRunner.update(testContext);
+                        }
                     }
                 };
 
-
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
-
-                TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
-                TestRunner.getSessionStateService().restart();
 
                 $controls.$skipButtons.click(function () {
                     if (!$(this).hasClass('disabled')) {
