@@ -414,7 +414,7 @@ define([
              * @returns {Boolean}
              */
             hasOption: function(option) {
-                return _.indexOf(this.testContext.categories, option) >= 0
+                return _.indexOf(this.testContext.categories, option) >= 0;
             },
 
             /**
@@ -437,8 +437,8 @@ define([
                 var timeConstraints = this.testContext.timeConstraints,
                     isTimedSection = false;
                 for( var index in timeConstraints ){
-                    if(    timeConstraints.hasOwnProperty(index)
-                        && timeConstraints[index].qtiClassName == 'assessmentSection' ){
+                    if(timeConstraints.hasOwnProperty(index) &&
+                        timeConstraints[index].qtiClassName === 'assessmentSection' ){
                         isTimedSection = true;
                     }
                 }
