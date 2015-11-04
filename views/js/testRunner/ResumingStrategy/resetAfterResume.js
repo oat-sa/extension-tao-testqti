@@ -18,7 +18,7 @@
  * Contain dummy implementation
  */
 
-define([], function () {
+define(['taoQtiTest/testRunner/resumingStrategy/keepAfterResume'], function (keepAfterResume) {
     'use strict';
 
     var sessionStateFactory = function sessionStateFactory() {
@@ -31,7 +31,13 @@ define([], function () {
                 return 0;
             },
 
+            reset: function reset() {
+                //cleanup data if other strategy was in use before
+                keepAfterResume.reset();
+            },
+
             restart: function restart() {
+
             }
 
         };

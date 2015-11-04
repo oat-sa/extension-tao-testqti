@@ -18,9 +18,7 @@
  * Keep duration of test-taker activity in localstorage
  */
 
-define([
-    'lodash'
-], function (_) {
+define([], function () {
     'use strict';
 
     /**
@@ -28,13 +26,17 @@ define([
      * @param {string} options.accuracy - period of user status checking
      */
     var sessionStateFactory = function sessionStateFactory(options) {
-        var _storageKey = 'testtaker_active_for',
+        var _storageKey = 'sessionState_active_for',
             _accuracy,
             _interval = null;
 
         var sessionState = {
 
-            restart: function restart(){
+            reset: function reset() {
+                reset();
+            },
+
+            restart: function restart() {
                 reset();
                 start();
             },
