@@ -50,6 +50,7 @@ define([
         $controls,
         timerIndex,
         testMetaData,
+        sessionStateService,
         $doc = $(document),
         optionNextSection = 'x-tao-option-nextSection',
         optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
@@ -115,6 +116,19 @@ define([
                     this.killItemSession(function() {
                         self.actionCall(action, params);
                     });
+                }
+            },
+
+            /**
+             * Push to server how long user seen that item before to track duration
+             * @param {Number} duration
+             */
+            keepItemTimed: function(duration){
+                if (duration) {
+                    var self = this,
+                        action = 'keepItemTimed',
+                        params = {duration: duration};
+                    self.actionCall(action, params);
                 }
             },
 
@@ -523,6 +537,27 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+
+            /**
+             * Handles Metadata initialization
+             */
+            initMetadata: function (){
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId: this.itemServiceApi.serviceCallId
+                });
+            },
+
+            /**
+             * Retrieve service responsible for broken session tracking
+             * @returns {*}
+             */
+            getSessionStateService: function () {
+                if (!sessionStateService) {
+                    sessionStateService = this.testContext.sessionStateService({accuracy: 1000});
+                }
+                return sessionStateService;
+            },
+            
             /**
              * Updates the GUI
              * @param {Object} testContext
@@ -533,6 +568,8 @@ define([
 
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
+
+                this.getSessionStateService().restart();
 
                 this.setTestContext(testContext);
                 this.updateContext();
@@ -545,13 +582,10 @@ define([
                 this.updateTimer();
                 this.updateExitButton();
                 this.resetCurrentItemState();
+                this.initMetadata();
 
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
-
-                testMetaData = testMetaDataFactory({
-                    testServiceCallId : this.itemServiceApi.serviceCallId
-                });
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
@@ -930,7 +964,7 @@ define([
              */
             actionCall: function (action, extraParams) {
                 var self = this,
-                    params = {metaData : testMetaData.getData()};
+                    params = {metaData: testMetaData ? testMetaData.getData() : {}};
 
                 if (extraParams) {
                     params = _.assign(params, extraParams);
@@ -1070,10 +1104,18 @@ define([
                         testMetaData.clearData();
                     }
                     else {
-                        TestRunner.update(testContext);
+
+                        if (TestRunner.getSessionStateService().getDuration()) {
+                            TestRunner.setTestContext(testContext);
+                            TestRunner.initMetadata();
+
+                            TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
+                            TestRunner.getSessionStateService().restart();
+                        } else {
+                            TestRunner.update(testContext);
+                        }
                     }
                 };
-
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;

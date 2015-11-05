@@ -17,11 +17,15 @@ use oat\tao\model\theme\Theme;
         (function () {
             requirejs.config({waitSeconds: <?=get_data('client_timeout')?> });
             require(['<?=get_data('client_config_url')?>'], function () {
-                require(['taoQtiTest/controller/runtime/testRunner', 'mathJax'], function (testRunner, MathJax) {
+                require(['taoQtiTest/controller/runtime/testRunner', 'mathJax', '<?=get_data('client_session_state_service')?>'], function (testRunner, MathJax, sessionStateService) {
                     if (MathJax) {
                         MathJax.Hub.Configured();
                     }
-                    testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
+
+                    var assessmentTestContext  = <?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>;
+                    assessmentTestContext.sessionStateService = sessionStateService;
+
+                    testRunner.start(assessmentTestContext);
                 });
             });
         }());
