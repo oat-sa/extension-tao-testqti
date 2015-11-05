@@ -236,6 +236,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
         $this->retrieveTestSession();
+
+        $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+        $sessionStateService->resumeSession($this->getTestSession());
+
         $this->retrieveTestMeta();
         
         // Prevent anything to be cached by the client.
@@ -247,7 +251,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $this->getMetaDataHandler()->save($metaData);
         }
     }
-    
+
     /**
      * Get instance og session metadata handler
      * 
@@ -291,21 +295,30 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
 	public function index() {
 	    $this->beforeAction();
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
 	    $session = $this->getTestSession();
-	    
+
+        /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+        $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+        $resetTimerAfterResume = isset($config['reset-timer-after-resume']) && $config['reset-timer-after-resume'];
+        if ($resetTimerAfterResume) {
+            $sessionStateService->updateTimeReference($session);
+        }
+        $this->setData('client_session_state_service',
+            $sessionStateService->getClientImplementation($resetTimerAfterResume));
+
 	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
             // The test has just been instantiated.
             $session->beginTestSession();
             $this->getMetaDataHandler()->registerItemCallbacks();
             common_Logger::i("Assessment Test Session begun.");
         }
-	    
+
         if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
             taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
         }
 
         // loads the specific config
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $this->setData('review_screen', !empty($config['test-taker-review']));
         $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
         
@@ -315,6 +328,35 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->afterAction(false);
 	}
+
+    /**
+     * Keep item activity time up to date
+     * @throws \oat\oatbox\service\ServiceNotFoundException
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
+     */
+    public function keepItemTimed(){
+        $this->beforeAction();
+
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+        if (isset( $config['reset-timer-after-resume'] ) && $config['reset-timer-after-resume'] && $this->hasRequestParameter('duration')) {
+
+            $session = $this->getTestSession();
+
+            // originally in milliseconds, but we have to convert to seconds now
+            $durationInSeconds = (int) ($this->getRequestParameter('duration') / 1000);
+
+            $time = new \DateTime('now', new \DateTimeZone('UTC'));
+            $duration = new DateInterval('PT' . $durationInSeconds . 'S');
+            $time->sub($duration);
+
+            /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+            $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+            $sessionStateService->updateTimeReference($session, $time);
+            $this->afterAction();
+        }
+    }
     
     /**
      * Mark an item for review in the Assessment Test Session flow.
@@ -329,7 +371,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             if ($this->hasRequestParameter('position')) {
                 $itemPosition = intval($this->getRequestParameter('position'));
             } else {
-                $itemPosition = $testSession->getRoute()->getPosition();                
+                $itemPosition = $testSession->getRoute()->getPosition();
             }
             if ($this->hasRequestParameter('flag')) {
                 $flag = $this->getRequestParameter('flag');
@@ -465,6 +507,28 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
 	    $this->afterAction();
 	}
+
+    /**
+     * Moves to the next available section in the Assessment Test Session flow.
+     *
+     */
+    public function nextSection() {
+        $this->beforeAction();
+        $session = $this->getTestSession();
+
+        try {
+            $session->moveNextAssessmentSection();
+
+            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            }
+        }
+        catch (AssessmentTestSessionException $e) {
+            $this->handleAssessmentTestSessionException($e);
+        }
+
+        $this->afterAction();
+    }
 	
 	/**
 	 * Skip the current item in the Assessment Test Session flow.
