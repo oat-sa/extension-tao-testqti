@@ -7,10 +7,10 @@
             <label for="section-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
         <div class="col-6">
-            <input type="text" name="section-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable(original={{identifier}});" />
+            <input type="text" name="section-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(original={{identifier}});" />
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'The identifier of the section.'}}
             </div>
@@ -26,7 +26,7 @@
             <input type="text" name="section-title" data-bind="title" data-validate="$notEmpty" />
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'The section title.'}}
             </div>
@@ -46,7 +46,7 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'If required, it must appears at least once in the selection.'}}
             </div>
@@ -67,7 +67,7 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'Fixed position in a shuffled the selection.'}}
             </div>
@@ -87,7 +87,7 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'A visible section is one that is identifiable by the candidate.'}}
             </div>
@@ -107,13 +107,13 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section.'}}
             </div>
         </div>
     </div>
-    
+
     <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
     <div class="grid-row">
         <div class="col-5">
@@ -123,13 +123,13 @@
             <input type="text" name="section-category" />
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category.'}}
             </div>
         </div>
     </div>
-    
+
     <h4 class="toggler closed" data-toggle="~ .section-selection">{{__ 'Selection'}}</h4>
 
 <!-- assessmentTest/testPart/assessmentSection/selection -->
@@ -157,7 +157,7 @@
                 <input name="section-select" type="text" data-increment="1" data-min="0" value="0" data-bind="selection.select"  data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'The number of child elements to be selected.'}}
                 </div>
@@ -177,7 +177,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'When selecting child elements each element is normally eligible for selection once only.'}}
                 </div>
@@ -202,7 +202,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined.'}}
                 </div>
@@ -223,7 +223,7 @@
                 <input name="section-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Controls the maximum number of attempts allowed. 0 means unlimited.'}}
                 </div>
@@ -242,7 +242,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
                 </div>
@@ -262,7 +262,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Allow the candidate to review his answers.'}}
                 </div>
@@ -283,7 +283,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Show the solution once the answer is submitted.'}}
                 </div>
@@ -303,7 +303,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
                 </div>
@@ -322,7 +322,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'If the candidate can skip the item, without submitting a response.'}}
                 </div>
@@ -342,7 +342,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "The candidate is not allowed to submit wrong responses."}}
                 </div>
@@ -350,7 +350,7 @@
         </div>
 --}}
     </div>
-    
+
     <h4 class="toggler closed" data-toggle="~ .section-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
@@ -367,7 +367,7 @@
                 <input type="text" name="section-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Minimum duration for this section.'}}
                 </div>
@@ -384,7 +384,7 @@
                 <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Maximum duration for this section.'}}
                 </div>
@@ -403,7 +403,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."}}
                 </div>

@@ -1,6 +1,6 @@
 <div id="testpart-props-{{identifier}}" class="testpart-props props clearfix">
     <h3>{{identifier}}</h3>
-    
+
     <form autocomplete="off">
 
 <!-- assessmentTest/testPart/identifier -->
@@ -9,10 +9,10 @@
                 <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
             </div>
             <div class="col-6">
-                <input type="text" name="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable(original={{identifier}});" />
+                <input type="text" name="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(original={{identifier}});" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'The test part identifier.'}}
                 </div>
@@ -37,7 +37,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction.'}}
                 </div>
@@ -62,7 +62,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."}}
                 </div>
@@ -84,7 +84,7 @@
                     <input name="testpart-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'Controls the maximum number of attempts allowed. 0 means unlimited.'}}
                     </div>
@@ -103,7 +103,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
                     </div>
@@ -123,7 +123,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'Allow the candidate to review his answers.'}}
                     </div>
@@ -144,7 +144,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'Show the solution once the answer is submitted.'}}
                     </div>
@@ -164,7 +164,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
                     </div>
@@ -183,7 +183,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'If the candidate can skip the item, without submitting a response.'}}
                     </div>
@@ -204,7 +204,7 @@
                 </div>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "The candidate is not allowed to submit wrong responses."}}
                 </div>
@@ -227,7 +227,7 @@
                     <input type="text" name="testpart-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'Minimum duration for this test part.'}}
                     </div>
@@ -244,7 +244,7 @@
                     <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ 'Maximum duration for this test part.'}}
                     </div>
@@ -263,7 +263,7 @@
                     </label>
                 </div>
                 <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
                     {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
                     </div>
