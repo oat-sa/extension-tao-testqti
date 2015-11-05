@@ -51,6 +51,9 @@ define([
         timerIndex,
         testMetaData,
         $doc = $(document),
+        optionNextSection = 'x-tao-option-nextSection',
+        optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
+        optionReviewScreen = 'x-tao-option-reviewScreen',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -61,6 +64,11 @@ define([
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
+
+            /**
+             * Prepare a transition to another item
+             * @param {Function} [callback]
+             */
             beforeTransition: function (callback) {
                 // Ask the top window to start the loader.
                 iframeNotifier.parent('loading');
@@ -78,8 +86,12 @@ define([
                 }
             },
 
+            /**
+             * Complete a transition to another item
+             */
             afterTransition: function () {
                 this.enableGui();
+
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
                 testMetaData.addData({
@@ -134,6 +146,7 @@ define([
                         // update the item flagged state
                         if (self.testReview) {
                             self.testReview.setItemFlag(position, flag);
+                            self.testReview.updateNumberFlagged(self.testContext, position, flag);
                             if (self.testContext.itemPosition === position) {
                                 self.testContext.itemFlagged = flag;
                             }
@@ -149,6 +162,9 @@ define([
                 });
             },
 
+            /**
+             * Move to the next available item
+             */
             moveForward: function () {
                 var self = this,
                     action = 'moveForward';
@@ -168,6 +184,9 @@ define([
                 }
             },
 
+            /**
+             * Move to the previous available item
+             */
             moveBackward: function () {
                 var self = this,
                     action = 'moveBackward';
@@ -183,6 +202,11 @@ define([
                 }
             },
 
+            /**
+             * Checks if a position is out of the current section
+             * @param {Number} jumpPosition
+             * @returns {Boolean}
+             */
             isJumpOutOfSection: function(jumpPosition){
                 var items = this.getCurrentSectionItems(),
                     isJumpToOtherSection = true,
@@ -205,47 +229,127 @@ define([
                 return isJumpToOtherSection;
             },
 
-            exitSection: function(action, params){
+            /**
+             * Exit from the current section. Set the exit code.de
+             * @param {String} action
+             * @param {Object} params
+             * @param {Number} [exitCode]
+             */
+            exitSection: function(action, params, exitCode){
                 var self = this;
-
-                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
                 self.killItemSession(function () {
                     self.actionCall(action, params);
                 });
             },
 
+            /**
+             * Tries to exit a timed section. Display a confirm message.
+             * @param {String} action
+             * @param {Object} params
+             */
             exitTimedSection: function(action, params){
-                var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    message,
-                    messageFlagged = '',
-                    unansweredCount=(this.testContext.numberItemsSection - this.testContext.numberCompletedSection),
-                    flaggedCount=this.testContext.numberFlaggedSection,
-                    qtiRunner = this.getQtiRunner();
-
-                if( this.isCurrentItemAnswered() ){
-                    unansweredCount--;
-                }
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
 
                 if (qtiRunner) {
                     qtiRunner.updateItemApi();
                 }
 
-                if( flaggedCount !== undefined ){
-                    messageFlagged = " and have %s item(s) marked for review";
+                this.displayExitMessage(
+                    __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                    function() {
+                        self.exitSection(action, params);
+                    },
+                    'testSection'
+                );
+
+                this.enableGui();
+            },
+
+            /**
+             * Tries to leave the current section and go to the next
+             */
+            nextSection: function(){
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
+                var doNextSection = function() {
+                    self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
+                };
+
+                if (qtiRunner) {
+                    qtiRunner.updateItemApi();
                 }
 
-                message = __(
-                    "You have %s unanswered question(s)" + messageFlagged + ". " +
-                    "After you complete the section it would be impossible to return to this section to make changes.  " +
-                    "Are you sure you want to end the section?",
-                    (unansweredCount || 0).toString(),
-                    (flaggedCount || 0).toString()
-                );
+                if (this.hasOption(optionNextSectionWarning)) {
+                    this.displayExitMessage(
+                        __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                        doNextSection,
+                        'testSection'
+                    );
+                } else {
+                    doNextSection();
+                }
+
+                this.enableGui();
+            },
+
+            /**
+             * Gets the current progression within a particular scope
+             * @param {String} [scope]
+             * @returns {Object}
+             */
+            getProgression: function(scope) {
+                var scopeSuffixMap = {
+                    test : '',
+                    testPart : 'Part',
+                    testSection : 'Section'
+                };
+                var scopeSuffix = scope && scopeSuffixMap[scope] || '';
+
+                return {
+                    total : this.testContext['numberItems' + scopeSuffix] || 0,
+                    answered : this.testContext['numberCompleted' + scopeSuffix] || 0,
+                    viewed : this.testContext['numberPresented' + scopeSuffix] || 0,
+                    flagged : this.testContext['numberFlagged' + scopeSuffix] || 0
+                };
+            },
+
+            /**
+             * Displays an exit message for a particular scope
+             * @param {String} message
+             * @param {Function} [action]
+             * @param {String} [scope]
+             * @returns {jQuery} Returns the message box
+             */
+            displayExitMessage: function(message, action, scope) {
+                var self = this;
+                var $confirmBox = $('.exit-modal-feedback');
+                var progression = this.getProgression(scope);
+                var unansweredCount = (progression.total - progression.answered);
+                var flaggedCount = progression.flagged;
+
+                if (unansweredCount && this.isCurrentItemAnswered()) {
+                    unansweredCount--;
+                }
+
+                if (flaggedCount && unansweredCount) {
+                    message = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                        unansweredCount.toString(),
+                        flaggedCount.toString()
+                    ) + ' ' + message;
+                } else {
+                    if (flaggedCount) {
+                        message = __('You have %s item(s) marked for review.', flaggedCount.toString()) + ' ' + message;
+                    }
+
+                    if (unansweredCount) {
+                        message = __('You have %s unanswered question(s).', unansweredCount.toString()) + ' ' + message;
+                    }
+                }
 
                 $confirmBox.find('.message').html(message);
                 $confirmBox.modal({ width: 500 });
-                this.enableGui();
 
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
                     $confirmBox.modal('close');
@@ -253,9 +357,14 @@ define([
 
                 $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
                     $confirmBox.modal('close');
-                    self.exitSection(action, params);
+                    if (_.isFunction(action)) {
+                        action.call(self);
+                    }
                 });
+
+                return $confirmBox;
             },
+
             /**
              * Kill current item section and execute callback function given as first parameter.
              * Item end execution time will be stored in metadata object to be sent to the server.
@@ -263,13 +372,21 @@ define([
              */
             killItemSession : function (callback) {
                 testMetaData.addData({
-                    'ITEM' : {'ITEM_END_TIME_CLIENT' : Date.now() / 1000}
+                    'ITEM' : {
+                        'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
+                    }
                 });
                 if (typeof callback !== 'function') {
                     callback = _.noop;
                 }
                 this.itemServiceApi.kill(callback);
             },
+
+            /**
+             * Checks if the current item is active
+             * @returns {Boolean}
+             */
             isCurrentItemActive: function(){
                 return (this.testContext.itemSessionState != 4);
             },
@@ -291,6 +408,19 @@ define([
                 return answered;
             },
 
+            /**
+             * Checks if a particular option is enabled for the current item
+             * @param {String} option
+             * @returns {Boolean}
+             */
+            hasOption: function(option) {
+                return _.indexOf(this.testContext.categories, option) >= 0;
+            },
+
+            /**
+             * Gets access to the qtiRunner instance
+             * @returns {Object}
+             */
             getQtiRunner: function(){
                 var itemFrame = document.getElementById('qti-item');
                 var itemWindow = itemFrame && itemFrame.contentWindow;
@@ -299,12 +429,16 @@ define([
                 return itemContainerWindow && itemContainerWindow.qtiRunner;
             },
 
+            /**
+             * Checks if the current section is timed
+             * @returns {Boolean}
+             */
             isTimedSection: function(){
                 var timeConstraints = this.testContext.timeConstraints,
                     isTimedSection = false;
                 for( var index in timeConstraints ){
-                    if(    timeConstraints.hasOwnProperty(index)
-                        && timeConstraints[index].qtiClassName == 'assessmentSection' ){
+                    if(timeConstraints.hasOwnProperty(index) &&
+                        timeConstraints[index].qtiClassName === 'assessmentSection' ){
                         isTimedSection = true;
                     }
                 }
@@ -312,6 +446,10 @@ define([
                 return isTimedSection;
             },
 
+            /**
+             * Gets the list of items owned by the current section
+             * @returns {Array}
+             */
             getCurrentSectionItems: function(){
                 var partId  = this.testContext.testPartId,
                     navMap  = this.testContext.navigatorMap,
@@ -339,11 +477,17 @@ define([
                 return sectionItems;
             },
 
+            /**
+             * Skips the current item
+             */
             skip: function () {
                 this.disableGui();
                 this.actionCall('skip');
             },
 
+            /**
+             * Handles the timeout state
+             */
             timeout: function () {
                 var self = this;
                 this.disableGui();
@@ -369,37 +513,6 @@ define([
                     });
                 });
             },
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
-                });
-            },
 
             /**
              * Sets the assessment test context object
@@ -410,6 +523,10 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+            /**
+             * Updates the GUI
+             * @param {Object} testContext
+             */
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
@@ -432,6 +549,10 @@ define([
                 $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId : this.itemServiceApi.serviceCallId
+                });
+
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
                         self.afterTransition();
@@ -449,15 +570,11 @@ define([
                     // but do not load the item.
                     self.afterTransition();
                 }
-
-                if (testMetaData) {
-                    testMetaData.clearData();
-                }
-                testMetaData = testMetaDataFactory({
-                    testServiceCallId : this.itemServiceApi.serviceCallId
-                });
             },
 
+            /**
+             * Displays feedback on the current state of the test
+             */
             updateInformation: function () {
 
                 if (this.testContext.isTimeout === true) {
@@ -468,25 +585,35 @@ define([
                 }
             },
 
+            /**
+             * Updates the displayed tools
+             * @param {Object} testContext
+             */
             updateTools: function updateTools(testContext) {
+                var showSkip = false;
+                var showSkipEnd = false;
+                var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
+
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
-                        $controls.$skip.show();
-                        $controls.$skipEnd.hide();
-                    }
-                    else {
-                        $controls.$skip.hide();
-                        $controls.$skipEnd.show();
+                        showSkip = true;
+                    } else {
+                        showSkipEnd = true;
                     }
                 }
-                else {
-                    $controls.$skip.hide();
-                    $controls.$skipEnd.hide();
-                }
+
+                $controls.$skip.toggle(showSkip);
+                $controls.$skipEnd.toggle(showSkipEnd);
+                $controls.$nextSection.toggle(showNextSection);
 
                 actionBarTools.render('.tools-box-list', testContext, TestRunner);
             },
 
+            /**
+             * Displays a timer
+             * @param {Object} cst
+             * @returns {*|jQuery|HTMLElement}
+             */
             createTimer: function(cst) {
                 var $timer = $('<div>', {'class': 'qti-timer qti-timer__type-' + cst.qtiClassName }),
                     $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.label }),
@@ -497,6 +624,9 @@ define([
                 return $timer;
             },
 
+            /**
+             * Updates the timers
+             */
             updateTimer: function () {
                 var self = this;
                 var hasTimers;
@@ -603,6 +733,10 @@ define([
 
                 cst.warningTime = Number.NEGATIVE_INFINITY;
             },
+
+            /**
+             * Displays or hides the rubric block
+             */
             updateRubrics: function () {
                 $controls.$rubricBlocks.remove();
 
@@ -630,6 +764,9 @@ define([
                 }
             },
 
+            /**
+             * Updates the list of navigation buttons (previous, next, skip, etc.)
+             */
             updateNavigation: function () {
                 $controls.$exit.show();
 
@@ -664,7 +801,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress && _.indexOf(this.testContext.categories, 'x-tao-option-reviewScreen') >= 0);
+                    this.testReview.toggle(considerProgress && this.hasOption(optionReviewScreen));
                     this.testReview.update(this.testContext);
                 }
             },
@@ -682,6 +819,9 @@ define([
                 }
             },
 
+            /**
+             * Updates the test informations
+             */
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
@@ -693,16 +833,23 @@ define([
                 $controls.$titleGroup.show();
             },
 
+            /**
+             * Displays the right exit button
+             */
             updateExitButton : function(){
 
                 $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
                 $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
             },
 
+            /**
+             * Ensures the frame has the right size
+             */
             adjustFrame: function () {
                 var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
                 var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
+                var itemFrame = $controls.$itemFrame.get(0);
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.each(function() {
@@ -711,7 +858,7 @@ define([
                     });
                 }
 
-                if($controls.$itemFrame.length && $controls.$itemFrame[0] && $controls.$itemFrame[0].contentWindow){
+                if(itemFrame && itemFrame.contentWindow){
                     frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
 
                     if (frameContentHeight < finalHeight) {
@@ -721,11 +868,16 @@ define([
                             frameContentHeight = finalHeight;
                         }
                     }
-                    $controls.$itemFrame[0].contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    if (itemFrame.contentWindow.$) {
+                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    }
                     $controls.$itemFrame.height(frameContentHeight);
                 }
             },
 
+            /**
+             * Locks the GUI
+             */
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
                 if (this.testReview) {
@@ -733,6 +885,9 @@ define([
                 }
             },
 
+            /**
+             * Unlocks the GUI
+             */
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
                 if (this.testReview) {
@@ -740,6 +895,11 @@ define([
                 }
             },
 
+            /**
+             * Formats a timer
+             * @param {Number} totalSeconds
+             * @returns {String}
+             */
             formatTime: function (totalSeconds) {
                 var sec_num = totalSeconds;
                 var hours = Math.floor(sec_num / 3600);
@@ -783,9 +943,9 @@ define([
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
+                            testMetaData.clearData();
                             if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
-                                testMetaData.clearData();
                             }
                             else {
                                 self.update(testContext);
@@ -801,38 +961,21 @@ define([
              * @returns {undefined}
              */
             exit: function () {
-                var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    testProgression = TestRunner.testReview ?
-                        TestRunner.testReview.getProgression(self.testContext) : {
-                            total : self.testContext.numberItems,
-                            answered : self.testContext.numberCompleted,
-                            flagged : self.testContext.numberFlagged || 0
-                        },
-                    message = __(
-                        "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (testProgression.total - testProgression.answered).toString(),
-                        (testProgression.flagged).toString()
-                    );
+                var self = this;
                 testMetaData.addData({
                     "TEST" : {"TEST_EXIT_CODE" : testMetaData.TEST_EXIT_CODE.INCOMPLETE},
                     "SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.QUIT}
                 });
-
-                $confirmBox.find('.message').html(message);
-                $confirmBox.modal({ width: 500 });
-
-                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
-                    $confirmBox.modal('close');
-                });
-
-                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
-                    $confirmBox.modal('close');
+                this.displayExitMessage(
+                    __('Are you sure you want to end the test?'),
+                    function() {
                     self.killItemSession(function () {
                         self.actionCall('endTestSession');
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     });
-                });
+                    },
+                    this.testReview ? this.testContext.reviewScope : null
+                );
             },
 
             /**
@@ -876,6 +1019,7 @@ define([
                     $moveForward: $('[data-control="move-forward"]'),
                     $moveEnd: $('[data-control="move-end"]'),
                     $moveBackward: $('[data-control="move-backward"]'),
+                    $nextSection: $('[data-control="next-section"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
                     $exit: $(window.parent.document).find('[data-control="exit"]'),
@@ -883,13 +1027,6 @@ define([
                     $naviButtons: $('.bottom-action-bar .action'),
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
-
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
 
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
@@ -917,11 +1054,6 @@ define([
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
 
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
-
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
                         iframeNotifier.parent('serviceforbidden');
@@ -935,7 +1067,7 @@ define([
                     // we give the control to the delivery engine by calling finish.
                     if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
-                        testMetaData.destroy();
+                        testMetaData.clearData();
                     }
                     else {
                         TestRunner.update(testContext);
@@ -964,18 +1096,10 @@ define([
                     }
                 });
 
-                $controls.$commentToggle.click(function () {
+                $controls.$nextSection.click(function () {
                     if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
+                        TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {
@@ -1002,8 +1126,8 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        hidden: _.indexOf(testContext.categories, 'x-tao-option-reviewScreen') < 0,
-                        reviewScope: !!testContext.reviewScope,
+                        hidden: !TestRunner.hasOption(optionReviewScreen),
+                        reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
                     }).on('jump', function(event, position) {
