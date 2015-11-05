@@ -40,15 +40,30 @@ define([
         assert.equal(typeof collapseReview, 'object', "The collapseReview module exposes an object");
     });
 
-
-    var testReviewApi = [
+    var collapseReviewApi = [
         { name : 'init', title : 'init' },
         { name : 'clear', title : 'clear' },
-        { name : 'isVisible', title : 'isVisible' }
+        { name : 'render', title : 'render' },
+        { name : 'bindTo', title : 'bindTo' },
+        { name : 'bindEvents', title : 'bindEvents' },
+        { name : 'unbindEvents', title : 'unbindEvents' },
+        { name : 'isVisible', title : 'isVisible' },
+        { name : 'hasMenu', title : 'hasMenu' },
+        { name : 'isMenuOpen', title : 'isMenuOpen' },
+        { name : 'closeMenu', title : 'closeMenu' },
+        { name : 'openMenu', title : 'openMenu' },
+        { name : 'toggleMenu', title : 'toggleMenu' },
+        { name : 'setActive', title : 'setActive' },
+        { name : 'trigger', title : 'trigger' },
+        { name : 'on', title : 'on' },
+        { name : 'off', title : 'off' },
+        { name : 'setup', title : 'setup' },
+        { name : 'action', title : 'action' },
+        { name : 'menuAction', title : 'menuAction' }
     ];
 
     QUnit
-        .cases(testReviewApi)
+        .cases(collapseReviewApi)
         .test('API ', function(data, assert) {
             assert.equal(typeof collapseReview[data.name], 'function', 'The collapseReview module exposes a "' + data.title + '" function');
         });
@@ -56,27 +71,43 @@ define([
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
-            reviewScreen: true,
-            considerProgress: true
+            reviewScreen: false,
+            considerProgress: true,
+            categories : []
         };
-
-        assert.ok(collapseReview.isVisible(configMock, testContextMock), 'The collapseReview button is visible when the test taker screen is enabled');
+        
+        testContextMock.reviewScreen = true;
+        collapseReview.init('collapseReview', configMock, testContextMock, {});
+        assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is enabled and when the special category is not set');
 
         testContextMock.reviewScreen = false;
-        assert.ok(!collapseReview.isVisible(configMock, testContextMock), 'The collapseReview button is not visible when the test taker screen is disabled');
+        collapseReview.init('collapseReview', configMock, testContextMock, {});
+        assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is disabled and when the special category is not set');
+        
+        //add special category to enable markForReview
+        testContextMock.categories.push('x-tao-option-reviewScreen');
+        
+        testContextMock.reviewScreen = true;
+        collapseReview.init('collapseReview', configMock, testContextMock, {});
+        assert.ok(collapseReview.isVisible(), 'The collapseReview button is visible when the test taker screen is enabled and when the special category is set');
+
+        testContextMock.reviewScreen = false;
+        collapseReview.init('collapseReview', configMock, testContextMock, {});
+        assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is disabled and when the special category is set');
     });
 
 
     QUnit.asyncTest('button install/uninstall', function(assert) {
         var callExpected = true;
+        var callExecuted = false;
+        var i = 0;
         var testRunnerMock = {
             testReview: {
                 toggle: function() {
-                    if (callExpected) {
-                        assert.ok(true, 'The button must trigger a call to toggle');
+                    if (callExpected && ++i ==2) {
+                        assert.ok(true, 'The button must trigger two calls to toggle');
+                        callExecuted = true;
                         QUnit.start();
-                    } else {
-                        assert.ok(false, 'The button must not trigger a call to toggle');
                     }
                 }
             }
@@ -84,22 +115,27 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
-            considerProgress: true
+            considerProgress: true,
+            categories : ['x-tao-option-reviewScreen']
         };
 
-        var $btn = $('#mark-for-review-1');
+        var $container = $('#mark-for-review-1');
+        var $btn;
 
-        collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
+        collapseReview.init('collapseReview', configMock, testContextMock, testRunnerMock);
+        $btn = collapseReview.render();
+        $container.append($btn);
 
         $btn.click();
 
         collapseReview.clear();
 
-        QUnit.stop();
-        _.defer(function() {
-            assert.ok(true, 'The button is uninstalled and did not trigger a call to collapseReview');
-            QUnit.start();
-        }, 100);
+        _.delay(function() {
+            if(!callExecuted){
+                assert.ok(true, 'The button is uninstalled and did not trigger a call to collapseReview');
+                QUnit.start();
+            }
+        }, 600);
         $btn.click();
 
     });
@@ -116,33 +152,45 @@ define([
 
         var testContextMock = {
             reviewScreen: true,
-            considerProgress: true
+            considerProgress: true,
+            categories : ['x-tao-option-reviewScreen']
         };
 
-        var $btn = $('#mark-for-review-2');
+        var $container = $('#mark-for-review-2');
+        var $btn;
 
-        collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
+        collapseReview.init('collapseReview', configMock, testContextMock, testRunnerMock);
+        $btn = collapseReview.render();
+        $container.append($btn);
+
         assert.ok(!$btn.hasClass('active'), 'The collapseReview button is idle when the component is hidden');
 
-
-        $btn = $('#mark-for-review-3');
+        $container = $('#mark-for-review-3');
 
         testRunnerMock.testReview.hidden = false;
-        collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
+        collapseReview.init('collapseReview', configMock, testContextMock, testRunnerMock);
+        $btn = collapseReview.render();
+        $container.append($btn);
+
         assert.ok($btn.hasClass('active'), 'The collapseReview button is activate when the component is visible');
     });
 
 
     QUnit.asyncTest('button click', function(assert) {
         var expectedHidden = true;
-
+        var i = 1;
         var testRunnerMock = {
             testReview: {
                 toggle: function () {
-                    testRunnerMock.testReview.hidden = !testRunnerMock.testReview.hidden;
-                    assert.equal(testRunnerMock.testReview.hidden, expectedHidden, 'The collapseReview button state must reflect the display state of the component');
-                    assert.equal($btn.hasClass('active'), testRunnerMock.testReview.hidden, 'The collapseReview button is idle when the component is hidden, or active when the component is visible');
-                    QUnit.start();
+                    if(i === 1){
+                        assert.ok(true, 'first call to toggle after init');
+                    }else if(i > 1){
+                        testRunnerMock.testReview.hidden = !testRunnerMock.testReview.hidden;
+                        assert.equal(testRunnerMock.testReview.hidden, expectedHidden, 'The collapseReview button state must reflect the display state of the component');
+                        assert.equal($btn.hasClass('active'), testRunnerMock.testReview.hidden, 'The collapseReview button is idle when the component is hidden, or active when the component is visible');
+                        QUnit.start();
+                    }
+                    i++;
                 },
                 hidden: false
             }
@@ -153,9 +201,13 @@ define([
             considerProgress: true
         };
 
-        var $btn = $('#mark-for-review-4');
+        var $container = $('#mark-for-review-4');
+        var $btn;
 
-        collapseReview.init($btn, configMock, testContextMock, testRunnerMock);
+        collapseReview.init('collapseReview', configMock, testContextMock, testRunnerMock);
+        $btn = collapseReview.render();
+        $container.append($btn);
+
         assert.ok($btn.hasClass('active'), 'The collapseReview button is active when the component is visible');
 
         $btn.click();
