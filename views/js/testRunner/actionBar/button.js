@@ -62,8 +62,10 @@ define([
          * @param {String} [config.title] - the title to be displayed in the button
          * @param {String} [config.type] - the type of button (button, menu, group)
          * @param {Array} [config.items] - an optional list of menu items
-         * @param {Object} testContext - the complete state of the test
-         * @param {Object} testRunner - the test runner instance
+         * @param {String} [config.content] - an optional content to place just after the button
+         * @param {String} [config.discard] - an optional CSS selector to discard from the click event
+         * @param {Object} [testContext] - the complete state of the test
+         * @param {Object} [testRunner] - the test runner instance
          * @returns {button}
          */
         init : function init(id, config, testContext, testRunner) {
@@ -73,8 +75,8 @@ define([
             this.config.id = id;
             this.config.is = {};
 
-            this.testContext = testContext;
-            this.testRunner = testRunner;
+            this.testContext = testContext || {};
+            this.testRunner = testRunner || {};
 
             this.setup();
 
@@ -85,6 +87,45 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         *
+         * @param {Document} [_document]
+         * @returns {{itemContainerWindow: *, $: *, qtiRunner: (*|qtiRunner), $item: *, context: *}}
+         */
+        getItemContext: function(_document){
+            var doc = _document || document;
+            var itemFrame, itemWindow, itemContainerFrame, itemContainerWindow, item$, qtiRunner, $item, context;
+
+            itemFrame = doc.getElementById('preview-container');
+
+            // test
+            if(!itemFrame) {
+                itemFrame = doc.getElementById('qti-item');
+                itemWindow = itemFrame && itemFrame.contentWindow;
+                itemContainerFrame = itemWindow && itemWindow.document.getElementById('item-container');
+                itemContainerWindow = itemContainerFrame && itemContainerFrame.contentWindow;
+                context = 'test';
+            }
+
+            // preview
+            else {
+                itemContainerWindow = itemFrame && itemFrame.contentWindow;
+                context = 'preview';
+            }
+
+            item$ = itemContainerWindow && itemContainerWindow.$;
+            qtiRunner = itemContainerWindow && itemContainerWindow.qtiRunner;
+            $item = item$ && item$('.qti-item');
+
+            return {
+                itemContainerWindow: itemContainerWindow,
+                $: item$,
+                qtiRunner: qtiRunner,
+                $item: $item,
+                context: context
+            };
         },
 
         /**
@@ -212,10 +253,11 @@ define([
                 var hasMenu = self.hasMenu();
                 var $target = $(e.target);
                 var $menuItem = hasMenu && $target.closest('.menu-item');
+                var discard = self.config.discard && $target.closest(self.config.discard).length;
                 var $action;
                 var id;
 
-                if (!self.$button.hasClass('disabled')) {
+                if (!self.$button.hasClass('disabled') && !discard) {
                     if ($menuItem && $menuItem.length) {
                         id = $menuItem.data('control');
 
@@ -482,6 +524,16 @@ define([
 
             return this;
         },
+
+        /**
+         * Tells if the button is active
+         * @param {String} [id]
+         * @returns {Boolean}
+         */
+        isActive : function isActive(id) {
+            return this._target(id).hasClass('active');
+        },
+
         /**
          * Sets the button active state
          * @param {Boolean} active

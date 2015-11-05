@@ -33,7 +33,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {Object} obj - the model to extract id from
          * @returns {Array} the extracted identifiers
          */
-        extractIdentifiers : function(obj){
+        extractIdentifiers : function extractIdentifiers(obj){
             var self = this;
             var identifiers = [];
             if(_.has(obj, 'identifier')){
@@ -51,7 +51,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {Array} lockedIdentifiers - the list of identifiers you cannot use anymore
          * @returns {String} the identifier
          */
-        getIdentifier : function(qtiType, lockedIdentifiers){
+        getIdentifier : function getIdentifier(qtiType, lockedIdentifiers){
             var index = 1;
             var suggestion;
             var glue =  '-';
@@ -69,11 +69,11 @@ define(['lodash', 'i18n'], function(_, __){
          * Gives you a validator that check QTI id format
          * @returns {Object} the validator
          */
-        idFormatValidator : function(){
+        idFormatValidator : function idFormatValidator(){
             var qtiIdPattern = /^[_a-zA-Z]{1}[a-zA-Z0-9\-._]{0,31}$/i;
             return {
-                name : 'testIdFormat',
-                message : __('is not a valid identifier (alphanum, underscore, dash and dots.)'),
+                name : 'idFormat',
+                message : __('is not a valid identifier (alphanum, underscore, dash and dots)'),
                 validate : function(value, callback){
                     if(typeof callback === 'function'){
                         callback(qtiIdPattern.test(value));
@@ -82,13 +82,29 @@ define(['lodash', 'i18n'], function(_, __){
             };
         },
 
+        /**
+         * Gives you a validator that check QTI id format of the test (it is different from the others...)
+         * @returns {Object} the validator
+         */
+        testidFormatValidator : function testidFormatValidator(){
+            var qtiTestIdPattern = /^\S+$/;
+            return {
+                name : 'testIdFormat',
+                message : __('is not a valid identifier (everything except spaces)'),
+                validate : function(value, callback){
+                    if(typeof callback === 'function'){
+                        callback(qtiTestIdPattern.test(value));
+                    }
+                }
+            };
+        },
 
         /**
          * Gives you a validator that check if a QTI id is available
          * @param {Array} lockedIdentifiers - the list of identifiers you cannot use anymore
          * @returns {Object} the validator
          */
-        idAvailableValidator : function(lockedIdentifiers){
+        idAvailableValidator : function idAvailableValidator(lockedIdentifiers){
             return {
                 name : 'testIdAvailable',
                 message : __('is already used in the test.'),
@@ -106,7 +122,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {string} type
          * @returns {boolean}
          */
-        filterQtiType : function (value, type){
+        filterQtiType : function filterQtiType (value, type){
              return value['qti-type'] && value['qti-type'] === type;
         },
 
@@ -115,7 +131,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {Object|Array} collection
          * @param {string} parentType
          */
-        addMissingQtiType : function (collection, parentType) {
+        addMissingQtiType : function addMissingQtiType(collection, parentType) {
               var self = this;
               _.forEach(collection, function(value, key) {
                 if (_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')) {
@@ -140,7 +156,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {Object} model
          * @returns {Object}
          */
-        consolidateModel : function(model){
+        consolidateModel : function consolidateModel(model){
             if(model && model.testParts && _.isArray(model.testParts) && model.testParts[0]){
                 var testPart = model.testParts[0];
                 if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
