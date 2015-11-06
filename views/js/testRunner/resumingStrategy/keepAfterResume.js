@@ -48,11 +48,11 @@ define([], function () {
 
         function start() {
             if (null !== _interval) {
-                throw TypeError('Tracking is already started');
+                throw new TypeError('Tracking is already started');
             }
             _interval = setInterval(function () {
                 setLocalStorageData(getLocalStorageData() + _accuracy);
-            }, _accuracy)
+            }, _accuracy);
         }
 
         function stop() {
