@@ -20,6 +20,7 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'module',
     'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
@@ -29,17 +30,36 @@ define([
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
     'iframeNotifier',
-    'i18n',
     'mathJax',
     'ui/feedback',
     'ui/deleter',
     'moment',
     'ui/modal',
+    'ui/dialog',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+function (
+    $,
+    _,
+    __,
+    module,
+    actionBarTools,
+    testReview,
+    progressUpdater,
+    testMetaDataFactory,
+    ServiceApi,
+    UserInfoService,
+    StateStorage,
+    iframeNotifier,
+    MathJax,
+    feedback,
+    deleter,
+    moment,
+    modal,
+    dialog
+) {
 
-        'use strict';
+    'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -978,7 +998,19 @@ define([
                         dataType: 'json',
                         success: function (testContext) {
                             testMetaData.clearData();
-                            if (testContext.state === self.TEST_STATE_CLOSED) {
+
+                            if (!testContext.success) {
+                                self.afterTransition();
+                                dialog({
+                                    message: testContext.message,
+                                    buttons: 'ok'
+                                })
+                                    .on('okbtn', function () {
+                                        self.serviceApi.finish();
+                                    })
+                                    .show();
+                            }
+                            else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
                             }
                             else {

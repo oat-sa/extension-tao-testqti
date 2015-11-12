@@ -524,6 +524,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 }
             }
         }
+
+        // add a flag to allow distinction with error responses
+        $context['success'] = true;
         
         return $context;
     }
