@@ -1003,12 +1003,11 @@ function (
                                 self.afterTransition();
                                 dialog({
                                     message: testContext.message,
-                                    buttons: 'ok'
-                                })
-                                    .on('okbtn', function () {
+                                    buttons: 'ok',
+                                    onokbtn: function () {
                                         self.serviceApi.finish();
-                                    })
-                                    .show();
+                                    }
+                                }).show();
                             }
                             else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
