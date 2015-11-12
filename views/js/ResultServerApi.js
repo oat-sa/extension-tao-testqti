@@ -37,7 +37,7 @@ define(['jquery', 'i18n', 'iframeNotifier'], function($, __, iframeNotifier) {
             //there is no error management, so doing an alert (an eval and I'll burn in hell...)
             //TODO manage errors during the delivery
             if (response && response.message) {
-                if (response.code === TEST_STATE_CLOSED && response.code === TEST_STATE_SUSPENDED) {
+                if (response.code === TEST_STATE_CLOSED || response.code === TEST_STATE_SUSPENDED) {
                     message = false;
                 } else {
                     message = response.message;
