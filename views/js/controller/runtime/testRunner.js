@@ -1004,10 +1004,12 @@ function (
                                 dialog({
                                     message: testContext.message,
                                     buttons: 'ok',
-                                    onokbtn: function () {
+                                    autoRender: true,
+                                    autoDestroy: true,
+                                    onOkBtn: function () {
                                         self.serviceApi.finish();
                                     }
-                                }).show();
+                                });
                             }
                             else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
