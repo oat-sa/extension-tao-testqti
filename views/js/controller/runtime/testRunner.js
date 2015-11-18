@@ -35,7 +35,6 @@ define([
     'ui/deleter',
     'moment',
     'ui/modal',
-    'ui/dialog',
     'ui/progressbar'
 ],
 function (
@@ -55,8 +54,7 @@ function (
     feedback,
     deleter,
     moment,
-    modal,
-    dialog
+    modal
 ) {
 
     'use strict';
@@ -950,6 +948,26 @@ function (
             },
 
             /**
+             * Hides the GUI
+             */
+            hideGui: function () {
+                $controls.$naviButtons.addClass('hidden');
+                if (this.testReview) {
+                    this.testReview.hide();
+                }
+            },
+
+            /**
+             * Shows the GUI
+             */
+            showGui: function () {
+                $controls.$naviButtons.removeClass('hidden');
+                if (this.testReview) {
+                    this.testReview.show();
+                }
+            },
+
+            /**
              * Formats a timer
              * @param {Number} totalSeconds
              * @returns {String}
@@ -973,6 +991,35 @@ function (
                 var time = hours + ':' + minutes + ':' + seconds;
 
                 return time;
+            },
+
+            /**
+             * Processes an error
+             * @param {Object} error
+             */
+            processError : function processError(error) {
+                var self = this;
+
+                // keep disabled
+                this.hideGui();
+                this.beforeTransition();
+
+                // ask the parent to display a message
+                iframeNotifier.parent('message', {
+                    message : error.message,
+                    action : function() {
+                        if (testMetaData) {
+                            testMetaData.clearData();
+                        }
+                        if (error.state === self.TEST_STATE_CLOSED) {
+                            // test is closed, finish it
+                            self.serviceApi.finish();
+                        } else {
+                            // test is still open, just exit to the index
+                            self.serviceApi.exit();
+                        }
+                    }
+                });
             },
 
             /**
@@ -1000,16 +1047,7 @@ function (
                             testMetaData.clearData();
 
                             if (!testContext.success) {
-                                self.afterTransition();
-                                dialog({
-                                    message: testContext.message,
-                                    buttons: 'ok',
-                                    autoRender: true,
-                                    autoDestroy: true,
-                                    onOkBtn: function () {
-                                        self.serviceApi.finish();
-                                    }
-                                });
+                                self.processError(testContext);
                             }
                             else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
@@ -1130,9 +1168,13 @@ function (
                 window.onServiceApiReady = function onServiceApiReady(serviceApi) {
                     TestRunner.serviceApi = serviceApi;
 
+                    if (!testContext.success) {
+                        TestRunner.processError(testContext);
+                    }
+
                     // If the assessment test session is in CLOSED state,
                     // we give the control to the delivery engine by calling finish.
-                    if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
+                    else if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
                         testMetaData.clearData();
                     }

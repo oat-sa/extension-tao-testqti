@@ -231,7 +231,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     protected function notifyError($message, $code = 0) {
         $ctx = array(
             'success' => false,
-            'state' => AssessmentTestSessionState::CLOSED,
+            'state' => $this->getTestSession()->getState(),
             'message' => $message,
             'code' => $code,
         );
@@ -347,8 +347,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * 
      */
 	public function index() {
-	    if ($this->beforeAction()) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $noError = $this->beforeAction();
+
+        if ($noError) {
             $session = $this->getTestSession();
 
             /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
@@ -370,15 +372,17 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
+        }
 
-            // loads the specific config
-            $this->setData('review_screen', !empty($config['test-taker-review']));
-            $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
+        // loads the specific config
+        $this->setData('review_screen', !empty($config['test-taker-review']));
+        $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
 
-            $this->setData('client_config_url', $this->getClientConfigUrl());
-            $this->setData('client_timeout', $this->getClientTimeout());
-            $this->setView('test_runner.tpl');
+        $this->setData('client_config_url', $this->getClientConfigUrl());
+        $this->setData('client_timeout', $this->getClientTimeout());
+        $this->setView('test_runner.tpl');
 
+        if ($noError) {
             $this->afterAction(false);
         }
 	}
