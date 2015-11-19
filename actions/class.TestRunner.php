@@ -329,6 +329,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	                                                                          $this->getRequestParameter('QtiTestCompilation'),
 	                                                                          $this->getRequestParameter('standalone'),
 	                                                                          $this->getCompilationDirectory());
+
+        // add a flag to allow distinction with error responses
+        $ctx['success'] = true;
 	    
         // Put the assessment test context in request data.
 	    $this->setData('assessmentTestContext', $ctx);
