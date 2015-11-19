@@ -353,6 +353,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $noError = $this->beforeAction();
 
+        // this part is only accessible if beforeAction did not return an error
         if ($noError) {
             $session = $this->getTestSession();
 
@@ -378,6 +379,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         }
 
         // loads the specific config
+        // this part must be processed no matter if beforeAction returned an error:
+        // the context object is provided through the view
         $this->setData('review_screen', !empty($config['test-taker-review']));
         $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
 
@@ -385,6 +388,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $this->setData('client_timeout', $this->getClientTimeout());
         $this->setView('test_runner.tpl');
 
+        // this part is only accessible if beforeAction did not return an error
         if ($noError) {
             $this->afterAction(false);
         }
