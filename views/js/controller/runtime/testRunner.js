@@ -1005,7 +1005,7 @@ function (
                 this.beforeTransition();
 
                 // ask the parent to display a message
-                iframeNotifier.parent('message', {
+                iframeNotifier.parent('alertMessage', {
                     message : error.message,
                     action : function() {
                         if (testMetaData) {
