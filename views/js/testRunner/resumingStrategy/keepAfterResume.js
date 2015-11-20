@@ -33,12 +33,12 @@ define([], function () {
         var sessionState = {
 
             reset: function reset() {
-                reset();
+                _reset();
             },
 
             restart: function restart() {
-                reset();
-                start();
+                _reset();
+                _start();
             },
 
             getDuration: function getDuration() {
@@ -46,7 +46,7 @@ define([], function () {
             }
         };
 
-        function start() {
+        function _start() {
             if (null !== _interval) {
                 throw new TypeError('Tracking is already started');
             }
@@ -55,21 +55,21 @@ define([], function () {
             }, _accuracy);
         }
 
-        function stop() {
+        function _stop() {
             clearInterval(_interval);
             _interval = null;
         }
 
-        function reset() {
-            stop();
+        function _reset() {
+            _stop();
             clearLocalStorage();
         }
 
-        function init() {
-            _accuracy = options.accuracy || 1000;
+        function _init() {
+            _accuracy = options && options.accuracy || 1000;
         }
 
-        init();
+        _init();
 
         /**
          * Store duration in ms to local storage

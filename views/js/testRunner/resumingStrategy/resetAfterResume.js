@@ -33,7 +33,7 @@ define(['taoQtiTest/testRunner/resumingStrategy/keepAfterResume'], function (kee
 
             reset: function reset() {
                 //cleanup data if other strategy was in use before
-                keepAfterResume.reset();
+                keepAfterResume().reset();
             },
 
             restart: function restart() {
