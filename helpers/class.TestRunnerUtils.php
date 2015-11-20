@@ -115,6 +115,28 @@ class taoQtiTest_helpers_TestRunnerUtils {
 	    $occurence = $session->getCurrentAssessmentItemRefOccurence();
 	    return "${sessionId}.${itemId}.${occurence}";
     }
+
+    /**
+     * Set the initial outcomes defined in the rdf outcome map configuration file
+     *
+     * @param AssessmentTestSession $session
+     * @throws common_exception_Error
+     * @throws common_ext_ExtensionException
+     */
+    public static function setInitialOutcomes(AssessmentTestSession $session){
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        if(is_array($rdfOutcomeMap)){
+            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
+                //set outcome value
+                $values = $testTaker->getPropertyValues($rdfPropUri);
+                $outcome = $session->getVariable($outcomeId);
+                if(!is_null($outcome) && count($values)){
+                    $outcome->setValue(new String($values[0]));
+                }
+            }
+        }
+    }
     
     /**
      * Whether or not the current Assessment Item to be presented to the candidate is timed-out. By timed-out

@@ -829,7 +829,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    if ($qtiStorage->exists($sessionId) === false) {
 	        common_Logger::i("Instantiating QTI Assessment Test Session");
             $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
-            $this->setInitialOutcomes();
+            taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession());
 	    }
 	    else {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
@@ -863,27 +863,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        break;
 	    }
 	}
-    
-    /**
-     * Set the initial outcomes defined in the rdf outcome map configuration file
-     */
-    protected function setInitialOutcomes(){
-        
-        $testSession = $this->getTestSession();
-        
-        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
-        if(is_array($rdfOutcomeMap)){
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
-            foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
-                //set outcome value
-                $values = $testTaker->getPropertyValues($rdfPropUri);
-                $outcome = $testSession->getVariable($outcomeId);
-                if(!is_null($outcome) && count($values)){
-                    $outcome->setValue(new String($values[0]));
-                }
-            }
-        }
-    }
 
     /**
      * Preserve the outcomes variables set in the "rdfOutcomeMap" config
