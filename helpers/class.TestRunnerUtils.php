@@ -120,13 +120,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * Set the initial outcomes defined in the rdf outcome map configuration file
      *
      * @param AssessmentTestSession $session
+     * @param \oat\oatbox\user\User $testTaker
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
      */
-    public static function setInitialOutcomes(AssessmentTestSession $session){
+    public static function setInitialOutcomes(AssessmentTestSession $session, \oat\oatbox\user\User $testTaker)
+    {
         $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
         if(is_array($rdfOutcomeMap)){
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
             foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
                 //set outcome value
                 $values = $testTaker->getPropertyValues($rdfPropUri);
@@ -135,6 +136,22 @@ class taoQtiTest_helpers_TestRunnerUtils {
                     $outcome->setValue(new String($values[0]));
                 }
             }
+        }
+    }
+
+    /**
+     * Preserve the outcomes variables set in the "rdfOutcomeMap" config
+     * This is required to prevent those special outcomes from being reset before every outcome processing
+     *
+     * @param AssessmentTestSession $session
+     * @throws common_ext_ExtensionException
+     */
+    public static function preserveOutcomes(AssessmentTestSession $session)
+    {
+        //preserve the special outcomes defined in the rdfOutcomeMap config
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        if (is_array($rdfOutcomeMap) === true) {
+            $session->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
         }
     }
     
