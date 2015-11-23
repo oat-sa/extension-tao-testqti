@@ -271,7 +271,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $state = $session->getState();
         if ($state == AssessmentTestSessionState::CLOSED) {
             if ($notifyError) {
-                $this->notifyError(__('The assessment test has been terminated!'), $state);
+                $this->notifyError(__('This test has been terminated'), $state);
             }
             return false;
         }
@@ -279,7 +279,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // @TODO: maybe use an option to enable this behavior
         if ($state == AssessmentTestSessionState::SUSPENDED) {
             if ($notifyError) {
-                $this->notifyError(__('The assessment test has been suspended!'), $state);
+                $this->notifyError(__('This test has been suspended'), $state);
             }
             return false;
         }
