@@ -29,7 +29,7 @@ use qtism\runtime\common\State;
 use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\common\datatypes\String;
+use qtism\common\datatypes\String as QtismString;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
@@ -791,7 +791,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             // build variable and send it.
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
             $testUri = $testSession->getTest()->getUri();
-            $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new String($comment));
+            $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
             $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
         }
 	}
