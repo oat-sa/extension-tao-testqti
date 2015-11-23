@@ -1,4 +1,8 @@
-define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
+define(['jquery', 'i18n', 'iframeNotifier'], function($, __, iframeNotifier) {
+
+    // Constants
+    var TEST_STATE_SUSPENDED = 3,
+        TEST_STATE_CLOSED = 4;
 
     function ResultServerApi(endpoint, params) {
 
@@ -22,11 +26,26 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
     ResultServerApi.prototype.submitItemVariables = function(itemId, serviceCallId, responses, scores, events, params, callback) {
 
         var that = this;
-        var error = function error(){
+        var error = function error(xhr){
+            var response;
+            var message = __('An error occurs, please contact your administrator');
+
+            if (xhr) {
+                try { response = JSON.parse(xhr.responseText); } catch (e) {}
+            }
+
             //there is no error management, so doing an alert (an eval and I'll burn in hell...)
             //TODO manage errors during the delivery
-            alert('An error occurs, please contact your administrator');
-
+            if (response && response.message) {
+                if (response.code === TEST_STATE_CLOSED || response.code === TEST_STATE_SUSPENDED) {
+                    message = false;
+                } else {
+                    message = response.message;
+                }
+            }
+            if (message) {
+                alert(message);
+            }
             iframeNotifier.parent('unloading');
             callback(0);
         };
@@ -50,7 +69,7 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
             type : 'post',
             contentType : 'application/json',
             dataType : 'json',
-            success : function(reply){
+            success : function(reply, status, xhr){
 
                 var qtiRunner,
                     fbCount = 0;
@@ -70,7 +89,7 @@ define(['jquery', 'iframeNotifier'], function($, iframeNotifier) {
                     }
 
                 }else{
-                    error();
+                    error(xhr);
                 }
             },
             error : error

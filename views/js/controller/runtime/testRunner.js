@@ -20,6 +20,7 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'module',
     'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
@@ -29,7 +30,6 @@ define([
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
     'iframeNotifier',
-    'i18n',
     'mathJax',
     'ui/feedback',
     'ui/deleter',
@@ -37,9 +37,27 @@ define([
     'ui/modal',
     'ui/progressbar'
 ],
-    function ($, _, module, actionBarTools, testReview, progressUpdater, testMetaDataFactory, ServiceApi, UserInfoService, StateStorage, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+function (
+    $,
+    _,
+    __,
+    module,
+    actionBarTools,
+    testReview,
+    progressUpdater,
+    testMetaDataFactory,
+    ServiceApi,
+    UserInfoService,
+    StateStorage,
+    iframeNotifier,
+    MathJax,
+    feedback,
+    deleter,
+    moment,
+    modal
+) {
 
-        'use strict';
+    'use strict';
 
     var timerIds = [],
         currentTimes = [],
@@ -930,6 +948,26 @@ define([
             },
 
             /**
+             * Hides the GUI
+             */
+            hideGui: function () {
+                $controls.$naviButtons.addClass('hidden');
+                if (this.testReview) {
+                    this.testReview.hide();
+                }
+            },
+
+            /**
+             * Shows the GUI
+             */
+            showGui: function () {
+                $controls.$naviButtons.removeClass('hidden');
+                if (this.testReview) {
+                    this.testReview.show();
+                }
+            },
+
+            /**
              * Formats a timer
              * @param {Number} totalSeconds
              * @returns {String}
@@ -956,6 +994,35 @@ define([
             },
 
             /**
+             * Processes an error
+             * @param {Object} error
+             */
+            processError : function processError(error) {
+                var self = this;
+
+                // keep disabled
+                this.hideGui();
+                this.beforeTransition();
+
+                // ask the parent to display a message
+                iframeNotifier.parent('messagealert', {
+                    message : error.message,
+                    action : function() {
+                        if (testMetaData) {
+                            testMetaData.clearData();
+                        }
+                        if (error.state === self.TEST_STATE_CLOSED) {
+                            // test is closed, finish it
+                            self.serviceApi.finish();
+                        } else {
+                            // test is still open, just exit to the index
+                            self.serviceApi.exit();
+                        }
+                    }
+                });
+            },
+
+            /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
              * @param {String} action - Action name
@@ -978,7 +1045,11 @@ define([
                         dataType: 'json',
                         success: function (testContext) {
                             testMetaData.clearData();
-                            if (testContext.state === self.TEST_STATE_CLOSED) {
+
+                            if (!testContext.success) {
+                                self.processError(testContext);
+                            }
+                            else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
                             }
                             else {
@@ -1097,9 +1168,13 @@ define([
                 window.onServiceApiReady = function onServiceApiReady(serviceApi) {
                     TestRunner.serviceApi = serviceApi;
 
+                    if (!testContext.success) {
+                        TestRunner.processError(testContext);
+                    }
+
                     // If the assessment test session is in CLOSED state,
                     // we give the control to the delivery engine by calling finish.
-                    if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
+                    else if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
                         testMetaData.clearData();
                     }
