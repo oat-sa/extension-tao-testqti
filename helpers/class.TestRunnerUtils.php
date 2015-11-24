@@ -29,6 +29,7 @@ use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\TestSessionMetaData;
 use oat\taoQtiTest\models\ExtendedStateService;
+use qtism\common\datatypes\String;
 
 /**
 * Utility methods for the QtiTest Test Runner.
