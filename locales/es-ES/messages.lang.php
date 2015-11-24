@@ -31,6 +31,7 @@ $GLOBALS['__l10n']["An error occured during user deletion"]="Un error ocurrió d
 $GLOBALS['__l10n']["Answered"]="Respondido(s)";
 $GLOBALS['__l10n']["Are you sure to delete the versioned resource?\nThe history will be lost as well."]="Está seguro de borrar este recurso versionado?\nLa historia se perderá también.";
 $GLOBALS['__l10n']["Are you sure you want to delete it?"]="Está seguro de querer borrarlo?";
+$GLOBALS['__l10n']["Are you sure you want to end the test?"]="¿Está seguro(a) de que desea finalizar la prueba?";
 $GLOBALS['__l10n']["Assign User to role"]="Asignar rol a usuario";
 $GLOBALS['__l10n']["Author"]="Autor";
 $GLOBALS['__l10n']["Author Item"]="Elemento de autor";
@@ -133,6 +134,8 @@ $GLOBALS['__l10n']["Viewed"]="Visto";
 $GLOBALS['__l10n']["Viewed items"]="Ítems vistos";
 $GLOBALS['__l10n']["Warning – You have %s remaining to complete the test."]="Advertencia – Le quedan %s minutos para completar la prueba.";
 $GLOBALS['__l10n']["Yes"]="Sí";
+$GLOBALS['__l10n']["You have %s item(s) marked for review."]="Tiene %s ítem(s) marcado(s) para revisión.";
+$GLOBALS['__l10n']["You have %s unanswered question(s) and have %s item(s) marked for review."]="Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión.";
 $GLOBALS['__l10n']["You have %s unanswered question(s)."]="Tiene %s pregunta(s) sin respuesta.";
 
 ?>

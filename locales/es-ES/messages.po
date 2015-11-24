@@ -77,7 +77,7 @@ msgid "Answered"
 msgstr "Respondido(s)"
 
 msgid "Are you sure you want to end the test?"
-msgstr ""
+msgstr "¿Está seguro(a) de que desea finalizar la prueba?"
 
 msgid "Author"
 msgstr ""
@@ -639,13 +639,13 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "Tiene %s ítem(s) marcado(s) para revisión."
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión."
 
 msgid "You have %s unanswered question(s)."
 msgstr "Tiene %s pregunta(s) sin respuesta."
