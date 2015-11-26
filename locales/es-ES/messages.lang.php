@@ -23,6 +23,7 @@ $GLOBALS['__l10n']["Add / Edit lists"]="Agregar / Editar listas";
 $GLOBALS['__l10n']["Add a CSV file"]="Agregar archivo CSV";
 $GLOBALS['__l10n']["Add a user"]="Agregar un usuario";
 $GLOBALS['__l10n']["Add an RDF/XML file"]="Agregar archivo RDF/XML";
+$GLOBALS['__l10n']["After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"]="Después de que complete la sección, no podrá regresar a ella para realizar cambios. ¿Está seguro de que desea terminar la sección?";
 $GLOBALS['__l10n']["all"]="todos";
 $GLOBALS['__l10n']["All"]="Todos";
 $GLOBALS['__l10n']["All rights reserved."]="Todos los derechos reservados";
