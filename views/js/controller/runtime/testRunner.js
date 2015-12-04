@@ -557,7 +557,7 @@ define([
                 }
                 return sessionStateService;
             },
-            
+
             /**
              * Updates the GUI
              * @param {Object} testContext
@@ -859,10 +859,10 @@ define([
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                
+
                 // Visibility of section?
                 var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
-                
+
                 $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
@@ -1202,6 +1202,8 @@ define([
                     if(id && state){
                         TestRunner.setCurrentItemState(id, state);
                     }
+                }).on('heightchange', function(e, height) {
+                    $controls.$itemFrame.height(height);
                 });
 
             }
