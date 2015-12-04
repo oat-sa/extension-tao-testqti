@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.1.0-sprint12\n"
-"PO-Revision-Date: 2015-11-24T08:49:39\n"
+"PO-Revision-Date: 2015-11-25T10:35:26\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -38,7 +38,7 @@ msgid "Add the source file"
 msgstr ""
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "Después de que complete la sección, no podrá regresar a ella para realizar cambios. ¿Está seguro de que desea terminar la sección?"
 
 msgid "All"
 msgstr "Todos"
