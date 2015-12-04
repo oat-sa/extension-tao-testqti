@@ -547,6 +547,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                 $finalErrorString = implode("\n", $eStrs);
                 if (empty($finalErrorString) === true) {
+                    common_Logger::e($e->getMessage());
                     // Not XML malformation related. No info from LibXmlErrors extracted.
                     if (($previous = $e->getPrevious()) != null) {
 
@@ -557,8 +558,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $domElement = $previous->getDOMElement();
                             $finalErrorString = __('Inconsistency at line %1d:', $domElement->getLineNo()) . ' ' . $previous->getMessage();
                         }
-                    }
-                    else {
+                    } elseif ($e->getMessage() !== '') {
+                        $finalErrorString = $e->getMessage();
+                    } else {
                         $finalErrorString = __("Unknown error.");
                     }
                 }
