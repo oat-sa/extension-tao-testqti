@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use qtism\runtime\tests\AssessmentTestSession;
-use oat\taoFrontOffice\model\interfaces\DeliveryExecution;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 
 /**
  * The SessionStateService
