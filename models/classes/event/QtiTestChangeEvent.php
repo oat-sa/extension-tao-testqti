@@ -44,7 +44,7 @@ class QtiTestChangeEvent extends TestChangedEvent
         $count = $this->session->getRouteCount();
         if ($this->session->isRunning()) {
             $section = $this->session->getCurrentAssessmentSection();
-            return __('%1$s - item %2$s/%3$s', $section->getTitle(), $pos, $count);
+            return __('%1$s - item %2$s/%3$s', $section->getTitle(), $pos+1, $count);
         } else {
             return __('finished');
         }
