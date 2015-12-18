@@ -41,6 +41,9 @@ use qtism\runtime\common\OutcomeVariable;
 use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
+use oat\oatbox\service\ServiceManager;
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -219,6 +222,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $msg = "An error occured during test-level outcome results transmission.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
+        
+        $this->triggerEventChange();
     }
     
     protected function submitTestResults() {
@@ -265,5 +270,76 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $divide = new Divide(new ExpressionCollection(array($numberCorrect, $numberPresented)));
         $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
         return new OutcomeProcessing(new OutcomeRuleCollection(array($outcomeRule)));
+    }
+    
+    public function beginTestSession()
+    {
+        parent::beginTestSession();
+        $this->triggerEventChange();
+    }
+    
+    public function jumpTo($position, $allowTimeout = false)
+    {
+        parent::jumpTo($position);
+        $this->triggerEventChange();
+    }
+    
+    public function moveNext($allowTimeout = false)
+    {
+        parent::moveNext($allowTimeout);
+        $this->triggerEventChange();
+    }
+    
+    public function moveBack($allowTimeout = false)
+    {
+        parent::moveBack($allowTimeout);
+        $this->triggerEventChange();
+    }
+    
+    public function skip()
+    {
+        parent::skip();
+        $this->triggerEventChange();
+    }
+    
+    public function moveNextTestPart()
+    {
+        parent::moveNextTestPart();
+        $this->triggerEventChange();
+    }
+    
+    public function moveNextAssessmentSection()
+    {
+        parent::moveNextAssessmentSection();
+        $this->triggerEventChange();
+    }
+    
+    public function moveNextAssessmentItem()
+    {
+        parent::moveNextAssessmentItem();
+        $this->triggerEventChange();
+    }
+    
+    protected function triggerEventChange() {
+        /*
+        $pos = $this->getRoute()->getPosition();
+        $count = $this->getRouteCount();
+        if ($this->isRunning()) {
+            $section = $this->getCurrentAssessmentSection();
+            $description = __('%1$s - item %2$s/%3$s', $section->getTitle(), $pos, $count);
+        } else {
+            $description = __('finished');
+        }
+        
+        $serviceCallId = $this->getSessionId();
+        */
+        $this->getEventManager()->trigger(new QtiTestChangeEvent($this));
+    }
+    
+    /**
+     * @return EventManager
+     */
+    protected function getEventManager() {
+        return ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID);
     }
 }
