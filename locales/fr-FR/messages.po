@@ -1,17 +1,20 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint03\n"
-"PO-Revision-Date: 2015-08-11T13:57:07\n"
-"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
-"MIME-Version: 1.0\n"
+"Project-Id-Version: TAO 3.1.0-sprint04\n"
+"PO-Revision-Date: 2015-07-23 12:34+0000\n"
+"Last-Translator: Patrick <patrick@taotesting.com>\n"
 "Language: fr-FR\n"
-"sourceLanguage: en-US\n"
-"targetLanguage: fr-FR\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.5.1-rc1\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: fr-FR\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-POOTLE-MTIME: 1437654852.000000\n"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -314,6 +317,9 @@ msgstr ""
 msgid "Ordering"
 msgstr ""
 
+msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
+msgstr ""
+
 msgid "Part %d"
 msgstr ""
 
@@ -461,6 +467,9 @@ msgstr ""
 msgid "The identifier of the section."
 msgstr ""
 
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr ""
+
 msgid "The IMS QTI Test Package could not be imported."
 msgstr ""
 
@@ -593,3 +602,31 @@ msgstr ""
 msgid "Your comment…"
 msgstr ""
 
+msgid "Maximum time limit reached for item \"%s\"."
+msgstr ""
+
+msgid "Skip & End Test"
+msgstr "Passer et terminer le test"
+
+msgid "Skip the current task and give an empty response."
+msgstr ""
+
+msgid ""
+"Skip the current task, give an empty response and head for the end of the "
+"test."
+msgstr ""
+
+msgid "Submit your responses and head for the end of the test."
+msgstr ""
+
+msgid "Submit your responses and head for the next item."
+msgstr ""
+
+msgid "Submit your responses and head for the previous item."
+msgstr ""
+
+msgid "Test completed at %d%%"
+msgstr ""
+
+msgid "Your comment..."
+msgstr ""
