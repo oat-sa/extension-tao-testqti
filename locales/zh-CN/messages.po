@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-08-13T13:28:08\n"
+"Project-Id-Version: TAO 3.1.0-sprint15\n"
+"PO-Revision-Date: 2015-12-22T14:24:32\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -12,6 +12,9 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%1$s - item %2$s/%3$s"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -37,6 +40,9 @@ msgstr "在此处添加所选的题目。"
 msgid "Add the source file"
 msgstr "添加来源文件"
 
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr ""
+
 msgid "All"
 msgstr ""
 
@@ -51,6 +57,9 @@ msgstr "允许跳过"
 
 msgid "Allow the candidate to review his answers."
 msgstr "允许考生复审答案。"
+
+msgid "An error occurs, please contact your administrator"
+msgstr ""
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
 msgstr "一个隐藏章节若有随机顺序的父代部分，当显示章节给考生时，您可以设定它的子章节：1.是否属于父代的随机顺序部分； 2.属于自己的随机顺序区块； 3.与其它子章节混合成为另一个随机顺序部分"
@@ -68,6 +77,9 @@ msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "在汇集QTI考试'%s'中时出现了一个不明错误。"
 
 msgid "Answered"
+msgstr ""
+
+msgid "Are you sure you want to end the test?"
 msgstr ""
 
 msgid "Author"
@@ -125,6 +137,9 @@ msgstr ""
 msgid "Export"
 msgstr "导出"
 
+msgid "Export error in test : %s"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "导出 QTI 2.1考试包"
 
@@ -133,6 +148,9 @@ msgstr "文件名"
 
 msgid "Filter"
 msgstr "过滤条件"
+
+msgid "finished"
+msgstr ""
 
 msgid "Fixed"
 msgstr "固定"
@@ -188,8 +206,11 @@ msgstr "个别"
 msgid "is already used in the test."
 msgstr "已经在考试中被使用。"
 
-msgid "is not a valid identifier (alphanum, underscore, dash and dots.)"
-msgstr "不是一个有效的标识符(字母数字，下划线，破折号和点)"
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr ""
+
+msgid "is not a valid identifier (everything except spaces)"
+msgstr ""
 
 msgid "Item %d of %d"
 msgstr ""
@@ -229,6 +250,9 @@ msgstr "管理考试属性"
 
 msgid "Manage Tests"
 msgstr "管理考试"
+
+msgid "Mark for review"
+msgstr ""
 
 msgid "Max Attempts"
 msgstr "最多使用次数"
@@ -281,6 +305,9 @@ msgstr "新考试部分"
 msgid "Next"
 msgstr "下一个"
 
+msgid "Next Section"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
@@ -295,6 +322,9 @@ msgstr "没有找到任何对照IMS QTI的题目。"
 
 msgid "Non Linear"
 msgstr "非线性"
+
+msgid "Not all test could be export"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "不是随机顺序，该位置保持固定。"
@@ -332,6 +362,9 @@ msgstr "属性"
 msgid "QTI 2.1 Test Driver"
 msgstr ""
 
+msgid "QTI Item Runner"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr ""
 
@@ -365,6 +398,9 @@ msgstr "必填栏"
 msgid "Reset filters"
 msgstr ""
 
+msgid "Review"
+msgstr ""
+
 msgid "Rubric Block"
 msgstr "指导语区块"
 
@@ -379,6 +415,9 @@ msgstr "储存"
 
 msgid "Scorer"
 msgstr "评分人"
+
+msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
 
 msgid "Section Properties"
 msgstr "章节属性"
@@ -404,6 +443,9 @@ msgstr "显示解答"
 msgid "Show the solution once the answer is submitted."
 msgstr "考生提交答案后就立刻显示解答。"
 
+msgid "Show/Hide the review screen"
+msgstr ""
+
 msgid "Shuffle"
 msgstr "随机顺序"
 
@@ -420,6 +462,9 @@ msgid "Skip to the end of the test"
 msgstr ""
 
 msgid "Skip to the next item"
+msgstr ""
+
+msgid "Skip to the next section"
 msgstr ""
 
 msgid "Start Test-part"
@@ -521,6 +566,12 @@ msgstr "这个约束影响到考生考完试以后是否可以看得见题目的
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "这个约束控制考生是否可以在考试中对题目提供评论。 评论不是回应的一部分，也不会被评分。"
 
+msgid "This test has been suspended"
+msgstr ""
+
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
 
@@ -594,6 +645,15 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "You have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s unanswered question(s)."
 msgstr ""
 
 msgid "Your comment…"
