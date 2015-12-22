@@ -101,6 +101,7 @@ define([
             var $container = $('#test-creator');
             var $saver = $('#saver');
 
+            self.identifiers = [];
 
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
@@ -159,8 +160,9 @@ define([
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
                     //register validators
-                    validators.register('testIdFormat', qtiTestHelper.idFormatValidator());
-                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers));
+                    validators.register('idFormat', qtiTestHelper.idFormatValidator());
+                    validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
+                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
                     testView(model, {

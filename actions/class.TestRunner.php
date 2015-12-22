@@ -29,13 +29,13 @@ use qtism\runtime\common\State;
 use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\common\datatypes\String;
+use qtism\common\datatypes\String as QtismString;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
-
+use oat\taoQtiTest\models\TestSessionMetaData;
 /**
  * Runs a QTI Test.
  *
@@ -46,21 +46,6 @@ use oat\taoQtiItem\helpers\QtiRunner;
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
-    
-    const SECTION_CODE_COMPLETED_NORMALLY = 700;
-    const SECTION_CODE_QUIT = 701;
-    const SECTION_CODE_COMPLETE_TIMEOUT = 703;
-    const SECTION_CODE_TIMEOUT = 704;
-    const SECTION_CODE_FORCE_QUIT = 705;
-    const SECTION_CODE_IN_PROGRESS = 706;
-    const SECTION_CODE_ERROR = 300;
-    
-    const TEST_CODE_COMPLETE = 'C';
-    const TEST_CODE_TERMINATED = 'T';
-    const TEST_CODE_INCOMPLETE = 'IC';
-    const TEST_CODE_INCOMPLETE_QUIT = 'IQ';
-    const TEST_CODE_INACTIVE = 'IA';
-    const TEST_CODE_DISAGREED_WITH_NDA = 'DA';
     
     /**
      * The current AssessmentTestSession object.
@@ -110,6 +95,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * @var array
      */
     private $testMeta;
+    
+    /**
+     * Testr session metadata manager
+     * 
+     * @var TestSessionMetaData
+     */
+    private $metaDataHandler;
     
     /**
      * Get the current assessment test session.
@@ -229,12 +221,41 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	protected function getTestMeta() {
 	    return $this->testMeta;
 	}
-    
-    protected function beforeAction() {
+
+    /**
+     * Print an error report into the response.
+     * After you have called this method, you must prevent other actions to be processed and must close the response.
+     * @param string $message
+     * @param int $code
+     */
+    protected function notifyError($message, $code = 0) {
+        $ctx = array(
+            'success' => false,
+            'state' => $this->getTestSession()->getState(),
+            'message' => $message,
+            'code' => $code,
+        );
+
+        $this->setData('assessmentTestContext', $ctx);
+
+        if (\tao_helpers_Request::isAjax()) {
+            $this->returnJson($ctx);
+        }
+    }
+
+    /**
+     * Common stuff processessed on almost all actions.
+     * If something goes wrong, print a report and return false, otherwise return true.
+     * @param bool $notifyError Allow to print error message if needed
+     * @return bool Returns a flag telling whether or not the action can be processed
+     * @throws \oat\oatbox\service\ServiceNotFoundException
+     * @throws common_exception_Error
+     */
+    protected function beforeAction($notifyError = true) {
         // Controller initialization.
         $this->retrieveTestDefinition($this->getRequestParameter('QtiTestCompilation'));
         $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-        
+
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
         
@@ -244,17 +265,59 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
         $this->retrieveTestSession();
+
+        // @TODO: use some storage to get the potential reason of the state (close/suspended)
+        $session = $this->getTestSession();
+        $state = $session->getState();
+        if ($state == AssessmentTestSessionState::CLOSED) {
+            if ($notifyError) {
+                $this->notifyError(__('This test has been terminated'), $state);
+            }
+            return false;
+        }
+
+        // @TODO: maybe use an option to enable this behavior
+        if ($state == AssessmentTestSessionState::SUSPENDED) {
+            if ($notifyError) {
+                $this->notifyError(__('This test has been suspended'), $state);
+            }
+            return false;
+        }
+
+        $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+        $sessionStateService->resumeSession($session);
+
         $this->retrieveTestMeta();
         
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $metaData = $this->getRequestParameter('metaData');
+        $this->getMetaDataHandler()->registerItemCallbacks();
+        $metaData = $this->getMetaDataHandler()->getData();
         if (!empty($metaData)) {
-            $this->saveMetaData($metaData);
+            $this->getMetaDataHandler()->save($metaData);
         }
+
+        return true;
     }
 
+    /**
+     * Get instance og session metadata handler
+     * 
+     * @return TestSessionMetaData
+     */
+    protected function getMetaDataHandler()
+    {
+        if ($this->metaDataHandler === null) {
+            $this->metaDataHandler = new TestSessionMetaData($this->getTestSession());
+        }
+        return $this->metaDataHandler;
+    }
+
+    /**
+     * Does some complementary stuff to finish the action. Builds the test context object and binds it to the response.
+     * @param bool $withContext
+     */
     protected function afterAction($withContext = true) {
         $testSession = $this->getTestSession();
         $sessionId = $testSession->getSessionId();
@@ -266,6 +329,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	                                                                          $this->getRequestParameter('QtiTestCompilation'),
 	                                                                          $this->getRequestParameter('standalone'),
 	                                                                          $this->getCompilationDirectory());
+
+        // add a flag to allow distinction with error responses
+        $ctx['success'] = true;
 	    
         // Put the assessment test context in request data.
 	    $this->setData('assessmentTestContext', $ctx);
@@ -284,62 +350,118 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * 
      */
 	public function index() {
-	    $this->beforeAction();
-	    $session = $this->getTestSession();
-	    
-	    if ($session->getState() === AssessmentTestSessionState::INITIAL) {
-            // The test has just been instantiated.
-            $session->beginTestSession();
-            common_Logger::i("Assessment Test Session begun.");
-        }
-	    
-        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $noError = $this->beforeAction();
+
+        // this part is only accessible if beforeAction did not return an error
+        if ($noError) {
+            $session = $this->getTestSession();
+
+            /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+            $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+            $resetTimerAfterResume = isset($config['reset-timer-after-resume']) && $config['reset-timer-after-resume'];
+            if ($resetTimerAfterResume) {
+                $sessionStateService->updateTimeReference($session);
+            }
+            $this->setData('client_session_state_service',
+                $sessionStateService->getClientImplementation($resetTimerAfterResume));
+
+            if ($session->getState() === AssessmentTestSessionState::INITIAL) {
+                // The test has just been instantiated.
+                $session->beginTestSession();
+                $this->getMetaDataHandler()->registerItemCallbacks();
+                common_Logger::i("Assessment Test Session begun.");
+            }
+
+            if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            }
         }
 
         // loads the specific config
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        // this part must be processed no matter if beforeAction returned an error:
+        // the context object is provided through the view
         $this->setData('review_screen', !empty($config['test-taker-review']));
         $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
-        
+
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setData('client_timeout', $this->getClientTimeout());
         $this->setView('test_runner.tpl');
-        
-        $this->afterAction(false);
+
+        // this part is only accessible if beforeAction did not return an error
+        if ($noError) {
+            $this->afterAction(false);
+        }
 	}
+
+    /**
+     * Keep item activity time up to date
+     * @throws \oat\oatbox\service\ServiceNotFoundException
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
+     */
+    public function keepItemTimed(){
+        if ($this->beforeAction()) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+            if (isset( $config['reset-timer-after-resume'] ) && $config['reset-timer-after-resume'] && $this->hasRequestParameter('duration')) {
+
+                $session = $this->getTestSession();
+
+                // originally in milliseconds, but we have to convert to seconds now
+                $durationInSeconds = (int) ($this->getRequestParameter('duration') / 1000);
+
+                $time = new \DateTime('now', new \DateTimeZone('UTC'));
+                $duration = new DateInterval('PT' . $durationInSeconds . 'S');
+                $time->sub($duration);
+
+                /** @var \oat\taoQtiTest\models\SessionStateService $sessionStateService */
+                $sessionStateService = $this->getServiceManager()->get('taoQtiTest/SessionStateService');
+                $sessionStateService->updateTimeReference($session, $time);
+                $this->afterAction();
+            }
+        }
+    }
     
     /**
      * Mark an item for review in the Assessment Test Session flow.
      *
      */
     public function markForReview() {
-        $this->beforeAction();
-        $testSession = $this->getTestSession();
+        if ($this->beforeAction()) {
+            $testSession = $this->getTestSession();
+            $sessionId = $testSession->getSessionId();
 
-        try {
-            if ($this->hasRequestParameter('position')) {
-                $itemPosition = intval($this->getRequestParameter('position'));
-            } else {
-                $itemPosition = $testSession->getRoute()->getPosition();                
-            }
-            if ($this->hasRequestParameter('flag')) {
-                $flag = $this->getRequestParameter('flag');
-                if (is_numeric($flag)) {
-                    $flag = !!(intval($flag));
+            try {
+                if ($this->hasRequestParameter('position')) {
+                    $itemPosition = intval($this->getRequestParameter('position'));
                 } else {
-                    $flag = 'false' != strtolower($flag);
+                    $itemPosition = $testSession->getRoute()->getPosition();
                 }
-            } else {
-                $flag = true;
-            }
-            taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
-        }
-        catch (AssessmentTestSessionException $e) {
-            $this->handleAssessmentTestSessionException($e);
-        }
+                if ($this->hasRequestParameter('flag')) {
+                    $flag = $this->getRequestParameter('flag');
+                    if (is_numeric($flag)) {
+                        $flag = !!(intval($flag));
+                    } else {
+                        $flag = 'false' != strtolower($flag);
+                    }
+                } else {
+                    $flag = true;
+                }
+                taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
 
-        $this->afterAction();
+                $this->returnJson(array(
+                    'success' => true,
+                    'position' => $itemPosition,
+                    'flag' => $flag
+                ));
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
+            $this->getStorage()->persist($testSession);
+        }
     }
 
     /**
@@ -347,43 +469,83 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      *
      */
     public function jumpTo() {
-        $this->beforeAction();
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+            $nextPosition = intval($this->getRequestParameter('position'));
+
+            try {
+                $this->endTimedSection($nextPosition);
+
+                $session->jumpTo($nextPosition);
+
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction();
+        }
+    }
+
+    protected function endTimedSection($nextPosition)
+    {
+        $isJumpOutOfSection = false;
         $session = $this->getTestSession();
+        $section = $session->getCurrentAssessmentSection();
 
-        try {
-            $session->jumpTo(intval($this->getRequestParameter('position')));
+        $route = $session->getRoute();
 
-            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+        if( ($nextPosition >= 0) && ($nextPosition < $route->count()) ){
+            $nextSection = $route->getRouteItemAt($nextPosition);
+
+            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+        }
+
+        $limits = $section->getTimeLimits();
+
+        //ensure that jumping out and section is timed
+        if( $isJumpOutOfSection && $limits != null && $limits->hasMaxTime() ) {
+            $components = $section->getComponents();
+
+            foreach( $components as $object ){
+                if( $object instanceof \qtism\data\ExtendedAssessmentItemRef ){
+                    $items = $session->getAssessmentItemSessions( $object->getIdentifier() );
+
+                    foreach ($items as $item) {
+                        if( $item instanceof \qtism\runtime\tests\AssessmentItemSession ){
+                            $item->endItemSession();
+                        }
+                    }
+                }
             }
         }
-        catch (AssessmentTestSessionException $e) {
-            $this->handleAssessmentTestSessionException($e);
-        }
-
-        $this->afterAction();
     }
-	
+
 	/**
 	 * Move forward in the Assessment Test Session flow.
 	 *
 	 */
 	public function moveForward() {
-        $this->beforeAction();
-        $session = $this->getTestSession();
-        
-        try {
-            $session->moveNext();
-            
-            if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-                taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
-            }
-        }
-        catch (AssessmentTestSessionException $e) {
-            $this->handleAssessmentTestSessionException($e);
-        }
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+            $nextPosition = $session->getRoute()->getPosition() + 1;
 
-        $this->afterAction();
+            try {
+                $this->endTimedSection($nextPosition);
+
+                $session->moveNext();
+
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction();
+        }
 	}
 	    
 	/**
@@ -391,44 +553,69 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 *
 	 */
 	public function moveBackward() {
-	    $this->beforeAction();
-	    $session = $this->getTestSession();
-	    
-	    try {
-	        $session->moveBack();
-	        
-	        if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
-	        }
-	    }
-	    catch (AssessmentTestSessionException $e) {
-	        $this->handleAssessmentTestSessionException($e);
-	    }
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+            $nextPosition = $session->getRoute()->getPosition() - 1;
 
-	    $this->afterAction();
+            try {
+                $this->endTimedSection($nextPosition);
+
+                $session->moveBack();
+
+                if (taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction();
+        }
 	}
+
+    /**
+     * Moves to the next available section in the Assessment Test Session flow.
+     *
+     */
+    public function nextSection() {
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+
+            try {
+                $session->moveNextAssessmentSection();
+
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction();
+        }
+    }
 	
 	/**
 	 * Skip the current item in the Assessment Test Session flow.
 	 *
 	 */
 	public function skip() {
-	    $this->beforeAction();
-	    $session = $this->getTestSession();
-	    
-	    try {
-	        $session->skip();
-	        $session->moveNext();
-	        
-	        if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
-	            taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
-	        }
-	    }
-	    catch (AssessmentTestSessionException $e) {
-	        $this->handleAssessmentTestSessionException($e);
-	    }
-	    
-	    $this->afterAction();
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+
+            try {
+                $session->skip();
+                $session->moveNext();
+
+                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                    taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction();
+        }
 	}
 	
 	/**
@@ -436,33 +623,35 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 *
 	 */
 	public function timeout() {
-	    $this->beforeAction();
-	    $session = $this->getTestSession();
-	    
-	    try {
-            $session->checkTimeLimits(false, true, false);
-        } catch (AssessmentTestSessionException $e) {
-            $this->onTimeout($e);
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+
+            try {
+                $session->checkTimeLimits(false, true, false);
+            } catch (AssessmentTestSessionException $e) {
+                $this->onTimeout($e);
+            }
+
+            // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
+            // to the client with the actual assessment test context. Maybe the client will be able to
+            // continue...
+            $this->afterAction();
         }
-        
-        // If we are here, without executing onTimeout() there is an inconsistency. Simply respond
-        // to the client with the actual assessment test context. Maybe the client will be able to
-        // continue...
-        $this->afterAction();
 	}
     
 	/**
 	 * Action to end test session
 	 */
 	public function endTestSession() {
-	    $this->beforeAction();
-        $session = $this->getTestSession();
-        $sessionId = $session->getSessionId();
-        
-        common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
-	    $session->endTestSession();
-        
-        $this->afterAction();
+        if ($this->beforeAction()) {
+            $session = $this->getTestSession();
+            $sessionId = $session->getSessionId();
+
+            common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+            $session->endTestSession();
+
+            $this->afterAction();
+        }
 	}
 
 	/**
@@ -507,92 +696,76 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	 * Action called when a QTI Item embedded in a QTI Test submit responses.
 	 * 
 	 */
-	public function storeItemVariableSet() {
-	    $this->beforeAction();
-	    
-	    // --- Deal with provided responses.
-	    $jsonPayload = taoQtiCommon_helpers_Utils::readJsonPayload();
+	public function storeItemVariableSet()
+	{
+        if ($this->beforeAction()) {
 
-	    $responses = new State();
-	    $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
-	    $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
-	    
-	    if ($currentItem === false) {
-	        $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
-	        $msg .= "Session state value: " . $this->getTestSession()->getState() . "\n";
-	        $msg .= "Session ID: " . $this->getTestSession()->getSessionId() . "\n";
-	        $msg .= "JSON Payload: " . mb_substr(json_encode($jsonPayload), 0, 1000);
-	        common_Logger::e($msg);
-	    }
-	    
-	    $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
-	    
-	    foreach ($jsonPayload as $id => $response) {
-	        try {
-	            $var = $filler->fill($id, $response);
-	            // Do not take into account QTI File placeholders.
-	            if (taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
-	                $responses->setVariable($var);
-	            }
-	        }
-	        catch (OutOfRangeException $e) {
-	            common_Logger::d("Could not convert client-side value for variable '${id}'.");
-	        }
-	        catch (OutOfBoundsException $e) {
-	            common_Logger::d("Could not find variable with identifier '${id}' in current item.");
-	        }
-	    }
-	    
-	    $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
-	    $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
-	    
-	    try {
-	        common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
-	        $this->getTestSession()->endAttempt($responses, true);
-	         
-	        // Return the item session state to the client side.
-	        $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
-	         
-	        foreach ($itemSession->getAllVariables() as $var) {
-	            $stateOutput->addVariable($var);
-	        }
-	        
-	        $itemCompilationDirectory = $this->getDirectory($this->getRequestParameter('itemDataPath'));
-	        $jsonReturn = array('success' => true,
-	                            'displayFeedback' => $displayFeedback,
-	                            'itemSession' => $stateOutput->getOutput(),
-	                            'feedbacks' => array());
-	        
-	        if ($displayFeedback === true) {
-	            $jsonReturn['feedbacks'] = QtiRunner::getFeedbacks($itemCompilationDirectory, $itemSession);
-	        }
-	         
-	        echo json_encode($jsonReturn);
-	    }
-	    catch (AssessmentTestSessionException $e) {
-	        $this->handleAssessmentTestSessionException($e);
-	    }
-	    
-	    $this->afterAction(false);
-    }
-	
-    /**
-     * Save metadata of session (given from GET['metaData'] parameter).
-     * Invokes in self::beforeAction() method.
-     * 
-     * @param array $metaData Meta data array to be saved.
-     * Example:
-     * array(
-     *   'TEST' => array('TEST_EXIT_CODE' => 'IC'),
-     *   'SECTION' => array('SECTION_EXIT_CODE' => 701),
-     * )
-     */
-    private function saveMetaData(array $metaData, $session = null)
-    {
-        if ($session === null) {
-            $session = $this->getTestSession();
+            // --- Deal with provided responses.
+            $jsonPayload = taoQtiCommon_helpers_Utils::readJsonPayload();
+
+            $responses = new State();
+            $currentItem = $this->getTestSession()->getCurrentAssessmentItemRef();
+            $currentOccurence = $this->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+            if ($currentItem === false) {
+                $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
+                $msg .= "Session state value: " . $this->getTestSession()->getState() . "\n";
+                $msg .= "Session ID: " . $this->getTestSession()->getSessionId() . "\n";
+                $msg .= "JSON Payload: " . mb_substr(json_encode($jsonPayload), 0, 1000);
+                common_Logger::e($msg);
+            }
+
+            $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+
+            if (is_array($jsonPayload)) {
+                foreach ($jsonPayload as $id => $response) {
+                    try {
+                        $var = $filler->fill($id, $response);
+                        // Do not take into account QTI File placeholders.
+                        if (taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
+                            $responses->setVariable($var);
+                        }
+                    } catch (OutOfRangeException $e) {
+                        common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                    } catch (OutOfBoundsException $e) {
+                        common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                    }
+                }
+            } else {
+                common_Logger::e('Invalid json payload');
+            }
+
+            $displayFeedback = $this->getTestSession()->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
+            $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
+
+            try {
+                common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
+                $this->getTestSession()->endAttempt($responses, true);
+
+                // Return the item session state to the client side.
+                $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+
+                foreach ($itemSession->getAllVariables() as $var) {
+                    $stateOutput->addVariable($var);
+                }
+
+                $itemCompilationDirectory = $this->getDirectory($this->getRequestParameter('itemDataPath'));
+                $jsonReturn = array('success' => true,
+                    'displayFeedback' => $displayFeedback,
+                    'itemSession' => $stateOutput->getOutput(),
+                    'feedbacks' => array());
+
+                if ($displayFeedback === true) {
+                    $jsonReturn['feedbacks'] = QtiRunner::getFeedbacks($itemCompilationDirectory, $itemSession);
+                }
+
+                echo json_encode($jsonReturn);
+            } catch (AssessmentTestSessionException $e) {
+                $this->handleAssessmentTestSessionException($e);
+            }
+
+            $this->afterAction(false);
         }
-        $session->saveMetaData($metaData);
     }
     
     /**
@@ -600,26 +773,27 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * 
      */
 	public function comment() {
-	    $this->beforeAction();
-	    $testSession = $this->getTestSession();
-	    
-	    $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
-	    $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultServer);
-	    
-	    // prepare transmission Id for result server.
-	    $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
-	    $occurence = $testSession->getCurrentAssessmentItemRefOccurence();
-	    $sessionId = $testSession->getSessionId();
-	    $transmissionId = "${sessionId}.${item}.${occurence}";
-	    
-	    // retrieve comment's intrinsic value.
-	    $comment = $this->getRequestParameter('comment');
-	    
-	    // build variable and send it.
-	    $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
-	    $testUri = $testSession->getTest()->getUri();
-	    $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new String($comment));
-	    $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+        if ($this->beforeAction()) {
+            $testSession = $this->getTestSession();
+
+            $resultServer = taoResultServer_models_classes_ResultServerStateFull::singleton();
+            $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultServer);
+
+            // prepare transmission Id for result server.
+            $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
+            $occurence = $testSession->getCurrentAssessmentItemRefOccurence();
+            $sessionId = $testSession->getSessionId();
+            $transmissionId = "${sessionId}.${item}.${occurence}";
+
+            // retrieve comment's intrinsic value.
+            $comment = $this->getRequestParameter('comment');
+
+            // build variable and send it.
+            $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
+            $testUri = $testSession->getTest()->getUri();
+            $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
+            $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+        }
 	}
 	
 	/**
@@ -655,14 +829,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    if ($qtiStorage->exists($sessionId) === false) {
 	        common_Logger::i("Instantiating QTI Assessment Test Session");
             $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
-            $this->setInitialOutcomes();
+
+            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
 	    }
 	    else {
 	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
 	        $this->setTestSession($qtiStorage->retrieve($this->getTestDefinition(), $sessionId));
 	    }
 
-        $this->preserveOutcomes();
+        taoQtiTest_helpers_TestRunnerUtils::preserveOutcomes($this->getTestSession());
     }
     
     /**
@@ -689,38 +865,4 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        break;
 	    }
 	}
-    
-    /**
-     * Set the initial outcomes defined in the rdf outcome map configuration file
-     */
-    protected function setInitialOutcomes(){
-        
-        $testSession = $this->getTestSession();
-        
-        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
-        if(is_array($rdfOutcomeMap)){
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
-            foreach($rdfOutcomeMap as $outcomeId => $rdfPropUri){
-                //set outcome value
-                $values = $testTaker->getPropertyValues($rdfPropUri);
-                $outcome = $testSession->getVariable($outcomeId);
-                if(!is_null($outcome) && count($values)){
-                    $outcome->setValue(new String($values[0]));
-                }
-            }
-        }
-    }
-
-    /**
-     * Preserve the outcomes variables set in the "rdfOutcomeMap" config
-     * This is required to prevent those special outcomes from being reset before every outcome processing
-     */
-    protected function preserveOutcomes(){
-
-        //preserve the special outcomes defined in the rdfOutcomeMap config
-        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
-        if (is_array($rdfOutcomeMap) === true) {
-            $this->getTestSession()->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
-        }
-    }
 }

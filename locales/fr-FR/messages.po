@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-12-22T15:23:18\n"
+"Project-Id-Version: TAO 3.1.0-sprint15\n"
+"PO-Revision-Date: 2015-12-22T14:24:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -40,6 +40,9 @@ msgstr ""
 msgid "Add the source file"
 msgstr "Ajouter le fichier source"
 
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr ""
+
 msgid "All"
 msgstr ""
 
@@ -53,6 +56,9 @@ msgid "Allow Skipping"
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
+msgstr ""
+
+msgid "An error occurs, please contact your administrator"
 msgstr ""
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
@@ -71,6 +77,9 @@ msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Une erreur inconnue s'est produite pendant la compilation du QTI test '%s'. "
 
 msgid "Answered"
+msgstr ""
+
+msgid "Are you sure you want to end the test?"
 msgstr ""
 
 msgid "Author"
@@ -126,6 +135,9 @@ msgid "Expand the review panel"
 msgstr ""
 
 msgid "Export"
+msgstr ""
+
+msgid "Export error in test : %s"
 msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
@@ -194,7 +206,10 @@ msgstr "Individuel"
 msgid "is already used in the test."
 msgstr ""
 
-msgid "is not a valid identifier (alphanum, underscore, dash and dots.)"
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr ""
+
+msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
 
 msgid "Item %d of %d"
@@ -234,6 +249,9 @@ msgid "Manage test properties"
 msgstr ""
 
 msgid "Manage Tests"
+msgstr ""
+
+msgid "Mark for review"
 msgstr ""
 
 msgid "Max Attempts"
@@ -287,6 +305,9 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+msgid "Next Section"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
@@ -301,6 +322,9 @@ msgstr ""
 
 msgid "Non Linear"
 msgstr "Non linéaire"
+
+msgid "Not all test could be export"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr ""
@@ -338,6 +362,9 @@ msgstr ""
 msgid "QTI 2.1 Test Driver"
 msgstr ""
 
+msgid "QTI Item Runner"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr ""
 
@@ -371,6 +398,9 @@ msgstr ""
 msgid "Reset filters"
 msgstr ""
 
+msgid "Review"
+msgstr ""
+
 msgid "Rubric Block"
 msgstr ""
 
@@ -384,6 +414,9 @@ msgid "Save"
 msgstr "Enregistrer"
 
 msgid "Scorer"
+msgstr ""
+
+msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
 msgid "Section Properties"
@@ -410,6 +443,9 @@ msgstr ""
 msgid "Show the solution once the answer is submitted."
 msgstr ""
 
+msgid "Show/Hide the review screen"
+msgstr ""
+
 msgid "Shuffle"
 msgstr "Mélanger"
 
@@ -426,6 +462,9 @@ msgid "Skip to the end of the test"
 msgstr ""
 
 msgid "Skip to the next item"
+msgstr ""
+
+msgid "Skip to the next section"
 msgstr ""
 
 msgid "Start Test-part"
@@ -527,6 +566,12 @@ msgstr ""
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr ""
 
+msgid "This test has been suspended"
+msgstr ""
+
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
 
@@ -600,6 +645,15 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "You have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s unanswered question(s)."
 msgstr ""
 
 msgid "Your comment…"

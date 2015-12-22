@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint04\n"
-"PO-Revision-Date: 2015-12-22T15:23:17\n"
+"Project-Id-Version: TAO 3.1.0-sprint15\n"
+"PO-Revision-Date: 2015-12-22T14:24:20\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -40,6 +40,9 @@ msgstr "Añadir elemento(s) seleccionados aqui."
 msgid "Add the source file"
 msgstr "Añadir el archivo origen"
 
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr "Después de que complete la sección, no podrá regresar a ella para realizar cambios. ¿Está seguro de que desea terminar la sección?"
+
 msgid "All"
 msgstr "Todos"
 
@@ -54,6 +57,9 @@ msgstr "Permitir Saltarse"
 
 msgid "Allow the candidate to review his answers."
 msgstr "Permitir al candidato revisar sus respuestas."
+
+msgid "An error occurs, please contact your administrator"
+msgstr ""
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
 msgstr "Una sección invisible con un padre que está sujeto a barajar puede especificar si o no a sus hijos, lo que le aparece al candidato como si fueran parte de los padres, se barajan como un bloque o se mezcla con los otros hijos de la sección de los padres."
@@ -72,6 +78,9 @@ msgstr "Un error desconocido ocurrió durante la compilación de la prueba '%s' 
 
 msgid "Answered"
 msgstr "Respondido"
+
+msgid "Are you sure you want to end the test?"
+msgstr "¿Está seguro(a) de que desea finalizar la prueba?"
 
 msgid "Author"
 msgstr "Autor"
@@ -128,6 +137,9 @@ msgstr "Expandir el panel de revisión"
 
 msgid "Export"
 msgstr "Exportar"
+
+msgid "Export error in test : %s"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exportar Paquete de Prueba QTI 2.1"
@@ -195,8 +207,11 @@ msgstr "Individual"
 msgid "is already used in the test."
 msgstr "ya se utiliza en la prueba."
 
-msgid "is not a valid identifier (alphanum, underscore, dash and dots.)"
-msgstr "no es un identificador válido (alfanumérico, subrayado, guiones y puntos.)"
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr ""
+
+msgid "is not a valid identifier (everything except spaces)"
+msgstr ""
 
 msgid "Item %d of %d"
 msgstr "Ítem %d de %d"
@@ -236,6 +251,9 @@ msgstr "Administrar las propiedades de prueba"
 
 msgid "Manage Tests"
 msgstr "Gestionar Pruebas"
+
+msgid "Mark for review"
+msgstr "Marcar para revisión"
 
 msgid "Max Attempts"
 msgstr "Intentos Máximos"
@@ -288,6 +306,9 @@ msgstr "Nueva parte de prueba"
 msgid "Next"
 msgstr "Siguiente"
 
+msgid "Next Section"
+msgstr ""
+
 msgid "No"
 msgstr "No"
 
@@ -302,6 +323,9 @@ msgstr "No hay referencia a ningún elemento IMS QTI encontrado."
 
 msgid "Non Linear"
 msgstr "No Lineal"
+
+msgid "Not all test could be export"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "No barajada, la posición permanece fija."
@@ -339,6 +363,9 @@ msgstr "Propiedades"
 msgid "QTI 2.1 Test Driver"
 msgstr "Manejar Prueba QTI 2.1"
 
+msgid "QTI Item Runner"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Publicación de prueba \"%s\" QTI fallida."
 
@@ -372,6 +399,9 @@ msgstr "Campo requerido"
 msgid "Reset filters"
 msgstr "Restaurar filtros"
 
+msgid "Review"
+msgstr "Revisión"
+
 msgid "Rubric Block"
 msgstr "Bloque de Rúbrica"
 
@@ -386,6 +416,9 @@ msgstr "Guardar"
 
 msgid "Scorer"
 msgstr "Puntaje"
+
+msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
 
 msgid "Section Properties"
 msgstr "Propiedades de sección"
@@ -411,6 +444,9 @@ msgstr "Mostrar Solución"
 msgid "Show the solution once the answer is submitted."
 msgstr "Mostrar la solución antes de que la respuesta sea enviada."
 
+msgid "Show/Hide the review screen"
+msgstr "Mostrar/esconder la pantalla de revisión"
+
 msgid "Shuffle"
 msgstr "Aleatorio"
 
@@ -428,6 +464,9 @@ msgstr "Omitir hasta el fin de la prueba"
 
 msgid "Skip to the next item"
 msgstr "Saltar al elemento siguiente"
+
+msgid "Skip to the next section"
+msgstr ""
 
 msgid "Start Test-part"
 msgstr "Iniciar parte de la Prueba"
@@ -529,6 +568,12 @@ msgstr "Esta restricción afecta la visibilidad de la retroalimentación despué
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "Esta restricción controla si se permite o no al candidato proporcionar un comentario sobre el tema durante la sesión. Los comentarios no son parte de las respuestas evaluadas."
 
+msgid "This test has been suspended"
+msgstr ""
+
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Alcanzó el límite de tiempo para el ítem \"%s\"."
 
@@ -602,7 +647,16 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML error en la linea %1$d columna %2$d \"%3$s\"."
 
 msgid "Yes"
-msgstr "Sí"
+msgstr ""
+
+msgid "You have %s item(s) marked for review."
+msgstr "Tiene %s ítem(s) marcado(s) para revisión."
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión."
+
+msgid "You have %s unanswered question(s)."
+msgstr "Tiene %s pregunta(s) sin respuesta."
 
 msgid "Your comment…"
 msgstr "Su comentario…"

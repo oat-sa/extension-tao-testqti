@@ -355,20 +355,27 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         
         foreach ($metadataMapping['injectors'] as $injector) {
             $metadataInjectors[] = new $injector();
+            \common_Logger::i("Metadata Injector '${injector}' registered.");
         }
         
         foreach ($metadataMapping['guardians'] as $guardian) {
             $metadataGuardians[] = new $guardian();
+            \common_Logger::i("Metadata Guardian '${guardian}' registered.");
         }
         
         foreach ($metadataMapping['classLookups'] as $classLookup) {
             $metadataClassLookups[] = new $classLookup();
+            \common_Logger::i("Metadata Class Lookup '{$classLookup}' registered.");
         }
         
         foreach ($metadataMapping['extractors'] as $extractor) {
             $metadataExtractor = new $extractor();
+            \common_Logger::i("Metatada Extractor '${extractor}' registered.");
             $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
         }
+
+        $metadataCount = count($metadataValues, COUNT_RECURSIVE);
+        \common_Logger::i("${metadataCount} Metadata Values found in manifest by extractor(s).");
 
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
@@ -401,9 +408,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 // discover test's base path.
                 $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
                 
-                if (count($dependencies) > 0) {
+                if (count($dependencies['items']) > 0) {
 
-                    foreach ($dependencies as $assessmentItemRefId => $qtiDependency) {
+                    $sharedFiles = array();
+                    foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
 
                         if ($qtiDependency !== false) {
 
@@ -432,7 +440,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // This is applied to items, not for test definitions.
                                 // The test definitions' target class will not be affected
                                 // by class lookups.
-                                $lookupTargetClass = null;
+                                $lookupTargetClass = false;
                                 foreach ($metadataClassLookups as $classLookup) {
                                     if (isset($metadataValues[$resourceIdentifier]) === true) {
                                         if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
@@ -447,31 +455,23 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
                                     $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-                                    $itemReport = $itemImportService->importQTIFile($qtiFile, (($lookupTargetClass !== null) ? $lookupTargetClass : $targetClass), true, null, $isApip);
+
+                                    $itemReport = $itemImportService->importQtiItem(
+                                        $folder, 
+                                        $qtiDependency, 
+                                        (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), 
+                                        $isApip,
+                                        $dependencies['dependencies'],
+                                        $metadataValues,
+                                        $metadataInjectors,
+                                        $metadataGuardians,
+                                        $metadataClassLookups,
+                                        $sharedFiles
+                                    );
+
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
-                                        $itemPath = taoItems_models_classes_ItemsService::singleton()->getItemFolder($rdfItem);
-
-                                        foreach ($qtiDependency->getAuxiliaryFiles() as $auxResource) {
-                                            // $auxResource is a relativ URL, so we need to replace the slashes with directory separators
-                                            $auxPath = $folder . str_replace('/', DIRECTORY_SEPARATOR, $auxResource);
-
-                                            // does the file referenced by $auxPath exist?
-                                            if (is_readable($auxPath) === true) {
-                                                $relPath = helpers_File::getRelPath($qtiFile, $auxPath);
-                                                $destPath = $itemPath . $relPath;
-                                                tao_helpers_File::copy($auxPath, $destPath, true);
-                                            }
-                                            else {
-                                                $msg = __('Auxiliary file not found at location "%s".', $auxResource);
-                                                $itemReport->add(new common_report_Report(common_report_Report::TYPE_WARNING,$msg));
-                                            }
-                                        }
-
-                                        // Import metadata.
-                                        $itemImportService->importItemMetadata($metadataValues, $qtiDependency, $rdfItem, $metadataInjectors);
-                                        
                                         $reportCtx->items[$assessmentItemRefId] = $rdfItem;
                                         $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
 
@@ -547,6 +547,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                 $finalErrorString = implode("\n", $eStrs);
                 if (empty($finalErrorString) === true) {
+                    common_Logger::e($e->getMessage());
                     // Not XML malformation related. No info from LibXmlErrors extracted.
                     if (($previous = $e->getPrevious()) != null) {
 
@@ -557,8 +558,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $domElement = $previous->getDOMElement();
                             $finalErrorString = __('Inconsistency at line %1d:', $domElement->getLineNo()) . ' ' . $previous->getMessage();
                         }
-                    }
-                    else {
+                    } elseif ($e->getMessage() !== '') {
+                        $finalErrorString = $e->getMessage();
+                    } else {
                         $finalErrorString = __("Unknown error.");
                     }
                 }
@@ -613,7 +615,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
         // Bind the newly created test content to the Test Resource in database.
         $ds = DIRECTORY_SEPARATOR;
-        $testContent = $this->createContent($testResource);
+        $testContent = $this->getTestFile($testResource);
+        if (is_null($testContent)) {
+            $testContent = $this->createContent($testResource);
+        }
+
         $testPath = $testContent->getAbsolutePath();
         $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, TAOQTITEST_FILENAME);
 
@@ -696,12 +702,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDoc(core_kernel_classes_Resource $test) {
 
         $doc = new XmlDocument('2.1');
-        $dir = $this->getTestFile($test);
-        if (is_null($dir)) {
-            $dir = $this->createContent($test);
-        } else {
-            $dir = new core_kernel_file_File($dir);
-        }
 
         try {
             $filePath = $this->getDocPath($test);
@@ -726,6 +726,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDocPath(core_kernel_classes_Resource $test)
     {
         $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $dir = $this->createContent($test);
+        }
         $testPath = $dir->getAbsolutePath();
         $files = tao_helpers_File::scandir($testPath, array(
             'recursive' => true,
