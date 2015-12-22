@@ -1,11 +1,9 @@
 <?php
-$GLOBALS['__l10n']["\n            Create items, manage item and test banks, organize cohorts and deliveries, prepare reports, set up workflows."]="\n建立題目，管理題目，管理題庫，組織班級，遞送考試，預備報告，和設定工作流程。";
 $GLOBALS['__l10n'][" and "]=" 和 ";
 $GLOBALS['__l10n'][" has been deleted successfully"]=" 已成功刪除";
 $GLOBALS['__l10n'][" has been installed"]=" 已安裝";
 $GLOBALS['__l10n'][" next"]=" 下一個";
 $GLOBALS['__l10n'][" requires a subgrid adapter"]=" 需要一個subgrid adapter";
-$GLOBALS['__l10n']["\"list saved\""]="\"列表已儲存\"";
 $GLOBALS['__l10n']["%d day"]="%d天";
 $GLOBALS['__l10n']["%d days"]="%d天";
 $GLOBALS['__l10n']["%h hour"]="%h小時";
@@ -16,7 +14,6 @@ $GLOBALS['__l10n']["%m month"]="%m 月";
 $GLOBALS['__l10n']["%m months"]="%m 個月";
 $GLOBALS['__l10n']["%s (%s kb)"]="%s (%s kb)";
 $GLOBALS['__l10n']["%s extension(s) to install."]="%s 擴充程式需要安裝。";
-$GLOBALS['__l10n']["%s Locked', get_data('topclass-label"]="%s Locked', get_data('topclass-label";
 $GLOBALS['__l10n']["%y year"]="%y 年";
 $GLOBALS['__l10n']["%y years"]="%y 年";
 $GLOBALS['__l10n']["(empty)"]="(空白)";
@@ -83,10 +80,7 @@ $GLOBALS['__l10n']["Change password"]="更改密碼";
 $GLOBALS['__l10n']["Change the password"]="更改密碼";
 $GLOBALS['__l10n']["Check All"]="全部勾選";
 $GLOBALS['__l10n']["Check all"]="全部勾選";
-<<<<<<< Updated upstream
-=======
 $GLOBALS['__l10n']["Check-in"]="登記";
->>>>>>> Stashed changes
 $GLOBALS['__l10n']["Choose export format"]="選擇匯出格式";
 $GLOBALS['__l10n']["Choose import format"]="選擇匯入格式";
 $GLOBALS['__l10n']["class selected"]="班級已選擇";
@@ -123,7 +117,6 @@ $GLOBALS['__l10n']["Deliveries"]="遞送";
 $GLOBALS['__l10n']["Deliveries library"]="遞送書庫";
 $GLOBALS['__l10n']["Demo Sandbox"]="演示用沙盤";
 $GLOBALS['__l10n']["Disable validation"]="停用驗證";
-$GLOBALS['__l10n']["Disabled %s', \$this->getRequestParameter('id"]="停止 %s', \$this->getRequestParameter('id";
 $GLOBALS['__l10n']["Do you wish to install the following extension(s):\n%s?"]="您希望安裝以下的擴充程式嗎:\n%s?";
 $GLOBALS['__l10n']["does not match"]="不相符";
 $GLOBALS['__l10n']["Don't set"]="不設定";
@@ -353,11 +346,7 @@ $GLOBALS['__l10n']["Please confirm this operation."]="請確認此行動。";
 $GLOBALS['__l10n']["Please confirm user deletion"]="刪除用戶，請確認";
 $GLOBALS['__l10n']["Please confirm you want to delete this list element."]="您將要刪除此清單元素，請確認。";
 $GLOBALS['__l10n']["Please confirm you want to delete this list. This operation cannot be undone."]="請確認您將要刪除此清單元素。 此行動無法復取消。";
-<<<<<<< Updated upstream
-$GLOBALS['__l10n']["Please contact %s or an administrator to release it', get_data('ownerHtml"]="請聯絡 %s 或系統管理員才可以釋放它', get_data('ownerHtml";
-=======
 $GLOBALS['__l10n']["Please give a message to your commit"]="請把信息給您的提交";
->>>>>>> Stashed changes
 $GLOBALS['__l10n']["Please report bugs, ideas, comments or feedback on the TAO Forge"]="請在 TAO Forge 上面報告錯誤,想法,意見或反饋";
 $GLOBALS['__l10n']["Post install processing"]="安裝後處理過程";
 $GLOBALS['__l10n']["Prepare, publish deliveries sessions."]="預備，發布遞送時域。";
@@ -373,7 +362,6 @@ $GLOBALS['__l10n']["RDF"]="RDF";
 $GLOBALS['__l10n']["Record and manage test takers."]="储存以及管理考生。";
 $GLOBALS['__l10n']["Reference"]="參照";
 $GLOBALS['__l10n']["Release"]="釋放";
-$GLOBALS['__l10n']["Releasing the lock might cause the work in progress by %s to be lost.', get_data('ownerHtml"]="釋放鎖有可能會讓 %s 失去正在進行的工作 ', get_data('ownerHtml";
 $GLOBALS['__l10n']["Remove"]="移除";
 $GLOBALS['__l10n']["Remove content"]="移除內容";
 $GLOBALS['__l10n']["Remove Item Reference"]="移除題目參照";
@@ -443,8 +431,8 @@ $GLOBALS['__l10n']["Submission"]="提交";
 $GLOBALS['__l10n']["Success"]="完成";
 $GLOBALS['__l10n']["Supported export formats"]="支援的匯出格式";
 $GLOBALS['__l10n']["TAO Back Office"]="TAO 後台";
-$GLOBALS['__l10n']["TAO Home"]="TAO 首頁";
 $GLOBALS['__l10n']["Tao Home"]="TAO 主頁";
+$GLOBALS['__l10n']["TAO Home"]="TAO 首頁";
 $GLOBALS['__l10n']["TAO Login"]="TAO 登入";
 $GLOBALS['__l10n']["Test"]="考試";
 $GLOBALS['__l10n']["Test constructor"]="考試建造器";
@@ -482,7 +470,6 @@ $GLOBALS['__l10n']["The uploaded file is too large"]="上傳的檔案過大";
 $GLOBALS['__l10n']["The value of this field must be a valide date format, e.g. YYYY-MM-DD"]="此欄位的值必須是有效的日期格式，如YYYY-MM-DD (西元年份-月份-日）";
 $GLOBALS['__l10n']["The value of this field must be an integer"]="此欄位的值必須是一個整數";
 $GLOBALS['__l10n']["The value of this field must be numeric"]="此欄位的值必須是數字";
-$GLOBALS['__l10n']["This %s is currently checked out', get_data('topclass-label"]="這 %s 已經被借出', get_data('topclass-label";
 $GLOBALS['__l10n']["This constraint affects the visibility of feedback after the end of the last attempt."]="考完試以後考生是否可以看得見題目的回饋。";
 $GLOBALS['__l10n']["This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."]="控制考生是否可以在考試中對題目提供評論。評論不是回應的一部分，也不會被評分。";
 $GLOBALS['__l10n']["This field is required"]="此欄位是必需的";
@@ -521,8 +508,6 @@ $GLOBALS['__l10n']["Unable to upload file"]="無法上傳檔案";
 $GLOBALS['__l10n']["Uncheck All"]="全部取消勾選";
 $GLOBALS['__l10n']["Uncheck all"]="全部取消勾選";
 $GLOBALS['__l10n']["Undo"]="復原";
-$GLOBALS['__l10n']["Uninstall of %s failed', \$this->getRequestParameter('id"]="卸載 %s 失敗', \$this->getRequestParameter('id";
-$GLOBALS['__l10n']["Uninstalled %s', \$this->getRequestParameter('id"]="已卸載 %s', \$this->getRequestParameter('id";
 $GLOBALS['__l10n']["unknown"]="不明";
 $GLOBALS['__l10n']["Unknown Error"]="不明的錯誤";
 $GLOBALS['__l10n']["Unknown error."]="不明的錯誤。";
