@@ -1,6 +1,7 @@
 <?php
 use oat\tao\helpers\Template;
 use oat\tao\helpers\Layout;
+use oat\tao\model\theme\Theme;
 ?><!doctype html>
 <html class="no-js" lang="<?= tao_helpers_I18n::getLangCode() ?>">
 <head>
@@ -10,21 +11,21 @@ use oat\tao\helpers\Layout;
     <title><?php echo __("QTI 2.1 Test Driver"); ?></title>
     <link rel="stylesheet" href="<?= Template::css('tao-main-style.css', 'tao') ?>"/>
     <link rel="stylesheet" href="<?= Template::css('test-runner.css', 'taoQtiTest') ?>"/>
-
-    <?php if (($themeUrl = Layout::getThemeUrl()) !== null): ?>
-        <link rel="stylesheet" href="<?= $themeUrl ?>"/>
-    <?php endif; ?>
+    <link rel="stylesheet" href="<?= Layout::getThemeStylesheet(Theme::CONTEXT_FRONTOFFICE) ?>" />
     <script src="<?= Template::js('lib/require.js', 'tao') ?>"></script>
-
     <script>
         (function () {
             requirejs.config({waitSeconds: <?=get_data('client_timeout')?> });
             require(['<?=get_data('client_config_url')?>'], function () {
-                require(['taoQtiTest/controller/runtime/testRunner', 'mathJax'], function (testRunner, MathJax) {
+                require(['taoQtiTest/controller/runtime/testRunner', 'mathJax', '<?=get_data('client_session_state_service')?>'], function (testRunner, MathJax, sessionStateService) {
                     if (MathJax) {
                         MathJax.Hub.Configured();
                     }
-                    testRunner.start(<?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>);
+
+                    var assessmentTestContext  = <?=json_encode(get_data('assessmentTestContext'), JSON_HEX_QUOT | JSON_HEX_APOS)?>;
+                    assessmentTestContext.sessionStateService = sessionStateService;
+
+                    testRunner.start(assessmentTestContext);
                 });
             });
         }());
@@ -35,19 +36,19 @@ use oat\tao\helpers\Layout;
 <div class="section-container">
     <div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft title-box">
+            <div class="title-box truncate">
                 <span data-control="qti-test-title" class="qti-controls"></span>
                 <span data-control="qti-test-position" class="qti-controls"></span>
             </div>
-            <div class="rgt progress-box">
-                <div data-control="progress-bar" class="qti-controls lft"></div>
-                <div data-control="progress-label" class="qti-controls lft"></div>
-            </div>
-            <div class="rgt item-number-box">
+            <div class="item-number-box">
                 <div data-control="item-number" class="qti-controls lft"></div>
             </div>
-            <div class="rgt timer-box">
-                <div data-control="qti-timers" class="qti-controls"></div>
+            <div class="timer-box">
+                <div data-control="qti-timers" class="qti-controls lft"></div>
+            </div>
+            <div class="progress-box">
+                <div data-control="progress-bar" class="qti-controls"></div>
+                <div data-control="progress-label" class="qti-controls"></div>
             </div>
         </div>
     </div>
@@ -67,19 +68,7 @@ use oat\tao\helpers\Layout;
     <div class="plain action-bar content-action-bar horizontal-action-bar bottom-action-bar">
         <div class="control-box size-wrapper">
             <div class="lft tools-box">
-                <ul class="plain tools-box-list">
-                    <li data-control="comment-toggle" class="small btn-info action" title="<?= __("Comment"); ?>">
-                        <a class="li-inner" href="#">
-                            <span class="icon-tag"></span>
-                            <?= __("Comment"); ?>
-                        </a>
-                    </li>
-                </ul>
-                <div data-control="qti-comment">
-                    <textarea data-control="qti-comment-text" placeholder="<?= __('Your comment…') ?>"></textarea>
-                    <button data-control="qti-comment-cancel" class="btn-info small"></span><?= __("Cancel"); ?></button>
-                    <button data-control="qti-comment-send" class="btn-info small"><?= __("Send"); ?></button>
-                </div>
+                <ul class="plain tools-box-list"></ul>
             </div>
             <div class="rgt navi-box">
                 <ul class="plain navi-box-list">
@@ -99,6 +88,12 @@ use oat\tao\helpers\Layout;
                         <a class="li-inner" href="#">
                             <span class="icon-fast-forward"></span>
                             <span class="text"><?= __("End Test"); ?></span>
+                        </a>
+                    </li>
+                    <li data-control="next-section" class="small btn-info action" title="<?= __("Skip to the next section"); ?>">
+                        <a class="li-inner" href="#">
+                            <span class="icon-external"></span>
+                            <span class="text"><?= __("Next Section"); ?></span>
                         </a>
                     </li>
                     <li data-control="skip" class="small btn-info action skip" title="<?= __("Skip to the next item"); ?>">

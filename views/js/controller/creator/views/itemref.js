@@ -49,7 +49,7 @@ function($, _, __, actions){
          */
         function propHandler (propView) {
 
-            categoriesProperty(propView.getView().find('[name=itemref-category]'));
+            categoriesProperty(propView.getView());
             
             $itemRef.parents('.testpart').on('delete', removePropHandler);
             $itemRef.parents('.section').on('delete', removePropHandler);
@@ -65,9 +65,11 @@ function($, _, __, actions){
         /**
          * Set up the category property
          * @private
-         * @param {jQueryElement} $select - the select box to set up
+         * @param {jQueryElement} $view - the $view object containing the $select
          */
-        function categoriesProperty($select){
+        function categoriesProperty($view){
+            
+            var $select = $view.find('[name=itemref-category]');
             $select.select2({
                 width: '100%',
                 tags : [],
@@ -78,6 +80,19 @@ function($, _, __, actions){
                 },
                 maximumInputLength : 32
             });
+            
+            initCategories();
+            $view.on('propopen.propview', function(){
+                initCategories();
+            });
+            
+            /**
+             * save the categories into the model
+             * @private
+             */
+            function initCategories(){
+                $select.select2('val', model.categories);
+            }
         }
    };
 

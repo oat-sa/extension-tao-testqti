@@ -402,11 +402,12 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $itemService = $subReport->getdata(); 
                 $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
                 $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
-                $itemCount++;
             } else {
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
-            
+
+            // Count the item even if it fails to avoid false "no item" error.
+            $itemCount++;
             common_Logger::t("QTI Item successfully compiled and registered as a service call in the QTI Test Definition.");
         }
         

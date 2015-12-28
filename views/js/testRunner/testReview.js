@@ -83,6 +83,7 @@ define([
         collapsiblePanels : '.collapsible-panel',
         unseen : '.unseen',
         answered : '.answered',
+        flagged : '.flagged',
         notFlagged : ':not(.flagged)',
         notAnswered : ':not(.answered)',
         masked : '.masked'
@@ -126,7 +127,7 @@ define([
 
     /**
      * Provides a test review manager
-     * @type {{init: Function, update: Function, enable: Function, disable: Function, hide: Function, show: Function, toggle: Function, on: Function, off: Function, trigger: Function}}
+     * @type {Object}
      */
     var testReview = {
         /**
@@ -134,7 +135,7 @@ define([
          * @param {String|jQuery|HTMLElement} element The element on which install the component
          * @param {Object} [options] A list of extra options
          * @param {String} [options.region] The region on which put the component: left or right
-         * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+         * @param {String} [options.reviewScope] Limit the review screen to a particular scope:
          * the whole test, the current test part or the current test section)
          * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
          * @returns {testReview}
@@ -146,7 +147,8 @@ define([
 
             this.options = initOptions;
             this.disabled = false;
-            this.hidden = false;
+            this.hidden = !!initOptions.hidden;
+            this.currentFilter = 'all';
 
             // clean the DOM if the init method is called after initialisation
             if (this.$component) {
@@ -158,7 +160,8 @@ define([
             insertMethod = this.$container[insertMethod];
             if (insertMethod) {
                 insertMethod.call(this.$container, navigatorTpl({
-                    region: putOnRight ? 'right' : 'left'
+                    region: putOnRight ? 'right' : 'left',
+                    hidden: this.hidden
                 }));
             } else {
                 throw new Error("Unable to inject the component structure into the DOM");
@@ -319,6 +322,7 @@ define([
                 $items.filter(filter).addClass(_cssCls.masked);
             }
             this._updateSectionCounters(!!filter);
+            this.currentFilter = criteria;
         },
 
         /**
@@ -427,6 +431,17 @@ define([
         },
 
         /**
+         * Toggle the marked state of an item
+         * @param {jQuery} $item
+         * @param {Boolean} [flag]
+         * @private
+         */
+        _toggleFlag: function($item, flag) {
+            $item.toggleClass(_cssCls.flagged, flag);
+            this._adjustItemIcon($item);
+        },
+
+        /**
          * Marks an item for later review
          * @param {jQuery} $item
          * @private
@@ -436,8 +451,7 @@ define([
             var itemPosition = $item.data('position');
             var flag = !$item.hasClass(_cssCls.flagged);
 
-            $item.toggleClass(_cssCls.flagged);
-            this._adjustItemIcon($item);
+            this._toggleFlag($item);
 
             /**
              * A storage of the flag is required
@@ -474,6 +488,7 @@ define([
          * @param {Boolean} filtered
          */
         _updateSectionCounters: function(filtered) {
+            var self = this;
             var filter = _filterMap[filtered ? 'filtered' : 'answered'];
             this.$tree.find(_selectors.sections).each(function() {
                 var $section = $(this);
@@ -481,7 +496,7 @@ define([
                 var $filtered = $items.filter(filter);
                 var total = $items.length;
                 var nb = total - $filtered.length;
-                $section.find(_selectors.counters).html(nb + '/' + total);
+                self._writeCount($section.find(_selectors.counters), nb, total);
             });
         },
 
@@ -518,17 +533,27 @@ define([
 
         /**
          * Updates the info panel
-         * @param {Object} testContext The progression context
          */
-        _updateInfos: function(testContext) {
-            var progression = this.getProgression(testContext),
+        _updateInfos: function() {
+            var progression = this.progression,
                 unanswered = Number(progression.total) - Number(progression.answered);
 
             // update the info panel
-            this.$infoAnswered.text(progression.answered + '/' + progression.total);
-            this.$infoUnanswered.text(unanswered + '/' + progression.total);
-            this.$infoViewed.text(progression.viewed + '/' + progression.total);
-            this.$infoFlagged.text(progression.flagged + '/' + progression.total);
+            this._writeCount(this.$infoAnswered, progression.answered, progression.total);
+            this._writeCount(this.$infoUnanswered, unanswered, progression.total);
+            this._writeCount(this.$infoViewed, progression.viewed, progression.total);
+            this._writeCount(this.$infoFlagged, progression.flagged, progression.total);
+        },
+
+        /**
+         * Updates a counter
+         * @param {jQuery} $place
+         * @param {Number} count
+         * @param {Number} total
+         * @private
+         */
+        _writeCount: function($place, count, total) {
+            $place.text(count + '/' + total);
         },
 
         /**
@@ -618,7 +643,91 @@ define([
             // apply again the current filter
             this._filter(this.$filters.filter(_selectors.actives).data('mode'));
         },
-        
+
+        /**
+         * Set the marked state of an item
+         * @param {Number|String|jQuery} position
+         * @param {Boolean} flag
+         */
+        setItemFlag: function setItemFlag(position, flag) {
+            var $item = position && position.jquery ? position : this.$tree.find('[data-position=' + position + ']');
+            var progression = this.progression;
+
+            // update the item flag
+            this._toggleFlag($item, flag);
+
+            // update the info panel
+            progression.flagged = this.$tree.find(_selectors.flagged).length;
+            this._writeCount(this.$infoFlagged, progression.flagged, progression.total);
+            this._filter(this.currentFilter);
+        },
+
+        /**
+         * Update the number of flagged items in the test context
+         * @param {Object} testContext The test context
+         * @param {Number} position The position of the flagged item
+         * @param {Boolean} flag The flag state
+         */
+        updateNumberFlagged: function(testContext, position, flag) {
+            var fields = ['numberFlagged'];
+            var currentPosition = testContext.itemPosition;
+            var currentFound = false, currentSection = null, currentPart = null;
+            var itemFound = false, itemSection = null, itemPart = null;
+
+            if (testContext.navigatorMap) {
+                // find the current item and the marked item inside the navigator map
+                // check if the marked item is in the current section
+                _.forEach(testContext.navigatorMap, function(part) {
+                    _.forEach(part && part.sections, function(section) {
+                        _.forEach(section && section.items, function(item) {
+                            if (item) {
+                                if (item.position === position) {
+                                    itemPart = part;
+                                    itemSection = section;
+                                    itemFound = true;
+                                }
+                                if (item.position === currentPosition) {
+                                    currentPart = part;
+                                    currentSection = section;
+                                    currentFound = true;
+
+                                }
+                                if (itemFound && currentFound) {
+                                    return false;
+                                }
+                            }
+                        });
+
+                        if (itemFound && currentFound) {
+                            return false;
+                        }
+                    });
+
+                    if (itemFound && currentFound) {
+                        return false;
+                    }
+                });
+
+                // select the context to update
+                if (itemFound && currentPart === itemPart) {
+                    fields.push('numberFlaggedPart');
+                }
+                if (itemFound && currentSection === itemSection) {
+                    fields.push('numberFlaggedSection');
+                }
+            } else {
+                // no navigator map, the current the marked item is in the current section
+                fields.push('numberFlaggedPart');
+                fields.push('numberFlaggedSection');
+            }
+
+            _.forEach(fields, function(field) {
+                if (field in testContext) {
+                    testContext[field] += flag ? 1 : -1;
+                }
+            });
+        },
+
         /**
          * Get progression
          * @param {Object} testContext The progression context
@@ -629,20 +738,21 @@ define([
                 progressInfoMethod = '_getProgressionOf' + capitalize(reviewScope),
                 getProgression = this[progressInfoMethod] || this._getProgressionOfTest,
                 progression = getProgression && getProgression(testContext) || {};
-            
+
             return progression;
         },
-        
+
         /**
          * Updates the review screen
          * @param {Object} testContext The progression context
          * @returns {testReview}
          */
         update: function update(testContext) {
+            this.progression = this.getProgression(testContext);
             this._updateOptions(testContext);
             this._updateInfos(testContext);
             this._updateTree(testContext);
-            this._updateDisplayOptions();
+            this._updateDisplayOptions(testContext);
             return this;
         },
 
@@ -766,7 +876,7 @@ define([
      * @param {String|jQuery|HTMLElement} element The element on which install the component
      * @param {Object} [options] A list of extra options
      * @param {String} [options.region] The region on which put the component: left or right
-     * @param {Boolean} [options.reviewScope] Limit the review screen to a particular scope:
+     * @param {String} [options.reviewScope] Limit the review screen to a particular scope:
      * the whole test, the current test part or the current test section)
      * @param {Boolean} [options.preventsUnseen] Prevents the test taker to access unseen items
      * @returns {testReview}

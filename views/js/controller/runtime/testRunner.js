@@ -20,23 +20,42 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'module',
-    'taoQtiTest/testRunner/actionBarHook',
+    'taoQtiTest/testRunner/actionBarTools',
     'taoQtiTest/testRunner/testReview',
     'taoQtiTest/testRunner/progressUpdater',
+    'taoQtiTest/testRunner/testMetaData',
     'serviceApi/ServiceApi',
     'serviceApi/UserInfoService',
     'serviceApi/StateStorage',
-    'iframeResizer',
     'iframeNotifier',
-    'i18n',
     'mathJax',
     'ui/feedback',
     'ui/deleter',
     'moment',
     'ui/modal',
     'ui/progressbar'
-], function ($, _, module, actionBarHook, testReview, progressUpdater, ServiceApi, UserInfoService, StateStorage, iframeResizer, iframeNotifier, __, MathJax, feedback, deleter, moment, modal) {
+],
+function (
+    $,
+    _,
+    __,
+    module,
+    actionBarTools,
+    testReview,
+    progressUpdater,
+    testMetaDataFactory,
+    ServiceApi,
+    UserInfoService,
+    StateStorage,
+    iframeNotifier,
+    MathJax,
+    feedback,
+    deleter,
+    moment,
+    modal
+) {
 
     'use strict';
 
@@ -48,7 +67,12 @@ define([
         $timers,
         $controls,
         timerIndex,
+        testMetaData,
+        sessionStateService,
         $doc = $(document),
+        optionNextSection = 'x-tao-option-nextSection',
+        optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
+        optionReviewScreen = 'x-tao-option-reviewScreen',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -59,23 +83,11 @@ define([
             'TEST_NAVIGATION_LINEAR': 0,
             'TEST_NAVIGATION_NONLINEAR': 1,
             'TEST_ITEM_STATE_INTERACTING': 1,
-            'SECTION_EXIT_CODE': {
-                'COMPLETED_NORMALLY': 700,
-                'QUIT': 701,
-                'COMPLETE_TIMEOUT': 703,
-                'TIMEOUT': 704,
-                'FORCE_QUIT': 705,
-                'IN_PROGRESS': 706,
-                'ERROR': 300
-            },
-            'TEST_EXIT_CODE': {
-                'COMPLETE': 'C',
-                'TERMINATED': 'T',
-                'INCOMPLETE': 'IC',
-                'INCOMPLETE_QUIT': 'IQ',
-                'INACTIVE': 'IA',
-                'CANDIDATE_DISAGREED_WITH_NDA': 'DA'
-            },
+
+            /**
+             * Prepare a transition to another item
+             * @param {Function} [callback]
+             */
             beforeTransition: function (callback) {
                 // Ask the top window to start the loader.
                 iframeNotifier.parent('loading');
@@ -93,11 +105,17 @@ define([
                 }
             },
 
+            /**
+             * Complete a transition to another item
+             */
             afterTransition: function () {
                 this.enableGui();
 
                 //ask the top window to stop the loader
                 iframeNotifier.parent('unloading');
+                testMetaData.addData({
+                    'ITEM' : {'ITEM_START_TIME_CLIENT' : Date.now() / 1000}
+                });
             },
 
             /**
@@ -105,11 +123,31 @@ define([
              * @param {Number} position The position of the item within the test
              */
             jump: function(position) {
-                var self = this;
+                var self = this,
+                    action = 'jump',
+                    params = {position: position};
                 this.disableGui();
-                this.itemServiceApi.kill(function() {
-                    self.actionCall('jump', null, {position: position});
-                });
+
+                if( this.isJumpOutOfSection(position)  && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action, params);
+                } else {
+                    this.killItemSession(function() {
+                        self.actionCall(action, params);
+                    });
+                }
+            },
+
+            /**
+             * Push to server how long user seen that item before to track duration
+             * @param {Number} duration
+             */
+            keepItemTimed: function(duration){
+                if (duration) {
+                    var self = this,
+                        action = 'keepItemTimed',
+                        params = {duration: duration};
+                    self.actionCall(action, params);
+                }
             },
 
             /**
@@ -126,111 +164,385 @@ define([
                 // Disable buttons.
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    $.ajax({
-                        url: self.testContext.markForReviewUrl,
-                        cache: false,
-                        async: true,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            flag: flag,
-                            position: position
-                        },
-                        success: function(testContext) {
-                            self.setTestContext(testContext);
-                            self.updateTestReview();
-                            self.itemServiceApi.connect($controls.$itemFrame[0]);
-
-                            // Enable buttons.
-                            self.enableGui();
-
-                            //ask the top window to stop the loader
-                            iframeNotifier.parent('unloading');
-
+                $.ajax({
+                    url: self.testContext.markForReviewUrl,
+                    cache: false,
+                    async: true,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        flag: flag,
+                        position: position
+                    },
+                    success: function(data) {
+                        // update the item flagged state
+                        if (self.testReview) {
+                            self.testReview.setItemFlag(position, flag);
+                            self.testReview.updateNumberFlagged(self.testContext, position, flag);
+                            if (self.testContext.itemPosition === position) {
+                                self.testContext.itemFlagged = flag;
+                            }
+                            self.updateTools(self.testContext);
                         }
-                    });
+
+                        // Enable buttons.
+                        self.enableGui();
+
+                        //ask the top window to stop the loader
+                        iframeNotifier.parent('unloading');
+                    }
                 });
             },
 
+            /**
+             * Move to the next available item
+             */
             moveForward: function () {
-                var self = this;
+                var self = this,
+                    action = 'moveForward';
+
                 this.disableGui();
 
-                this.itemServiceApi.kill(function () {
-                    self.actionCall('moveForward');
-                });
+                if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
+                    if( this.isTimedSection() && !this.testContext.isTimeout){
+                        this.exitTimedSection(action);
+                    } else {
+                        this.exitSection(action);
+                    }
+                } else {
+                    this.killItemSession(function () {
+                        self.actionCall(action);
+                    });
+                }
             },
 
+            /**
+             * Move to the previous available item
+             */
             moveBackward: function () {
-                var self = this;
+                var self = this,
+                    action = 'moveBackward';
 
                 this.disableGui();
-                this.itemServiceApi.kill(function () {
-                    self.actionCall('moveBackward');
+
+                if( (this.testContext.itemPositionSection == 0) && this.isCurrentItemActive() && this.isTimedSection() ){
+                    this.exitTimedSection(action);
+                } else {
+                this.killItemSession(function () {
+                        self.actionCall(action);
+                    });
+                }
+            },
+
+            /**
+             * Checks if a position is out of the current section
+             * @param {Number} jumpPosition
+             * @returns {Boolean}
+             */
+            isJumpOutOfSection: function(jumpPosition){
+                var items = this.getCurrentSectionItems(),
+                    isJumpToOtherSection = true,
+                    isValidPosition = (jumpPosition >= 0) && ( jumpPosition < this.testContext.numberItems );
+
+                if( isValidPosition){
+                    for(var i in items ) {
+                        if (!items.hasOwnProperty(i)) {
+                            continue;
+                        }
+                        if( items[i].position == jumpPosition ){
+                            isJumpToOtherSection = false;
+                            break;
+                        }
+                    }
+                } else {
+                    isJumpToOtherSection = false;
+                }
+
+                return isJumpToOtherSection;
+            },
+
+            /**
+             * Exit from the current section. Set the exit code.de
+             * @param {String} action
+             * @param {Object} params
+             * @param {Number} [exitCode]
+             */
+            exitSection: function(action, params, exitCode){
+                var self = this;
+                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                self.killItemSession(function () {
+                    self.actionCall(action, params);
                 });
             },
 
+            /**
+             * Tries to exit a timed section. Display a confirm message.
+             * @param {String} action
+             * @param {Object} params
+             */
+            exitTimedSection: function(action, params){
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
+
+                if (qtiRunner) {
+                    qtiRunner.updateItemApi();
+                }
+
+                this.displayExitMessage(
+                    __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                    function() {
+                        self.exitSection(action, params);
+                    },
+                    'testSection'
+                );
+
+                this.enableGui();
+            },
+
+            /**
+             * Tries to leave the current section and go to the next
+             */
+            nextSection: function(){
+                var self = this;
+                var qtiRunner = this.getQtiRunner();
+                var doNextSection = function() {
+                    self.exitSection('nextSection', null, testMetaData.SECTION_EXIT_CODE.QUIT);
+                };
+
+                if (qtiRunner) {
+                    qtiRunner.updateItemApi();
+                }
+
+                if (this.hasOption(optionNextSectionWarning)) {
+                    this.displayExitMessage(
+                        __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                        doNextSection,
+                        'testSection'
+                    );
+                } else {
+                    doNextSection();
+                }
+
+                this.enableGui();
+            },
+
+            /**
+             * Gets the current progression within a particular scope
+             * @param {String} [scope]
+             * @returns {Object}
+             */
+            getProgression: function(scope) {
+                var scopeSuffixMap = {
+                    test : '',
+                    testPart : 'Part',
+                    testSection : 'Section'
+                };
+                var scopeSuffix = scope && scopeSuffixMap[scope] || '';
+
+                return {
+                    total : this.testContext['numberItems' + scopeSuffix] || 0,
+                    answered : this.testContext['numberCompleted' + scopeSuffix] || 0,
+                    viewed : this.testContext['numberPresented' + scopeSuffix] || 0,
+                    flagged : this.testContext['numberFlagged' + scopeSuffix] || 0
+                };
+            },
+
+            /**
+             * Displays an exit message for a particular scope
+             * @param {String} message
+             * @param {Function} [action]
+             * @param {String} [scope]
+             * @returns {jQuery} Returns the message box
+             */
+            displayExitMessage: function(message, action, scope) {
+                var self = this;
+                var $confirmBox = $('.exit-modal-feedback');
+                var progression = this.getProgression(scope);
+                var unansweredCount = (progression.total - progression.answered);
+                var flaggedCount = progression.flagged;
+
+                if (unansweredCount && this.isCurrentItemAnswered()) {
+                    unansweredCount--;
+                }
+
+                if (flaggedCount && unansweredCount) {
+                    message = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                        unansweredCount.toString(),
+                        flaggedCount.toString()
+                    ) + ' ' + message;
+                } else {
+                    if (flaggedCount) {
+                        message = __('You have %s item(s) marked for review.', flaggedCount.toString()) + ' ' + message;
+                    }
+
+                    if (unansweredCount) {
+                        message = __('You have %s unanswered question(s).', unansweredCount.toString()) + ' ' + message;
+                    }
+                }
+
+                $confirmBox.find('.message').html(message);
+                $confirmBox.modal({ width: 500 });
+
+                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                });
+
+                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
+                    $confirmBox.modal('close');
+                    if (_.isFunction(action)) {
+                        action.call(self);
+                    }
+                });
+
+                return $confirmBox;
+            },
+
+            /**
+             * Kill current item section and execute callback function given as first parameter.
+             * Item end execution time will be stored in metadata object to be sent to the server.
+             * @param {function} callback
+             */
+            killItemSession : function (callback) {
+                testMetaData.addData({
+                    'ITEM' : {
+                        'ITEM_END_TIME_CLIENT' : Date.now() / 1000,
+                        'ITEM_TIMEZONE' : moment().utcOffset(moment().utcOffset()).format('Z')
+                    }
+                });
+                if (typeof callback !== 'function') {
+                    callback = _.noop;
+                }
+                this.itemServiceApi.kill(callback);
+            },
+
+            /**
+             * Checks if the current item is active
+             * @returns {Boolean}
+             */
+            isCurrentItemActive: function(){
+                return (this.testContext.itemSessionState != 4);
+            },
+
+            /**
+             * Tells is the current item has been answered or not
+             * The item is considered answered when at least one response has been set to not empty {base : null}
+             *
+             * @returns {Boolean}
+             */
+            isCurrentItemAnswered: function(){
+                var answered = false;
+                _.each(this.getCurrentItemState(), function(state){
+                    if(state && _.isObject(state.response) && state.response.base !== null){
+                        answered = true;//at least one response is not null so consider the item answered
+                        return false;
+                    }
+                });
+                return answered;
+            },
+
+            /**
+             * Checks if a particular option is enabled for the current item
+             * @param {String} option
+             * @returns {Boolean}
+             */
+            hasOption: function(option) {
+                return _.indexOf(this.testContext.categories, option) >= 0;
+            },
+
+            /**
+             * Gets access to the qtiRunner instance
+             * @returns {Object}
+             */
+            getQtiRunner: function(){
+                var itemFrame = document.getElementById('qti-item');
+                var itemWindow = itemFrame && itemFrame.contentWindow;
+                var itemContainerFrame = itemWindow && itemWindow.document.getElementById('item-container');
+                var itemContainerWindow = itemContainerFrame && itemContainerFrame.contentWindow;
+                return itemContainerWindow && itemContainerWindow.qtiRunner;
+            },
+
+            /**
+             * Checks if the current section is timed
+             * @returns {Boolean}
+             */
+            isTimedSection: function(){
+                var timeConstraints = this.testContext.timeConstraints,
+                    isTimedSection = false;
+                for( var index in timeConstraints ){
+                    if(timeConstraints.hasOwnProperty(index) &&
+                        timeConstraints[index].qtiClassName === 'assessmentSection' ){
+                        isTimedSection = true;
+                    }
+                }
+
+                return isTimedSection;
+            },
+
+            /**
+             * Gets the list of items owned by the current section
+             * @returns {Array}
+             */
+            getCurrentSectionItems: function(){
+                var partId  = this.testContext.testPartId,
+                    navMap  = this.testContext.navigatorMap,
+                    sectionItems;
+
+                for( var partIndex in navMap ){
+                    if( !navMap.hasOwnProperty(partIndex)){
+                        continue;
+                    }
+                    if( navMap[partIndex].id !== partId ){
+                        continue;
+                    }
+
+                    for(var sectionIndex in navMap[partIndex].sections){
+                        if( !navMap[partIndex].sections.hasOwnProperty(sectionIndex)){
+                            continue;
+                        }
+                        if( navMap[partIndex].sections[sectionIndex].active === true ){
+                            sectionItems = navMap[partIndex].sections[sectionIndex].items;
+                            break;
+                        }
+                    }
+                }
+
+                return sectionItems;
+            },
+
+            /**
+             * Skips the current item
+             */
             skip: function () {
                 this.disableGui();
-                
                 this.actionCall('skip');
             },
 
+            /**
+             * Handles the timeout state
+             */
             timeout: function () {
                 var self = this;
                 this.disableGui();
                 this.testContext.isTimeout = true;
                 this.updateTimer();
 
-                this.itemServiceApi.kill(function () {
+                this.killItemSession(function () {
                     var confirmBox = $('.timeout-modal-feedback'),
                         testContext = self.testContext,
-                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close'),
-                        metaData = {};
-                        
+                        confirmBtn = confirmBox.find('.js-timeout-confirm, .modal-close');
+
                     if (testContext.numberCompletedSection === testContext.numberItemsSection) {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.COMPLETE_TIMEOUT}});
                     } else {
-                        metaData = {"SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.TIMEOUT}};
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.TIMEOUT}});
                     }
-                    
+
+                    self.enableGui();
                     confirmBox.modal({width: 500});
                     confirmBtn.off('click').on('click', function () {
                         confirmBox.modal('close');
-                        self.actionCall('timeout', metaData);
+                        self.actionCall('timeout');
                     });
-                });
-            },
-            comment: function () {
-                if(!$controls.$commentArea.is(':visible')) {
-                    $controls.$commentText.val('');
-                }
-                $controls.$commentArea.toggle();
-                $controls.$commentText.focus();
-            },
-
-            closeComment: function () {
-                $controls.$commentArea.hide();
-            },
-
-            emptyComment: function () {
-                $controls.$commentText.val('');
-            },
-
-            storeComment: function () {
-                var self = this;
-                var comment = $controls.$commentText.val();
-                if(!comment) {
-                    return;
-                }
-                $.when(
-                    $.post(
-                        self.testContext.commentUrl,
-                        { comment: comment }
-                    )
-                ).done(function() {
-                    self.closeComment();
                 });
             },
 
@@ -243,12 +555,39 @@ define([
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
             },
 
+
+            /**
+             * Handles Metadata initialization
+             */
+            initMetadata: function (){
+                testMetaData = testMetaDataFactory({
+                    testServiceCallId: this.itemServiceApi.serviceCallId
+                });
+            },
+
+            /**
+             * Retrieve service responsible for broken session tracking
+             * @returns {*}
+             */
+            getSessionStateService: function () {
+                if (!sessionStateService) {
+                    sessionStateService = this.testContext.sessionStateService({accuracy: 1000});
+                }
+                return sessionStateService;
+            },
+
+            /**
+             * Updates the GUI
+             * @param {Object} testContext
+             */
             update: function (testContext) {
                 var self = this;
                 $controls.$itemFrame.remove();
 
                 var $runner = $('#runner');
                 $runner.css('height', 'auto');
+
+                this.getSessionStateService().restart();
 
                 this.setTestContext(testContext);
                 this.updateContext();
@@ -260,10 +599,11 @@ define([
                 this.updateTools(testContext);
                 this.updateTimer();
                 this.updateExitButton();
-                
-                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0"/>');
+                this.resetCurrentItemState();
+                this.initMetadata();
+
+                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
-                iframeResizer.autoHeight($controls.$itemFrame, 'body');
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
                     $doc.off('.testRunner').on('serviceloaded.testRunner', function () {
@@ -284,6 +624,9 @@ define([
                 }
             },
 
+            /**
+             * Displays feedback on the current state of the test
+             */
             updateInformation: function () {
 
                 if (this.testContext.isTimeout === true) {
@@ -294,34 +637,35 @@ define([
                 }
             },
 
+            /**
+             * Updates the displayed tools
+             * @param {Object} testContext
+             */
             updateTools: function updateTools(testContext) {
-
-				var $toolsContainer,
-                    config = module.config();
+                var showSkip = false;
+                var showSkipEnd = false;
+                var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
 
                 if (this.testContext.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
-                        $controls.$skip.show();
-                        $controls.$skipEnd.hide();
+                        showSkip = true;
+                    } else {
+                        showSkipEnd = true;
                     }
-                    else {
-                        $controls.$skip.hide();
-                        $controls.$skipEnd.show();
-                    }
-                }
-                else {
-                    $controls.$skip.hide();
-                    $controls.$skipEnd.hide();
                 }
 
-                if(config && config.qtiTools){
-                    $toolsContainer = $('.tools-box-list');
-                    _.forIn(config.qtiTools, function(toolconfig, id){
-                        actionBarHook.initQtiTool($toolsContainer, id, toolconfig, testContext, TestRunner);
-                    });
-                }
+                $controls.$skip.toggle(showSkip);
+                $controls.$skipEnd.toggle(showSkipEnd);
+                $controls.$nextSection.toggle(showNextSection);
+
+                actionBarTools.render('.tools-box-list', testContext, TestRunner);
             },
 
+            /**
+             * Displays a timer
+             * @param {Object} cst
+             * @returns {*|jQuery|HTMLElement}
+             */
             createTimer: function(cst) {
                 var $timer = $('<div>', {'class': 'qti-timer qti-timer__type-' + cst.qtiClassName }),
                     $label = $('<div>', {'class': 'qti-timer_label truncate', text: cst.label }),
@@ -332,6 +676,9 @@ define([
                 return $timer;
             },
 
+            /**
+             * Updates the timers
+             */
             updateTimer: function () {
                 var self = this;
                 var hasTimers;
@@ -351,7 +698,6 @@ define([
 
                     hasTimers = !!this.testContext.timeConstraints.length;
                     $controls.$topActionBar.toggleClass('has-timers', hasTimers);
-                    self.adjustFrame();
 
                     if (hasTimers) {
 
@@ -439,6 +785,10 @@ define([
 
                 cst.warningTime = Number.NEGATIVE_INFINITY;
             },
+
+            /**
+             * Displays or hides the rubric block
+             */
             updateRubrics: function () {
                 $controls.$rubricBlocks.remove();
 
@@ -466,6 +816,9 @@ define([
                 }
             },
 
+            /**
+             * Updates the list of navigation buttons (previous, next, skip, etc.)
+             */
             updateNavigation: function () {
                 $controls.$exit.show();
 
@@ -500,7 +853,7 @@ define([
                 var considerProgress = this.testContext.considerProgress === true;
 
                 if (this.testReview) {
-                    this.testReview.toggle(considerProgress);
+                    this.testReview.toggle(considerProgress && this.hasOption(optionReviewScreen));
                     this.testReview.update(this.testContext);
                 }
             },
@@ -518,21 +871,37 @@ define([
                 }
             },
 
+            /**
+             * Updates the test informations
+             */
             updateContext: function () {
 
                 $controls.$title.text(this.testContext.testTitle);
-                $controls.$position.text(' - ' + this.testContext.sectionTitle);
+
+                // Visibility of section?
+                var sectionText = (this.testContext.isDeepestSectionVisible === true) ? (' - ' + this.testContext.sectionTitle) : '';
+
+                $controls.$position.text(sectionText);
                 $controls.$titleGroup.show();
             },
-            
+
+            /**
+             * Displays the right exit button
+             */
             updateExitButton : function(){
-                
+
                 $controls.$logout.toggleClass('hidden', !this.testContext.logoutButton);
                 $controls.$exit.toggleClass('hidden', !this.testContext.exitButton);
             },
-            
+
+            /**
+             * Ensures the frame has the right size
+             */
             adjustFrame: function () {
+                var rubricHeight = $controls.$rubricBlocks.outerHeight(true) || 0;
+                var frameContentHeight;
                 var finalHeight = $(window).innerHeight() - $controls.$topActionBar.outerHeight() - $controls.$bottomActionBar.outerHeight();
+                var itemFrame = $controls.$itemFrame.get(0);
                 $controls.$contentBox.height(finalHeight);
                 if($controls.$sideBars.length){
                     $controls.$sideBars.each(function() {
@@ -540,8 +909,27 @@ define([
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
                 }
+
+                if(itemFrame && itemFrame.contentWindow){
+                    frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
+
+                    if (frameContentHeight < finalHeight) {
+                        if (rubricHeight) {
+                            frameContentHeight = Math.max(frameContentHeight, finalHeight - rubricHeight);
+                        } else {
+                            frameContentHeight = finalHeight;
+                        }
+                    }
+                    if (itemFrame.contentWindow.$) {
+                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
+                    }
+                    $controls.$itemFrame.height(frameContentHeight);
+                }
             },
 
+            /**
+             * Locks the GUI
+             */
             disableGui: function () {
                 $controls.$naviButtons.addClass('disabled');
                 if (this.testReview) {
@@ -549,6 +937,9 @@ define([
                 }
             },
 
+            /**
+             * Unlocks the GUI
+             */
             enableGui: function () {
                 $controls.$naviButtons.removeClass('disabled');
                 if (this.testReview) {
@@ -556,6 +947,31 @@ define([
                 }
             },
 
+            /**
+             * Hides the GUI
+             */
+            hideGui: function () {
+                $controls.$naviButtons.addClass('hidden');
+                if (this.testReview) {
+                    this.testReview.hide();
+                }
+            },
+
+            /**
+             * Shows the GUI
+             */
+            showGui: function () {
+                $controls.$naviButtons.removeClass('hidden');
+                if (this.testReview) {
+                    this.testReview.show();
+                }
+            },
+
+            /**
+             * Formats a timer
+             * @param {Number} totalSeconds
+             * @returns {String}
+             */
             formatTime: function (totalSeconds) {
                 var sec_num = totalSeconds;
                 var hours = Math.floor(sec_num / 3600);
@@ -578,27 +994,45 @@ define([
             },
 
             /**
+             * Processes an error
+             * @param {Object} error
+             */
+            processError : function processError(error) {
+                var self = this;
+
+                // keep disabled
+                this.hideGui();
+                this.beforeTransition();
+
+                // ask the parent to display a message
+                iframeNotifier.parent('messagealert', {
+                    message : error.message,
+                    action : function() {
+                        if (testMetaData) {
+                            testMetaData.clearData();
+                        }
+                        if (error.state === self.TEST_STATE_CLOSED) {
+                            // test is closed, finish it
+                            self.serviceApi.finish();
+                        } else {
+                            // test is still open, just exit to the index
+                            self.serviceApi.exit();
+                        }
+                    }
+                });
+            },
+
+            /**
              * Call action specified in testContext. A postfix <i>Url</i> will be added to the action name.
              * To specify actions see {@link https://github.com/oat-sa/extension-tao-testqti/blob/master/helpers/class.TestRunnerUtils.php}
              * @param {String} action - Action name
-             * @param {Object} [metaData] - Metadata to be sent to the server. Will be saved in result storage as a trace variable.
-             * Example:
-             * <pre>
-             * {
-             *   "TEST" : {
-             *      "TEST_EXIT_CODE" : "T"
-             *   },
-             *   "SECTION" : {
-             *      "SECTION_EXIT_CODE" : 704
-             *   }
-             * }
-             * </pre>
              * @param {Object} [extraParams] - Additional parameters to be sent to the server
              * @returns {undefined}
              */
-            actionCall: function (action, metaData, extraParams) {
+            actionCall: function (action, extraParams) {
                 var self = this,
-                    params = metaData ? {"metaData" : metaData} : {};
+                    params = {metaData: testMetaData ? testMetaData.getData() : {}};
+
                 if (extraParams) {
                     params = _.assign(params, extraParams);
                 }
@@ -610,7 +1044,12 @@ define([
                         async: true,
                         dataType: 'json',
                         success: function (testContext) {
-                            if (testContext.state === self.TEST_STATE_CLOSED) {
+                            testMetaData.clearData();
+
+                            if (!testContext.success) {
+                                self.processError(testContext);
+                            }
+                            else if (testContext.state === self.TEST_STATE_CLOSED) {
                                 self.serviceApi.finish();
                             }
                             else {
@@ -627,39 +1066,55 @@ define([
              * @returns {undefined}
              */
             exit: function () {
-                var self = this,
-                    $confirmBox = $('.exit-modal-feedback'),
-                    testProgression = TestRunner.testReview ? 
-                        TestRunner.testReview.getProgression(self.testContext) : {
-                            total : self.testContext.numberItems,
-                            answered : self.testContext.numberCompleted,
-                            flagged : self.testContext.numberFlagged || 0
-                        },
-                    message = __(
-                        "You have %s unanswered question(s) and have %s item(s) marked for review. Are you sure you want to end the test?",
-                        (testProgression.total - testProgression.answered).toString(),
-                        (testProgression.flagged).toString()
-                    ),
-                    metaData = {
-                        "TEST" : {"TEST_EXIT_CODE" : TestRunner.TEST_EXIT_CODE.INCOMPLETE},
-                        "SECTION" : {"SECTION_EXIT_CODE" : TestRunner.SECTION_EXIT_CODE.QUIT}
-                    };
-
-                $confirmBox.find('.message').html(message);
-                $confirmBox.modal({ width: 500 });
-
-                $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
-                    $confirmBox.modal('close');
+                var self = this;
+                testMetaData.addData({
+                    "TEST" : {"TEST_EXIT_CODE" : testMetaData.TEST_EXIT_CODE.INCOMPLETE},
+                    "SECTION" : {"SECTION_EXIT_CODE" : testMetaData.SECTION_EXIT_CODE.QUIT}
                 });
-
-                $confirmBox.find('.js-exit-confirm').off('click').on('click', function () {
-                    $confirmBox.modal('close');
-                    self.itemServiceApi.kill(function () {
-                        self.actionCall('endTestSession', metaData);
+                this.displayExitMessage(
+                    __('Are you sure you want to end the test?'),
+                    function() {
+                    self.killItemSession(function () {
+                        self.actionCall('endTestSession');
+                        testMetaData.clearData();
                     });
-                });
+                    },
+                    this.testReview ? this.testContext.reviewScope : null
+                );
+            },
+
+            /**
+             * Set the state of the current item in the test runner
+             *
+             * @param {string} id
+             * @param {object} state
+             */
+            setCurrentItemState : function(id, state){
+                if(id){
+                    this.currentItemState[id] = state;
+                }
+            },
+
+            /**
+             * Reset the state of the current item in the test runner
+             */
+            resetCurrentItemState : function(){
+                this.currentItemState = {};
+            },
+
+            /**
+             * Get the state of the current item as stored in the test runner
+             * @returns {Object}
+             */
+            getCurrentItemState : function(){
+                return this.currentItemState;
             }
         };
+
+        var config = module.config();
+        if (config) {
+            actionBarTools.register(config.qtiTools);
+        }
 
         return {
             start: function (testContext) {
@@ -669,6 +1124,7 @@ define([
                     $moveForward: $('[data-control="move-forward"]'),
                     $moveEnd: $('[data-control="move-end"]'),
                     $moveBackward: $('[data-control="move-backward"]'),
+                    $nextSection: $('[data-control="next-section"]'),
                     $skip: $('[data-control="skip"]'),
                     $skipEnd: $('[data-control="skip-end"]'),
                     $exit: $(window.parent.document).find('[data-control="exit"]'),
@@ -676,13 +1132,6 @@ define([
                     $naviButtons: $('.bottom-action-bar .action'),
                     $skipButtons: $('.navi-box .skip'),
                     $forwardButtons: $('.navi-box .forward'),
-
-                    // comment
-                    $commentToggle: $('[data-control="comment-toggle"]'),
-                    $commentArea: $('[data-control="qti-comment"]'),
-                    $commentText: $('[data-control="qti-comment-text"]'),
-                    $commentCancel: $('[data-control="qti-comment-cancel"]'),
-                    $commentSend: $('[data-control="qti-comment-send"]'),
 
                     // progress bar
                     $progressBar: $('[data-control="progress-bar"]'),
@@ -706,14 +1155,9 @@ define([
                     $topActionBar: $('.horizontal-action-bar.top-action-bar'),
                     $bottomActionBar: $('.horizontal-action-bar.bottom-action-bar')
                 };
-                
+
                 // title
                 $controls.$titleGroup = $controls.$title.add($controls.$position);
-
-                // @todo remove when framework gets isn place
-                if(testContext.allowComment) {
-                    $controls.$commentToggle.show();
-                }
 
                 $doc.ajaxError(function (event, jqxhr) {
                     if (jqxhr.status === 403) {
@@ -724,16 +1168,29 @@ define([
                 window.onServiceApiReady = function onServiceApiReady(serviceApi) {
                     TestRunner.serviceApi = serviceApi;
 
+                    if (!testContext.success) {
+                        TestRunner.processError(testContext);
+                    }
+
                     // If the assessment test session is in CLOSED state,
                     // we give the control to the delivery engine by calling finish.
-                    if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
+                    else if (testContext.state === TestRunner.TEST_STATE_CLOSED) {
                         serviceApi.finish();
+                        testMetaData.clearData();
                     }
                     else {
-                        TestRunner.update(testContext);
+
+                        if (TestRunner.getSessionStateService().getDuration()) {
+                            TestRunner.setTestContext(testContext);
+                            TestRunner.initMetadata();
+
+                            TestRunner.keepItemTimed(TestRunner.getSessionStateService().getDuration());
+                            TestRunner.getSessionStateService().restart();
+                        } else {
+                            TestRunner.update(testContext);
+                        }
                     }
                 };
-
 
                 TestRunner.beforeTransition();
                 TestRunner.testContext = testContext;
@@ -756,18 +1213,10 @@ define([
                     }
                 });
 
-                $controls.$commentToggle.click(function () {
+                $controls.$nextSection.click(function () {
                     if (!$(this).hasClass('disabled')) {
-                        TestRunner.comment();
+                        TestRunner.nextSection();
                     }
-                });
-
-                $controls.$commentCancel.click(function () {
-                    TestRunner.closeComment();
-                });
-
-                $controls.$commentSend.click(function () {
-                    TestRunner.storeComment();
                 });
 
                 $controls.$exit.click(function (e) {
@@ -775,17 +1224,17 @@ define([
                     TestRunner.exit();
                 });
 
-                $(window).bind('resize', function () {
+                $(window).on('resize', _.throttle(function () {
                     TestRunner.adjustFrame();
                     $controls.$titleGroup.show();
-                });
+                }, 250));
 
-                $doc.bind('loading', function () {
+                $doc.on('loading', function () {
                     iframeNotifier.parent('loading');
                 });
 
 
-                $doc.bind('unloading', function () {
+                $doc.on('unloading', function () {
                     iframeNotifier.parent('unloading');
                 });
 
@@ -794,7 +1243,8 @@ define([
                 if (testContext.reviewScreen) {
                     TestRunner.testReview = testReview($controls.$contentPanel, {
                         region: testContext.reviewRegion || 'left',
-                        reviewScope: !!testContext.reviewScope,
+                        hidden: !TestRunner.hasOption(optionReviewScreen),
+                        reviewScope: testContext.reviewScope,
                         preventsUnseen: !!testContext.reviewPreventsUnseen,
                         canCollapse: !!testContext.reviewCanCollapse
                     }).on('jump', function(event, position) {
@@ -817,6 +1267,20 @@ define([
 
                 deleter($('#feedback-box'));
                 modal($('body'));
+
+                //listen to state change in the current item
+                $(document).on('responsechange', function(e, responseId, response){
+                    if(responseId && response){
+                        TestRunner.setCurrentItemState(responseId, {response:response});
+                    }
+                }).on('stateready', function(e, id, state){
+                    if(id && state){
+                        TestRunner.setCurrentItemState(id, state);
+                    }
+                }).on('heightchange', function(e, height) {
+                    $controls.$itemFrame.height(height);
+                });
+
             }
         };
     });
