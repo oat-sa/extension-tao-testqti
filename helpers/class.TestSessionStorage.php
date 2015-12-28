@@ -27,6 +27,9 @@ use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\storage\binary\QtiBinaryStreamAccessFsFile;
+use oat\oatbox\service\ServiceManager;
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
@@ -64,7 +67,12 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        parent::__construct($manager, $seeker);
        $this->setUserUri($userUri);
    }
-   
+
+    public function persist(AssessmentTestSession $assessmentTestSession) {
+        parent::persist($assessmentTestSession);
+        $this->triggerEventChange($assessmentTestSession);
+    }
+
    /**
     * Get the last retrieved error. -1 means
     * no error.
@@ -163,4 +171,15 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function createBinaryStreamAccess(IStream $stream) {
        return new QtiBinaryStreamAccessFsFile($stream);
    }
+
+    protected function triggerEventChange(AssessmentTestSession $assessmentTestSession) {
+        $this->getEventManager()->trigger(new QtiTestChangeEvent($assessmentTestSession));
+    }
+
+    /**
+     * @return EventManager
+     */
+    protected function getEventManager() {
+        return ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID);
+    }
 }
