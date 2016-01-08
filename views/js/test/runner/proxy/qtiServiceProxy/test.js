@@ -30,6 +30,16 @@ define([
     QUnit.module('qtiServiceProxy');
 
 
+    // backup/restore ajax method between each test
+    var ajaxBackup;
+    QUnit.testStart(function() {
+        ajaxBackup = $.ajax;
+    });
+    QUnit.testDone(function() {
+        $.ajax = ajaxBackup;
+    });
+
+
     /**
      * A simple AJAX mock factory that fakes a successful ajax call.
      * To use it, just replace $.ajax with the returned value:
