@@ -24,6 +24,13 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 
+/**
+ * Class QtiRunnerService
+ * 
+ * QTI implementation service for the test runner
+ * 
+ * @package oat\taoQtiTest\models
+ */
 class QtiRunnerService extends ConfigurableService implements RunnerService
 {
     const CONFIG_ID = 'taoQtiTest/runner';
@@ -43,7 +50,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Initializes the delivery execution session
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function init($testSession)
     {
@@ -53,43 +60,51 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the test definition data
      * @param $testSession
-     * @return mixed
+     * @return array
      */
     public function getTestData($testSession)
     {
         // TODO: Implement getTestData() method.
+
+        return [];
     }
 
     /**
      * Gets the test context object
      * @param $testSession
-     * @return mixed
+     * @return array
      */
     public function getTestContext($testSession)
     {
         // TODO: Implement getTestContext() method.
+
+        return [];
     }
 
     /**
      * Gets definition data of a particular item
      * @param $testSession
      * @param $itemRef
-     * @return mixed
+     * @return array
      */
     public function getItemData($testSession, $itemRef)
     {
         // TODO: Implement getItemData() method.
+
+        return [];
     }
 
     /**
      * Gets the state of a particular item
      * @param $testSession
      * @param $itemRef
-     * @return mixed
+     * @return array
      */
     public function getItemState($testSession, $itemRef)
     {
         // TODO: Implement getItemState() method.
+        
+        return [];
     }
 
     /**
@@ -97,11 +112,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param $testSession
      * @param $itemRef
      * @param $state
-     * @return mixed
+     * @return boolean
      */
     public function setItemState($testSession, $itemRef, $state)
     {
         // TODO: Implement setItemState() method.
+
+        return true;
     }
 
     /**
@@ -109,11 +126,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param $testSession
      * @param $itemRef
      * @param $response
-     * @return mixed
+     * @return boolean
      */
     public function storeItemResponse($testSession, $itemRef, $response)
     {
         // TODO: Implement storeItemResponse() method.
+
+        return true;
     }
 
     /**
@@ -121,11 +140,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param $testSession
      * @param $scope
      * @param $ref
-     * @return mixed
+     * @return boolean
      */
     public function move($testSession, $scope, $ref)
     {
         // TODO: Implement move() method.
+
+        return true;
     }
 
     /**
@@ -133,41 +154,49 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param $testSession
      * @param $scope
      * @param $ref
-     * @return mixed
+     * @return boolean
      */
     public function skip($testSession, $scope, $ref)
     {
         // TODO: Implement skip() method.
+
+        return true;
     }
 
     /**
      * Finishes the test
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function finish($testSession)
     {
         // TODO: Implement finish() method.
+
+        return true;
     }
 
     /**
      * Sets the test to paused state
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function pause($testSession)
     {
         // TODO: Implement pause() method.
+
+        return true;
     }
 
     /**
      * Resumes the test from paused state
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function resume($testSession)
     {
         // TODO: Implement resume() method.
+        
+        return true;
     }
 
 }

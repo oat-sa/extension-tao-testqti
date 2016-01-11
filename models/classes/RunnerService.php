@@ -21,6 +21,13 @@
  */
 namespace oat\taoQtiTest\models;
 
+/**
+ * Interface RunnerService
+ * 
+ * Describes a test runner dedicated service
+ * 
+ * @package oat\taoQtiTest\models
+ */
 interface RunnerService
 {
     /**
@@ -35,21 +42,21 @@ interface RunnerService
     /**
      * Initializes the delivery execution session
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function init($testSession);
 
     /**
      * Gets the test definition data
      * @param $testSession
-     * @return mixed
+     * @return array
      */
     public function getTestData($testSession);
 
     /**
      * Gets the test context object
      * @param $testSession
-     * @return mixed
+     * @return array
      */
     public function getTestContext($testSession);
 
@@ -57,7 +64,7 @@ interface RunnerService
      * Gets definition data of a particular item
      * @param $testSession
      * @param $itemRef
-     * @return mixed
+     * @return array
      */
     public function getItemData($testSession, $itemRef);
 
@@ -65,7 +72,7 @@ interface RunnerService
      * Gets the state of a particular item
      * @param $testSession
      * @param $itemRef
-     * @return mixed
+     * @return array
      */
     public function getItemState($testSession, $itemRef);
 
@@ -74,7 +81,7 @@ interface RunnerService
      * @param $testSession
      * @param $itemRef
      * @param $state
-     * @return mixed
+     * @return boolean
      */
     public function setItemState($testSession, $itemRef, $state);
 
@@ -83,7 +90,7 @@ interface RunnerService
      * @param $testSession
      * @param $itemRef
      * @param $response
-     * @return mixed
+     * @return boolean
      */
     public function storeItemResponse($testSession, $itemRef, $response);
 
@@ -92,7 +99,7 @@ interface RunnerService
      * @param $testSession
      * @param $scope
      * @param $ref
-     * @return mixed
+     * @return boolean
      */
     public function move($testSession, $scope, $ref);
 
@@ -101,28 +108,28 @@ interface RunnerService
      * @param $testSession
      * @param $scope
      * @param $ref
-     * @return mixed
+     * @return boolean
      */
     public function skip($testSession, $scope, $ref);
 
     /**
      * Finishes the test
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function finish($testSession);
 
     /**
      * Sets the test to paused state
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function pause($testSession);
 
     /**
      * Resumes the test from paused state
      * @param $testSession
-     * @return mixed
+     * @return boolean
      */
     public function resume($testSession);
 }

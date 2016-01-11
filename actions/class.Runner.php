@@ -22,6 +22,11 @@
 
 use oat\taoQtiTest\models\QtiRunnerService;
 
+/**
+ * Class taoQtiTest_actions_Runner
+ * 
+ * Serves QTI implementation of the test runner
+ */
 class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 {
     /**
@@ -70,14 +75,26 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function init()
     {
-        $testSession = $this->getTestSession();
-        $this->runnerService->init($testSession);
+        try {
+            $testSession = $this->getTestSession();
+            $result = $this->runnerService->init($testSession);
 
-        $this->returnJson([
-            'testData' => $this->runnerService->getTestData($testSession),
-            'testContext' => $this->runnerService->getTestContext($testSession),
-            'success' => true,
-        ]);
+            $response = [
+                'success' => $result,
+            ];
+
+            if ($result) {
+                $result['testData'] = $this->runnerService->getTestData($testSession);
+                $result['testContext'] = $this->runnerService->getTestContext($testSession);
+            }
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+        
+
+        $this->returnJson($response);
     }
 
     /**
@@ -85,12 +102,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getTestData()
     {
-        $testSession = $this->getTestSession();
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'testData' => $this->runnerService->getTestData($testSession),
+                'success' => true,
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
 
-        $this->returnJson([
-            'testData' => $this->runnerService->getTestData($testSession),
-            'success' => true,
-        ]);   
+        $this->returnJson($response);
     }
 
     /**
@@ -98,12 +122,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getTestContext()
     {
-        $testSession = $this->getTestSession();
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'testContext' => $this->runnerService->getTestContext($testSession),
+                'success' => true,
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
 
-        $this->returnJson([
-            'testContext' => $this->runnerService->getTestContext($testSession),
-            'success' => true,
-        ]);
+        $this->returnJson($response);
     }
 
     /**
@@ -111,14 +142,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getItemData()
     {
-        $testSession = $this->getTestSession();
-        
         $itemRef = $this->getRequestParameter('itemDefinition');
         
-        $this->returnJson([
-            'itemData' => $this->runnerService->getItemData($testSession, $itemRef),
-            'success' => true,
-        ]);
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'itemData' => $this->runnerService->getItemData($testSession, $itemRef),
+                'success' => true,
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
 
     /**
@@ -126,14 +164,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getItemState()
     {
-        $testSession = $this->getTestSession();
-
         $itemRef = $this->getRequestParameter('itemDefinition');
-        
-        $this->returnJson([
-            'itemState' => $this->runnerService->getItemState($testSession, $itemRef),
-            'success' => true,
-        ]);
+
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'itemState' => $this->runnerService->getItemState($testSession, $itemRef),
+                'success' => true,
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
 
     /**
@@ -141,14 +186,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function submitItemState()
     {
-        $testSession = $this->getTestSession();
-
         $itemRef = $this->getRequestParameter('itemDefinition');
         $state = $this->getRequestParameter('state');
-        
-        $this->returnJson([
-            'success' => $this->runnerService->setItemState($testSession, $itemRef, $state),
-        ]);
+
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->setItemState($testSession, $itemRef, $state),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
 
     /**
@@ -156,14 +208,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function storeItemResponse()
     {
-        $testSession = $this->getTestSession();
-
         $itemRef = $this->getRequestParameter('itemDefinition');
         $response = $this->getRequestParameter('response');
 
-        $this->returnJson([
-            'success' => $this->runnerService->setItemResponse($testSession, $itemRef, $response),
-        ]);
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->setItemResponse($testSession, $itemRef, $response),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
 
     /**
@@ -171,14 +230,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function move()
     {
-        $testSession = $this->getTestSession();
-
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
 
-        $this->returnJson([
-            'success' => $this->runnerService->move($testSession, $scope, $ref),
-        ]);
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->move($testSession, $scope, $ref),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
     
     /**
@@ -186,14 +252,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function skip()
     {
-        $testSession = $this->getTestSession();
-
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
 
-        $this->returnJson([
-            'success' => $this->runnerService->skip($testSession, $scope, $ref),
-        ]);
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->skip($testSession, $scope, $ref),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
     }
     
     /**
@@ -201,11 +274,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function finish()
     {
-        $testSession = $this->getTestSession();
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->finish($testSession),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
 
-        $this->returnJson([
-            'success' => $this->runnerService->finish($testSession),
-        ]);
+        $this->returnJson($response);
     }
 
     /**
@@ -213,11 +293,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function pause()
     {
-        $testSession = $this->getTestSession();
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->pause($testSession),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
 
-        $this->returnJson([
-            'success' => $this->runnerService->pause($testSession),
-        ]);
+        $this->returnJson($response);
     }
 
     /**
@@ -225,10 +312,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function resume()
     {
-        $testSession = $this->getTestSession();
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'success' => $this->runnerService->resume($testSession),
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
 
-        $this->returnJson([
-            'success' => $this->runnerService->resume($testSession),
-        ]);
+        $this->returnJson($response);
     }
 }
