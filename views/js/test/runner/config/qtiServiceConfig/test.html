@@ -2,13 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Test Runner - qtiServiceProxy</title>
+        <title>Test Runner - qtiServiceConfig</title>
         <base href="../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/proxy/qtiServiceProxy.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/config/qtiServiceConfig.js"></script>
 
         <script  type="text/javascript">
 
@@ -19,7 +19,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/runner/proxy/qtiServiceProxy/test'], function(){
+                require(['taoQtiTest/test/runner/config/qtiServiceConfig/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();

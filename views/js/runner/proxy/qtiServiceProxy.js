@@ -22,8 +22,9 @@ define([
     'jquery',
     'lodash',
     'core/promise',
-    'helpers'
-], function($, _, Promise, helpers) {
+    'helpers',
+    'taoQtiTest/runner/config/qtiServiceConfig'
+], function($, _, Promise, helpers, configFactory) {
     'use strict';
 
     /**
@@ -60,83 +61,6 @@ define([
         });
     }
 
-
-    /**
-     * Extract and validate a required config property. If the property is not set, throws an error.
-     * @param {Object} config
-     * @param {String} property
-     * @returns {*}
-     * @throws Error
-     */
-    function getRequired(config, property) {
-        var value = config[property];
-        if (!value) {
-            throw new Error('The config entry "' + property + '" is required!');
-        }
-        return value;
-    }
-
-    /**
-     * Creates a storage object for test
-     * @param {Object} config - Some required and optional config
-     * @param {String} config.testDefinition - The URI of the test
-     * @param {String} config.testCompilation - The URI of the compiled delivery
-     * @param {String} config.serviceCallId - The URI of the service call
-     * @param {String} [config.serviceController] - The name of the service controller
-     * @param {String} [config.serviceExtension] - The name of the service extension
-     * @returns {Object}
-     */
-    function storageFactory(config) {
-        // protected storage
-        var storage = {
-            testDefinition : getRequired(config, 'testDefinition'),
-            testCompilation : getRequired(config, 'testCompilation'),
-            serviceCallId : getRequired(config, 'serviceCallId'),
-            serviceController : config.serviceController || 'Runner',
-            serviceExtension : config.serviceExtension || null
-        };
-
-        // returns only a proxy storage object : no direct access to data is provided
-        return {
-            getTestDefinition : function getTestDefinition() {
-                return storage.testDefinition;
-            },
-
-            getTestCompilation : function getTestCompilation() {
-                return storage.testCompilation;
-            },
-
-            getServiceCallId : function getServiceCallId() {
-                return storage.serviceCallId;
-            },
-
-            getServiceController : function getServiceController() {
-                return storage.serviceController;
-            },
-
-            getServiceExtension : function getServiceExtension() {
-                return storage.serviceExtension;
-            },
-
-            getTestActionUrl : function getTestActionUrl(action) {
-                return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
-                    testDefinition : this.getTestDefinition(),
-                    testCompilation : this.getTestCompilation(),
-                    serviceCallId : this.getServiceCallId()
-                });
-            },
-
-            getItemActionUrl : function getTestActionUrl(uri, action) {
-                return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
-                    testDefinition : this.getTestDefinition(),
-                    testCompilation : this.getTestCompilation(),
-                    testServiceCallId : this.getServiceCallId(),
-                    itemDefinition : uri
-                });
-            }
-        }
-    }
-
     /**
      * QTI proxy definition
      * Related to remote services calls
@@ -156,7 +80,7 @@ define([
             var initConfig = config || {};
 
             // store config in a dedicated storage
-            this.storage = storageFactory(initConfig);
+            this.storage = configFactory(initConfig);
 
             // request for initialization
             return request(this.storage.getTestActionUrl('init'));
