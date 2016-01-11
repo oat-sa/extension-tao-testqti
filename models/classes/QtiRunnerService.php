@@ -45,6 +45,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestSession($testDefinition, $testCompilation, $testExecution)
     {
         // TODO: Implement getTestSession() method.
+        
+        return null;
     }
 
     /**
@@ -55,6 +57,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function init($testSession)
     {
         // TODO: Implement init() method.
+        
+        return true;
     }
 
     /**
@@ -77,6 +81,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestContext($testSession)
     {
         // TODO: Implement getTestContext() method.
+
+        return [];
+    }
+
+    /**
+     * Gets the map of the test items
+     * @param $testSession
+     * @return array
+     */
+    public function getTestMap($testSession)
+    {
+        // TODO: Implement getTestMap() method.
 
         return [];
     }
@@ -138,11 +154,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Moves the current position to the provided scoped reference.
      * @param $testSession
+     * @param $direction
      * @param $scope
      * @param $ref
      * @return boolean
      */
-    public function move($testSession, $scope, $ref)
+    public function move($testSession, $direction, $scope, $ref)
     {
         // TODO: Implement move() method.
 

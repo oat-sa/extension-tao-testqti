@@ -86,6 +86,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($result) {
                 $result['testData'] = $this->runnerService->getTestData($testSession);
                 $result['testContext'] = $this->runnerService->getTestContext($testSession);
+                $result['testMap'] = $this->runnerService->getTestMap($testSession);
             }
         } catch (common_Exception $e) {
             $response = [
@@ -126,6 +127,26 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $testSession = $this->getTestSession();
             $response = [
                 'testContext' => $this->runnerService->getTestContext($testSession),
+                'success' => true,
+            ];
+        } catch (common_Exception $e) {
+            $response = [
+                'success' => false,
+            ];
+        }
+
+        $this->returnJson($response);
+    }
+    
+    /**
+     * Provides the map of the test items
+     */
+    public function getTestMap()
+    {
+        try {
+            $testSession = $this->getTestSession();
+            $response = [
+                'testMap' => $this->runnerService->getTestMap($testSession),
                 'success' => true,
             ];
         } catch (common_Exception $e) {
@@ -231,13 +252,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function move()
     {
         $ref = $this->getRequestParameter('ref');
+        $direction = $this->getRequestParameter('direction');
         $scope = $this->getRequestParameter('scope');
 
         try {
             $testSession = $this->getTestSession();
+            $result = $this->runnerService->move($testSession, $direction, $scope, $ref);
+            
             $response = [
-                'success' => $this->runnerService->move($testSession, $scope, $ref),
+                'success' => $result,
             ];
+
+            if ($result) {
+                $result['testContext'] = $this->runnerService->getTestContext($testSession);
+            }
         } catch (common_Exception $e) {
             $response = [
                 'success' => false,
@@ -257,9 +285,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $testSession = $this->getTestSession();
+            $result = $this->runnerService->skip($testSession, $scope, $ref);
+
             $response = [
-                'success' => $this->runnerService->skip($testSession, $scope, $ref),
+                'success' => $result,
             ];
+
+            if ($result) {
+                $result['testContext'] = $this->runnerService->getTestContext($testSession);
+            }
         } catch (common_Exception $e) {
             $response = [
                 'success' => false,
@@ -314,9 +348,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         try {
             $testSession = $this->getTestSession();
+            $result = $this->runnerService->resume($testSession);
+
             $response = [
-                'success' => $this->runnerService->resume($testSession),
+                'success' => $result,
             ];
+
+            if ($result) {
+                $result['testContext'] = $this->runnerService->getTestContext($testSession);
+            }
         } catch (common_Exception $e) {
             $response = [
                 'success' => false,

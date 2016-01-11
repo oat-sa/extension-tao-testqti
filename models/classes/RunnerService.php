@@ -59,6 +59,13 @@ interface RunnerService
      * @return array
      */
     public function getTestContext($testSession);
+    
+    /**
+     * Gets the map of the test items
+     * @param $testSession
+     * @return array
+     */
+    public function getTestMap($testSession);
 
     /**
      * Gets definition data of a particular item
@@ -97,11 +104,12 @@ interface RunnerService
     /**
      * Moves the current position to the provided scoped reference.
      * @param $testSession
+     * @param $direction
      * @param $scope
      * @param $ref
      * @return boolean
      */
-    public function move($testSession, $scope, $ref);
+    public function move($testSession, $direction, $scope, $ref);
 
     /**
      * Skips the current position to the provided scoped reference
