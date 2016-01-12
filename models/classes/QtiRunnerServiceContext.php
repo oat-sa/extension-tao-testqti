@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models;
 
 use qtism\data\AssessmentTest;
+use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 
 /**
@@ -36,7 +37,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 {
     /**
      * The session storage
-     * @var mixed
+     * @var AbstractQtiBinaryStorage
      */
     protected $storage;
 
@@ -188,7 +189,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Gets the session storage
-     * @return mixed
+     * @return AbstractQtiBinaryStorage
      */
     public function getStorage()
     {
