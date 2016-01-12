@@ -30,9 +30,6 @@
  */
 class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_TestModel, tao_models_classes_import_ImportProvider, tao_models_classes_export_ExportProvider
 {
-
-    const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
-
     /**
      * default constructor to ensure the implementation
      * can be instanciated
@@ -89,16 +86,6 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
      */
     public function getAuthoringUrl( core_kernel_classes_Resource $test) {
         return _url('index', 'Creator', 'taoQtiTest', array('uri' => $test->getUri()));
-    }
-
-    public static function setQtiTestDirectory(core_kernel_file_File $folder) {
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-    	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
-    }
-
-    public static function getQtiTestDirectory() {
-    	$service = taoQtiTest_models_classes_QtiTestService::singleton();
-    	return $service->getQtiTestDirectory();
     }
 
     /**
