@@ -125,9 +125,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
 
             if ($result) {
-                $result['testData'] = $this->runnerService->getTestData($serviceContext);
-                $result['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                $result['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                $response['testData'] = $this->runnerService->getTestData($serviceContext);
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
             }
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -289,7 +289,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
 
             if ($result) {
-                $result['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -315,7 +315,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
 
             if ($result) {
-                $result['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -372,7 +372,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
 
             if ($result) {
-                $result['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
