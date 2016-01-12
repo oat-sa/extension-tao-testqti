@@ -43,21 +43,17 @@ define([
                 data: params,
                 async: true,
                 dataType: 'json'
-            }).then(
-                // success
-                function(data) {
-                    if (data && data.success) {
-                        resolve(data);
-                    } else {
-                        reject(false);
-                    }
-                },
-
-                // error
-                function(jqXHR) {
-                    reject(jqXHR);
+            })
+            .done(function(data) {
+                if (data && data.success) {
+                    resolve(data);
+                } else {
+                    reject(false);
                 }
-            );
+            })
+            .fail(function(jqXHR) {
+                reject(jqXHR);
+            });
         });
     }
 
