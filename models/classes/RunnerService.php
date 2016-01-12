@@ -31,113 +31,125 @@ namespace oat\taoQtiTest\models;
 interface RunnerService
 {
     /**
-     * Gets the test session for a particular delivery execution
-     * @param $testDefinition
-     * @param $testCompilation
-     * @param $testExecution
-     * @return mixed
-     */
-    public function getTestSession($testDefinition, $testCompilation, $testExecution);
-
-    /**
      * Initializes the delivery execution session
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function init($testSession);
+    public function init(RunnerServiceContext $context);
 
     /**
      * Gets the test definition data
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestData($testSession);
+    public function getTestData(RunnerServiceContext $context);
 
     /**
      * Gets the test context object
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestContext($testSession);
+    public function getTestContext(RunnerServiceContext $context);
     
     /**
      * Gets the map of the test items
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestMap($testSession);
+    public function getTestMap(RunnerServiceContext $context);
 
     /**
      * Gets definition data of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array
+     * @throws \common_Exception
      */
-    public function getItemData($testSession, $itemRef);
+    public function getItemData(RunnerServiceContext $context, $itemRef);
 
     /**
      * Gets the state of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array
+     * @throws \common_Exception
      */
-    public function getItemState($testSession, $itemRef);
+    public function getItemState(RunnerServiceContext $context, $itemRef);
 
     /**
      * Sets the state of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $state
      * @return boolean
+     * @throws \common_Exception
      */
-    public function setItemState($testSession, $itemRef, $state);
+    public function setItemState(RunnerServiceContext $context, $itemRef, $state);
 
     /**
      * Stores the response of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $response
      * @return boolean
+     * @throws \common_Exception
      */
-    public function storeItemResponse($testSession, $itemRef, $response);
+    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response);
 
     /**
      * Moves the current position to the provided scoped reference.
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $direction
      * @param $scope
      * @param $ref
      * @return boolean
+     * @throws \common_Exception
      */
-    public function move($testSession, $direction, $scope, $ref);
+    public function move(RunnerServiceContext $context, $direction, $scope, $ref);
 
     /**
      * Skips the current position to the provided scoped reference
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $scope
      * @param $ref
      * @return boolean
+     * @throws \common_Exception
      */
-    public function skip($testSession, $scope, $ref);
+    public function skip(RunnerServiceContext $context, $scope, $ref);
 
     /**
      * Finishes the test
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function finish($testSession);
+    public function finish(RunnerServiceContext $context);
 
     /**
      * Sets the test to paused state
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function pause($testSession);
+    public function pause(RunnerServiceContext $context);
 
     /**
      * Resumes the test from paused state
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function resume($testSession);
+    public function resume(RunnerServiceContext $context);
+
+    /**
+     * Checks if the test is still valid
+     * @param RunnerServiceContext $context
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function check(RunnerServiceContext $context);
 }

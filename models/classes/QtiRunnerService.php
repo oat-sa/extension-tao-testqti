@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class QtiRunnerService
@@ -37,36 +38,70 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the test session for a particular delivery execution
-     * @param $testDefinition
-     * @param $testCompilation
-     * @param $testExecution
-     * @return mixed
+     * @param string $testDefinitionUri
+     * @param string $testCompilationUri
+     * @param string $testExecutionUri
+     * @return QtiRunnerServiceContext
+     * @throws \common_Exception
      */
-    public function getTestSession($testDefinition, $testCompilation, $testExecution)
+    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
-        // TODO: Implement getTestSession() method.
+        // create a service context based on the provided URI
+        // initialize the test session and related objects
+        $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
+
+        // will throw exception if the test session is not valid
+        $this->check($serviceContext);
+
+        // code borrowed from the previous implementation, maybe obsolete...
+        /** @var SessionStateService $sessionStateService */
+        $sessionStateService = $this->getServiceManager()->get(SessionStateService::CONFIG_ID);
+        $sessionStateService->resumeSession($serviceContext->getTestSession());
+
+        $serviceContext->retrieveTestMeta();
         
-        return null;
+        $metaDataHandler = $serviceContext->getMetaDataHandler();
+        $metaDataHandler->registerItemCallbacks();
+        $metaData = $metaDataHandler->getData();
+        if (!empty($metaData)) {
+            $metaDataHandler->save($metaData);
+        }
+        
+        return $serviceContext;
     }
 
     /**
      * Initializes the delivery execution session
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function init($testSession)
+    public function init(RunnerServiceContext $context)
     {
-        // TODO: Implement init() method.
+        $session = $context->getTestSession();
+
+        // code borrowed from the previous implementation, but the reset timers option has been discarded
+        if ($session->getState() === AssessmentTestSessionState::INITIAL) {
+            // The test has just been instantiated.
+            $session->beginTestSession();
+            $context->getMetaDataHandler()->registerItemCallbacks();
+            \common_Logger::i("Assessment Test Session begun.");
+        }
+
+        if (\taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+            \taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+        }
         
         return true;
     }
 
     /**
      * Gets the test definition data
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestData($testSession)
+    public function getTestData(RunnerServiceContext $context)
     {
         // TODO: Implement getTestData() method.
 
@@ -75,10 +110,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the test context object
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestContext($testSession)
+    public function getTestContext(RunnerServiceContext $context)
     {
         // TODO: Implement getTestContext() method.
 
@@ -87,10 +123,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the map of the test items
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return array
+     * @throws \common_Exception
      */
-    public function getTestMap($testSession)
+    public function getTestMap(RunnerServiceContext $context)
     {
         // TODO: Implement getTestMap() method.
 
@@ -99,11 +136,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets definition data of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array
+     * @throws \common_Exception
      */
-    public function getItemData($testSession, $itemRef)
+    public function getItemData(RunnerServiceContext $context, $itemRef)
     {
         // TODO: Implement getItemData() method.
 
@@ -112,11 +150,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the state of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array
+     * @throws \common_Exception
      */
-    public function getItemState($testSession, $itemRef)
+    public function getItemState(RunnerServiceContext $context, $itemRef)
     {
         // TODO: Implement getItemState() method.
         
@@ -125,12 +164,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Sets the state of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $state
      * @return boolean
+     * @throws \common_Exception
      */
-    public function setItemState($testSession, $itemRef, $state)
+    public function setItemState(RunnerServiceContext $context, $itemRef, $state)
     {
         // TODO: Implement setItemState() method.
 
@@ -139,12 +179,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Stores the response of a particular item
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $response
      * @return boolean
+     * @throws \common_Exception
      */
-    public function storeItemResponse($testSession, $itemRef, $response)
+    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
         // TODO: Implement storeItemResponse() method.
 
@@ -153,13 +194,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Moves the current position to the provided scoped reference.
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $direction
      * @param $scope
      * @param $ref
      * @return boolean
+     * @throws \common_Exception
      */
-    public function move($testSession, $direction, $scope, $ref)
+    public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
         // TODO: Implement move() method.
 
@@ -168,12 +210,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Skips the current position to the provided scoped reference
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @param $scope
      * @param $ref
      * @return boolean
+     * @throws \common_Exception
      */
-    public function skip($testSession, $scope, $ref)
+    public function skip(RunnerServiceContext $context, $scope, $ref)
     {
         // TODO: Implement skip() method.
 
@@ -182,10 +225,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Finishes the test
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function finish($testSession)
+    public function finish(RunnerServiceContext $context)
     {
         // TODO: Implement finish() method.
 
@@ -194,10 +238,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Sets the test to paused state
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function pause($testSession)
+    public function pause(RunnerServiceContext $context)
     {
         // TODO: Implement pause() method.
 
@@ -206,14 +251,35 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Resumes the test from paused state
-     * @param $testSession
+     * @param RunnerServiceContext $context
      * @return boolean
+     * @throws \common_Exception
      */
-    public function resume($testSession)
+    public function resume(RunnerServiceContext $context)
     {
         // TODO: Implement resume() method.
         
         return true;
     }
 
+    /**
+     * Checks if the test is still valid
+     * @param RunnerServiceContext $context
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function check(RunnerServiceContext $context)
+    {
+        $state = $context->getTestSession()->getState();
+        
+        if ($state == AssessmentTestSessionState::CLOSED) {
+            throw new QtiRunnerClosedException();
+        }
+
+        if ($state == AssessmentTestSessionState::SUSPENDED) {
+            throw new QtiRunnerPausedException();
+        }
+        
+        return true;
+    }
 }
