@@ -20,28 +20,38 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
-use qtism\runtime\tests\AssessmentTestSessionState;
-
-class QtiRunnerPausedException extends \common_Exception implements \common_exception_UserReadableException
+/**
+ * Class RunnerServiceContext
+ * 
+ * Defines a container to store and to share runner service context
+ * 
+ * @package oat\taoQtiTest\models
+ */
+class RunnerServiceContext
 {
     /**
-     * Create a new QtiRunnerClosedException object.
-     *
-     * @param string $message A technical infiormation message.
-     * @param integer $code A code to explicitely identify the nature of the error.
+     * The test session
+     * @var mixed
      */
-    public function __construct($message = 'The test has been suspended', $code = AssessmentTestSessionState::SUSPENDED) {
-        parent::__construct($message, $code);
-    }
-    
+    protected $testSession;
+
     /**
-     * Returns a translated human-readable message destinated to the end-user.
-     *
-     * @return string A human-readable message.
+     * Gets the test session
+     * @return mixed
      */
-    public function getUserMessage() {
-        return __('This test has been suspended');
+    public function getTestSession()
+    {
+        return $this->testSession;
+    }
+
+    /**
+     * Sets the test session
+     * @param mixed $testSession
+     */
+    public function setTestSession($testSession)
+    {
+        $this->testSession = $testSession;
     }
 }

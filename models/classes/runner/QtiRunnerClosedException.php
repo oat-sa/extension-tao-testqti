@@ -20,38 +20,28 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
-/**
- * Class RunnerServiceContext
- * 
- * Defines a container to store and to share runner service context
- * 
- * @package oat\taoQtiTest\models
- */
-class RunnerServiceContext
+use qtism\runtime\tests\AssessmentTestSessionState;
+
+class QtiRunnerClosedException extends \common_Exception implements \common_exception_UserReadableException
 {
     /**
-     * The test session
-     * @var mixed
+     * Create a new QtiRunnerClosedException object.
+     *
+     * @param string $message A technical infiormation message.
+     * @param integer $code A code to explicitely identify the nature of the error.
      */
-    protected $testSession;
-
-    /**
-     * Gets the test session
-     * @return mixed
-     */
-    public function getTestSession()
-    {
-        return $this->testSession;
+    public function __construct($message = 'The test has been terminated', $code = AssessmentTestSessionState::CLOSED) {
+        parent::__construct($message, $code);
     }
-
+    
     /**
-     * Sets the test session
-     * @param mixed $testSession
+     * Returns a translated human-readable message destinated to the end-user.
+     *
+     * @return string A human-readable message.
      */
-    public function setTestSession($testSession)
-    {
-        $this->testSession = $testSession;
+    public function getUserMessage() {
+        return __('This test has been terminated');
     }
 }

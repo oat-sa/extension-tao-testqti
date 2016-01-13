@@ -19,7 +19,7 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
 /**
  * Interface RunnerService

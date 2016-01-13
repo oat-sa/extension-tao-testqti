@@ -19,4 +19,4 @@
  * 
  */  
 
-return new oat\taoQtiTest\models\QtiRunnerService();
+return new oat\taoQtiTest\models\runner\QtiRunnerService();

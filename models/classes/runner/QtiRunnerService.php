@@ -20,9 +20,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\SessionStateService;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**

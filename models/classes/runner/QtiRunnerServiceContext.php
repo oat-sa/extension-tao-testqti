@@ -20,8 +20,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\TestSessionMetaData;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;

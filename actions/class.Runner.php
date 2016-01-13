@@ -20,10 +20,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-use oat\taoQtiTest\models\QtiRunnerService;
-use oat\taoQtiTest\models\RunnerServiceContext;
-use oat\taoQtiTest\models\QtiRunnerClosedException;
-use oat\taoQtiTest\models\QtiRunnerPausedException;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
+use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use \qtism\runtime\tests\AssessmentTestSessionState;
 
 /**

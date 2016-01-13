@@ -20,11 +20,11 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\runner;
 
 use qtism\runtime\tests\AssessmentTestSessionState;
 
-class QtiRunnerClosedException extends \common_Exception implements \common_exception_UserReadableException
+class QtiRunnerPausedException extends \common_Exception implements \common_exception_UserReadableException
 {
     /**
      * Create a new QtiRunnerClosedException object.
@@ -32,7 +32,7 @@ class QtiRunnerClosedException extends \common_Exception implements \common_exce
      * @param string $message A technical infiormation message.
      * @param integer $code A code to explicitely identify the nature of the error.
      */
-    public function __construct($message = 'The test has been terminated', $code = AssessmentTestSessionState::CLOSED) {
+    public function __construct($message = 'The test has been suspended', $code = AssessmentTestSessionState::SUSPENDED) {
         parent::__construct($message, $code);
     }
     
@@ -42,6 +42,6 @@ class QtiRunnerClosedException extends \common_Exception implements \common_exce
      * @return string A human-readable message.
      */
     public function getUserMessage() {
-        return __('This test has been terminated');
+        return __('This test has been suspended');
     }
 }

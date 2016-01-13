@@ -19,7 +19,7 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\taoQtiTest\models\QtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
