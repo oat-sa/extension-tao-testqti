@@ -122,6 +122,16 @@ interface RunnerService
     public function skip(RunnerServiceContext $context, $scope, $ref);
 
     /**
+     * Handles a test timeout
+     * @param RunnerServiceContext $context
+     * @param $scope
+     * @param $ref
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function timeout(RunnerServiceContext $context, $scope, $ref);
+    
+    /**
      * Finishes the test
      * @param RunnerServiceContext $context
      * @return boolean

@@ -23,7 +23,10 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\SessionStateService;
+use qtism\data\NavigationMode;
+use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
@@ -383,14 +386,30 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
-        // TODO: Implement move() method.
-
+        $result = true;
+        
         if ($context instanceof QtiRunnerServiceContext) {
+            $navigator = QtiRunnerNavigation::getNavigator($direction, $scope);
+            try {
+                $result = $navigator->move($context, $ref);
+                if ($result) {
+                    $this->continueInteraction($context);
+                }
+            } catch (AssessmentTestSessionException $e) {
+                switch ($e->getCode()) {
+                    case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                    case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+                    case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+                    case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+                        $this->onTimeout($context, $e);
+                        break;
+                }
+            }
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
 
-        return true;
+        return $result;
     }
 
     /**
@@ -403,9 +422,28 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function skip(RunnerServiceContext $context, $scope, $ref)
     {
-        // TODO: Implement skip() method.
+        return $this->move($context, 'skip', $scope, $ref);
+    }
 
+    /**
+     * Handles a test timeout
+     * @param RunnerServiceContext $context
+     * @param $scope
+     * @param $ref
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function timeout(RunnerServiceContext $context, $scope, $ref)
+    {
         if ($context instanceof QtiRunnerServiceContext) {
+            $session = $context->getTestSession();
+            
+            try {
+                $session->checkTimeLimits(false, true, false);
+            } catch (AssessmentTestSessionException $e) {
+                $this->onTimeout($context, $e);
+            }
+            
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -421,9 +459,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function finish(RunnerServiceContext $context)
     {
-        // TODO: Implement finish() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            $session = $context->getTestSession();
+            $sessionId = $session->getSessionId();
+
+            \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+            $session->endTestSession();
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -439,9 +480,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function pause(RunnerServiceContext $context)
     {
-        // TODO: Implement pause() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            // TODO: Implement pause() method.
+            throw new \common_exception_NotImplemented('Not yet implemented!');
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -457,9 +498,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function resume(RunnerServiceContext $context)
     {
-        // TODO: Implement resume() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            // TODO: Implement resume() method.
+            throw new \common_exception_NotImplemented('Not yet implemented!');
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -486,5 +527,61 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return true;
+    }
+
+    /**
+     * Continue the test interaction if possible
+     * @param RunnerServiceContext $context
+     * @return bool
+     */
+    protected function continueInteraction(RunnerServiceContext $context)
+    {
+        $continue = false;
+        $session = $context->getTestSession();
+        
+        if ($session->isRunning() === true && \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+            \taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
+            $continue = true;
+        }
+        
+        return $continue;
+    }
+
+    /**
+     * Stuff to be undertaken when the Assessment Item presented to the candidate
+     * times out.
+     *
+     * @param RunnerServiceContext $context
+     * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to indicate the timeout.
+     */
+    protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
+    {
+        $session = $context->getTestSession();
+        
+        if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {
+            switch ($timeOutException->getCode()) {
+                case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                    $session->endTestSession();
+                    break;
+
+                case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+                    $session->moveNextTestPart();
+                    break;
+
+                case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+                    $session->moveNextAssessmentSection();
+                    break;
+
+                case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+                    $session->moveNextAssessmentItem();
+                    break;
+            }
+
+            $this->continueInteraction($context);
+
+        } else {
+            $itemSession = $session->getCurrentAssessmentItemSession();
+            $itemSession->endItemSession();
+        }
     }
 }

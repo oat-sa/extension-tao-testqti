@@ -21,7 +21,7 @@
  */
 
 use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use \qtism\runtime\tests\AssessmentTestSessionState;
@@ -41,7 +41,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * The current test session
-     * @var RunnerServiceContext
+     * @var QtiRunnerServiceContext
      */
     protected $serviceContext;
 
@@ -58,7 +58,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Gets the test service context
-     * @return RunnerServiceContext
+     * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
     protected function getServiceContext()
@@ -332,6 +332,35 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
+
+            $response = [
+                'success' => $result,
+            ];
+
+            if ($result) {
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+            }
+
+            $this->runnerService->persist($serviceContext);
+            
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+        }
+
+        $this->returnJson($response);
+    }
+    
+    /**
+     * Handles a test timeout
+     */
+    public function timeout()
+    {
+        $ref = $this->getRequestParameter('ref');
+        $scope = $this->getRequestParameter('scope');
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $result = $this->runnerService->timeout($serviceContext, $scope, $ref);
 
             $response = [
                 'success' => $result,
