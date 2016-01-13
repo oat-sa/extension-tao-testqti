@@ -1,0 +1,91 @@
+@import "inc/bootstrap";
+
+$widths: (
+    item-max-width: 1024
+);
+
+// size-wrapper = item-max-width * 1.25
+$widths: map-merge($widths, ( size-wrapper : map-get($widths, item-max-width) * 1.25 ));
+
+@function getBlockWidth($key) {
+    @return map-get($widths, $key) * 1px;
+}
+
+
+// layout
+.test-runner-scope {
+    display: -ms-flexbox; /* IE 10 */
+    display: flex;
+    flex-flow: column;
+    min-height: 100vh;
+    max-height: 100vh;
+    margin-bottom: 0;
+
+    main {
+        -ms-flex: 1; /* IE 10 */
+        flex: 1;
+        -ms-flex-flow: row; /* IE 10 */
+        flex-flow: row;
+        overflow-y:auto;
+
+        // this is at the same time a wrapper for the flex columns
+        display: -ms-flexbox; /* IE 10 */
+        display: flex;
+
+        .test-sidebar {
+            min-width: 200px;
+            max-width: 300px;
+            width: 12.5%;
+            overflow:auto;
+            background:$canvas;
+        }
+
+        .test-sidebar-left {
+            border-right: 1px $uiGeneralContentBorder solid;
+        }
+
+        .test-sidebar-right {
+            border-left: 1px $uiGeneralContentBorder solid;
+        }
+
+        .content-wrapper {
+            -ms-flex: 1; /* IE 10 */
+            flex: 1;
+            overflow:auto;
+        }
+
+        #qti-content {
+            max-width: getBlockWidth(item-max-width);
+            width: 100%;
+            margin: auto
+        }
+
+
+        #qti-item {
+            width: 100%;
+            min-width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .size-wrapper {
+            max-width: getBlockWidth(size-wrapper);
+            margin: auto;
+            width: 100%;
+        }
+
+
+        #qti-rubrics{
+            margin: auto;
+            max-width: getBlockWidth(item-max-width);
+            width: 100%;
+            padding: 15px;
+            .qti-rubricBlock {
+                margin: 20px 0;
+            }
+            .hidden{
+                display:none;
+            }
+        }
+    }
+}

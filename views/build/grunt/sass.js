@@ -1,4 +1,5 @@
 module.exports = function(grunt) {
+    'use strict';
 
     var sass    = grunt.config('sass') || {};
     var watch   = grunt.config('watch') || {};
@@ -9,6 +10,7 @@ module.exports = function(grunt) {
     sass.taoqtitest.files = { };
     sass.taoqtitest.files[root + 'css/creator.css'] = root + 'scss/creator.scss';
     sass.taoqtitest.files[root + 'css/test-runner.css'] = root + 'scss/test-runner.scss';
+    sass.taoqtitest.files[root + 'css/new-test-runner.css'] = root + 'scss/new-test-runner.scss';
 
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],

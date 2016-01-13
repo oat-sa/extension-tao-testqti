@@ -148,7 +148,7 @@ define([
                     itemDefinition : uri
                 });
             }
-        }
+        };
     }
 
     return configFactory;
