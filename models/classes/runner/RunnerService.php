@@ -74,7 +74,7 @@ interface RunnerService
      * Gets definition data of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
-     * @return array
+     * @return mixed
      * @throws \common_Exception
      */
     public function getItemData(RunnerServiceContext $context, $itemRef);
