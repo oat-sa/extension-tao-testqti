@@ -19,11 +19,11 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\tao\model\accessControl\func\AccessRule;
-use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
@@ -234,7 +234,25 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.16.0';
         }
+        
+        $this->setVersion($currentVersion);
 
-        return $currentVersion;
+        if ($this->isVersion('2.16.0')) {
+            OntologyUpdater::syncModels();
+            $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
+            $accessService = \funcAcl_models_classes_AccessService::singleton();
+            $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
+
+            try {
+                $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
+            } catch (ServiceNotFoundException $e) {
+                $service = new QtiRunnerService();
+                $service->setServiceManager($this->getServiceManager());
+
+                $this->getServiceManager()->register(QtiRunnerService::CONFIG_ID, $service);
+            }
+            
+            $this->setVersion('2.17.0');
+        }
     }
 }
