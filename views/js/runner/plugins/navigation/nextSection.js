@@ -35,6 +35,15 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
+            var toggle = function toggle(){
+                var context = testRunner.getTestContext();
+                if(context.nextSection === true){
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            };
+
             this.$element = $(buttonTpl({
                 control : 'next-section',
                 title   : __('Skip to the next section'),
@@ -42,11 +51,24 @@ define([
                 text    : __('Next Section')
             }));
 
-            this.$element.on('click', function(e){
+          this.$element.on('click', function(e){
                 e.preventDefault();
+                if(self.getState('enabled') !== false){
+                    self.disable();
 
-                testRunner.next('section');
+                    testRunner.next('section');
+                }
             });
+
+            toggle();
+
+            testRunner
+                .on('ready', function(){
+                    self.enable();
+                })
+                .after('move', function(){
+                    toggle();
+                });
         },
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
@@ -62,10 +84,10 @@ define([
             this.$element.prop('disabled', true);
         },
         show: function show(){
-            this.element.show();
+            this.$element.show();
         },
         hide: function hide(){
-            this.element.hide();
+            this.$element.hide();
         },
     });
 });

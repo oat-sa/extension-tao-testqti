@@ -29,8 +29,45 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+    var buttonData = {
+        next : {
+            control : 'move-forward',
+            title   : __('Submit and go to the next item'),
+            icon    : 'forward',
+            text    : __('Next')
+        },
+        end : {
+            control : 'move-end',
+            title   : __('Submit and go to the end of the test'),
+            icon    : 'fast-forward',
+            text    : __('End test')
+        }
+    };
 
+    var createElement = function createElement(context){
+        var dataType = !!context.isLast ? 'end' : 'next';
+        return $(buttonTpl(buttonData[dataType]));
+    };
 
+    var updateElement = function updateElement($element, context){
+        var dataType = !!context.isLast ? 'end' : 'next';
+        if($element.data('control') !== buttonData[dataType].control){
+
+            $element.data('control', buttonData[dataType].control)
+                    .attr('title', buttonData[dataType].title)
+                    .find('.text').text(buttonData[dataType].title);
+
+            if(dataType === 'next'){
+                $element.find('.icon-' + buttonData.end.icon)
+                        .removeClass('icon-' + buttonData.end.icon)
+                        .addClass('icon-' + buttonData.next.icon);
+            } else {
+                $element.find('.icon-' + buttonData.next.icon)
+                        .removeClass('icon-' + buttonData.next.icon)
+                        .addClass('icon-' + buttonData.end.icon);
+            }
+        }
+    };
 
     return pluginFactory({
         name : 'next',
@@ -38,41 +75,28 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
-            var createElement = function(){
+            this.$element = createElement(testRunner.getTestContext());
 
-                var context  = testRunner.getTestContext();
-                var isLast   = !!context.isLast;
-                var $element =  $(buttonTpl({
-                    control : isLast ? 'move-end' : 'move-forward',
-                    title   : isLast ? __('Submit and go to the end of the test') : __('Submit and go to the next item'),
-                    icon    : isLast ? 'external' : 'forward',
-                    text    : isLast ? __('End test') : __('Next')
-                }));
+            this.$element.on('click', function(e){
+                e.preventDefault();
 
-                $element.on('click', function(e){
-                    e.preventDefault();
+                if(self.getState('enabled') !== false){
+                    self.disable();
 
-                    if(self.getState('enabled') !== false){
-                        self.disable();
-
-                        if(isLast){
-                            testRunner.finish();
-                        } else {
-                            testRunner.next();
-                        }
+                    if(testRunner.getTestContext().isLast){
+                        testRunner.finish();
+                    } else {
+                        testRunner.next();
                     }
-                });
-                return $element;
-            };
-
-            this.$element = createElement();
+                }
+            });
 
             testRunner
                 .on('ready', function(){
                     self.enable();
                 })
                 .after('move', function(){
-                    self.$element = self.$element.replaceWith(createElement());
+                    updateElement(self.$element, testRunner.getTestContext());
                 });
         },
         render : function render(){
@@ -91,10 +115,10 @@ define([
                          .addClass('disabled');
         },
         show: function show(){
-            this.element.show();
+            this.$element.show();
         },
         hide: function hide(){
-            this.element.hide();
+            this.$element.hide();
         },
     });
 });

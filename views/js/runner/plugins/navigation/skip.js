@@ -29,24 +29,76 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+    var buttonData = {
+        skip : {
+            control : 'skip',
+            title   : __('Skip  and go to the next item'),
+            icon    : 'external',
+            text    : __('Skip')
+        },
+        end : {
+            control : 'skip-end',
+            title   : __('Skip and go to the end of the test'),
+            icon    : 'external',
+            text    : __('Skip and end test')
+        }
+    };
+
+    var createElement = function createElement(context){
+        var dataType = context.isLast ? 'end' : 'skip';
+        return $(buttonTpl(buttonData[dataType]));
+    };
+
+    var updateElement = function updateElement($element, context){
+        var dataType = context.isLast ? 'end' : 'skip';
+        if($element.data('control') !== buttonData[dataType].control){
+
+            $element.data('control', buttonData[dataType].control)
+                    .attr('title', buttonData[dataType].title)
+                    .find('.text').text(buttonData[dataType].title);
+        }
+    };
+
     return pluginFactory({
-        name : 'next',
+        name : 'skip',
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
 
-            this.$element = $(buttonTpl({
-                control : 'skip',
-                title   : __('SKip  and go to the next item'),
-                icon    : 'external',
-                text    : __('Skip')
-            }));
+            var toggle = function toggle(){
+                var context = testRunner.getTestContext();
+                if(context.allowSkipping === true){
+                    self.show();
+                    return true;
+                }
+
+                self.hide();
+                return false;
+            };
+
+            this.$element = createElement(testRunner.getTestContext());
 
             this.$element.on('click', function(e){
                 e.preventDefault();
 
-                testRunner.skip();
+                if(self.getState('enabled') !== false){
+                    self.disable();
+
+                    testRunner.skip();
+                }
             });
+
+            toggle();
+
+            testRunner
+                .on('ready', function(){
+                    self.enable();
+                })
+                .after('move', function(){
+                    if(toggle()){
+                        updateElement(self.$element, testRunner.getTestContext());
+                    }
+                });
         },
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
@@ -62,10 +114,10 @@ define([
             this.$element.prop('disabled', true);
         },
         show: function show(){
-            this.element.show();
+            this.$element.show();
         },
         hide: function hide(){
-            this.element.hide();
+            this.$element.hide();
         },
     });
 });

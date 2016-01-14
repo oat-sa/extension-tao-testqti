@@ -52,7 +52,7 @@
         "isDeepestSectionVisible": true,
         "canMoveBackward": false,
         "allowComment": false,
-        "allowSkipping": true,
+        "allowSkipping": false,
         "exitButton": false,
         "logoutButton": true,
         "categories": []

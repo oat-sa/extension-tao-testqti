@@ -68,6 +68,32 @@ define([
             this.on('ready', function(){
                 var context = this.getTestContext();
                 self.loadItem(context.itemUri);
+            })
+            .on('next', function(){
+                var context = this.getTestContext();
+
+                debugger;
+                self.unloadItem();
+
+                self.getProxy()
+                    .callItemAction(context.itemUri, 'next')
+                    .then(function(results){
+                        console.log(results);
+                        self.setTestData(results.testData);
+                        self.setTestContext(results.testContext);
+
+                        self.loadItem(results.testContext.itemUri);
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+
+            })
+            .on('skip', function(){
+
+            })
+            .on('finish', function(){
+
             });
 
             //load data and current context in parrallel at initialization
@@ -111,6 +137,12 @@ define([
                 self.itemRunner = qtiItemRunner(item.data.type, item.data.data)
                     .on('error', reject)
                     .on('render', resolve)
+                    .on('statechange', function(state){
+                        console.log(state);
+                    })
+                    .on('responsechange', function(responses){
+                        console.log(responses);
+                    })
                     .init()
                     .setState(item.state)
                     .render(self.getAreaBroker().getContentArea());

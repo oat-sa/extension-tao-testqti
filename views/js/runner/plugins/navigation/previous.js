@@ -35,7 +35,16 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
-            this.$element = $(buttonTpl({
+            var toggle = function toggle(){
+                var context = testRunner.getTestContext();
+                if(context.navigationMode === 0 && context.canMoveBackward){
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            };
+
+            this.$element =  $(buttonTpl({
                 control : 'move-backward',
                 title   : __('Submit and go to the previous item'),
                 icon    : 'backward',
@@ -44,9 +53,22 @@ define([
 
             this.$element.on('click', function(e){
                 e.preventDefault();
+                if(self.getState('enabled') !== false){
+                    self.disable();
 
-                testRunner.previous();
+                    testRunner.previous();
+                }
             });
+
+            toggle();
+
+            testRunner
+                .on('ready', function(){
+                    self.enable();
+                })
+                .after('move', function(){
+                    toggle();
+                });
         },
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
@@ -62,10 +84,10 @@ define([
             this.$element.prop('disabled', true);
         },
         show: function show(){
-            this.element.show();
+            this.$element.show();
         },
         hide: function hide(){
-            this.element.hide();
+            this.$element.hide();
         },
     });
 });
