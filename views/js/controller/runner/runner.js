@@ -30,11 +30,45 @@ define([
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
-], function($, _, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip) {
+
+    'json!taoQtiTest/test/samples/json/QtiRunnerData',
+    'json!taoQtiTest/test/samples/json/itemData',
+], function($, _, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip, runnerData, itemData) {
     'use strict';
 
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+    //proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+    //
+
+    /** Mock the proxy */
+    proxy.registerProxy('qtiServiceProxy', {
+        init: function () { return Promise.resolve(runnerData); },
+        destroy: _.noop,
+        getTestData: function getTestData() {
+            return Promise.resolve(runnerData.testData);
+        },
+        getTestContext: function getTestContext() {
+            return Promise.resolve(runnerData.testContext);
+        },
+        callTestAction: function callTestAction(action, params) {
+            return Promise.resolve({});
+        },
+        getItemData: function getItemData(uri) {
+            return Promise.resolve(itemData);
+        },
+        getItemState: function getItemState(uri) {
+            return Promise.resolve({});
+        },
+        submitItemState: function submitItemState(uri, state) {
+            return Promise.resolve({});
+        },
+        storeItemResponse: function storeItemResponse(uri, response) {
+            return Promise.resolve({});
+        },
+        callItemAction: function callItemAction(uri, action, params) {
+            return Promise.resolve({});
+        }
+    });
 
     var plugins = {
         title       : title,
@@ -49,7 +83,7 @@ define([
         start : function start(options){
 
             var config = _.defaults(options || {}, {
-                renderTo : $('.test-runner')
+                renderTo : $('.runner')
             });
 
             runner('qti', plugins, config)
