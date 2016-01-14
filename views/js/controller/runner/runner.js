@@ -33,6 +33,7 @@ define([
 
     'json!taoQtiTest/test/samples/json/QtiRunnerData',
     'json!taoQtiTest/test/samples/json/itemData',
+    'css!taoQtiTestCss/new-test-runner'
 ], function($, _, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip, runnerData, itemData) {
     'use strict';
 
