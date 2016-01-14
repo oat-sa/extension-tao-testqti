@@ -39,7 +39,11 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
      */
     public function move(RunnerServiceContext $context, $ref)
     {
-        $context->getTestSession()->moveBack();
+        /* @var AssessmentTestSession $session */
+        $session = $context->getTestSession();
+        $nextPosition = $session->getRoute()->getPosition() - 1;
+        QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
+        $session->moveBack();
         return true;
     }
 }

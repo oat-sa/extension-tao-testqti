@@ -21,6 +21,9 @@
  */
 
 namespace oat\taoQtiTest\models\runner\navigation;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use qtism\data\ExtendedAssessmentItemRef;
+use qtism\runtime\tests\AssessmentItemSession;
 
 /**
  * Class QtiRunnerNavigation
@@ -48,6 +51,43 @@ class QtiRunnerNavigation
             }
         } else {
             throw new \common_exception_NotImplemented('The action is invalid!');
+        }
+    }
+
+    /**
+     * Check if a timed section is exited
+     * @param RunnerServiceContext $context
+     * @param int $nextPosition
+     */
+    public static function checkTimedSectionExit(RunnerServiceContext $context, $nextPosition)
+    {
+        /* @var AssessmentTestSession $session */
+        $session = $context->getTestSession();
+        $route = $session->getRoute();
+        $section = $session->getCurrentAssessmentSection();
+        $limits = $section->getTimeLimits();
+
+        $isJumpOutOfSection = false;
+        if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+            $nextSection = $route->getRouteItemAt($nextPosition);
+
+            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+        }
+
+        if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
+            $components = $section->getComponents();
+
+            foreach ($components as $object) {
+                if ($object instanceof ExtendedAssessmentItemRef) {
+                    $items = $session->getAssessmentItemSessions($object->getIdentifier());
+
+                    foreach ($items as $item) {
+                        if ($item instanceof AssessmentItemSession) {
+                            $item->endItemSession();
+                        }
+                    }
+                }
+            }
         }
     }
 }
