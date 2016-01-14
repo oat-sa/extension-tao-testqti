@@ -238,7 +238,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->setVersion($currentVersion);
 
         if ($this->isVersion('2.16.0')) {
-            OntologyUpdater::syncModels();
             $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
             $accessService = \funcAcl_models_classes_AccessService::singleton();
             $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');

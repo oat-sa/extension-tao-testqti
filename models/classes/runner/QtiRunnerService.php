@@ -41,7 +41,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
  */
 class QtiRunnerService extends ConfigurableService implements RunnerService
 {
-    const CONFIG_ID = 'taoQtiTest/runner';
+    const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
     /**
      * The test runner config
