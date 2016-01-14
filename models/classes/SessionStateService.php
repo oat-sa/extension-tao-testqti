@@ -43,7 +43,9 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
  */
 class SessionStateService extends ConfigurableService
 {
-    const CONFIG_ID = 'taoQtiTest/SessionStateService';
+    const SERVICE_ID = 'taoQtiTest/SessionStateService';
+    
+    const OPTION_STATE_FORMAT = 'stateFormat';
     
     /**
      * @var \taoDelivery_models_classes_execution_ServiceProxy
@@ -127,5 +129,27 @@ class SessionStateService extends ConfigurableService
             return 'taoQtiTest/testRunner/resumingStrategy/keepAfterResume';
         }
         return 'taoQtiTest/testRunner/resumingStrategy/resetAfterResume';
+    }
+    
+    /**
+     * Return a human readable description of the test session
+     *  
+     * @return string
+     */
+    public function getSessionDescription(\taoQtiTest_helpers_TestSession $session)
+    {
+        if ($session->isRunning()) {
+            $format = $this->hasOption(self::OPTION_STATE_FORMAT)
+                ? $this->getOption(self::OPTION_STATE_FORMAT)
+                : __('%s - item %p/%c');
+            $map = array(
+                '%s' => $session->getCurrentAssessmentSection()->getTitle(),
+                '%p' => $session->getRoute()->getPosition(),
+                '%c' => $session->getRouteCount()
+            );
+            return strtr($format, $map);
+        } else {
+            return __('finished');
+        }
     }
 }

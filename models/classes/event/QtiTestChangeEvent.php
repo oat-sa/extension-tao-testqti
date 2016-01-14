@@ -21,11 +21,16 @@
 namespace oat\taoQtiTest\models\event;
 
 use oat\taoTests\models\event\TestChangedEvent;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use oat\taoQtiTest\models\SessionStateService;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 /**
  *
  */
-class QtiTestChangeEvent extends TestChangedEvent
+class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAwareInterface
 {
+    use ServiceLocatorAwareTrait;
+     
     private $session;
     
     public function __construct(\taoQtiTest_helpers_TestSession $testSession)
@@ -40,13 +45,7 @@ class QtiTestChangeEvent extends TestChangedEvent
     
     public function getNewStateDescription()
     {
-        $pos = $this->session->getRoute()->getPosition();
-        $count = $this->session->getRouteCount();
-        if ($this->session->isRunning()) {
-            $section = $this->session->getCurrentAssessmentSection();
-            return __('%1$s - item %2$s/%3$s', $section->getTitle(), $pos+1, $count);
-        } else {
-            return __('finished');
-        }
-    } 
+        $sessionService = $this->getServiceLocator()->get(SessionStateService::SERVICE_ID);
+        return $sessionService->getSessionDescription($this->session);
+    }
 }

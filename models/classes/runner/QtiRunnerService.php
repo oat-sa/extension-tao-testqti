@@ -68,7 +68,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         // code borrowed from the previous implementation, maybe obsolete...
         /** @var SessionStateService $sessionStateService */
-        $sessionStateService = $this->getServiceManager()->get(SessionStateService::CONFIG_ID);
+        $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($serviceContext->getTestSession());
 
         $serviceContext->retrieveTestMeta();
