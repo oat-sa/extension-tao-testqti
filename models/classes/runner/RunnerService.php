@@ -63,6 +63,14 @@ interface RunnerService
     public function getTestMap(RunnerServiceContext $context);
 
     /**
+     * Gets the rubrics related to the current session state
+     * @param RunnerServiceContext $context
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function getRubrics(RunnerServiceContext $context);
+
+    /**
      * Gets definition data of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef

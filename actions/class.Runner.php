@@ -198,6 +198,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response);
     }
+    
+    /**
+     * Provides the rubrics related to the current session state
+     */
+    public function getRubrics()
+    {
+        // TODO: make a better implementation
+        
+        // the rubrics will be rendered in the page
+        header(HTTPToolkit::statusCodeHeader(200));
+        Context::getInstance()->getResponse()->setContentHeader('text/html');
+        
+        $serviceContext = $this->getServiceContext();
+        $this->runnerService->getRubrics($serviceContext);
+    }
 
     /**
      * Provides the definition data for a particular item
