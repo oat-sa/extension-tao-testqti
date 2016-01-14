@@ -15,9 +15,6 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
-/**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
- */
 define([
     'jquery',
     'lodash',
@@ -25,115 +22,46 @@ define([
     'taoTests/runner/runner',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/provider/qti',
-    'taoQtiTest/runner/plugins/controls/title',
+    'json!taoQtiTest/test/samples/json/QtiRunnerData',
+    'json!taoQtiTest/test/samples/json/itemData',
+    'taoQtiTest/runner/plugins/controls/title/title',
+    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'taoQtiTest/runner/plugins/navigation/next',
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
-], function($, _, Promise, runner, proxy, qtiProvider, title, next, previous, nextSection, skip) {
+], function($, _, Promise, runner, proxy, qtiProvider, runnerData, itemData, title, progressbar, next, previous, nextSection, skip) {
     'use strict';
 
     runner.registerProvider('qti', qtiProvider);
 
     /** Mock the proxy */
     proxy.registerProxy('qtiServiceProxy', {
-        init: _.noop,
+        init: function () { return Promise.resolve(runnerData); },
         destroy: _.noop,
         getTestData: function getTestData() {
-            return Promise.resolve({
-                "title": "QTI Example Test",
-                "hasTimeLimits": true,
-                "timeLimits": {
-                    "maxTime": {
-                        "duration": 7810,
-                        "iso": "PT2H10M10S"
-                    }
-                },
-                "config": {
-                    "timerWarning": {
-                        "assessmentItemRef": null,
-                        "assessmentSection": null,
-                        "testPart": null
-                    },
-                    "progress-indicator": "percentage",
-                    "progress-indicator-scope": "testSection",
-                    "progress-indicator-forced": false,
-                    "test-taker-review": false,
-                    "test-taker-review-region": "left",
-                    "test-taker-review-force-title": false,
-                    "test-taker-review-item-title": "Item %d",
-                    "test-taker-review-scope": "test",
-                    "test-taker-review-prevents-unseen": true,
-                    "test-taker-review-can-collapse": false,
-                    "exitButton": false,
-                    "next-section": false,
-                    "reset-timer-after-resume": false
-                }
-            });
+            return Promise.resolve(runnerData.testData);
         },
         getTestContext: function getTestContext() {
-            return Promise.resolve({
-                "state": 1,
-                "navigationMode": 1,
-                "submissionMode": 0,
-                "remainingAttempts": 0,
-                "isAdaptive": false,
-                "isTimeout": true,
-                "itemIdentifier": "item-1",
-                "itemSessionState": 1,
-                "isLast": false,
-                "itemPosition": 0,
-                "timeConstraints": [{
-                    "label": "QTI Example Test",
-                    "source": "Test-1",
-                    "seconds": 0,
-                    "allowLateSubmission": false,
-                    "qtiClassName": "assessmentTest"
-                }],
-                "testPartId": "Introduction",
-                "sectionTitle": "Section 1",
-                "numberItems": 9,
-                "numberCompleted": 0,
-                "numberPresented": 1,
-                "considerProgress": true,
-                "isDeepestSectionVisible": true,
-                "canMoveBackward": false,
-                "allowComment": true,
-                "allowSkipping": false,
-                "exitButton": false,
-                "logoutButton": true,
-                "categories": []
-            });
+            return Promise.resolve(runnerData.testContext);
         },
         callTestAction: function callTestAction(action, params) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve({});
         },
         getItemData: function getItemData(uri) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve(itemData);
         },
         getItemState: function getItemState(uri) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve({});
         },
         submitItemState: function submitItemState(uri, state) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve({});
         },
         storeItemResponse: function storeItemResponse(uri, response) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve({});
         },
         callItemAction: function callItemAction(uri, action, params) {
-            return new Promise(function(resolve) {
-                resolve();
-            });
+            return Promise.resolve({});
         }
     });
 
@@ -147,6 +75,7 @@ define([
 
         runner('qti', {
             title       : title,
+            progress    : progressbar,
             previous    : previous,
             next        : next,
             skip        : skip,

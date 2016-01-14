@@ -29,24 +29,51 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+
+
+
     return pluginFactory({
         name : 'next',
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
 
-            this.$element = $(buttonTpl({
-                control : 'move-forward',
-                title   : __('Submit and go to the next item'),
-                icon    : 'forward',
-                text    : __('Next')
-            }));
+            var createElement = function(){
 
-            this.$element.on('click', function(e){
-                e.preventDefault();
+                var context  = testRunner.getTestContext();
+                var isLast   = !!context.isLast;
+                var $element =  $(buttonTpl({
+                    control : isLast ? 'move-end' : 'move-forward',
+                    title   : isLast ? __('Submit and go to the end of the test') : __('Submit and go to the next item'),
+                    icon    : isLast ? 'external' : 'forward',
+                    text    : isLast ? __('End test') : __('Next')
+                }));
 
-                testRunner.next();
-            });
+                $element.on('click', function(e){
+                    e.preventDefault();
+
+                    if(self.getState('enabled') !== false){
+                        self.disable();
+
+                        if(isLast){
+                            testRunner.finish();
+                        } else {
+                            testRunner.next();
+                        }
+                    }
+                });
+                return $element;
+            };
+
+            this.$element = createElement();
+
+            testRunner
+                .on('ready', function(){
+                    self.enable();
+                })
+                .after('move', function(){
+                    self.$element = self.$element.replaceWith(createElement());
+                });
         },
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
@@ -56,10 +83,12 @@ define([
             this.$element.remove();
         },
         enable : function enable (){
-            this.$element.removeProp('disabled');
+            this.$element.removeProp('disabled')
+                         .removeClass('disabled');
         },
         disable : function disable (){
-            this.$element.prop('disabled', true);
+            this.$element.prop('disabled', true)
+                         .addClass('disabled');
         },
         show: function show(){
             this.element.show();

@@ -25,7 +25,7 @@ define([
     'jquery',
     'i18n',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/controls/title'
+    'tpl!taoQtiTest/runner/plugins/controls/title/title'
 ], function ($, __, pluginFactory, titleTpl){
     'use strict';
 
@@ -36,12 +36,32 @@ define([
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
 
-            this.$element = $(titleTpl({
-                titles : [{
-                    control : 'qti-test-title"',
+            var createElement = function(){
+
+                var context  = testRunner.getTestContext();
+                var showSection   = !!context.isDeepestSectionVisible;
+                var titles =  [{
+                    control : 'qti-test-title',
                     text    : testData.title
-                }]
-            }));
+                }];
+               if(context.isDeepestSectionVisible){
+                    titles.push({
+                        control : 'qti-test-position',  //WTF !? isn't it the section title... ?
+                        text    : context.sectionTitle
+                    });
+                }
+
+                return $(titleTpl({ titles : titles }));
+            };
+
+            this.$element = createElement();
+
+
+            testRunner
+                .after('move', function(){
+                    self.$element = self.$element.replaceWith(createElement());
+                });
+
         },
         render : function render(){
             var $container = this.getAreaBroker().getControlArea();

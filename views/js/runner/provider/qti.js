@@ -38,10 +38,10 @@ define([
         loadAreaBroker : function loadAreaBroker(){
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
-                'content' : $('.qti-content', $layout),
+                'content' : $('#qti-content', $layout),
                 'toolbox' : $('.tools-box', $layout),
                 'navigation' : $('.navi-box-list', $layout),
-                'control' : $('.control-box', $layout),
+                'control' : $('.top-action-bar .control-box', $layout),
                 'panel' : $('.test-sidebar', $layout),
                 'header' : $('.title-box', $layout)
             });
@@ -52,11 +52,11 @@ define([
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
-                    'testDefinition',
-                    'testCompilation',
-                    'serviceCallId',
-                    'serviceController',
-                    'serviceExtension'
+                'testDefinition',
+                'testCompilation',
+                'serviceCallId',
+                'serviceController',
+                'serviceExtension'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig);
         },
@@ -66,25 +66,16 @@ define([
 
             //install behavior events handlers
             this.on('ready', function(){
-                this.next();    //load 1st item
-            })
-            .on('move', function(){
-
-                this.getProxy().getTestContext().then(function(context){
-                    self.setTestContext(context);
-                });
-
+                var context = this.getTestContext();
+                self.loadItem(context.itemUri);
             });
 
             //load data and current context in parrallel at initialization
-            return Promise.all([
-                this.getProxy().getTestData(),
-                this.getProxy().getTestContext()
-            ])
-            .then(function(data, context){
-                self.setTestData(data);
-                self.setTestContext(context);
-            });
+            return this.getProxy().init()
+                       .then(function(results){
+                            self.setTestData(results.testData);
+                            self.setTestContext(results.testContext);
+                       });
         },
 
         render : function render(){
@@ -103,10 +94,10 @@ define([
                     self.getProxy().getItemData(itemRef),
                     self.getProxy().getItemState(itemRef)
                 ])
-                .then(function(data, state){
+                .then(function(results){
                     resolve({
-                        data : data,
-                        state : state
+                        data : results[0],
+                        state : results[1]
                     });
                 })
                 .catch(reject);
@@ -117,7 +108,7 @@ define([
             var self = this;
 
             return new Promise(function(resolve, reject){
-                self.itemRunner = qtiItemRunner(item.data)
+                self.itemRunner = qtiItemRunner(item.data.type, item.data.data)
                     .on('error', reject)
                     .on('render', resolve)
                     .init()
