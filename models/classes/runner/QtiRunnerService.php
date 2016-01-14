@@ -226,7 +226,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $session->getCurrentAssessmentItemRef()->getIdentifier();
-                $response['itemUri'] = strstr($session->getCurrentAssessmentItemRef()->getHref(), '|', true);
+                $response['itemUri'] = $session->getCurrentAssessmentItemRef()->getHref();
 
                 // The state of the current AssessmentTestSession.
                 $response['itemSessionState'] = $session->getCurrentAssessmentItemSession()->getState();
