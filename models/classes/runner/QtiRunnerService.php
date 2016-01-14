@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -323,21 +324,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Gets definition data of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
-     * @return array
+     * @return mixed
      * @throws \common_Exception
      */
     public function getItemData(RunnerServiceContext $context, $itemRef)
     {
-        $response = [];
-
-        // TODO: Implement getItemData() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            $directoryIds = explode('|', $itemRef);
+            $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
+            $itemFilePath = $dirPath . QtiJsonItemCompiler::ITEM_FILE_NAME;
+
+            return $itemFilePath;
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-        return $response;
     }
 
     /**
@@ -349,16 +349,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getItemState(RunnerServiceContext $context, $itemRef)
     {
-        $response = [];
-
-        // TODO: Implement getItemState() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            $serviceService = $this->getServiceManager()->get('tao/stateStorage');
+            $userUri = \common_session_SessionManager::getSession()->getUserUri();
+            return is_null($userUri) ? null : $serviceService->get($userUri, $itemRef);
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-        return $response;
     }
 
     /**
@@ -371,14 +368,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function setItemState(RunnerServiceContext $context, $itemRef, $state)
     {
-        // TODO: Implement setItemState() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            $serviceService = $this->getServiceManager()->get('tao/stateStorage');
+            $userUri = \common_session_SessionManager::getSession()->getUserUri();
+            return is_null($userUri) ? false : $serviceService->set($userUri, $itemRef, $state);
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-        return true;
     }
 
     /**
