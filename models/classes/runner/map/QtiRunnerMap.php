@@ -67,7 +67,8 @@ class QtiRunnerMap implements RunnerMap
                 $itemSession = $store->getAssessmentItemSession($itemRef, $occurrence);
 
                 // load item infos
-                $partId = $routeItem->getTestPart()->getIdentifier();
+                $testPart = $routeItem->getTestPart();
+                $partId = $testPart->getIdentifier();
                 $sections = $routeItem->getAssessmentSections();
                 $sectionId = key(current($sections));
                 $section = $sections[$sectionId];
@@ -106,6 +107,7 @@ class QtiRunnerMap implements RunnerMap
                 if (!isset($map['parts'][$partId])) {
                     $map['parts'][$partId]['title'] = $partId;
                     $map['parts'][$partId]['position'] = $offset;
+                    $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
                 }
                 if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
                     $map['parts'][$partId]['sections'][$sectionId]['title'] = $section->getTitle();
