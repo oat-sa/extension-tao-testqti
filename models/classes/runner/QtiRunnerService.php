@@ -333,8 +333,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $directoryIds = explode('|', $itemRef);
             $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
             $itemFilePath = $dirPath . QtiJsonItemCompiler::ITEM_FILE_NAME;
-
-            return $itemFilePath;
+            if (file_exists($itemFilePath)) {
+                return file_get_contents($itemFilePath);
+            } else {
+                throw new \tao_models_classes_FileNotFoundException('file ' . $itemFilePath . ' for item ' . $directoryIds[2] . ' does not exist');
+            }
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
