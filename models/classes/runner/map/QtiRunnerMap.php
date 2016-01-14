@@ -76,9 +76,11 @@ class QtiRunnerMap implements RunnerMap
                 $item = new \core_kernel_classes_Resource($itemUri);
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
+                    $lastPart = $partId;
                 }
                 if ($lastSection != $sectionId) {
                     $offsetSection = 0;
+                    $lastSection = $sectionId;
                 }
                 
                 $itemInfos = [
