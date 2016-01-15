@@ -69,7 +69,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function buildItemServiceCall(AssessmentTestSession $session, $testDefinitionUri, $testCompilationUri) {
         
         $href = $session->getCurrentAssessmentItemRef()->getHref();
-         
+
         // retrive itemUri & itemPath.
         $parts = explode('|', $href);
          
@@ -400,6 +400,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $context['submissionMode'] = null;
         $context['remainingAttempts'] = 0;
         $context['isAdaptive'] = false;
+
+        $hasBeenPaused = true;
+        if(\oat\oatbox\service\ServiceManager::getServiceManager()->has('taoProctoring/delivery')){
+            $deliveryService = \oat\oatbox\service\ServiceManager::getServiceManager()->get('taoProctoring/delivery');
+            $hasBeenPaused = $deliveryService->getHasBeenPaused($session->getSessionId());
+        }
+        $context['hasBeenPaused'] = $hasBeenPaused;
+
          
         if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
             $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');

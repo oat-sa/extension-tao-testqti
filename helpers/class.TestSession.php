@@ -44,6 +44,7 @@ use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -321,25 +322,21 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
     
     protected function triggerEventChange() {
-        /*
-        $pos = $this->getRoute()->getPosition();
-        $count = $this->getRouteCount();
-        if ($this->isRunning()) {
-            $section = $this->getCurrentAssessmentSection();
-            $description = __('%1$s - item %2$s/%3$s', $section->getTitle(), $pos, $count);
-        } else {
-            $description = __('finished');
+        $event = new QtiTestChangeEvent($this);
+        if ($event instanceof ServiceLocatorAwareInterface) {
+            $event->setServiceLocator($this->getServiceLocator());
         }
-        
-        $serviceCallId = $this->getSessionId();
-        */
-        $this->getEventManager()->trigger(new QtiTestChangeEvent($this));
+        $this->getEventManager()->trigger($event);
     }
     
     /**
      * @return EventManager
      */
     protected function getEventManager() {
-        return ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID);
+        return $this->getServiceLocator()->get(EventManager::CONFIG_ID);
+    }
+    
+    protected function getServiceLocator() {
+        return ServiceManager::getServiceManager();
     }
 }

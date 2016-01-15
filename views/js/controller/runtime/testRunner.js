@@ -553,6 +553,7 @@ function (
             setTestContext: function(testContext) {
                 this.testContext = testContext;
                 this.itemServiceApi = eval(testContext.itemServiceApiCall);
+                this.itemServiceApi.setHasBeenPaused(testContext.hasBeenPaused);
             },
 
 
