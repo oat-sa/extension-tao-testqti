@@ -20,9 +20,12 @@ define([
     'lodash',
     'core/promise',
     'ui/feedback',
+    'layout/loading-bar',
+
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
+
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/controls/title/title',
     'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
@@ -31,45 +34,12 @@ define([
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
 
-    'json!taoQtiTest/test/samples/json/QtiRunnerData',
-    'json!taoQtiTest/test/samples/json/itemData',
     'css!taoQtiTestCss/new-test-runner'
-], function($, _, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip, runnerData, itemData) {
+], function($, _, Promise, feedback, loadingBar, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip) {
     'use strict';
 
     runner.registerProvider('qti', qtiProvider);
-    //proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
-    //
-
-    /** Mock the proxy */
-    proxy.registerProxy('qtiServiceProxy', {
-        init: function () { return Promise.resolve(runnerData); },
-        destroy: _.noop,
-        getTestData: function getTestData() {
-            return Promise.resolve(runnerData.testData);
-        },
-        getTestContext: function getTestContext() {
-            return Promise.resolve(runnerData.testContext);
-        },
-        callTestAction: function callTestAction(action, params) {
-            return Promise.resolve({});
-        },
-        getItemData: function getItemData(uri) {
-            return Promise.resolve(itemData);
-        },
-        getItemState: function getItemState(uri) {
-            return Promise.resolve({});
-        },
-        submitItemState: function submitItemState(uri, state) {
-            return Promise.resolve({});
-        },
-        storeItemResponse: function storeItemResponse(uri, response) {
-            return Promise.resolve({});
-        },
-        callItemAction: function callItemAction(uri, action, params) {
-            return Promise.resolve({});
-        }
-    });
+    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
     var plugins = {
         title       : title,
@@ -87,13 +57,27 @@ define([
                 renderTo : $('.runner')
             });
 
+            loadingBar.start();
+
             runner('qti', plugins, config)
                 .on('error', function(err){
-                    console.error(err);
+
+                    loadingBar.stop();
+
+                    window.console.error(err);
+
                     feedback().error(err);
                 })
                 .on('ready', function(){
-
+                    _.defer(function(){
+                        $('.runner').removeClass('hidden');
+                    });
+                })
+                .on('unloaditem', function(){
+                    loadingBar.start();
+                })
+                .on('renderitem', function(){
+                    loadingBar.stop();
                 })
                 .init();
         }

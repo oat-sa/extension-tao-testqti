@@ -97,6 +97,12 @@ define([
                 })
                 .after('move', function(){
                     updateElement(self.$element, testRunner.getTestContext());
+                })
+                .on('unloaditem', function(){
+                    self.disable();
+                })
+                .on('renderitem', function(){
+                    self.enable();
                 });
         },
         render : function render(){

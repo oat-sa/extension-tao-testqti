@@ -28,9 +28,17 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoQtiItem/runner/qtiItemRunner',
+    'taoItems/assets/manager',
+    'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, Promise, areaBroker, proxyFactory, qtiItemRunner, layoutTpl) {
+], function($, _, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
+
+    var assetManager = assetManagerFactory([
+        assetStrategies.external,
+        assetStrategies.base64,
+        assetStrategies.baseUrl
+    ], { baseUrl: '' });
 
     var qtiProvider = {
         name : 'qti',
@@ -69,30 +77,30 @@ define([
                 var context = this.getTestContext();
                 self.loadItem(context.itemUri);
             })
-            .on('next', function(){
+            .on('move', function(action){
+                var args = [].slice.call(arguments, 1);
                 var context = this.getTestContext();
 
-                debugger;
-                self.unloadItem();
+                self.on('unloaditem.'+action, function(){
+                    self.off('.'+action);
 
-                self.getProxy()
-                    .callItemAction(context.itemUri, 'next')
-                    .then(function(results){
-                        console.log(results);
-                        self.setTestData(results.testData);
-                        self.setTestContext(results.testContext);
+                    self.getProxy()
+                        .callItemAction(context.itemUri, 'move', { direction : action, scope : 'item' })
+                        .then(function(results){
 
-                        self.loadItem(results.testContext.itemUri);
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
-                    });
+                            self.setTestData(results.testData);
+                            self.setTestContext(results.testContext);
+
+                            self.loadItem(results.testContext.itemUri);
+                        })
+                        .catch(function(err){
+                            self.trigger('error', err);
+                        });
+                })
+                .unloadItem();
 
             })
             .on('skip', function(){
-
-            })
-            .on('finish', function(){
 
             });
 
@@ -122,8 +130,8 @@ define([
                 ])
                 .then(function(results){
                     resolve({
-                        data : results[0],
-                        state : results[1]
+                        data : results[0].itemData,
+                        state : results[1].itemState || {}
                     });
                 })
                 .catch(reject);
@@ -134,18 +142,22 @@ define([
             var self = this;
 
             return new Promise(function(resolve, reject){
-                self.itemRunner = qtiItemRunner(item.data.type, item.data.data)
-                    .on('error', reject)
-                    .on('render', resolve)
-                    .on('statechange', function(state){
-                        console.log(state);
-                    })
-                    .on('responsechange', function(responses){
-                        console.log(responses);
-                    })
-                    .init()
-                    .setState(item.state)
-                    .render(self.getAreaBroker().getContentArea());
+                assetManager.setData('baseUrl', 'http://foo.fr/bar?path=');
+
+                self.itemRunner = qtiItemRunner(item.data.type, item.data.data, {
+                    assetManager: assetManager
+                })
+                .on('error', reject)
+                .on('render', resolve)
+                .on('statechange', function(state){
+                    console.log(state);
+                })
+                .on('responsechange', function(responses){
+                    console.log(responses);
+                })
+                .init()
+                .setState(item.state)
+                .render(self.getAreaBroker().getContentArea());
             });
         },
 
@@ -156,12 +168,14 @@ define([
                     self.itemRunner
                         .on('clear', resolve)
                         .clear();
+                    return;
                 }
+                resolve();
             });
         },
 
         finish : function finish(){
-
+            return this.getProxy().callTestAction('finish');
         },
 
         destroy : function destroy(){
