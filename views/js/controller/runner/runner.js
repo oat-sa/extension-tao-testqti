@@ -18,6 +18,7 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'core/promise',
     'ui/feedback',
     'taoTests/runner/runner',
@@ -34,7 +35,7 @@ define([
     'json!taoQtiTest/test/samples/json/QtiRunnerData',
     'json!taoQtiTest/test/samples/json/itemData',
     'css!taoQtiTestCss/new-test-runner'
-], function($, _, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip, runnerData, itemData) {
+], function($, _, __, Promise, feedback, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip, runnerData, itemData) {
     'use strict';
 
     runner.registerProvider('qti', qtiProvider);
@@ -89,8 +90,35 @@ define([
 
             runner('qti', plugins, config)
                 .on('error', function(err){
+                    var message = err;
+                    var type = 'error';
+
+                    if ('object' === typeof err) {
+                        message = err.message;
+                        type = err.type;
+                    }
+
+                    if (!message) {
+                        switch (type) {
+                            case 'TestState':
+                                message = __('The test has been closed/suspended!');
+                                break;
+
+                            case 'FileNotFound':
+                                message = __('File not found!');
+                                break;
+
+                            default:
+                                message = __('An error occurred!');
+                        }
+                    }
+
                     console.error(err);
-                    feedback().error(err);
+                    feedback().error(message);
+
+                    if ('TestState' === type) {
+                        // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
+                    }
                 })
                 .on('ready', function(){
 
