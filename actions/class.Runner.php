@@ -224,16 +224,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             
-            $response = [
-                'itemData' => $this->runnerService->getItemData($serviceContext, $itemRef),
-                'success' => true,
-            ];
+            $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
+
+            if (is_string($itemData)) {
+                $response = '{"success":true,"itemData":' . $itemData . '}';
+            } else {
+                $response = [
+                    'itemData' => $itemData,
+                    'success' => true,
+                ];    
+            }
             
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
         }
 
-        $this->returnJson($response);
+        if (is_string($response)) {
+            $code = 200;
+            header(HTTPToolkit::statusCodeHeader($code));
+            Context::getInstance()->getResponse()->setContentHeader('application/json');
+            echo $response;   
+        } else {
+            $this->returnJson($response);
+        }
     }
 
     /**
