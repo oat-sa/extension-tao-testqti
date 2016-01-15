@@ -226,6 +226,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             
             $response = [
                 'itemData' => $this->runnerService->getItemData($serviceContext, $itemRef),
+                'baseUrl' => $this->runnerService->getItemPublicUrl($serviceContext, $itemRef),
                 'success' => true,
             ];
             

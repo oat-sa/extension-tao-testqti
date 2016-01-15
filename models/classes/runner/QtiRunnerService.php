@@ -573,6 +573,32 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Get the base url to the item public directory
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return string
+     * @throws \common_Exception
+     * @throws \common_exception_Error
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getItemPublicUrl(RunnerServiceContext $context, $itemRef){
+        if ($context instanceof QtiRunnerServiceContext) {
+            $directoryIds = explode('|', $itemRef);
+
+            $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+
+            $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
+            $basepath = $directory->getPath();
+            if (!file_exists($basepath.$userDataLang) && file_exists($basepath.DEFAULT_LANG)) {
+                $userDataLang = DEFAULT_LANG;
+            }
+            return $directory->getPublicAccessUrl().$userDataLang.DIRECTORY_SEPARATOR;
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+    }
+
+    /**
      * Continue the test interaction if possible
      * @param RunnerServiceContext $context
      * @return bool
