@@ -1,0 +1,28 @@
+@import "./test-dimensions";
+// override original .delivery-scope from delivery.css
+body {
+    &.delivery-scope {
+        min-height: 100vh;
+        max-height: 100vh;
+        margin-bottom: 0;
+
+        // everything above the footer
+        & > .content-wrap {
+            min-height: 0px;
+            margin-bottom: 0;
+            height: calc(100vh - #{(map-get($heights, footer)) * 1px});
+            &:after {
+                content: normal;
+                display: none;
+            }
+        }
+
+        .runner {
+            height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer)) * 1px});
+        }
+    }
+
+    & > footer {
+        overflow-y: visible !important;
+    }
+}
