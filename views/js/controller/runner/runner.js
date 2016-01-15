@@ -15,6 +15,11 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
+/**
+ * Test runner controller entry
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ */
 define([
     'jquery',
     'lodash',
@@ -35,11 +40,21 @@ define([
     'taoQtiTest/runner/plugins/navigation/skip',
 
     'css!taoQtiTestCss/new-test-runner'
-], function($, _, Promise, feedback, loadingBar, runner, qtiProvider, proxy, qtiServiceProxy, title, progressbar, next, previous, nextSection, skip) {
+], function(
+    $, _, Promise, feedback, loadingBar,
+    runner, qtiProvider, proxy, qtiServiceProxy,
+    title, progressbar, next, previous, nextSection, skip
+) {
     'use strict';
+
+
+    /*
+     *TODO plugins list, provider registration should be loaded dynamically
+     */
 
     runner.registerProvider('qti', qtiProvider);
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+
 
     var plugins = {
         title       : title,
@@ -50,7 +65,21 @@ define([
         nextSection : nextSection
     };
 
+    /**
+     * The runner controller
+     */
     var runnerController = {
+
+        /**
+         * Controller entry point
+         * @param {Object} options - options to give to the test runner
+         * @param {String} options.testDefinition
+         * @param {String} options.testCompilation
+         * @param {String} options.serviceCallId
+         * @param {String} options.serviceExtension
+         * @param {String} options.serviceController
+         * @param {String} options.exitUrl
+         */
         start : function start(options){
 
             var config = _.defaults(options || {}, {
@@ -59,11 +88,13 @@ define([
 
             loadingBar.start();
 
+            //instantiate the QtiTestRunner
             runner('qti', plugins, config)
                 .on('error', function(err){
 
                     loadingBar.stop();
 
+                    //TODO to be replaced by the logger
                     window.console.error(err);
 
                     feedback().error(err);
@@ -78,6 +109,12 @@ define([
                 })
                 .on('renderitem', function(){
                     loadingBar.stop();
+                })
+                .on('finish', function(){
+                    this.destroy();
+                })
+                .on('destroy', function(){
+                    window.location = config.exitUrl;
                 })
                 .init();
         }

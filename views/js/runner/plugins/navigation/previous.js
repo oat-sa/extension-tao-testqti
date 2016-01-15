@@ -29,21 +29,34 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+    /**
+     * Returns the configured plugin
+     */
     return pluginFactory({
+
         name : 'previous',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
         init : function init(){
             var self = this;
+
             var testRunner = this.getTestRunner();
 
+            /**
+             * Can we move backward ? if not, then we hide the plugin
+             */
             var toggle = function toggle(){
                 var context = testRunner.getTestContext();
-                if(context.navigationMode === 0 && context.canMoveBackward){
+                if(context.navigationMode === 1 && context.canMoveBackward){
                     self.show();
                 } else {
                     self.hide();
                 }
             };
 
+            //build element (detached)
             this.$element =  $(buttonTpl({
                 control : 'move-backward',
                 title   : __('Submit and go to the previous item'),
@@ -51,6 +64,7 @@ define([
                 text    : __('Previous')
             }));
 
+            //attach behavior
             this.$element.on('click', function(e){
                 e.preventDefault();
                 if(self.getState('enabled') !== false){
@@ -60,34 +74,64 @@ define([
                 }
             });
 
+            //start disabled
             toggle();
+            self.disable();
 
+            //update plugin state based on changes
             testRunner
-                .on('ready', function(){
+                .on('loaditem', toggle)
+                .on('renderitem', function(){
                     self.enable();
                 })
-                .after('move', function(){
-                    toggle();
+                .on('unloaditem', function(){
+                    self.disable();
                 });
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
             $container.append(this.$element);
         },
+
+        /**
+         * Called during the runner's destroy phase
+         */
         destroy : function destroy (){
             this.$element.remove();
         },
+
+        /**
+         * Enable the button
+         */
         enable : function enable (){
-            this.$element.removeProp('disabled');
+            this.$element.removeProp('disabled')
+                         .removeClass('disabled');
         },
+
+        /**
+         * Disable the button
+         */
         disable : function disable (){
-            this.$element.prop('disabled', true);
+            this.$element.prop('disabled', true)
+                         .addClass('disabled');
         },
+
+        /**
+         * Show the button
+         */
         show: function show(){
             this.$element.show();
         },
+
+        /**
+         * Hide the button
+         */
         hide: function hide(){
             this.$element.hide();
-        },
+        }
     });
 });

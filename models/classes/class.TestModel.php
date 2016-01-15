@@ -126,6 +126,6 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
 
 
     public function getPackerClass() {
-        return 'oat\\taoQtiTest\\model\\pack\\QtiTestPacker';
+        return 'oat\\taoQtiTest\\models\\pack\\QtiTestPacker';
     }
 }

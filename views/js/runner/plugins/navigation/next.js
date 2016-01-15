@@ -29,6 +29,9 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+    /**
+     * The display of the next button
+     */
     var buttonData = {
         next : {
             control : 'move-forward',
@@ -44,18 +47,28 @@ define([
         }
     };
 
+    /**
+     * Create the button based on the current context
+     * @param {Object} context - the test context
+     * @returns {jQueryElement} the button
+     */
     var createElement = function createElement(context){
         var dataType = !!context.isLast ? 'end' : 'next';
         return $(buttonTpl(buttonData[dataType]));
     };
 
+    /**
+     * Update the button based on the context
+     * @param {jQueryElement} $element - the element to update
+     * @param {Object} context - the test context
+     */
     var updateElement = function updateElement($element, context){
         var dataType = !!context.isLast ? 'end' : 'next';
         if($element.data('control') !== buttonData[dataType].control){
 
             $element.data('control', buttonData[dataType].control)
                     .attr('title', buttonData[dataType].title)
-                    .find('.text').text(buttonData[dataType].title);
+                    .find('.text').text(buttonData[dataType].text);
 
             if(dataType === 'next'){
                 $element.find('.icon-' + buttonData.end.icon)
@@ -69,62 +82,93 @@ define([
         }
     };
 
+    /**
+     * Returns the configured plugin
+     */
     return pluginFactory({
         name : 'next',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
 
+            //create the button (detached)
             this.$element = createElement(testRunner.getTestContext());
 
+            //plugin behavior
             this.$element.on('click', function(e){
                 e.preventDefault();
 
                 if(self.getState('enabled') !== false){
                     self.disable();
-
-                    if(testRunner.getTestContext().isLast){
-                        testRunner.finish();
-                    } else {
-                        testRunner.next();
-                    }
+                    testRunner.next();
                 }
             });
 
+            //disabled by default
+            this.disable();
+
+            //change plugin state
             testRunner
-                .on('ready', function(){
-                    self.enable();
-                })
-                .after('move', function(){
+                .on('loaditem', function(){
                     updateElement(self.$element, testRunner.getTestContext());
-                })
-                .on('unloaditem', function(){
-                    self.disable();
                 })
                 .on('renderitem', function(){
                     self.enable();
+                })
+                .on('unloaditem', function(){
+                    self.disable();
                 });
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
+
+            //attach the element to the navigation area
             var $container = this.getAreaBroker().getNavigationArea();
             $container.append(this.$element);
         },
+
+        /**
+         * Called during the runner's destroy phase
+         */
         destroy : function destroy (){
             this.$element.remove();
         },
+
+        /**
+         * Enable the button
+         */
         enable : function enable (){
             this.$element.removeProp('disabled')
                          .removeClass('disabled');
         },
+
+        /**
+         * Disable the button
+         */
         disable : function disable (){
             this.$element.prop('disabled', true)
                          .addClass('disabled');
         },
+
+        /**
+         * Show the button
+         */
         show: function show(){
             this.$element.show();
         },
+
+        /**
+         * Hide the button
+         */
         hide: function hide(){
             this.$element.hide();
-        },
+        }
     });
 });
