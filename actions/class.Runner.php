@@ -85,12 +85,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getErrorResponse($e = null) {
         $response = [
             'success' => false,
-            'type' => 'Error',
+            'type' => 'error',
         ];
         
         if ($e) {
             if ($e instanceof \Exception) {
-                $response['type'] = 'Exception';
+                $response['type'] = 'exception';
                 $response['code'] = $e->getCode();
             }
 
