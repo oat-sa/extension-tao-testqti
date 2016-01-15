@@ -104,7 +104,6 @@ define([
                         .callItemAction(context.itemUri, action, params)
                         .then(function(results){
 
-                                self.setTestData(results.testData);
                                 self.setTestContext(results.testContext);
 
                                 load();
