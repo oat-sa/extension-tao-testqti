@@ -34,15 +34,34 @@ define([
 ], function($, _, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
+    //states that can be found in the context
+    var states = {
+        initial:       0,
+        interacting:   1,
+        modalFeedback: 2,
+        suspended:     3,
+        closed:        4
+    };
+
+    //the asset strategies
     var assetManager = assetManagerFactory([
         assetStrategies.external,
         assetStrategies.base64,
         assetStrategies.baseUrl
     ], { baseUrl: '' });
 
+    /**
+     * A Test runner provider to be registered againt the runner
+     */
     var qtiProvider = {
+
+        //provider name
         name : 'qti',
 
+        /**
+         * Initialize and load the area broker with a correct mapping
+         * @returns {areaBroker}
+         */
         loadAreaBroker : function loadAreaBroker(){
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
@@ -72,36 +91,59 @@ define([
         init : function init(){
             var self = this;
 
-            //install behavior events handlers
-            this.on('ready', function(){
-                var context = this.getTestContext();
-                self.loadItem(context.itemUri);
-            })
-            .on('move', function(action){
-                var args = [].slice.call(arguments, 1);
-                var context = this.getTestContext();
+            var computeNext = function computeNext(action, params){
 
-                self.on('unloaditem.'+action, function(){
+                var context = self.getTestContext();
+
+                //to be sure load start after unload...
+                //we add an intermediate ns event on unload
+                self.on('unloaditem.' + action, function(){
                     self.off('.'+action);
 
                     self.getProxy()
-                        .callItemAction(context.itemUri, 'move', { direction : action, scope : 'item' })
+                        .callItemAction(context.itemUri, action, params)
                         .then(function(results){
 
-                            self.setTestData(results.testData);
-                            self.setTestContext(results.testContext);
+                                self.setTestData(results.testData);
+                                self.setTestContext(results.testContext);
 
-                            self.loadItem(results.testContext.itemUri);
+                                load();
                         })
                         .catch(function(err){
                             self.trigger('error', err);
                         });
                 })
-                .unloadItem();
+                .unloadItem(context.itemUri);
+            };
 
+            var load = function load(){
+
+                var context = self.getTestContext();
+
+                if(context.state <= states.interacting){
+                    self.loadItem(context.itemUri);
+                } else if (context.state === states.closed){
+                    self.finish();
+                }
+            };
+
+            //install behavior events handlers
+            this.on('ready', function(){
+                load();
             })
-            .on('skip', function(){
+            .on('move', function(direction, scope, position){
 
+                computeNext('move', {
+                    direction : direction,
+                    scope     : scope || 'item',
+                    position  : position
+                });
+            })
+            .on('skip', function(scope){
+
+                computeNext('skip', {
+                    scope     : scope || 'item'
+                });
             });
 
             //load data and current context in parrallel at initialization
@@ -131,6 +173,7 @@ define([
                 .then(function(results){
                     resolve({
                         data : results[0].itemData,
+                        baseUrl : results[0].baseUrl,
                         state : results[1].itemState || {}
                     });
                 })
@@ -142,7 +185,7 @@ define([
             var self = this;
 
             return new Promise(function(resolve, reject){
-                assetManager.setData('baseUrl', 'http://foo.fr/bar?path=');
+                assetManager.setData('baseUrl', item.baseUrl);
 
                 self.itemRunner = qtiItemRunner(item.data.type, item.data.data, {
                     assetManager: assetManager
