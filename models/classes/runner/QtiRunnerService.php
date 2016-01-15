@@ -406,14 +406,62 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
-        // TODO: Implement storeItemResponse() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            // --- Deal with provided responses.
+
+            $responses = new State();
+            $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+            $currentOccurence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+            if ($currentItem === false) {
+                $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
+                $msg .= "Session state value: " . $context->getTestSession()->getState() . "\n";
+                $msg .= "Session ID: " . $context->getTestSession()->getSessionId() . "\n";
+                $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
+                \common_Logger::e($msg);
+            }
+
+            $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+
+            if (is_array($response)) {
+                foreach ($response as $id => $resp) {
+                    try {
+                        $var = $filler->fill($id, $resp);
+                        // Do not take into account QTI File placeholders.
+                        if (\taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
+                            $responses->setVariable($var);
+                        }
+                    } catch (\OutOfRangeException $e) {
+                        \common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                    } catch (\OutOfBoundsException $e) {
+                        \common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                    }
+                }
+            } else {
+                \common_Logger::e('Invalid json payload');
+            }
+
+            $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
+
+            try {
+                \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
+                $context->getTestSession()->endAttempt($responses, true);
+
+                // Return the item session state to the client side.
+                $itemSession = $context->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+
+                foreach ($itemSession->getAllVariables() as $var) {
+                    $stateOutput->addVariable($var);
+                }
+
+                return true;
+            } catch (AssessmentTestSessionException $e) {
+                \common_Logger::w($e->getMessage());
+                return false;
+            }
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-        return true;
     }
 
     /**
