@@ -331,12 +331,28 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $directoryIds = explode('|', $itemRef);
+
+            $itemUri = $directoryIds[0];
+            $item = new \core_kernel_classes_Resource($itemUri);
+            $usedLang = $item->getUsedLanguages(new \core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY));
+
+            $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+
             $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
-            $itemFilePath = $dirPath . QtiJsonItemCompiler::ITEM_FILE_NAME;
+            if (in_array($userDataLang, $usedLang)) {
+                $itemFilePath = $dirPath . $userDataLang . DIRECTORY_SEPARATOR . QtiJsonItemCompiler::ITEM_FILE_NAME;
+            } else {
+                throw new \common_Exception(
+                    $userDataLang . 'is not part of compilation directory for item : ' . $itemUri
+                );
+            }
+
             if (file_exists($itemFilePath)) {
                 return file_get_contents($itemFilePath);
             } else {
-                throw new \tao_models_classes_FileNotFoundException('file ' . $itemFilePath . ' for item ' . $directoryIds[2] . ' does not exist');
+                throw new \tao_models_classes_FileNotFoundException(
+                    $itemFilePath . ' for item ' . $directoryIds[2]
+                );
             }
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
