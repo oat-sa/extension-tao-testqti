@@ -21,6 +21,9 @@
  */
 
 namespace oat\taoQtiTest\models\runner;
+use oat\oatbox\service\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  * Class RunnerServiceContext
@@ -29,8 +32,10 @@ namespace oat\taoQtiTest\models\runner;
  * 
  * @package oat\taoQtiTest\models
  */
-class RunnerServiceContext
+class RunnerServiceContext  implements ServiceLocatorAwareInterface
 {
+    use ServiceLocatorAwareTrait;
+    
     /**
      * The test session
      * @var mixed
@@ -53,5 +58,32 @@ class RunnerServiceContext
     public function setTestSession($testSession)
     {
         $this->testSession = $testSession;
+    }
+
+    /**
+     * Sets the service manager
+     * @param ServiceManager $serviceManager
+     * @return RunnerServiceContext
+     */
+    public function setServiceManager(ServiceManager $serviceManager)
+    {
+        return $this->setServiceLocator($serviceManager);
+    }
+
+    /**
+     * Gets the service manager
+     * @return ServiceManager
+     */
+    public function getServiceManager()
+    {
+        return $this->getServiceLocator();
+    }
+
+    /**
+     * Starts the context
+     */
+    public function init()
+    {
+        
     }
 }
