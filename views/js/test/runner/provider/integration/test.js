@@ -45,11 +45,14 @@ define([
         getTestContext: function getTestContext() {
             return Promise.resolve(runnerData.testContext);
         },
+        getTestMap: function getTestMap() {
+            return Promise.resolve({});
+        },
         callTestAction: function callTestAction(action, params) {
             return Promise.resolve({});
         },
         getItemData: function getItemData(uri) {
-            return Promise.resolve(itemData);
+            return Promise.resolve({ itemData : itemData });
         },
         getItemState: function getItemState(uri) {
             return Promise.resolve({});

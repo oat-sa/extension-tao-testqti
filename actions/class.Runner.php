@@ -58,10 +58,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Gets the test service context
+     * @param bool [$check] Checks the context after create. Default to true.
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    protected function getServiceContext()
+    protected function getServiceContext($check = true)
     {
         if (!$this->serviceContext) {
             $testDefinition = $this->getRequestParameter('testDefinition');
@@ -72,7 +73,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $testExecution = $this->getRequestParameter('serviceCallId');
             }  
-            $this->serviceContext = $this->runnerService->getServiceContext($testDefinition, $testCompilation, $testExecution);
+            $this->serviceContext = $this->runnerService->getServiceContext($testDefinition, $testCompilation, $testExecution, $check);
         }
         
         return $this->serviceContext;
@@ -396,19 +397,37 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
     
     /**
-     * Finishes the test
+     * Exits the test before its end
      */
-    public function finish()
+    public function exitTest()
     {
         try {
             $serviceContext = $this->getServiceContext();
             
             $response = [
-                'success' => $this->runnerService->finish($serviceContext),
+                'success' => $this->runnerService->exitTest($serviceContext),
             ];
             
             $this->runnerService->persist($serviceContext);
             
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+        }
+
+        $this->returnJson($response);
+    }
+    
+    /**
+     * Finishes the test
+     */
+    public function finish()
+    {
+        try {
+            $serviceContext = $this->getServiceContext(false);
+            
+            $response = [
+                'success' => $this->runnerService->finish($serviceContext),
+            ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
         }
