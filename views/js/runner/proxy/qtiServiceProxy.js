@@ -21,10 +21,11 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'core/promise',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, Promise, helpers, configFactory) {
+], function($, _, __, Promise, helpers, configFactory) {
     'use strict';
 
     /**
@@ -48,11 +49,22 @@ define([
                 if (data && data.success) {
                     resolve(data);
                 } else {
-                    reject(false);
+                    reject(data);
                 }
             })
-            .fail(function(jqXHR) {
-                reject(jqXHR);
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                var data;
+                try {
+                    data = JSON.parse(jqXHR.responseText);
+                } catch (e) {
+                    data = {
+                        success: false,
+                        code: jqXHR.status,
+                        type: textStatus || 'error',
+                        message: errorThrown || __('An error occurred!')
+                    };
+                }
+                reject(data);
             });
         });
     }
