@@ -19,6 +19,8 @@
 /**
  * Test Runner Control Plugin : Progress Bar
  *
+ * TODO move the progressUpdater inside the plugin at some point
+ *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
@@ -30,22 +32,47 @@ define([
 ], function ($, __, pluginFactory, progressUpdater, progressTpl){
     'use strict';
 
+
+    /**
+     * Returns the configured plugin
+     */
     return pluginFactory({
+
         name : 'progressBar',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
 
-            this.$element = $(progressTpl());
-            this.progressUpdate = progressUpdater($('[data-control="progress-bar"]', this.$element), $('[data-control="progress-label"]', this.$element));
+            //update the progress bar at the beginning and
+            var update = function update (){
+                if(self.progressUpdater){
+                    self.progressUpdater.update(testRunner.getTestContext());
+                }
+            };
 
-            this.progressUpdate.update(testRunner.getTestContext());
+            //create the progressbar
+            this.$element = $(progressTpl());
+
+            //load the updater
+            this.progressUpdater = progressUpdater(
+                    $('[data-control="progress-bar"]', this.$element),
+                    $('[data-control="progress-label"]', this.$element)
+                );
+
+            update();
 
             testRunner
-                .after('move', function(){
-                    self.progressUpdate.update(testRunner.getTestContext());
-                });
+                .on('ready', update)
+                .on('loaditem', update);
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
             var $container = this.getAreaBroker().getControlArea();
             $container.append(this.$element);

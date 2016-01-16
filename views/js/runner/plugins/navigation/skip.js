@@ -29,6 +29,9 @@ define([
 ], function ($, __, pluginFactory, buttonTpl){
     'use strict';
 
+    /**
+     * The display of the skip
+     */
     var buttonData = {
         skip : {
             control : 'skip',
@@ -44,11 +47,21 @@ define([
         }
     };
 
+    /**
+     * Create the button based on the current context
+     * @param {Object} context - the test context
+     * @returns {jQueryElement} the button
+     */
     var createElement = function createElement(context){
         var dataType = context.isLast ? 'end' : 'skip';
         return $(buttonTpl(buttonData[dataType]));
     };
 
+    /**
+     * Update the button based on the context
+     * @param {jQueryElement} $element - the element to update
+     * @param {Object} context - the test context
+     */
     var updateElement = function updateElement($element, context){
         var dataType = context.isLast ? 'end' : 'skip';
         if($element.data('control') !== buttonData[dataType].control){
@@ -59,8 +72,16 @@ define([
         }
     };
 
+    /**
+     * Returns the configured plugin
+     */
     return pluginFactory({
+
         name : 'skip',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
@@ -89,35 +110,65 @@ define([
             });
 
             toggle();
+            self.disable();
 
             testRunner
-                .on('ready', function(){
-                    self.enable();
-                })
-                .after('move', function(){
+                .on('loaditem', function(){
                     if(toggle()){
                         updateElement(self.$element, testRunner.getTestContext());
                     }
+                })
+                .on('renderitem', function(){
+                    self.enable();
+                })
+                .on('unloaditem', function(){
+                    self.disable();
                 });
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
             var $container = this.getAreaBroker().getNavigationArea();
             $container.append(this.$element);
         },
+
+        /**
+         * Called during the runner's destroy phase
+         */
         destroy : function destroy (){
             this.$element.remove();
         },
+
+        /**
+         * Enable the button
+         */
         enable : function enable (){
-            this.$element.removeProp('disabled');
+            this.$element.removeProp('disabled')
+                         .removeClass('disabled');
         },
+
+        /**
+         * Disable the button
+         */
         disable : function disable (){
-            this.$element.prop('disabled', true);
+            this.$element.prop('disabled', true)
+                         .addClass('disabled');
         },
+
+        /**
+         * Show the button
+         */
         show: function show(){
             this.$element.show();
         },
+
+        /**
+         * Hide the button
+         */
         hide: function hide(){
             this.$element.hide();
-        },
+        }
     });
 });
