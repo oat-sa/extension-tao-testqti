@@ -103,6 +103,7 @@ define([
         { name : 'destroy', title : 'destroy' },
         { name : 'getTestData', title : 'getTestData' },
         { name : 'getTestContext', title : 'getTestContext' },
+        { name : 'getTestMap', title : 'getTestMap' },
         { name : 'callTestAction', title : 'callTestAction' },
         { name : 'getItemData', title : 'getItemData' },
         { name : 'getItemState', title : 'getItemState' },
@@ -240,7 +241,7 @@ define([
         title: 'success',
         ajaxMock: ajaxMockSuccess,
         response: {
-            title: 'MyTest',
+            testData: {},
             success: true
         },
         success: true
@@ -316,7 +317,7 @@ define([
         title: 'success',
         ajaxMock: ajaxMockSuccess,
         response: {
-            map: [{}],
+            testContext: {},
             success: true
         },
         success: true
@@ -373,6 +374,82 @@ define([
             var result = proxy.getTestContext();
 
             assert.equal(typeof result, 'object', 'The proxy.getTestContext method has returned a promise');
+
+            result.then(function(data) {
+                if (caseData.success) {
+                    assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                } else {
+                    assert.ok(false, 'The proxy must throw an error!');
+                }
+                QUnit.start();
+            }).catch(function(err) {
+                assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                QUnit.start();
+            });
+        });
+
+
+    var qtiServiceProxyGetTestMapChecks = [{
+        title: 'success',
+        ajaxMock: ajaxMockSuccess,
+        response: {
+            testMap: {},
+            success: true
+        },
+        success: true
+    }, {
+        title: 'failing data',
+        ajaxMock: ajaxMockSuccess,
+        response: {
+            success: false
+        },
+        success: false
+    }, {
+        title: 'failing request',
+        ajaxMock: ajaxMockError,
+        response: "error",
+        success: false
+    }] ;
+
+    QUnit
+        .cases(qtiServiceProxyGetTestMapChecks)
+        .asyncTest('qtiServiceProxy.getTestMap ', 5, function(caseData, assert) {
+            var initConfig = {
+                testDefinition: 'http://tao.dev/mockTestDefinition#123',
+                testCompilation: 'http://tao.dev/mockTestCompilation#123',
+                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
+                serviceController: 'MockRunner',
+                serviceExtension: 'taoRunnerMock'
+            };
+
+            var expectedUrl = helpers._url('getTestMap', initConfig.serviceController, initConfig.serviceExtension, {
+                testDefinition : initConfig.testDefinition,
+                testCompilation : initConfig.testCompilation,
+                serviceCallId : initConfig.serviceCallId
+            });
+
+            coverage.getTestMap = true;
+
+            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+
+            $.ajax = ajaxMockSuccess({success: true});
+
+            var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.init();
+
+            $.ajax = caseData.ajaxMock(caseData.response, function(ajaxConfig) {
+                assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+            });
+
+            proxy.on('getTestMap', function(promise) {
+                assert.ok(true, 'The proxy has fired the "getTestMap" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestMap" event');
+            });
+
+            var result = proxy.getTestMap();
+
+            assert.equal(typeof result, 'object', 'The proxy.getTestMap method has returned a promise');
 
             result.then(function(data) {
                 if (caseData.success) {

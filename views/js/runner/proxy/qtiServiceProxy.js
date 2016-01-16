@@ -116,6 +116,15 @@ define([
         },
 
         /**
+         * Gets the test map
+         * @returns {Promise} - Returns a promise. The test map object will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        getTestMap: function getTestMap() {
+            return request(this.storage.getTestActionUrl('getTestMap'));
+        },
+
+        /**
          * Calls an action related to the test
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
