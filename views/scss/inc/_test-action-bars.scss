@@ -47,7 +47,8 @@
             opacity: 1;
 
             .title-box {
-                padding-top: 4px;
+                @include font-size(14);
+                padding: 4px 0 0;
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
