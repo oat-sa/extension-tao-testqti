@@ -401,8 +401,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $context['remainingAttempts'] = 0;
         $context['isAdaptive'] = false;
 
-        $hasBeenPaused = true;
-        if(\oat\oatbox\service\ServiceManager::getServiceManager()->has('taoProctoring/delivery')){
+        $hasBeenPaused = false;
+        if(common_ext_ExtensionsManager::singleton()->isEnabled('taoProctoring') && \oat\oatbox\service\ServiceManager::getServiceManager()->has('taoProctoring/delivery')){
             $deliveryService = \oat\oatbox\service\ServiceManager::getServiceManager()->get('taoProctoring/delivery');
             $hasBeenPaused = $deliveryService->getHasBeenPaused($session->getSessionId());
         }
