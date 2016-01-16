@@ -1,4 +1,5 @@
-module.exports = function(grunt) { 
+module.exports = function(grunt) {
+    'use strict';
 
     var requirejs   = grunt.config('requirejs') || {};
     var clean       = grunt.config('clean') || {};
@@ -9,20 +10,29 @@ module.exports = function(grunt) {
     var ext         = require(root + '/tao/views/build/tasks/helpers/extensions')(grunt, root);
     var out         = 'output';
 
+    var paths = {
+        'taoQtiItem':    root + '/taoQtiItem/views/js',
+        'taoQtiItemCss': root + '/taoQtiItem/views/css',
+        'taoItems':      root + '/taoItems/views/js',
+        'taoTests':      root + '/taoTests/views/js',
+        'taoQtiTest':    root + '/taoQtiTest/views/js',
+        'taoQtiTestCss': root + '/taoQtiTest/views/css'
+    };
+
     /**
      * Remove bundled and bundling files
      */
     clean.taoqtitestbundle = [out];
-    
+
     /**
-     * Compile tao files into a bundle 
+     * Compile tao files into a bundle
      */
     requirejs.taoqtitestbundle = {
         options: {
             baseUrl : '../js',
             dir : out,
             mainConfigFile : './config/requirejs.build.js',
-            paths : { 'taoQtiTest' : root + '/taoQtiTest/views/js', 'taoQtiItem' : root + '/taoQtiItem/views/js' },
+            paths : paths,
             modules : [{
                 name: 'taoQtiTest/controller/routes',
                 include : ext.getExtensionsControllers(['taoQtiTest']),
