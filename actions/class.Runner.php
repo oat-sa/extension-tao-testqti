@@ -251,14 +251,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getRubrics()
     {
-        // TODO: make a better implementation
-        
-        // the rubrics will be rendered in the page
-        header(HTTPToolkit::statusCodeHeader(200));
-        Context::getInstance()->getResponse()->setContentHeader('text/html');
-        
+        // TODO: make a better implementation 
+        // the rb are now rendererd in the output...
+        ob_start();
         $serviceContext = $this->getServiceContext();
         $this->runnerService->getRubrics($serviceContext);
+        $rubrics = ob_get_contents();
+        ob_end_clean();
+
+        $this->returnJson(array(
+            'success' => true,
+            'content' => $rubrics
+        ));
     }
 
     /**

@@ -267,6 +267,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // If the candidate is allowed to move backward e.g. first item of the test.
                 $response['canMoveBackward'] = $session->canMoveBackward();
 
+                //Number of rubric blocks
+                $response['numberRubrics'] = count($session->getRoute()->current()->getRubricBlockRefs());
+
                 // Comment allowed? Skipping allowed? Logout or Exit allowed ?
                 $response['allowComment'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session);
                 $response['allowSkipping'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session);
