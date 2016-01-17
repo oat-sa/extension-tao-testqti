@@ -297,17 +297,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function getItemState()
     {
         $code = 200;
-        
-        $itemRef = $this->getRequestParameter('itemDefinition');
+
+        $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
             $serviceContext = $this->getServiceContext();
-            
+            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+
+
             $response = [
-                'itemState' => $this->runnerService->getItemState($serviceContext, $itemRef),
+                'itemState' => $this->runnerService->getItemState($serviceContext, $stateId),
                 'success' => true,
             ];
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -322,15 +324,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function submitItemState()
     {
         $code = 200;
-        
-        $itemRef = $this->getRequestParameter('itemDefinition');
+
         $state = $this->getRequestParameter('state');
+        $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
             $serviceContext = $this->getServiceContext();
-            
+            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+
             $response = [
-                'success' => $this->runnerService->setItemState($serviceContext, $itemRef, $state),
+                'success' => $this->runnerService->setItemState($serviceContext, $stateId, $state),
             ];
             
             $this->runnerService->persist($serviceContext);
@@ -351,13 +354,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
         
         $itemRef = $this->getRequestParameter('itemDefinition');
-        $response = $this->getRequestParameter('response');
 
+        $itemResponse = \taoQtiCommon_helpers_Utils::readJsonPayload();
+        
         try {
             $serviceContext = $this->getServiceContext();
             
             $response = [
-                'success' => $this->runnerService->setItemResponse($serviceContext, $itemRef, $response),
+                'success' => $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse),
             ];
             
             $this->runnerService->persist($serviceContext);

@@ -29,6 +29,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\data\NavigationMode;
+use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -419,7 +420,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
-
             if (is_array($response)) {
                 foreach ($response as $id => $resp) {
                     try {

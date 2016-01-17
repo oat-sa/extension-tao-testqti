@@ -33,9 +33,10 @@ define([
      * Applied options: asynchronous call, JSON data, no cache
      * @param {String} url
      * @param {Object} [params]
+     * @param {String} [contentType] - to force the content type
      * @returns {Promise}
      */
-    function request(url, params) {
+    function request(url, params, contentType) {
         return new Promise(function(resolve, reject) {
             $.ajax({
                 url: url,
@@ -43,7 +44,8 @@ define([
                 cache: false,
                 data: params,
                 async: true,
-                dataType: 'json'
+                dataType: 'json',
+                contentType : contentType
             })
             .done(function(data) {
                 if (data && data.success) {
@@ -176,18 +178,18 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItemState: function submitItemState(uri, state) {
-            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), state);
+            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { state : state });
         },
 
         /**
          * Stores the response for a particular item
          * @param {String} uri - The URI of the item to update
-         * @param {Object} response - The response object to submit
+         * @param {Object} responses - The response object to submit
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        storeItemResponse: function storeItemResponse(uri, response) {
-            return request(this.storage.getItemActionUrl(uri, 'storeItemResponse'), response);
+        storeItemResponse: function storeItemResponse(uri, responses) {
+            return request(this.storage.getItemActionUrl(uri, 'storeItemResponse'), JSON.stringify(responses), 'application/json');
         },
 
         /**
