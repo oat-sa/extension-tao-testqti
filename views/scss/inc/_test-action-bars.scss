@@ -45,6 +45,8 @@
         }
         &.horizontal-action-bar {
             opacity: 1;
+            overflow-y:visible;
+            min-height: #{(map-get($heights, horizontal-action-bar)) * 1px };
 
             .title-box {
                 @include font-size(14);
