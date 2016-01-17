@@ -11,13 +11,18 @@ module.exports = function(grunt) {
     var out         = 'output';
 
     var paths = {
-        'taoQtiItem':    root + '/taoQtiItem/views/js',
-        'taoQtiItemCss': root + '/taoQtiItem/views/css',
-        'taoItems':      root + '/taoItems/views/js',
         'taoTests':      root + '/taoTests/views/js',
         'taoQtiTest':    root + '/taoQtiTest/views/js',
-        'taoQtiTestCss': root + '/taoQtiTest/views/css'
+        'taoQtiTestCss': root + '/taoQtiTest/views/css',
+        'taoQtiItem'    : root + '/taoQtiItem/views/js',
+        'taoQtiItemCss' : root + '/taoQtiItem/views/css',
+        'taoItems'      : root + '/taoItems/views/js',
+        'qtiCustomInteractionContext' : root + '/taoQtiItem/views/js/runtime/qtiCustomInteractionContext',
+        'qtiInfoControlContext' : root + '/taoQtiItem/views/js/runtime/qtiInfoControlContext',
     };
+
+    var runtimeLibsPattern  = ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'];
+    var runtimeLibs         = ext.getExtensionSources('taoQtiItem', runtimeLibsPattern, true);
 
     /**
      * Remove bundled and bundling files
@@ -36,8 +41,28 @@ module.exports = function(grunt) {
             modules : [{
                 name: 'taoQtiTest/controller/routes',
                 include : ext.getExtensionsControllers(['taoQtiTest']),
-                exclude : ['mathJax', 'mediaElement'].concat(libs)
+                exclude : ['mathJax', 'mediaElement', 'taoQtiTest/controller/runner/runner'].concat(libs)
             }]
+        }
+    };
+
+    /**
+     * Compile the new item runner as a standalone library
+     */
+    requirejs.qtitestrunner = {
+        options: {
+            baseUrl : '../js',
+            mainConfigFile : './config/requirejs.build.js',
+            findNestedDependencies : true,
+            paths : paths,
+            wrap : {
+                start : '',
+                end : "define(['taoQtiTest/controller/runner/runner'], function(r){ return r; });"
+            },
+            include: runtimeLibs.concat([ 'tpl', 'json']),
+            excludeShallow : ['mathJax', 'ckeditor'],
+            name: "taoQtiTest/controller/runner/runner",
+            out: out + "/qtiTestRunner.min.js"
         }
     };
 
@@ -47,7 +72,9 @@ module.exports = function(grunt) {
     copy.taoqtitestbundle = {
         files: [
             { src: [out + '/taoQtiTest/controller/routes.js'],  dest: root + '/taoQtiTest/views/js/controllers.min.js' },
-            { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' }
+            { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' },
+            { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/qtiTestRunner.min.js' },
+            { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/qtiTestRunner.min.js.map' }
         ]
     };
 
@@ -56,5 +83,5 @@ module.exports = function(grunt) {
     grunt.config('copy', copy);
 
     // bundle task
-    grunt.registerTask('taoqtitestbundle', ['clean:taoqtitestbundle', 'requirejs:taoqtitestbundle', 'copy:taoqtitestbundle']);
+    grunt.registerTask('taoqtitestbundle', ['clean:taoqtitestbundle', 'requirejs:taoqtitestbundle', 'requirejs:qtitestrunner', 'copy:taoqtitestbundle']);
 };
