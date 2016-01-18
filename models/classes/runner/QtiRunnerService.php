@@ -155,6 +155,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $response['exclusivelyLinear'] = $testDefinition->isExclusivelyLinear();
             $response['hasTimeLimits'] = $testDefinition->hasTimeLimits();
 
+            //states that can be found in the context
+            $response['states'] = [
+                'initial'       => AssessmentTestSessionState::INITIAL,
+                'interacting'   => AssessmentTestSessionState::INTERACTING,
+                'modalFeedback' => AssessmentTestSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentTestSessionState::SUSPENDED,
+                'closed'        => AssessmentTestSessionState::CLOSED
+            ];
+
             $timeLimits = $testDefinition->getTimeLimits();
             if ($timeLimits) {
                 if ($timeLimits->hasMinTime()) {

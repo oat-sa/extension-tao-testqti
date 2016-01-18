@@ -34,15 +34,6 @@ define([
 ], function($, _, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
-    //states that can be found in the context
-    var states = {
-        initial:       0,
-        interacting:   1,
-        modalFeedback: 2,
-        suspended:     3,
-        closed:        4
-    };
-
     //the asset strategies
     var assetManager = assetManagerFactory([
         assetStrategies.external,
@@ -118,6 +109,8 @@ define([
             var load = function load(){
 
                 var context = self.getTestContext();
+                var testData = self.getTestData();
+                var states = testData.states;
 
                 if(context.state <= states.interacting){
                     self.loadItem(context.itemUri);
