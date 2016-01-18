@@ -23,12 +23,13 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
-use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\NavigationMode;
+use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -52,33 +53,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the test session for a particular delivery execution
-     * @param string $testDefinitionUri
-     * @param string $testCompilationUri
-     * @param string $testExecutionUri
+     * @param string $testDefinitionUri The URI of the test
+     * @param string $testCompilationUri The URI of the compiled delivery
+     * @param string $testExecutionUri The URI of the delivery execution
+     * @param bool [$check] Checks the created context, then initializes it, 
+     *                      otherwise just returns the context without check and init. Default to true.
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
+    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $check = true)
     {
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
+        $serviceContext->setServiceManager($this->getServiceManager());
 
-        // will throw exception if the test session is not valid
-        $this->check($serviceContext);
+        if ($check) {
+            // will throw exception if the test session is not valid
+            $this->check($serviceContext);
 
-        // code borrowed from the previous implementation, maybe obsolete...
-        /** @var SessionStateService $sessionStateService */
-        $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
-        $sessionStateService->resumeSession($serviceContext->getTestSession());
-
-        $serviceContext->retrieveTestMeta();
-
-        $metaDataHandler = $serviceContext->getMetaDataHandler();
-        $metaDataHandler->registerItemCallbacks();
-        $metaData = $metaDataHandler->getData();
-        if (!empty($metaData)) {
-            $metaDataHandler->save($metaData);
+            // starts the context
+            $serviceContext->init();
         }
 
         return $serviceContext;
@@ -273,6 +268,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // If the candidate is allowed to move backward e.g. first item of the test.
                 $response['canMoveBackward'] = $session->canMoveBackward();
 
+                //Number of rubric blocks
+                $response['numberRubrics'] = count($session->getRoute()->current()->getRubricBlockRefs());
+
                 // Comment allowed? Skipping allowed? Logout or Exit allowed ?
                 $response['allowComment'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session);
                 $response['allowSkipping'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session);
@@ -406,14 +404,61 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
-        // TODO: Implement storeItemResponse() method.
-
         if ($context instanceof QtiRunnerServiceContext) {
+            // --- Deal with provided responses.
+
+            $responses = new State();
+            $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+            $currentOccurence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+            if ($currentItem === false) {
+                $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
+                $msg .= "Session state value: " . $context->getTestSession()->getState() . "\n";
+                $msg .= "Session ID: " . $context->getTestSession()->getSessionId() . "\n";
+                $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
+                \common_Logger::e($msg);
+            }
+
+            $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            if (is_array($response)) {
+                foreach ($response as $id => $resp) {
+                    try {
+                        $var = $filler->fill($id, $resp);
+                        // Do not take into account QTI File placeholders.
+                        if (\taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
+                            $responses->setVariable($var);
+                        }
+                    } catch (\OutOfRangeException $e) {
+                        \common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                    } catch (\OutOfBoundsException $e) {
+                        \common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                    }
+                }
+            } else {
+                \common_Logger::e('Invalid json payload');
+            }
+
+            $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
+
+            try {
+                \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
+                $context->getTestSession()->endAttempt($responses, true);
+
+                // Return the item session state to the client side.
+                $itemSession = $context->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+
+                foreach ($itemSession->getAllVariables() as $var) {
+                    $stateOutput->addVariable($var);
+                }
+
+                return true;
+            } catch (AssessmentTestSessionException $e) {
+                \common_Logger::w($e->getMessage());
+                return false;
+            }
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-        return true;
     }
 
     /**
@@ -494,12 +539,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
-     * Finishes the test
+     * Exits the test before its end
      * @param RunnerServiceContext $context
      * @return boolean
      * @throws \common_Exception
      */
-    public function finish(RunnerServiceContext $context)
+    public function exitTest(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
@@ -511,8 +556,38 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+    }
 
-        return true;
+
+    /**
+     * Finishes the test
+     * @param RunnerServiceContext $context
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function finish(RunnerServiceContext $context)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            $executionUri = $context->getTestExecutionUri();
+            $userUri = \common_session_SessionManager::getSession()->getUserUri();
+
+            $executionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
+            $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
+            if ($deliveryExecution->getUserIdentifier() == $userUri) {
+                \common_Logger::i("Finishing the delivery execution {$executionUri}");
+                $result = $deliveryExecution->setState(DeliveryExecution::STATE_FINISHIED);
+            } else {
+                \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
+                $result = false;
+            }
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+
+
+        
+
+        return $result;
     }
 
     /**

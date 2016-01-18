@@ -45,9 +45,12 @@
         }
         &.horizontal-action-bar {
             opacity: 1;
+            overflow-y:visible;
+            min-height: #{(map-get($heights, horizontal-action-bar)) * 1px };
 
             .title-box {
-                padding-top: 4px;
+                @include font-size(14);
+                padding: 4px 0 0;
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;

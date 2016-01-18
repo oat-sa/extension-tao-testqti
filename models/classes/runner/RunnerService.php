@@ -140,6 +140,14 @@ interface RunnerService
     public function timeout(RunnerServiceContext $context, $scope, $ref);
     
     /**
+     * Exits the test before its end
+     * @param RunnerServiceContext $context
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function exitTest(RunnerServiceContext $context);
+    
+    /**
      * Finishes the test
      * @param RunnerServiceContext $context
      * @return boolean

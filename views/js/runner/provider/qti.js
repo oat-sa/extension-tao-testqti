@@ -126,20 +126,36 @@ define([
                 }
             };
 
+            var store = function store(){
+
+               var context = self.getTestContext();
+
+               var responses = self.itemRunner.getResponses();
+               var state = self.itemRunner.getState();
+
+                return Promise.all([
+                    self.getProxy().submitItemState(context.itemUri, state),
+                    self.getProxy().storeItemResponse(context.itemUri, responses)
+                ]);
+            };
+
             //install behavior events handlers
             this.on('ready', function(){
                 load();
             })
             .on('move', function(direction, scope, position){
 
-                computeNext('move', {
-                    direction : direction,
-                    scope     : scope || 'item',
-                    position  : position
+                store().then(function(){
+                    computeNext('move', {
+                        direction : direction,
+                        scope     : scope || 'item',
+                        position  : position
+                    });
+                }).catch(function(err){
+                    self.trigger('error', err);
                 });
             })
             .on('skip', function(scope){
-
                 computeNext('skip', {
                     scope     : scope || 'item'
                 });
@@ -191,12 +207,6 @@ define([
                 })
                 .on('error', reject)
                 .on('render', resolve)
-                .on('statechange', function(state){
-                    console.log(state);
-                })
-                .on('responsechange', function(responses){
-                    console.log(responses);
-                })
                 .init()
                 .setState(item.state)
                 .render(self.getAreaBroker().getContentArea());

@@ -23,6 +23,7 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'core/promise',
     'ui/feedback',
     'layout/loading-bar',
@@ -30,8 +31,9 @@ define([
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
-
     'taoQtiTest/runner/proxy/qtiServiceProxy',
+
+    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
     'taoQtiTest/runner/plugins/controls/title/title',
     'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'taoQtiTest/runner/plugins/navigation/next',
@@ -41,9 +43,9 @@ define([
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
-    $, _, Promise, feedback, loadingBar,
+    $, _, __, Promise, feedback, loadingBar,
     runner, qtiProvider, proxy, qtiServiceProxy,
-    title, progressbar, next, previous, nextSection, skip
+    rubricBlock, title, progressbar, next, previous, nextSection, skip
 ) {
     'use strict';
 
@@ -57,6 +59,7 @@ define([
 
 
     var plugins = {
+        rubricBlock : rubricBlock,
         title       : title,
         progress    : progressbar,
         previous    : previous,
@@ -69,17 +72,6 @@ define([
      * The runner controller
      */
     var runnerController = {
-
-        /**
-         * Controller entry point
-         * @param {Object} options - options to give to the test runner
-         * @param {String} options.testDefinition
-         * @param {String} options.testCompilation
-         * @param {String} options.serviceCallId
-         * @param {String} options.serviceExtension
-         * @param {String} options.serviceController
-         * @param {String} options.exitUrl
-         */
         start : function start(options){
 
             var config = _.defaults(options || {}, {
@@ -91,13 +83,39 @@ define([
             //instantiate the QtiTestRunner
             runner('qti', plugins, config)
                 .on('error', function(err){
+                    var message = err;
+                    var type = 'error';
 
                     loadingBar.stop();
+
+                    if ('object' === typeof err) {
+                        message = err.message;
+                        type = err.type;
+                    }
+
+                    if (!message) {
+                        switch (type) {
+                            case 'TestState':
+                                message = __('The test has been closed/suspended!');
+                                break;
+
+                            case 'FileNotFound':
+                                message = __('File not found!');
+                                break;
+
+                            default:
+                                message = __('An error occurred!');
+                        }
+                    }
 
                     //TODO to be replaced by the logger
                     window.console.error(err);
 
-                    feedback().error(err);
+                    feedback().error(message);
+
+                    if ('TestState' === type) {
+                        // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
+                    }
                 })
                 .on('ready', function(){
                     _.defer(function(){

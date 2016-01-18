@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestSessionMetaData;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
@@ -93,26 +94,39 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @param string $testDefinitionUri
      * @param string $testCompilationUri
      * @param string $testExecutionUri
+     * @throws \common_Exception
      */
     public function __construct($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
         $this->testDefinitionUri = $testDefinitionUri;
         $this->testCompilationUri = $testCompilationUri;
         $this->testExecutionUri = $testExecutionUri;
-        
-        $this->init();
-    }
 
-    /**
-     * Delegated constructor
-     * @throws \common_Exception
-     */
-    protected function init()
-    {
         $this->initCompilationDirectory();
         $this->initTestDefinition();
         $this->initStorage();
         $this->initTestSession();
+    }
+
+    /**
+     * Starts the context
+     * @throws \common_Exception
+     */
+    public function init()
+    {
+        // code borrowed from the previous implementation, maybe obsolete...
+        /** @var SessionStateService $sessionStateService */
+        $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
+        $sessionStateService->resumeSession($this->getTestSession());
+
+        $this->retrieveTestMeta();
+
+        $metaDataHandler = $this->getMetaDataHandler();
+        $metaDataHandler->registerItemCallbacks();
+        $metaData = $metaDataHandler->getData();
+        if (!empty($metaData)) {
+            $metaDataHandler->save($metaData);
+        }
     }
     
     /**
@@ -181,7 +195,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
      */
-    public function retrieveTestMeta() {
+    protected function retrieveTestMeta() {
         $directories = $this->getCompilationDirectory();
         $privateDirectoryPath = $directories['private']->getPath();
         $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
