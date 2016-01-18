@@ -569,10 +569,10 @@ msgid "This constraint controls whether or not the candidate is allowed to provi
 msgstr "Esta restricción controla si se permite o no al candidato proporcionar un comentario sobre el tema durante la sesión. Los comentarios no son parte de las respuestas evaluadas."
 
 msgid "This test has been suspended"
-msgstr ""
+msgstr "Esta prueba ha sido suspendida"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Esta prueba es terminado"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Alcanzó el límite de tiempo para el ítem \"%s\"."
