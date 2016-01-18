@@ -603,7 +603,7 @@ function (
                 this.resetCurrentItemState();
                 this.initMetadata();
 
-                $controls.$itemFrame = $('<iframe id="qti-item" frameborder="0" scrollbars="no"/>');
+                $controls.$itemFrame = $('<iframe style="height:100%;" id="qti-item" frameborder="0" scrollbars="no"/>');
                 $controls.$itemFrame.appendTo($controls.$contentBox);
 
                 if (this.testContext.itemSessionState === this.TEST_ITEM_STATE_INTERACTING && self.testContext.isTimeout === false) {
@@ -909,22 +909,6 @@ function (
                         var $sideBar = $(this);
                         $sideBar.height(finalHeight - $sideBar.outerHeight() + $sideBar.height());
                     });
-                }
-
-                if(itemFrame && itemFrame.contentWindow){
-                    frameContentHeight = $controls.$itemFrame.contents().outerHeight(true);
-
-                    if (frameContentHeight < finalHeight) {
-                        if (rubricHeight) {
-                            frameContentHeight = Math.max(frameContentHeight, finalHeight - rubricHeight);
-                        } else {
-                            frameContentHeight = finalHeight;
-                        }
-                    }
-                    if (itemFrame.contentWindow.$) {
-                        itemFrame.contentWindow.$('body').trigger('setheight', [frameContentHeight]);
-                    }
-                    $controls.$itemFrame.height(frameContentHeight);
                 }
             },
 
