@@ -40,12 +40,13 @@ define([
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
+    'taoQtiTest/runner/plugins/content/overlay/overlay',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
     $, _, __, Promise, feedback, loadingBar,
     runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, progressbar, next, previous, nextSection, skip
+    rubricBlock, title, progressbar, next, previous, nextSection, skip, overlay
 ) {
     'use strict';
 
@@ -65,7 +66,8 @@ define([
         previous    : previous,
         next        : next,
         skip        : skip,
-        nextSection : nextSection
+        nextSection : nextSection,
+        overlay     : overlay
     };
 
     /**
@@ -116,6 +118,12 @@ define([
                     if ('TestState' === type) {
                         // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
                     }
+                })
+                .on('warning', function(message){
+                    feedback().warning(message);
+                })
+                .on('info', function(message){
+                    feedback().info(message);
                 })
                 .on('ready', function(){
                     _.defer(function(){
