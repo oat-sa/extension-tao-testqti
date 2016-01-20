@@ -178,6 +178,23 @@ define([
                     scope     : scope || 'item'
                 });
             })
+            .on('timeout', function(){
+                var context = self.getTestContext();
+
+                context.isTimeout = true;
+                self.disableItem(context.itemUri);
+
+                self.trigger('warning', __('Time limit reached, this part of the test has ended.'));
+
+                self.getProxy()
+                    .callTestAction('timeout')
+                    .then(function(results){
+                        self.setTestContext(results.testContext);
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+            })
             .on('renderitem', function(itemRef){
                 var context = self.getTestContext();
                 var states = self.getTestData().states;

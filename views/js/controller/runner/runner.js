@@ -35,6 +35,7 @@ define([
 
     'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
     'taoQtiTest/runner/plugins/controls/title/title',
+    'taoQtiTest/runner/plugins/controls/timer/timer',
     'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'taoQtiTest/runner/plugins/navigation/next',
     'taoQtiTest/runner/plugins/navigation/previous',
@@ -46,7 +47,7 @@ define([
 ], function(
     $, _, __, Promise, feedback, loadingBar,
     runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, progressbar, next, previous, nextSection, skip, overlay
+    rubricBlock, title, timer, progressbar, next, previous, nextSection, skip, overlay
 ) {
     'use strict';
 
@@ -62,6 +63,7 @@ define([
     var plugins = {
         rubricBlock : rubricBlock,
         title       : title,
+        timer       : timer,
         progress    : progressbar,
         previous    : previous,
         next        : next,
