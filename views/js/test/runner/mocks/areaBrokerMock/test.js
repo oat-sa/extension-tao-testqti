@@ -23,23 +23,19 @@
  */
 define([
     'jquery',
-    'taoQtiTest/test/runner/mocks/areaBrokerMock',
-], function ($, areaBrokerMock){
+    'taoQtiTest/test/runner/mocks/areaBrokerMock'
+], function ($, areaBrokerMock) {
     'use strict';
-
-    var fixture = '#qunit-fixture';
 
     QUnit.module('API');
 
 
-    QUnit.test('module', 1, function (assert){
+    QUnit.test('module', 1, function (assert) {
         assert.equal(typeof areaBrokerMock, 'function', "The module exposes a function");
     });
 
 
-    QUnit.test('factory', 33, function (assert){
-        var $fixture = $(fixture);
-        var $container = $('<div />').addClass('test-runner').appendTo($fixture);
+    QUnit.test('factory', 21, function (assert) {
         var extraArea = 'extra';
         var areas = [
             'content',
@@ -49,59 +45,33 @@ define([
             'header',
             'panel'
         ];
+        var broker = areaBrokerMock();
 
-        $container.append($('<div />').addClass('dummy'));
+        assert.equal(typeof broker, 'object', "The factory creates an object");
+        assert.equal(broker.getContainer().length, 1, "The container exists");
+        assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
 
-        assert.ok($fixture.length,  "The fixture exists");
-        assert.ok($container.length,  "The container exists");
-        assert.equal($container.children().length, 1, "The container contains an element");
-
-        var areaBroker = areaBrokerMock($container);
-
-        assert.equal(typeof areaBroker, 'object', "The factory creates an object");
-        assert.equal($container.find('.dummy').length, 0, "The container must be cleaned before the mocks are added");
-        assert.equal($container.children().length, areas.length, "The container contains the exact number of areas");
-
-        _.forEach(areas, function(area) {
-            assert.equal($container.find('.' + area).length, 1, "The container must contain an area related to " + area);
+        _.forEach(areas, function (area) {
+            assert.equal(broker.getContainer().find('.' + area).length, 1, "The container must contain an area related to " + area);
         });
 
-        areaBroker = areaBrokerMock($container, [extraArea]);
+        broker = areaBrokerMock([extraArea]);
 
-        assert.equal(typeof areaBroker, 'object', "The factory creates an object");
-        assert.equal($container.children().length, areas.length + 1, "The container contains the exact number of areas");
-        assert.equal($container.find('.' + extraArea).length, 1, "The container must contain the extra area");
+        assert.equal(typeof broker, 'object', "The factory creates an object");
+        assert.equal(broker.getContainer().length, 1, "The container exists");
+        assert.equal(broker.getContainer().children().length, areas.length + 1, "The container contains the exact number of areas");
+        assert.equal(broker.getContainer().find('.' + extraArea).length, 1, "The container must contain the extra area");
 
-        _.forEach(areas, function(area) {
-            assert.equal($container.find('.' + area).length, 1, "The container must contain an area related to " + area);
+        _.forEach(areas, function (area) {
+            assert.equal(broker.getContainer().find('.' + area).length, 1, "The container must contain an area related to " + area);
         });
 
         assert.notEqual(areaBrokerMock(), areaBrokerMock(), "The factory creates new instances");
-
-        areaBroker = areaBrokerMock();
-
-        assert.notEqual(areaBroker.getContainer().get(0), $container.get(0), 'The factory has created a new container');
-
-        assert.equal(typeof areaBroker, 'object', "The factory creates an object");
-        assert.equal(areaBroker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
-
-        _.forEach(areas, function(area) {
-            assert.equal(areaBroker.getContainer().find('.' + area).length, 1, "The container must contain an area related to " + area);
-        });
-
-        $('<div />').addClass('my-mock').appendTo($fixture);
-        areaBroker = areaBrokerMock('.my-mock');
-        assert.ok(areaBroker.getContainer().is('.my-mock'), 'The factory has retrieved the container (string)');
-
-        $container = $('<div />').appendTo($fixture);
-        areaBroker = areaBrokerMock($container.get(0));
-        assert.ok(areaBroker.getContainer().is($container.get(0)), 'The factory has retrieved the container (element)');
+        assert.notEqual(areaBrokerMock().getContainer().get(0), areaBrokerMock().getContainer().get(0), 'The factory creates a new container for each instance');
     });
 
 
-    QUnit.test('broker api', 5, function (assert){
-        var $fixture = $(fixture);
-        var $container = $('<div />').addClass('test-runner').appendTo($fixture);
+    QUnit.test('broker api', 5, function (assert) {
         var areas = [
             'content',
             'toolbox',
@@ -110,11 +80,10 @@ define([
             'header',
             'panel'
         ];
+        var broker = areaBrokerMock(areas);
 
-        assert.ok($container.length,  "The container exists");
-
-        var broker = areaBrokerMock($container, areas);
-        assert.equal($container.children().length, areas.length, "The container contains the exact number of areas");
+        assert.equal(broker.getContainer().length, 1, "The container exists");
+        assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
 
         assert.equal(typeof broker.defineAreas, 'function', 'The broker has a defineAreas function');
         assert.equal(typeof broker.getContainer, 'function', 'The broker has a getContainer function');
@@ -122,9 +91,7 @@ define([
     });
 
 
-    QUnit.test('retrieve', function (assert){
-        var $fixture = $(fixture);
-        var $container = $('<div />').addClass('test-runner').appendTo($fixture);
+    QUnit.test('retrieve', 8, function (assert) {
         var areas = [
             'content',
             'toolbox',
@@ -133,15 +100,12 @@ define([
             'header',
             'panel'
         ];
+        var broker = areaBrokerMock(areas);
 
-        assert.ok($container.length,  "The container exists");
+        assert.equal(broker.getContainer().length, 1, "The container exists");
+        assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
 
-        var broker = areaBrokerMock($container, areas);
-        assert.equal($container.children().length, areas.length, "The container contains the exact number of areas");
-
-        assert.deepEqual(broker.getContainer(), $container, 'The container match');
-
-        _.forEach(areas, function(area) {
+        _.forEach(areas, function (area) {
             assert.equal(broker.getArea(area).length, 1, "The container can retrieve the area " + area);
         });
     });

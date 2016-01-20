@@ -27,7 +27,7 @@ define([
 
     /**
      * The list of default areas
-     * @type {string[]}
+     * @type {String[]}
      */
     var defaultAreas = [
         'content',      //where the content is renderer, for example an item
@@ -38,28 +38,20 @@ define([
         'panel'         //a panel to add more advanced GUI (item review, navigation pane, etc.)
     ];
 
+    /**
+     * A counter utilised to generate the mock identifiers
+     * @type {Number}
+     */
     var mockId = 0;
 
     /**
-     * Gets the default container
-     * @returns {*|jQuery|HTMLElement}
-     */
-    function getDefaultContainer() {
-        return $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner').appendTo('#qunit-fixture');
-    }
-
-    /**
-     * Build and return a new areaBrocker with dedicated areas.
-     * @param $container - The container in which make the rendering. Default to #qunit-fixture
+     * Builds and returns a new areaBroker with dedicated areas.
      * @param areas - A list of areas to create
-     * @returns {areaBroker} - Returns the new areaBrocker
+     * @returns {areaBroker} - Returns the new areaBroker
      */
-    function areaBrokerMock($container, areas) {
+    function areaBrokerMock(areas) {
         var mapping = {};
-
-        if (!$container) {
-            $container = getDefaultContainer();
-        }
+        var $container = $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner');
 
         if (!areas) {
             areas = defaultAreas;
@@ -67,14 +59,8 @@ define([
             areas = _.keys(_.merge(_.object(areas), _.object(defaultAreas)));
         }
 
-        if (typeof $container === 'string' || $container instanceof HTMLElement) {
-            $container = $($container);
-        }
-
-        $container.empty();
-
         _.forEach(areas, function (areaId) {
-            mapping[areaId] = $('<div />').addClass(areaId).appendTo($container);
+            mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($container);
         });
 
         return areaBroker($container, mapping);
