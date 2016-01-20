@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\data\NavigationMode;
 use qtism\runtime\common\State;
+use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -162,6 +163,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 'modalFeedback' => AssessmentTestSessionState::MODAL_FEEDBACK,
                 'suspended'     => AssessmentTestSessionState::SUSPENDED,
                 'closed'        => AssessmentTestSessionState::CLOSED
+            ];
+
+            $response['itemStates'] = [
+                'initial'       => AssessmentItemSessionState::INITIAL,
+                'interacting'   => AssessmentItemSessionState::INTERACTING,
+                'modalFeedback' => AssessmentItemSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentItemSessionState::SUSPENDED,
+                'closed'        => AssessmentItemSessionState::CLOSED,
+                'solution'      => AssessmentItemSessionState::SOLUTION,
+                'review'        => AssessmentItemSessionState::REVIEW,
+                'notSelected'   => AssessmentItemSessionState::NOT_SELECTED
             ];
 
             $timeLimits = $testDefinition->getTimeLimits();
