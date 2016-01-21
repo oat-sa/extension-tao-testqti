@@ -41,12 +41,13 @@ define([
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
     'taoQtiTest/runner/plugins/content/overlay/overlay',
+    'taoQtiTest/runner/plugins/content/dialog/dialog',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
     $, _, __, Promise, feedback, loadingBar,
     runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, progressbar, next, previous, nextSection, skip, overlay
+    rubricBlock, title, progressbar, next, previous, nextSection, skip, overlay, dialog
 ) {
     'use strict';
 
@@ -67,14 +68,32 @@ define([
         next        : next,
         skip        : skip,
         nextSection : nextSection,
-        overlay     : overlay
+        overlay     : overlay,
+        dialog      : dialog
     };
 
     /**
      * The runner controller
      */
     var runnerController = {
+
+        /**
+         * Controller entry point
+         *
+         * TODO verify required options
+         *
+         * @param {Object} options - the testRunner options
+         * @param {String} options.testDefinition
+         * @param {String} optins.testCompilation
+         * @param {String} optins.serviceCallId
+         * @param {String} optins.serviceController
+         * @param {String} optins.serviceExtension
+         * @param {String} optins.exitUrl - the full URL where to return at the final end of the test
+         */
         start : function start(options){
+
+            //keep a ref of the feedbacks
+            var currentFeedback;
 
             var config = _.defaults(options || {}, {
                 renderTo : $('.runner')
@@ -113,17 +132,17 @@ define([
                     //TODO to be replaced by the logger
                     window.console.error(err);
 
-                    feedback().error(message);
+                    currentFeedback = feedback().error(message);
 
                     if ('TestState' === type) {
                         // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
                     }
                 })
                 .on('warning', function(message){
-                    feedback().warning(message);
+                    currentFeedback = feedback().warning(message);
                 })
                 .on('info', function(message){
-                    feedback().info(message);
+                    currentFeedback = feedback().info(message);
                 })
                 .on('ready', function(){
                     _.defer(function(){
@@ -131,7 +150,13 @@ define([
                     });
                 })
                 .on('unloaditem', function(){
+
                     loadingBar.start();
+
+                    //close any feedback in order to not mess messages
+                    if(currentFeedback){
+                        currentFeedback.close();
+                    }
                 })
                 .on('renderitem', function(){
                     loadingBar.stop();
@@ -140,6 +165,8 @@ define([
                     this.destroy();
                 })
                 .on('destroy', function(){
+
+                    //at the end, we are redirected to the exit URL
                     window.location = config.exitUrl;
                 })
                 .init();

@@ -171,7 +171,8 @@ define([
             })
             .on('move', function(direction, scope, position){
 
-                store().then(function(){
+                store().then(function(results){
+
                     computeNext('move', {
                         direction : direction,
                         scope     : scope || 'item',
