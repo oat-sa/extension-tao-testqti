@@ -20,9 +20,14 @@
 
 namespace oat\taoQtiTest\models;
 
+use DateTime;
+use qtism\common\datatypes\Duration;
+use qtism\data\AssessmentItemRef;
+use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
+use taoResultServer_models_classes_TraceVariable;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
@@ -139,8 +144,55 @@ class TestSessionMetaData
                     $itemSession->registerCallback(
                         'suspend',
                         function ($item, $testSessionMetaData) {
+                            $time = microtime(true);
+                            /** @var $testSessionMetaData TestSessionMetaData */
+                            $session  = $testSessionMetaData->getTestSession();
+                            $section  = $session->getCurrentAssessmentSection();
+
+                            $testPart = $session->getCurrentTestPart();
+                            $test     = $session->getAssessmentTest();
+
+                            $testMaxTimeAllowed     = $test->hasTimeLimits() ? $test->getTimeLimits()->getMaxTime() : null;
+                            $testPartMaxTimeAllowed = $testPart->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
+                            $sectionMaxTimeAllowed  = $section->hasTimeLimits() ? $section->getTimeLimits()->getMaxTime() : null;
+                            $itemMaxTimeAllowed     = $item->hasTimeLimits() ? $item->getTimeLimits()->getMaxTime() : null;
+
+                            $timeLimits = array_filter(array(
+                                $testMaxTimeAllowed,
+                                $testPartMaxTimeAllowed,
+                                $sectionMaxTimeAllowed,
+                                $itemMaxTimeAllowed
+                            ));
+
+                            usort($timeLimits, function ($a, $b) {
+                                /** @var $a Duration */
+                                if ($a->equals($b)) {
+                                    return 0;
+                                };
+
+                                return $a->longerThanOrEquals($b) ? 1 : - 1;
+
+                            });
+
+                            $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
+
+                            if (isset( $timeLimits[count($timeLimits) - 1] )) {
+                                $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
+
+                                $latestPossibleSectionTime = $startTimeSection->add(new \DateInterval('PT' . $maxAllowedTime->getSeconds() . 'S'));
+
+                                if ($time > $latestPossibleSectionTime->getTimestamp()) {
+                                    $currentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
+                                    if ($itemMaxTimeAllowed) {
+                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new \DateInterval('PT' . $itemMaxTimeAllowed->getSeconds() . 'S'))->getTimestamp();
+                                    } else {
+                                        $time = $latestPossibleSectionTime->getTimestamp();
+                                    }
+                                }
+                            }
+
                             $testSessionMetaData->save(
-                                array('ITEM' => array('ITEM_END_TIME_SERVER' => microtime(true)))
+                                array('ITEM' => array('ITEM_END_TIME_SERVER' => $time))
                             );
                         },
                         array($this)
@@ -213,11 +265,11 @@ class TestSessionMetaData
      *
      * @param string $identifier
      * @param string $value
-     * @return \taoResultServer_models_classes_TraceVariable variable instance to save.
+     * @return taoResultServer_models_classes_TraceVariable variable instance to save.
      */
     private function getVariable($identifier, $value)
     {
-        $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+        $metaVariable = new taoResultServer_models_classes_TraceVariable();
         $metaVariable->setIdentifier($identifier);
         $metaVariable->setBaseType('string');
         $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
@@ -230,9 +282,63 @@ class TestSessionMetaData
      * Get test session instance
      * @return AssessmentTestSession|\taoQtiTest_helpers_TestSession
      */
-    private function getTestSession()
+    public function getTestSession()
     {
         return $this->session;
     }
 
+    /**
+     * Retrieve information about passed items
+     * @return DateTime
+     * @throws \common_exception_Error
+     */
+    public function getStartSectionTime()
+    {
+        $itemResults        = array();
+        $assessmentItemsRef = $this->getTestSession()->getCurrentAssessmentSection()->getComponentsByClassName('assessmentItemRef');
+
+        /** @var ExtendedAssessmentItemRef $itemRef */
+        foreach ($assessmentItemsRef as $itemRef) {
+            $itemResults[] = $this->getItemStartTime($itemRef);
+        }
+        $sectionStart = min(array_filter($itemResults));
+
+        return $sectionStart;
+    }
+
+    /**
+     * @param AssessmentItemRef $itemRef
+     *
+     * @return DateTime
+     */
+    public function getItemStartTime($itemRef)
+    {
+        $itemResults   = array();
+        $itemStartTime = null;
+
+        $ssid         = $this->getTestSession()->getSessionId();
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $collection   = $resultServer->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
+
+        foreach ($collection as $vars) {
+            foreach ($vars as $var) {
+                if ($var->variable instanceof taoResultServer_models_classes_TraceVariable && $var->variable->getIdentifier() === 'ITEM_START_TIME_SERVER') {
+                    $itemResults[] = $var->variable->getValue();
+                }
+            }
+        }
+
+        $itemResults = array_map(function ($ts) {
+            $itemStart = (new DateTime('now', new \DateTimeZone('UTC')));
+            $itemStart->setTimestamp($ts);
+
+            return $itemStart;
+        }, $itemResults);
+
+        if ( ! empty( $itemResults )) {
+            $itemStartTime = min($itemResults);
+        }
+
+        return $itemStartTime;
+    }
 }
