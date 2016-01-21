@@ -25,6 +25,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'moment',
     'core/polling',
     'core/timer',
     'core/encoder/time',
@@ -32,7 +33,7 @@ define([
     'ui/dialog/alert',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timer'
-], function ($, _, __, pollingFactory, timerFactory, time, feedback, dialogAlert, pluginFactory, timerTpl) {
+], function ($, _, __, moment, pollingFactory, timerFactory, time, feedback, dialogAlert, pluginFactory, timerTpl) {
     'use strict';
 
     /**
@@ -40,6 +41,12 @@ define([
      * @type {Number}
      */
     var timerRefresh = 1000;
+
+    /**
+     * Duration of a second in the timer's base unit
+     * @type {Number}
+     */
+    var precision = 1000;
 
     /**
      * Creates the timer plugin
@@ -53,8 +60,9 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData();
-            var itemStates = testData.itemStates;
+            var testData = testRunner.getTestData() || {};
+            var itemStates = testData.itemStates || {};
+            var timerWarning = testData.config && testData.config.timerWarning || {};
             var timers = [];
 
             /**
@@ -74,10 +82,14 @@ define([
                         var timer = {
                             label: timeConstraint.label,
                             type: timeConstraint.qtiClassName,
-                            remaining: timeConstraint.seconds,
+                            remaining: timeConstraint.seconds * precision,
                             control: timeConstraint.source,
                             value: time.encode(timeConstraint.seconds)
                         };
+
+                        if (timerWarning[timer.type]) {
+                            timer.warning = parseInt(timerWarning[timer.type], 10) * precision;
+                        }
 
                         config.timers.push(timer);
                         config.index[timer.control] = timer;
@@ -113,7 +125,7 @@ define([
              */
             function updateElement() {
                 _.forEach(timers, function(timer) {
-                    timer.value = time.encode(timer.remaining);
+                    timer.value = time.encode(timer.remaining / precision);
                     if (timer.$time) {
                         timer.$time.text(timer.value);
                     }
@@ -121,16 +133,51 @@ define([
             }
 
             /**
+             * Display a warning message with the remaining time
+             * @param timer
+             */
+            function warning(timer) {
+                var remaining = moment.duration(timer.remaining / precision, "seconds").humanize();
+                var message;
+
+                switch (timer.type) {
+                    case 'assessmentItemRef':
+                        message = __("Warning – You have %s remaining to complete this item.", remaining);
+                        break;
+
+                    case 'assessmentSection':
+                        message = __("Warning – You have %s remaining to complete this section.", remaining);
+                        break;
+
+                    case 'testPart':
+                        message = __("Warning – You have %s remaining to complete this test part.", remaining);
+                        break;
+
+                    case 'assessmentTest':
+                        message = __("Warning – You have %s remaining to complete the test.", remaining);
+                        break;
+                }
+
+                testRunner.trigger('warning', message);
+                timer.warning = 0;
+            }
+
+            /**
              * Updates each timer
              */
             function tick() {
                 // get the time elapsed since the last tick
-                var elapsed = self.timer.tick() / 1000;
+                var elapsed = self.timer.tick();
                 var timeout = false;
 
                 // update the timers, detect timeout
                 _.forEach(timers, function(timer) {
                     timer.remaining -= elapsed;
+
+                    if (_.isFinite(timer.warning) && timer.remaining <= timer.warning) {
+                        warning(timer);
+                    }
+
                     if (timer.remaining <= 0) {
                         timer.remaining = 0;
                         timeout = true;
