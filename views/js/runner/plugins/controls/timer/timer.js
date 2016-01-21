@@ -210,7 +210,9 @@ define([
             }
 
             this.$element = createElement();
-            this.timer = timerFactory(false);
+            this.timer = timerFactory({
+                autoStart : false
+            });
             this.polling = pollingFactory({
                 action : function() {
                     tick();
