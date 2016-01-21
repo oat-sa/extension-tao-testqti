@@ -186,18 +186,12 @@ define([
 
                 self.trigger('warning', __('Time limit reached, this part of the test has ended.'));
 
-                self.getProxy()
-                    .callTestAction('timeout')
-                    .then(function(results){
-                        self.setTestContext(results.testContext);
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
-                    });
+                // TODO: handle the action after the test taker has validated the message
+                computeNext('timeout');
             })
             .on('renderitem', function(itemRef){
                 var context = self.getTestContext();
-                var states = self.getTestData().states;
+                var states = self.getTestData().itemStates;
 
                 //should we disable the item ?
                 if(context.itemSessionState > states.interacting){
