@@ -84,15 +84,18 @@ define([
                             type: timeConstraint.qtiClassName,
                             remaining: timeConstraint.seconds * precision,
                             control: timeConstraint.source,
-                            value: time.encode(timeConstraint.seconds)
+                            value: time.encode(timeConstraint.seconds),
+                            running: true
                         };
 
                         if (timerWarning[timer.type]) {
                             timer.warning = parseInt(timerWarning[timer.type], 10) * precision;
                         }
 
-                        config.timers.push(timer);
-                        config.index[timer.control] = timer;
+                        if (!timeConstraint.allowLateSubmission) {
+                            config.timers.push(timer);
+                            config.index[timer.control] = timer;
+                        }
                     });
                 }
                 return config;
@@ -128,6 +131,9 @@ define([
                     timer.value = time.encode(timer.remaining / precision);
                     if (timer.$time) {
                         timer.$time.text(timer.value);
+                    }
+                    if (timer.$control) {
+                        timer.$control.toggleClass('disabled', !timer.running);
                     }
                 });
             }
@@ -169,25 +175,35 @@ define([
                 // get the time elapsed since the last tick
                 var elapsed = self.timer.tick();
                 var timeout = false;
+                var running = 0;
 
                 // update the timers, detect timeout
                 _.forEach(timers, function(timer) {
-                    timer.remaining -= elapsed;
+                    if (timer.running) {
+                        timer.remaining -= elapsed;
 
-                    if (_.isFinite(timer.warning) && timer.remaining <= timer.warning) {
-                        warning(timer);
-                    }
+                        if (_.isFinite(timer.warning) && timer.remaining <= timer.warning) {
+                            warning(timer);
+                        }
 
-                    if (timer.remaining <= 0) {
-                        timer.remaining = 0;
-                        timeout = true;
+                        if (timer.remaining <= 0) {
+                            timer.remaining = 0;
+                            timer.running = 0;
+                            timeout = true;
+                        } else {
+                            running ++;
+                        }
                     }
                 });
 
                 // timeout ?
                 if (timeout) {
-                    self.disable();
                     testRunner.timeout();
+                }
+
+                // no timer running anymore ?
+                if (!running) {
+                    self.disable();
                 }
 
                 return timeout;
