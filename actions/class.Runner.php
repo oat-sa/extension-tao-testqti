@@ -565,4 +565,31 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+
+    /**
+     * allow client to store information about the test, the section or the item
+     */
+    public function storeTraceData(){
+        $code = 200;
+
+        $itemRef = ($this->hasRequestParameter('itemDefinition'))?$this->getRequestParameter('itemDefinition'): null;
+
+        $variableIdentifier = $this->getRequestParameter('variableIdentifier');
+        $variableValue = $this->getRequestParameter('variableValue');
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $response = [
+                'success' => $this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue),
+            ];
+
+            $this->runnerService->persist($serviceContext);
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
 }
