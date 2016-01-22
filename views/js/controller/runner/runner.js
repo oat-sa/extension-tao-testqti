@@ -84,11 +84,11 @@ define([
          *
          * @param {Object} options - the testRunner options
          * @param {String} options.testDefinition
-         * @param {String} optins.testCompilation
-         * @param {String} optins.serviceCallId
-         * @param {String} optins.serviceController
-         * @param {String} optins.serviceExtension
-         * @param {String} optins.exitUrl - the full URL where to return at the final end of the test
+         * @param {String} options.testCompilation
+         * @param {String} options.serviceCallId
+         * @param {String} options.serviceController
+         * @param {String} options.serviceExtension
+         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start : function start(options){
 
