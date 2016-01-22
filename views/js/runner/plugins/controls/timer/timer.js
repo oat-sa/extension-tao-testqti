@@ -29,11 +29,9 @@ define([
     'core/polling',
     'core/timer',
     'core/encoder/time',
-    'ui/feedback',
-    'ui/dialog/alert',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timer'
-], function ($, _, __, moment, pollingFactory, timerFactory, time, feedback, dialogAlert, pluginFactory, timerTpl) {
+], function ($, _, __, moment, pollingFactory, timerFactory, time, pluginFactory, timerTpl) {
     'use strict';
 
     /**
