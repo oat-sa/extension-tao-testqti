@@ -61,7 +61,7 @@ define([
                 'toolbox' : $('.tools-box', $layout),
                 'navigation' : $('.navi-box-list', $layout),
                 'control' : $('.top-action-bar .control-box', $layout),
-                'panel' : $('.test-sidebar', $layout),
+                'panel' : $('.test-sidebar-left', $layout),
                 'header' : $('.title-box', $layout)
             });
         },
