@@ -31,6 +31,7 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\State;
+use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -185,6 +186,26 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $response['toolName'] = $testDefinition->getToolName();
             $response['exclusivelyLinear'] = $testDefinition->isExclusivelyLinear();
             $response['hasTimeLimits'] = $testDefinition->hasTimeLimits();
+
+            //states that can be found in the context
+            $response['states'] = [
+                'initial'       => AssessmentTestSessionState::INITIAL,
+                'interacting'   => AssessmentTestSessionState::INTERACTING,
+                'modalFeedback' => AssessmentTestSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentTestSessionState::SUSPENDED,
+                'closed'        => AssessmentTestSessionState::CLOSED
+            ];
+
+            $response['itemStates'] = [
+                'initial'       => AssessmentItemSessionState::INITIAL,
+                'interacting'   => AssessmentItemSessionState::INTERACTING,
+                'modalFeedback' => AssessmentItemSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentItemSessionState::SUSPENDED,
+                'closed'        => AssessmentItemSessionState::CLOSED,
+                'solution'      => AssessmentItemSessionState::SOLUTION,
+                'review'        => AssessmentItemSessionState::REVIEW,
+                'notSelected'   => AssessmentItemSessionState::NOT_SELECTED
+            ];
 
             $timeLimits = $testDefinition->getTimeLimits();
             if ($timeLimits) {
