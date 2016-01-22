@@ -352,20 +352,28 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function storeItemResponse()
     {
         $code = 200;
-        
+
         $itemRef = $this->getRequestParameter('itemDefinition');
 
         $itemResponse = \taoQtiCommon_helpers_Utils::readJsonPayload();
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
-            $response = [
+
+            $response = array(
                 'success' => $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse),
-            ];
-            
+                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext)
+            );
+
+            if($response['displayFeedbacks'] == true){
+
+                //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
+                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
+            }
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
