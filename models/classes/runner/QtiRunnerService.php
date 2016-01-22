@@ -518,7 +518,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if (file_exists($varEltPath)) {
                 $variableData = json_decode(file_get_contents($varEltPath), true); 
                 foreach( $variableData as $key => $element){
-                    if($element['qtiClass'] == 'modalFeedback'){
+                    if(isset($element['qtiClass']) && $element['qtiClass'] == 'modalFeedback'){
                         $feedbacks[$key] = $element;
                     }
                 }
