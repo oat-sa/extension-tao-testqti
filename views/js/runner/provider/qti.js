@@ -169,6 +169,7 @@ define([
              */
             var updateStats = function updateStats(answered){
 
+               var testPart, section, item;
                var stats = {
                     answered : 0,
                     viewed : 0
@@ -176,10 +177,7 @@ define([
 
                var context = self.getTestContext();
                var testMap = self.getTestMap();
-
-               var testPart = testMap.parts[context.testPartId];
-               var section  = testPart.sections[context.sectionId];
-               var item     = section.items[context.itemIdentifier];
+               var states = self.getTestData().states;
 
                //reduce by sum up the stats
                var accStats = function accStats(acc, level){
@@ -187,6 +185,14 @@ define([
                     acc.viewed += level.stats.viewed;
                     return acc;
                };
+
+               if(context.state !== states.interacting){
+                   return;
+               }
+
+               testPart = testMap.parts[context.testPartId];
+               section  = testPart.sections[context.sectionId];
+               item     = section.items[context.itemIdentifier];
 
                //flag as viewed, always
                item.viewed = true;
