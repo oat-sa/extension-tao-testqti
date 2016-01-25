@@ -27,10 +27,71 @@ define([
     'jquery',
     'i18n',
     'taoTests/runner/plugin',
-    'taoQtiTest/testRunner/progressUpdater',
-    'tpl!taoQtiTest/runner/plugins/controls/progressbar/progressbar'
-], function ($, __, pluginFactory, progressUpdater, progressTpl){
+    'tpl!taoQtiTest/runner/plugins/controls/progressbar/progressbar',
+    'ui/progressbar'
+], function ($, __, pluginFactory, progressTpl){
     'use strict';
+
+    /**
+     * Calculate progression based on the current context
+     *
+     * @param {Object} testContext The progression context
+     * @param {String} progressIndicator - to select the progression type
+     * @param {String} [progressScope] - the progression scope
+     * @returns {Object} the progression with a label and a ratio
+     */
+    var progressUpdater = function progressUpdater(testContext, progressIndicator, progressScope){
+
+        /**
+         * Provide progression calculation based on the type of indicator
+         */
+        var updater = {
+
+            /**
+            * Updates the progress bar displaying the percentage
+            * @param {Object} testContext The progression context
+            * @returns {{ratio: number, label: string}}
+            */
+            percentage : function percentage() {
+                var total = Math.max(1, testContext.numberItems);
+                var ratio = Math.floor(testContext.numberCompleted / total * 100);
+                return {
+                    ratio : ratio,
+                    label : ratio + '%'
+                };
+            },
+
+            /**
+            * Updates the progress bar displaying the position
+            * @param {Object} testContext The progression context
+            * @returns {{ratio: number, label: string}}
+            */
+            position : function position() {
+                var progressScopeCounter = {
+                    test : {
+                        total : 'numberItems',
+                        position : 'itemPosition'
+                    },
+                    testPart : {
+                        total : 'numberItemsPart',
+                        position : 'itemPositionPart'
+                    },
+                    testSection : {
+                        total : 'numberItemsSection',
+                        position : 'itemPositionSection'
+                    }
+                };
+                var counter = progressScopeCounter[progressScope] || progressScopeCounter.test;
+                var total = Math.max(1, testContext[counter.total]);
+                var currentPosition = testContext[counter.position] + 1;
+                return {
+                    ratio : Math.floor(currentPosition / total * 100),
+                    label : __('Item %d of %d', currentPosition, total)
+                };
+            }
+        };
+        return updater[progressIndicator]();
+    };
 
 
     /**
@@ -45,23 +106,30 @@ define([
          */
         init : function init(){
             var self = this;
+            var $progressLabel,
+                $progressControl;
             var testRunner = this.getTestRunner();
+            var testData   = testRunner.getTestData();
+            var progressIndicator = testData.config['progress-indicator'] || 'percentage';
+            var progressScope = testData.config['progress-indicator-scope'] || 'test';
 
-            //update the progress bar at the beginning and
+            /**
+             * Updae the progress bar
+             */
             var update = function update (){
-                if(self.progressUpdater){
-                    self.progressUpdater.update(testRunner.getTestContext());
+                var progressData = progressUpdater(testRunner.getTestContext(), progressIndicator, progressScope);
+                if(progressData && $progressLabel && $progressControl){
+                    $progressLabel.text(progressData.label);
+                    $progressControl.progressbar('value', progressData.ratio);
                 }
             };
 
             //create the progressbar
             this.$element = $(progressTpl());
 
-            //load the updater
-            this.progressUpdater = progressUpdater(
-                    $('[data-control="progress-bar"]', this.$element),
-                    $('[data-control="progress-label"]', this.$element)
-                );
+            $progressLabel = $('[data-control="progress-label"]', this.$element);
+            $progressControl = $('[data-control="progress-bar"]', this.$element);
+            $progressControl.progressbar();
 
             update();
 
@@ -76,6 +144,6 @@ define([
         render : function render(){
             var $container = this.getAreaBroker().getControlArea();
             $container.append(this.$element);
-        },
+        }
     });
 });
