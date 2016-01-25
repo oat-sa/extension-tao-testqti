@@ -93,6 +93,7 @@ class QtiRunnerMap implements RunnerMap
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
                     'answered' => $this->isItemCompleted($routeItem, $itemSession),
+                    'flagged' => \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
                 
@@ -139,7 +140,9 @@ class QtiRunnerMap implements RunnerMap
         if (!isset($target['stats'])) {
             $target['stats'] = [
                 'answered' => 0,
+                'flagged' => 0,
                 'viewed' => 0,
+                'total' => 0,
             ];
         }
         
@@ -147,9 +150,15 @@ class QtiRunnerMap implements RunnerMap
             $target['stats']['answered'] ++;
         }
         
+        if (!empty($itemInfos['flagged'])) {
+            $target['stats']['flagged'] ++;
+        }
+        
         if (!empty($itemInfos['viewed'])) {
             $target['stats']['viewed'] ++;
         }
+        
+        $target['stats']['total'] ++;
     }
 
     /**
