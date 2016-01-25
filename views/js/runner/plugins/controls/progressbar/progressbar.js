@@ -79,7 +79,7 @@ define([
                 var getTestSection = function getTestSection(){
                     var testPart = getTestPart();
                     if(testPart && testPart.sections){
-                        return testPart.sections[testContext.testSectionId];
+                        return testPart.sections[testContext.sectionId];
                     }
                 };
 
