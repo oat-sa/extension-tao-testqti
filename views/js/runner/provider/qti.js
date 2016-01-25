@@ -35,15 +35,6 @@ define([
 ], function($, _, __, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
-    //states that can be found in the context
-    var states = {
-        initial:       0,
-        interacting:   1,
-        modalFeedback: 2,
-        suspended:     3,
-        closed:        4
-    };
-
     //the asset strategies
     var assetManager = assetManagerFactory([
         assetStrategies.external,
@@ -70,7 +61,7 @@ define([
                 'toolbox' : $('.tools-box', $layout),
                 'navigation' : $('.navi-box-list', $layout),
                 'control' : $('.top-action-bar .control-box', $layout),
-                'panel' : $('.test-sidebar', $layout),
+                'panel' : $('.test-sidebar-left', $layout),
                 'header' : $('.title-box', $layout)
             });
         },
@@ -140,6 +131,7 @@ define([
             var load = function load(){
 
                 var context = self.getTestContext();
+                var states = self.getTestData().states;
                 if(context.state <= states.interacting){
                     self.loadItem(context.itemUri);
                 } else if (context.state === states.closed){
@@ -187,8 +179,20 @@ define([
                     scope     : scope || 'item'
                 });
             })
+            .on('timeout', function(){
+                var context = self.getTestContext();
+
+                context.isTimeout = true;
+                self.disableItem(context.itemUri);
+
+                self.trigger('warning', __('Time limit reached, this part of the test has ended.'));
+
+                // TODO: handle the action after the test taker has validated the message
+                computeNext('timeout');
+            })
             .on('renderitem', function(itemRef){
                 var context = self.getTestContext();
+                var states = self.getTestData().itemStates;
 
                 //should we disable the item ?
                 if(context.itemSessionState > states.interacting){
