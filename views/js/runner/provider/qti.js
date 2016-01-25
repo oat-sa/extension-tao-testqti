@@ -172,7 +172,9 @@ define([
                var testPart, section, item;
                var stats = {
                     answered : 0,
-                    viewed : 0
+                    flagged : 0,
+                    viewed : 0,
+                    total : 0
                };
 
                var context = self.getTestContext();
@@ -182,7 +184,9 @@ define([
                //reduce by sum up the stats
                var accStats = function accStats(acc, level){
                     acc.answered += level.stats.answered;
+                    acc.flagged += level.stats.flagged;
                     acc.viewed += level.stats.viewed;
+                    acc.total += level.stats.total;
                     return acc;
                };
 
@@ -202,12 +206,16 @@ define([
 
                //compute section stats from it's items
                section.stats = _.reduce(section.items, function(acc, item){
-                     if(item.answered){
+                    if(item.answered){
                         acc.answered++;
-                     }
-                     if(item.viewed){
+                    }
+                    if(item.flagged){
+                        acc.flagged++;
+                    }
+                    if(item.viewed){
                         acc.viewed++;
                     }
+                    acc.total ++;
                     return acc;
                 }, _.clone(stats));
 
