@@ -114,9 +114,13 @@ define([
                         .callItemAction(context.itemUri, action, params)
                         .then(function(results){
 
-                                self.setTestContext(results.testContext);
+                            self.setTestContext(results.testContext);
 
-                                load();
+                            if (results.testMap) {
+                                self.setTestMap(results.testMap);
+                            }
+
+                            load();
                         })
                         .catch(function(err){
                             self.trigger('error', err);
@@ -216,6 +220,7 @@ define([
                        .then(function(results){
                             self.setTestData(results.testData);
                             self.setTestContext(results.testContext);
+                            self.setTestMap(results.testMap);
                        });
         },
 
