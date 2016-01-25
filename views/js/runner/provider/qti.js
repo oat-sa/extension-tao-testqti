@@ -118,6 +118,8 @@ define([
 
                             if (results.testMap) {
                                 self.setTestMap(results.testMap);
+                            } else {
+                                updateStats();
                             }
 
                             load();
@@ -158,7 +160,57 @@ define([
                         self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
                     ]);
                }
-               return Promise.resolve();
+               return Promise.resolve([]);
+            };
+
+            /**
+             * Update the stats on the TestMap
+             * @param {Boolean} answered - if we flag the current item as answered
+             */
+            var updateStats = function updateStats(answered){
+
+               var stats = {
+                    answered : 0,
+                    viewed : 0
+               };
+
+               var context = self.getTestContext();
+               var testMap = self.getTestMap();
+
+               var testPart = testMap.parts[context.testPartId];
+               var section  = testPart.sections[context.sectionId];
+               var item     = section.items[context.itemIdentifier];
+
+               //reduce by sum up the stats
+               var accStats = function accStats(acc, level){
+                    acc.answered += level.stats.answered;
+                    acc.viewed += level.stats.viewed;
+                    return acc;
+               };
+
+               //flag as viewed, always
+               item.viewed = true;
+               if(answered){
+                    item.answered = true;
+               }
+
+               //compute section stats from it's items
+               section.stats = _.reduce(section.items, function(acc, item){
+                     if(item.answered){
+                        acc.answered++;
+                     }
+                     if(item.viewed){
+                        acc.viewed++;
+                    }
+                    return acc;
+                }, _.clone(stats));
+
+               //compute testParts and test stats
+               testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
+               testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
+
+               //reassign the map
+               self.setTestMap(testMap);
             };
 
             //install behavior events handlers
@@ -167,8 +219,19 @@ define([
             })
             .on('move', function(direction, scope, position){
 
-                store().then(function(results){
 
+                //Try to store the data
+                store()
+                 .then(function(results){
+
+                    //if we have an item session, then the item is answered
+                    if(results && results[1] && results[1].itemSession){
+                        updateStats(true);
+                    } else {
+                        updateStats();
+                    }
+
+                    //and then load the next item
                     computeNext('move', {
                         direction : direction,
                         scope     : scope || 'item',
