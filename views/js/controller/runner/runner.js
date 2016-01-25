@@ -25,7 +25,6 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'ui/feedback',
     'layout/loading-bar',
 
     'taoTests/runner/runner',
@@ -42,12 +41,14 @@ define([
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
     'taoQtiTest/runner/plugins/content/overlay/overlay',
+    'taoQtiTest/runner/plugins/content/dialog/dialog',
+    'taoQtiTest/runner/plugins/content/feedback/feedback',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
-    $, _, __, Promise, feedback, loadingBar,
+    $, _, __, Promise, loadingBar,
     runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, timer, progressbar, next, previous, nextSection, skip, overlay
+    rubricBlock, title, timer, progressbar, next, previous, nextSection, skip, overlay, dialog, feedback
 ) {
     'use strict';
 
@@ -69,15 +70,30 @@ define([
         next        : next,
         skip        : skip,
         nextSection : nextSection,
-        overlay     : overlay
+        overlay     : overlay,
+        dialog      : dialog,
+        feedback    : feedback
     };
 
     /**
      * The runner controller
      */
     var runnerController = {
-        start : function start(options){
 
+        /**
+         * Controller entry point
+         *
+         * TODO verify required options
+         *
+         * @param {Object} options - the testRunner options
+         * @param {String} options.testDefinition
+         * @param {String} options.testCompilation
+         * @param {String} options.serviceCallId
+         * @param {String} options.serviceController
+         * @param {String} options.serviceExtension
+         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
+         */
+        start : function start(options){
             var config = _.defaults(options || {}, {
                 renderTo : $('.runner')
             });
@@ -87,45 +103,15 @@ define([
             //instantiate the QtiTestRunner
             runner('qti', plugins, config)
                 .on('error', function(err){
-                    var message = err;
-                    var type = 'error';
 
                     loadingBar.stop();
-
-                    if ('object' === typeof err) {
-                        message = err.message;
-                        type = err.type;
-                    }
-
-                    if (!message) {
-                        switch (type) {
-                            case 'TestState':
-                                message = __('The test has been closed/suspended!');
-                                break;
-
-                            case 'FileNotFound':
-                                message = __('File not found!');
-                                break;
-
-                            default:
-                                message = __('An error occurred!');
-                        }
-                    }
 
                     //TODO to be replaced by the logger
                     window.console.error(err);
 
-                    feedback().error(message);
-
-                    if ('TestState' === type) {
+                    if(err && err.type && err.type === 'TestState') {
                         // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
                     }
-                })
-                .on('warning', function(message){
-                    feedback().warning(message);
-                })
-                .on('info', function(message){
-                    feedback().info(message);
                 })
                 .on('ready', function(){
                     _.defer(function(){
@@ -142,6 +128,8 @@ define([
                     this.destroy();
                 })
                 .on('destroy', function(){
+
+                    //at the end, we are redirected to the exit URL
                     window.location = config.exitUrl;
                 })
                 .init();

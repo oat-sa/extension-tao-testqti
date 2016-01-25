@@ -163,7 +163,8 @@ define([
             })
             .on('move', function(direction, scope, position){
 
-                store().then(function(){
+                store().then(function(results){
+
                     computeNext('move', {
                         direction : direction,
                         scope     : scope || 'item',
@@ -286,9 +287,13 @@ define([
                     assetManager: assetManager
                 })
                 .on('error', reject)
-                .on('render', resolve)
-                .on('responsechange', changeState)
-                .on('statechange', changeState)
+                .on('render', function(){
+
+                    this.on('responsechange', changeState);
+                    this.on('statechange', changeState);
+
+                    resolve();
+                })
                 .init()
                 .setState(itemData.state)
                 .render(self.getAreaBroker().getContentArea());
