@@ -262,6 +262,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
+                $response['isLinear'] = $session->getCurrentNavigationMode() == NavigationMode::LINEAR;
 
                 // The submission mode.
                 $response['submissionMode'] = $session->getCurrentSubmissionMode();
