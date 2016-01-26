@@ -249,7 +249,7 @@ define([
                     computeNext('move', {
                         direction : direction,
                         scope     : scope || 'item',
-                        position  : position
+                        ref       : position
                     });
                 }).catch(function(err){
                     self.trigger('error', err);
