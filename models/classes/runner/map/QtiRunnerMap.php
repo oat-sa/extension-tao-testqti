@@ -85,8 +85,9 @@ class QtiRunnerMap implements RunnerMap
                 }
                 
                 $itemInfos = [
+                    'id' => $itemId,
                     'uri' => $itemUri,
-                    'title' => $item->getLabel(),
+                    'label' => $item->getLabel(),
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
                     'positionInSection' => $offsetSection,
@@ -106,12 +107,14 @@ class QtiRunnerMap implements RunnerMap
                     'uri' => $itemUri,
                 ];
                 if (!isset($map['parts'][$partId])) {
-                    $map['parts'][$partId]['title'] = $partId;
+                    $map['parts'][$partId]['id'] = $partId;
+                    $map['parts'][$partId]['label'] = $partId;
                     $map['parts'][$partId]['position'] = $offset;
                     $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
                 }
                 if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
-                    $map['parts'][$partId]['sections'][$sectionId]['title'] = $section->getTitle();
+                    $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
+                    $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
                     $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
                 }
                 $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
