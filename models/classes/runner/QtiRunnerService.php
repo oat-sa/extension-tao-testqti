@@ -293,6 +293,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The current position in the route.
                 $response['itemPosition'] = $session->getRoute()->getPosition();
 
+                // The current item flagged state
+                $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
+
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
 
