@@ -180,16 +180,16 @@ define([
                     if (timer.running) {
                         timer.remaining -= elapsed;
 
-                        if (_.isFinite(timer.warning) && timer.remaining <= timer.warning) {
-                            warning(timer);
-                        }
-
                         if (timer.remaining <= 0) {
                             timer.remaining = 0;
                             timer.running = 0;
                             timeout = true;
                         } else {
                             running ++;
+                        }
+
+                        if (!timeout && _.isFinite(timer.warning) && timer.remaining <= timer.warning) {
+                            warning(timer);
                         }
                     }
                 });
