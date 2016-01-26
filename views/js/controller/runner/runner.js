@@ -31,24 +31,12 @@ define([
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-
-    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
-    'taoQtiTest/runner/plugins/controls/title/title',
-    'taoQtiTest/runner/plugins/controls/timer/timer',
-    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'taoQtiTest/runner/plugins/navigation/next',
-    'taoQtiTest/runner/plugins/navigation/previous',
-    'taoQtiTest/runner/plugins/navigation/nextSection',
-    'taoQtiTest/runner/plugins/navigation/skip',
-    'taoQtiTest/runner/plugins/content/overlay/overlay',
-    'taoQtiTest/runner/plugins/content/dialog/dialog',
-    'taoQtiTest/runner/plugins/content/feedback/feedback',
+    'taoQtiTest/runner/plugins/loader',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
     $, _, __, Promise, loadingBar,
-    runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, timer, progressbar, next, previous, nextSection, skip, overlay, dialog, feedback
+    runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader
 ) {
     'use strict';
 
@@ -56,24 +44,9 @@ define([
     /*
      *TODO plugins list, provider registration should be loaded dynamically
      */
-
     runner.registerProvider('qti', qtiProvider);
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
-
-    var plugins = {
-        rubricBlock : rubricBlock,
-        title       : title,
-        timer       : timer,
-        progress    : progressbar,
-        previous    : previous,
-        next        : next,
-        skip        : skip,
-        nextSection : nextSection,
-        overlay     : overlay,
-        dialog      : dialog,
-        feedback    : feedback
-    };
 
     /**
      * The runner controller
@@ -98,6 +71,9 @@ define([
                 renderTo : $('.runner')
             });
 
+            var plugins = pluginLoader.getPlugins();
+
+            //TODO move the loading bar into a plugin
             loadingBar.start();
 
             //instantiate the QtiTestRunner
