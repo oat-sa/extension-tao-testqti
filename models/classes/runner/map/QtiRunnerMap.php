@@ -37,14 +37,19 @@ class QtiRunnerMap implements RunnerMap
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context
+     * @param array $config
      * @return mixed
      */
-    public function getMap(RunnerServiceContext $context)
+    public function getMap(RunnerServiceContext $context, $config = [])
     {
         $map = [
             'parts' => [],
             'jumps' => []
         ];
+
+        // get config for the sequence number option
+        $forceTitles = !empty($config['test-taker-review-force-title']);
+        $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
         
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
@@ -83,11 +88,17 @@ class QtiRunnerMap implements RunnerMap
                     $offsetSection = 0;
                     $lastSection = $sectionId;
                 }
+
+                if ($forceTitles) {
+                    $label = sprintf($uniqueTitle, $offsetSection + 1);
+                } else {
+                    $label = $item->getLabel();
+                }
                 
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
-                    'label' => $item->getLabel(),
+                    'label' => $label,
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
                     'positionInSection' => $offsetSection,

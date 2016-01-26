@@ -349,7 +349,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $map = new QtiRunnerMap();
-            return $map->getMap($context);
+            return $map->getMap($context, $this->getConfig());
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
