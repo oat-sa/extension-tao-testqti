@@ -130,10 +130,6 @@ define([
                 canCollapse: !!config['test-taker-review-can-collapse']
             };
 
-            console.log('testData', testData);
-            console.log('context', context);
-            console.log('map', map);
-
             /**
              * Mark an item for review
              * @param {Number} position
