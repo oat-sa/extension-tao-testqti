@@ -139,7 +139,11 @@ define([
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
-                    self.loadItem(context.itemUri);
+                    if (context.isTimeout) {
+                        self.timeout();
+                    } else {
+                        self.loadItem(context.itemUri);
+                    }
                 } else if (context.state === states.closed){
                     self.finish();
                 }
