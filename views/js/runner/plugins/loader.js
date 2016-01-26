@@ -16,7 +16,7 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
 define([
-    'lodash',
+    'taoTests/runner/pluginLoader',
     'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
     'taoQtiTest/runner/plugins/content/overlay/overlay',
     'taoQtiTest/runner/plugins/content/dialog/dialog',
@@ -28,31 +28,15 @@ define([
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip'
-], function(_, rubricBlock, overlay, dialog, feedback, title, timer, progressbar, next, previous, nextSection, skip) {
+], function(pluginLoader, rubricBlock, overlay, dialog, feedback, title, timer, progressbar, next, previous, nextSection, skip) {
     'use strict';
 
     /**
-     * Those plugins are required by the qti provider
+     * Instantiate the plugin loader with all the required plugins configured
      */
-    var requiredPlugins = {
+    return pluginLoader({
         content    : [rubricBlock, overlay, dialog, feedback],
         controls   : [title, timer, progressbar],
         navigation : [previous, next, nextSection, skip]
-    };
-    var plugins = { };
-
-
-    //load dynamically
-    //
-    return {
-
-        loadPlugins : function loadPlugins (modules, category, position){
-            modules = _.isArray(modules) ? modules : [modules];
-        },
-
-
-        getPlugins : function getPlugins(){
-            return plugins;
-        }
-    };
+    });
 });
