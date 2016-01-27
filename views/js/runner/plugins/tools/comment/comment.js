@@ -31,28 +31,43 @@ define([
     'use strict';
 
     /**
-     * Closes the comment form
-     * @param {jQuery} $form
+     * The CSS class used to hide elements.
+     * Using a CSS class prevents some tricky bugs like an element list displayed with list style despite CSS rules.
+     * @type {String}
      */
-    function closeForm($form) {
-        $form.addClass('hidden');
+    var hiddenCls = 'hidden';
+
+    /**
+     * Hides an element using CSS class
+     * @param {jQuery} $el
+     */
+    function hideElement($el) {
+        $el.addClass(hiddenCls);
     }
 
     /**
-     * Show/hide the comment form
-     * @param {jQuery} $form
+     * Shows an element using CSS class
+     * @param {jQuery} $el
      */
-    function toggleForm($form) {
-        $form.toggleClass('hidden');
+    function showElement($el) {
+        $el.removeClass(hiddenCls);
     }
 
     /**
-     * Checks if the comment form is visible
-     * @param {jQuery} $form
+     * Show/hide an element using CSS class
+     * @param {jQuery} $el
+     */
+    function toggleElement($el) {
+        $el.toggleClass(hiddenCls);
+    }
+
+    /**
+     * Checks if an element is hidden using CSS class
+     * @param {jQuery} $el
      * @returns {Boolean}
      */
-    function formVisible($form) {
-        return !$form.hasClass('hidden');
+    function hiddenElement($el) {
+        return $el.hasClass(hiddenCls);
     }
 
     /**
@@ -73,7 +88,7 @@ define([
             /**
              * Can we comment ? if not, then we hide the plugin
              */
-            function toggle() {
+            function togglePlugin() {
                 var context = testRunner.getTestContext();
                 if (context.allowComment) {
                     self.show();
@@ -108,8 +123,8 @@ define([
 
                 if (self.getState('enabled') !== false) {
                     //just show/hide the form
-                    toggleForm(self.$form);
-                    if (formVisible(self.$form)) {
+                    toggleElement(self.$form);
+                    if (!hiddenElement(self.$form)) {
                         //reset the form on each display
                         self.$input.val('').focus();
                     }
@@ -118,7 +133,7 @@ define([
 
             //hide the form without submit
             this.$cancel.on('click', function () {
-                closeForm(self.$form);
+                hideElement(self.$form);
             });
 
             //submit the comment, then hide the form
@@ -133,24 +148,24 @@ define([
                             comment: comment
                         })
                         .then(function () {
-                            closeForm(self.$form);
+                            hideElement(self.$form);
                             self.enable();
                         })
                         .catch(function (err) {
                             testRunner.trigger('error', err);
-                            closeForm(self.$form);
+                            hideElement(self.$form);
                             self.enable();
                         });
                 }
             });
 
             //start disabled
-            toggle();
+            togglePlugin();
             this.disable();
 
             //update plugin state based on changes
             testRunner
-                .on('loaditem', toggle)
+                .on('loaditem', togglePlugin)
                 .on('renderitem', function () {
                     self.enable();
                 })
@@ -186,7 +201,7 @@ define([
          * Disable the button
          */
         disable: function disable() {
-            closeForm(this.$form);
+            hideElement(this.$form);
             this.$button.prop('disabled', true)
                 .addClass('disabled');
         },
@@ -195,15 +210,15 @@ define([
          * Show the button
          */
         show: function show() {
-            this.$button.show();
+            showElement(this.$button);
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            closeForm(this.$form);
-            this.$button.hide();
+            hideElement(this.$form);
+            hideElement(this.$button);
         }
     });
 });
