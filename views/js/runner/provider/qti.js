@@ -147,7 +147,7 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise}
+             * @returns {Promise} - resolve with a boolean at true if the response is stored
              */
             var store = function store(){
 
@@ -158,7 +158,20 @@ define([
                     return Promise.all([
                         self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                         self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                    ]);
+                    ]).then(function(results){
+
+                        return new Promise(function(resolve){
+                            if(results.length === 2){
+                                if(results[1].displayFeedbacks === true && self.itemRunner){
+                                    return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
+                                        resolve(true);
+                                    });
+                                }
+                                return resolve(true);
+                            }
+                            return resolve(false);
+                        });
+                    });
                }
                return Promise.resolve(false);
             };
