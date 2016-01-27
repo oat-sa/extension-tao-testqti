@@ -270,42 +270,45 @@ define([
             .on('timeout', function(){
 
                 var context = self.getTestContext();
-                var computeNextTimeout = _.partial(computeNext, 'timeout');
 
                 context.isTimeout = true;
 
                 self.disableItem(context.itemUri);
 
-                self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function(){
-                    store()
-                     .then(updateStats)
-                     .then(computeNextTimeout)
-                     .catch(function(err){
+                store()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout');
+                        });
+                    })
+                    .catch(function(err){
                         self.trigger('error', err);
-                     });
-                });
+                    });
             })
             .on('renderitem', function(itemRef){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
+                var warning = false;
 
                 //The item is rendered but in a state that prevents us from interacting
-                if(context.itemSessionState > states.interacting){
+                if (context.isTimeout) {
+                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
 
-                    //we diable the item and warn the user
-                    self.disableItem(context.itemUri);
+                } else if (context.itemSessionState > states.interacting) {
 
-                    if(context.isTimeout){
-                        self.trigger('warning', __('Time limit reached for item "%s".', context.itemIdentifier));
-                    }
-                    else if(context.remainingAttempts === 0){
-
-                        self.trigger('warning', __('No more attempts allowed for item "%s".', context.itemIdentifier));
+                    if (context.remainingAttempts === 0) {
+                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
                     } else {
-
-                        self.trigger('warning', __('Item "%s" is completed.', context.itemIdentifier));
+                        warning = __('Item "%s" is completed.', context.itemIdentifier);
                     }
+                }
+
+                //we disable the item and warn the user
+                if (warning) {
+                    self.disableItem(context.itemUri);
+                    self.trigger('warning', warning);
                 }
             });
 
