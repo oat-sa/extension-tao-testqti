@@ -163,6 +163,7 @@ define([
                 }
 
                 testRunner.trigger('warning', message);
+                timer.$control.addClass('qti-timer__warning');
                 timer.warning = 0;
             }
 
