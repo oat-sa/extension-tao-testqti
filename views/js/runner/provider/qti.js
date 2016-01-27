@@ -256,20 +256,21 @@ define([
             .on('timeout', function(){
 
                 var context = self.getTestContext();
-                var computeNextTimeout = _.partial(computeNext, 'timeout');
 
                 context.isTimeout = true;
 
                 self.disableItem(context.itemUri);
 
-                self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function(){
-                    store()
-                     .then(updateStats)
-                     .then(computeNextTimeout)
-                     .catch(function(err){
+                store()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout');
+                        });
+                    })
+                    .catch(function(err){
                         self.trigger('error', err);
-                     });
-                });
+                    });
             })
             .on('renderitem', function(itemRef){
 
