@@ -573,4 +573,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+    
+    /**
+     * Comment the test
+     */
+    public function comment()
+    {
+        $code = 200;
+
+        $comment = $this->getRequestParameter('comment');
+        
+        try {
+            $serviceContext = $this->getServiceContext();
+            $result = $this->runnerService->comment($serviceContext, $comment);
+
+            $response = [
+                'success' => $result,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
 }
