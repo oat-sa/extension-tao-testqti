@@ -57,12 +57,12 @@ define([
         loadAreaBroker : function loadAreaBroker(){
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
-                'content' : $('#qti-content', $layout),
-                'toolbox' : $('.tools-box', $layout),
-                'navigation' : $('.navi-box-list', $layout),
-                'control' : $('.top-action-bar .control-box', $layout),
-                'panel' : $('.test-sidebar-left', $layout),
-                'header' : $('.title-box', $layout)
+                content:    $('#qti-content', $layout),
+                toolbox:    $('.tools-box', $layout),
+                navigation: $('.navi-box-list', $layout),
+                control:    $('.top-action-bar .control-box', $layout),
+                panel:      $('.test-sidebar-left', $layout),
+                header:     $('.title-box', $layout)
             });
         },
 
@@ -147,7 +147,7 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise}
+             * @returns {Promise} - resolve with a boolean at true if the response is stored
              */
             var store = function store(){
 
@@ -155,12 +155,26 @@ define([
 
                //we store only the responses and the state only if the user has interacted with the item.
                if(self.getItemState(context.itemUri, 'changed')){
+
                     return Promise.all([
                         self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                         self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                    ]);
+                    ]).then(function(results){
+                        return new Promise(function(resolve){
+                            //if the store results contains modal feedback we ask (gently) the IR to display them
+                            if(results.length === 2){
+                                if(results[1].displayFeedbacks === true && self.itemRunner){
+                                    return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
+                                        resolve(true);
+                                    });
+                                }
+                                return resolve(true);
+                            }
+                            return resolve(false);
+                        });
+                    });
                }
-               return Promise.resolve([]);
+               return Promise.resolve(false);
             };
 
             /**
@@ -200,7 +214,7 @@ define([
 
                //flag as viewed, always
                item.viewed = true;
-               if(answered){
+               if(answered !== false){
                     item.answered = true;
                }
 
@@ -227,68 +241,82 @@ define([
                self.setTestMap(testMap);
             };
 
-            //install behavior events handlers
+            /*
+             * Install behavior on events
+             */
             this.on('ready', function(){
+                //load the 1st item
                 load();
             })
             .on('move', function(direction, scope, position){
 
+                //ask to move:
+                // 1. try to store state and responses
+                // 2. update stats on the map
+                // 3. compute the next item to load
 
-                //Try to store the data
-                store()
-                 .then(function(results){
-
-                    //if we have an item session, then the item is answered
-                    if(results && results[1] && results[1].itemSession){
-                        updateStats(true);
-                    } else {
-                        updateStats();
-                    }
-
-                    //and then load the next item
-                    computeNext('move', {
+                var computeNextMove = _.partial(computeNext, 'move', {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
                     });
-                }).catch(function(err){
+
+                store()
+                 .then(updateStats)
+                 .then(computeNextMove)
+                 .catch(function(err){
                     self.trigger('error', err);
-                });
+                 });
             })
             .on('skip', function(scope){
+
                 computeNext('skip', {
                     scope     : scope || 'item'
                 });
+
             })
             .on('timeout', function(){
+
                 var context = self.getTestContext();
 
                 context.isTimeout = true;
+
                 self.disableItem(context.itemUri);
 
-                self.trigger('warning', __('Time limit reached, this part of the test has ended.'));
-
-                // TODO: handle the action after the test taker has validated the message
-                computeNext('timeout');
+                store()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout');
+                        });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
             })
             .on('renderitem', function(itemRef){
+
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
+                var warning = false;
 
-                //should we disable the item ?
-                if(context.itemSessionState > states.interacting){
-                    self.disableItem(context.itemUri);
+                //The item is rendered but in a state that prevents us from interacting
+                if (context.isTimeout) {
+                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
 
-                    if(context.isTimeout){
-                        self.trigger('warning', __('Time limit reached for item "%s".', context.itemIdentifier));
-                    }
-                    else if(context.remainingAttempts === 0){
+                } else if (context.itemSessionState > states.interacting) {
 
-                        self.trigger('warning', __('No more attempts allowed for item "%s".', context.itemIdentifier));
+                    if (context.remainingAttempts === 0) {
+                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
                     } else {
-
-                        self.trigger('warning', __('Item "%s" is completed.', context.itemIdentifier));
+                        warning = __('Item "%s" is completed.', context.itemIdentifier);
                     }
+                }
+
+                //we disable the item and warn the user
+                if (warning) {
+                    self.disableItem(context.itemUri);
+                    self.trigger('warning', warning);
                 }
             });
 
@@ -327,23 +355,18 @@ define([
         loadItem : function loadItem(itemRef){
             var self = this;
 
-            //FIXME check if we can't just return the sub promise instead of wrapping
-            return new Promise(function(resolve, reject){
+            return Promise.all([
+                self.getProxy().getItemData(itemRef),
+                self.getProxy().getItemState(itemRef)
+            ])
+            .then(function(results){
 
-                Promise.all([
-                    self.getProxy().getItemData(itemRef),
-                    self.getProxy().getItemState(itemRef)
-                ])
-                .then(function(results){
-
-                    //aggregate the results
-                    resolve({
-                        content : results[0].itemData,
-                        baseUrl : results[0].baseUrl,
-                        state : results[1].itemState || {}
-                    });
-                })
-                .catch(reject);
+                //aggregate the results
+                return {
+                    content : results[0].itemData,
+                    baseUrl : results[0].baseUrl,
+                    state : results[1].itemState || {}
+                };
             });
         },
 

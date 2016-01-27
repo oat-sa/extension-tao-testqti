@@ -163,6 +163,7 @@ define([
                 }
 
                 testRunner.trigger('warning', message);
+                timer.$control.addClass('qti-timer__warning');
                 timer.warning = 0;
             }
 
@@ -173,23 +174,20 @@ define([
                 // get the time elapsed since the last tick
                 var elapsed = self.timer.tick();
                 var timeout = false;
-                var running = 0;
 
                 // update the timers, detect timeout
                 _.forEach(timers, function(timer) {
                     if (timer.running) {
                         timer.remaining -= elapsed;
 
-                        if (_.isFinite(timer.warning) && timer.remaining <= timer.warning) {
-                            warning(timer);
-                        }
-
                         if (timer.remaining <= 0) {
                             timer.remaining = 0;
                             timer.running = 0;
                             timeout = true;
-                        } else {
-                            running ++;
+                        }
+
+                        if (!timeout && _.isFinite(timer.warning) && timer.remaining <= timer.warning) {
+                            warning(timer);
                         }
                     }
                 });
@@ -197,10 +195,6 @@ define([
                 // timeout ?
                 if (timeout) {
                     testRunner.timeout();
-                }
-
-                // no timer running anymore ?
-                if (!running) {
                     self.disable();
                 }
 
