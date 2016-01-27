@@ -174,7 +174,6 @@ define([
                 // get the time elapsed since the last tick
                 var elapsed = self.timer.tick();
                 var timeout = false;
-                var running = 0;
 
                 // update the timers, detect timeout
                 _.forEach(timers, function(timer) {
@@ -185,8 +184,6 @@ define([
                             timer.remaining = 0;
                             timer.running = 0;
                             timeout = true;
-                        } else {
-                            running ++;
                         }
 
                         if (!timeout && _.isFinite(timer.warning) && timer.remaining <= timer.warning) {
@@ -198,10 +195,6 @@ define([
                 // timeout ?
                 if (timeout) {
                     testRunner.timeout();
-                }
-
-                // no timer running anymore ?
-                if (!running) {
                     self.disable();
                 }
 
