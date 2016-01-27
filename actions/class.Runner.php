@@ -573,4 +573,46 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+
+    /**
+     * Flag an item
+     */
+    public function flagItem()
+    {
+        $code = 200;
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $testSession = $serviceContext->getTestSession();
+            
+            if ($this->hasRequestParameter('position')) {
+                $itemPosition = intval($this->getRequestParameter('position'));
+            } else {
+                $itemPosition = $testSession->getRoute()->getPosition();
+            }
+            
+            if ($this->hasRequestParameter('flag')) {
+                $flag = $this->getRequestParameter('flag');
+                if (is_numeric($flag)) {
+                    $flag = !!(intval($flag));
+                } else {
+                    $flag = 'false' != strtolower($flag);
+                }
+            } else {
+                $flag = true;
+            }
+            
+            taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+            
+            $response = [
+                'success' => true,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
 }

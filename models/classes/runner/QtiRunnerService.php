@@ -262,6 +262,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
+                $response['isLinear'] = $session->getCurrentNavigationMode() == NavigationMode::LINEAR;
 
                 // The submission mode.
                 $response['submissionMode'] = $session->getCurrentSubmissionMode();
@@ -291,6 +292,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The current position in the route.
                 $response['itemPosition'] = $session->getRoute()->getPosition();
+
+                // The current item flagged state
+                $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
 
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
@@ -348,7 +352,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $map = new QtiRunnerMap();
-            return $map->getMap($context);
+            return $map->getMap($context, $this->getConfig());
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
