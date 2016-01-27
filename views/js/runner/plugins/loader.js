@@ -27,8 +27,9 @@ define([
     'taoQtiTest/runner/plugins/navigation/next',
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
-    'taoQtiTest/runner/plugins/navigation/skip'
-], function(pluginLoader, rubricBlock, overlay, dialog, feedback, title, timer, progressbar, next, previous, nextSection, skip) {
+    'taoQtiTest/runner/plugins/navigation/skip',
+    'taoQtiTest/runner/plugins/tools/comment/comment'
+], function(pluginLoader, rubricBlock, overlay, dialog, feedback, title, timer, progressbar, next, previous, nextSection, skip, comment) {
     'use strict';
 
     /**
@@ -37,6 +38,7 @@ define([
     return pluginLoader({
         content    : [rubricBlock, overlay, dialog, feedback],
         controls   : [title, timer, progressbar],
-        navigation : [previous, next, nextSection, skip]
+        navigation : [previous, next, nextSection, skip],
+        tools      : [comment]
     });
 });
