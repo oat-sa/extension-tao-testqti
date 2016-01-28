@@ -95,7 +95,7 @@ define([
                 } else {
                     self.hide();
                 }
-            };
+            }
 
             //build element (detached)
             this.$button = $(buttonTpl({
