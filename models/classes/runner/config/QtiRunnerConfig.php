@@ -58,7 +58,7 @@ class QtiRunnerConfig implements RunnerConfig
                     'enabled' => !!$rawConfig['test-taker-review'],
                     'scope' => $rawConfig['test-taker-review-scope'],
                     'forceTitle' => !!$rawConfig['test-taker-review-force-title'],
-                    'itemTile' => $rawConfig['test-taker-review-item-title'],
+                    'itemTitle' => $rawConfig['test-taker-review-item-title'],
                     'preventsUnseen' => !!$rawConfig['test-taker-review-prevents-unseen'],
                     'canCollapse' => !!$rawConfig['test-taker-review-can-collapse'],
                 ],
@@ -70,6 +70,19 @@ class QtiRunnerConfig implements RunnerConfig
         return $this->config;
     }
 
+    /**
+     * Returns the value of a config entry
+     * @param string $name
+     * @return mixed
+     */
+    public function getConfigValue($name)
+    {
+        $config = $this->getConfig();
+        if (isset($config[$name])) {
+            return $config[$name];
+        }
+        return null;
+    }
 
     /**
      * Returns the options related to the current test context
@@ -95,8 +108,8 @@ class QtiRunnerConfig implements RunnerConfig
         foreach ($categories as $category) {
             if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
-                $optionName = strtr(lcfirst(ucwords(substr($category, $prefixCategoryLen), '-_')), ['-'=>'', '_'=>'']);
-                
+                $optionName = strtr(lcfirst(ucwords(substr($category, $prefixCategoryLen), '-_')), ['-' => '', '_' => '']);
+
                 // the options added by the categories are just flags
                 $options[$optionName] = true;
             }

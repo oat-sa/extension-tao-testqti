@@ -21,6 +21,8 @@
  */
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
+
 /**
  * Interface RunnerService
  * 
@@ -37,6 +39,13 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function init(RunnerServiceContext $context);
+
+    /**
+     * Gets the test runner config
+     * @return RunnerConfig
+     * @throws \common_ext_ExtensionException
+     */
+    public function getTestConfig();
 
     /**
      * Gets the test definition data

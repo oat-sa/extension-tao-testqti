@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\map;
 
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -36,11 +37,11 @@ class QtiRunnerMap implements RunnerMap
 {
     /**
      * Builds the map of an assessment test
-     * @param RunnerServiceContext $context
-     * @param array $config
+     * @param RunnerServiceContext $context The test context
+     * @param RunnerConfig $config The runner config
      * @return mixed
      */
-    public function getMap(RunnerServiceContext $context, $config = [])
+    public function getMap(RunnerServiceContext $context, RunnerConfig $config)
     {
         $map = [
             'parts' => [],
@@ -48,8 +49,9 @@ class QtiRunnerMap implements RunnerMap
         ];
 
         // get config for the sequence number option
-        $forceTitles = !empty($config['test-taker-review-force-title']);
-        $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
+        $reviewConfig = $config->getConfigValue('review');
+        $forceTitles = !empty($reviewConfig['forceTitle']);
+        $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();

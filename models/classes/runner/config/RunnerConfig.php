@@ -37,6 +37,13 @@ interface RunnerConfig
     public function getConfig();
     
     /**
+     * Returns the value of a config entry
+     * @param string $name
+     * @return mixed
+     */
+    public function getConfigValue($name);
+    
+    /**
      * Returns the options related to the current test context
      * @param RunnerServiceContext $context The test context
      * @return mixed
