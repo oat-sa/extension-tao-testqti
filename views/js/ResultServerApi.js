@@ -32,7 +32,7 @@ define(['jquery', 'i18n', 'iframeNotifier'], function($, __, iframeNotifier) {
 
             if (xhr) {
                 if (xhr.status && xhr.status === 403) {
-                    // don't show alert, layout/logout-event should be fired
+                    // don't show alert, layout/logout-event should be performed
                     message = '';
                 } else {
                     try {response = JSON.parse(xhr.responseText);} catch (e) {}
