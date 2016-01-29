@@ -31,7 +31,12 @@ define(['jquery', 'i18n', 'iframeNotifier'], function($, __, iframeNotifier) {
             var message = __('An error occurs, please contact your administrator');
 
             if (xhr) {
-                try { response = JSON.parse(xhr.responseText); } catch (e) {}
+                if (xhr.status && xhr.status === 403) {
+                    // don't show alert, layout/logout-event should be fired
+                    message = '';
+                } else {
+                    try {response = JSON.parse(xhr.responseText);} catch (e) {}
+                }
             }
 
             //there is no error management, so doing an alert (an eval and I'll burn in hell...)
