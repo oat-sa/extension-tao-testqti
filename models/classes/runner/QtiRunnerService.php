@@ -389,7 +389,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $itemFilePath = $itemDirectory . QtiJsonItemCompiler::ITEM_FILE_NAME;
 
             if (file_exists($itemFilePath)) {
-                return json_decode(file_get_contents($itemFilePath));
+                return file_get_contents($itemFilePath);
             } else {
                 throw new \tao_models_classes_FileNotFoundException(
                     $itemFilePath . ' for item reference ' . $itemRef
