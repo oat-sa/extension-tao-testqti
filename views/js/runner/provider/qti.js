@@ -57,12 +57,12 @@ define([
         loadAreaBroker : function loadAreaBroker(){
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
-                'content' : $('#qti-content', $layout),
-                'toolbox' : $('.tools-box', $layout),
-                'navigation' : $('.navi-box-list', $layout),
-                'control' : $('.top-action-bar .control-box', $layout),
-                'panel' : $('.test-sidebar-left', $layout),
-                'header' : $('.title-box', $layout)
+                content:    $('#qti-content', $layout),
+                toolbox:    $('.tools-box', $layout),
+                navigation: $('.navi-box-list', $layout),
+                control:    $('.top-action-bar .control-box', $layout),
+                panel:      $('.test-sidebar-left', $layout),
+                header:     $('.title-box', $layout)
             });
         },
 
@@ -114,9 +114,15 @@ define([
                         .callItemAction(context.itemUri, action, params)
                         .then(function(results){
 
-                                self.setTestContext(results.testContext);
+                            self.setTestContext(results.testContext);
 
-                                load();
+                            if (results.testMap) {
+                                self.setTestMap(results.testMap);
+                            } else {
+                                updateStats();
+                            }
+
+                            load();
                         })
                         .catch(function(err){
                             self.trigger('error', err);
@@ -141,7 +147,7 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise}
+             * @returns {Promise} - resolve with a boolean at true if the response is stored
              */
             var store = function store(){
 
@@ -149,64 +155,168 @@ define([
 
                //we store only the responses and the state only if the user has interacted with the item.
                if(self.getItemState(context.itemUri, 'changed')){
+
                     return Promise.all([
                         self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                         self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                    ]);
+                    ]).then(function(results){
+                        return new Promise(function(resolve){
+                            //if the store results contains modal feedback we ask (gently) the IR to display them
+                            if(results.length === 2){
+                                if(results[1].displayFeedbacks === true && self.itemRunner){
+                                    return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
+                                        resolve(true);
+                                    });
+                                }
+                                return resolve(true);
+                            }
+                            return resolve(false);
+                        });
+                    });
                }
-               return Promise.resolve();
+               return Promise.resolve(false);
             };
 
-            //install behavior events handlers
+            /**
+             * Update the stats on the TestMap
+             * @param {Boolean} answered - if we flag the current item as answered
+             */
+            var updateStats = function updateStats(answered){
+
+               var testPart, section, item;
+               var stats = {
+                    answered : 0,
+                    flagged : 0,
+                    viewed : 0,
+                    total : 0
+               };
+
+               var context = self.getTestContext();
+               var testMap = self.getTestMap();
+               var states = self.getTestData().states;
+
+               //reduce by sum up the stats
+               var accStats = function accStats(acc, level){
+                    acc.answered += level.stats.answered;
+                    acc.flagged += level.stats.flagged;
+                    acc.viewed += level.stats.viewed;
+                    acc.total += level.stats.total;
+                    return acc;
+               };
+
+               if(context.state !== states.interacting){
+                   return;
+               }
+
+               testPart = testMap.parts[context.testPartId];
+               section  = testPart.sections[context.sectionId];
+               item     = section.items[context.itemIdentifier];
+
+               //flag as viewed, always
+               item.viewed = true;
+               if(answered !== false){
+                    item.answered = true;
+               }
+
+               //compute section stats from it's items
+               section.stats = _.reduce(section.items, function(acc, item){
+                    if(item.answered){
+                        acc.answered++;
+                    }
+                    if(item.flagged){
+                        acc.flagged++;
+                    }
+                    if(item.viewed){
+                        acc.viewed++;
+                    }
+                    acc.total ++;
+                    return acc;
+                }, _.clone(stats));
+
+               //compute testParts and test stats
+               testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
+               testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
+
+               //reassign the map
+               self.setTestMap(testMap);
+            };
+
+            /*
+             * Install behavior on events
+             */
             this.on('ready', function(){
+                //load the 1st item
                 load();
             })
             .on('move', function(direction, scope, position){
 
-                store().then(function(){
-                    computeNext('move', {
+                //ask to move:
+                // 1. try to store state and responses
+                // 2. update stats on the map
+                // 3. compute the next item to load
+
+                var computeNextMove = _.partial(computeNext, 'move', {
                         direction : direction,
                         scope     : scope || 'item',
-                        position  : position
+                        ref       : position
                     });
-                }).catch(function(err){
+
+                store()
+                 .then(updateStats)
+                 .then(computeNextMove)
+                 .catch(function(err){
                     self.trigger('error', err);
-                });
+                 });
             })
             .on('skip', function(scope){
+
                 computeNext('skip', {
                     scope     : scope || 'item'
                 });
+
             })
             .on('timeout', function(){
+
                 var context = self.getTestContext();
 
                 context.isTimeout = true;
+
                 self.disableItem(context.itemUri);
 
-                self.trigger('warning', __('Time limit reached, this part of the test has ended.'));
-
-                // TODO: handle the action after the test taker has validated the message
-                computeNext('timeout');
+                store()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout');
+                        });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
             })
             .on('renderitem', function(itemRef){
+
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
+                var warning = false;
 
-                //should we disable the item ?
-                if(context.itemSessionState > states.interacting){
-                    self.disableItem(context.itemUri);
+                //The item is rendered but in a state that prevents us from interacting
+                if (context.isTimeout) {
+                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
 
-                    if(context.isTimeout){
-                        self.trigger('warning', __('Time limit reached for item "%s".', context.itemIdentifier));
-                    }
-                    else if(context.remainingAttempts === 0){
+                } else if (context.itemSessionState > states.interacting) {
 
-                        self.trigger('warning', __('No more attempts allowed for item "%s".', context.itemIdentifier));
+                    if (context.remainingAttempts === 0) {
+                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
                     } else {
-
-                        self.trigger('warning', __('Item "%s" is completed.', context.itemIdentifier));
+                        warning = __('Item "%s" is completed.', context.itemIdentifier);
                     }
+                }
+
+                //we disable the item and warn the user
+                if (warning) {
+                    self.disableItem(context.itemUri);
+                    self.trigger('warning', warning);
                 }
             });
 
@@ -215,6 +325,7 @@ define([
                        .then(function(results){
                             self.setTestData(results.testData);
                             self.setTestContext(results.testContext);
+                            self.setTestMap(results.testMap);
                        });
         },
 
@@ -244,23 +355,18 @@ define([
         loadItem : function loadItem(itemRef){
             var self = this;
 
-            //FIXME check if we can't just return the sub promise instead of wrapping
-            return new Promise(function(resolve, reject){
+            return Promise.all([
+                self.getProxy().getItemData(itemRef),
+                self.getProxy().getItemState(itemRef)
+            ])
+            .then(function(results){
 
-                Promise.all([
-                    self.getProxy().getItemData(itemRef),
-                    self.getProxy().getItemState(itemRef)
-                ])
-                .then(function(results){
-
-                    //aggregate the results
-                    resolve({
-                        content : results[0].itemData,
-                        baseUrl : results[0].baseUrl,
-                        state : results[1].itemState || {}
-                    });
-                })
-                .catch(reject);
+                //aggregate the results
+                return {
+                    content : results[0].itemData,
+                    baseUrl : results[0].baseUrl,
+                    state : results[1].itemState || {}
+                };
             });
         },
 
@@ -286,9 +392,13 @@ define([
                     assetManager: assetManager
                 })
                 .on('error', reject)
-                .on('render', resolve)
-                .on('responsechange', changeState)
-                .on('statechange', changeState)
+                .on('render', function(){
+
+                    this.on('responsechange', changeState);
+                    this.on('statechange', changeState);
+
+                    resolve();
+                })
                 .init()
                 .setState(itemData.state)
                 .render(self.getAreaBroker().getContentArea());

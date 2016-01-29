@@ -25,29 +25,18 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'ui/feedback',
     'layout/loading-bar',
 
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-
-    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
-    'taoQtiTest/runner/plugins/controls/title/title',
-    'taoQtiTest/runner/plugins/controls/timer/timer',
-    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'taoQtiTest/runner/plugins/navigation/next',
-    'taoQtiTest/runner/plugins/navigation/previous',
-    'taoQtiTest/runner/plugins/navigation/nextSection',
-    'taoQtiTest/runner/plugins/navigation/skip',
-    'taoQtiTest/runner/plugins/content/overlay/overlay',
+    'taoQtiTest/runner/plugins/loader',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
-    $, _, __, Promise, feedback, loadingBar,
-    runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, timer, progressbar, next, previous, nextSection, skip, overlay
+    $, _, __, Promise, loadingBar,
+    runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader
 ) {
     'use strict';
 
@@ -60,72 +49,46 @@ define([
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
 
-    var plugins = {
-        rubricBlock : rubricBlock,
-        title       : title,
-        timer       : timer,
-        progress    : progressbar,
-        previous    : previous,
-        next        : next,
-        skip        : skip,
-        nextSection : nextSection,
-        overlay     : overlay
-    };
-
     /**
      * The runner controller
      */
     var runnerController = {
-        start : function start(options){
 
+        /**
+         * Controller entry point
+         *
+         * TODO verify required options
+         *
+         * @param {Object} options - the testRunner options
+         * @param {String} options.testDefinition
+         * @param {String} options.testCompilation
+         * @param {String} options.serviceCallId
+         * @param {String} options.serviceController
+         * @param {String} options.serviceExtension
+         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
+         */
+        start : function start(options){
             var config = _.defaults(options || {}, {
                 renderTo : $('.runner')
             });
 
+            var plugins = pluginLoader.getPlugins();
+
+            //TODO move the loading bar into a plugin
             loadingBar.start();
 
             //instantiate the QtiTestRunner
             runner('qti', plugins, config)
                 .on('error', function(err){
-                    var message = err;
-                    var type = 'error';
 
                     loadingBar.stop();
-
-                    if ('object' === typeof err) {
-                        message = err.message;
-                        type = err.type;
-                    }
-
-                    if (!message) {
-                        switch (type) {
-                            case 'TestState':
-                                message = __('The test has been closed/suspended!');
-                                break;
-
-                            case 'FileNotFound':
-                                message = __('File not found!');
-                                break;
-
-                            default:
-                                message = __('An error occurred!');
-                        }
-                    }
 
                     //TODO to be replaced by the logger
                     window.console.error(err);
 
-                    feedback().error(message);
-
-                    if ('TestState' === type) {
+                    if(err && err.type && err.type === 'TestState') {
                         // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
                     }
-                })
-                .on('warning', function(message){
-                    feedback().warning(message);
-                })
-                .on('info', function(message){
-                    feedback().info(message);
                 })
                 .on('ready', function(){
                     _.defer(function(){
@@ -142,6 +105,8 @@ define([
                     this.destroy();
                 })
                 .on('destroy', function(){
+
+                    //at the end, we are redirected to the exit URL
                     window.location = config.exitUrl;
                 })
                 .init();

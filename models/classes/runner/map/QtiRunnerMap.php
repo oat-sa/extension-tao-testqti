@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\map;
 
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -36,15 +37,21 @@ class QtiRunnerMap implements RunnerMap
 {
     /**
      * Builds the map of an assessment test
-     * @param RunnerServiceContext $context
+     * @param RunnerServiceContext $context The test context
+     * @param RunnerConfig $config The runner config
      * @return mixed
      */
-    public function getMap(RunnerServiceContext $context)
+    public function getMap(RunnerServiceContext $context, RunnerConfig $config)
     {
         $map = [
             'parts' => [],
             'jumps' => []
         ];
+
+        // get config for the sequence number option
+        $reviewConfig = $config->getConfigValue('review');
+        $forceTitles = !empty($reviewConfig['forceTitle']);
+        $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
@@ -83,16 +90,24 @@ class QtiRunnerMap implements RunnerMap
                     $offsetSection = 0;
                     $lastSection = $sectionId;
                 }
+
+                if ($forceTitles) {
+                    $label = sprintf($uniqueTitle, $offsetSection + 1);
+                } else {
+                    $label = $item->getLabel();
+                }
                 
                 $itemInfos = [
+                    'id' => $itemId,
                     'uri' => $itemUri,
-                    'title' => $item->getLabel(),
+                    'label' => $label,
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
                     'positionInSection' => $offsetSection,
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
                     'answered' => $this->isItemCompleted($routeItem, $itemSession),
+                    'flagged' => \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
                 
@@ -105,12 +120,14 @@ class QtiRunnerMap implements RunnerMap
                     'uri' => $itemUri,
                 ];
                 if (!isset($map['parts'][$partId])) {
-                    $map['parts'][$partId]['title'] = $partId;
+                    $map['parts'][$partId]['id'] = $partId;
+                    $map['parts'][$partId]['label'] = $partId;
                     $map['parts'][$partId]['position'] = $offset;
                     $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
                 }
                 if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
-                    $map['parts'][$partId]['sections'][$sectionId]['title'] = $section->getTitle();
+                    $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
+                    $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
                     $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
                 }
                 $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
@@ -139,7 +156,9 @@ class QtiRunnerMap implements RunnerMap
         if (!isset($target['stats'])) {
             $target['stats'] = [
                 'answered' => 0,
+                'flagged' => 0,
                 'viewed' => 0,
+                'total' => 0,
             ];
         }
         
@@ -147,9 +166,15 @@ class QtiRunnerMap implements RunnerMap
             $target['stats']['answered'] ++;
         }
         
+        if (!empty($itemInfos['flagged'])) {
+            $target['stats']['flagged'] ++;
+        }
+        
         if (!empty($itemInfos['viewed'])) {
             $target['stats']['viewed'] ++;
         }
+        
+        $target['stats']['total'] ++;
     }
 
     /**
