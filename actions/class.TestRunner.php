@@ -764,14 +764,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             }
 
             $this->afterAction(false);
-        } else {
-            $session = $this->getTestSession();
-            $state = $session->getState();
-            if($state == AssessmentTestSessionState::SUSPENDED){
-                if (common_ext_ExtensionsManager::singleton()->isEnabled('taoProctoring')) {
-                    \oat\taoProctoring\helpers\DeliveryHelper::setHasBeenPaused($session->getSessionId(), true);
-                }
-            }
         }
     }
     
