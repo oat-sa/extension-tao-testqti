@@ -95,19 +95,18 @@ define([
                 } else {
                     self.hide();
                 }
-            };
+            }
 
             //build element (detached)
             this.$button = $(buttonTpl({
                 control: 'comment',
                 title: __('Leave a comment'),
                 icon: 'tag',
-                text: __('Comment'),
-                content: commentTpl()
+                text: __('Comment')
             }));
 
             //get access to controls
-            this.$form = this.$button.find('[data-control="qti-comment"]');
+            this.$form = $(commentTpl()).appendTo(this.$button);
             this.$input = this.$button.find('[data-control="qti-comment-text"]');
             this.$cancel = this.$button.find('[data-control="qti-comment-cancel"]');
             this.$submit = this.$button.find('[data-control="qti-comment-send"]');
