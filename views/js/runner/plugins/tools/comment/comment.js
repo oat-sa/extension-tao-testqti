@@ -90,7 +90,7 @@ define([
              */
             function togglePlugin() {
                 var context = testRunner.getTestContext();
-                if (context.allowComment) {
+                if (context.options.allowComment) {
                     self.show();
                 } else {
                     self.hide();
