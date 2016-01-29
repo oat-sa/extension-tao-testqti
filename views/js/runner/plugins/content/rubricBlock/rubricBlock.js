@@ -69,6 +69,9 @@ define([
                         testRunner.getProxy().callItemAction(context.itemUri, 'getRubrics').then(function(result){
                             self.$element.html(result.content);
                             blankifyLinks(self.$element);
+
+                            // notify that the rubric blocks are loaded
+                            testRunner.trigger('rubricblock');
                         });
                     }
                 })
