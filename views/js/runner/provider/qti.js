@@ -147,7 +147,7 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise}
+             * @returns {Promise} - resolve with a boolean at true if the response is stored
              */
             var store = function store(){
 
@@ -155,10 +155,24 @@ define([
 
                //we store only the responses and the state only if the user has interacted with the item.
                if(self.getItemState(context.itemUri, 'changed')){
+
                     return Promise.all([
                         self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                         self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                    ]);
+                    ]).then(function(results){
+                        return new Promise(function(resolve){
+                            //if the store results contains modal feedback we ask (gently) the IR to display them
+                            if(results.length === 2){
+                                if(results[1].displayFeedbacks === true && self.itemRunner){
+                                    return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
+                                        resolve(true);
+                                    });
+                                }
+                                return resolve(true);
+                            }
+                            return resolve(false);
+                        });
+                    });
                }
                return Promise.resolve(false);
             };
@@ -172,7 +186,9 @@ define([
                var testPart, section, item;
                var stats = {
                     answered : 0,
-                    viewed : 0
+                    flagged : 0,
+                    viewed : 0,
+                    total : 0
                };
 
                var context = self.getTestContext();
@@ -182,7 +198,9 @@ define([
                //reduce by sum up the stats
                var accStats = function accStats(acc, level){
                     acc.answered += level.stats.answered;
+                    acc.flagged += level.stats.flagged;
                     acc.viewed += level.stats.viewed;
+                    acc.total += level.stats.total;
                     return acc;
                };
 
@@ -202,12 +220,16 @@ define([
 
                //compute section stats from it's items
                section.stats = _.reduce(section.items, function(acc, item){
-                     if(item.answered){
+                    if(item.answered){
                         acc.answered++;
-                     }
-                     if(item.viewed){
+                    }
+                    if(item.flagged){
+                        acc.flagged++;
+                    }
+                    if(item.viewed){
                         acc.viewed++;
                     }
+                    acc.total ++;
                     return acc;
                 }, _.clone(stats));
 
@@ -236,7 +258,7 @@ define([
                 var computeNextMove = _.partial(computeNext, 'move', {
                         direction : direction,
                         scope     : scope || 'item',
-                        position  : position
+                        ref       : position
                     });
 
                 store()
@@ -256,42 +278,45 @@ define([
             .on('timeout', function(){
 
                 var context = self.getTestContext();
-                var computeNextTimeout = _.partial(computeNext, 'timeout');
 
                 context.isTimeout = true;
 
                 self.disableItem(context.itemUri);
 
-                self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function(){
-                    store()
-                     .then(updateStats)
-                     .then(computeNextTimeout)
-                     .catch(function(err){
+                store()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout');
+                        });
+                    })
+                    .catch(function(err){
                         self.trigger('error', err);
-                     });
-                });
+                    });
             })
             .on('renderitem', function(itemRef){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
+                var warning = false;
 
                 //The item is rendered but in a state that prevents us from interacting
-                if(context.itemSessionState > states.interacting){
+                if (context.isTimeout) {
+                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
 
-                    //we diable the item and warn the user
-                    self.disableItem(context.itemUri);
+                } else if (context.itemSessionState > states.interacting) {
 
-                    if(context.isTimeout){
-                        self.trigger('warning', __('Time limit reached for item "%s".', context.itemIdentifier));
-                    }
-                    else if(context.remainingAttempts === 0){
-
-                        self.trigger('warning', __('No more attempts allowed for item "%s".', context.itemIdentifier));
+                    if (context.remainingAttempts === 0) {
+                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
                     } else {
-
-                        self.trigger('warning', __('Item "%s" is completed.', context.itemIdentifier));
+                        warning = __('Item "%s" is completed.', context.itemIdentifier);
                     }
+                }
+
+                //we disable the item and warn the user
+                if (warning) {
+                    self.disableItem(context.itemUri);
+                    self.trigger('warning', warning);
                 }
             });
 

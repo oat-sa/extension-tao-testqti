@@ -40,7 +40,7 @@ class QtiRunnerNavigationJumpItem implements RunnerNavigation
     public function move(RunnerServiceContext $context, $ref)
     {
         QtiRunnerNavigation::checkTimedSectionExit($context, $ref);
-        $context->getTestSession()->jumpTo($ref);
+        $context->getTestSession()->jumpTo(intval($ref));
         return true;
     }
 }

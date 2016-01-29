@@ -44,6 +44,7 @@ define([
     /*
      *TODO plugins list, provider registration should be loaded dynamically
      */
+
     runner.registerProvider('qti', qtiProvider);
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 

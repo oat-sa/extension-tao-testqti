@@ -33,7 +33,8 @@ interface RunnerMap
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context
+     * @param array $config
      * @return mixed
      */
-    public function getMap(RunnerServiceContext $context);
+    public function getMap(RunnerServiceContext $context, $config = []);
 }
