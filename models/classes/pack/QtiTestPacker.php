@@ -58,15 +58,13 @@ class QtiTestPacker implements Packable
         try {
 
             $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
-            $itemService    = taoItems_models_classes_ItemsService::singleton();
-
 
             $doc            = $qtiTestService->getDoc($test);
             $converter      = new \taoQtiTest_models_classes_QtiTestConverter($doc);
             $itemPacker     = new QtiItemPacker();
             $items          = array();
             foreach($qtiTestService->getItems($test) as $item){
-                $items[$item->getUri()] = $itemPacker->packItem($item, $itemService->getItemFolder($item));
+                $items[$item->getUri()] = $itemPacker->packItem($item);
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
         } catch(common_Exception $e){

@@ -1,0 +1,73 @@
+@import "inc/bootstrap";
+@import "./test-dimensions";
+
+.test-runner-scope {
+
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+
+    height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer)) * 1px});
+
+    .test-runner-section-wrapper {
+
+        -webkit-flex: 1 1 0%;
+        -ms-flex: 1 1 0%;
+        flex: 1 1 0%;
+
+        overflow: auto;
+    }
+
+    .test-sidebar {
+        min-width: 200px;
+        max-width: 300px;
+        width: 12.5%;
+        overflow: auto;
+        background: $canvas;
+        height: 200px;
+    }
+
+    .test-sidebar-left {
+        border-right: 1px $uiGeneralContentBorder solid;
+    }
+
+    .test-sidebar-right {
+        border-left: 1px $uiGeneralContentBorder solid;
+    }
+
+    #qti-content {
+        max-width: map-get($widths, item-max-width) * 1px;
+        width: 100%;
+        margin: auto;
+    }
+
+    #qti-item {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .size-wrapper {
+        max-width: map-get($widths, size-wrapper) * 1px;
+        margin: auto;
+        width: 100%;
+    }
+
+    #qti-rubrics {
+        margin: auto;
+        max-width: map-get($widths, item-max-width) * 1px;
+        width: 100%;
+        padding: 15px;
+        .qti-rubricBlock {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    }
+}
+
