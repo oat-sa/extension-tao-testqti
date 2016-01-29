@@ -23,27 +23,20 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'core/promise',
-    'ui/feedback',
     'layout/loading-bar',
 
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
-
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-    'taoQtiTest/runner/plugins/controls/title/title',
-    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'taoQtiTest/runner/plugins/navigation/next',
-    'taoQtiTest/runner/plugins/navigation/previous',
-    'taoQtiTest/runner/plugins/navigation/nextSection',
-    'taoQtiTest/runner/plugins/navigation/skip',
+    'taoQtiTest/runner/plugins/loader',
 
     'css!taoQtiTestCss/new-test-runner'
 ], function(
-    $, _, Promise, feedback, loadingBar,
-    runner, qtiProvider, proxy, qtiServiceProxy,
-    title, progressbar, next, previous, nextSection, skip
+    $, _, __, Promise, loadingBar,
+    runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader
 ) {
     'use strict';
 
@@ -56,15 +49,6 @@ define([
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
 
-    var plugins = {
-        title       : title,
-        progress    : progressbar,
-        previous    : previous,
-        next        : next,
-        skip        : skip,
-        nextSection : nextSection
-    };
-
     /**
      * The runner controller
      */
@@ -72,20 +56,25 @@ define([
 
         /**
          * Controller entry point
-         * @param {Object} options - options to give to the test runner
+         *
+         * TODO verify required options
+         *
+         * @param {Object} options - the testRunner options
          * @param {String} options.testDefinition
          * @param {String} options.testCompilation
          * @param {String} options.serviceCallId
-         * @param {String} options.serviceExtension
          * @param {String} options.serviceController
-         * @param {String} options.exitUrl
+         * @param {String} options.serviceExtension
+         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start : function start(options){
-
             var config = _.defaults(options || {}, {
                 renderTo : $('.runner')
             });
 
+            var plugins = pluginLoader.getPlugins();
+
+            //TODO move the loading bar into a plugin
             loadingBar.start();
 
             //instantiate the QtiTestRunner
@@ -97,7 +86,9 @@ define([
                     //TODO to be replaced by the logger
                     window.console.error(err);
 
-                    feedback().error(err);
+                    if(err && err.type && err.type === 'TestState') {
+                        // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
+                    }
                 })
                 .on('ready', function(){
                     _.defer(function(){
@@ -114,6 +105,8 @@ define([
                     this.destroy();
                 })
                 .on('destroy', function(){
+
+                    //at the end, we are redirected to the exit URL
                     window.location = config.exitUrl;
                 })
                 .init();
