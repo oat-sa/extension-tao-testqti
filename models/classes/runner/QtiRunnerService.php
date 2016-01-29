@@ -31,9 +31,9 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\State;
+use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
@@ -63,24 +63,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     private function getItemDataFolder($itemRef)
     {
         $directoryIds = explode('|', $itemRef);
-        if(count($directoryIds) < 3){
+        if (count($directoryIds) < 3) {
             throw new \common_exception_InvalidArgumentType('The itemRef is not formated correctly');
         }
 
         $itemUri = $directoryIds[0];
-        $item = new \core_kernel_classes_Resource($itemUri);
-        $usedLang = $item->getUsedLanguages(new \core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY));
-
         $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
 
         $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
-        if (in_array($userDataLang, $usedLang)) {
+        if (file_exists($dirPath . $userDataLang)) {
             return $dirPath . $userDataLang . DIRECTORY_SEPARATOR;
-        }
+        } elseif (file_exists($dirPath . DEFAULT_LANG)) {
+            \common_Logger::i(
+                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
+            );
 
-        throw new \common_Exception(
-            $userDataLang . 'is not part of compilation directory for item : ' . $itemUri
-        );
+            return $dirPath . DEFAULT_LANG . DIRECTORY_SEPARATOR;
+        } else {
+            throw new \common_Exception(
+                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
+            );
+        }
     }
 
     /**
