@@ -122,13 +122,16 @@ define([
             var testData = testRunner.getTestData();
             var context = testRunner.getTestContext();
             var map = testRunner.getTestMap();
-            var config = testData.config;
-            var navigatorConfig = {
-                scope: config['test-taker-review-scope'],
-                hidden: false,//!context.displayReviewScreen,
-                preventsUnseen: !!config['test-taker-review-prevents-unseen'],
-                canCollapse: !!config['test-taker-review-can-collapse']
-            };
+            var navigatorConfig = testData.config.review || {};
+
+            /**
+             * Tells if the component is enabled
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                return navigatorConfig.enabled && context.options.reviewScreen;
+            }
 
             /**
              * Mark an item for review
@@ -206,22 +209,37 @@ define([
             //disabled by default
             this.disable();
 
+            if (!isEnabled()) {
+                this.hide();
+            }
+
             //change plugin state
             testRunner
                 .on('loaditem', function () {
                     var context = testRunner.getTestContext();
                     var map = testRunner.getTestMap();
 
-                    updateButton(self.$flagItemButton, getFlagItemButtonData(context));
-                    self.$flagItemButton.toggle(!context.isLinear);
-
-                    self.navigator.update(map, context);
+                    if (isEnabled()) {
+                        updateButton(self.$flagItemButton, getFlagItemButtonData(context));
+                        self.navigator
+                            .update(map, context)
+                            .updateConfig({
+                                canFlag: !context.isLinear && context.options.markReview
+                            });
+                        self.show();
+                    } else {
+                        self.hide();
+                    }
                 })
                 .on('renderitem', function () {
-                    self.enable();
+                    if (isEnabled()) {
+                        self.enable();
+                    }
                 })
                 .on('unloaditem', function () {
-                    self.disable();
+                    if (isEnabled()) {
+                        self.disable();
+                    }
                 });
         },
 
@@ -275,9 +293,7 @@ define([
         show: function show() {
             var testRunner = this.getTestRunner();
             var context = testRunner.getTestContext();
-            if (!context.isLinear) {
-                this.$flagItemButton.show();
-            }
+            this.$flagItemButton.toggle(!context.isLinear && context.options.markReview);
             this.$toggleButton.show();
             this.navigator.show();
         },

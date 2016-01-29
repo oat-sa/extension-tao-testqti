@@ -154,13 +154,13 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init : function init(){
-            var self = this;
             var $progressLabel,
                 $progressControl;
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
-            var progressIndicator = testData.config['progress-indicator'] || 'percentage';
-            var progressScope = testData.config['progress-indicator-scope'] || 'test';
+            var config     = testData.config.progressIndicator || {};
+            var progressIndicator = config.type || 'percentage';
+            var progressScope = config.scope || 'test';
 
             /**
              * Updae the progress bar
