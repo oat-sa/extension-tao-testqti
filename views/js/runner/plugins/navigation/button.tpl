@@ -3,4 +3,5 @@
         <span class="icon icon-{{icon}}"></span>
         <span class="text">{{text}}</span>
     </a>
+    {{{content}}}
 </li>

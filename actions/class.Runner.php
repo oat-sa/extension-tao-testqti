@@ -20,10 +20,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
-use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
+use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -276,19 +276,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         
         try {
             $serviceContext = $this->getServiceContext();
-
+            
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
+            $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
             if (is_string($itemData)) {
-                $response = '{"success":true,"itemData":' . $itemData . '}';
+                $response = '{"success":true,"itemData":' . $itemData . ',"baseUrl":"'.$baseUrl.'"}';
             } else {
                 $response = [
                     'itemData' => $itemData,
                     'success' => true,
+                    'baseUrl' => $baseUrl
                 ];
             }
-
+            
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
         }
         if (is_string($response)) {
             header(HTTPToolkit::statusCodeHeader($code));
@@ -614,6 +617,31 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             
             $response = [
                 'success' => true,
+            ];
+            
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+    
+    /**
+     * Comment the test
+     */
+    public function comment()
+    {
+        $code = 200;
+
+        $comment = $this->getRequestParameter('comment');
+        
+        try {
+            $serviceContext = $this->getServiceContext();
+            $result = $this->runnerService->comment($serviceContext, $comment);
+
+            $response = [
+                'success' => $result,
             ];
 
         } catch (common_Exception $e) {

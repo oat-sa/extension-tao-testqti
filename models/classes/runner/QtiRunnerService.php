@@ -28,8 +28,12 @@ use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
+use qtism\common\datatypes\String as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
+use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -805,6 +809,33 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+    }
+
+    /**
+     * Comment the test
+     * @param RunnerServiceContext $context
+     * @param string $comment
+     * @return bool
+     */
+    public function comment(RunnerServiceContext $context, $comment)
+    {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultServer);
+
+        // prepare transmission Id for result server.
+        $testSession = $context->getTestSession();
+        $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
+        $occurrence = $testSession->getCurrentAssessmentItemRefOccurence();
+        $sessionId = $testSession->getSessionId();
+        $transmissionId = "${sessionId}.${item}.${occurrence}";
+
+        // build variable and send it.
+        $itemUri = \taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
+        $testUri = $testSession->getTest()->getUri();
+        $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
+        $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+        
+        return true;
     }
 
     /**
