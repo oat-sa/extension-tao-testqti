@@ -24,6 +24,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'module',
     'core/promise',
     'layout/loading-bar',
 
@@ -34,10 +35,8 @@ define([
     'taoQtiTest/runner/plugins/loader',
 
     'css!taoQtiTestCss/new-test-runner'
-], function(
-    $, _, __, Promise, loadingBar,
-    runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader
-) {
+], function ($, _, __, module, Promise, loadingBar,
+             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
     'use strict';
 
 
@@ -48,6 +47,80 @@ define([
     runner.registerProvider('qti', qtiProvider);
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
+    /**
+     * Catches errors
+     * @param {Object} err
+     */
+    function onError(err) {
+        loadingBar.stop();
+
+        //TODO to be replaced by the logger
+        window.console.error(err);
+    }
+
+
+    /**
+     * Initializes and launches the test runner
+     * @param {Object} config
+     */
+    function initRunner(config) {
+        var plugins = pluginLoader.getPlugins();
+
+        _.defaults(config, {
+            renderTo: $('.runner')
+        });
+
+        //instantiate the QtiTestRunner
+        runner('qti', plugins, config)
+            .before('error', function (e, err) {
+                var self = this;
+
+                onError(err);
+
+                if (err && err.type && err.type === 'TestState') {
+                    // test has been closed/suspended => redirect to the index page after message acknowledge
+                    this.trigger('alert', err.message, function() {
+                        self.destroy();
+                    });
+
+                    // prevent other messages/warnings
+                    return false;
+                }
+            })
+            .on('ready', function () {
+                _.defer(function () {
+                    $('.runner').removeClass('hidden');
+                });
+            })
+            .on('unloaditem', function () {
+                //TODO move the loading bar into a plugin
+                loadingBar.start();
+            })
+            .on('renderitem', function () {
+                //TODO move the loading bar into a plugin
+                loadingBar.stop();
+            })
+            .on('finish', function () {
+                this.destroy();
+            })
+            .on('destroy', function () {
+
+                //at the end, we are redirected to the exit URL
+                window.location = config.exitUrl;
+            })
+            .init();
+    }
+
+    /**
+     * List of options required by the controller
+     * @type {String[]}
+     */
+    var requiredOptions = [
+        'testDefinition',
+        'testCompilation',
+        'serviceCallId',
+        'exitUrl'
+    ];
 
     /**
      * The runner controller
@@ -57,8 +130,6 @@ define([
         /**
          * Controller entry point
          *
-         * TODO verify required options
-         *
          * @param {Object} options - the testRunner options
          * @param {String} options.testDefinition
          * @param {String} options.testCompilation
@@ -67,49 +138,47 @@ define([
          * @param {String} options.serviceExtension
          * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
-        start : function start(options){
-            var config = _.defaults(options || {}, {
-                renderTo : $('.runner')
+        start: function start(options) {
+            var startOptions = options || {};
+            var config = module.config();
+            var missingOption = false;
+
+            // verify required options
+            _.forEach(requiredOptions, function(name) {
+                if (!startOptions[name]) {
+                    onError({
+                        success: false,
+                        code: 0,
+                        type: 'error',
+                        message: __('Missing required option %s', name)
+                    });
+                    missingOption = true;
+                    return false;
+                }
             });
 
-            var plugins = pluginLoader.getPlugins();
+            if (!missingOption) {
+                loadingBar.start();
 
-            //TODO move the loading bar into a plugin
-            loadingBar.start();
-
-            //instantiate the QtiTestRunner
-            runner('qti', plugins, config)
-                .on('error', function(err){
-
-                    loadingBar.stop();
-
-                    //TODO to be replaced by the logger
-                    window.console.error(err);
-
-                    if(err && err.type && err.type === 'TestState') {
-                        // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
-                    }
-                })
-                .on('ready', function(){
-                    _.defer(function(){
-                        $('.runner').removeClass('hidden');
+                if (config) {
+                    _.forEach(config.plugins, function (plugin) {
+                        pluginLoader.add(plugin.module, plugin.category, plugin.position);
                     });
-                })
-                .on('unloaditem', function(){
-                    loadingBar.start();
-                })
-                .on('renderitem', function(){
-                    loadingBar.stop();
-                })
-                .on('finish', function(){
-                    this.destroy();
-                })
-                .on('destroy', function(){
+                }
 
-                    //at the end, we are redirected to the exit URL
-                    window.location = config.exitUrl;
-                })
-                .init();
+                pluginLoader.load()
+                    .then(function () {
+                        initRunner(_.omit(startOptions, 'plugins'));
+                    })
+                    .catch(function () {
+                        onError({
+                            success: false,
+                            code: 0,
+                            type: 'error',
+                            message: __('Plugin dependency error!')
+                        });
+                    });
+            }
         }
     };
 
