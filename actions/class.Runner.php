@@ -660,22 +660,23 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $itemRef = ($this->hasRequestParameter('itemDefinition'))?$this->getRequestParameter('itemDefinition'): null;
 
-        $traceData = json_decode($this->getRequestParameter('traceData'));
+        $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
 
         try {
-            $serviceContext = $this->getServiceContext();
+            $serviceContext = $this->getServiceContext(false);
             $stored = 0;
             $size   = count($traceData);
+
             foreach($traceData  as $variableIdentifier => $variableValue){
-                if($this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)){
+                if($this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, json_encode($variableValue))){
                     $stored++;
                 }
             }
+
             $response = [
                 'success' => $stored == $size
             ];
-
-            $this->runnerService->persist($serviceContext);
+            common_Logger::d("Stored {$stored}/{$size} trace variables");
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);

@@ -100,13 +100,15 @@ define([
                 //TODO move the loading bar into a plugin
                 loadingBar.stop();
             })
-            .on('finish', function () {
+            .after('finish', function () {
                 this.destroy();
             })
             .on('destroy', function () {
 
                 //at the end, we are redirected to the exit URL
-                window.location = config.exitUrl;
+                _.delay(function(){
+                    window.location = config.exitUrl;
+                }, 50); //let defered exec a chance to finish
             })
             .init();
     }

@@ -23,10 +23,11 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, pluginFactory, buttonTpl){
+], function ($, _, __, pluginFactory, buttonTpl){
     'use strict';
 
     return pluginFactory({
@@ -43,7 +44,7 @@ define([
                 } else {
                     self.hide();
                 }
-            };
+            }
 
             function nextSection() {
                 testRunner.next('section');

@@ -333,6 +333,12 @@ define([
                 }
             });
 
+            //starts the event collection
+            if(this.getProbeOverseer()){
+                this.getProbeOverseer().start();
+            }
+
+
             //load data and current context in parrallel at initialization
             return this.getProxy().init()
                        .then(function(results){
@@ -448,31 +454,6 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
-            var self = this;
-            var probeOverseer = this.getProbeOverseer();
-
-            //if there is trace data collected by the probes
-            if(probeOverseer && probeOverseer.getProbes().length){
-                return Promise.all([
-                    probeOverseer.flush().then(function(data){
-
-                        //we reformat the time set into a trace variables
-                        var traceData = {};
-                        _.forEach(data, function(entry){
-                            var id = entry.type + '-' + entry.id;
-
-                            if(entry.marker){
-                                id = entry.marker + '-' + id;
-                            }
-                            traceData[id] = entry;
-                        });
-                        //and send them
-                        return this.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
-                    }),
-                    this.getProxy().callTestAction('finish')
-                ]);
-            }
-
             return this.getProxy().callTestAction('finish');
         },
 
@@ -484,6 +465,35 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy : function destroy(){
+
+            var self = this;
+
+            var probeOverseer = this.getProbeOverseer();
+
+            //if there is trace data collected by the probes
+            if(probeOverseer){
+                probeOverseer.flush()
+                    .then(function(data){
+
+                        //we reformat the time set into a trace variables
+                        if(data && data.length){
+                            var traceData = {};
+                            _.forEach(data, function(entry){
+                                var id = entry.type + '-' + entry.id;
+
+                                if(entry.marker){
+                                    id = entry.marker + '-' + id;
+                                }
+                                traceData[id] = entry;
+                            });
+                            //and send them
+                            return self.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
+                        }
+                    }).then(function(){
+                        probeOverseer.stop();
+                    });
+            }
+
             this.itemRunner = null;
         }
     };

@@ -104,6 +104,9 @@ define([
 
                 if(self.getState('enabled') !== false){
                     self.disable();
+                    if($(this).data('control') === 'move-end'){
+                        self.trigger('end');
+                    }
                     testRunner.next();
                 }
             });
