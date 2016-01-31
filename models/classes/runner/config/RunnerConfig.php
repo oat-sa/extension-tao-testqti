@@ -20,22 +20,33 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
-namespace oat\taoQtiTest\models\runner\map;
+namespace oat\taoQtiTest\models\runner\config;
 
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
- * Interface RunnerMap
- * @package oat\taoQtiTest\models\runner\map
+ * Interface RunnerOptions
+ * @package oat\taoQtiTest\models\runner\options
  */
-interface RunnerMap
+interface RunnerConfig
 {
     /**
-     * Builds the map of an assessment test
-     * @param RunnerServiceContext $context The test context
-     * @param RunnerConfig $config The runner config
+     * Returns the config related to the runner
      * @return mixed
      */
-    public function getMap(RunnerServiceContext $context, RunnerConfig $config);
+    public function getConfig();
+    
+    /**
+     * Returns the value of a config entry
+     * @param string $name
+     * @return mixed
+     */
+    public function getConfigValue($name);
+    
+    /**
+     * Returns the options related to the current test context
+     * @param RunnerServiceContext $context The test context
+     * @return mixed
+     */
+    public function getOptions(RunnerServiceContext $context);
 }

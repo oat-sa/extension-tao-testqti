@@ -34,15 +34,20 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testConfig = testRunner.getTestData().config;
 
-            var toggle = function toggle(){
-                var context = testRunner.getTestContext();
-                if(context.nextSection === true){
+            function toggle(){
+                var options = testRunner.getTestContext().options;
+                if(testConfig.nextSection && (options.nextSection || options.nextSectionWarning)){
                     self.show();
                 } else {
                     self.hide();
                 }
             };
+
+            function nextSection() {
+                testRunner.next('section');
+            }
 
             this.$element = $(buttonTpl({
                 control : 'next-section',
@@ -51,12 +56,23 @@ define([
                 text    : __('Next Section')
             }));
 
-          this.$element.on('click', function(e){
+            this.$element.on('click', function(e){
+                var context = testRunner.getTestContext();
+                var enable = _.bind(self.enable, self);
                 e.preventDefault();
                 if(self.getState('enabled') !== false){
                     self.disable();
 
-                    testRunner.next('section');
+                    if(context.options.nextSectionWarning){
+                        testRunner.trigger(
+                            'confirm',
+                            __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                            nextSection, // if the test taker accept
+                            enable       // if the test taker refuse
+                        );
+                    } else {
+                        nextSection();
+                    }
                 }
             });
 

@@ -224,10 +224,40 @@ define([
         },
 
         /**
+         * Update the config
+         * @param {Object} [config]
+         * @returns {navigatorApi}
+         */
+        updateConfig: function updateConfig(config) {
+            var $component = this.getElement();
+            var scopeClass = _cssCls.scope[this.config.scope || _defaults.scope];
+
+            // apply the new config
+            config = _.merge(this.config, config || {});
+
+            // enable/disable the collapsing of the panel
+            $component.toggleClass(_cssCls.collapsible, config.canCollapse);
+
+            // update the component CSS class according to the scope
+            $component.removeClass(scopeClass);
+            scopeClass = _cssCls.scope[this.config.scope || _defaults.scope];
+            $component.addClass(scopeClass);
+
+            // update component visibility
+            if (config.hidden) {
+                this.hide();
+            } else {
+                this.show();
+            }
+
+            return this;
+        },
+
+        /**
          * Updates the review screen
          * @param {Object} map The current test map
          * @param {Object} context The current test context
-         * @returns {testReview}
+         * @returns {navigatorApi}
          */
         update: function update(map, context) {
             var scopedMap = this.getScopedMap(map, context);
@@ -404,7 +434,7 @@ define([
         /**
          * Toggles the display state of the component
          * @param {Boolean} [show] External condition that's tells if the component must be shown or hidden
-         * @returns {testReview}
+         * @returns {navigatorApi}
          */
         toggle: function toggle(show) {
             if (undefined === show) {
@@ -427,6 +457,8 @@ define([
      * @param {String} [config.scope] Limit the review screen to a particular scope: test, testPart, testSection
      * @param {Boolean} [config.preventsUnseen] Prevents the test taker to access unseen items
      * @param {Boolean} [config.canCollapse] Allow the test taker to collapse the component
+     * @param {Boolean} [config.canFlag] Allow the test taker to flag items
+     * @param {Boolean} [config.hidden] Hide the component at init
      * @param {Object} map The current test map
      * @param {Object} context The current test context
      * @returns {*}
@@ -477,10 +509,6 @@ define([
                     this.render();
                 }
 
-                if (this.config.hidden) {
-                    this.hide();
-                }
-
                 this.update(map, context);
             })
 
@@ -492,7 +520,6 @@ define([
             // renders the component
             .on('render', function () {
                 var self = this;
-                var scopeClass = _cssCls.scope[this.config.scope || _defaults.scope];
 
                 // main component elements
                 var $component = this.getElement();
@@ -520,10 +547,7 @@ define([
                 };
 
                 // apply options
-                if (scopeClass) {
-                    $component.addClass(scopeClass);
-                }
-                $component.toggleClass(_cssCls.collapsible, this.config.canCollapse);
+                this.updateConfig();
 
                 // click on the collapse handle: collapse/expand the review panel
                 $component.on('click' + _selectors.component, _selectors.collapseHandle, function () {
@@ -576,7 +600,7 @@ define([
 
                         if (!$item.hasClass(_cssCls.disabled)) {
                             $target = $(event.target);
-                            if ($target.is(_selectors.icons) && !$component.hasClass(_cssCls.collapsed)) {
+                            if (self.config.canFlag && $target.is(_selectors.icons) && !$component.hasClass(_cssCls.collapsed)) {
                                 // click on the icon, just flag the item, unless the panel is collapsed
                                 if (!$item.hasClass(_cssCls.unseen)) {
                                     flagItem($item);

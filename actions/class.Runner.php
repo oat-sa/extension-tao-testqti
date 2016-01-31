@@ -277,18 +277,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             
-            $response = [
-                'itemData' => $this->runnerService->getItemData($serviceContext, $itemRef),
-                'baseUrl' => $this->runnerService->getItemPublicUrl($serviceContext, $itemRef),
-                'success' => true,
-            ];
+            $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
+            $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
+            if (is_string($itemData)) {
+                $response = '{"success":true,"itemData":' . $itemData . ',"baseUrl":"'.$baseUrl.'"}';
+            } else {
+                $response = [
+                    'itemData' => $itemData,
+                    'success' => true,
+                    'baseUrl' => $baseUrl
+                ];
+            }
             
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
-        
-        $this->returnJson($response, $code);
+        if (is_string($response)) {
+            header(HTTPToolkit::statusCodeHeader($code));
+            Context::getInstance()->getResponse()->setContentHeader('application/json');
+            echo $response;
+        } else {
+            $this->returnJson($response, $code);
+        }
     }
 
     /**
@@ -607,6 +618,58 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $response = [
                 'success' => true,
             ];
+            
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+    
+    /**
+     * Comment the test
+     */
+    public function comment()
+    {
+        $code = 200;
+
+        $comment = $this->getRequestParameter('comment');
+        
+        try {
+            $serviceContext = $this->getServiceContext();
+            $result = $this->runnerService->comment($serviceContext, $comment);
+
+            $response = [
+                'success' => $result,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * allow client to store information about the test, the section or the item
+     */
+    public function storeTraceData(){
+        $code = 200;
+
+        $itemRef = ($this->hasRequestParameter('itemDefinition'))?$this->getRequestParameter('itemDefinition'): null;
+
+        $variableIdentifier = $this->getRequestParameter('variableIdentifier');
+        $variableValue = $this->getRequestParameter('variableValue');
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $response = [
+                'success' => $this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue),
+            ];
+
+            $this->runnerService->persist($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
