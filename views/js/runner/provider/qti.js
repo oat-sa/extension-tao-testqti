@@ -28,11 +28,12 @@ define([
     'core/promise',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
+    'taoTests/runner/probeOverseer',
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -82,6 +83,18 @@ define([
                 'serviceExtension'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig);
+        },
+
+        /**
+         * Initialize and load the probe overseer
+         * @returns {probeOverseer}
+         */
+        loadProbeOverseer : function loadProbeOverseer(){
+            var config = this.getConfig();
+
+            //the test run needs to be identified uniquely
+            var identifier = config.serviceCallId || 'test-' + Date.now();
+            return probeOverseer(identifier, this);
         },
 
         /**
@@ -435,6 +448,31 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            var self = this;
+            var probeOverseer = this.getProbeOverseer();
+
+            //if there is trace data collected by the probes
+            if(probeOverseer && probeOverseer.getProbes().length){
+                return Promise.all([
+                    probeOverseer.flush().then(function(data){
+
+                        //we reformat the time set into a trace variables
+                        var traceData = {};
+                        _.forEach(data, function(entry){
+                            var id = entry.type + '-' + entry.id;
+
+                            if(entry.marker){
+                                id = entry.marker + '-' + id;
+                            }
+                            traceData[id] = entry;
+                        });
+                        //and send them
+                        return this.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
+                    }),
+                    this.getProxy().callTestAction('finish')
+                ]);
+            }
+
             return this.getProxy().callTestAction('finish');
         },
 
