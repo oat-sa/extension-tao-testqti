@@ -28,11 +28,12 @@ define([
     'core/promise',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
+    'taoTests/runner/probeOverseer',
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -82,6 +83,18 @@ define([
                 'serviceExtension'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig);
+        },
+
+        /**
+         * Initialize and load the probe overseer
+         * @returns {probeOverseer}
+         */
+        loadProbeOverseer : function loadProbeOverseer(){
+            var config = this.getConfig();
+
+            //the test run needs to be identified uniquely
+            var identifier = config.serviceCallId || 'test-' + Date.now();
+            return probeOverseer(identifier, this);
         },
 
         /**
@@ -320,6 +333,12 @@ define([
                 }
             });
 
+            //starts the event collection
+            if(this.getProbeOverseer()){
+                this.getProbeOverseer().start();
+            }
+
+
             //load data and current context in parrallel at initialization
             return this.getProxy().init()
                        .then(function(results){
@@ -446,6 +465,35 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy : function destroy(){
+
+            var self = this;
+
+            var probeOverseer = this.getProbeOverseer();
+
+            //if there is trace data collected by the probes
+            if(probeOverseer){
+                probeOverseer.flush()
+                    .then(function(data){
+
+                        //we reformat the time set into a trace variables
+                        if(data && data.length){
+                            var traceData = {};
+                            _.forEach(data, function(entry){
+                                var id = entry.type + '-' + entry.id;
+
+                                if(entry.marker){
+                                    id = entry.marker + '-' + id;
+                                }
+                                traceData[id] = entry;
+                            });
+                            //and send them
+                            return self.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
+                        }
+                    }).then(function(){
+                        probeOverseer.stop();
+                    });
+            }
+
             this.itemRunner = null;
         }
     };
