@@ -106,9 +106,10 @@ define([
             .on('destroy', function () {
 
                 //at the end, we are redirected to the exit URL
+                //FIXME this should be handled by the eventifier instead of doing a delay
                 _.delay(function(){
                     window.location = config.exitUrl;
-                }, 50); //let defered exec a chance to finish
+                }, 300); //let defered exec a chance to finish
             })
             .init();
     }
