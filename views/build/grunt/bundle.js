@@ -55,12 +55,8 @@ module.exports = function(grunt) {
             mainConfigFile : './config/requirejs.build.js',
             findNestedDependencies : true,
             paths : paths,
-            wrap : {
-                start : '',
-                end : "define(['taoQtiTest/controller/runner/runner'], function(r){ return r; });"
-            },
             include: runtimeLibs.concat([ 'tpl', 'json']),
-            excludeShallow : ['mathJax', 'ckeditor'],
+            excludeShallow : ['mathJax', 'ckeditor', 'lib/localforage'],
             name: "taoQtiTest/controller/runner/runner",
             out: out + "/qtiTestRunner.min.js"
         }
