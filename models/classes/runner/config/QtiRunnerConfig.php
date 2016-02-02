@@ -108,7 +108,7 @@ class QtiRunnerConfig implements RunnerConfig
         foreach ($categories as $category) {
             if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
-                $optionName = strtr(lcfirst(ucwords(substr($category, $prefixCategoryLen), '-_')), ['-' => '', '_' => '']);
+                $optionName = lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
 
                 // the options added by the categories are just flags
                 $options[$optionName] = true;
