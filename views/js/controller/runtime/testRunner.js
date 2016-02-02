@@ -420,7 +420,7 @@ function (
              * @returns {Boolean}
              */
             isCurrentItemActive: function(){
-                return (this.testContext.itemSessionState != 4);
+                return (this.testContext.itemSessionState !=4);
             },
 
             /**

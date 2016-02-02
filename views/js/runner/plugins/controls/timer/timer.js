@@ -46,6 +46,24 @@ define([
      */
     var precision = 1000;
 
+
+    /**
+     * The message to display when exiting
+     */
+    var exitMessage = __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?');
+
+    /**
+     * Are we in a timed section
+     * @param {Object} context - the current test context
+     * @returns {Boolean}
+     */
+    var isTimedSection = function isTimedSection(context){
+        var timeConstraints = context.timeConstraints || [];
+        return _.some(timeConstraints, function(constraint){
+            return constraint.qtiClassName === 'assessmentSection';
+        });
+    };
+
     /**
      * Creates the timer plugin
      */
@@ -168,6 +186,29 @@ define([
             }
 
             /**
+             * Are we going to leave a timed section and should we ask the tt if he would like to leave ?
+             * @param {String} type - the move type
+             * @param {Number} [position] - jump's poisition
+             * @returns {Boolean}
+             */
+            var displayExitMessage = function displayExitMessage(type, position){
+                var context = testRunner.getTestContext();
+                var map     = testRunner.getTestMap();
+
+                var section = map.parts[context.testPartId].sections[context.sectionId];
+                var item    = _.find(section.items, { position : context.itemPosition });
+
+                if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item ){
+
+                    return !!( (type === 'next' && ((_.size(section.items) - item.positionInSection - 1) === 0) ) ||
+                               (type === 'previous' && item.positionInSection === 0) ||
+                               (type === 'jump' && position > 0 && _.some(section.items,  { "position" : position })) );
+
+                }
+                return false;
+            };
+
+            /**
              * Updates each timer
              */
             function tick() {
@@ -219,10 +260,23 @@ define([
 
             //change plugin state
             testRunner
-                .before('move', function(){
+                .before('move', function(e, type, scope, position){
+                    var done = e.done();
+
                     if (self.getState('enabled')) {
                         self.disable();
                     }
+
+                    //display a mesage if we exit a timed section
+                    if(displayExitMessage(type, scope, position)){
+                        testRunner.trigger('confirm', exitMessage, done, function cancel(){
+                            self.enable();
+                            e.prevent();
+                        });
+                    } else {
+                        done();
+                    }
+
                 })
                 .on('loaditem', function(){
                     updateElement();
