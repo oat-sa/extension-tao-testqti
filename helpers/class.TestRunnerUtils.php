@@ -537,6 +537,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
                         $standalone,
                         $compilationDirs
                     );
+                } else {
+                    common_Logger::i('Try to use an extra context builder class that is not an instance of \\oat\\taoMp\\model\\runner\\ReviewTestContextBuilder!');
                 }
             }
         }
