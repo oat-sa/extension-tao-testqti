@@ -288,6 +288,22 @@ define([
                 });
 
             })
+            .on('exit', function(why){
+                var context = self.getTestContext();
+                self.disableItem(context.itemUri);
+
+                store()
+                    .then(function() {
+                        return self.getProxy()
+                            .callTestAction('exitTest', {reason: why})
+                            .then(function(){
+                                return self.finish();
+                            });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+            })
             .on('timeout', function(){
 
                 var context = self.getTestContext();
