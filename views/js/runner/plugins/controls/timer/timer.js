@@ -271,6 +271,7 @@ define([
                     if(displayExitMessage(type, scope, position)){
                         testRunner.trigger('confirm', exitMessage, done, function cancel(){
                             _.invoke(testRunner.getPlugins(), 'enable');
+                            testRunner.trigger('enableitem');
                             e.prevent();
                         });
                     } else {
