@@ -270,7 +270,7 @@ define([
                     //display a mesage if we exit a timed section
                     if(displayExitMessage(type, scope, position)){
                         testRunner.trigger('confirm', exitMessage, done, function cancel(){
-                            self.enable();
+                            _.invoke(testRunner.getPlugins(), 'enable');
                             e.prevent();
                         });
                     } else {
