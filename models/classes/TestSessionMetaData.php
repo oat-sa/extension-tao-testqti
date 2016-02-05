@@ -20,7 +20,9 @@
 
 namespace oat\taoQtiTest\models;
 
-use DateTime;
+use alroniks\dtms\DateInterval;
+use alroniks\dtms\DateTime;
+use DateTimeZone;
 use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
