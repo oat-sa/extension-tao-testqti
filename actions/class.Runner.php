@@ -678,8 +678,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
             $eventManager = \oat\oatbox\service\ServiceManager::getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
-            $deliveryExecution = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($serviceContext->getTestSession()->getSessionId());
-            $event = new \oat\taoQtiTest\models\event\RunnerTraceStored($deliveryExecution, $deliveryExecution->getState()->getUri());
+            $event = new \oat\taoQtiTest\models\event\TraceVariableStored($serviceContext->getTestSession()->getSessionId());
             $eventManager->trigger($event);
 
         } catch (common_Exception $e) {
