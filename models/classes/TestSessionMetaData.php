@@ -20,7 +20,9 @@
 
 namespace oat\taoQtiTest\models;
 
-use DateTime;
+use alroniks\dtms\DateInterval;
+use alroniks\dtms\DateTime;
+use DateTimeZone;
 use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
@@ -179,12 +181,12 @@ class TestSessionMetaData
                             if (isset( $timeLimits[count($timeLimits) - 1] )) {
                                 $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
 
-                                $latestPossibleSectionTime = $startTimeSection->add(new \DateInterval('PT' . $maxAllowedTime->getSeconds() . 'S'));
+                                $latestPossibleSectionTime = $startTimeSection->add(new DateInterval('PT' . $maxAllowedTime->getSeconds(true) . 'S'));
 
                                 if ($time > $latestPossibleSectionTime->getTimestamp()) {
                                     $currentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
                                     if ($itemMaxTimeAllowed) {
-                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new \DateInterval('PT' . $itemMaxTimeAllowed->getSeconds() . 'S'))->getTimestamp();
+                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new DateInterval('PT' . $itemMaxTimeAllowed->getSeconds(true) . 'S'))->getTimestamp();
                                     } else {
                                         $time = $latestPossibleSectionTime->getTimestamp();
                                     }
@@ -329,7 +331,7 @@ class TestSessionMetaData
         }
 
         $itemResults = array_map(function ($ts) {
-            $itemStart = (new DateTime('now', new \DateTimeZone('UTC')));
+            $itemStart = (new DateTime('now', new DateTimeZone('UTC')));
             $itemStart->setTimestamp($ts);
 
             return $itemStart;
