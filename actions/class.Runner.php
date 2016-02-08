@@ -24,6 +24,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\taoQtiTest\models\event\TraceVariableStored;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -677,8 +678,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => $stored == $size
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
-            $eventManager = \oat\oatbox\service\ServiceManager::getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
-            $event = new \oat\taoQtiTest\models\event\TraceVariableStored($serviceContext->getTestSession()->getSessionId());
+            $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
+            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId());
             $eventManager->trigger($event);
 
         } catch (common_Exception $e) {
