@@ -230,7 +230,6 @@ class TestSessionMetaData
     {
         $request = Context::getInstance()->getRequest();
         $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : array();
-        $action = Context::getInstance()->getActionName();
         $route = $this->getTestSession()->getRoute();
 
         if ($route->getPosition() === 0) { //very first item
