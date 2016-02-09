@@ -806,7 +806,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if (!file_exists($basepath.$userDataLang) && file_exists($basepath.DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
-            return $directory->getPublicAccessUrl().$userDataLang.DIRECTORY_SEPARATOR;
+            return $directory->getPublicAccessUrl().$userDataLang.'/';
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
