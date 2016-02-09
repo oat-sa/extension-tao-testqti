@@ -102,41 +102,4 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
         // TODO: store the list of plugins into json file to compile the controller with dependencies
         // example: file_put_contents($jsonPath, json_encode($plugins, JSON_PRETTY_PRINT));
     }
-
-    /**
-     * @param $module
-     * @param $category
-     */
-    public function removePlugin($module, $category, $position = null)
-    {
-        $config = [];
-        $registry = self::getRegistry();
-        if ($registry->isRegistered(self::RUNNER)) {
-            $config = $registry->get(self::RUNNER);
-        }
-
-        $plugins = [];
-        if (isset($config['plugins'])) {
-            foreach($config['plugins'] as $plugin) {
-                if ($plugin['module'] != $module) {
-                    $plugins[] = $plugin;
-                }
-            }
-        }
-
-        $plugin = [
-            'module' => $module,
-            'category' => $category,
-            'position' => $position,
-        ];
-
-        $key = array_search($plugin, $plugins);
-        if (is_numeric($key)) {
-            unset($plugins[$key]);
-        }
-
-        $config['plugins'] = $plugins;
-        $registry->set(self::RUNNER, $config);
-        $registry->set(self::RUNNER_PROD, $config);
-    }
 }
