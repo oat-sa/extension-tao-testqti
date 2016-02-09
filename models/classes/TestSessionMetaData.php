@@ -173,7 +173,6 @@ class TestSessionMetaData
                                 };
 
                                 return $a->longerThanOrEquals($b) ? 1 : - 1;
-
                             });
 
                             $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
@@ -234,29 +233,27 @@ class TestSessionMetaData
         $action = Context::getInstance()->getActionName();
         $route = $this->getTestSession()->getRoute();
 
-        if (in_array($action, array('index'))) {
+        if ($route->getPosition() === 0) { //very first item
             $data['TEST']['TAO_VERSION'] = TAO_VERSION;
         }
 
-        if (in_array($action, array('moveForward', 'skip'))) {
-            if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
-                $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
-                $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
-                $lastInSection = $route->isLast() ||
-                    ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
+        if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
+            $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
+            $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
+            $lastInSection = $route->isLast() ||
+                ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
 
-                if ($lastInSection && $timeOut) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
-                } elseif ($timeOut) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
-                } elseif ($lastInSection) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
-                }
+            if ($lastInSection && $timeOut) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
+            } elseif ($timeOut) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
+            } elseif ($lastInSection) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
             }
+        }
 
-            if ($route->isLast()) {
-                $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
-            }
+        if ($route->isLast()) {
+            $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
         }
 
         return $data;

@@ -120,15 +120,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionStateService->resumeSession($this->getTestSession());
 
         $this->retrieveTestMeta();
+    }
 
+    /**
+     * Save metadata retrieved from the request.
+     */
+    public function saveMetaData()
+    {
         $metaDataHandler = $this->getMetaDataHandler();
-        $metaDataHandler->registerItemCallbacks();
         $metaData = $metaDataHandler->getData();
         if (!empty($metaData)) {
             $metaDataHandler->save($metaData);
         }
     }
-    
+
     /**
      * Extracts the path of the compilation directory
      */

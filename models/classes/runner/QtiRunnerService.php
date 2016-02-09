@@ -146,10 +146,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
 
             // code borrowed from the previous implementation, but the reset timers option has been discarded
+            $context->getMetaDataHandler()->registerItemCallbacks();
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
-                $context->getMetaDataHandler()->registerItemCallbacks();
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
@@ -614,6 +614,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
         
         if ($context instanceof QtiRunnerServiceContext) {
+            $context->saveMetaData();
             $navigator = QtiRunnerNavigation::getNavigator($direction, $scope);
             try {
                 $result = $navigator->move($context, $ref);
@@ -663,7 +664,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
-            
+            $context->saveMetaData();
             try {
                 $session->checkTimeLimits(false, true, false);
             } catch (AssessmentTestSessionException $e) {
@@ -689,7 +690,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
-
+            $context->saveMetaData();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
             $session->endTestSession();
         } else {
