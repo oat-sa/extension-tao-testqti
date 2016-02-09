@@ -146,10 +146,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
 
             // code borrowed from the previous implementation, but the reset timers option has been discarded
-            $context->getMetaDataHandler()->registerItemCallbacks();
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
+                $context->getMetaDataHandler()->registerItemCallbacks();
                 \common_Logger::i("Assessment Test Session begun.");
             }
 

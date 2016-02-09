@@ -114,10 +114,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function init()
     {
+        $this->getMetaDataHandler()->registerItemCallbacks();
         // code borrowed from the previous implementation, maybe obsolete...
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
+
 
         $this->retrieveTestMeta();
     }
