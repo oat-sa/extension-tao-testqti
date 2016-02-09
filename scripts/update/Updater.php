@@ -253,11 +253,5 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.17.0');
         }
-
-        if ($this->isVersion('2.17.0')) {
-            $registry = TestRunnerClientConfigRegistry::getRegistry();
-            $registry->registerPlugin('taoQtiTest/runner/plugins/metaData', 'metadata');
-            $this->setVersion('2.17.1');
-        }
     }
 }
