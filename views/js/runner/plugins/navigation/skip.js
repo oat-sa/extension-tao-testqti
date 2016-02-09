@@ -88,7 +88,7 @@ define([
 
             var toggle = function toggle(){
                 var context = testRunner.getTestContext();
-                if(context.allowSkipping === true){
+                if(context.options.allowSkipping === true){
                     self.show();
                     return true;
                 }

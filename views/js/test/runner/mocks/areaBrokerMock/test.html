@@ -2,16 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Test Runner - integration test</title>
+        <title>Test Runner - Area Broker Mock</title>
         <base href="../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
-        <link rel="stylesheet" type="text/css" href="css/tao-main-style.css">
-        <link rel="stylesheet" type="text/css" href="css/tao-3.css">
-        <link rel="stylesheet" type="text/css" href="/taoQtiTest/views/css/new-test-runner.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="provider/qti.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js"  data-cover-flag="branchTracking"  data-cover-only="areaBrokerMock.js"></script>
 
         <script  type="text/javascript">
 
@@ -22,7 +19,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/runner/provider/integration/test'], function(){
+                require(['taoQtiTest/test/runner/mocks/areaBrokerMock/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();
@@ -33,8 +30,5 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture"></div>
-        <div id="external" style="width: 100%">
-
-        </div>
     </body>
 </html>

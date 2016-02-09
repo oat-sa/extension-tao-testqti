@@ -24,29 +24,19 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'module',
     'core/promise',
-    'ui/feedback',
     'layout/loading-bar',
 
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-
-    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
-    'taoQtiTest/runner/plugins/controls/title/title',
-    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'taoQtiTest/runner/plugins/navigation/next',
-    'taoQtiTest/runner/plugins/navigation/previous',
-    'taoQtiTest/runner/plugins/navigation/nextSection',
-    'taoQtiTest/runner/plugins/navigation/skip',
+    'taoQtiTest/runner/plugins/loader',
 
     'css!taoQtiTestCss/new-test-runner'
-], function(
-    $, _, __, Promise, feedback, loadingBar,
-    runner, qtiProvider, proxy, qtiServiceProxy,
-    rubricBlock, title, progressbar, next, previous, nextSection, skip
-) {
+], function ($, _, __, module, Promise, loadingBar,
+             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
     'use strict';
 
 
@@ -57,84 +47,142 @@ define([
     runner.registerProvider('qti', qtiProvider);
     proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
+    /**
+     * Catches errors
+     * @param {Object} err
+     */
+    function onError(err) {
+        loadingBar.stop();
 
-    var plugins = {
-        rubricBlock : rubricBlock,
-        title       : title,
-        progress    : progressbar,
-        previous    : previous,
-        next        : next,
-        skip        : skip,
-        nextSection : nextSection
-    };
+        //TODO to be replaced by the logger
+        window.console.error(err);
+    }
+
+
+    /**
+     * Initializes and launches the test runner
+     * @param {Object} config
+     */
+    function initRunner(config) {
+        var plugins = pluginLoader.getPlugins();
+
+        _.defaults(config, {
+            renderTo: $('.runner')
+        });
+
+        //instantiate the QtiTestRunner
+        runner('qti', plugins, config)
+            .before('error', function (e, err) {
+                var self = this;
+
+                onError(err);
+
+                if (err && err.type && err.type === 'TestState') {
+                    // test has been closed/suspended => redirect to the index page after message acknowledge
+                    this.trigger('alert', err.message, function() {
+                        self.destroy();
+                    });
+
+                    // prevent other messages/warnings
+                    return false;
+                }
+            })
+            .on('ready', function () {
+                _.defer(function () {
+                    $('.runner').removeClass('hidden');
+                });
+            })
+            .on('unloaditem', function () {
+                //TODO move the loading bar into a plugin
+                loadingBar.start();
+            })
+            .on('renderitem', function () {
+                //TODO move the loading bar into a plugin
+                loadingBar.stop();
+            })
+            .after('finish', function () {
+                var self = this;
+                //FIXME this should be handled by the eventifier instead of doing a delay
+                _.delay(function(){
+                    self.destroy();
+                }, 300); //let defered exec a chance to finish
+            })
+            .on('destroy', function () {
+
+                //at the end, we are redirected to the exit URL
+                window.location = config.exitUrl;
+            })
+            .init();
+    }
+
+    /**
+     * List of options required by the controller
+     * @type {String[]}
+     */
+    var requiredOptions = [
+        'testDefinition',
+        'testCompilation',
+        'serviceCallId',
+        'exitUrl'
+    ];
 
     /**
      * The runner controller
      */
     var runnerController = {
-        start : function start(options){
 
-            var config = _.defaults(options || {}, {
-                renderTo : $('.runner')
+        /**
+         * Controller entry point
+         *
+         * @param {Object} options - the testRunner options
+         * @param {String} options.testDefinition
+         * @param {String} options.testCompilation
+         * @param {String} options.serviceCallId
+         * @param {String} options.serviceController
+         * @param {String} options.serviceExtension
+         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
+         */
+        start: function start(options) {
+            var startOptions = options || {};
+            var config = module.config();
+            var missingOption = false;
+
+            // verify required options
+            _.forEach(requiredOptions, function(name) {
+                if (!startOptions[name]) {
+                    onError({
+                        success: false,
+                        code: 0,
+                        type: 'error',
+                        message: __('Missing required option %s', name)
+                    });
+                    missingOption = true;
+                    return false;
+                }
             });
 
-            loadingBar.start();
+            if (!missingOption) {
+                loadingBar.start();
 
-            //instantiate the QtiTestRunner
-            runner('qti', plugins, config)
-                .on('error', function(err){
-                    var message = err;
-                    var type = 'error';
-
-                    loadingBar.stop();
-
-                    if ('object' === typeof err) {
-                        message = err.message;
-                        type = err.type;
-                    }
-
-                    if (!message) {
-                        switch (type) {
-                            case 'TestState':
-                                message = __('The test has been closed/suspended!');
-                                break;
-
-                            case 'FileNotFound':
-                                message = __('File not found!');
-                                break;
-
-                            default:
-                                message = __('An error occurred!');
-                        }
-                    }
-
-                    //TODO to be replaced by the logger
-                    window.console.error(err);
-
-                    feedback().error(message);
-
-                    if ('TestState' === type) {
-                        // TODO: test has been closed/suspended => redirect to the index page after message acknowledge
-                    }
-                })
-                .on('ready', function(){
-                    _.defer(function(){
-                        $('.runner').removeClass('hidden');
+                if (config) {
+                    _.forEach(config.plugins, function (plugin) {
+                        pluginLoader.add(plugin.module, plugin.category, plugin.position);
                     });
-                })
-                .on('unloaditem', function(){
-                    loadingBar.start();
-                })
-                .on('renderitem', function(){
-                    loadingBar.stop();
-                })
-                .on('finish', function(){
-                    this.destroy();
-                })
-                .on('destroy', function(){
-                    window.location = config.exitUrl;
-                })
-                .init();
+                }
+
+                pluginLoader.load()
+                    .then(function () {
+                        initRunner(_.omit(startOptions, 'plugins'));
+                    })
+                    .catch(function () {
+                        onError({
+                            success: false,
+                            code: 0,
+                            type: 'error',
+                            message: __('Plugin dependency error!')
+                        });
+                    });
+            }
         }
     };
 

@@ -12,30 +12,84 @@
 
     height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer)) * 1px});
 
-    .test-runner-section-wrapper {
+    .test-runner-sections {
 
+        /* flex column value */
         -webkit-flex: 1 1 0%;
         -ms-flex: 1 1 0%;
         flex: 1 1 0%;
 
-        overflow: auto;
+        overflow: hidden;
+
+        /* is also a flex container */
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+        flex-direction: row;
     }
 
     .test-sidebar {
-        min-width: 200px;
-        max-width: 300px;
-        width: 12.5%;
-        overflow: auto;
         background: $canvas;
-        height: 200px;
-    }
 
+        /* side bars are supposed to have no width until they've got content */
+        -webkit-flex: 0 1 auto;
+        -ms-flex: 0 1 auto;
+        flex: 0 1 auto;
+
+        overflow-y: auto;
+
+        max-width: 350px;
+        & > .qti-panel {
+            max-width: 350px;
+            padding: 10px;
+        }
+        @media only screen and (max-device-width : 800px) {
+            max-width: 200px;
+            & > .qti-panel {
+                max-width: 200px;
+            }
+        }
+        @media only screen and (min-device-width : 800px) and (max-device-width : 1280px) {
+            max-width: 250px;
+            & > .qti-panel {
+                max-width: 250px;
+            }
+        }
+        @media only screen and (min-device-width : 1280px) and (max-device-width : 1440px) {
+            max-width: 300px;
+            & > .qti-panel {
+                max-width: 300px;
+            }
+        }
+    }
     .test-sidebar-left {
         border-right: 1px $uiGeneralContentBorder solid;
     }
 
     .test-sidebar-right {
         border-left: 1px $uiGeneralContentBorder solid;
+    }
+
+    .content-wrapper {
+        position: relative;
+
+        -webkit-flex: 1 1 0%;
+        -ms-flex: 1 1 0%;
+        flex: 1 1 0%;
+
+        overflow: auto;
+
+        .overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            opacity : .5;
+        }
     }
 
     #qti-content {

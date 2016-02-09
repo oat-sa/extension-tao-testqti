@@ -21,6 +21,8 @@
  */
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
+
 /**
  * Interface RunnerService
  * 
@@ -37,6 +39,13 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function init(RunnerServiceContext $context);
+
+    /**
+     * Gets the test runner config
+     * @return RunnerConfig
+     * @throws \common_ext_ExtensionException
+     */
+    public function getTestConfig();
 
     /**
      * Gets the test definition data
@@ -109,6 +118,30 @@ interface RunnerService
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response);
 
     /**
+     * Should we display feedbacks
+     * @param RunnerServiceContext $context
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function displayFeedbacks(RunnerServiceContext $context);
+
+    /**
+     * Get feedback definition
+     * @param RunnerServiceContext $context
+     * @param string $itemRef  the item reference
+     * @return array the feedbacks data
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getFeedbacks(RunnerServiceContext $context, $itemRef);
+
+    /**
+     * Get the current item session
+     * @param RunnerServiceContext $context
+     * @throws \common_Exception
+     */
+    public function getItemSession(RunnerServiceContext $context);
+
+    /**
      * Moves the current position to the provided scoped reference.
      * @param RunnerServiceContext $context
      * @param $direction
@@ -178,4 +211,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function check(RunnerServiceContext $context);
+
+
+
 }

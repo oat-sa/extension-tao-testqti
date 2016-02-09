@@ -25,11 +25,20 @@ namespace oat\taoQtiTest\models\runner;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
+use qtism\common\datatypes\String as QtismString;
 use qtism\data\NavigationMode;
+use qtism\data\SubmissionMode;
+use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
+use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -47,9 +56,41 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * The test runner config
-     * @var array
+     * @var RunnerConfig
      */
-    protected $config;
+    protected $testConfig;
+
+    /**
+     * Get the data folder from a given item definition
+     * @param string $itemRef - formated as itemURI|publicFolderURI|privateFolderURI
+     * @return string the path
+     * @throws \common_Exception
+     */
+    private function getItemDataFolder($itemRef)
+    {
+        $directoryIds = explode('|', $itemRef);
+        if (count($directoryIds) < 3) {
+            throw new \common_exception_InvalidArgumentType('The itemRef is not formated correctly');
+        }
+
+        $itemUri = $directoryIds[0];
+        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+
+        $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
+        if (file_exists($dirPath . $userDataLang)) {
+            return $dirPath . $userDataLang . DIRECTORY_SEPARATOR;
+        } elseif (file_exists($dirPath . DEFAULT_LANG)) {
+            \common_Logger::i(
+                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
+            );
+
+            return $dirPath . DEFAULT_LANG . DIRECTORY_SEPARATOR;
+        } else {
+            throw new \common_Exception(
+                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
+            );
+        }
+    }
 
     /**
      * Gets the test session for a particular delivery execution
@@ -93,19 +134,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
-     * Gets the test runner config
-     * @return array
-     * @throws \common_ext_ExtensionException
-     */
-    public function getConfig()
-    {
-        if (is_null($this->config)) {
-            $this->config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-        }
-        return $this->config;
-    }
-
-    /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context
      * @return boolean
@@ -136,6 +164,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Gets the test runner config
+     * @return RunnerConfig
+     * @throws \common_ext_ExtensionException
+     */
+    public function getTestConfig()
+    {
+        if (is_null($this->testConfig)) {
+            $this->testConfig = new QtiRunnerConfig();
+        }
+        return $this->testConfig;
+    }
+
+    /**
      * Gets the test definition data
      * @param RunnerServiceContext $context
      * @return array
@@ -155,6 +196,26 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $response['exclusivelyLinear'] = $testDefinition->isExclusivelyLinear();
             $response['hasTimeLimits'] = $testDefinition->hasTimeLimits();
 
+            //states that can be found in the context
+            $response['states'] = [
+                'initial'       => AssessmentTestSessionState::INITIAL,
+                'interacting'   => AssessmentTestSessionState::INTERACTING,
+                'modalFeedback' => AssessmentTestSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentTestSessionState::SUSPENDED,
+                'closed'        => AssessmentTestSessionState::CLOSED
+            ];
+
+            $response['itemStates'] = [
+                'initial'       => AssessmentItemSessionState::INITIAL,
+                'interacting'   => AssessmentItemSessionState::INTERACTING,
+                'modalFeedback' => AssessmentItemSessionState::MODAL_FEEDBACK,
+                'suspended'     => AssessmentItemSessionState::SUSPENDED,
+                'closed'        => AssessmentItemSessionState::CLOSED,
+                'solution'      => AssessmentItemSessionState::SOLUTION,
+                'review'        => AssessmentItemSessionState::REVIEW,
+                'notSelected'   => AssessmentItemSessionState::NOT_SELECTED
+            ];
+
             $timeLimits = $testDefinition->getTimeLimits();
             if ($timeLimits) {
                 if ($timeLimits->hasMinTime()) {
@@ -172,7 +233,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
             }
 
-            $response['config'] = $this->getConfig();
+            $response['config'] = $this->getTestConfig()->getConfig();
 
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
@@ -206,10 +267,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             // Context of interacting test
             if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
-                $config = $this->getConfig();
+                $config = $this->getTestConfig();
 
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
+                $response['isLinear'] = $session->getCurrentNavigationMode() == NavigationMode::LINEAR;
 
                 // The submission mode.
                 $response['submissionMode'] = $session->getCurrentSubmissionMode();
@@ -240,6 +302,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The current position in the route.
                 $response['itemPosition'] = $session->getRoute()->getPosition();
 
+                // The current item flagged state
+                $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
+
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
 
@@ -260,7 +325,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['numberPresented'] = $session->numberPresented();
 
                 // Whether or not the progress of the test can be inferred.
-                $response['considerProgress'] = \taoQtiTest_helpers_TestRunnerUtils::considerProgress($session, $context->getTestMeta(), $config);
+                $response['considerProgress'] = \taoQtiTest_helpers_TestRunnerUtils::considerProgress($session, $context->getTestMeta(), $config->getConfig());
 
                 // Whether or not the deepest current section is visible.
                 $response['isDeepestSectionVisible'] = $session->getCurrentAssessmentSection()->isVisible();
@@ -271,12 +336,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($session->getRoute()->current()->getRubricBlockRefs());
 
-                // Comment allowed? Skipping allowed? Logout or Exit allowed ?
-                $response['allowComment'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session);
-                $response['allowSkipping'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session);
-                $response['exitButton'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session);
-                $response['logoutButton'] = \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session);
-                $response['categories'] = \taoQtiTest_helpers_TestRunnerUtils::getCategories($session);
+                // append dynamic options
+                $response['options'] = $config->getOptions($context);
             }
 
         } else {
@@ -296,7 +357,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $map = new QtiRunnerMap();
-            return $map->getMap($context);
+            return $map->getMap($context, $this->getTestConfig());
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -328,28 +389,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemData(RunnerServiceContext $context, $itemRef)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $directoryIds = explode('|', $itemRef);
 
-            $itemUri = $directoryIds[0];
-            $item = new \core_kernel_classes_Resource($itemUri);
-            $usedLang = $item->getUsedLanguages(new \core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY));
-
-            $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
-
-            $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
-            if (in_array($userDataLang, $usedLang)) {
-                $itemFilePath = $dirPath . $userDataLang . DIRECTORY_SEPARATOR . QtiJsonItemCompiler::ITEM_FILE_NAME;
-            } else {
-                throw new \common_Exception(
-                    $userDataLang . 'is not part of compilation directory for item : ' . $itemUri
-                );
-            }
+            $itemDirectory = $this->getItemDataFolder($itemRef);
+            $itemFilePath = $itemDirectory . QtiJsonItemCompiler::ITEM_FILE_NAME;
 
             if (file_exists($itemFilePath)) {
-                return json_decode(file_get_contents($itemFilePath));
+                return file_get_contents($itemFilePath);
             } else {
                 throw new \tao_models_classes_FileNotFoundException(
-                    $itemFilePath . ' for item ' . $directoryIds[2]
+                    $itemFilePath . ' for item reference ' . $itemRef
                 );
             }
         } else {
@@ -405,16 +453,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            // --- Deal with provided responses.
 
+            $session = $context->getTestSession();
+            $currentItem  = $session->getCurrentAssessmentItemRef();
             $responses = new State();
-            $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
-            $currentOccurence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
             if ($currentItem === false) {
                 $msg = "Trying to store item variables but the state of the test session is INITIAL or CLOSED.\n";
-                $msg .= "Session state value: " . $context->getTestSession()->getState() . "\n";
-                $msg .= "Session ID: " . $context->getTestSession()->getSessionId() . "\n";
+                $msg .= "Session state value: " . $session->getState() . "\n";
+                $msg .= "Session ID: " . $session->getSessionId() . "\n";
                 $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
                 \common_Logger::e($msg);
             }
@@ -438,18 +485,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::e('Invalid json payload');
             }
 
-            $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
-
             try {
                 \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
-                $context->getTestSession()->endAttempt($responses, true);
-
-                // Return the item session state to the client side.
-                $itemSession = $context->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
-
-                foreach ($itemSession->getAllVariables() as $var) {
-                    $stateOutput->addVariable($var);
-                }
+                $session->endAttempt($responses, true);
 
                 return true;
             } catch (AssessmentTestSessionException $e) {
@@ -459,6 +497,107 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+    }
+
+
+    /**
+     * Should we display feedbacks
+     * @param QtiRunnerServiceContext $context
+     * @return boolean
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function displayFeedbacks(RunnerServiceContext $context)
+    {
+        $displayFeedbacks = false;
+
+        if ($context instanceof QtiRunnerServiceContext) {
+            /* @var AssessmentTestSession $session */
+            $session = $context->getTestSession();
+
+            if($session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS){
+                $displayFeedbacks = true;
+            }
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+        return $displayFeedbacks;
+    }
+
+
+    /**
+     * Get feedback definitions
+     *
+     * @param QtiRunnerServiceContext $context
+     * @param string $itemRef  the item reference
+     * @return array the feedbacks data
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getFeedbacks(RunnerServiceContext $context, $itemRef)
+    {
+
+        $feedbacks = array();
+
+        if ($context instanceof QtiRunnerServiceContext) {
+            /* @var AssessmentTestSession $session */
+            $session = $context->getTestSession();
+
+            $itemDirectory = $this->getItemDataFolder($itemRef);
+            $varEltPath    = $itemDirectory . QtiJsonItemCompiler::VAR_ELT_FILE_NAME;
+
+
+            if (file_exists($varEltPath)) {
+                $variableData = json_decode(file_get_contents($varEltPath), true); 
+                foreach( $variableData as $key => $element){
+                    if(isset($element['qtiClass']) && $element['qtiClass'] == 'modalFeedback'){
+                        $feedbacks[$key] = $element;
+                    }
+                }
+
+            } else {
+                throw new \tao_models_classes_FileNotFoundException(
+                    $varEltPath . ' for item reference' . $itemRef
+                );
+            }
+
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+
+        return $feedbacks;
+    }
+
+    /**
+     * Should we display feedbacks
+     * @param QtiRunnerServiceContext $context
+     * @return AssessmentItemSession the item session
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getItemSession(RunnerServiceContext $context)
+    {
+
+        $output = "";
+
+        if ($context instanceof QtiRunnerServiceContext) {
+            /* @var AssessmentTestSession $session */
+            $session = $context->getTestSession();
+
+            $currentItem      = $session->getCurrentAssessmentItemRef();
+            $currentOccurence = $session->getCurrentAssessmentItemRefOccurence();
+
+            $itemSession      = $session->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+
+            $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
+
+            foreach ($itemSession->getAllVariables() as $var) {
+                $stateOutput->addVariable($var);
+            }
+
+            $output = $stateOutput->getOutput();
+
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+        return $output;
     }
 
     /**
@@ -556,6 +695,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+        
+        return true;
     }
 
 
@@ -583,9 +724,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-
-
-        
 
         return $result;
     }
@@ -674,6 +812,33 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Comment the test
+     * @param RunnerServiceContext $context
+     * @param string $comment
+     * @return bool
+     */
+    public function comment(RunnerServiceContext $context, $comment)
+    {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultServer);
+
+        // prepare transmission Id for result server.
+        $testSession = $context->getTestSession();
+        $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
+        $occurrence = $testSession->getCurrentAssessmentItemRefOccurence();
+        $sessionId = $testSession->getSessionId();
+        $transmissionId = "${sessionId}.${item}.${occurrence}";
+
+        // build variable and send it.
+        $itemUri = \taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
+        $testUri = $testSession->getTest()->getUri();
+        $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
+        $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+        
+        return true;
+    }
+
+    /**
      * Continue the test interaction if possible
      * @param RunnerServiceContext $context
      * @return bool
@@ -729,6 +894,45 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             $itemSession = $session->getCurrentAssessmentItemSession();
             $itemSession->endItemSession();
+        }
+    }
+
+    /**
+     * Stores trace variable related to an item, a test or a section
+     * @param RunnerServiceContext $context
+     * @param $itemUri
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+            $metaVariable->setIdentifier($variableIdentifier);
+            $metaVariable->setBaseType('string');
+            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+            $metaVariable->setTrace($variableValue);
+
+            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $testUri = $context->getTestDefinitionUri();
+            $sessionId = $context->getTestSession()->getSessionId();
+
+            if (!is_null($itemUri)) {
+                $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+                $currentOccurence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+                $transmissionId = "${sessionId}.${$currentItem}.${$currentOccurence}";
+                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+            } else {
+                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+            }
+
+            return true;
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
     }
 }

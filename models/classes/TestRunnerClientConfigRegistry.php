@@ -32,6 +32,16 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
     const AMD = 'taoQtiTest/controller/runtime/testRunner';
 
     /**
+     * Path to the runner controller module
+     */
+    const RUNNER = 'taoQtiTest/controller/runner/runner';
+
+    /**
+     * Path to the runner controller module in production mode
+     */
+    const RUNNER_PROD = 'taoQtiTest/qtiTestRunner.min';
+
+    /**
      * Register a qti tools in the client lib config registry
      * 
      * @param string $name
@@ -42,5 +52,54 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
         //@todo validate tool config structure before registration
         $newConfig['qtiTools'][$name] = $toolConfig;
         $this->register(self::AMD, $newConfig);
+    }
+
+    /**
+     * Register a runner plugin
+     * @param string $module
+     * @param string $category
+     * @param string|int $position
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function registerPlugin($module, $category, $position = null){
+        if (!is_string($module)) {
+            throw new \common_exception_InvalidArgumentType('The module path must be a string!');
+        }
+        
+        if (!is_string($category)) {
+            throw new \common_exception_InvalidArgumentType('The category name must be a string!');
+        }
+        
+        if (!is_null($position) && !is_string($position) && !is_numeric($position)) {
+            throw new \common_exception_InvalidArgumentType('The position must be a string or a number!');
+        }
+
+        $config = [];
+        $registry = self::getRegistry();
+        if ($registry->isRegistered(self::RUNNER)) {
+            $config = $registry->get(self::RUNNER);
+        }
+
+        $plugins = [];
+        if (isset($config['plugins'])) {
+            foreach($config['plugins'] as $plugin) {
+                if ($plugin['module'] != $module) {
+                    $plugins[] = $plugin;
+                }
+            }
+        }
+        
+        $plugins[] = [
+            'module' => $module,
+            'category' => $category,
+            'position' => $position,
+        ]; 
+        
+        $config['plugins'] = $plugins;
+        $registry->set(self::RUNNER, $config);
+        $registry->set(self::RUNNER_PROD, $config);
+
+        // TODO: store the list of plugins into json file to compile the controller with dependencies
+        // example: file_put_contents($jsonPath, json_encode($plugins, JSON_PRETTY_PRINT));
     }
 }

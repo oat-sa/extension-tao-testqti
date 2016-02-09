@@ -277,18 +277,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             
-            $response = [
-                'itemData' => $this->runnerService->getItemData($serviceContext, $itemRef),
-                'baseUrl' => $this->runnerService->getItemPublicUrl($serviceContext, $itemRef),
-                'success' => true,
-            ];
+            $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
+            $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
+            if (is_string($itemData)) {
+                $response = '{"success":true,"itemData":' . $itemData . ',"baseUrl":"'.$baseUrl.'"}';
+            } else {
+                $response = [
+                    'itemData' => $itemData,
+                    'success' => true,
+                    'baseUrl' => $baseUrl
+                ];
+            }
             
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
-        
-        $this->returnJson($response, $code);
+        if (is_string($response)) {
+            header(HTTPToolkit::statusCodeHeader($code));
+            Context::getInstance()->getResponse()->setContentHeader('application/json');
+            echo $response;
+        } else {
+            $this->returnJson($response, $code);
+        }
     }
 
     /**
@@ -352,20 +363,28 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function storeItemResponse()
     {
         $code = 200;
-        
+
         $itemRef = $this->getRequestParameter('itemDefinition');
 
         $itemResponse = \taoQtiCommon_helpers_Utils::readJsonPayload();
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
-            $response = [
+
+            $response = array(
                 'success' => $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse),
-            ];
-            
+                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext)
+            );
+
+            if($response['displayFeedbacks'] == true){
+
+                //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
+                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
+            }
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -558,6 +577,107 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
             
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * Flag an item
+     */
+    public function flagItem()
+    {
+        $code = 200;
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $testSession = $serviceContext->getTestSession();
+            
+            if ($this->hasRequestParameter('position')) {
+                $itemPosition = intval($this->getRequestParameter('position'));
+            } else {
+                $itemPosition = $testSession->getRoute()->getPosition();
+            }
+            
+            if ($this->hasRequestParameter('flag')) {
+                $flag = $this->getRequestParameter('flag');
+                if (is_numeric($flag)) {
+                    $flag = !!(intval($flag));
+                } else {
+                    $flag = 'false' != strtolower($flag);
+                }
+            } else {
+                $flag = true;
+            }
+            
+            taoQtiTest_helpers_TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+            
+            $response = [
+                'success' => true,
+            ];
+            
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+    
+    /**
+     * Comment the test
+     */
+    public function comment()
+    {
+        $code = 200;
+
+        $comment = $this->getRequestParameter('comment');
+        
+        try {
+            $serviceContext = $this->getServiceContext();
+            $result = $this->runnerService->comment($serviceContext, $comment);
+
+            $response = [
+                'success' => $result,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * allow client to store information about the test, the section or the item
+     */
+    public function storeTraceData(){
+        $code = 200;
+
+        $itemRef = ($this->hasRequestParameter('itemDefinition'))?$this->getRequestParameter('itemDefinition'): null;
+
+        $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
+
+        try {
+            $serviceContext = $this->getServiceContext(false);
+            $stored = 0;
+            $size   = count($traceData);
+
+            foreach($traceData  as $variableIdentifier => $variableValue){
+                if($this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, json_encode($variableValue))){
+                    $stored++;
+                }
+            }
+
+            $response = [
+                'success' => $stored == $size
+            ];
+            common_Logger::d("Stored {$stored}/{$size} trace variables");
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
