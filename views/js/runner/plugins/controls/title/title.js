@@ -39,7 +39,6 @@ define([
             var createElement = function(){
 
                 var context  = testRunner.getTestContext();
-                var showSection   = !!context.isDeepestSectionVisible;
                 var titles =  [{
                     control : 'qti-test-title',
                     text    : testData.title
@@ -58,14 +57,16 @@ define([
 
 
             testRunner
-                .after('move', function(){
-                    self.$element = self.$element.replaceWith(createElement());
+                .after('renderitem', function(){
+                    var $element = createElement();
+                    self.$element.replaceWith($element);
+                    self.$element = $element;
                 });
 
         },
         render : function render(){
             var $container = this.getAreaBroker().getControlArea();
             $container.append(this.$element);
-        },
+        }
     });
 });
