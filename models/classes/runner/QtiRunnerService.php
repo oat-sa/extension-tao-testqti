@@ -279,6 +279,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
+                // The number of current attempt (1 for the first time ...)
+                $response['attempt'] = $session->getCurrentAssessmentItemSession()['numAttempts']->getValue();
+
                 // Whether or not the current step is time out.
                 $response['isTimeout'] = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
 
