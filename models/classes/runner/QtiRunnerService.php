@@ -615,9 +615,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         
         if ($context instanceof QtiRunnerServiceContext) {
             $context->saveMetaData();
-            $navigator = QtiRunnerNavigation::getNavigator($direction, $scope);
             try {
-                $result = $navigator->move($context, $ref);
+                $result = QtiRunnerNavigation::move($direction, $scope, $context, $ref);
                 if ($result) {
                     $this->continueInteraction($context);
                 }
