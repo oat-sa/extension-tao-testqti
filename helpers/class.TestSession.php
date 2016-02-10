@@ -220,6 +220,41 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }
+
+    /**
+     * Rewind the test to its first position
+     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
+     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
+     */
+    public function rewind($allowTimeout = false)
+    {
+        $position = 0;
+        $this->suspendItemSession();
+        $route = $this->getRoute();
+        $oldPosition = $route->getPosition();
+
+        try {
+            $route->setPosition($position);
+            $this->selectEligibleItems();
+
+            // Check the time limits after the jump is trully performed.
+            if ($allowTimeout === false) {
+                $this->checkTimeLimits(false, true);
+            }
+
+            // No exception thrown, interact!
+            $this->interactWithItemSession();
+        }
+        catch (AssessmentTestSessionException $e) {
+            // Rollback to previous position.
+            $route->setPosition($oldPosition);
+            throw $e;
+        }
+        catch (OutOfBoundsException $e) {
+            $msg = "Position '${position}' is out of the Route bounds.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::FORBIDDEN_JUMP, $e);
+        }
+    }
     
     protected function submitTestResults() {
         $testUri = $this->getTest()->getUri();

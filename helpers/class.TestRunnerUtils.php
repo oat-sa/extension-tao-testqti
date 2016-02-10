@@ -523,6 +523,24 @@ class taoQtiTest_helpers_TestRunnerUtils {
                     $context[$contextKey] = $config[$configKey];
                 }
             }
+
+            // optionally extend the context 
+            if (isset($config['extraContextBuilder']) && class_exists($config['extraContextBuilder'])) {
+                $builder = new $config['extraContextBuilder']();
+                if ($builder instanceof \oat\taoQtiTest\models\TestContextBuilder) {
+                    $builder->extendAssessmentTestContext(
+                        $context,
+                        $session,
+                        $testMeta,
+                        $qtiTestDefinitionUri,
+                        $qtiTestCompilationUri,
+                        $standalone,
+                        $compilationDirs
+                    );
+                } else {
+                    common_Logger::i('Try to use an extra context builder class that is not an instance of \\oat\\taoQtiTest\\models\\TestContextBuilder!');
+                }
+            }
         }
         
         return $context;
