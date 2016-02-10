@@ -21,9 +21,14 @@
  */
 
 namespace oat\taoQtiTest\models\runner\navigation;
+
+use oat\taoQtiTest\models\event\QtiMoveEvent;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentItemSession;
+use oat\oatbox\service\ServiceManager;
+use oat\oatbox\event\EventManager;
 
 /**
  * Class QtiRunnerNavigation
@@ -52,6 +57,34 @@ class QtiRunnerNavigation
         } else {
             throw new \common_exception_NotImplemented('The action is invalid!');
         }
+    }
+
+    /**
+     * @param string $direction
+     * @param string $scope
+     * @param RunnerServiceContext $context
+     * @param integer $ref
+     * @throws \common_exception_InvalidArgumentType
+     * @throws \common_exception_NotImplemented
+     * @return boolean
+     */
+    public static function move($direction, $scope, RunnerServiceContext $context, $ref)
+    {
+        $navigator = self::getNavigator($direction, $scope);
+
+        if ($context instanceof QtiRunnerServiceContext) {
+            $from = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
+        }
+
+        $result = $navigator->move($context, $ref);
+
+        if ($context instanceof QtiRunnerServiceContext) {
+            $to = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
+            $event = new QtiMoveEvent($context->getTestSession(), $from, $to);
+            ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+        }
+
+        return $result;
     }
 
     /**
