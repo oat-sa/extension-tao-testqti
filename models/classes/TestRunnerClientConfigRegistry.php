@@ -118,11 +118,7 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 
         $plugins = [];
         if (isset($config['plugins'])) {
-            foreach($config['plugins'] as $plugin) {
-                if ($plugin['module'] != $module) {
-                    $plugins[] = $plugin;
-                }
-            }
+            $plugins = $config['plugins'];
         }
 
         $plugin = [
