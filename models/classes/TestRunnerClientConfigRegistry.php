@@ -112,14 +112,16 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
     {
         $config = [];
         $registry = self::getRegistry();
+        
         if ($registry->isRegistered(self::RUNNER)) {
             $config = $registry->get(self::RUNNER);
         }
 
-        $plugins = [];
-        if (isset($config['plugins'])) {
-            $plugins = $config['plugins'];
+        if (!isset($config['plugins'])) {
+            return;
         }
+
+        $plugins = $config['plugins'];
 
         $plugin = [
             'module' => $module,
