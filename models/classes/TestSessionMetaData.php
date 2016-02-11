@@ -30,6 +30,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
@@ -236,7 +237,7 @@ class TestSessionMetaData
             $data['TEST']['TAO_VERSION'] = TAO_VERSION;
         }
 
-        if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
+        if (!isset($data['SECTION']['SECTION_EXIT_CODE']) && $this->getTestSession()->getState() != AssessmentTestSessionState::INITIAL) {
             $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
             $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
             $lastInSection = $route->isLast() ||
