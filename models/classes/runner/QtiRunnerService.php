@@ -42,6 +42,8 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\TestRunnerEvent;
 
 /**
  * Class QtiRunnerService
@@ -149,7 +151,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
-                $context->getMetaDataHandler()->registerItemCallbacks();
+                $event = new TestRunnerEvent(TestRunnerEvent::ACTION_INIT, $session);
+                $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
@@ -614,7 +617,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
         
         if ($context instanceof QtiRunnerServiceContext) {
-            $context->saveMetaData();
             try {
                 $result = QtiRunnerNavigation::move($direction, $scope, $context, $ref);
                 if ($result) {
@@ -663,7 +665,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
-            $context->saveMetaData();
             try {
                 $session->checkTimeLimits(false, true, false);
             } catch (AssessmentTestSessionException $e) {
@@ -689,13 +690,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
-            $context->saveMetaData();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+
+            $event = new TestRunnerEvent(TestRunnerEvent::ACTION_EXIT, $session);
+            $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+
             $session->endTestSession();
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-        
+
+
         return true;
     }
 
@@ -714,9 +719,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $executionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
             $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
+
             if ($deliveryExecution->getUserIdentifier() == $userUri) {
                 \common_Logger::i("Finishing the delivery execution {$executionUri}");
                 $result = $deliveryExecution->setState(DeliveryExecution::STATE_FINISHIED);
+                $event = new TestRunnerEvent(TestRunnerEvent::ACTION_FINISH, $context->getTestSession());
+                $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
             } else {
                 \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
                 $result = false;
@@ -869,7 +877,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-        
+
+        $event = new TestRunnerEvent(TestRunnerEvent::ACTION_TIMEOUT, $session);
+        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+
         if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {
             switch ($timeOutException->getCode()) {
                 case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:

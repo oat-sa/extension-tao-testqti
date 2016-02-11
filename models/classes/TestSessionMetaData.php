@@ -30,6 +30,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
+use qtism\runtime\tests\RouteItem;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
@@ -98,13 +99,15 @@ class TestSessionMetaData
      * Save session metadata.
      * 
      * @param array $metaData Meta data array to be saved.
+     * @param RouteItem $routeItem item for which data will be saved
+     * @param string $assessmentSectionId section id for which data will be saved
      * Example:
      * array(
      *   'TEST' => array('TEST_EXIT_CODE' => 'IC'),
      *   'SECTION' => array('SECTION_EXIT_CODE' => 701),
      * )
      */
-    public function save(array $metaData)
+    public function save(array $metaData, RouteItem $routeItem = null, $assessmentSectionId = null)
     {
         $testUri = $this->session->getTest()->getUri();
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
@@ -114,108 +117,28 @@ class TestSessionMetaData
                 $metaVariable = $this->getVariable($key, $value);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
-                    $itemUri = \taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($this->session);
-                    $itemRef = $this->session->getCurrentAssessmentItemRef();
-                    $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
+                    if ($routeItem === null) {
+                        $itemRef = $this->session->getCurrentAssessmentItemRef();
+                        $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
+                    } else {
+                        $itemRef = $routeItem->getAssessmentItemRef();
+                        $occurence = $routeItem->getOccurence();
+                    }
+
+                    $itemUri = $this->getItemUri($itemRef);
                     $sessionId = $this->session->getSessionId();
-                    
+
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
                     $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
                     $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
-                    $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
+                    if ($assessmentSectionId === null) {
+                        $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
+                    }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
                     $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
-                }
-            }
-        }
-    }
-    
-    /**
-     * Register callbacks for all item sessions
-     */
-    public function registerItemCallbacks() 
-    {
-        $sessionItems = $this->session->getItemSubset();
-        foreach($sessionItems as $assesmentItem) {
-            $itemSessions = $this->session->getAssessmentItemSessions($assesmentItem->getIdentifier());
-            if (!empty($itemSessions)) {
-                foreach ($itemSessions as $itemSession) {
-                    $itemSession->registerCallback(
-                        'suspend',
-                        function ($item, $testSessionMetaData) {
-                            $time = microtime(true);
-                            /** @var $testSessionMetaData TestSessionMetaData */
-                            $session  = $testSessionMetaData->getTestSession();
-                            $section  = $session->getCurrentAssessmentSection();
-
-                            $testPart = $session->getCurrentTestPart();
-                            $test     = $session->getAssessmentTest();
-
-                            $testMaxTimeAllowed     = $test->hasTimeLimits() ? $test->getTimeLimits()->getMaxTime() : null;
-                            $testPartMaxTimeAllowed = $testPart->hasTimeLimits() ? $testPart->getTimeLimits()->getMaxTime() : null;
-                            $sectionMaxTimeAllowed  = $section->hasTimeLimits() ? $section->getTimeLimits()->getMaxTime() : null;
-                            $itemMaxTimeAllowed     = $item->hasTimeLimits() ? $item->getTimeLimits()->getMaxTime() : null;
-
-                            $timeLimits = array_filter(array(
-                                $testMaxTimeAllowed,
-                                $testPartMaxTimeAllowed,
-                                $sectionMaxTimeAllowed,
-                                $itemMaxTimeAllowed
-                            ));
-
-                            usort($timeLimits, function ($a, $b) {
-                                /** @var $a Duration */
-                                if ($a->equals($b)) {
-                                    return 0;
-                                };
-
-                                return $a->longerThanOrEquals($b) ? 1 : - 1;
-                            });
-
-                            $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
-
-                            if (isset( $timeLimits[count($timeLimits) - 1] )) {
-                                $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
-
-                                $latestPossibleSectionTime = $startTimeSection->add(new DateInterval('PT' . $maxAllowedTime->getSeconds(true) . 'S'));
-
-                                if ($time > $latestPossibleSectionTime->getTimestamp()) {
-                                    $currentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
-                                    if ($itemMaxTimeAllowed) {
-                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new DateInterval('PT' . $itemMaxTimeAllowed->getSeconds(true) . 'S'))->getTimestamp();
-                                    } else {
-                                        $time = $latestPossibleSectionTime->getTimestamp();
-                                    }
-                                }
-                            }
-
-                            $testSessionMetaData->save(
-                                array('ITEM' => array('ITEM_END_TIME_SERVER' => $time))
-                            );
-                        },
-                        array($this)
-                    );
-                    $itemSession->registerCallback(
-                        'interact',
-                        function ($item, $testSessionMetaData) {
-                            $testSessionMetaData->save(
-                                array('ITEM' => array('ITEM_START_TIME_SERVER' => microtime(true)))
-                            );
-                        },
-                        array($this)
-                    );
-                    $itemSession->registerCallback(
-                        'beginAttempt',
-                        function ($item, $testSessionMetaData) {
-                            $testSessionMetaData->save(
-                                array('ITEM' => array('ITEM_START_TIME_SERVER' => microtime(true)))
-                            );
-                        },
-                        array($this)
-                    );
                 }
             }
         }
@@ -230,30 +153,6 @@ class TestSessionMetaData
     {
         $request = Context::getInstance()->getRequest();
         $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : array();
-        $route = $this->getTestSession()->getRoute();
-
-        if ($route->getPosition() === 0) { //very first item
-            $data['TEST']['TAO_VERSION'] = TAO_VERSION;
-        }
-
-        if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
-            $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
-            $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
-            $lastInSection = $route->isLast() ||
-                ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
-
-            if ($lastInSection && $timeOut) {
-                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
-            } elseif ($timeOut) {
-                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
-            } elseif ($lastInSection) {
-                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
-            }
-        }
-
-        if ($route->isLast()) {
-            $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
-        }
 
         return $data;
     }
@@ -338,5 +237,19 @@ class TestSessionMetaData
         }
 
         return $itemStartTime;
+    }
+
+    /**
+     * Get the URI referencing the Assessment Item (in the knowledge base)
+     *
+     * @param AssessmentItemRef $itemRef
+     * @return string A URI.
+     */
+    private function getItemUri(AssessmentItemRef $itemRef)
+    {
+        $href = $itemRef->getHref();
+        $parts = explode('|', $href);
+
+        return $parts[0];
     }
 }

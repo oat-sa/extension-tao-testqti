@@ -21,21 +21,31 @@
 namespace oat\taoQtiTest\models\event;
 
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\Event;
 
 /**
  *
  */
-class QtiMoveEvent implements Event
+class TestRunnerEvent implements Event
 {
-    const CONTEXT_BEFORE = 'before';
-    const CONTEXT_AFTER = 'after';
+    const ACTION_INIT = 'init';
+    const ACTION_EXIT = 'exit';
+    const ACTION_FINISH = 'finish';
+    const ACTION_TIMEOUT = 'timeout';
 
-    private $from;
-    private $to;
+    private $action;
     private $session;
-    private $context;
+
+    /**
+     * QtiMoveEvent constructor.
+     * @param string $action name of action such as 'init', 'exit', 'timeout'
+     * @param AssessmentTestSession $session
+     */
+    public function __construct($action, AssessmentTestSession $session)
+    {
+        $this->session = $session;
+        $this->action = $action;
+    }
 
     /**
      * @return string
@@ -46,26 +56,11 @@ class QtiMoveEvent implements Event
     }
 
     /**
-     * QtiMoveEvent constructor.
-     * @param string $context 'before' or 'after' move
-     * @param AssessmentTestSession $session
-     * @param null|RouteItem $from
-     * @param null|RouteItem $to
+     * @return AssessmentTestSession
      */
-    public function __construct($context, AssessmentTestSession $session, RouteItem $from = null, RouteItem $to = null)
+    public function getAction()
     {
-        $this->context = $context;
-        $this->session = $session;
-        $this->from = $from;
-        $this->to = $to;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContext()
-    {
-        return $this->context;
+        return $this->action;
     }
 
     /**
@@ -74,22 +69,6 @@ class QtiMoveEvent implements Event
     public function getSession()
     {
         return $this->session;
-    }
-
-    /**
-     * @return null|RouteItem
-     */
-    public function getFrom()
-    {
-        return $this->from;
-    }
-
-    /**
-     * @return null|RouteItem
-     */
-    public function getTo()
-    {
-        return $this->to;
     }
 
 }
