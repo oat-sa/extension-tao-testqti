@@ -167,26 +167,23 @@ define([
                var context = self.getTestContext();
 
                //we store only the responses and the state only if the user has interacted with the item.
-               if(self.getItemState(context.itemUri, 'changed')){
-
-                    return Promise.all([
-                        self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
-                        self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                    ]).then(function(results){
-                        return new Promise(function(resolve){
-                            //if the store results contains modal feedback we ask (gently) the IR to display them
-                            if(results.length === 2){
-                                if(results[1].displayFeedbacks === true && self.itemRunner){
-                                    return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
-                                        resolve(true);
-                                    });
-                                }
-                                return resolve(true);
+                return Promise.all([
+                    self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
+                    self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
+                ]).then(function(results){
+                    return new Promise(function(resolve){
+                        //if the store results contains modal feedback we ask (gently) the IR to display them
+                        if(results.length === 2){
+                            if(results[1].displayFeedbacks === true && self.itemRunner){
+                                return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
+                                    resolve(true);
+                                });
                             }
-                            return resolve(false);
-                        });
+                            return resolve(true);
+                        }
+                        return resolve(false);
                     });
-               }
+                });
                return Promise.resolve(false);
             };
 
