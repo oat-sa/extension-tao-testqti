@@ -81,6 +81,7 @@ define([
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     this.trigger('alert', err.message, function() {
                         self.trigger('endsession', 'teststate', err.code);
+                        self.destroy();
                     });
 
                     // prevent other messages/warnings
