@@ -143,7 +143,16 @@ class TestSessionMetaData
             }
         }
     }
-    
+
+    /**
+     * Register callbacks for all item sessions
+     * @deprecated 
+     */
+    public function registerItemCallbacks()
+    {
+         return false;
+    }
+
     /**
      * Get current test session meta data array
      *
