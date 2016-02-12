@@ -20,7 +20,9 @@
 
 namespace oat\taoQtiTest\models;
 
-use DateTime;
+use alroniks\dtms\DateInterval;
+use alroniks\dtms\DateTime;
+use DateTimeZone;
 use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
@@ -28,6 +30,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
@@ -171,7 +174,6 @@ class TestSessionMetaData
                                 };
 
                                 return $a->longerThanOrEquals($b) ? 1 : - 1;
-
                             });
 
                             $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
@@ -179,12 +181,12 @@ class TestSessionMetaData
                             if (isset( $timeLimits[count($timeLimits) - 1] )) {
                                 $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
 
-                                $latestPossibleSectionTime = $startTimeSection->add(new \DateInterval('PT' . $maxAllowedTime->getSeconds() . 'S'));
+                                $latestPossibleSectionTime = $startTimeSection->add(new DateInterval('PT' . $maxAllowedTime->getSeconds(true) . 'S'));
 
                                 if ($time > $latestPossibleSectionTime->getTimestamp()) {
                                     $currentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
                                     if ($itemMaxTimeAllowed) {
-                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new \DateInterval('PT' . $itemMaxTimeAllowed->getSeconds() . 'S'))->getTimestamp();
+                                        $time = $testSessionMetaData->getItemStartTime($currentItemRef)->add(new DateInterval('PT' . $itemMaxTimeAllowed->getSeconds(true) . 'S'))->getTimestamp();
                                     } else {
                                         $time = $latestPossibleSectionTime->getTimestamp();
                                     }
@@ -229,32 +231,29 @@ class TestSessionMetaData
     {
         $request = Context::getInstance()->getRequest();
         $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : array();
-        $action = Context::getInstance()->getActionName();
         $route = $this->getTestSession()->getRoute();
 
-        if (in_array($action, array('index'))) {
+        if ($route->getPosition() === 0) { //very first item
             $data['TEST']['TAO_VERSION'] = TAO_VERSION;
         }
 
-        if (in_array($action, array('moveForward', 'skip'))) {
-            if (!isset($data['SECTION']['SECTION_EXIT_CODE'])) {
-                $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
-                $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
-                $lastInSection = $route->isLast() ||
-                    ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
+        if (!isset($data['SECTION']['SECTION_EXIT_CODE']) && $this->getTestSession()->getState() != AssessmentTestSessionState::INITIAL) {
+            $currentSection = $this->getTestSession()->getCurrentAssessmentSection();
+            $timeOut = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($this->getTestSession());
+            $lastInSection = $route->isLast() ||
+                ($route->getNext()->getAssessmentSection()->getIdentifier() !== $currentSection->getIdentifier());
 
-                if ($lastInSection && $timeOut) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
-                } elseif ($timeOut) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
-                } elseif ($lastInSection) {
-                    $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
-                }
+            if ($lastInSection && $timeOut) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETE_TIMEOUT;
+            } elseif ($timeOut) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_TIMEOUT;
+            } elseif ($lastInSection) {
+                $data['SECTION']['SECTION_EXIT_CODE'] = self::SECTION_CODE_COMPLETED_NORMALLY;
             }
+        }
 
-            if ($route->isLast()) {
-                $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
-            }
+        if ($route->isLast()) {
+            $data['TEST']['TEST_EXIT_CODE'] = self::TEST_CODE_COMPLETE;
         }
 
         return $data;
@@ -329,7 +328,7 @@ class TestSessionMetaData
         }
 
         $itemResults = array_map(function ($ts) {
-            $itemStart = (new DateTime('now', new \DateTimeZone('UTC')));
+            $itemStart = (new DateTime('now', new DateTimeZone('UTC')));
             $itemStart->setTimestamp($ts);
 
             return $itemStart;

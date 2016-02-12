@@ -114,21 +114,28 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function init()
     {
+        $this->getMetaDataHandler()->registerItemCallbacks();
         // code borrowed from the previous implementation, maybe obsolete...
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
 
-        $this->retrieveTestMeta();
 
+        $this->retrieveTestMeta();
+    }
+
+    /**
+     * Save metadata retrieved from the request.
+     */
+    public function saveMetaData()
+    {
         $metaDataHandler = $this->getMetaDataHandler();
-        $metaDataHandler->registerItemCallbacks();
         $metaData = $metaDataHandler->getData();
         if (!empty($metaData)) {
             $metaDataHandler->save($metaData);
         }
     }
-    
+
     /**
      * Extracts the path of the compilation directory
      */

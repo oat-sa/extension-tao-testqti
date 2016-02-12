@@ -279,6 +279,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
+                // The number of current attempt (1 for the first time ...)
+                $response['attempt'] = $session->getCurrentAssessmentItemSession()['numAttempts']->getValue();
+
                 // Whether or not the current step is time out.
                 $response['isTimeout'] = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
 
@@ -614,6 +617,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
         
         if ($context instanceof QtiRunnerServiceContext) {
+            $context->saveMetaData();
             $navigator = QtiRunnerNavigation::getNavigator($direction, $scope);
             try {
                 $result = $navigator->move($context, $ref);
@@ -663,7 +667,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
-            
+            $context->saveMetaData();
             try {
                 $session->checkTimeLimits(false, true, false);
             } catch (AssessmentTestSessionException $e) {
@@ -689,7 +693,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
-
+            $context->saveMetaData();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
             $session->endTestSession();
         } else {
@@ -805,7 +809,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if (!file_exists($basepath.$userDataLang) && file_exists($basepath.DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
-            return $directory->getPublicAccessUrl().$userDataLang.DIRECTORY_SEPARATOR;
+            return $directory->getPublicAccessUrl().$userDataLang.'/';
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
