@@ -58,6 +58,18 @@ define([
         window.console.error(err);
     }
 
+    /**
+     * Call the destroy action of the test runner
+     * Must be applied on a test runner instance: destroyRunner.call(runner);
+     */
+    function destroyRunner() {
+        var self = this;
+        //FIXME this should be handled by the eventifier instead of doing a delay
+        _.delay(function(){
+            self.destroy();
+        }, 300); //let deferred exec a chance to finish
+    }
+
 
     /**
      * Initializes and launches the test runner
@@ -81,7 +93,7 @@ define([
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     this.trigger('alert', err.message, function() {
                         self.trigger('endsession', 'teststate', err.code);
-                        self.destroy();
+                        destroyRunner.call(self);
                     });
 
                     // prevent other messages/warnings
@@ -102,14 +114,9 @@ define([
                 loadingBar.stop();
             })
             .after('finish', function () {
-                var self = this;
-                //FIXME this should be handled by the eventifier instead of doing a delay
-                _.delay(function(){
-                    self.destroy();
-                }, 300); //let defered exec a chance to finish
+                destroyRunner.call(this);
             })
             .on('destroy', function () {
-
                 //at the end, we are redirected to the exit URL
                 window.location = config.exitUrl;
             })
