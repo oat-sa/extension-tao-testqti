@@ -30,7 +30,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
-use qtism\runtime\tests\AssessmentTestSessionState;|
+use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\RouteItem;
 
 /**
