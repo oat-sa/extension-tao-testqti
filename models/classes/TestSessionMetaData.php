@@ -30,6 +30,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
+use qtism\runtime\tests\AssessmentTestSessionState;|
 use qtism\runtime\tests\RouteItem;
 
 /**
@@ -118,8 +119,8 @@ class TestSessionMetaData
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {
-                        $itemRef = $this->session->getCurrentAssessmentItemRef();
-                        $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
+                    $itemRef = $this->session->getCurrentAssessmentItemRef();
+                    $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
                     } else {
                         $itemRef = $routeItem->getAssessmentItemRef();
                         $occurence = $routeItem->getOccurence();
@@ -135,7 +136,7 @@ class TestSessionMetaData
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
-                        $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
+                    $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
                     $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
@@ -151,7 +152,7 @@ class TestSessionMetaData
     public function registerItemCallbacks()
     {
          return false;
-    }
+                            }
 
     /**
      * Get current test session meta data array

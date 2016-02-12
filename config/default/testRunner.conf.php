@@ -115,9 +115,16 @@ return array(
      */
     'next-section' => false,
 
-   /**
+    /**
      * After resuming test session timers will be reset to the time when the last item has been submitted.
      * @type boolean
      */
     'reset-timer-after-resume' => false,
+
+    /**
+     * Sets an extra AssessmentTestContext builder class.
+     * This class have to implements \oat\taoQtiTest\models\TestContextBuilder
+     * @type string
+     */
+    'extraContextBuilder' => null,
 );
