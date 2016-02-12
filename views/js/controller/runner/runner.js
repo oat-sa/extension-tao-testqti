@@ -80,7 +80,7 @@ define([
                 if (err && err.type && err.type === 'TestState') {
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     this.trigger('alert', err.message, function() {
-                        self.trigger('done', 'teststate', err.code);
+                        self.trigger('endsession', 'teststate', err.code);
                     });
 
                     // prevent other messages/warnings
@@ -101,9 +101,6 @@ define([
                 loadingBar.stop();
             })
             .after('finish', function () {
-                this.trigger('done', 'finish');
-            })
-            .on('done', function() {
                 var self = this;
                 //FIXME this should be handled by the eventifier instead of doing a delay
                 _.delay(function(){

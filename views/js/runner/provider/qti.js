@@ -467,6 +467,7 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            this.trigger('endsession', 'finish');
             return this.getProxy().callTestAction('finish');
         },
 
