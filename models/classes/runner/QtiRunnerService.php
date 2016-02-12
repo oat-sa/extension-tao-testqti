@@ -43,7 +43,9 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\event\TestRunnerEvent;
+use oat\taoQtiTest\models\event\TestInitEvent;
+use oat\taoQtiTest\models\event\TestExitEvent;
+use oat\taoQtiTest\models\event\TestTimeoutEvent;
 
 /**
  * Class QtiRunnerService
@@ -151,7 +153,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
-                $event = new TestRunnerEvent(TestRunnerEvent::ACTION_INIT, $session);
+                $event = new TestInitEvent($session);
                 $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
                 \common_Logger::i("Assessment Test Session begun.");
             }
@@ -695,7 +697,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $session->getSessionId();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
 
-            $event = new TestRunnerEvent(TestRunnerEvent::ACTION_EXIT, $session);
+            $event = new TestExitEvent($session);
             $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
             $session->endTestSession();
@@ -726,8 +728,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($deliveryExecution->getUserIdentifier() == $userUri) {
                 \common_Logger::i("Finishing the delivery execution {$executionUri}");
                 $result = $deliveryExecution->setState(DeliveryExecution::STATE_FINISHIED);
-                $event = new TestRunnerEvent(TestRunnerEvent::ACTION_FINISH, $context->getTestSession());
-                $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
             } else {
                 \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
                 $result = false;
@@ -881,7 +881,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
 
-        $event = new TestRunnerEvent(TestRunnerEvent::ACTION_TIMEOUT, $session);
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode());
         $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
         if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {

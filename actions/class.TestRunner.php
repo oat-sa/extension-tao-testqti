@@ -291,7 +291,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
         
-        $this->getMetaDataHandler()->registerItemCallbacks();
         $metaData = $this->getMetaDataHandler()->getData();
         if (!empty($metaData)) {
             $this->getMetaDataHandler()->save($metaData);
@@ -368,7 +367,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
-                $this->getMetaDataHandler()->registerItemCallbacks();
                 common_Logger::i("Assessment Test Session begun.");
             }
 

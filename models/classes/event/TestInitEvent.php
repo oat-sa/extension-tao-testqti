@@ -20,33 +20,14 @@
 
 namespace oat\taoQtiTest\models\event;
 
-use qtism\runtime\tests\AssessmentTestSession;
-use oat\oatbox\event\Event;
-
 /**
+ * Event represents initialization of test session in test runner.
+ * Triggered right after beginning of assessment session.
  *
+ * @author Aleh Hutnikau <hutnikau@1pt.com>
  */
-class TestRunnerEvent implements Event
+class TestInitEvent extends AbstractTestEvent
 {
-    const ACTION_INIT = 'init';
-    const ACTION_EXIT = 'exit';
-    const ACTION_FINISH = 'finish';
-    const ACTION_TIMEOUT = 'timeout';
-
-    private $action;
-    private $session;
-
-    /**
-     * QtiMoveEvent constructor.
-     * @param string $action name of action such as 'init', 'exit', 'timeout'
-     * @param AssessmentTestSession $session
-     */
-    public function __construct($action, AssessmentTestSession $session)
-    {
-        $this->session = $session;
-        $this->action = $action;
-    }
-
     /**
      * @return string
      */
@@ -54,21 +35,4 @@ class TestRunnerEvent implements Event
     {
         return __CLASS__;
     }
-
-    /**
-     * @return AssessmentTestSession
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
-     * @return AssessmentTestSession
-     */
-    public function getSession()
-    {
-        return $this->session;
-    }
-
 }
