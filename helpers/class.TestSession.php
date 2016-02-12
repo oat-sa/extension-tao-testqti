@@ -307,7 +307,23 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
         return new OutcomeProcessing(new OutcomeRuleCollection(array($outcomeRule)));
     }
-    
+
+    /**
+     * Suspend the current test session if it is running.
+     */
+    public function suspend() {
+        parent::suspend();
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Resume the current test session if it is suspended.
+     */
+    public function resume() {
+        parent::resume();
+        $this->triggerEventChange();
+    }
+
     public function beginTestSession()
     {
         parent::beginTestSession();
