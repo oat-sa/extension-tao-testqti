@@ -55,7 +55,6 @@ define([
                 response = mockAction.apply(this, params);
             } else {
                 message = 'Missing proxy mock implementation for ' + scope + ' action: ' + action;
-                console.log(message);
                 response = Promise.reject({
                     success: false,
                     type: 'error',
@@ -64,7 +63,7 @@ define([
                 });
             }
 
-            return response
+            return response;
         }
 
         return {

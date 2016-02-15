@@ -87,17 +87,6 @@ define([
     });
 
 
-    // small coverage check to facilitate dev of unit tests
-    var coverage = {};
-    QUnit.moduleDone(function() {
-        _.forEach(proxyApi, function(api) {
-            if (!coverage[api.name]) {
-                console.log('Missing unit test for method qtiServiceProxy.' + api.name);
-            }
-        });
-    });
-
-
     var proxyApi = [
         { name : 'init', title : 'init' },
         { name : 'destroy', title : 'destroy' },
@@ -157,8 +146,6 @@ define([
                 serviceCallId : initConfig.serviceCallId
             });
 
-            coverage.init = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = caseData.ajaxMock(caseData.response, function(ajaxConfig) {
@@ -201,8 +188,6 @@ define([
             serviceController: 'MockRunner',
             serviceExtension: 'taoRunnerMock'
         };
-
-        coverage.destroy = true;
 
         proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
@@ -275,8 +260,6 @@ define([
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
             });
-
-            coverage.getTestData = true;
 
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
@@ -352,8 +335,6 @@ define([
                 serviceCallId : initConfig.serviceCallId
             });
 
-            coverage.getTestContext = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
@@ -427,8 +408,6 @@ define([
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
             });
-
-            coverage.getTestMap = true;
 
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
@@ -515,8 +494,6 @@ define([
                 serviceCallId : initConfig.serviceCallId
             });
 
-            coverage.callTestAction = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
@@ -533,7 +510,7 @@ define([
                 assert.ok(true, 'The proxy has fired the "callTestAction" event');
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callTestAction" event');
                 assert.equal(action, caseData.action, 'The proxy has provided the action through the "callTestAction" event');
-                assert.equal(params, caseData.params, 'The proxy has provided the params through the "callTestAction" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callTestAction" event');
             });
 
             var result = proxy.callTestAction(caseData.action, caseData.params);
@@ -596,8 +573,6 @@ define([
                 testServiceCallId : initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
-
-            coverage.getItemData = true;
 
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
@@ -677,8 +652,6 @@ define([
                 testServiceCallId : initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
-
-            coverage.getItemState = true;
 
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
@@ -761,8 +734,6 @@ define([
                 itemDefinition : caseData.uri
             });
 
-            coverage.submitItemState = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
@@ -779,7 +750,7 @@ define([
                 assert.ok(true, 'The proxy has fired the "submitItemState" event');
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "submitItemState" event');
                 assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "submitItemState" event');
-                assert.equal(state, caseData.state, 'The proxy has provided the state through the "submitItemState" event');
+                assert.deepEqual(state, caseData.state, 'The proxy has provided the state through the "submitItemState" event');
             });
 
             var result = proxy.submitItemState(caseData.uri, caseData.state);
@@ -845,8 +816,6 @@ define([
                 itemDefinition : caseData.uri
             });
 
-            coverage.storeItemResponse = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
@@ -863,7 +832,7 @@ define([
                 assert.ok(true, 'The proxy has fired the "storeItemResponse" event');
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "storeItemResponse" event');
                 assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "storeItemResponse" event');
-                assert.equal(response, caseData.itemResponse, 'The proxy has provided the response through the "storeItemResponse" event');
+                assert.deepEqual(response, caseData.itemResponse, 'The proxy has provided the response through the "storeItemResponse" event');
             });
 
             var result = proxy.storeItemResponse(caseData.uri, caseData.itemResponse);
@@ -938,8 +907,6 @@ define([
                 itemDefinition : caseData.uri
             });
 
-            coverage.callItemAction = true;
-
             proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
@@ -957,7 +924,7 @@ define([
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callItemAction" event');
                 assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "callItemAction" event');
                 assert.equal(action, caseData.action, 'The proxy has provided the action through the "callItemAction" event');
-                assert.equal(params, caseData.params, 'The proxy has provided the params through the "callItemAction" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callItemAction" event');
             });
 
             var result = proxy.callItemAction(caseData.uri, caseData.action, caseData.params);
