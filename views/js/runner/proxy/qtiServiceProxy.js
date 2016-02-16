@@ -72,6 +72,34 @@ define([
     }
 
     /**
+     * Filters the state/response data to ensure the format is correct
+     * @param {Object} data
+     * @returns {Object}
+     */
+    function filterStateData(data) {
+        if (data && data.RESPONSE) {
+            _.forEach(data.RESPONSE, function(response) {
+                if (_.isArray(response)) {
+                    _.forEach(response, function(variable) {
+                        if (!_.isUndefined(variable.base)) {
+                            if (_.isEmpty(variable.base)) {
+                                variable.base = null;
+                            }
+                        }
+                    });
+                } else if (_.isObject(response)) {
+                    if (!_.isUndefined(response.base)) {
+                        if (_.isEmpty(response.base)) {
+                            response.base = null;
+                        }
+                    }
+                }
+            })
+        }
+        return data;
+    }
+
+    /**
      * QTI proxy definition
      * Related to remote services calls
      * @type {Object}
@@ -167,7 +195,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         getItemState: function getItemState(uri) {
-            return request(this.storage.getItemActionUrl(uri, 'getItemState'));
+            return request(this.storage.getItemActionUrl(uri, 'getItemState')).then(function(data) {
+                return new Promise(function(resolve) {
+                    data.itemState = filterStateData(data.itemState);
+                    resolve(data);
+                });
+            });
         },
 
         /**
@@ -178,7 +211,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItemState: function submitItemState(uri, state) {
-            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { state : state });
+            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { state : filterStateData(state) });
         },
 
         /**
@@ -189,7 +222,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         storeItemResponse: function storeItemResponse(uri, responses) {
-            return request(this.storage.getItemActionUrl(uri, 'storeItemResponse'), JSON.stringify(responses), 'application/json');
+            return request(this.storage.getItemActionUrl(uri, 'storeItemResponse'), JSON.stringify(filterStateData(responses)), 'application/json');
         },
 
         /**
