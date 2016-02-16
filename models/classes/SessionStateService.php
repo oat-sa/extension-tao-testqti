@@ -102,7 +102,9 @@ class SessionStateService extends ConfigurableService
         if ($time === null) {
             $time = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+
         $itemSession = $session->getCurrentAssessmentItemSession();
+
         if ($itemSession) {
             $itemSession->setTimeReference($time);
             $session->updateDuration();

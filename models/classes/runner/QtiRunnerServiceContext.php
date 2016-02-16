@@ -23,7 +23,6 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\SessionStateService;
-use oat\taoQtiTest\models\TestSessionMetaData;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
@@ -48,13 +47,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var AssessmentTest 
      */
     protected $testDefinition;
-
-    /**
-     * Test session metadata manager
-     *
-     * @var TestSessionMetaData
-     */
-    private $metaDataHandler;
 
     /**
      * The path of the compilation directory.
@@ -114,7 +106,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function init()
     {
-        $this->getMetaDataHandler()->registerItemCallbacks();
         // code borrowed from the previous implementation, maybe obsolete...
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
@@ -122,18 +113,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
 
         $this->retrieveTestMeta();
-    }
-
-    /**
-     * Save metadata retrieved from the request.
-     */
-    public function saveMetaData()
-    {
-        $metaDataHandler = $this->getMetaDataHandler();
-        $metaData = $metaDataHandler->getData();
-        if (!empty($metaData)) {
-            $metaDataHandler->save($metaData);
-        }
     }
 
     /**
@@ -227,18 +206,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->testDefinition;
     }
 
-    /**
-     * Gets the test session metadata manager
-     * @return TestSessionMetaData
-     */
-    public function getMetaDataHandler()
-    {
-        if (!$this->metaDataHandler) {
-            $this->metaDataHandler = new TestSessionMetaData($this->getTestSession());
-        }
-        return $this->metaDataHandler;
-    }
-    
     /**
      * Gets the path of the compilation directory
      * @return \tao_models_classes_service_StorageDirectory[]

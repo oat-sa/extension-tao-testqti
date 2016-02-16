@@ -42,6 +42,10 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\TestInitEvent;
+use oat\taoQtiTest\models\event\TestExitEvent;
+use oat\taoQtiTest\models\event\TestTimeoutEvent;
 
 /**
  * Class QtiRunnerService
@@ -149,7 +153,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->getState() === AssessmentTestSessionState::INITIAL) {
                 // The test has just been instantiated.
                 $session->beginTestSession();
-                $context->getMetaDataHandler()->registerItemCallbacks();
+                $event = new TestInitEvent($session);
+                $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
@@ -617,10 +622,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
         
         if ($context instanceof QtiRunnerServiceContext) {
-            $context->saveMetaData();
-            $navigator = QtiRunnerNavigation::getNavigator($direction, $scope);
             try {
-                $result = $navigator->move($context, $ref);
+                $result = QtiRunnerNavigation::move($direction, $scope, $context, $ref);
                 if ($result) {
                     $this->continueInteraction($context);
                 }
@@ -667,7 +670,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
-            $context->saveMetaData();
             try {
                 $session->checkTimeLimits(false, true, false);
             } catch (AssessmentTestSessionException $e) {
@@ -693,13 +695,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
-            $context->saveMetaData();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+
+            $event = new TestExitEvent($session);
+            $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+
             $session->endTestSession();
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
-        
+
+
         return true;
     }
 
@@ -718,6 +724,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $executionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
             $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
+
             if ($deliveryExecution->getUserIdentifier() == $userUri) {
                 \common_Logger::i("Finishing the delivery execution {$executionUri}");
                 $result = $deliveryExecution->setState(DeliveryExecution::STATE_FINISHIED);
@@ -873,7 +880,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-        
+
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode());
+        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+
         if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {
             switch ($timeOutException->getCode()) {
                 case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
