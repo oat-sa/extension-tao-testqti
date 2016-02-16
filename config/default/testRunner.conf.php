@@ -127,4 +127,10 @@ return array(
      * @type string
      */
     'extraContextBuilder' => null,
+
+    /**
+     * A collection of plugins related config sets
+     * @type array
+     */
+    'plugins' => null,
 );
