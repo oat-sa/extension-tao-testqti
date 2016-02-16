@@ -254,7 +254,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('2.17.0');
         }
         
-        if ($this->isVersion('2.17.0')) {
+        $this->skip('2.17.0','2.19.1');
+        
+        if ($this->isVersion('2.19.1')) {
             // sets default plugin options
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
@@ -263,7 +265,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             }
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('2.18.0');
+            $this->setVersion('2.20.0');
         }
     }
 }
