@@ -48,11 +48,11 @@ use qtism\runtime\tests\RouteItem;
  * $metaData = array(
  *   //Test level metadata
  *   'TEST' => array( 
- *      'TEST_EXIT_CODE' => TestSessionMetaData::TEST_CODE_COMPLETE,
+ *      'TEST_EXIT_CODE' => TEST_CODE_COMPLETE,
  *   ),
  *   //Section level metadata
  *   'SECTION' => array(
- *      'SECTION_EXIT_CODE' => TestSessionMetaData::SECTION_CODE_COMPLETED_NORMALLY,
+ *      'SECTION_EXIT_CODE' => SECTION_CODE_COMPLETED_NORMALLY,
  *   ),
  *   //Item level metadata
  *   'ITEM' => array( //save item level metadata
@@ -67,21 +67,6 @@ use qtism\runtime\tests\RouteItem;
  */
 class TestSessionMetaData
 {
-    const SECTION_CODE_COMPLETED_NORMALLY = 700;
-    const SECTION_CODE_QUIT = 701;
-    const SECTION_CODE_COMPLETE_TIMEOUT = 703;
-    const SECTION_CODE_TIMEOUT = 704;
-    const SECTION_CODE_FORCE_QUIT = 705;
-    const SECTION_CODE_IN_PROGRESS = 706;
-    const SECTION_CODE_ERROR = 300;
-    
-    const TEST_CODE_COMPLETE = 'C';
-    const TEST_CODE_TERMINATED = 'T';
-    const TEST_CODE_INCOMPLETE = 'IC';
-    const TEST_CODE_INCOMPLETE_QUIT = 'IQ';
-    const TEST_CODE_INACTIVE = 'IA';
-    const TEST_CODE_DISAGREED_WITH_NDA = 'DA';
-
     /**
      * Test session instance
      * @var AssessmentTestSession 
