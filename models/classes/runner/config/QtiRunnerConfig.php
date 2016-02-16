@@ -48,23 +48,24 @@ class QtiRunnerConfig implements RunnerConfig
 
             // build the test config using the new notation
             $this->config = [
-                'timerWarning' => $rawConfig['timerWarning'],
+                'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
                 'progressIndicator' => [
-                    'type' => $rawConfig['progress-indicator'],
-                    'scope' => $rawConfig['progress-indicator-scope'],
-                    'forced' => $rawConfig['progress-indicator-forced'],
+                    'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
+                    'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
+                    'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
                 ],
                 'review' => [
-                    'enabled' => !!$rawConfig['test-taker-review'],
-                    'scope' => $rawConfig['test-taker-review-scope'],
-                    'forceTitle' => !!$rawConfig['test-taker-review-force-title'],
-                    'itemTitle' => $rawConfig['test-taker-review-item-title'],
-                    'preventsUnseen' => !!$rawConfig['test-taker-review-prevents-unseen'],
-                    'canCollapse' => !!$rawConfig['test-taker-review-can-collapse'],
+                    'enabled' => !empty($rawConfig['test-taker-review']),
+                    'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
+                    'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
+                    'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
+                    'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
+                    'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
                 ],
-                'exitButton' => !!$rawConfig['exitButton'],
-                'nextSection' => !!$rawConfig['next-section'],
-                'resetTimerAfterResume' => !!$rawConfig['reset-timer-after-resume'],
+                'exitButton' => !empty($rawConfig['exitButton']),
+                'nextSection' => !empty($rawConfig['next-section']),
+                'resetTimerAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
+                'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
             ];
         }
         return $this->config;
