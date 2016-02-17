@@ -337,7 +337,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $state = $this->getRequestParameter('state');
+        $state = json_decode(html_entity_decode($this->getRequestParameter('itemState')));
         $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
@@ -347,9 +347,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $response = [
                 'success' => $this->runnerService->setItemState($serviceContext, $stateId, $state),
             ];
-            
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);

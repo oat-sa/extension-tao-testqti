@@ -164,9 +164,14 @@ define([
              */
             var store = function store(){
 
-               var context = self.getTestContext();
+                var context = self.getTestContext();
+                var states = self.getTestData().itemStates;
 
-               //we store only the responses and the state only if the user has interacted with the item.
+                if(context.itemSessionState >= states.closed) {
+                    return Promise.resolve(false);
+                }
+
+                //we store the responses
                 return Promise.all([
                     self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                     self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
@@ -184,7 +189,6 @@ define([
                         return resolve(false);
                     });
                 });
-               return Promise.resolve(false);
             };
 
             /**
@@ -397,7 +401,7 @@ define([
                 return {
                     content : results[0].itemData,
                     baseUrl : results[0].baseUrl,
-                    state : results[1].itemState || {}
+                    state : results[1].itemState
                 };
             });
         },
@@ -424,6 +428,12 @@ define([
                     assetManager: assetManager
                 })
                 .on('error', reject)
+                .on('init', function(){
+                    if(itemData.state){
+                        this.setState(itemData.state);
+                    }
+                    this.render(self.getAreaBroker().getContentArea());
+                })
                 .on('render', function(){
 
                     this.on('responsechange', changeState);
@@ -431,9 +441,7 @@ define([
 
                     resolve();
                 })
-                .init()
-                .setState(itemData.state)
-                .render(self.getAreaBroker().getContentArea());
+                .init();
             });
         },
 
