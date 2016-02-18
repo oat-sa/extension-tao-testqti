@@ -19,6 +19,7 @@
  */
 
 namespace oat\taoQtiTest\models\event;
+use qtism\runtime\tests\AssessmentTestSession;
 
 /**
  * Event represents timeout during test session
