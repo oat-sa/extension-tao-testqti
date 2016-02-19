@@ -165,6 +165,7 @@ define([
 
                     data.warning = 0;
                 }
+
                 return message;
             },
 

@@ -127,8 +127,6 @@ define([
                 var context = testRunner.getTestContext();
                 var map     = testRunner.getTestMap();
 
-                console.log('leaveTimedSection', arguments);
-
                 var section = map.parts[context.testPartId].sections[context.sectionId];
                 var item    = _.find(section.items, { position : context.itemPosition });
 
@@ -149,7 +147,7 @@ define([
             var removeTimer = function removeTimer(type){
                 if(currentTimers[type]){
                     currentTimers[type].destroy();
-                    _.omit(currentTimers, type);
+                    currentTimers = _.omit(currentTimers, type);
                 }
             };
 
@@ -273,11 +271,6 @@ define([
                         self.disable();
                     }
 
-                    //add the last diff to the next action call
-                    if(lastDiff && _.size(currentTimers) > 0){
-                        testRunner.getProxy().addCallActionParams({ timerPaused : lastDiff });
-                    }
-
                     //display a mesage if we exit a timed section
                     if(leaveTimedSection(type, scope, position)){
                         testRunner.trigger('confirm', exitMessage, doMove, cancelMove);
@@ -298,6 +291,13 @@ define([
 
                     //start timers
                     self.enable();
+
+                    //add the last diff to the next action call
+                    if(lastDiff && _.size(currentTimers) > 0){
+                        _.defer(function(){
+                            testRunner.getProxy().callTestAction('time', { timerPaused : lastDiff / precision });
+                        });
+                    }
                 });
         },
 
