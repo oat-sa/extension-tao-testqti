@@ -237,7 +237,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         $this->setVersion($currentVersion);
 
-        if ($this->isVersion('2.16.0')) {
+        if ($this->isBetween('2.16.0','2.17.0')) {
             $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
             $accessService = \funcAcl_models_classes_AccessService::singleton();
             $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
