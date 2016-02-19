@@ -42,6 +42,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\AssessmentTestPlace;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -948,5 +949,39 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+    }
+
+    /**
+     * Update the test timers duration
+     *
+     * @param RunnerServiceContext $context
+     * @param int|float $duration
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function updateTimers(RunnerServiceContext $context, $duration)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            $session = $context->getTestSession();
+
+            if($duration > 0){
+                $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
+                $constraints = $session->getTimeConstraints($places);
+
+                foreach ($constraints as $constraint) {
+
+                    $placeId = $constraint->getSource()->getIdentifier();
+                    $placeDuration = $session[ $placeId . '.duration' ];
+                    if($placeDuration instanceof \qtism\common\datatypes\Duration){
+
+                        //here the duration means: the time spent by a user, so we subtract the given time
+                        $placeDuration->sub(new \qtism\common\datatypes\Duration('PT' . $duration . 'S'));
+                    }
+                }
+            }
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+        return true;
     }
 }

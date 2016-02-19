@@ -213,5 +213,13 @@ interface RunnerService
     public function check(RunnerServiceContext $context);
 
 
+    /**
+     * Update the test timers duration
+     * @param RunnerServiceContext $context
+     * @param int|float $duration
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function updateTimers(RunnerServiceContext $context, $duration);
 
 }
