@@ -25,13 +25,12 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'moment',
     'core/polling',
     'core/timer',
-    'core/encoder/time',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/controls/timer/timer'
-], function ($, _, __, moment, pollingFactory, timerFactory, time, pluginFactory, timerTpl) {
+    'taoQtiTest/runner/plugins/controls/timer/timerComponent',
+    'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
+], function ($, _, __, pollingFactory, timerFactory, pluginFactory, timerComponentFactory, timerBoxTpl) {
     'use strict';
 
     /**
@@ -46,11 +45,18 @@ define([
      */
     var precision = 1000;
 
-
     /**
      * The message to display when exiting
      */
     var exitMessage = __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?');
+
+
+    var timerTypes = {
+        test:     'assessmentTest',
+        testPart: 'testPart',
+        section:  'assessmentSection',
+        item:     'assessmentItemRef'
+    };
 
     /**
      * Are we in a timed section
@@ -64,6 +70,7 @@ define([
         });
     };
 
+
     /**
      * Creates the timer plugin
      */
@@ -74,124 +81,49 @@ define([
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
+
             var self = this;
-            var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var itemStates = testData.itemStates || {};
+            var testRunner   = this.getTestRunner();
+            var testData     = testRunner.getTestData() || {};
+            var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
-            var timers = [];
+            var lastDiff;
+
+            var currentTimers = {};
 
             /**
-             * Gets the config for the current timers
-             * @returns {Object}
+             * Load the configuration of a timer from the current context
+             * @param {String} type - the timer type/qtiClass
+             * @returns {Object?} the timer config if there's one for the given type
              */
-            function getTimerConfig() {
+            var getTimerConfig = function getTimerConfig(type) {
+                var timeConstraint;
+                var timer;
                 var context = testRunner.getTestContext();
-                var config = {
-                    index : {},
-                    timers : []
-                };
 
                 // get the config of each timer
                 if (!context.isTimeout && context.itemSessionState === itemStates.interacting) {
-                    _.forEach(context.timeConstraints, function(timeConstraint) {
-                        var timer = {
-                            label: timeConstraint.label,
-                            type: timeConstraint.qtiClassName,
+                    timeConstraint = _.findLast(context.timeConstraints, { qtiClassName : type });
+                    if(timeConstraint){
+                        timer = {
+                            label:     timeConstraint.label,
+                            type:      timeConstraint.qtiClassName,
                             remaining: timeConstraint.seconds * precision,
-                            control: timeConstraint.source,
-                            value: time.encode(timeConstraint.seconds),
-                            running: true
+                            id:        timeConstraint.source,
+                            running:   true
                         };
 
                         if (timerWarning[timer.type]) {
                             timer.warning = parseInt(timerWarning[timer.type], 10) * precision;
                         }
-
-                        if (!timeConstraint.allowLateSubmission) {
-                            config.timers.push(timer);
-                            config.index[timer.control] = timer;
-                        }
-                    });
-                }
-                return config;
-            }
-
-            /**
-             * Creates a new display for the timers
-             * @returns {*|jQuery|HTMLElement}
-             */
-            function createElement() {
-                var timerConfig = getTimerConfig();
-                var $element = $(timerTpl(timerConfig));
-                var index = timerConfig.index;
-
-                // link each timer with the related DOM element
-                $element.find('[data-control]').each(function() {
-                    var $control = $(this);
-                    var controlId = $control.data('control');
-                    index[controlId].$control = $control;
-                    index[controlId].$time = $control.find('.qti-timer_time');
-                });
-
-                timers = timerConfig.timers;
-
-                return $element;
-            }
-
-            /**
-             * Refreshes the display
-             */
-            function updateElement() {
-                _.forEach(timers, function(timer) {
-                    timer.value = time.encode(timer.remaining / precision);
-                    if (timer.$time) {
-                        timer.$time.text(timer.value);
                     }
-                    if (timer.$control) {
-                        timer.$control.toggleClass('disabled', !timer.running);
-                    }
-                });
-            }
-
-            /**
-             * Display a warning message with the remaining time
-             * @param timer
-             */
-            function warning(timer) {
-                var remaining = moment.duration(timer.remaining / precision, "seconds").humanize();
-                var message;
-
-                switch (timer.type) {
-                    case 'assessmentItemRef':
-                        message = __("Warning – You have %s remaining to complete this item.", remaining);
-                        break;
-
-                    case 'assessmentSection':
-                        message = __("Warning – You have %s remaining to complete this section.", remaining);
-                        break;
-
-                    case 'testPart':
-                        message = __("Warning – You have %s remaining to complete this test part.", remaining);
-                        break;
-
-                    case 'assessmentTest':
-                        message = __("Warning – You have %s remaining to complete the test.", remaining);
-                        break;
                 }
+                return timer;
+            };
 
-                testRunner.trigger('warning', message);
-                timer.$control.addClass('qti-timer__warning');
-                timer.warning = 0;
-            }
 
-            /**
-             * Are we going to leave a timed section and should we ask the tt if he would like to leave ?
-             * @param {String} type - the move type
-             * @param {Number} [position] - jump's poisition
-             * @returns {Boolean}
-             */
-            var displayExitMessage = function displayExitMessage(type, position){
+            //TODO this kind of function is generic enough to be moved to a util/helper
+            var leaveTimedSection = function leaveTimedSection(type, scope, position){
                 var context = testRunner.getTestContext();
                 var map     = testRunner.getTestMap();
 
@@ -200,7 +132,7 @@ define([
 
                 if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item ){
 
-                    return !!( (type === 'next' && ((_.size(section.items) - item.positionInSection - 1) === 0) ) ||
+                    return !!( (type === 'next' && (scope === 'assessmentSection' || ((_.size(section.items) - item.positionInSection - 1) === 0) )) ||
                                (type === 'previous' && item.positionInSection === 0) ||
                                (type === 'jump' && position > 0 && _.some(section.items,  { "position" : position })) );
 
@@ -209,88 +141,162 @@ define([
             };
 
             /**
-             * Updates each timer
+             * Remove a timer from the current ones
+             * @param {String} type - the timer type to remove
              */
-            function tick() {
-                // get the time elapsed since the last tick
-                var elapsed = self.timer.tick();
-                var timeout = false;
+            var removeTimer = function removeTimer(type){
+                if(currentTimers[type]){
+                    currentTimers[type].destroy();
+                    currentTimers = _.omit(currentTimers, type);
+                }
+            };
 
-                // update the timers, detect timeout
-                _.forEach(timers, function(timer) {
-                    if (timer.running) {
-                        timer.remaining -= elapsed;
+            /**
+             * Add and initialize a timer of the given type
+             * @param {Object} config - the timer config
+             * @param {String} type - the timer type to remove
+             */
+            var addTimer = function addTimer(type, config){
+                if(config){
+                    currentTimers[type] = timerComponentFactory(config);
+                    currentTimers[type]
+                        .init()
+                        .render(self.$element);
+                }
+            };
 
-                        if (timer.remaining <= 0) {
-                            timer.remaining = 0;
-                            timer.running = 0;
-                            timeout = true;
+            /**
+             * Update the timers.
+             * It will remove, let, add or update the current timers based on the current context.
+             */
+            var updateTimers = function updateTimers(){
+
+                _.forEach(timerTypes, function(type){
+                    var timerConfig = getTimerConfig(type);
+
+                    if(currentTimers[type]){
+                        if(!timerConfig){
+                            removeTimer(type);
+                        } else if(currentTimers[type].id() !== timerConfig.id){
+                            removeTimer(type);
+                            addTimer(type, timerConfig);
                         }
-
-                        if (!timeout && _.isFinite(timer.warning) && timer.remaining <= timer.warning) {
-                            warning(timer);
-                        }
+                    } else {
+                        addTimer(type, timerConfig);
                     }
                 });
+            };
 
-                // timeout ?
-                if (timeout) {
-                    testRunner.timeout();
-                    self.disable();
-                }
+            //the element that'll contain the timers
+            this.$element = $(timerBoxTpl());
 
-                return timeout;
-            }
-
-            this.$element = createElement();
-            this.timer = timerFactory({
+            //one stopwatch to count the time
+            this.stopwatch = timerFactory({
                 autoStart : false
             });
+
+            //a pausewatch that counts only during pauses (between items)
+            this.pausewatch = timerFactory({
+                autoStart : false
+            });
+
+            //update the timers at regular intervals
             this.polling = pollingFactory({
-                action : function() {
-                    tick();
-                    updateElement();
+
+                /**
+                 * The polling action consists in updating each timers,
+                 * checking timeout and warnings
+                 */
+                action : function updateTime() {
+
+                    //how many time elapsed from the last tick ?
+                    var elapsed = self.stopwatch.tick();
+                    var timeout = false;
+
+                    _.forEach(currentTimers, function(timer) {
+                        var currentVal,
+                            warnMessage;
+                        if (timer.running()) {
+                            currentVal = Math.max(timer.val() - elapsed, 0);
+                            timer
+                                .val(currentVal)
+                                .refresh();
+
+                            if (currentVal === 0) {
+                                timer.running(false);
+                                timeout = true;
+                            }
+
+                            if (!timeout) {
+                                warnMessage = timer.warn();
+                                if(warnMessage){
+                                    testRunner.trigger('warning', warnMessage);
+                                }
+                            }
+                        }
+                    });
+                    if (timeout) {
+                        testRunner.timeout();
+                        self.disable();
+                    }
                 },
                 interval : timerRefresh,
                 autoStart : false
             });
 
-            //disabled by default
-            this.disable();
+            //create the initial timers
+            updateTimers();
 
             //change plugin state
             testRunner
                 .before('move', function(e, type, scope, position){
                     var done = e.done();
 
+                    var doMove = function doMove(){
+                        removeTimer(timerTypes.item);
+                        done();
+                    };
+
+                    var cancelMove = function cancelMove() {
+                        _.invoke(testRunner.getPlugins(), 'enable');
+                        testRunner.trigger('enableitem');
+                        e.prevent();
+                    };
+
                     if (self.getState('enabled')) {
+                        //start to count the time before the next content is shown
+                        self.pausewatch.start();
+
+                        //and pause the running ones
                         self.disable();
                     }
 
                     //display a mesage if we exit a timed section
-                    if(displayExitMessage(type, scope, position)){
-                        testRunner.trigger('confirm', exitMessage, done, function cancel(){
-                            _.invoke(testRunner.getPlugins(), 'enable');
-                            testRunner.trigger('enableitem');
-                            e.prevent();
-                        });
+                    if(leaveTimedSection(type, scope, position)){
+                        testRunner.trigger('confirm', exitMessage, doMove, cancelMove);
                     } else {
-                        done();
+                        doMove();
                     }
-
                 })
                 .on('loaditem', function(){
-                    updateElement();
+
+                    //check for new timers
+                    updateTimers();
                 })
-                .on('renderitem', function(){
-                    var $element = createElement();
-                    self.$element.replaceWith($element);
-                    self.$element = $element;
+
+                .after('renderitem', function(){
+                    //get the diff of the timers pause
+                    lastDiff = self.pausewatch.tick();
+                    self.pausewatch.stop();
+
+                    //start timers
                     self.enable();
-                })
-                .on('unloaditem', function(){
-                    if (self.getState('enabled')) {
-                        self.disable();
+
+                    //add the last diff to the next action call
+                    if(lastDiff && _.size(currentTimers) > 0){
+                        _.defer(function(){
+                            testRunner.getProxy().callTestAction('time', { timerPaused : lastDiff / precision });
+                        });
                     }
                 });
         },
@@ -307,8 +313,8 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
-            this.timer.stop();
             this.polling.stop();
+            this.stopwatch.stop();
             this.$element.remove();
         },
 
@@ -316,18 +322,16 @@ define([
          * Enables the button
          */
         enable : function enable (){
-            this.$element.removeClass('disabled');
             this.polling.start();
-            this.timer.resume();
+            this.stopwatch.resume();
         },
 
         /**
          * Disables the button
          */
         disable : function disable (){
-            this.timer.pause();
             this.polling.stop();
-            this.$element.addClass('disabled');
+            this.stopwatch.pause();
         },
 
         /**
