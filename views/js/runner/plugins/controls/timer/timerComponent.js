@@ -119,7 +119,7 @@ define([
              * Refresh the display
              * @returns {timerComponent} chains
              */
-            refresh : function(){
+            refresh : function refresh(){
                 var self = this;
                 var update = function update(){
                     self.$display.text( timeEncoder.encode( data.remaining / precision) );
@@ -174,7 +174,7 @@ define([
              * Get the timer id
              * @returns {String} the id
              */
-            id  : function(){
+            id  : function id(){
                 return data.id;
             },
 
