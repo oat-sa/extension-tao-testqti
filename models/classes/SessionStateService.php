@@ -55,10 +55,6 @@ class SessionStateService extends ConfigurableService
      */
     private $deliveryExecutionService;
 
-    /**
-     * @var AssessmentTestSession[]
-     */
-    private $sessions = [];
 
     /**
      * @var AbstractQtiBinaryStorage[]
@@ -177,43 +173,40 @@ class SessionStateService extends ConfigurableService
      */
     public function getSessionByDeliveryExecution(DeliveryExecution $deliveryExecution)
     {
-        if (!isset($this->sessions[$deliveryExecution->getIdentifier()])) {
-            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
 
-            $compiledDelivery = $deliveryExecution->getDelivery();
-            $runtime = DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
-            $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+        $compiledDelivery = $deliveryExecution->getDelivery();
+        $runtime = DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
+        $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
 
-            $session = null;
+        $session = null;
 
-            if (isset($inputParameters['QtiTestCompilation']) && isset($inputParameters['QtiTestDefinition'])) {
-                $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
-                $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+        if (isset($inputParameters['QtiTestCompilation']) && isset($inputParameters['QtiTestDefinition'])) {
+            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
 
-                $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+            $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
 
-                $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
-                    $sessionManager,
-                    new BinaryAssessmentTestSeeker($testDefinition), $deliveryExecution->getUserIdentifier()
-                );
-                $this->qtiStorage[$deliveryExecution->getIdentifier()] = $qtiStorage;
+            $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
+                $sessionManager,
+                new BinaryAssessmentTestSeeker($testDefinition), $deliveryExecution->getUserIdentifier()
+            );
+            $this->qtiStorage[$deliveryExecution->getIdentifier()] = $qtiStorage;
 
-                $sessionId = $deliveryExecution->getIdentifier();
+            $sessionId = $deliveryExecution->getIdentifier();
 
-                if ($qtiStorage->exists($sessionId)) {
-                    $session = $qtiStorage->retrieve($testDefinition, $sessionId);
+            if ($qtiStorage->exists($sessionId)) {
+                $session = $qtiStorage->retrieve($testDefinition, $sessionId);
 
-                    $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
-                    $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
-                    $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
-                    $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
-                    $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getIdentifier());
-                }
+                $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
+                $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
+                $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
+                $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
+                $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getIdentifier());
             }
-            $this->sessions[$deliveryExecution->getIdentifier()] = $session;
         }
 
-        return $this->sessions[$deliveryExecution->getIdentifier()];
+        return $session;
     }
 
     /**
