@@ -141,17 +141,92 @@ class SessionStateService extends ConfigurableService
     public function getSessionDescription(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning()) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $progressScope = isset($config['progress-indicator-scope']) ? $config['progress-indicator-scope'] : 'test';
+            $progress = $this->getSessionProgress($session);
+            $itemPosition = $progress[$progressScope];
+            $itemCount = $progress[$progressScope . 'Length'];
+
             $format = $this->hasOption(self::OPTION_STATE_FORMAT)
                 ? $this->getOption(self::OPTION_STATE_FORMAT)
                 : __('%s - item %p/%c');
             $map = array(
                 '%s' => $session->getCurrentAssessmentSection()->getTitle(),
-                '%p' => $session->getRoute()->getPosition(),
-                '%c' => $session->getRouteCount()
+                '%p' => $itemPosition,
+                '%c' => $itemCount
             );
             return strtr($format, $map);
         } else {
             return __('finished');
         }
+    }
+
+    /**
+     * Gets the current progress inside a delivery execution
+     * @param \taoQtiTest_helpers_TestSession $session
+     * @return array|bool
+     */
+    protected function getSessionProgress(\taoQtiTest_helpers_TestSession $session)
+    {
+        if ($session->isRunning() !== false) {
+            $route = $session->getRoute();
+            $routeItems = $route->getAllRouteItems();
+            $offset = $route->getRouteItemPosition($routeItems[0]);
+            $offsetPart = 0;
+            $offsetSection = 0;
+            $lastPart = null;
+            $lastSection = null;
+
+            $positions = [];
+            $lengthParts = [];
+            $lengthSections = [];
+            $sectionIndex = 0;
+            $partIndex = 0;
+
+            // compute positions from the test map
+            foreach ($routeItems as $routeItem) {
+                $testPart = $routeItem->getTestPart();
+                $partId = $testPart->getIdentifier();
+                if ($lastPart != $partId) {
+                    $offsetPart = 0;
+                    $lastPart = $partId;
+                    $partIndex ++;
+                }
+
+                $sections = $routeItem->getAssessmentSections();
+                $sectionId = key(current($sections));
+                if ($lastSection != $sectionId) {
+                    $offsetSection = 0;
+                    $lastSection = $sectionId;
+                    $sectionIndex ++;
+                }
+
+                $offset ++;
+                $offsetPart ++;
+                $offsetSection ++;
+
+                $lengthParts[$partIndex] = $offsetPart;
+                $lengthSections[$sectionIndex] = $offsetSection;
+
+                $positions[] = [
+                    'test' => $offset,
+                    'part' => $offsetPart,
+                    'partId' => $partIndex,
+                    'section' => $offsetSection,
+                    'sectionId' => $sectionIndex,
+                ];
+            }
+
+            $progress = $positions[$route->getPosition()];
+            return [
+                'test' => $progress['test'],
+                'testPart' => $progress['part'],
+                'testSection' => $progress['section'],
+                'testLength' => $session->getRouteCount(),
+                'testPartLength' => $lengthParts[$progress['partId']],
+                'testSectionLength' => $lengthSections[$progress['sectionId']],
+            ];
+        }
+        return false;
     }
 }
