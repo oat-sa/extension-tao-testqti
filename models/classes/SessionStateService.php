@@ -22,6 +22,9 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use qtism\runtime\tests\AssessmentTestSession;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
+use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 
 /**
  * The SessionStateService
@@ -51,6 +54,12 @@ class SessionStateService extends ConfigurableService
      * @var \taoDelivery_models_classes_execution_ServiceProxy
      */
     private $deliveryExecutionService;
+
+
+    /**
+     * @var AbstractQtiBinaryStorage[]
+     */
+    private $qtiStorage = [];
 
     public function __construct(array $options = array())
     {
@@ -153,5 +162,84 @@ class SessionStateService extends ConfigurableService
         } else {
             return __('finished');
         }
+    }
+
+    /**
+     * @param DeliveryExecution $deliveryExecution
+     * @return mixed
+     * @throws \common_exception_MissingParameter
+     * @throws \core_kernel_persistence_Exception
+     * @throws \qtism\runtime\storage\common\StorageException
+     */
+    public function getSessionByDeliveryExecution(DeliveryExecution $deliveryExecution)
+    {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+        $compiledDelivery = $deliveryExecution->getDelivery();
+        $runtime = DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
+        $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+
+        $session = null;
+
+        if (isset($inputParameters['QtiTestCompilation']) && isset($inputParameters['QtiTestDefinition'])) {
+            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+
+            $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+
+            $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
+                $sessionManager,
+                new BinaryAssessmentTestSeeker($testDefinition), $deliveryExecution->getUserIdentifier()
+            );
+            $this->qtiStorage[$deliveryExecution->getIdentifier()] = $qtiStorage;
+
+            $sessionId = $deliveryExecution->getIdentifier();
+
+            if ($qtiStorage->exists($sessionId)) {
+                $session = $qtiStorage->retrieve($testDefinition, $sessionId);
+
+                $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
+                $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
+                $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
+                $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
+                $resultServer->setValue('resultServer_deliveryResultIdentifier', $deliveryExecution->getIdentifier());
+            }
+        }
+
+        return $session;
+    }
+
+    /**
+     * @param DeliveryExecution $deliveryExecution
+     * @throws \common_exception_Error
+     * @return AbstractQtiBinaryStorage
+     */
+    public function getQtiStorageByDeliveryExecution(DeliveryExecution $deliveryExecution)
+    {
+        if (!isset($this->qtiStorage[$deliveryExecution->getIdentifier()])) {
+            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $compiledDelivery = $deliveryExecution->getDelivery();
+            $runtime = DeliveryAssemblyService::singleton()->getRuntime($compiledDelivery);
+            $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+            
+            $qtiStorage = null;
+
+            if (isset($inputParameters['QtiTestCompilation']) && isset($inputParameters['QtiTestDefinition'])) {
+                $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+                $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+
+                $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+
+                $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
+                    $sessionManager,
+                    new BinaryAssessmentTestSeeker($testDefinition), $deliveryExecution->getUserIdentifier()
+                );
+            }
+
+            $this->qtiStorages[$deliveryExecution->getIdentifier()] = $qtiStorage;
+        }
+
+        return $this->qtiStorage[$deliveryExecution->getIdentifier()];
     }
 }
