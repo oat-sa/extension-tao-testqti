@@ -178,61 +178,64 @@ define([
                     return new Promise(function(resolve){
                         //if the store results contains modal feedback we ask (gently) the IR to display them
                         if(results.length === 2){
+                            context.itemAnswered = results[1].itemSession.itemAnswered;
+
                             if(results[1].displayFeedbacks === true && self.itemRunner){
                                 return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
-                                    resolve(true);
+                                    resolve();
                                 });
                             }
-                            return resolve(true);
+                            return resolve();
                         }
-                        return resolve(false);
+                        return resolve();
                     });
                 });
             };
 
             /**
              * Update the stats on the TestMap
-             * @param {Boolean} [answered] - if we flag the current item as answered
              */
-            var updateStats = function updateStats(answered){
+            var updateStats = function updateStats(){
 
-               var testPart, section, item;
-               var stats = {
+                var testPart, section, item;
+                var stats = {
                     answered : 0,
                     flagged : 0,
                     viewed : 0,
                     total : 0
-               };
+                };
 
-               var context = self.getTestContext();
-               var testMap = self.getTestMap();
-               var states = self.getTestData().states;
+                var context = self.getTestContext();
+                var testMap = self.getTestMap();
+                var states = self.getTestData().states;
 
-               //reduce by sum up the stats
-               var accStats = function accStats(acc, level){
+                //reduce by sum up the stats
+                var accStats = function accStats(acc, level){
                     acc.answered += level.stats.answered;
                     acc.flagged += level.stats.flagged;
                     acc.viewed += level.stats.viewed;
                     acc.total += level.stats.total;
                     return acc;
-               };
+                };
 
-               if(context.state !== states.interacting){
-                   return;
-               }
+                if(context.state !== states.interacting){
+                    return;
+                }
 
-               testPart = testMap.parts[context.testPartId];
-               section  = testPart.sections[context.sectionId];
-               item     = section.items[context.itemIdentifier];
+                testPart = testMap.parts[context.testPartId];
+                section  = testPart.sections[context.sectionId];
+                item     = section.items[context.itemIdentifier];
 
-               //flag as viewed, always
-               item.viewed = true;
-               if(answered){
-                    item.answered = true;
-               }
+                //flag as viewed, always
+                item.viewed = true;
 
-               //compute section stats from it's items
-               section.stats = _.reduce(section.items, function(acc, item){
+                //flag as answered only if a response has been set
+                if (undefined !== context.itemAnswered) {
+                    item.answered = context.itemAnswered;
+                }
+
+                //compute section stats from it's items
+                section.stats = _.reduce(section.items, function(acc, item){
                     if(item.answered){
                         acc.answered++;
                     }
@@ -246,12 +249,12 @@ define([
                     return acc;
                 }, _.clone(stats));
 
-               //compute testParts and test stats
-               testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
-               testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
+                //compute testParts and test stats
+                testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
+                testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
 
-               //reassign the map
-               self.setTestMap(testMap);
+                //reassign the map
+                self.setTestMap(testMap);
             };
 
             /*
