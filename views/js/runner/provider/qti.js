@@ -1,4 +1,3 @@
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -193,7 +192,7 @@ define([
 
             /**
              * Update the stats on the TestMap
-             * @param {Boolean} answered - if we flag the current item as answered
+             * @param {Boolean} [answered] - if we flag the current item as answered
              */
             var updateStats = function updateStats(answered){
 
@@ -228,7 +227,7 @@ define([
 
                //flag as viewed, always
                item.viewed = true;
-               if(answered !== false){
+               if(answered){
                     item.answered = true;
                }
 
