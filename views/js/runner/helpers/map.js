@@ -78,7 +78,7 @@ define([
         getSection: function getSection(map, sectionName) {
             var parts = this.getParts(map);
             var section = null;
-            _.forEach(parts, function(part) {
+            _.forEach(parts, function (part) {
                 var sections = part.sections;
                 if (sections && sections[sectionName]) {
                     section = sections[sectionName];
@@ -120,7 +120,7 @@ define([
         },
 
         /**
-         * Gets the stats of the test section containing a particulr position
+         * Gets the stats of the test section containing a particular position
          * @param {Object} map - The assessment test map
          * @param {String} sectionName - The identifier of the test section
          * @returns {Object}
@@ -128,6 +128,29 @@ define([
         getSectionStats: function getSectionStats(map, sectionName) {
             var section = this.getSection(map, sectionName);
             return section && section.stats;
+        },
+
+        /**
+         * Gets the stats related to a particular scope
+         * @param {Object} map - The assessment test map
+         * @param {Number} position - The current position
+         * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
+         * @returns {Object}
+         */
+        getScopeStats: function getScopeStats(map, position, scope) {
+            var jump = this.getJump(map, position);
+
+            switch (scope) {
+                case 'section':
+                    return this.getSectionStats(map, jump && jump.section);
+
+                case 'part':
+                    return this.getPartStats(map, jump && jump.part);
+
+                default:
+                case 'test':
+                    return this.getTestStats(map);
+            }
         },
 
         /**

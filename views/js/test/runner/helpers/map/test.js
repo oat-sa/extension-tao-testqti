@@ -44,6 +44,7 @@ define([
         { name : 'getTestStats', title : 'getTestStats' },
         { name : 'getPartStats', title : 'getPartStats' },
         { name : 'getSectionStats', title : 'getSectionStats' },
+        { name : 'getScopeStats', title : 'getScopeStats' },
         { name : 'getItemPart', title : 'getItemPart' },
         { name : 'getItemSection', title : 'getItemSection' },
         { name : 'getItemAt', title : 'getItemAt' }
@@ -141,6 +142,19 @@ define([
         assert.equal(mapHelper.getSectionStats(mapSample, 'assessmentSection-0'), undefined, 'The map helper getSectionStats does not provide any stats when the section does not exist');
         assert.equal(mapHelper.getSectionStats({}), undefined, 'The map helper getSectionStats does not provide any stats when the map is wrong');
         assert.equal(mapHelper.getSectionStats(), undefined, 'The map helper getSectionStats does not provide any stats when the map does not exist');
+    });
+    
+    
+    QUnit.test('helpers/map.getScopeStats', 9, function(assert) {
+        assert.equal(mapHelper.getScopeStats(mapSample, 6), mapHelper.getScopeStats(mapSample, 6, 'test'), 'The map helper getScopeStats use the "test" scope by default');
+        assert.equal(mapHelper.getScopeStats(mapSample, 6, 'test'), mapSample.stats, 'The map helper getScopeStats provides the right stats when the scope is "test"');
+        assert.equal(mapHelper.getScopeStats(mapSample, 6, 'part'), mapSample.parts['testPart-2'].stats, 'The map helper getScopeStats provides the right stats when the scope is "part"');
+        assert.equal(mapHelper.getScopeStats(mapSample, 6, 'section'), mapSample.parts['testPart-2'].sections['assessmentSection-3'].stats, 'The map helper getScopeStats provides the right stats when the scope is "section');
+        assert.equal(mapHelper.getScopeStats(mapSample, 100, 'test'), mapSample.stats, 'The map helper getScopeStats still provide any stats when the position does not exist but the scope is "test"');
+        assert.equal(mapHelper.getScopeStats(mapSample, 100, 'part'), undefined, 'The map helper getScopeStats does not provide any stats when the position does not exist and the scope is "part"');
+        assert.equal(mapHelper.getScopeStats(mapSample, 100, 'section'), undefined, 'The map helper getScopeStats does not provide any stats when the section does not exist and the scope is "section"');
+        assert.equal(mapHelper.getScopeStats({}, 1), undefined, 'The map helper getScopeStats does not provide any stats when the map is wrong');
+        assert.equal(mapHelper.getScopeStats(), undefined, 'The map helper getScopeStats does not provide any stats when the map does not exist');
     });
     
     
