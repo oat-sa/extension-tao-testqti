@@ -1,11 +1,11 @@
 @import "inc/bootstrap";
 
-
 // action bars
 .test-runner-scope {
+
     .action-bar {
         li {
-            margin: 0 5px;
+            margin: 2px 0 0 10px;
             &.btn-info {
                 border-color: white(.3);
                 &.btn-group {
@@ -43,33 +43,11 @@
                 }
             }
         }
+
         &.horizontal-action-bar {
             opacity: 1;
             overflow-y:visible;
             min-height: #{(map-get($heights, horizontal-action-bar)) * 1px };
-
-            .title-box {
-                @include font-size(14);
-                padding: 4px 0 0;
-            }
-            .progress-box, .timer-box, .item-number-box {
-                padding-top: 4px;
-                display: inline-block;
-                white-space: nowrap;
-                -webkit-flex: 0 0 auto;
-                flex: 0 1 auto;
-                .qti-controls {
-                    display: inline-block;
-                    margin-left: 20px;
-                    white-space: nowrap;
-                }
-            }
-            .progressbar {
-                margin-top: 5px;
-                min-width: 150px;
-                max-width: 200px;
-                height: 0.6em;
-            }
 
             &.top-action-bar > .control-box {
                 display: -webkit-flex;
@@ -79,6 +57,97 @@
                 display: flex;
                 justify-content: space-between;
                 flex-flow: row nowrap;
+
+                .title-box {
+                    @include font-size(14);
+                    padding: 4px 0 0;
+                }
+                .progress-box, .item-number-box {
+                    padding-top: 4px;
+                    white-space: nowrap;
+
+                    -ms-flex : 0 1 auto;
+                    -webkit-flex: 0 1 auto;
+                    flex: 0 1 auto;
+
+                    .qti-controls {
+                        display: inline-block;
+                        margin-left: 20px;
+                        white-space: nowrap;
+                    }
+
+                }
+                .timer-box {
+                    padding-top: 0;
+                    white-space: nowrap;
+
+                    /*flex item of control-box */
+                    -webkit-flex: 1 0 auto;
+                    -ms-flex : 1 0 auto;
+                    flex: 1 0 auto;
+
+                    /* is also a flex container for .qti-timer */
+                    display: -ms-flexbox;
+                    display: -webkit-flex;
+                    display: flex;
+
+                    -webkit-flex-direction: row;
+                    -ms-flex-direction: row;
+                    flex-direction: row;
+
+                    -webkit-flex-wrap: nowrap;
+                    -ms-flex-wrap: nowrap;
+                    flex-wrap: nowrap;
+
+                    -webkit-justify-content: flex-end;
+                    -ms-flex-pack: end;
+                    justify-content: flex-end;
+
+
+                    .qti-timer {
+
+                        display: inline-block;
+                        text-align: center;
+                        vertical-align: top;
+                        line-height: 1.2;
+                        position: relative;
+                        padding: 0 20px;
+                        margin-top: -1px;
+
+                        .qti-timer_label {
+                            max-width: 130px;
+                            display:block;
+                            @include font-size(12);
+                        }
+                        &.qti-timer__warning {
+                            .qti-timer_time {
+                                color: $warning;
+                            }
+                        }
+                        &::before {
+                            content: ' ';
+                            background: white(.3);
+                            width: 1px;
+                            height: 20px;
+                            position: absolute;
+                            left: 0;
+                            top: 5px
+                        }
+                        &:first-child {
+                            &::before {
+                                content: none;
+                            }
+                        }
+
+                    }
+                }
+                .progressbar {
+                    margin-top: 5px;
+                    min-width: 150px;
+                    max-width: 200px;
+                    height: 0.6em;
+                }
+
             }
 
             & > .control-box {
@@ -163,23 +232,7 @@
                     line-height: 1.6;
                 }
             }
-            &.has-timers {
-                height: 47px;
-                .progress-box,
-                .title-box {
-                    padding-top: 10px;
-                }
-            }
-
-            // navigation elements
-            .bottom-action-bar .action {
-                display:none;
-            }
         }
-    }
-
-    #qti-timers {
-        display: none;
     }
 
     [data-control="exit"]{
@@ -190,38 +243,7 @@
         display:none;
     }
 
-    .qti-timer {
-        display: inline-block;
-        text-align: center;
-        vertical-align: top;
-        line-height: 1.2;
-        position: relative;
-        padding: 0 20px;
-        .qti-timer_label {
-            max-width: 130px;
-            @include font-size(12);
-        }
-        &.qti-timer__warning {
-            .qti-timer_time {
-                color: $warning;
-            }
-        }
-        &::before {
-            content: ' ';
-            background: white(.3);
-            width: 1px;
-            height: 20px;
-            position: absolute;
-            left: 0;
-            top: 5px
-        }
-        &:first-child {
-            &::before {
-                content: none;
-            }
-        }
 
-    }
     &.non-lti-context {
         .title-box {
             display:none;
