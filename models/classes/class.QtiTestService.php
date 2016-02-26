@@ -21,6 +21,8 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoQtiItem\model\qti\Parser;
+use oat\taoQtiItem\model\qti\parser\ValidationException;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -398,6 +400,25 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         else {
             // -- Load the test in a QTISM flavour.
             $testDefinition = new XmlDocument();
+
+            //validate the file to import
+            $qtiParser = new Parser($expectedTestFile);
+
+            $qtiParser->validate();
+
+            if (!$qtiParser->isValid()) {
+                $eStrs = array();
+                foreach ($qtiParser->getErrors() as $libXmlError) {
+                    $eStrs[] = __('QTI-XML error at line %1$d "%2$s".', $libXmlError['line'],
+                        str_replace('[LibXMLError] ', '', trim($libXmlError['message'])));
+                }
+
+                // Make sure there are no duplicate...
+                $eStrs = array_unique($eStrs);
+
+                // Add sub-report.
+                throw new ValidationException($expectedTestFile, $eStrs);
+            }
 
             try {
                 $testDefinition->load($expectedTestFile, true);
