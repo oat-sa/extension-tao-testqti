@@ -1,6 +1,6 @@
 <main class="test-runner-scope">
     <div class="action-bar content-action-bar horizontal-action-bar top-action-bar">
-        <div class="control-box"></div>
+        <div class="control-box size-wrapper"></div>
     </div>
 
     <div class="test-runner-sections">
