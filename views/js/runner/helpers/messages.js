@@ -34,11 +34,26 @@ define([
      */
     function isCurrentItemAnswered(runner) {
         var answered = false;
-        _.each(runner.itemRunner && runner.itemRunner.getState(), function (state) {
+        _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
             var response = state && state.response;
             if (_.isObject(response)) {
-                answered = _.isObject(response.base);
-                return false;
+                // base or record defined: the interaction has a response, so the item is responded
+                if (_.isObject(response.base) || _.isObject(response.record)) {
+                    answered = true;
+                }
+                else if (_.isObject(response.list)) {
+                    _.forEach(response.list, function(entry) {
+                        // list defined, and something is listed: the interaction has a response, so the item is responded
+                        if (_.isArray(entry) && entry.length) {
+                            answered = true;
+                            return false;
+                        }
+                    });
+                }
+
+                if (answered) {
+                    return false;
+                }
             }
         });
         return answered;
