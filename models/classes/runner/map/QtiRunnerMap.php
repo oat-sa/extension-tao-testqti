@@ -58,6 +58,7 @@ class QtiRunnerMap implements RunnerMap
 
         if ($session->isRunning() !== false) {
             $route = $session->getRoute();
+            $store = $session->getAssessmentItemSessionStore();
             $routeItems = $route->getAllRouteItems();
             $offset = $route->getRouteItemPosition($routeItems[0]);
             $offsetPart = 0;
@@ -70,7 +71,6 @@ class QtiRunnerMap implements RunnerMap
                 $occurrence = $routeItem->getOccurence();
 
                 // get the jump definition
-                $store = $session->getAssessmentItemSessionStore();
                 $itemSession = $store->getAssessmentItemSession($itemRef, $occurrence);
 
                 // load item infos
@@ -106,7 +106,7 @@ class QtiRunnerMap implements RunnerMap
                     'positionInSection' => $offsetSection,
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                    'answered' => $this->isItemCompleted($routeItem, $itemSession),
+                    'answered' => \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
                     'flagged' => \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
@@ -175,36 +175,5 @@ class QtiRunnerMap implements RunnerMap
         }
         
         $target['stats']['total'] ++;
-    }
-
-    /**
-     * Checks if an item has been completed
-     * @param RouteItem $routeItem
-     * @param AssessmentItemSession $itemSession
-     * @return bool
-     */
-    protected function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession) {
-        $completed = false;
-        if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
-            // In linear mode, we consider the item completed if it was presented.
-            if ($itemSession->isPresented() === true) {
-                $completed = true;
-            }
-        }
-        else {
-            // In nonlinear mode we consider: 
-            // - an adaptive item completed if it's completion status is 'completed'.
-            // - a non-adaptive item to be completed if it is responded.
-            $isAdaptive = $itemSession->getAssessmentItem()->isAdaptive();
-
-            if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
-                $completed = true;
-            }
-            else if ($isAdaptive === false && $itemSession->isResponded() === true) {
-                $completed = true;
-            }
-        }
-
-        return $completed;
     }
 }

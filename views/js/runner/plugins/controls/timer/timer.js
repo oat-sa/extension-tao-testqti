@@ -129,13 +129,14 @@ define([
                 var map     = testRunner.getTestMap();
 
                 var section = map.parts[context.testPartId].sections[context.sectionId];
+                var nbItems = _.size(section.items);
                 var item    = _.find(section.items, { position : context.itemPosition });
 
                 if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item ){
 
-                    return !!( (type === 'next' && (scope === 'assessmentSection' || ((_.size(section.items) - item.positionInSection - 1) === 0) )) ||
+                    return !!( (type === 'next' && (scope === 'assessmentSection' || ((item.positionInSection + 1) === nbItems) )) ||
                                (type === 'previous' && item.positionInSection === 0) ||
-                               (type === 'jump' && position > 0 && _.some(section.items,  { "position" : position })) );
+                               (type === 'jump' && position > 0 &&  (position < section.position || position >= section.position + nbItems)) );
 
                 }
                 return false;
