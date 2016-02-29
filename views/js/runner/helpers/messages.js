@@ -38,7 +38,7 @@ define([
             var response = state && state.response;
             if (_.isObject(response)) {
                 // base or record defined: the interaction has a response, so the item is responded
-                if (_.isObject(response.base) || _.isObject(response.record)) {
+                if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
                     answered = true;
                 }
                 else if (_.isObject(response.list)) {
