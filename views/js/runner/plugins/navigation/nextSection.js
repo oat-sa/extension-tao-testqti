@@ -80,13 +80,15 @@ define([
                 }
             });
 
+            this.disable();
             toggle();
 
             testRunner
-                .on('ready', function(){
-                    self.enable();
+                .on('move', function(){
+                    self.disable();
                 })
-                .after('move', function(){
+                .on('renderitem', function(){
+                    self.enable();
                     toggle();
                 });
         },
@@ -98,16 +100,18 @@ define([
             this.$element.remove();
         },
         enable : function enable (){
-            this.$element.removeProp('disabled');
+            this.$element.removeClass('disabled')
+                         .removeProp('disabled');
         },
         disable : function disable (){
-            this.$element.prop('disabled', true);
+            this.$element.addClass('disabled')
+                         .prop('disabled', true);
         },
         show: function show(){
             this.$element.show();
         },
         hide: function hide(){
             this.$element.hide();
-        },
+        }
     });
 });
