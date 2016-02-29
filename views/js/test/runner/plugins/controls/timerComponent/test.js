@@ -239,7 +239,7 @@ define([
             _.delay(function(){
                 assert.equal($('.qti-timer_time', timer.$element).text(), '00:00:29', 'The element contains the updated time value');
                 QUnit.start();
-            }, 10);
+            }, 50);
         }, 10);
     });
 
