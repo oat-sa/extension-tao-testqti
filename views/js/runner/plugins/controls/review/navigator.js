@@ -155,14 +155,14 @@ define([
                 if (section) {
                     section.stats.flagged = _.reduce(section.items, function (count, item) {
                         return count + (item.flagged ? 1 : 0);
-                    });
+                    }, 0);
                 }
 
                 if (part) {
-                    part.stats.flagged = _.reduce(part.sections, accStats);
+                    part.stats.flagged = _.reduce(part.sections, accStats, 0);
                 }
 
-                map.stats.flagged = _.reduce(map.parts, accStats);
+                map.stats.flagged = _.reduce(map.parts, accStats, 0);
             }
         },
 
