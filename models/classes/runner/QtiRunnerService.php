@@ -274,10 +274,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             // Context of interacting test
             if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
                 $config = $this->getTestConfig();
+                $route = $session->getRoute();
+                $itemSession = $session->getCurrentAssessmentItemSession();
+                $itemRef = $session->getCurrentAssessmentItemRef();
+                $currentSection = $session->getCurrentAssessmentSection();
 
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
-                $response['isLinear'] = $session->getCurrentNavigationMode() == NavigationMode::LINEAR;
+                $response['isLinear'] = $response['navigationMode'] == NavigationMode::LINEAR;
 
                 // The submission mode.
                 $response['submissionMode'] = $session->getCurrentSubmissionMode();
@@ -286,17 +290,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
                 // The number of current attempt (1 for the first time ...)
-                $response['attempt'] = $session->getCurrentAssessmentItemSession()['numAttempts']->getValue();
+                $response['attempt'] = $itemSession['numAttempts']->getValue();
 
                 // Whether or not the current step is time out.
                 $response['isTimeout'] = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
 
                 // The identifier of the current item.
-                $response['itemIdentifier'] = $session->getCurrentAssessmentItemRef()->getIdentifier();
-                $response['itemUri'] = $session->getCurrentAssessmentItemRef()->getHref();
+                $response['itemIdentifier'] = $itemRef->getIdentifier();
+                $response['itemUri'] = $itemRef->getHref();
 
                 // The state of the current AssessmentTestSession.
-                $response['itemSessionState'] = $session->getCurrentAssessmentItemSession()->getState();
+                $response['itemSessionState'] = $itemSession->getState();
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
@@ -306,13 +310,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['needMapUpdate'] = false;
 
                 // Whether the current item is the very last one of the test.
-                $response['isLast'] = $session->getRoute()->isLast();
+                $response['isLast'] = $route->isLast();
 
                 // The current position in the route.
-                $response['itemPosition'] = $session->getRoute()->getPosition();
+                $response['itemPosition'] = $route->getPosition();
 
                 // The current item flagged state
                 $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
+
+                // The current item answered state
+                $response['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($route->getRouteItemAt($response['itemPosition']), $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
@@ -321,11 +328,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
 
                 // Current Section title.
-                $response['sectionId'] = $session->getCurrentAssessmentSection()->getIdentifier();
-                $response['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
+                $response['sectionId'] = $currentSection->getIdentifier();
+                $response['sectionTitle'] = $currentSection->getTitle();
 
                 // Number of items composing the test session.
-                $response['numberItems'] = $session->getRoute()->count();
+                $response['numberItems'] = $route->count();
 
                 // Number of items completed during the test session.
                 $response['numberCompleted'] = \taoQtiTest_helpers_TestRunnerUtils::testCompletion($session);
@@ -337,13 +344,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['considerProgress'] = \taoQtiTest_helpers_TestRunnerUtils::considerProgress($session, $context->getTestMeta(), $config->getConfig());
 
                 // Whether or not the deepest current section is visible.
-                $response['isDeepestSectionVisible'] = $session->getCurrentAssessmentSection()->isVisible();
+                $response['isDeepestSectionVisible'] = $currentSection->isVisible();
 
                 // If the candidate is allowed to move backward e.g. first item of the test.
                 $response['canMoveBackward'] = $session->canMoveBackward();
 
                 //Number of rubric blocks
-                $response['numberRubrics'] = count($session->getRoute()->current()->getRubricBlockRefs());
+                $response['numberRubrics'] = count($route->current()->getRubricBlockRefs());
 
                 // append dynamic options
                 $response['options'] = $config->getOptions($context);
@@ -583,17 +590,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getItemSession(RunnerServiceContext $context)
     {
-
-        $output = "";
-
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
 
-            $currentItem      = $session->getCurrentAssessmentItemRef();
-            $currentOccurence = $session->getCurrentAssessmentItemRefOccurence();
+            $currentItem       = $session->getCurrentAssessmentItemRef();
+            $currentOccurrence = $session->getCurrentAssessmentItemRefOccurence();
 
-            $itemSession      = $session->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+            $itemSession       = $session->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurrence);
 
             $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
 
@@ -602,6 +606,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
             $output = $stateOutput->getOutput();
+
+            // The current item answered state
+            $route    = $session->getRoute();
+            $position = $route->getPosition();
+            $output['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession);
 
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');

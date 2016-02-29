@@ -23,11 +23,11 @@ use qtism\data\SubmissionMode;
 use qtism\data\View;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
+use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
-use oat\taoQtiTest\models\TestSessionMetaData;
 use oat\taoQtiTest\models\ExtendedStateService;
 use qtism\common\datatypes\String;
 
@@ -665,13 +665,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
     /**
      * Checks if an item has been completed
-     * @param Jump $jump
+     * @param RouteItem $routeItem
+     * @param AssessmentItemSession $itemSession
      * @return bool
      */
-    static private function isItemCompleted(Jump $jump) {
-        $itemSession = $jump->getItemSession();
-        $routeItem = $jump->getTarget();
-
+    static public function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession) {
         $completed = false;
         if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
             // In linear mode, we consider the item completed if it was presented.
@@ -704,9 +702,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static private function getItemInfo(AssessmentTestSession $session, Jump $jump) {
         $itemSession = $jump->getItemSession();
+        $routeItem = $jump->getTarget();
         return array(
             'remainingAttempts' => $itemSession->getRemainingAttempts(),
-            'answered' => self::isItemCompleted($jump),
+            'answered' => self::isItemCompleted($routeItem, $itemSession),
             'viewed' => $itemSession->isPresented(),
             'flagged' => self::getItemFlag($session, $jump),
             'position' => $jump->getPosition()
