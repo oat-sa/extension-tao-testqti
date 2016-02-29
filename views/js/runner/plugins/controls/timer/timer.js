@@ -29,8 +29,9 @@ define([
     'core/timer',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
+    'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, pollingFactory, timerFactory, pluginFactory, timerComponentFactory, timerBoxTpl) {
+], function ($, _, __, pollingFactory, timerFactory, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -274,7 +275,7 @@ define([
 
                     //display a mesage if we exit a timed section
                     if(leaveTimedSection(type, scope, position)){
-                        testRunner.trigger('confirm', exitMessage, doMove, cancelMove);
+                        testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
                     } else {
                         doMove();
                     }

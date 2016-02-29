@@ -26,8 +26,9 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, pluginFactory, buttonTpl){
+], function ($, _, __, pluginFactory, messages, buttonTpl){
     'use strict';
 
     return pluginFactory({
@@ -67,7 +68,9 @@ define([
                     if(context.options.nextSectionWarning){
                         testRunner.trigger(
                             'confirm',
-                            __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                            messages.getExitMessage(
+                                __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                                'section', testRunner),
                             nextSection, // if the test taker accept
                             enable       // if the test taker refuse
                         );
