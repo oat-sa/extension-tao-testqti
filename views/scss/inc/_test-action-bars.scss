@@ -46,21 +46,35 @@
 
         &.horizontal-action-bar {
             opacity: 1;
-            overflow-y:visible;
-            min-height: #{(map-get($heights, horizontal-action-bar)) * 1px };
+            height: #{(map-get($heights, horizontal-action-bar)) * 1px };
 
             &.top-action-bar > .control-box {
-                display: -webkit-flex;
-                -webkit-justify-content: space-between; // Safari
-                -webkit-flex-flow: row nowrap;
 
+                height: #{(map-get($heights, horizontal-action-bar)) * 1px };
+
+                display: -ms-flexbox;
+                display: -webkit-flex;
                 display: flex;
+
+                -webkit-flex-direction: row;
+                -ms-flex-direction: row;
+                flex-direction: row;
+
+                -webkit-flex-wrap: nowrap;
+                -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+
+                -webkit-justify-content: space-between;
+                -ms-flex-pack: space-between;
                 justify-content: space-between;
-                flex-flow: row nowrap;
 
                 .title-box {
                     @include font-size(14);
                     padding: 4px 0 0;
+
+                    -ms-flex : 0 1 auto;
+                    -webkit-flex: 0 1 auto;
+                    flex: 0 1 auto;
                 }
                 .progress-box, .item-number-box {
                     padding-top: 4px;
