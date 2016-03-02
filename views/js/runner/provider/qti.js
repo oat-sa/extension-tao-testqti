@@ -28,11 +28,12 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -197,34 +198,14 @@ define([
              */
             var updateStats = function updateStats(){
 
-                var testPart, section, item;
-                var stats = {
-                    answered : 0,
-                    flagged : 0,
-                    viewed : 0,
-                    total : 0
-                };
-
                 var context = self.getTestContext();
                 var testMap = self.getTestMap();
                 var states = self.getTestData().states;
-
-                //reduce by sum up the stats
-                var accStats = function accStats(acc, level){
-                    acc.answered += level.stats.answered;
-                    acc.flagged += level.stats.flagged;
-                    acc.viewed += level.stats.viewed;
-                    acc.total += level.stats.total;
-                    return acc;
-                };
+                var item = mapHelper.getItemAt(testMap, context.itemPosition);
 
                 if(context.state !== states.interacting){
                     return;
                 }
-
-                testPart = testMap.parts[context.testPartId];
-                section  = testPart.sections[context.sectionId];
-                item     = section.items[context.itemIdentifier];
 
                 //flag as viewed, always
                 item.viewed = true;
@@ -234,27 +215,8 @@ define([
                     item.answered = context.itemAnswered;
                 }
 
-                //compute section stats from it's items
-                section.stats = _.reduce(section.items, function(acc, item){
-                    if(item.answered){
-                        acc.answered++;
-                    }
-                    if(item.flagged){
-                        acc.flagged++;
-                    }
-                    if(item.viewed){
-                        acc.viewed++;
-                    }
-                    acc.total ++;
-                    return acc;
-                }, _.clone(stats));
-
-                //compute testParts and test stats
-                testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
-                testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
-
-                //reassign the map
-                self.setTestMap(testMap);
+                //update the map stats, then reassign the map
+                self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             };
 
             /*

@@ -19,11 +19,22 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
-    'lodash',
-    'i18n'
-], function ($, _, __) {
+    'lodash'
+], function (_) {
     'use strict';
+
+    /**
+     * Gets an empty stats record
+     * @returns {Object}
+     */
+    function getEmptyStats() {
+        return {
+            answered: 0,
+            flagged: 0,
+            viewed: 0,
+            total: 0
+        };
+    }
 
     /**
      * Defines a helper that provides extractors for an assessment test map
@@ -190,6 +201,61 @@ define([
             var section = sections && sections[jump && jump.section];
             var items = section && section.items;
             return items && items[jump && jump.identifier];
+        },
+
+        /**
+         * Update the map stats from a particular item
+         * @param {Object} map - The assessment test map
+         * @param {Number} position - The position of the item
+         * @returns {Object}
+         */
+        updateItemStats: function updateItemStats(map, position) {
+            var jump = this.getJump(map, position);
+            var part = this.getPart(map, jump && jump.part);
+            var sections = part && part.sections;
+            var section = sections && sections[jump && jump.section];
+
+            section.stats = this.computeItemStats(section.items);
+            part.stats = this.computeStats(part.sections);
+            map.stats = this.computeStats(this.getParts(map));
+
+            return map;
+        },
+
+        /**
+         * Computes the stats for a list of items
+         * @param {Object} items
+         * @returns {Object}
+         */
+        computeItemStats: function computeItemStats(items) {
+            return _.reduce(items, function accStats(acc, item) {
+                if (item.answered) {
+                    acc.answered++;
+                }
+                if (item.flagged) {
+                    acc.flagged++;
+                }
+                if (item.viewed) {
+                    acc.viewed++;
+                }
+                acc.total++;
+                return acc;
+            }, getEmptyStats());
+        },
+
+        /**
+         * Computes the global stats of a collection of stats
+         * @param {Array} collection
+         * @returns {Object}
+         */
+        computeStats: function computeStats(collection) {
+            return _.reduce(collection, function accStats(acc, item) {
+                acc.answered += item.stats.answered;
+                acc.flagged += item.stats.flagged;
+                acc.viewed += item.stats.viewed;
+                acc.total += item.stats.total;
+                return acc;
+            }, getEmptyStats());
         }
     };
 });

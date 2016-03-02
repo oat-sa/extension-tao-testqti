@@ -47,7 +47,10 @@ define([
         { name : 'getScopeStats', title : 'getScopeStats' },
         { name : 'getItemPart', title : 'getItemPart' },
         { name : 'getItemSection', title : 'getItemSection' },
-        { name : 'getItemAt', title : 'getItemAt' }
+        { name : 'getItemAt', title : 'getItemAt' },
+        { name : 'updateItemStats', title : 'updateItemStats' },
+        { name : 'computeItemStats', title : 'computeItemStats' },
+        { name : 'computeStats', title : 'computeStats' }
     ];
 
     QUnit
@@ -182,4 +185,123 @@ define([
     });
 
 
+    QUnit.test('helpers/map.updateItemStats', 25, function(assert) {
+        var map = _.cloneDeep(mapSample);
+        var item = mapHelper.getItemAt(map, 8);
+        var section = mapHelper.getItemSection(map, 8);
+        var part = mapHelper.getItemPart(map, 8);
+        var stats = mapHelper.getTestStats(map);
+
+        assert.equal(item.answered, false, 'The item is not answered at this time');
+        assert.equal(item.flagged, false, 'The item is not flagged at this time');
+        assert.equal(item.viewed, false, 'The item is not viewed at this time');
+
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the test');
+        assert.equal(stats.flagged, 0, 'There is no flagged item at this time in the test');
+        assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the test');
+
+        assert.equal(part.stats.answered, 0, 'There is no answered item at this time in the part');
+        assert.equal(part.stats.flagged, 0, 'There is no flagged item at this time in the part');
+        assert.equal(part.stats.viewed, 0, 'There is no viewed item at this time in the part');
+
+        assert.equal(section.stats.answered, 0, 'There is no answered item at this time in the section');
+        assert.equal(section.stats.flagged, 0, 'There is no flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
+
+        item.answered = true;
+        item.flagged = true;
+        item.viewed = true;
+
+        assert.equal(mapHelper.updateItemStats(map, 8), map, 'The map helper updateItemStats returns the map');
+
+        assert.equal(item.answered, true, 'The item is now answered');
+        assert.equal(item.flagged, true, 'The item is now flagged');
+        assert.equal(item.viewed, true, 'The item is now viewed');
+
+        stats = mapHelper.getTestStats(map);
+        assert.equal(stats.answered, 1, 'There is one answered item at this time in the test');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the test');
+        assert.equal(stats.viewed, 2, 'There is two viewed items at this time in the test');
+
+        assert.equal(part.stats.answered, 1, 'There is one answered item at this time in the part');
+        assert.equal(part.stats.flagged, 1, 'There is one flagged item at this time in the part');
+        assert.equal(part.stats.viewed, 1, 'There is one viewed item at this time in the part');
+
+        assert.equal(section.stats.answered, 1, 'There is one answered item at this time in the section');
+        assert.equal(section.stats.flagged, 1, 'There is one flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 1, 'There is one viewed item at this time in the section');
+    });
+
+
+    QUnit.test('helpers/map.computeItemStats', 13, function(assert) {
+        var item = mapHelper.getItemAt(mapSample, 6);
+        var section = mapHelper.getItemSection(mapSample, 6);
+        var stats;
+
+        assert.equal(item.answered, false, 'The item is not answered at this time');
+        assert.equal(item.flagged, false, 'The item is not flagged at this time');
+        assert.equal(item.viewed, false, 'The item is not viewed at this time');
+
+        assert.equal(section.stats.answered, 0, 'There is no answered item at this time in the section');
+        assert.equal(section.stats.flagged, 0, 'There is no flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
+
+        item.answered = true;
+        item.flagged = true;
+        item.viewed = true;
+
+        stats = mapHelper.computeItemStats(section.items);
+
+        assert.equal(typeof stats, 'object', 'The map helper computeItemStats returns an object');
+
+        assert.equal(item.answered, true, 'The item is now answered');
+        assert.equal(item.flagged, true, 'The item is now flagged');
+        assert.equal(item.viewed, true, 'The item is now viewed');
+
+        assert.equal(stats.answered, 1, 'There is one answered item at this time in the computed stats');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the computed stats');
+        assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the computed stats');
+    });
+
+
+    QUnit.test('helpers/map.computeStats', 20, function(assert) {
+        var map = _.cloneDeep(mapSample);
+        var section = mapHelper.getItemSection(map, 8);
+        var part = mapHelper.getItemPart(map, 8);
+        var stats = mapHelper.getTestStats(map);
+
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the test');
+        assert.equal(stats.flagged, 0, 'There is no flagged item at this time in the test');
+        assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the test');
+
+        assert.equal(part.stats.answered, 0, 'There is no answered item at this time in the part');
+        assert.equal(part.stats.flagged, 0, 'There is no flagged item at this time in the part');
+        assert.equal(part.stats.viewed, 0, 'There is no viewed item at this time in the part');
+
+        assert.equal(section.stats.answered, 0, 'There is no answered item at this time in the section');
+        assert.equal(section.stats.flagged, 0, 'There is no flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
+
+        section.stats.answered = 2;
+        section.stats.flagged = 2;
+        section.stats.viewed = 2;
+
+        part.stats = mapHelper.computeStats(part.sections);
+        assert.equal(typeof part.stats, 'object', 'The map helper computeStats returns an object');
+
+        stats = mapHelper.computeStats(mapHelper.getParts(map));
+        assert.equal(typeof map.stats, 'object', 'The map helper computeStats returns an object');
+
+        assert.equal(stats.answered, 2, 'There is two answered items at this time in the test');
+        assert.equal(stats.flagged, 2, 'There is two flagged items at this time in the test');
+        assert.equal(stats.viewed, 3, 'There is three viewed items at this time in the test');
+
+        assert.equal(part.stats.answered, 2, 'There is two answered items at this time in the part');
+        assert.equal(part.stats.flagged, 2, 'There is two flagged items at this time in the part');
+        assert.equal(part.stats.viewed, 2, 'There is two viewed items at this time in the part');
+
+        assert.equal(section.stats.answered, 2, 'There is two answered items at this time in the section');
+        assert.equal(section.stats.flagged, 2, 'There is two flagged items at this time in the section');
+        assert.equal(section.stats.viewed, 2, 'There is two viewed items at this time in the section');
+    });
 });

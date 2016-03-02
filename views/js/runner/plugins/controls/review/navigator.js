@@ -23,9 +23,10 @@ define([
     'lodash',
     'i18n',
     'ui/component',
+    'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigator',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigatorTree'
-], function ($, _, __, component, navigatorTpl, navigatorTreeTpl) {
+], function ($, _, __, component, mapHelper, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
     /**
@@ -138,31 +139,15 @@ define([
          */
         updateStats: function updateStats(position, flag) {
             var map = this.map;
-            var jump = map && map.jumps[position];
-            var part = jump && map.parts[jump.part];
-            var section = part && part.sections[jump.section];
-            var item = section && section.items[jump.identifier];
-
-            function accStats(count, level) {
-                return count + level.stats.flagged;
-            }
+            var item;
 
             if (map) {
+                item = mapHelper.getItemAt(map, position);
+
                 if (item) {
                     item.flagged = flag;
+                    mapHelper.updateItemStats(map, position);
                 }
-
-                if (section) {
-                    section.stats.flagged = _.reduce(section.items, function (count, item) {
-                        return count + (item.flagged ? 1 : 0);
-                    }, 0);
-                }
-
-                if (part) {
-                    part.stats.flagged = _.reduce(part.sections, accStats, 0);
-                }
-
-                map.stats.flagged = _.reduce(map.parts, accStats, 0);
             }
         },
 
