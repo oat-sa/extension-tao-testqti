@@ -24,9 +24,10 @@
 define([
     'jquery',
     'i18n',
+    'ui/hider',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, pluginFactory, buttonTpl){
+], function ($, __, hider, pluginFactory, buttonTpl){
     'use strict';
 
     /**
@@ -124,14 +125,14 @@ define([
          * Show the button
          */
         show: function show(){
-            this.$element.show();
+            hider.show(this.$element);
         },
 
         /**
          * Hide the button
          */
         hide: function hide(){
-            this.$element.hide();
+            hider.hide(this.$element);
         }
     });
 });

@@ -59,7 +59,7 @@ define([
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
                 content:    $('#qti-content', $layout),
-                toolbox:    $('.tools-box', $layout),
+                toolbox:    $('.tools-box-list', $layout),
                 navigation: $('.navi-box-list', $layout),
                 control:    $('.top-action-bar .control-box', $layout),
                 panel:      $('.test-sidebar-left', $layout),

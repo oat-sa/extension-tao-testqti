@@ -26,9 +26,10 @@
 define([
     'jquery',
     'i18n',
+    'ui/hider',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock'
-], function ($, __, pluginFactory, containerTpl){
+], function ($, __, hider, pluginFactory, containerTpl){
     'use strict';
 
     /**
@@ -121,14 +122,14 @@ define([
          * Show the container
          */
         show: function show(){
-            this.$element.show();
+            hider.show(this.$element);
         },
 
         /**
          * Hide the container
          */
         hide: function hide(){
-            this.$element.hide();
+            hider.hide(this.$element);
         }
     });
 });
