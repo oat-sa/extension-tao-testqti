@@ -25,50 +25,11 @@ define([
     'jquery',
     'i18n',
     'taoTests/runner/plugin',
+    'ui/hider',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, buttonTpl, commentTpl) {
+], function ($, __, pluginFactory, hider, buttonTpl, commentTpl) {
     'use strict';
-
-    /**
-     * The CSS class used to hide elements.
-     * Using a CSS class prevents some tricky bugs like an element list displayed with list style despite CSS rules.
-     * @type {String}
-     */
-    var hiddenCls = 'hidden';
-
-    /**
-     * Hides an element using CSS class
-     * @param {jQuery} $el
-     */
-    function hideElement($el) {
-        $el.addClass(hiddenCls);
-    }
-
-    /**
-     * Shows an element using CSS class
-     * @param {jQuery} $el
-     */
-    function showElement($el) {
-        $el.removeClass(hiddenCls);
-    }
-
-    /**
-     * Show/hide an element using CSS class
-     * @param {jQuery} $el
-     */
-    function toggleElement($el) {
-        $el.toggleClass(hiddenCls);
-    }
-
-    /**
-     * Checks if an element is hidden using CSS class
-     * @param {jQuery} $el
-     * @returns {Boolean}
-     */
-    function hiddenElement($el) {
-        return $el.hasClass(hiddenCls);
-    }
 
     /**
      * Returns the configured plugin
@@ -122,8 +83,8 @@ define([
 
                 if (self.getState('enabled') !== false) {
                     //just show/hide the form
-                    toggleElement(self.$form);
-                    if (!hiddenElement(self.$form)) {
+                    hider.toggle(self.$form);
+                    if (!hider.isHidden(self.$form)) {
                         //reset the form on each display
                         self.$input.val('').focus();
                     }
@@ -132,7 +93,7 @@ define([
 
             //hide the form without submit
             this.$cancel.on('click', function () {
-                hideElement(self.$form);
+                hider.hide(self.$form);
             });
 
             //submit the comment, then hide the form
@@ -147,12 +108,12 @@ define([
                             comment: comment
                         })
                         .then(function () {
-                            hideElement(self.$form);
+                            hider.hide(self.$form);
                             self.enable();
                         })
                         .catch(function (err) {
                             testRunner.trigger('error', err);
-                            hideElement(self.$form);
+                            hider.hide(self.$form);
                             self.enable();
                         });
                 }
@@ -200,7 +161,7 @@ define([
          * Disable the button
          */
         disable: function disable() {
-            hideElement(this.$form);
+            hider.hide(this.$form);
             this.$button.prop('disabled', true)
                 .addClass('disabled');
         },
@@ -209,15 +170,15 @@ define([
          * Show the button
          */
         show: function show() {
-            showElement(this.$button);
+            hider.show(this.$button);
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            hideElement(this.$form);
-            hideElement(this.$button);
+            hider.hide(this.$form);
+            hider.hide(this.$button);
         }
     });
 });

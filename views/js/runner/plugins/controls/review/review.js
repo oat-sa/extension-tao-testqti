@@ -25,10 +25,11 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/review/navigator',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, pluginFactory, navigator, buttonTpl) {
+], function ($, _, __, hider, pluginFactory, navigator, buttonTpl) {
     'use strict';
 
     /**
@@ -293,8 +294,12 @@ define([
         show: function show() {
             var testRunner = this.getTestRunner();
             var context = testRunner.getTestContext();
-            this.$flagItemButton.toggle(!context.isLinear && context.options.markReview);
-            this.$toggleButton.show();
+            if(!context.isLinear && context.options.markReview){
+                hider.show(this.$flagItemButton);
+            } else {
+                hider.hide(this.$flagItemButton);
+            }
+            hider.show(this.$toggleButton);
             this.navigator.show();
         },
 
@@ -302,8 +307,8 @@ define([
          * Hides the button
          */
         hide: function hide() {
-            this.$flagItemButton.hide();
-            this.$toggleButton.hide();
+            hider.hide(this.$flagItemButton);
+            hider.hide(this.$toggleButton);
             this.navigator.hide();
         }
     });

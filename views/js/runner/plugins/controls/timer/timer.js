@@ -27,11 +27,12 @@ define([
     'i18n',
     'core/polling',
     'core/timer',
+    'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, pollingFactory, timerFactory, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function ($, _, __, pollingFactory, timerFactory, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -340,14 +341,14 @@ define([
          * Shows the button
          */
         show: function show(){
-            this.$element.show();
+            hider.show(this.$element);
         },
 
         /**
          * Hides the button
          */
         hide: function hide(){
-            this.$element.hide();
+            hider.hide(this.$element);
         }
     });
 });

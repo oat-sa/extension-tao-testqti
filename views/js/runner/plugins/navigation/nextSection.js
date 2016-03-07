@@ -25,10 +25,11 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, pluginFactory, messages, buttonTpl){
+], function ($, _, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 
     return pluginFactory({
@@ -92,26 +93,52 @@ define([
                     toggle();
                 });
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
+
+            //attach the element to the navigation area
             var $container = this.getAreaBroker().getNavigationArea();
             $container.append(this.$element);
         },
+
+        /**
+         * Called during the runner's destroy phase
+         */
         destroy : function destroy (){
             this.$element.remove();
         },
+
+        /**
+         * Enable the button
+         */
         enable : function enable (){
-            this.$element.removeClass('disabled')
-                         .removeProp('disabled');
+            this.$element.removeProp('disabled')
+                         .removeClass('disabled');
         },
+
+        /**
+         * Disable the button
+         */
         disable : function disable (){
-            this.$element.addClass('disabled')
-                         .prop('disabled', true);
+            this.$element.prop('disabled', true)
+                         .addClass('disabled');
         },
+
+        /**
+         * Show the button
+         */
         show: function show(){
-            this.$element.show();
+            hider.show(this.$element);
         },
+
+        /**
+         * Hide the button
+         */
         hide: function hide(){
-            this.$element.hide();
+            hider.hide(this.$element);
         }
     });
 });
