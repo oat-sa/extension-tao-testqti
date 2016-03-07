@@ -341,7 +341,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
-            $serviceContext = $this->getServiceContext();
+            $serviceContext = $this->getServiceContext(false);
             $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
 
             $response = [
