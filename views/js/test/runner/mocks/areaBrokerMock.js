@@ -63,6 +63,8 @@ define([
             mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($container);
         });
 
+        $('#qunit-fixture').append($container);
+
         return areaBroker($container, mapping);
     }
 
