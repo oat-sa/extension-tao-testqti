@@ -25,6 +25,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\event\TraceVariableStored;
+use \oat\taoTests\models\runner\CsrfToken;
+use \oat\taoTests\models\runner\SessionCsrfToken;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -46,6 +48,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected $serviceContext;
 
     /**
+     * The anti-CSRF manager
+     * @var CsrfToken;
+     */
+    protected $csrf;
+
+    /**
      * taoQtiTest_actions_Runner constructor.
      */
     public function __construct()
@@ -54,6 +62,34 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
+    }
+
+    /**
+     * Gets the anti-CSRF manager
+     * @return CsrfToken
+     */
+    protected function getCsrf()
+    {
+        if (!$this->csrf) {
+            $this->csrf = new SessionCsrfToken('TEST_RUNNER');
+        }
+        return $this->csrf;
+    }
+
+    /**
+     * @param $data
+     * @param int $httpStatus
+     */
+    protected function returnJson($data, $httpStatus = 200)
+    {
+        // auto append the CSRF token to the result
+        if (is_array($data)) {
+            $data['token'] = $this->getCsrf()->getCsrfToken();
+        } else if (is_object($data)) {
+            $data->token = $this->getCsrf()->getCsrfToken();
+        }
+
+        parent::returnJson($data, $httpStatus);
     }
 
     /**
@@ -67,6 +103,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if (!$this->serviceContext) {
             $testDefinition = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
+            $csrfToken = $this->getRequestParameter('x-security-token');
+
+            if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
+                throw new common_exception_InconsistentData('CSRF attempt!');
+            }
 
             if ($this->hasRequestParameter('testServiceCallId')) {
                 $testExecution = $this->getRequestParameter('testServiceCallId');
@@ -155,6 +196,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
         
         try {
+            $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
             $result = $this->runnerService->init($serviceContext);
 
@@ -267,29 +309,34 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Provides the definition data for a particular item
+     * Provides the definition data and the state for a particular item
      */
-    public function getItemData()
+    public function getItem()
     {
         $code = 200;
         
         $itemRef = $this->getRequestParameter('itemDefinition');
-        
+        $serviceCallId = $this->getRequestParameter('testServiceCallId');
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
+            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+            $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
+
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
             $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
             if (is_string($itemData)) {
-                $response = '{"success":true,"itemData":' . $itemData . ',"baseUrl":"'.$baseUrl.'"}';
+                $response = '{"success":true,"token":"' . $this->getCsrf()->getCsrfToken() . '","itemData":' . $itemData . ',"itemState":' . json_encode($itemState) . ',"baseUrl":"'.$baseUrl.'"}';
             } else {
                 $response = [
-                    'itemData' => $itemData,
                     'success' => true,
-                    'baseUrl' => $baseUrl
+                    'itemData' => $itemData,
+                    'itemState' => $itemState,
+                    'baseUrl' => $baseUrl,
                 ];
             }
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -304,83 +351,40 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Provides the state object for a particular item 
+     * Stores the state object and the response set of a particular item
      */
-    public function getItemState()
+    public function submitItem()
     {
         $code = 200;
 
+        $itemRef = $this->getRequestParameter('itemDefinition');
         $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
-        try {
-            $serviceContext = $this->getServiceContext();
-            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+        $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
 
-
-            $response = [
-                'itemState' => $this->runnerService->getItemState($serviceContext, $stateId),
-                'success' => true,
-            ];
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
-
-        $this->returnJson($response, $code);
-    }
-
-    /**
-     * Stores the state object of a particular item
-     */
-    public function submitItemState()
-    {
-        $code = 200;
-
-        $state = json_decode(html_entity_decode($this->getRequestParameter('itemState')));
-        $serviceCallId = $this->getRequestParameter('testServiceCallId');
+        $state = isset($data['itemState']) ? $data['itemState'] : new StdClass();
+        $itemResponse = isset($data['itemResponse']) ? $data['itemResponse'] : [];
 
         try {
             $serviceContext = $this->getServiceContext(false);
             $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
 
+            $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
+
+            // do not allow to store the response if the session is in a wrong state
+            $this->runnerService->check($serviceContext);
+
+            $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+
             $response = [
-                'success' => $this->runnerService->setItemState($serviceContext, $stateId, $state),
+                'success' => $successState && $successResponse,
+                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext),
             ];
 
-            $this->runnerService->persist($serviceContext);
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
-
-        $this->returnJson($response, $code);
-    }
-
-    /**
-     * Stores the response set of a particular item
-     */
-    public function storeItemResponse()
-    {
-        $code = 200;
-
-        $itemRef = $this->getRequestParameter('itemDefinition');
-
-        $itemResponse = \taoQtiCommon_helpers_Utils::readJsonPayload();
-
-        try {
-            $serviceContext = $this->getServiceContext();
-
-            $response = array(
-                'success' => $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse),
-                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext)
-            );
-
-            if($response['displayFeedbacks'] == true){
+            if ($response['displayFeedbacks'] == true) {
 
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
-                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
             }
 

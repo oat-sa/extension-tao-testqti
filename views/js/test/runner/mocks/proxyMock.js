@@ -135,61 +135,42 @@ define([
             },
 
             /**
-             * Gets an item definition by its URI
+             * Gets an item definition by its URI, also gets its current state
              * @param {String} uri - The URI of the item to get
-             * @returns {Promise} - Returns a promise. The item definition data will be provided on resolve.
+             * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
              *                      Any error will be provided if rejected.
-             * @fires getItemData
+             * @fires getItem
              */
-            getItemData: function getItemData(uri) {
-                return request('item', 'getItemData', [uri]);
-            },
-
-            /**
-             * Gets an item state by the item URI
-             * @param {String} uri - The URI of the item for which get the state
-             * @returns {Promise} - Returns a promise. The item state object will be provided on resolve.
-             *                      Any error will be provided if rejected.
-             */
-            getItemState: function getItemState(uri) {
-                var success = !!(storage && storage.states);
-                var state = success && storage.states[uri] || {};
-                return Promise.resolve({
-                    success: success,
-                    itemState: state
+            getItem: function getItem(uri) {
+                return request('item', 'getItem', [uri]).then(function(data) {
+                    var success = !!(storage && storage.states);
+                    return Promise.resolve({
+                        success: !!(success && data),
+                        itemData: data,
+                        itemState: success && storage.states[uri] || {},
+                    });
                 });
             },
 
             /**
-             * Submits the state of a particular item
+             * Submits the state and the response of a particular item
              * @param {String} uri - The URI of the item to update
              * @param {Object} state - The state to submit
+             * @param {Object} response - The response object to submit
              * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
              *                      Any error will be provided if rejected.
+             * @fires submitItem
              */
-            submitItemState: function submitItemState(uri, state) {
+            submitItem: function submitItem(uri, state, response) {
                 var success = false;
-                if (storage && storage.states) {
-                    storage.states[uri] = state;
-                    success = true;
-                }
-                return Promise.resolve({
-                    success: success
-                });
-            },
-
-            /**
-             * Stores the response for a particular item
-             * @param {String} uri - The URI of the item to update
-             * @param {Object} responses - The response object to submit
-             * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-             *                      Any error will be provided if rejected.
-             */
-            storeItemResponse: function storeItemResponse(uri, responses) {
-                var success = false;
-                if (storage && storage.responses) {
-                    storage.responses[uri] = responses;
-                    success = true;
+                if (storage) {
+                    if (storage.states) {
+                        storage.states[uri] = state;
+                    }
+                    if (storage.responses) {
+                        storage.responses[uri] = response;
+                    }
+                    success = !!(storage.states && storage.responses);
                 }
                 return Promise.resolve({
                     success: success
