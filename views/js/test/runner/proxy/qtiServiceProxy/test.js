@@ -161,7 +161,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.on('init', function(promise, config) {
                 assert.ok(true, 'The proxy has fired the "init" event');
@@ -182,7 +182,7 @@ define([
                     }
 
                     if (data.token) {
-                        assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                     }
 
                     QUnit.start();
@@ -191,7 +191,7 @@ define([
                     assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                     if (err.token) {
-                        assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                     }
 
                     QUnit.start();
@@ -295,7 +295,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -320,7 +320,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -328,7 +328,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -388,7 +388,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -413,7 +413,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -421,7 +421,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -481,7 +481,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -506,7 +506,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -514,7 +514,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -585,7 +585,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -612,7 +612,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -620,7 +620,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -689,7 +689,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -715,7 +715,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -723,7 +723,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -792,7 +792,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -820,7 +820,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -828,7 +828,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -903,7 +903,7 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.getSecurityToken().setToken(caseData.token);
+            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.init();
 
@@ -931,7 +931,7 @@ define([
                 }
 
                 if (data.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), data.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();
@@ -939,7 +939,7 @@ define([
                 assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
                 if (err.token) {
-                    assert.equal(proxy.getSecurityToken().getToken(), err.token, 'The proxy must update the security token');
+                    assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
                 }
 
                 QUnit.start();

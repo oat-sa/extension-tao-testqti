@@ -39,8 +39,8 @@ define([
      */
     function request(proxy, url, params, contentType) {
         var headers = {};
-        var securityToken = proxy.getSecurityToken();
-        var token = securityToken.getToken();
+        var tokenHandler = proxy.getTokenHandler();
+        var token = tokenHandler.getToken();
 
         if (token) {
             headers['X-Auth-Token'] = token;
@@ -59,7 +59,7 @@ define([
             })
             .done(function(data) {
                 if (data && data.token) {
-                    securityToken.setToken(data.token);
+                    tokenHandler.setToken(data.token);
                 }
                 if (data && data.success) {
                     resolve(data);
@@ -81,7 +81,7 @@ define([
                 }
 
                 if (data.token) {
-                    securityToken.setToken(data.token);
+                    tokenHandler.setToken(data.token);
                 }
 
                 reject(data);
