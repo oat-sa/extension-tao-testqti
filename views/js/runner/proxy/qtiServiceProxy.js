@@ -43,7 +43,7 @@ define([
         var token = securityToken.getToken();
 
         if (token) {
-            headers['x-security-token'] = token;
+            headers['X-Auth-Token'] = token;
         }
 
         return new Promise(function(resolve, reject) {

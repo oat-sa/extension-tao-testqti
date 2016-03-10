@@ -103,7 +103,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if (!$this->serviceContext) {
             $testDefinition = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
-            $csrfToken = $this->getRequestParameter('x-security-token');
+            $csrfToken = $this->getRequestParameter('X-Auth-Token');
 
             if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
                 throw new common_exception_InconsistentData('CSRF attempt!');
