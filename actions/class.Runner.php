@@ -106,7 +106,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $csrfToken = $this->getRequestParameter('X-Auth-Token');
 
             if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
-                throw new common_exception_InconsistentData('CSRF attempt!');
+                \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
+                throw new \common_exception_Unauthorized();
             }
 
             if ($this->hasRequestParameter('testServiceCallId')) {
@@ -153,6 +154,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     $response['type'] = 'FileNotFound';
                     $response['message'] = __('File not found');
                     break;
+
+                case $e instanceof \common_exception_Unauthorized:
+                    $response['code'] = 403;
+                    break;
             }
         }
         
@@ -182,6 +187,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 
                 case $e instanceof \tao_models_classes_FileNotFoundException:
                     $code = 404;
+                    break;
+
+                case $e instanceof \common_exception_Unauthorized:
+                    $code = 403;
                     break;
             }
         }
