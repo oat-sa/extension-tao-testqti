@@ -349,7 +349,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         }
         if ($collection instanceof IntegerCollection || $collection instanceof StringCollection) {
             foreach ($values as $value) {
-                $collection[] = $value;
+                if(!empty($value)){
+                    $collection[] = $value;
+                }
             }
             return $collection;
         }
