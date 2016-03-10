@@ -78,15 +78,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * @param $data
-     * @param int $httpStatus
+     * @param int [$httpStatus]
+     * @param bool [$token]
      */
-    protected function returnJson($data, $httpStatus = 200)
+    protected function returnJson($data, $httpStatus = 200, $token = true)
     {
         // auto append the CSRF token to the result
-        if (is_array($data)) {
-            $data['token'] = $this->getCsrf()->getCsrfToken();
-        } else if (is_object($data)) {
-            $data->token = $this->getCsrf()->getCsrfToken();
+        if ($token) {
+            if (is_array($data)) {
+                if ($data['success'] || $httpStatus != 403) {
+                    $data['token'] = $this->getCsrf()->getCsrfToken();
+                }
+            } else if (is_object($data)) {
+                if ($data->success || $httpStatus != 403) {
+                    $data->token = $this->getCsrf()->getCsrfToken();
+                }
+            }
         }
 
         return parent::returnJson($data, $httpStatus);
@@ -95,19 +102,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Gets the test service context
      * @param bool [$check] Checks the context after create. Default to true.
+     * @param bool [$checkToken] Checks the security token.
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    protected function getServiceContext($check = true)
+    protected function getServiceContext($check = true, $checkToken = true)
     {
         if (!$this->serviceContext) {
             $testDefinition = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
-            $csrfToken = $this->getRequestParameter('X-Auth-Token');
 
-            if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
-                \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
-                throw new \common_exception_Unauthorized();
+            if ($checkToken) {
+                $csrfToken = $this->getRequestParameter('X-Auth-Token');
+                if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
+                    \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
+                    throw new \common_exception_Unauthorized();
+                }
             }
 
             if ($this->hasRequestParameter('testServiceCallId')) {
@@ -182,15 +192,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
                 case $e instanceof \common_exception_NotImplemented:
                 case $e instanceof \common_exception_NoImplementation:
+                case $e instanceof \common_exception_Unauthorized:
                     $code = 403;
                     break;
                 
                 case $e instanceof \tao_models_classes_FileNotFoundException:
                     $code = 404;
-                    break;
-
-                case $e instanceof \common_exception_Unauthorized:
-                    $code = 403;
                     break;
             }
         }

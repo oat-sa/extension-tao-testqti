@@ -945,4 +945,111 @@ define([
                 QUnit.start();
             });
         });
+    
+    
+    var qtiServiceProxyTelemetryChecks = [{
+        title: 'success',
+        ajaxMock: ajaxMockSuccess,
+        uri: 'http://tao.dev/mockItemDefinition#123',
+        signal: 'hello',
+        params: {
+            text: 'lorem ipsum'
+        },
+        token: '1234',
+        response: {
+            success: true
+        },
+        success: true
+    }, {
+        title: 'failing data',
+        ajaxMock: ajaxMockSuccess,
+        uri: 'http://tao.dev/mockItemDefinition#123',
+        signal: 'hello',
+        params: {
+            text: 'lorem ipsum'
+        },
+        token: '1234',
+        response: {
+            success: false
+        },
+        success: false
+    }, {
+        title: 'failing request',
+        ajaxMock: ajaxMockError,
+        uri: 'http://tao.dev/mockItemDefinition#123',
+        signal: 'hello',
+        params: {
+            text: 'lorem ipsum'
+        },
+        token: '1234',
+        response: "error",
+        success: false
+    }] ;
+
+    QUnit
+        .cases(qtiServiceProxyTelemetryChecks)
+        .asyncTest('qtiServiceProxy.telemetry ', function(caseData, assert) {
+            var initConfig = {
+                testDefinition: 'http://tao.dev/mockTestDefinition#123',
+                testCompilation: 'http://tao.dev/mockTestCompilation#123',
+                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
+                serviceController: 'MockRunner',
+                serviceExtension: 'taoRunnerMock'
+            };
+
+            var expectedUrl = helpers._url(caseData.signal, initConfig.serviceController, initConfig.serviceExtension, {
+                testDefinition : initConfig.testDefinition,
+                testCompilation : initConfig.testCompilation,
+                testServiceCallId : initConfig.serviceCallId,
+                itemDefinition : caseData.uri
+            });
+
+            QUnit.expect(10);
+
+            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+
+            $.ajax = ajaxMockSuccess({success: true});
+
+            var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.init();
+
+            proxy.getTokenHandler().setToken(caseData.token);
+
+            $.ajax = caseData.ajaxMock(caseData.response, function(ajaxConfig) {
+                assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+            });
+
+            proxy.on('telemetry', function(promise, uri, signal, params) {
+                assert.ok(true, 'The proxy has fired the "telemetry" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "telemetry" event');
+                assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "telemetry" event');
+                assert.equal(signal, caseData.signal, 'The proxy has provided the signal through the "telemetry" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "telemetry" event');
+            });
+
+            var result = proxy.telemetry(caseData.uri, caseData.signal, caseData.params);
+
+            assert.equal(typeof result, 'object', 'The proxy.telemetry method has returned a promise');
+
+            result.then(function(data) {
+                if (caseData.success) {
+                    assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                } else {
+                    assert.ok(false, 'The proxy must throw an error!');
+                }
+
+                assert.equal(data.token, undefined, 'No token must be received');
+                assert.equal(proxy.getTokenHandler().getToken(), caseData.token, 'The proxy must not update the security token');
+
+                QUnit.start();
+            }).catch(function(err) {
+                assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+
+                assert.equal(err.token, undefined, 'No token must be received');
+                assert.equal(proxy.getTokenHandler().getToken(), caseData.token, 'The proxy must not update the security token');
+
+                QUnit.start();
+            });
+        });
 });

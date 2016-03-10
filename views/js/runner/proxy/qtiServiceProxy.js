@@ -35,15 +35,19 @@ define([
      * @param {String} url
      * @param {Object} [params]
      * @param {String} [contentType] - to force the content type
+     * @param {Boolean} [noToken] - to disable the token
      * @returns {Promise}
      */
-    function request(proxy, url, params, contentType) {
+    function request(proxy, url, params, contentType, noToken) {
         var headers = {};
         var tokenHandler = proxy.getTokenHandler();
-        var token = tokenHandler.getToken();
+        var token;
 
-        if (token) {
-            headers['X-Auth-Token'] = token;
+        if (!noToken) {
+            token = tokenHandler.getToken();
+            if (token) {
+                headers['X-Auth-Token'] = token;
+            }
         }
 
         return new Promise(function(resolve, reject) {
@@ -202,6 +206,19 @@ define([
          */
         callItemAction: function callItemAction(uri, action, params) {
             return request(this, this.storage.getItemActionUrl(uri, action), params);
+        },
+
+        /**
+         * Sends a telemetry signal
+         * @param {String} uri - The URI of the item for which sends the telemetry signal
+         * @param {String} signal - The name of the signal to send
+         * @param {Object} [params] - Some optional parameters to join to the signal
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires telemetry
+         */
+        telemetry: function telemetry(uri, signal, params) {
+            return request(this, this.storage.getTelemetryUrl(uri, signal), params, null, true);
         }
     };
 
