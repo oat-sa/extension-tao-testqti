@@ -89,7 +89,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $data->token = $this->getCsrf()->getCsrfToken();
         }
 
-        parent::returnJson($data, $httpStatus);
+        return parent::returnJson($data, $httpStatus);
     }
 
     /**
