@@ -205,6 +205,26 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * Gets the state identifier for the current itemRef
+     * @return string
+     * @throws QtiRunnerClosedException
+     * @throws common_exception_Unauthorized
+     */
+    protected function getStateId()
+    {
+        $serviceContext = $this->getServiceContext();
+        $serviceCallId = $serviceContext->getTestExecutionUri();
+        $testSession = $serviceContext->getTestSession();
+        $itemRef = $testSession->getCurrentAssessmentItemRef();
+
+        if ($itemRef instanceof \qtism\data\AssessmentItemRef) {
+            return $serviceCallId . $itemRef->getIdentifier();
+        }
+
+        throw new QtiRunnerClosedException();
+    }
+
+    /**
      * Initializes the delivery session
      */
     public function init()
@@ -337,8 +357,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
 
-            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+            $stateId = $this->getStateId();
             $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
+            if (!count($itemState)) {
+                $itemState = null;
+            }
 
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
             $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
@@ -383,7 +406,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getServiceContext(false);
-            $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
+            $stateId = $this->getStateId();
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
