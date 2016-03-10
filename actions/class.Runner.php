@@ -352,7 +352,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
         
         $itemRef = $this->getRequestParameter('itemDefinition');
-        $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -360,7 +359,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $stateId = $this->getStateId();
             $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
             if (!count($itemState)) {
-                $itemState = null;
+                $itemState = new StdClass();
             }
 
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
@@ -397,7 +396,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemRef = $this->getRequestParameter('itemDefinition');
-        $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
 
