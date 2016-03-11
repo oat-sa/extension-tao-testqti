@@ -1,4 +1,3 @@
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +28,12 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -59,7 +59,7 @@ define([
             var $layout = $(layoutTpl());
             return areaBroker($layout, {
                 content:    $('#qti-content', $layout),
-                toolbox:    $('.tools-box', $layout),
+                toolbox:    $('.tools-box-list', $layout),
                 navigation: $('.navi-box-list', $layout),
                 control:    $('.top-action-bar .control-box', $layout),
                 panel:      $('.test-sidebar-left', $layout),
@@ -164,9 +164,14 @@ define([
              */
             var store = function store(){
 
-               var context = self.getTestContext();
+                var context = self.getTestContext();
+                var states = self.getTestData().itemStates;
 
-               //we store only the responses and the state only if the user has interacted with the item.
+                if(context.itemSessionState >= states.closed) {
+                    return Promise.resolve(false);
+                }
+
+                //we store the responses
                 return Promise.all([
                     self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
                     self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
@@ -174,81 +179,44 @@ define([
                     return new Promise(function(resolve){
                         //if the store results contains modal feedback we ask (gently) the IR to display them
                         if(results.length === 2){
+                            context.itemAnswered = results[1].itemSession.itemAnswered;
+
                             if(results[1].displayFeedbacks === true && self.itemRunner){
                                 return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
-                                    resolve(true);
+                                    resolve();
                                 });
                             }
-                            return resolve(true);
+                            return resolve();
                         }
-                        return resolve(false);
+                        return resolve();
                     });
                 });
-               return Promise.resolve(false);
             };
 
             /**
              * Update the stats on the TestMap
-             * @param {Boolean} answered - if we flag the current item as answered
              */
-            var updateStats = function updateStats(answered){
+            var updateStats = function updateStats(){
 
-               var testPart, section, item;
-               var stats = {
-                    answered : 0,
-                    flagged : 0,
-                    viewed : 0,
-                    total : 0
-               };
+                var context = self.getTestContext();
+                var testMap = self.getTestMap();
+                var states = self.getTestData().states;
+                var item = mapHelper.getItemAt(testMap, context.itemPosition);
 
-               var context = self.getTestContext();
-               var testMap = self.getTestMap();
-               var states = self.getTestData().states;
+                if(context.state !== states.interacting){
+                    return;
+                }
 
-               //reduce by sum up the stats
-               var accStats = function accStats(acc, level){
-                    acc.answered += level.stats.answered;
-                    acc.flagged += level.stats.flagged;
-                    acc.viewed += level.stats.viewed;
-                    acc.total += level.stats.total;
-                    return acc;
-               };
+                //flag as viewed, always
+                item.viewed = true;
 
-               if(context.state !== states.interacting){
-                   return;
-               }
+                //flag as answered only if a response has been set
+                if (undefined !== context.itemAnswered) {
+                    item.answered = context.itemAnswered;
+                }
 
-               testPart = testMap.parts[context.testPartId];
-               section  = testPart.sections[context.sectionId];
-               item     = section.items[context.itemIdentifier];
-
-               //flag as viewed, always
-               item.viewed = true;
-               if(answered !== false){
-                    item.answered = true;
-               }
-
-               //compute section stats from it's items
-               section.stats = _.reduce(section.items, function(acc, item){
-                    if(item.answered){
-                        acc.answered++;
-                    }
-                    if(item.flagged){
-                        acc.flagged++;
-                    }
-                    if(item.viewed){
-                        acc.viewed++;
-                    }
-                    acc.total ++;
-                    return acc;
-                }, _.clone(stats));
-
-               //compute testParts and test stats
-               testPart.stats =_.reduce(testPart.sections, accStats, _.clone(stats));
-               testMap.stats =_.reduce(testMap.parts, accStats, _.clone(stats));
-
-               //reassign the map
-               self.setTestMap(testMap);
+                //update the map stats, then reassign the map
+                self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             };
 
             /*
@@ -397,7 +365,7 @@ define([
                 return {
                     content : results[0].itemData,
                     baseUrl : results[0].baseUrl,
-                    state : results[1].itemState || {}
+                    state : results[1].itemState
                 };
             });
         },
@@ -424,6 +392,12 @@ define([
                     assetManager: assetManager
                 })
                 .on('error', reject)
+                .on('init', function(){
+                    if(itemData.state){
+                        this.setState(itemData.state);
+                    }
+                    this.render(self.getAreaBroker().getContentArea());
+                })
                 .on('render', function(){
 
                     this.on('responsechange', changeState);
@@ -431,9 +405,7 @@ define([
 
                     resolve();
                 })
-                .init()
-                .setState(itemData.state)
-                .render(self.getAreaBroker().getContentArea());
+                .init();
             });
         },
 
@@ -467,6 +439,7 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            this.trigger('endsession', 'finish');
             return this.getProxy().callTestAction('finish');
         },
 

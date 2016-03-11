@@ -25,9 +25,11 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'ui/hider',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, pluginFactory, buttonTpl){
+], function ($, _, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 
     return pluginFactory({
@@ -67,7 +69,9 @@ define([
                     if(context.options.nextSectionWarning){
                         testRunner.trigger(
                             'confirm',
-                            __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                            messages.getExitMessage(
+                                __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                                'section', testRunner),
                             nextSection, // if the test taker accept
                             enable       // if the test taker refuse
                         );
@@ -77,34 +81,64 @@ define([
                 }
             });
 
+            this.disable();
             toggle();
 
             testRunner
-                .on('ready', function(){
-                    self.enable();
+                .on('move', function(){
+                    self.disable();
                 })
-                .after('move', function(){
+                .on('renderitem', function(){
+                    self.enable();
                     toggle();
                 });
         },
+
+        /**
+         * Called during the runner's render phase
+         */
         render : function render(){
+
+            //attach the element to the navigation area
             var $container = this.getAreaBroker().getNavigationArea();
             $container.append(this.$element);
         },
+
+        /**
+         * Called during the runner's destroy phase
+         */
         destroy : function destroy (){
             this.$element.remove();
         },
+
+        /**
+         * Enable the button
+         */
         enable : function enable (){
-            this.$element.removeProp('disabled');
+            this.$element.removeProp('disabled')
+                         .removeClass('disabled');
         },
+
+        /**
+         * Disable the button
+         */
         disable : function disable (){
-            this.$element.prop('disabled', true);
+            this.$element.prop('disabled', true)
+                         .addClass('disabled');
         },
+
+        /**
+         * Show the button
+         */
         show: function show(){
-            this.$element.show();
+            hider.show(this.$element);
         },
+
+        /**
+         * Hide the button
+         */
         hide: function hide(){
-            this.$element.hide();
-        },
+            hider.hide(this.$element);
+        }
     });
 });

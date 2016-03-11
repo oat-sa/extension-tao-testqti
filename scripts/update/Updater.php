@@ -237,7 +237,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         $this->setVersion($currentVersion);
 
-        if ($this->isVersion('2.16.0')) {
+        if ($this->isBetween('2.16.0','2.17.0')) {
             $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
             $accessService = \funcAcl_models_classes_AccessService::singleton();
             $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
@@ -253,6 +253,19 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.17.0');
         }
-        $this->skip('2.17.0','2.19.0');
+        
+        $this->skip('2.17.0','2.19.1');
+        
+        if ($this->isVersion('2.19.1')) {
+            // sets default plugin options
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            if (!array_key_exists('plugins', $config)) {
+                $config['plugins'] = null;
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.20.0');
+        }
     }
 }

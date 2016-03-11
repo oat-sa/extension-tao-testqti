@@ -178,7 +178,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItemState: function submitItemState(uri, state) {
-            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { state : state });
+            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { itemState : JSON.stringify(state) });
         },
 
         /**

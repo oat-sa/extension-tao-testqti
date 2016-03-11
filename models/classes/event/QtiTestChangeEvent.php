@@ -37,12 +37,17 @@ class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAware
     {
         $this->session = $testSession;
     }
-    
+
+    public function getSession()
+    {
+        return $this->session;
+    }
+
     public function getServiceCallId()
     {
         return $this->session->getSessionId();
     }
-    
+
     public function getNewStateDescription()
     {
         $sessionService = $this->getServiceLocator()->get(SessionStateService::SERVICE_ID);

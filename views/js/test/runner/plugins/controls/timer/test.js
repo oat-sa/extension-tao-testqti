@@ -76,11 +76,10 @@ define([
         timer.init()
             .then(function() {
                 assert.equal(timer.polling.is('stopped'), true, 'The timer must not start the polling before an item is loaded');
-                assert.equal(timer.timer.is('started'), false, 'The timer must not start the countdown before an item is loaded');
+                assert.equal(timer.stopwatch.is('started'), false, 'The timer must not start the countdown before an item is loaded');
                 assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
                 assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
                 assert.equal(timer.getState('init'), true, 'The timer is initialised');
-                assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
 
                 QUnit.start();
             })
@@ -131,7 +130,6 @@ define([
         timer.init()
             .then(function() {
                 assert.equal(timer.getState('init'), true, 'The timer is initialised');
-                assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
                 assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
                 assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
 
@@ -146,8 +144,8 @@ define([
                             .then(function() {
                                 assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
                                 assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                                assert.equal(timer.timer.is('started'), true, 'The timer has started the countdown');
-                                assert.equal(timer.timer.is('running'), true, 'The timer is running the countdown');
+                                assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
+                                assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
 
                                 timer.destroy()
                                     .then(function() {
@@ -157,7 +155,7 @@ define([
                                         assert.equal($container.find(timer.$element).length, 0, 'The timer has removed its content from the layout');
 
                                         assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                        assert.equal(timer.timer.is('started'), false, 'The timer has stopped the countdown');
+                                        assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
 
                                         QUnit.start();
                                     })
@@ -200,14 +198,14 @@ define([
                     .then(function() {
                         assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
                         assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                        assert.equal(timer.timer.is('started'), true, 'The timer has started the countdown');
-                        assert.equal(timer.timer.is('running'), true, 'The timer is running the countdown');
+                        assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
+                        assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
 
                         timer.destroy()
                             .then(function() {
                                 assert.equal(timer.getState('init'), false, 'The timer is destroyed');
                                 assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                assert.equal(timer.timer.is('started'), false, 'The timer has stopped the countdown');
+                                assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
 
                                 QUnit.start();
                             })
@@ -244,15 +242,15 @@ define([
                     .then(function() {
                         assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
                         assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                        assert.equal(timer.timer.is('started'), true, 'The timer has started the countdown');
-                        assert.equal(timer.timer.is('running'), true, 'The timer is running the countdown');
+                        assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
+                        assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
 
                         timer.disable()
                             .then(function() {
                                 assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
                                 assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                assert.equal(timer.timer.is('started'), true, 'The timer has keeped the countdown');
-                                assert.equal(timer.timer.is('running'), false, 'The timer is not running the countdown');
+                                assert.equal(timer.stopwatch.is('started'), true, 'The timer has keeped the countdown');
+                                assert.equal(timer.stopwatch.is('running'), false, 'The timer is not running the countdown');
 
                                 QUnit.start();
                             })

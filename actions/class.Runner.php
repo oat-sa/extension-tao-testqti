@@ -337,19 +337,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $state = $this->getRequestParameter('state');
+        $state = json_decode(html_entity_decode($this->getRequestParameter('itemState')));
         $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
-            $serviceContext = $this->getServiceContext();
+            $serviceContext = $this->getServiceContext(false);
             $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
 
             $response = [
                 'success' => $this->runnerService->setItemState($serviceContext, $stateId, $state),
             ];
-            
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -681,6 +681,34 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId());
             $eventManager->trigger($event);
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * Used to manage time
+     */
+    public function time()
+    {
+        $code = 200;
+
+        try {
+            if($this->hasRequestParameter('timerPaused')){
+                $duration = round($this->getRequestParameter('timerPaused'), 3);
+                if($duration > 0){
+                    $serviceContext = $this->getServiceContext(false);
+                    $this->runnerService->updateTimers($serviceContext, $duration);
+                    $this->runnerService->persist($serviceContext);
+                }
+            }
+            $response = [
+                'success' => true
+            ];
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
