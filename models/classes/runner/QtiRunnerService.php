@@ -986,7 +986,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         $extendedStateService = \taoQtiTest_helpers_TestRunnerUtils::getExtendedStateService();
                         $delay = $extendedStateService->getTimerDelay($sessionId);
                         $duration += $delay;
-                        $delay = $duration % 1;
+                        $delay = fmod($duration, 1);
                         $extendedStateService->setTimerDelay($sessionId, $delay);
 
                         //here the duration means: the time spent by a user, so we subtract the given time
