@@ -46,6 +46,15 @@ define([
 
             var testRunner = this.getTestRunner();
 
+            /**
+             * Close the current feedback
+             */
+            var closeCurrent = function closeCurrent(){
+                if(currentFeedback){
+                    currentFeedback.close();
+                }
+            };
+
             //change plugin state
             testRunner
                 .on('error', function(err){
@@ -80,11 +89,9 @@ define([
                 .on('info', function(message){
                     currentFeedback = feedback().info(message);
                 })
-                .on('unloaditem', function(){
-                    if(currentFeedback){
-                        currentFeedback.close();
-                    }
-                });
+                .on('alert', closeCurrent)
+                .on('confirm', closeCurrent)
+                .on('unloaditem', closeCurrent);
         }
     });
 });
