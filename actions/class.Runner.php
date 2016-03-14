@@ -406,10 +406,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false);
             $stateId = $this->getStateId();
 
-            $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
+            try {
+                // do not allow to store the response if the session is in a wrong state
+                $this->runnerService->check($serviceContext);
+            } catch (QtiRunnerPausedException $e) {
+                \common_Logger::i('Store item state after a test session pause');
+            }
 
-            // do not allow to store the response if the session is in a wrong state
-            $this->runnerService->check($serviceContext);
+            $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
             $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
 
