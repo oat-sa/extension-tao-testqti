@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\event\TraceVariableStored;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -341,7 +342,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $serviceCallId = $this->getRequestParameter('testServiceCallId');
 
         try {
-            $serviceContext = $this->getServiceContext(true);
+            $serviceContext = $this->getServiceContext(false);
+            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::CLOSED) {
+                throw new QtiRunnerClosedException();
+            }
             $stateId = $serviceCallId . $serviceContext->getTestSession()->getCurrentAssessmentItemRef()->getIdentifier();
 
             $response = [
