@@ -972,6 +972,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $session = $context->getTestSession();
+            $sessionId = $session->getSessionId();
 
             if($duration > 0){
                 $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
@@ -982,6 +983,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $placeId = $constraint->getSource()->getIdentifier();
                     $placeDuration = $session[ $placeId . '.duration' ];
                     if($placeDuration instanceof \qtism\common\datatypes\Duration){
+                        $extendedStateService = \taoQtiTest_helpers_TestRunnerUtils::getExtendedStateService();
+                        $delay = $extendedStateService->getTimerDelay($sessionId);
+                        $duration += $delay;
+                        $delay = $duration % 1;
+                        $extendedStateService->setTimerDelay($sessionId, $delay);
 
                         //here the duration means: the time spent by a user, so we subtract the given time
                         $placeDuration->sub(new \qtism\common\datatypes\Duration('PT' . $duration . 'S'));
