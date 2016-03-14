@@ -403,25 +403,33 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext(false);
             $stateId = $this->getStateId();
+            $storeResponse = true;
 
             try {
                 // do not allow to store the response if the session is in a wrong state
                 $this->runnerService->check($serviceContext);
             } catch (QtiRunnerPausedException $e) {
+                // allow to store the state but prevent to store the response
+                $storeResponse = false;
                 \common_Logger::i('Store item state after a test session pause');
             }
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
-            $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+            if ($storeResponse) {
+                $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+                $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
+            } else {
+                $successResponse = true;
+                $displayFeedback = false;
+            }
 
             $response = [
                 'success' => $successState && $successResponse,
-                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext),
+                'displayFeedbacks' => $displayFeedback,
             ];
 
-            if ($response['displayFeedbacks'] == true) {
-
+            if ($displayFeedback == true) {
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
                 $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
