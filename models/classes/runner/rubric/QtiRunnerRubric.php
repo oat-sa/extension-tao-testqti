@@ -58,9 +58,14 @@ class QtiRunnerRubric implements RunnerRubric
         $viewsName = TAOQTITEST_VIEWS_NAME;
         $$viewsName = array(View::CANDIDATE);
 
+        ob_start();
         foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
             include($compilationDirs['private']->getPath() . $rubric->getHref());
         }
+        $rubrics = ob_get_contents();
+        ob_end_clean();
+
+        return $rubrics;
     }
 
 }
