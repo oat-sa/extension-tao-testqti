@@ -22,6 +22,8 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use alroniks\dtms\DateInterval;
+use alroniks\dtms\DateTime;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
@@ -971,24 +973,23 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function updateTimers(RunnerServiceContext $context, $duration)
     {
         if ($context instanceof QtiRunnerServiceContext) {
+            /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
 
             if($duration > 0){
+                $extendedStateService = \taoQtiTest_helpers_TestRunnerUtils::getExtendedStateService();
+                $duration += $extendedStateService->getTimerDelay($sessionId);
+                $delay = fmod($duration, 1);
+                $duration = floor($duration);
+                $extendedStateService->setTimerDelay($sessionId, $delay);
+
                 $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
                 $constraints = $session->getTimeConstraints($places);
-
                 foreach ($constraints as $constraint) {
-
                     $placeId = $constraint->getSource()->getIdentifier();
                     $placeDuration = $session[ $placeId . '.duration' ];
                     if($placeDuration instanceof \qtism\common\datatypes\Duration){
-                        $extendedStateService = \taoQtiTest_helpers_TestRunnerUtils::getExtendedStateService();
-                        $delay = $extendedStateService->getTimerDelay($sessionId);
-                        $duration += $delay;
-                        $delay = fmod($duration, 1);
-                        $extendedStateService->setTimerDelay($sessionId, $delay);
-
                         //here the duration means: the time spent by a user, so we subtract the given time
                         $placeDuration->sub(new \qtism\common\datatypes\Duration('PT' . $duration . 'S'));
                     }

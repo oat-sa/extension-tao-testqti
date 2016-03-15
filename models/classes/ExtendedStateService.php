@@ -102,7 +102,7 @@ class ExtendedStateService
     /**
      * Gets the timer delay
      * @param string $testSessionId
-     * @return bool|float
+     * @return float
      * @throws \common_exception_InconsistentData
      */
     public function getTimerDelay($testSessionId)
@@ -110,7 +110,7 @@ class ExtendedStateService
         $extra = $this->getExtra($testSessionId);
         return isset($extra['timer_delay'])
             ? floatval($extra['timer_delay'])
-            : false;
+            : 0;
     }
 
     /**
