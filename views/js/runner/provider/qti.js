@@ -166,31 +166,30 @@ define([
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
+                var itemRunner = self.itemRunner;
 
                 if(context.itemSessionState >= states.closed) {
                     return Promise.resolve(false);
                 }
 
                 //we store the responses
-                return Promise.all([
-                    self.getProxy().submitItemState(context.itemUri, self.itemRunner.getState()),
-                    self.getProxy().storeItemResponse(context.itemUri, self.itemRunner.getResponses())
-                ]).then(function(results){
-                    return new Promise(function(resolve){
-                        //if the store results contains modal feedback we ask (gently) the IR to display them
-                        if(results.length === 2){
-                            context.itemAnswered = results[1].itemSession.itemAnswered;
+                return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses())
+                    .then(function(result){
+                        return new Promise(function(resolve){
+                            //if the store results contains modal feedback we ask (gently) the IR to display them
+                            if(result.success){
+                                context.itemAnswered = result.itemSession.itemAnswered;
 
-                            if(results[1].displayFeedbacks === true && self.itemRunner){
-                                return self.itemRunner.trigger('feedback', results[1].feedbacks, results[1].itemSession, function(){
-                                    resolve();
-                                });
+                                if(result.displayFeedbacks === true && itemRunner){
+                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, function(){
+                                        resolve();
+                                    });
+                                }
+                                return resolve();
                             }
                             return resolve();
-                        }
-                        return resolve();
+                        });
                     });
-                });
             };
 
             /**
@@ -355,19 +354,16 @@ define([
         loadItem : function loadItem(itemRef){
             var self = this;
 
-            return Promise.all([
-                self.getProxy().getItemData(itemRef),
-                self.getProxy().getItemState(itemRef)
-            ])
-            .then(function(results){
-
-                //aggregate the results
-                return {
-                    content : results[0].itemData,
-                    baseUrl : results[0].baseUrl,
-                    state : results[1].itemState
-                };
-            });
+            return self.getProxy().getItem(itemRef)
+                .then(function(data){
+                    //aggregate the results
+                    return {
+                        content : data.itemData,
+                        baseUrl : data.baseUrl,
+                        state : data.itemState,
+                        rubrics : data.rubrics
+                    };
+                });
         },
 
         /**
@@ -384,6 +380,10 @@ define([
             var changeState = function changeState(){
                 self.setItemState(itemRef, 'changed', true);
             };
+
+            if (itemData.rubrics) {
+                this.trigger('loadrubricblock', itemData.rubrics);
+            }
 
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);

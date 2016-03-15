@@ -62,18 +62,13 @@ define([
                 .on('ready', function(){
                     self.hide();
                 })
-                .on('loaditem', function(){
-                    var context = testRunner.getTestContext();
+                .on('loadrubricblock', function(rubrics){
+                    if(rubrics){
+                        self.$element.html(rubrics);
+                        blankifyLinks(self.$element);
 
-                    //load rubric content based on the context
-                    if(context.numberRubrics){
-                        testRunner.getProxy().callItemAction(context.itemUri, 'getRubrics').then(function(result){
-                            self.$element.html(result.content);
-                            blankifyLinks(self.$element);
-
-                            // notify that the rubric blocks are loaded
-                            testRunner.trigger('rubricblock');
-                        });
+                        // notify that the rubric blocks are loaded
+                        testRunner.trigger('rubricblock');
                     }
                 })
                 .on('renderitem', function(){

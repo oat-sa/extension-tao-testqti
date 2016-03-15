@@ -31,23 +31,40 @@ define([
     /**
      * Proxy request function. Returns a promise
      * Applied options: asynchronous call, JSON data, no cache
+     * @param {proxy} proxy
      * @param {String} url
      * @param {Object} [params]
      * @param {String} [contentType] - to force the content type
+     * @param {Boolean} [noToken] - to disable the token
      * @returns {Promise}
      */
-    function request(url, params, contentType) {
+    function request(proxy, url, params, contentType, noToken) {
+        var headers = {};
+        var tokenHandler = proxy.getTokenHandler();
+        var token;
+
+        if (!noToken) {
+            token = tokenHandler.getToken();
+            if (token) {
+                headers['X-Auth-Token'] = token;
+            }
+        }
+
         return new Promise(function(resolve, reject) {
             $.ajax({
                 url: url,
                 type: params ? 'POST' : 'GET',
                 cache: false,
                 data: params,
+                headers: headers,
                 async: true,
                 dataType: 'json',
                 contentType : contentType
             })
             .done(function(data) {
+                if (data && data.token) {
+                    tokenHandler.setToken(data.token);
+                }
                 if (data && data.success) {
                     resolve(data);
                 } else {
@@ -66,6 +83,11 @@ define([
                         message: errorThrown || __('An error occurred!')
                     };
                 }
+
+                if (data.token) {
+                    tokenHandler.setToken(data.token);
+                }
+
                 reject(data);
             });
         });
@@ -93,7 +115,7 @@ define([
             this.storage = configFactory(initConfig);
 
             // request for initialization
-            return request(this.storage.getTestActionUrl('init'));
+            return request(this, this.storage.getTestActionUrl('init'));
         },
 
         /**
@@ -117,7 +139,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestData: function getTestData() {
-            return request(this.storage.getTestActionUrl('getTestData'));
+            return request(this, this.storage.getTestActionUrl('getTestData'));
         },
 
         /**
@@ -126,7 +148,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestContext: function getTestContext() {
-            return request(this.storage.getTestActionUrl('getTestContext'));
+            return request(this, this.storage.getTestActionUrl('getTestContext'));
         },
 
         /**
@@ -135,7 +157,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestMap: function getTestMap() {
-            return request(this.storage.getTestActionUrl('getTestMap'));
+            return request(this, this.storage.getTestActionUrl('getTestMap'));
         },
 
         /**
@@ -146,50 +168,32 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            return request(this.storage.getTestActionUrl(action), params);
+            return request(this, this.storage.getTestActionUrl(action), params);
         },
 
         /**
-         * Gets an item definition by its URI
+         * Gets an item definition by its URI, also gets its current state
          * @param {String} uri - The URI of the item to get
-         * @returns {Promise} - Returns a promise. The item definition data will be provided on resolve.
+         * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
-         * @fires getItemData
          */
-        getItemData: function getItemData(uri) {
-            return request(this.storage.getItemActionUrl(uri, 'getItemData'));
+        getItem: function getItem(uri) {
+            return request(this, this.storage.getItemActionUrl(uri, 'getItem'));
         },
 
         /**
-         * Gets an item state by the item URI
-         * @param {String} uri - The URI of the item for which get the state
-         * @returns {Promise} - Returns a promise. The item state object will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        getItemState: function getItemState(uri) {
-            return request(this.storage.getItemActionUrl(uri, 'getItemState'));
-        },
-
-        /**
-         * Submits the state of a particular item
+         * Submits the state and the response of a particular item
          * @param {String} uri - The URI of the item to update
          * @param {Object} state - The state to submit
+         * @param {Object} response - The response object to submit
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        submitItemState: function submitItemState(uri, state) {
-            return request(this.storage.getItemActionUrl(uri, 'submitItemState'), { itemState : JSON.stringify(state) });
-        },
-
-        /**
-         * Stores the response for a particular item
-         * @param {String} uri - The URI of the item to update
-         * @param {Object} responses - The response object to submit
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        storeItemResponse: function storeItemResponse(uri, responses) {
-            return request(this.storage.getItemActionUrl(uri, 'storeItemResponse'), JSON.stringify(responses), 'application/json');
+        submitItem: function submitItem(uri, state, response) {
+            return request(this, this.storage.getItemActionUrl(uri, 'submitItem'), JSON.stringify({
+                itemState : state,
+                itemResponse : response
+            }), 'application/json');
         },
 
         /**
@@ -201,7 +205,20 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
-            return request(this.storage.getItemActionUrl(uri, action), params);
+            return request(this, this.storage.getItemActionUrl(uri, action), params);
+        },
+
+        /**
+         * Sends a telemetry signal
+         * @param {String} uri - The URI of the item for which sends the telemetry signal
+         * @param {String} signal - The name of the signal to send
+         * @param {Object} [params] - Some optional parameters to join to the signal
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires telemetry
+         */
+        telemetry: function telemetry(uri, signal, params) {
+            return request(this, this.storage.getTelemetryUrl(uri, signal), params, null, true);
         }
     };
 
