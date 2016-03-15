@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\event\TraceVariableStored;
+use qtism\runtime\tests\AssessmentTestSessionState;
 use \oat\taoTests\models\runner\CsrfToken;
 use \oat\taoTests\models\runner\SessionCsrfToken;
 
@@ -324,7 +325,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-
+    
     /**
      * Provides the definition data and the state for a particular item
      */
@@ -333,7 +334,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
         
         $itemRef = $this->getRequestParameter('itemDefinition');
-
+        
         try {
             $serviceContext = $this->getServiceContext();
 
@@ -351,7 +352,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $rubrics = null;
             }
-
+            
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
             $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
             if (is_string($itemData)) {
@@ -372,7 +373,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     'rubrics' => $rubrics
                 ];
             }
-
+            
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -403,6 +404,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext(false);
             $stateId = $this->getStateId();
+            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::CLOSED) {
+                throw new QtiRunnerClosedException();
+            }
             $storeResponse = true;
 
             try {
@@ -412,7 +416,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 // allow to store the state but prevent to store the response
                 $storeResponse = false;
                 \common_Logger::i('Store item state after a test session pause');
-            }
+        }
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
@@ -422,7 +426,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $successResponse = true;
                 $displayFeedback = false;
-            }
+    }
 
             $response = [
                 'success' => $successState && $successResponse,
@@ -431,7 +435,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($displayFeedback == true) {
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
-                $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
             }
 
