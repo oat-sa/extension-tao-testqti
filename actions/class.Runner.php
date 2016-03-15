@@ -324,25 +324,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
-    /**
-     * Provides the rubrics related to the current session state
-     */
-    public function getRubrics()
-    {
-        // TODO: make a better implementation 
-        // the rb are now rendererd in the output...
-        ob_start();
-        $serviceContext = $this->getServiceContext();
-        $this->runnerService->getRubrics($serviceContext);
-        $rubrics = ob_get_contents();
-        ob_end_clean();
-
-        $this->returnJson(array(
-            'success' => true,
-            'content' => $rubrics
-        ));
-    }
 
     /**
      * Provides the definition data and the state for a particular item
@@ -362,16 +343,33 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $itemState = new StdClass();
             }
 
+            // TODO: make a better implementation
+            // As the rubric blocs are nested at the section level, it could be interesting to send these
+            // rubric blocs only once per section
+            if (count($serviceContext->getTestSession()->getRoute()->current()->getRubricBlockRefs())) {
+                $rubrics = $this->runnerService->getRubrics($serviceContext);
+            } else {
+                $rubrics = null;
+            }
+
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
             $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
             if (is_string($itemData)) {
-                $response = '{"success":true,"token":"' . $this->getCsrf()->getCsrfToken() . '","itemData":' . $itemData . ',"itemState":' . json_encode($itemState) . ',"baseUrl":"'.$baseUrl.'"}';
+                $response = '{' .
+                    '"success":true,' .
+                    '"token":"' . $this->getCsrf()->getCsrfToken() . '",' .
+                    '"baseUrl":"'.$baseUrl.'",' .
+                    '"itemData":' . $itemData . ',' .
+                    '"itemState":' . json_encode($itemState) . ',' .
+                    '"rubrics":' . json_encode($rubrics) .
+                '}';
             } else {
                 $response = [
                     'success' => true,
                     'itemData' => $itemData,
                     'itemState' => $itemState,
                     'baseUrl' => $baseUrl,
+                    'rubrics' => $rubrics
                 ];
             }
 
@@ -405,21 +403,33 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext(false);
             $stateId = $this->getStateId();
+            $storeResponse = true;
+
+            try {
+                // do not allow to store the response if the session is in a wrong state
+                $this->runnerService->check($serviceContext);
+            } catch (QtiRunnerPausedException $e) {
+                // allow to store the state but prevent to store the response
+                $storeResponse = false;
+                \common_Logger::i('Store item state after a test session pause');
+            }
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
-            // do not allow to store the response if the session is in a wrong state
-            $this->runnerService->check($serviceContext);
-
-            $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+            if ($storeResponse) {
+                $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+                $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
+            } else {
+                $successResponse = true;
+                $displayFeedback = false;
+            }
 
             $response = [
                 'success' => $successState && $successResponse,
-                'displayFeedbacks' => $this->runnerService->displayFeedbacks($serviceContext),
+                'displayFeedbacks' => $displayFeedback,
             ];
 
-            if ($response['displayFeedbacks'] == true) {
-
+            if ($displayFeedback == true) {
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
                 $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);

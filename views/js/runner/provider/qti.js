@@ -360,7 +360,8 @@ define([
                     return {
                         content : data.itemData,
                         baseUrl : data.baseUrl,
-                        state : data.itemState
+                        state : data.itemState,
+                        rubrics : data.rubrics
                     };
                 });
         },
@@ -379,6 +380,10 @@ define([
             var changeState = function changeState(){
                 self.setItemState(itemRef, 'changed', true);
             };
+
+            if (itemData.rubrics) {
+                this.trigger('loadrubricblock', itemData.rubrics);
+            }
 
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);
