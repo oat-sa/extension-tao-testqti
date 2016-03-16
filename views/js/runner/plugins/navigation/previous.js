@@ -82,10 +82,10 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', toggle)
-                .on('renderitem', function(){
+                .on('enablenav', function(){
                     self.enable();
                 })
-                .on('unloaditem', function(){
+                .on('disablenav', function(){
                     self.disable();
                 });
         },

@@ -85,12 +85,12 @@ define([
             toggle();
 
             testRunner
-                .on('move', function(){
-                    self.disable();
-                })
-                .on('renderitem', function(){
+                .on('loaditem', toggle)
+                .on('enablenav', function(){
                     self.enable();
-                    toggle();
+                })
+                .on('disablenav', function(){
+                    self.disable();
                 });
         },
 

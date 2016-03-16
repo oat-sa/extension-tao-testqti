@@ -120,10 +120,10 @@ define([
                 .on('loaditem', function(){
                     updateElement(self.$element, testRunner.getTestContext());
                 })
-                .on('renderitem', function(){
+                .on('enablenav', function(){
                     self.enable();
                 })
-                .on('unloaditem', function(){
+                .on('disablenav', function(){
                     self.disable();
                 });
         },

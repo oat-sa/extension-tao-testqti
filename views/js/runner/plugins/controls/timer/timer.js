@@ -41,7 +41,7 @@ define([
      */
     var timerRefresh = 1000;
 
-    /**
+    /**views/js/runner/plugins/controls/timer/timer.js
      * Duration of a second in the timer's base unit
      * @type {Number}
      */
@@ -261,8 +261,7 @@ define([
                     };
 
                     var cancelMove = function cancelMove() {
-                        _.invoke(testRunner.getPlugins(), 'enable');
-                        testRunner.trigger('enableitem');
+                        testRunner.trigger('enableitem enablenav');
                         e.prevent();
                     };
 

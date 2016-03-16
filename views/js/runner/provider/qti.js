@@ -177,15 +177,12 @@ define([
                     .then(function(result){
                         return new Promise(function(resolve){
                             //if the store results contains modal feedback we ask (gently) the IR to display them
-                            if(result.success){
+                            if(result.success) {
                                 context.itemAnswered = result.itemSession.itemAnswered;
 
                                 if(result.displayFeedbacks === true && itemRunner){
-                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, function(){
-                                        resolve();
-                                    });
+                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
                                 }
-                                return resolve();
                             }
                             return resolve();
                         });
@@ -238,6 +235,9 @@ define([
                         ref       : position
                     });
 
+
+                this.trigger('disablenav');
+
                 store()
                  .then(updateStats)
                  .then(computeNextMove)
@@ -289,9 +289,12 @@ define([
             })
             .on('renderitem', function(itemRef){
 
-                var context = self.getTestContext();
-                var states = self.getTestData().itemStates;
+                var context = this.getTestContext();
+                var states = this.getTestData().itemStates;
                 var warning = false;
+
+                this.trigger('enablenav enabletools');
+
 
                 //The item is rendered but in a state that prevents us from interacting
                 if (context.isTimeout) {
@@ -311,13 +314,18 @@ define([
                     self.disableItem(context.itemUri);
                     self.trigger('warning', warning);
                 }
+            })
+            .on('disableitem', function(){
+                this.trigger('disabletools');
+            })
+            .on('enableitem', function(){
+                this.trigger('enabletools');
             });
 
             //starts the event collection
             if(this.getProbeOverseer()){
                 this.getProbeOverseer().start();
             }
-
 
             //load data and current context in parrallel at initialization
             return this.getProxy().init()
@@ -391,7 +399,10 @@ define([
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
-                .on('error', reject)
+                .on('error', function(err){
+                    self.trigger('enablenav');
+                    reject(err);
+                })
                 .on('init', function(){
                     if(itemData.state){
                         this.setState(itemData.state);
@@ -419,6 +430,9 @@ define([
          */
         unloadItem : function unloadItem(itemRef){
             var self = this;
+
+            self.trigger('disablenav disabletools');
+
             return new Promise(function(resolve, reject){
                 if(self.itemRunner){
                     self.itemRunner
@@ -439,7 +453,10 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
-            this.trigger('endsession', 'finish');
+
+            this.trigger('disablenav disabletools')
+                .trigger('endsession', 'finish');
+
             return this.getProxy().callTestAction('finish');
         },
 

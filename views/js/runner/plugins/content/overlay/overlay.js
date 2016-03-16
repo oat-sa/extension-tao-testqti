@@ -42,7 +42,7 @@ define([
             var testRunner = this.getTestRunner();
 
             this.$element = $('<div />');
-            this.$element.on('click mousedown mouseup touchstart keyup keydow keypress', function(e){
+            this.$element.on('click mousedown mouseup touchstart touchend keyup keydow keypress scroll drop', function(e){
                 e.stopImmediatePropagation();
                 e.stopPropagation();
             });
@@ -57,8 +57,7 @@ define([
             //change plugin state
             testRunner
                 .on('disableitem',  shield)
-                .on('enableitem', unshield)
-                .on('unloaditem', unshield);
+                .on('enableitem unloaditem', unshield);
         },
 
         /**

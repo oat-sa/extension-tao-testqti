@@ -89,9 +89,7 @@ define([
                 .on('info', function(message){
                     currentFeedback = feedback().info(message);
                 })
-                .on('alert', closeCurrent)
-                .on('confirm', closeCurrent)
-                .on('unloaditem', closeCurrent);
+                .on('alert confirm unloaditem', closeCurrent);
         }
     });
 });

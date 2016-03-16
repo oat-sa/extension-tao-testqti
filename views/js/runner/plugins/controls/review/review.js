@@ -131,7 +131,7 @@ define([
              */
             function isEnabled() {
                 var context = testRunner.getTestContext();
-                return navigatorConfig.enabled && context.options.reviewScreen;
+                return navigatorConfig.enabled && context && context.options && context.options.reviewScreen;
             }
 
             /**
@@ -232,12 +232,12 @@ define([
                         self.hide();
                     }
                 })
-                .on('renderitem', function () {
+                .on('enabletools', function () {
                     if (isEnabled()) {
                         self.enable();
                     }
                 })
-                .on('unloaditem', function () {
+                .on('disabletools', function () {
                     if (isEnabled()) {
                         self.disable();
                     }
@@ -273,6 +273,7 @@ define([
             this.$flagItemButton.removeClass('disabled')
                 .removeProp('disabled');
             this.$toggleButton.removeClass('disabled')
+
                 .removeProp('disabled');
             this.navigator.enable();
         },
