@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint15\n"
-"PO-Revision-Date: 2015-12-23T13:28:58\n"
+"Project-Id-Version: TAO 3.1.0-sprint21\n"
+"PO-Revision-Date: 2016-03-02T14:06:42\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%1$s - item %2$s/%3$s"
+msgid "%s - item %p/%c"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -41,7 +41,7 @@ msgid "Add the source file"
 msgstr "Ajouter le fichier source"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "Après avoir fini cette section, il est impossible de retourner à cette dernière pour effectuer des modifications. Êtes-vous sûr(e) de quitter cette section?"
 
 msgid "All"
 msgstr ""
@@ -56,6 +56,9 @@ msgid "Allow Skipping"
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
+msgstr ""
+
+msgid "An error occurred!"
 msgstr ""
 
 msgid "An error occurs, please contact your administrator"
@@ -101,7 +104,7 @@ msgid "Collapse the review panel"
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 msgid "Completed items"
 msgstr ""
@@ -112,10 +115,16 @@ msgstr ""
 msgid "Disable validation"
 msgstr ""
 
+msgid "Do not mark the current item for later review"
+msgstr ""
+
 msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
+msgstr "Finir le test"
+
+msgid "End test"
 msgstr ""
 
 msgid "Enter a category"
@@ -146,6 +155,12 @@ msgstr ""
 msgid "File name"
 msgstr ""
 
+msgid "File not found"
+msgstr ""
+
+msgid "File not found!"
+msgstr ""
+
 msgid "Filter"
 msgstr "Filtrer"
 
@@ -159,6 +174,12 @@ msgid "Fixed position in a shuffled the selection."
 msgstr ""
 
 msgid "Flagged"
+msgstr ""
+
+msgid "Hide review"
+msgstr ""
+
+msgid "Hide the review screen"
 msgstr ""
 
 msgid "Identifier"
@@ -212,6 +233,9 @@ msgstr ""
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
 
+msgid "Item \"%s\" is completed."
+msgstr ""
+
 msgid "Item %d of %d"
 msgstr ""
 
@@ -239,6 +263,9 @@ msgstr ""
 msgid "Late submission allowed"
 msgstr ""
 
+msgid "Leave a comment"
+msgstr ""
+
 msgid "Linear"
 msgstr ""
 
@@ -252,6 +279,9 @@ msgid "Manage Tests"
 msgstr ""
 
 msgid "Mark for review"
+msgstr ""
+
+msgid "Mark the current item for later review"
 msgstr ""
 
 msgid "Max Attempts"
@@ -285,6 +315,9 @@ msgid "Minimum duration for this section."
 msgstr ""
 
 msgid "Minimum duration for this test part."
+msgstr ""
+
+msgid "Missing required option %s"
 msgstr ""
 
 msgid "Move Down"
@@ -348,6 +381,9 @@ msgid "Package is valid but no tests were found. Make sure that it contains vali
 msgstr ""
 
 msgid "Part %d"
+msgstr ""
+
+msgid "Plugin dependency error!"
 msgstr ""
 
 msgid "Previous"
@@ -432,12 +468,18 @@ msgid "Selection"
 msgstr ""
 
 msgid "Send"
-msgstr ""
+msgstr "Envoyer"
 
 msgid "Show Feedback"
 msgstr ""
 
+msgid "Show review"
+msgstr ""
+
 msgid "Show Solution"
+msgstr ""
+
+msgid "Show the review screen"
 msgstr ""
 
 msgid "Show the solution once the answer is submitted."
@@ -453,34 +495,43 @@ msgid "Simultaneous"
 msgstr ""
 
 msgid "Skip"
+msgstr "Passer"
+
+msgid "Skip  and go to the next item"
 msgstr ""
 
 msgid "Skip &amp; End Test"
+msgstr "Passer &amp; finir le test"
+
+msgid "Skip and end test"
+msgstr ""
+
+msgid "Skip and go to the end of the test"
 msgstr ""
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "Allez à la fin du test"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "Aller à l'item suivant"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "Passer à la prochaine section"
 
 msgid "Start Test-part"
-msgstr ""
+msgstr "Commencer ce Test-part"
 
 msgid "Submission"
-msgstr ""
+msgstr "Soumettre"
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "Soumettre et aller à la fin du test"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "Soumettre et aller au prochain item"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "Soumettre et revenir à l'item précédent"
 
 msgid "Test"
 msgstr "Test"
@@ -554,6 +605,9 @@ msgstr ""
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr ""
 
+msgid "The test has been closed/suspended!"
+msgstr ""
+
 msgid "The test part identifier."
 msgstr ""
 
@@ -573,13 +627,13 @@ msgid "This test has been terminated"
 msgstr ""
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "Limite de temps atteinte pour l'item \"%s\"."
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "Limite de temps atteinte, cette partie du test est finie."
 
 msgid "Time Limits"
-msgstr ""
+msgstr "Temps limité"
 
 msgid "Title"
 msgstr ""
@@ -594,6 +648,9 @@ msgid "Unanswered items"
 msgstr ""
 
 msgid "Unknown error."
+msgstr ""
+
+msgid "Unmark for review"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -618,6 +675,15 @@ msgid "Visible"
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
+msgstr "Attention - Vous avez %s restant pour finir le test."
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this test part."
 msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
@@ -645,17 +711,17 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "Vous avez %s item(s) marqué(s) pour examen"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "Vous avez %s question(s) non répondue(s) et %s item(s) marqué(s) pour examen"
 
 msgid "You have %s unanswered question(s)."
-msgstr ""
+msgstr "Vous avez %s question(s) non répondue(s)"
 
 msgid "Your comment…"
-msgstr ""
+msgstr "Votre commentaire..."
 
