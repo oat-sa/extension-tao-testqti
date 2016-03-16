@@ -41,7 +41,7 @@ define([
      */
     var timerRefresh = 1000;
 
-    /**views/js/runner/plugins/controls/timer/timer.js
+    /**
      * Duration of a second in the timer's base unit
      * @type {Number}
      */

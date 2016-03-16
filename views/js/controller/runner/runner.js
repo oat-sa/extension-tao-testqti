@@ -33,7 +33,6 @@ define([
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/loader',
-
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, module, Promise, loadingBar, feedback,
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
@@ -80,8 +79,10 @@ define([
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
 
+        /**
+         *  At the end, we are redirected to the exit URL
+         */
         var leave = function leave (){
-            //at the end, we are redirected to the exit URL
             window.location = config.exitUrl;
         };
 
@@ -100,6 +101,8 @@ define([
                 if (err && err.type && err.type === 'TestState') {
 
                     if(!this.getState('ready')){
+                        //if we open an inconstent test (should never happen) we let a few sec to
+                        //read the error message then leave
                         _.delay(leave, 2000);
                     } else {
                         this.trigger('alert', err.message, function() {
