@@ -52,6 +52,10 @@
 
             .title-box {
                 padding-top: 4px;
+
+                [data-control="qti-test-position"] {
+                    display: none !important;
+                }
             }
             .progress-box, .timer-box, .item-number-box {
                 padding-top: 4px;
