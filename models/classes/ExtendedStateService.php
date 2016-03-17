@@ -26,7 +26,7 @@ namespace oat\taoQtiTest\models;
 class ExtendedStateService
 {
     const STORAGE_PREFIX = 'extra_';
-    
+
     private $cache = null;
 
     /**
@@ -40,7 +40,7 @@ class ExtendedStateService
         if (!isset($this->cache[$testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
-        
+
             $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
             if ($data) {
                 $data = json_decode($data, true);
@@ -56,7 +56,7 @@ class ExtendedStateService
         }
         return $this->cache[$testSessionId];
     }
-    
+
     /**
      * Store extended state informations
      * @param string $testSessionId
@@ -67,33 +67,62 @@ class ExtendedStateService
         $this->cache[$testSessionId] = $extra;
         $storageService = \tao_models_classes_service_StateStorage::singleton();
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
-    
+
         $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
     }
-    
+
     /**
      * Set the marked for review state of an item
      * @param string $sessionId
      * @param string $itemRef
      * @param boolean $flag
      */
-    public function setItemFlag($sessionId, $itemRef, $flag) {
+    public function setItemFlag($sessionId, $itemRef, $flag)
+    {
         $extra = $this->getExtra($sessionId);
         $extra['review'][$itemRef] = $flag;
         $this->saveExtra($sessionId, $extra);
     }
-    
+
     /**
      * Gets the marked for review state of an item
-     * @param string $session
+     * @param string $testSessionId
      * @param string $itemRef
      * @return bool
-     * @throws common_exception_InconsistentData
+     * @throws \common_exception_InconsistentData
      */
-    public function getItemFlag($testSessionId, $itemRef) {
+    public function getItemFlag($testSessionId, $itemRef)
+    {
         $extra = $this->getExtra($testSessionId);
         return isset($extra['review'][$itemRef])
             ? $extra['review'][$itemRef]
             : false;
+    }
+
+    /**
+     * Gets the timer delay
+     * @param string $testSessionId
+     * @return float
+     * @throws \common_exception_InconsistentData
+     */
+    public function getTimerDelay($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra['timer_delay'])
+            ? floatval($extra['timer_delay'])
+            : 0;
+    }
+
+    /**
+     * Gets the timer delay
+     * @param string $testSessionId
+     * @param float $delay
+     * @throws \common_exception_InconsistentData
+     */
+    public function setTimerDelay($testSessionId, $delay)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra['timer_delay'] = floatval($delay);
+        $this->saveExtra($testSessionId, $extra);
     }
 }

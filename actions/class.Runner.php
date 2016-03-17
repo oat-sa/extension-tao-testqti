@@ -754,7 +754,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             if($this->hasRequestParameter('timerPaused')){
-                $duration = round($this->getRequestParameter('timerPaused'), 3);
+                $duration = floatval($this->getRequestParameter('timerPaused'));
                 if($duration > 0){
                     $serviceContext = $this->getServiceContext(false);
                     $this->runnerService->updateTimers($serviceContext, $duration);

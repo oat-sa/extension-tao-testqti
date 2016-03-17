@@ -49,7 +49,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * temporary helper until proper servicemanager integration
      * @return ExtendedStateService
      */
-    static protected function getExtendedStateService()
+    static public function getExtendedStateService()
     {
         if (!isset(self::$extendedStateService)) {
             self::$extendedStateService = new ExtendedStateService();
