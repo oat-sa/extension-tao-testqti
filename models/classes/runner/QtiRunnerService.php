@@ -37,6 +37,7 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
+use qtism\common\datatypes\Duration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -901,15 +902,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
                     $session->endTestSession();
                     break;
-
                 case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                     $session->moveNextTestPart();
                     break;
-
                 case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
                     $session->moveNextAssessmentSection();
                     break;
-
                 case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
                     $session->moveNextAssessmentItem();
                     break;
@@ -984,14 +982,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $duration = floor($duration);
                 $extendedStateService->setTimerDelay($sessionId, $delay);
 
+                $qtiDuration = new Duration('PT' . $duration . 'S');
+
                 $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
                 $constraints = $session->getTimeConstraints($places);
                 foreach ($constraints as $constraint) {
                     $placeId = $constraint->getSource()->getIdentifier();
                     $placeDuration = $session[ $placeId . '.duration' ];
-                    if($placeDuration instanceof \qtism\common\datatypes\Duration){
+                    if($placeDuration instanceof Duration){
                         //here the duration means: the time spent by a user, so we subtract the given time
-                        $placeDuration->sub(new \qtism\common\datatypes\Duration('PT' . $duration . 'S'));
+                        $placeDuration->sub($qtiDuration);
+                    }
+                    if($constraint->getDuration() instanceof Duration &&  $constraint->getDuration()->getSeconds(true) > 0){
+                        $constraint->getDuration()->sub($qtiDuration);
                     }
                 }
             }
