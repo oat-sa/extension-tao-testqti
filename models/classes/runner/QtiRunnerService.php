@@ -902,12 +902,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
                     $session->endTestSession();
                     break;
+
                 case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                     $session->moveNextTestPart();
                     break;
+
                 case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
                     $session->moveNextAssessmentSection();
                     break;
+
                 case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
                     $session->moveNextAssessmentItem();
                     break;
@@ -986,7 +989,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
                 $constraints = $session->getTimeConstraints($places);
+
                 foreach ($constraints as $constraint) {
+
                     $placeId = $constraint->getSource()->getIdentifier();
                     $placeDuration = $session[ $placeId . '.duration' ];
                     if($placeDuration instanceof Duration){
