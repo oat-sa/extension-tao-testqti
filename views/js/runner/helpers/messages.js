@@ -36,7 +36,7 @@ define([
         var answered = false;
         _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
             var response = state && state.response;
-            console.log(state)
+
             if (_.isObject(response)) {
                 // base or record defined: the interaction has a response, so the item is responded
                 if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
