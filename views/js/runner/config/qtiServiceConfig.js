@@ -147,6 +147,21 @@ define([
                     testServiceCallId : this.getServiceCallId(),
                     itemDefinition : uri
                 });
+            },
+
+            /**
+             * Gets an URL of a telemetry signal related to a particular item
+             * @param {String} uri - The URI of the item
+             * @param {String} signal - the name of the signal to request
+             * @returns {String} - Returns the URL
+             */
+            getTelemetryUrl : function getTelemetryUrl(uri, signal) {
+                return helpers._url(signal, this.getServiceController(), this.getServiceExtension(), {
+                    testDefinition : this.getTestDefinition(),
+                    testCompilation : this.getTestCompilation(),
+                    testServiceCallId : this.getServiceCallId(),
+                    itemDefinition : uri
+                });
             }
         };
     }

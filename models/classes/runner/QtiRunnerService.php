@@ -22,6 +22,8 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use alroniks\dtms\DateInterval;
+use alroniks\dtms\DateTime;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
@@ -35,6 +37,7 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
+use qtism\common\datatypes\Duration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -971,9 +974,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function updateTimers(RunnerServiceContext $context, $duration)
     {
         if ($context instanceof QtiRunnerServiceContext) {
+            /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
+            $sessionId = $session->getSessionId();
 
             if($duration > 0){
+                $extendedStateService = \taoQtiTest_helpers_TestRunnerUtils::getExtendedStateService();
+                $duration += $extendedStateService->getTimerDelay($sessionId);
+                $delay = fmod($duration, 1);
+                $duration = floor($duration);
+                $extendedStateService->setTimerDelay($sessionId, $delay);
+
+                $qtiDuration = new Duration('PT' . $duration . 'S');
+
                 $places = AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::ASSESSMENT_SECTION;
                 $constraints = $session->getTimeConstraints($places);
 
@@ -981,10 +994,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                     $placeId = $constraint->getSource()->getIdentifier();
                     $placeDuration = $session[ $placeId . '.duration' ];
-                    if($placeDuration instanceof \qtism\common\datatypes\Duration){
-
+                    if($placeDuration instanceof Duration){
                         //here the duration means: the time spent by a user, so we subtract the given time
-                        $placeDuration->sub(new \qtism\common\datatypes\Duration('PT' . $duration . 'S'));
+                        $placeDuration->sub($qtiDuration);
+                    }
+                    if($constraint->getDuration() instanceof Duration &&  $constraint->getDuration()->getSeconds(true) > 0){
+                        $constraint->getDuration()->sub($qtiDuration);
                     }
                 }
             }

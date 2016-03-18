@@ -227,4 +227,27 @@ define([
 
         assert.equal(instance.getItemActionUrl(itemUri, actionName), expectedUrl, 'The qtiServiceConfig.getItemActionUrl() method has returned the expected value');
     });
+    
+    
+    QUnit.test('qtiServiceConfig.getTelemetryUrl', 1, function(assert) {
+        var itemUri = 'http://tao.dev/mockItem#123';
+        var config = {
+            testDefinition: 'http://tao.dev/mockTestDefinition#123',
+            testCompilation: 'http://tao.dev/mockTestCompilation#123',
+            serviceCallId: 'http://tao.dev/mockServiceCallId#123',
+            serviceController: 'MockRunner',
+            serviceExtension: 'MockExtension'
+        };
+        var signalName = 'MockSignal';
+        var expectedUrl = helpers._url(signalName, config.serviceController, config.serviceExtension, {
+            testDefinition : config.testDefinition,
+            testCompilation : config.testCompilation,
+            testServiceCallId : config.serviceCallId,
+            itemDefinition : itemUri
+        });
+        var instance = qtiServiceConfig(config);
+        coverage.getTelemetryUrl = true;
+
+        assert.equal(instance.getTelemetryUrl(itemUri, signalName), expectedUrl, 'The qtiServiceConfig.getTelemetryUrl() method has returned the expected value');
+    });
 });

@@ -27,15 +27,14 @@ define([
     'module',
     'core/promise',
     'layout/loading-bar',
-
+    'ui/feedback',
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/loader',
-
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, loadingBar,
+], function ($, _, __, module, Promise, loadingBar, feedback,
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
     'use strict';
 
@@ -53,6 +52,8 @@ define([
      */
     function onError(err) {
         loadingBar.stop();
+
+        feedback().error(err.message);
 
         //TODO to be replaced by the logger
         window.console.error(err);
@@ -78,7 +79,14 @@ define([
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
 
-        _.defaults(config, {
+        /**
+         *  At the end, we are redirected to the exit URL
+         */
+        var leave = function leave (){
+            window.location = config.exitUrl;
+        };
+
+        config = _.defaults(config, {
             renderTo: $('.runner')
         });
 
@@ -89,13 +97,19 @@ define([
 
                 onError(err);
 
+                // test has been closed/suspended => redirect to the index page after message acknowledge
                 if (err && err.type && err.type === 'TestState') {
-                    // test has been closed/suspended => redirect to the index page after message acknowledge
-                    this.trigger('alert', err.message, function() {
-                        self.trigger('endsession', 'teststate', err.code);
-                        destroyRunner.call(self);
-                    });
 
+                    if(!this.getState('ready')){
+                        //if we open an inconstent test (should never happen) we let a few sec to
+                        //read the error message then leave
+                        _.delay(leave, 2000);
+                    } else {
+                        this.trigger('alert', err.message, function() {
+                            self.trigger('endsession', 'teststate', err.code);
+                            destroyRunner.call(self);
+                        });
+                    }
                     // prevent other messages/warnings
                     return false;
                 }
@@ -116,10 +130,7 @@ define([
             .after('finish', function () {
                 destroyRunner.call(this);
             })
-            .on('destroy', function () {
-                //at the end, we are redirected to the exit URL
-                window.location = config.exitUrl;
-            })
+            .on('destroy', leave)
             .init();
     }
 

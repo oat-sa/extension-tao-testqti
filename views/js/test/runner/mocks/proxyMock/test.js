@@ -27,7 +27,8 @@ define([
 
     QUnit.module('proxyMock');
 
-    QUnit.test('module', 3, function (assert) {
+    QUnit.test('module', function (assert) {
+        QUnit.expect(3);
         assert.equal(typeof proxyMockFactory, 'function', "The proxyMock module exposes a function");
         assert.equal(typeof proxyMockFactory(), 'object', "The proxyMock factory produces an object");
         assert.notStrictEqual(proxyMockFactory(), proxyMockFactory(), "The proxyMock factory provides a different object on each call");
@@ -40,22 +41,21 @@ define([
         {name: 'getTestContext', title: 'getTestContext'},
         {name: 'getTestMap', title: 'getTestMap'},
         {name: 'callTestAction', title: 'callTestAction'},
-        {name: 'getItemData', title: 'getItemData'},
-        {name: 'getItemState', title: 'getItemState'},
-        {name: 'submitItemState', title: 'submitItemState'},
-        {name: 'storeItemResponse', title: 'storeItemResponse'},
+        {name: 'getItem', title: 'getItem'},
+        {name: 'submitItem', title: 'submitItem'},
         {name: 'callItemAction', title: 'callItemAction'}
     ];
 
     QUnit
         .cases(proxyApi)
-        .test('instance API ', 1, function (data, assert) {
+        .test('instance API ', function (data, assert) {
             var instance = proxyMockFactory();
+            QUnit.expect(1);
             assert.equal(typeof instance[data.name], 'function', 'The proxyMock instance exposes a "' + data.name + '" function');
         });
 
 
-    QUnit.asyncTest('proxyMock.init', 10, function (assert) {
+    QUnit.asyncTest('proxyMock.init', function (assert) {
         var initConfig = {
             data: {}
         };
@@ -70,6 +70,7 @@ define([
             }
         });
 
+        QUnit.expect(10);
         QUnit.stop();
 
         proxy.init(initConfig)
@@ -100,8 +101,10 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.destroy', 1, function (assert) {
+    QUnit.asyncTest('proxyMock.destroy', function (assert) {
         var proxy = proxyMockFactory();
+
+        QUnit.expect(1);
 
         proxy.destroy()
             .then(function (data) {
@@ -115,7 +118,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.getTestData', 8, function (assert) {
+    QUnit.asyncTest('proxyMock.getTestData', function (assert) {
         var testData = {
             data: {}
         };
@@ -131,6 +134,7 @@ define([
             }
         });
 
+        QUnit.expect(8);
         QUnit.stop();
 
         proxy.init()
@@ -184,7 +188,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.getTestContext', 8, function (assert) {
+    QUnit.asyncTest('proxyMock.getTestContext', function (assert) {
         var testContext = {
             context: {}
         };
@@ -194,24 +198,25 @@ define([
                 init: function () {
                     return Promise.resolve();
                 },
-                getTestMap: function () {
+                getTestContext: function () {
                     return Promise.resolve(testContext);
                 }
             }
         });
 
+        QUnit.expect(8);
         QUnit.stop();
 
         proxy.init()
             .then(function () {
-                proxy.getTestMap()
+                proxy.getTestContext()
                     .then(function (data) {
-                        assert.ok(true, 'The getTestMap promise is resolved');
+                        assert.ok(true, 'The getTestContext promise is resolved');
                         assert.equal(data, testContext, 'The mock has provided the data');
                         QUnit.start();
                     })
                     .catch(function () {
-                        assert.ok(false, 'The getTestMap promise must not be rejected');
+                        assert.ok(false, 'The getTestContext promise must not be rejected');
                         QUnit.start();
                     });
             })
@@ -231,13 +236,13 @@ define([
 
         proxy2.init()
             .then(function () {
-                proxy2.getTestMap()
+                proxy2.getTestContext()
                     .then(function () {
-                        assert.ok(false, 'The getTestMap promise must not be resolved');
+                        assert.ok(false, 'The getTestContext promise must not be resolved');
                         QUnit.start();
                     })
                     .catch(function (err) {
-                        assert.ok(true, 'The getTestMap promise is rejected');
+                        assert.ok(true, 'The getTestContext promise is rejected');
                         assert.equal(typeof err, 'object', 'The promise has provided the error descriptor');
                         assert.equal(err.success, false, 'The promise has provided the error status');
                         assert.equal(err.type, 'error', 'The promise has provided the error type');
@@ -253,7 +258,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.getTestMap', 8, function (assert) {
+    QUnit.asyncTest('proxyMock.getTestMap', function (assert) {
         var testMap = {
             map: {}
         };
@@ -269,6 +274,7 @@ define([
             }
         });
 
+        QUnit.expect(8);
         QUnit.stop();
 
         proxy.init()
@@ -322,7 +328,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.callTestAction', 9, function (assert) {
+    QUnit.asyncTest('proxyMock.callTestAction', function (assert) {
         var params = {
             data: {}
         };
@@ -342,6 +348,7 @@ define([
             }
         });
 
+        QUnit.expect(9);
         QUnit.stop();
 
         proxy.init()
@@ -379,7 +386,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.getItemData', 9, function (assert) {
+    QUnit.asyncTest('proxyMock.getItem', function (assert) {
         var uri = 'item-0';
         var itemData = {
             data: {}
@@ -392,25 +399,28 @@ define([
                 }
             },
             itemActions: {
-                getItemData: function (actionUri) {
+                getItem: function (actionUri) {
                     assert.equal(actionUri, uri, 'The mock has received the uri');
                     return Promise.resolve(itemData);
                 }
             }
         });
 
+        QUnit.expect(11);
         QUnit.stop();
 
         proxy.init()
             .then(function () {
-                proxy.getItemData(uri)
+                proxy.getItem(uri)
                     .then(function (data) {
-                        assert.ok(true, 'The getItemData promise is resolved');
-                        assert.equal(data, itemData, 'The mock has provided the data');
+                        assert.ok(true, 'The getItem promise is resolved');
+                        assert.equal(typeof data, 'object', 'The mock has provided the data');
+                        assert.equal(data.itemData, itemData, 'The mock has provided the item data');
+                        assert.equal(typeof data.itemState, 'object', 'The mock has provided the item state');
                         QUnit.start();
                     })
                     .catch(function () {
-                        assert.ok(false, 'The getItemData promise must not be rejected');
+                        assert.ok(false, 'The getItem promise must not be rejected');
                         QUnit.start();
                     });
             })
@@ -430,13 +440,13 @@ define([
 
         proxy2.init()
             .then(function () {
-                proxy2.getItemData(uri)
+                proxy2.getItem(uri)
                     .then(function () {
-                        assert.ok(false, 'The getItemData promise must not be resolved');
+                        assert.ok(false, 'The getItem promise must not be resolved');
                         QUnit.start();
                     })
                     .catch(function (err) {
-                        assert.ok(true, 'The getItemData promise is rejected');
+                        assert.ok(true, 'The getItem promise is rejected');
                         assert.equal(typeof err, 'object', 'The promise has provided the error descriptor');
                         assert.equal(err.success, false, 'The promise has provided the error status');
                         assert.equal(err.type, 'error', 'The promise has provided the error type');
@@ -452,76 +462,58 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.getItemState', 3, function (assert) {
-        var uri = 'item-0';
-        var proxy = proxyMockFactory({
-            testActions: {
-                init: function () {
-                    return Promise.resolve();
-                }
-            }
-        });
-
-        proxy.init()
-            .then(function () {
-                assert.ok(true, 'The init promise is resolved');
-
-                proxy.getItemState(uri)
-                    .then(function (data) {
-                        assert.ok(true, 'The getItemState promise is resolved');
-                        assert.equal(typeof data, 'object', 'The mock has provided the data');
-                        QUnit.start();
-                    })
-                    .catch(function () {
-                        assert.ok(false, 'The getItemState promise must not be rejected');
-                        QUnit.start();
-                    });
-            })
-            .catch(function () {
-                assert.ok(false, 'The init promise must not be rejected');
-                QUnit.start();
-            });
-    });
-
-
-    QUnit.asyncTest('proxyMock.submitItemState', 8, function (assert) {
+    QUnit.asyncTest('proxyMock.submitItem', function (assert) {
         var uri = 'item-0';
         var state = {
             RESPONSE: {}
+        };
+        var response = {
+            RESPONSE: {}
+        };
+        var itemData = {
+            data: {}
         };
         var proxy = proxyMockFactory({
             testActions: {
                 init: function () {
                     return Promise.resolve();
                 }
+            },
+            itemActions: {
+                getItem: function (actionUri) {
+                    assert.equal(actionUri, uri, 'The mock has received the uri');
+                    return Promise.resolve(itemData);
+                }
             }
         });
+
+        QUnit.expect(9);
 
         proxy.init()
             .then(function () {
                 assert.ok(true, 'The init promise is resolved');
 
-                proxy.submitItemState(uri, state)
+                proxy.submitItem(uri, state, response)
                     .then(function (data) {
-                        assert.ok(true, 'The submitItemState promise is resolved');
+                        assert.ok(true, 'The submitItem promise is resolved');
                         assert.equal(typeof data, 'object', 'The mock has provided a response');
                         assert.equal(data.success, true, 'The mock has provided a successful response');
 
-                        proxy.getItemState(uri)
+                        proxy.getItem(uri)
                             .then(function (data) {
-                                assert.ok(true, 'The getItemState promise is resolved');
+                                assert.ok(true, 'The getItem promise is resolved');
                                 assert.equal(typeof data, 'object', 'The mock has provided a response');
                                 assert.equal(data.success, true, 'The mock has provided a successful response');
                                 assert.equal(data.itemState, state, 'The mock has provided the data');
                                 QUnit.start();
                             })
                             .catch(function () {
-                                assert.ok(false, 'The getItemState promise must not be rejected');
+                                assert.ok(false, 'The getItem promise must not be rejected');
                                 QUnit.start();
                             });
                     })
                     .catch(function () {
-                        assert.ok(false, 'The submitItemState promise must not be rejected');
+                        assert.ok(false, 'The submitItem promise must not be rejected');
                         QUnit.start();
                     });
             })
@@ -532,43 +524,7 @@ define([
     });
 
 
-    QUnit.asyncTest('proxyMock.storeItemResponse', 4, function (assert) {
-        var uri = 'item-0';
-        var response = {
-            RESPONSE: {}
-        };
-        var proxy = proxyMockFactory({
-            testActions: {
-                init: function () {
-                    return Promise.resolve();
-                }
-            }
-        });
-
-        proxy.init()
-            .then(function () {
-                assert.ok(true, 'The init promise is resolved');
-
-                proxy.storeItemResponse(uri, response)
-                    .then(function (data) {
-                        assert.ok(true, 'The storeItemResponse promise is resolved');
-                        assert.equal(typeof data, 'object', 'The mock has provided a response');
-                        assert.equal(data.success, true, 'The mock has provided a successful response');
-                        QUnit.start();
-                    })
-                    .catch(function () {
-                        assert.ok(false, 'The storeItemResponse promise must not be rejected');
-                        QUnit.start();
-                    });
-            })
-            .catch(function () {
-                assert.ok(false, 'The init promise must not be rejected');
-                QUnit.start();
-            });
-    });
-
-
-    QUnit.asyncTest('proxyMock.callItemAction', 10, function (assert) {
+    QUnit.asyncTest('proxyMock.callItemAction', function (assert) {
         var uri = 'item-0';
         var params = {
             data: {}
@@ -592,6 +548,7 @@ define([
             }
         });
 
+        QUnit.expect(10);
         QUnit.stop();
 
         proxy.init()

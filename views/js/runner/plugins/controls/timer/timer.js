@@ -261,8 +261,7 @@ define([
                     };
 
                     var cancelMove = function cancelMove() {
-                        _.invoke(testRunner.getPlugins(), 'enable');
-                        testRunner.trigger('enableitem');
+                        testRunner.trigger('enableitem enablenav');
                         e.prevent();
                     };
 
