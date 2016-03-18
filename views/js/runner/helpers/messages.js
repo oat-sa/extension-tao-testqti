@@ -27,6 +27,41 @@ define([
     'use strict';
 
     /**
+     * Tells is the current item has been answered or not
+     * The item is considered answered when at least one response has been set to not empty {base : null}
+     *
+     * @returns {Boolean}
+     */
+    function isCurrentItemAnswered(runner) {
+        var answered = false;
+        _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
+            var response = state && state.response;
+            console.log(state)
+            if (_.isObject(response)) {
+                // base or record defined: the interaction has a response, so the item is responded
+                if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
+                    answered = true;
+                }
+                else if (_.isObject(response.list)) {
+                    _.forEach(response.list, function(entry) {
+                        // list defined, and something is listed: the interaction has a response, so the item is responded
+                        if (_.isArray(entry) && entry.length) {
+                            answered = true;
+                            return false;
+                        }
+                    });
+                }
+
+                if (answered) {
+                    return false;
+                }
+            }
+        });
+
+        return answered;
+    }
+
+    /**
      * Completes an exit message
      * @param {String} message
      * @param {Object} runner
@@ -39,6 +74,19 @@ define([
         var unansweredCount = stats && (stats.total - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
+
+        if (unansweredCount){
+            var isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
+
+            if (!isItemCurrentlyAnswered && context.itemAnswered) {
+                unansweredCount++;
+            }
+
+            if (isItemCurrentlyAnswered && !context.itemAnswered) {
+                unansweredCount--;
+            }
+        }
+
 
         if (flaggedCount && unansweredCount) {
             itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
