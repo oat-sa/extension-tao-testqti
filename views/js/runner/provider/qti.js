@@ -178,7 +178,9 @@ define([
                         return new Promise(function(resolve){
                             //if the store results contains modal feedback we ask (gently) the IR to display them
                             if(result.success) {
-                                context.itemAnswered = result.itemSession.itemAnswered;
+                                if (result.itemSession) {
+                                    context.itemAnswered = result.itemSession.itemAnswered;
+                                }
 
                                 if(result.displayFeedbacks === true && itemRunner){
                                     return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
