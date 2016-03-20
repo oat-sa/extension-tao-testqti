@@ -178,7 +178,9 @@ define([
                         return new Promise(function(resolve){
                             //if the store results contains modal feedback we ask (gently) the IR to display them
                             if(result.success) {
-                                context.itemAnswered = result.itemSession.itemAnswered;
+                                if (result.itemSession) {
+                                    context.itemAnswered = result.itemSession.itemAnswered;
+                                }
 
                                 if(result.displayFeedbacks === true && itemRunner){
                                     return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
@@ -236,7 +238,7 @@ define([
                     });
 
 
-                this.trigger('disablenav');
+                this.trigger('disablenav disabletools');
 
                 store()
                  .then(updateStats)
@@ -246,6 +248,8 @@ define([
                  });
             })
             .on('skip', function(scope){
+
+                this.trigger('disablenav disabletools');
 
                 computeNext('skip', {
                     scope     : scope || 'item'
@@ -320,6 +324,9 @@ define([
             })
             .on('enableitem', function(){
                 this.trigger('enabletools');
+            })
+            .on('error', function(){
+                this.trigger('disabletools enablenav');
             });
 
             //starts the event collection

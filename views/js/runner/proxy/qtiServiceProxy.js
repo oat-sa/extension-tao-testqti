@@ -39,57 +39,84 @@ define([
      * @returns {Promise}
      */
     function request(proxy, url, params, contentType, noToken) {
-        var headers = {};
-        var tokenHandler = proxy.getTokenHandler();
-        var token;
 
-        if (!noToken) {
-            token = tokenHandler.getToken();
-            if (token) {
-                headers['X-Auth-Token'] = token;
-            }
+        //run the request Promise
+        var requestPromise = function requestPromise(){
+            return new Promise(function(resolve, reject) {
+                var headers = {};
+                var tokenHandler = proxy.getTokenHandler();
+                var token;
+                if (!noToken) {
+                    token = tokenHandler.getToken();
+                    if (token) {
+                        headers['X-Auth-Token'] = token;
+                    }
+                }
+                $.ajax({
+                    url: url,
+                    type: params ? 'POST' : 'GET',
+                    cache: false,
+                    data: params,
+                    headers: headers,
+                    async: true,
+                    dataType: 'json',
+                    contentType : contentType
+                })
+                .done(function(data) {
+                    if (data && data.token) {
+                        tokenHandler.setToken(data.token);
+                    }
+
+                    if (data && data.success) {
+                        resolve(data);
+                    } else {
+                        reject(data);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    var data;
+                    try {
+                        data = JSON.parse(jqXHR.responseText);
+                    } catch (e) {
+                        data = {
+                            success: false,
+                            code: jqXHR.status,
+                            type: textStatus || 'error',
+                            message: errorThrown || __('An error occurred!')
+                        };
+                    }
+
+                    if (data.token) {
+                        tokenHandler.setToken(data.token);
+                    }
+
+                    reject(data);
+                });
+            });
+        };
+
+        //no token protection, run the request
+        if(noToken === true){
+            return requestPromise();
         }
 
-        return new Promise(function(resolve, reject) {
-            $.ajax({
-                url: url,
-                type: params ? 'POST' : 'GET',
-                cache: false,
-                data: params,
-                headers: headers,
-                async: true,
-                dataType: 'json',
-                contentType : contentType
-            })
-            .done(function(data) {
-                if (data && data.token) {
-                    tokenHandler.setToken(data.token);
-                }
-                if (data && data.success) {
-                    resolve(data);
-                } else {
-                    reject(data);
-                }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-                var data;
-                try {
-                    data = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    data = {
-                        success: false,
-                        code: jqXHR.status,
-                        type: textStatus || 'error',
-                        message: errorThrown || __('An error occurred!')
-                    };
-                }
+        //first promise, keep the ref
+        if(!proxy._runningPromise){
+            proxy._runningPromise = requestPromise();
+            return proxy._runningPromise;
+        }
 
-                if (data.token) {
-                    tokenHandler.setToken(data.token);
-                }
+        //create a wrapping promise
+        return new Promise(function(resolve, reject){
+            //run the current request
+            var runRequest = function(){
+                var p = requestPromise();
+                proxy._runningPromise = p; //and keep the ref
+                p.then(resolve).catch(reject);
+            };
 
-                reject(data);
-            });
+            //wait the previous to resolve or fail and run the current one
+            proxy._runningPromise.then(runRequest).catch(runRequest);
         });
     }
 
@@ -99,6 +126,15 @@ define([
      * @type {Object}
      */
     var qtiServiceProxy = {
+
+        /**
+         * Keep a reference of the last running promise to
+         * ensure the tokened protected called are chained
+         * @type {Promise}
+         */
+        _runningPromise : null,
+
+
         /**
          * Initializes the proxy
          * @param {Object} config - The config provided to the proxy factory
@@ -129,6 +165,7 @@ define([
             return new Promise(function(resolve) {
                 // no request, just a resources cleaning
                 self.storage = null;
+                self._runningPromise = null;
                 resolve();
             });
         },
