@@ -74,9 +74,10 @@ define([
         var unansweredCount = stats && (stats.total - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
+        var isItemCurrentlyAnswered;
 
         if (unansweredCount){
-            var isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
+            isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
 
             if (!isItemCurrentlyAnswered && context.itemAnswered) {
                 unansweredCount++;
