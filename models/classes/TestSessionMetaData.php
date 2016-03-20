@@ -178,7 +178,7 @@ class TestSessionMetaData
 
                             $startTimeSection = $testSessionMetaData->getStartSectionTime();//start time of first item in section
 
-                            if (isset( $timeLimits[count($timeLimits) - 1] )) {
+                            if ($startTimeSection && isset( $timeLimits[count($timeLimits) - 1] )) {
                                 $maxAllowedTime = $timeLimits[count($timeLimits) - 1];//actually current limit for answering
 
                                 $latestPossibleSectionTime = $startTimeSection->add(new DateInterval('PT' . $maxAllowedTime->getSeconds(true) . 'S'));
@@ -288,19 +288,23 @@ class TestSessionMetaData
 
     /**
      * Retrieve information about passed items
-     * @return DateTime
+     * @return null|DateTime
      * @throws \common_exception_Error
      */
     public function getStartSectionTime()
     {
         $itemResults        = array();
+        $sectionStart = null;
         $assessmentItemsRef = $this->getTestSession()->getCurrentAssessmentSection()->getComponentsByClassName('assessmentItemRef');
 
         /** @var ExtendedAssessmentItemRef $itemRef */
         foreach ($assessmentItemsRef as $itemRef) {
             $itemResults[] = $this->getItemStartTime($itemRef);
         }
-        $sectionStart = min(array_filter($itemResults));
+        $itemResults = array_filter($itemResults);
+        if (!empty($itemResults)) {
+            $sectionStart = min($itemResults);
+        }
 
         return $sectionStart;
     }
