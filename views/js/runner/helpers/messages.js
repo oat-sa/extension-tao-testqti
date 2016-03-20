@@ -36,6 +36,7 @@ define([
         var answered = false;
         _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
             var response = state && state.response;
+
             if (_.isObject(response)) {
                 // base or record defined: the interaction has a response, so the item is responded
                 if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
@@ -56,6 +57,7 @@ define([
                 }
             }
         });
+
         return answered;
     }
 
@@ -72,10 +74,20 @@ define([
         var unansweredCount = stats && (stats.total - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
+        var isItemCurrentlyAnswered;
 
-        if (unansweredCount && isCurrentItemAnswered(runner)) {
-            unansweredCount--;
+        if (unansweredCount){
+            isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
+
+            if (!isItemCurrentlyAnswered && context.itemAnswered) {
+                unansweredCount++;
+            }
+
+            if (isItemCurrentlyAnswered && !context.itemAnswered) {
+                unansweredCount--;
+            }
         }
+
 
         if (flaggedCount && unansweredCount) {
             itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
