@@ -457,6 +457,93 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         parent::moveNextAssessmentItem();
         $this->triggerEventChange();
     }
+
+    /**
+     * Set the position in the Route at the very next TestPart in the Route sequence or, if the current
+     * testPart is the last one of the test session, the test session ends gracefully. If the submission mode
+     * is simultaneous, the pending responses are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is currently not running.
+     */
+    public function closeTestPart() {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $route = $this->getRoute();
+        $from = $route->current();
+
+        while ($route->valid() === true && $route->current()->getTestPart() === $from->getTestPart()) {
+            $itemSession = $this->getCurrentAssessmentItemSession();
+            $itemSession->endItemSession();
+            $this->nextRouteItem();
+        }
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Set the position in the Route at the very next assessmentSection in the route sequence.
+     *
+     * * If there is no assessmentSection left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
+    public function closeAssessmentSection() {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $route = $this->getRoute();
+        $from = $route->current();
+
+        while ($route->valid() === true && $route->current()->getAssessmentSection() === $from->getAssessmentSection()) {
+            $itemSession = $this->getCurrentAssessmentItemSession();
+            $itemSession->endItemSession();
+            $this->nextRouteItem();
+        }
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Set the position in the Route at the very next assessmentItem in the route sequence.
+     *
+     * * If there is no item left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
+    public function closeAssessmentItem() {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $itemSession = $this->getCurrentAssessmentItemSession();
+        $itemSession->endItemSession();
+        $this->nextRouteItem();
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
     
     protected function triggerEventChange() {
         $event = new QtiTestChangeEvent($this);
