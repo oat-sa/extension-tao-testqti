@@ -891,37 +891,44 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
     {
-        /* @var AssessmentTestSession $session */
+        /* @var \taoQtiTest_helpers_TestSession $session */
         $session = $context->getTestSession();
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode());
         $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
-        if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {
-            switch ($timeOutException->getCode()) {
-                case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
-                    $session->endTestSession();
-                    break;
+        $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
+        switch ($timeOutException->getCode()) {
+            case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                $session->endTestSession();
+                break;
 
-                case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+                if ($isLinear) {
                     $session->moveNextTestPart();
-                    break;
+                } else {
+                    $session->closeTestPart();
+                }
+                break;
 
-                case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+                if ($isLinear) {
                     $session->moveNextAssessmentSection();
-                    break;
+                } else {
+                    $session->closeAssessmentSection();
+                }
+                break;
 
-                case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+                if ($isLinear) {
                     $session->moveNextAssessmentItem();
-                    break;
-            }
-
-            $this->continueInteraction($context);
-
-        } else {
-            $itemSession = $session->getCurrentAssessmentItemSession();
-            $itemSession->endItemSession();
+                } else {
+                    $session->closeAssessmentItem();
+                }
+                break;
         }
+
+        $this->continueInteraction($context);
     }
 
     /**
