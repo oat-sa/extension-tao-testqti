@@ -23,22 +23,21 @@ use qtism\runtime\processing\OutcomeProcessingEngine;
 use qtism\data\rules\OutcomeRuleCollection;
 use qtism\data\processing\OutcomeProcessing;
 use qtism\data\rules\SetOutcomeValue;
-use qtism\runtime\expressions\operators\DivideProcessor;
 use qtism\data\expressions\ExpressionCollection;
 use qtism\data\expressions\operators\Divide;
 use qtism\data\expressions\NumberPresented;
 use qtism\data\expressions\NumberCorrect;
 use qtism\common\enums\BaseType;
 use qtism\common\datatypes\Float;
+use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentTest;
-use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\Route;
 use qtism\runtime\common\OutcomeVariable;
-use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
@@ -465,7 +464,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      *
      * @throws AssessmentTestSessionException If the test is currently not running.
      */
-    public function closeTestPart() {
+    public function closeTestPart()
+    {
 
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
@@ -496,7 +496,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      *
      * @throws AssessmentTestSessionException If the test is not running.
      */
-    public function closeAssessmentSection() {
+    public function closeAssessmentSection()
+    {
 
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or CLOSED.";
@@ -527,7 +528,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      *
      * @throws AssessmentTestSessionException If the test is not running.
      */
-    public function closeAssessmentItem() {
+    public function closeAssessmentItem()
+    {
 
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
@@ -544,7 +546,57 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
 
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Closes a timer
+     * @param string $identifier
+     * @param string [$type]
+     */
+    public function closeTimer($identifier, $type = null)
+    {
+        switch ($type) {
+            case 'assessmentTest':
+                $places = AssessmentTestPlace::ASSESSMENT_TEST;
+                break;
+
+            case 'testPart':
+                $places = AssessmentTestPlace::TEST_PART;
+                break;
+
+            case 'assessmentSection':
+                $places = AssessmentTestPlace::ASSESSMENT_SECTION;
+                break;
+
+            case 'assessmentItemRef':
+                $places = AssessmentTestPlace::ASSESSMENT_ITEM;
+                break;
+
+            default:
+                $places = AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM;
+        }
+
+        $constraints = $this->getTimeConstraints($places);
+        foreach ($constraints as $constraint) {
+            $source = $constraint->getSource();
+            $placeId = $source->getIdentifier();
+            if ($placeId === $identifier) {
+                if (($timeLimits = $source->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
+                    $placeDuration = $this[$placeId . '.duration'];
+                    if ($placeDuration instanceof Duration) {
+                        $placeDuration->sub($placeDuration);
+                        $placeDuration->add($maxTime);
+                    }
+
+                    $constraintDuration = $constraint->getDuration();
+                    if ($constraintDuration instanceof Duration) {
+                        $constraintDuration->sub($constraintDuration);
+                        $constraintDuration->add($maxTime);
+                    }
+                }
+            }
+        }
+    }
+
     protected function triggerEventChange() {
         $event = new QtiTestChangeEvent($this);
         if ($event instanceof ServiceLocatorAwareInterface) {
