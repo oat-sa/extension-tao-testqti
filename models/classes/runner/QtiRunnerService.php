@@ -436,7 +436,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             $serviceService = $this->getServiceManager()->get('tao/stateStorage');
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
-            return is_null($userUri) ? null : $serviceService->get($userUri, $itemRef);
+            $state = is_null($userUri) ? null : $serviceService->get($userUri, $itemRef);
+
+            if ($state) {
+                $state = json_decode($state, true);
+                if (is_null($state)) {
+                    throw new \common_exception_InconsistentData('Unable to decode the state for the item '.$itemRef);
+                }
+            }
+
+            return $state;
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
@@ -446,7 +455,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Sets the state of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
-     * @param $state
+     * @param  $state
      * @return boolean
      * @throws \common_Exception
      */
@@ -455,7 +464,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             $serviceService = $this->getServiceManager()->get('tao/stateStorage');
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
-            return is_null($userUri) ? false : $serviceService->set($userUri, $itemRef, $state);
+            if(!isset($state)){
+                $state = '';
+            }
+            return is_null($userUri) ? false : $serviceService->set($userUri, $itemRef, json_encode($state));
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
