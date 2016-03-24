@@ -23,22 +23,21 @@ use qtism\runtime\processing\OutcomeProcessingEngine;
 use qtism\data\rules\OutcomeRuleCollection;
 use qtism\data\processing\OutcomeProcessing;
 use qtism\data\rules\SetOutcomeValue;
-use qtism\runtime\expressions\operators\DivideProcessor;
 use qtism\data\expressions\ExpressionCollection;
 use qtism\data\expressions\operators\Divide;
 use qtism\data\expressions\NumberPresented;
 use qtism\data\expressions\NumberCorrect;
 use qtism\common\enums\BaseType;
 use qtism\common\datatypes\Float;
+use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentTest;
-use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\Route;
 use qtism\runtime\common\OutcomeVariable;
-use qtism\runtime\common\ResponseVariable;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
@@ -261,7 +260,15 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::FORBIDDEN_JUMP, $e);
         }
     }
-    
+
+    /**
+     * AssessmentTestSession implementations must override this method in order to submit test results
+     * from the current AssessmentTestSession to the appropriate data source.
+     *
+     * This method is triggered once at the end of the AssessmentTestSession.
+     *
+     * * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while transmitting results.
+     */
     protected function submitTestResults() {
         $testUri = $this->getTest()->getUri();
         $sessionId = $this->getSessionId();
@@ -324,54 +331,272 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $this->triggerEventChange();
     }
 
+    /**
+     * Begins the test session. Calling this method will make the state
+     * change into AssessmentTestSessionState::INTERACTING.
+     *
+     * @qtism-test-interaction
+     * @qtism-test-duration-update
+     */
     public function beginTestSession()
     {
         parent::beginTestSession();
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Perform a 'jump' to a given position in the Route sequence. The current navigation
+     * mode must be LINEAR to be able to jump.
+     *
+     * @param integer $position The position in the route the jump has to be made.
+     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
+     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
+     * @qtism-test-interaction
+     * @qtism-test-duration-update
+     */
     public function jumpTo($position, $allowTimeout = false)
     {
         parent::jumpTo($position);
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Ask the test session to move to next RouteItem in the Route sequence.
+     *
+     * If $allowTimeout is set to true, the very next RouteItem in the Route sequence will bet set
+     * as the current RouteItem, whether or not it is timed out or not.
+     *
+     * On the other hand, if $allowTimeout is set to false, the next RouteItem in the Route sequence
+     * which is not timed out will be set as the current RouteItem. If there is no more following RouteItems
+     * that are not timed out in the Route sequence, the test session ends gracefully.
+     *
+     * @param boolean $allowTimeout If set to true, the next RouteItem in the Route sequence does not have to respect the timeLimits in force. Default value is false.
+     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the transition (e.g. branching, preConditions, ...).
+     * @qtism-test-interaction
+     * @qtism-test-duration-update
+     */
     public function moveNext($allowTimeout = false)
     {
         parent::moveNext($allowTimeout);
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Ask the test session to move to the previous RouteItem in the Route sequence.
+     *
+     * If $allowTimeout is set to true, the previous RouteItem in the Route sequence will bet set
+     * as the current RouteItem, whether or not it is timed out.
+     *
+     * On the other hand, if $allowTimeout is set to false, the previous RouteItem in the Route sequence
+     * which is not timed out will be set as the current RouteItem. If there is no more previous RouteItems
+     * that are not timed out in the Route sequence, the current RouteItem remains the same and an
+     * AssessmentTestSessionException with the appropriate timing error code is thrown.
+     *
+     * @param boolean $allowTimeout If set to true, the next RouteItem in the sequence does not have to respect timeLimits in force. Default value is false.
+     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the transition (e.g. branching, preConditions, ...) or if $allowTimeout = false and there absolutely no possibility to move backward (even the first RouteItem is timed out).
+     * @qtism-test-interaction
+     * @qtism-test-duration-update
+     */
     public function moveBack($allowTimeout = false)
     {
         parent::moveBack($allowTimeout);
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Skip the current item.
+     *
+     * @throws AssessmentTestSessionException If the test session is not running or it is the last route item of the testPart but the SIMULTANEOUS submission mode is in force and not all responses were provided.
+     * @qtism-test-interaction
+     * @qtism-test-duration-update
+     */
     public function skip()
     {
         parent::skip();
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Set the position in the Route at the very next TestPart in the Route sequence or, if the current
+     * testPart is the last one of the test session, the test session ends gracefully. If the submission mode
+     * is simultaneous, the pending responses are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is currently not running.
+     */
     public function moveNextTestPart()
     {
         parent::moveNextTestPart();
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Set the position in the Route at the very next assessmentSection in the route sequence.
+     *
+     * * If there is no assessmentSection left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
     public function moveNextAssessmentSection()
     {
         parent::moveNextAssessmentSection();
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Set the position in the Route at the very next assessmentItem in the route sequence.
+     *
+     * * If there is no item left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
     public function moveNextAssessmentItem()
     {
         parent::moveNextAssessmentItem();
         $this->triggerEventChange();
     }
-    
+
+    /**
+     * Set the position in the Route at the very next TestPart in the Route sequence or, if the current
+     * testPart is the last one of the test session, the test session ends gracefully. If the submission mode
+     * is simultaneous, the pending responses are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is currently not running.
+     */
+    public function closeTestPart()
+    {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $route = $this->getRoute();
+        $from = $route->current();
+
+        while ($route->valid() === true && $route->current()->getTestPart() === $from->getTestPart()) {
+            $itemSession = $this->getCurrentAssessmentItemSession();
+            $itemSession->endItemSession();
+            $this->nextRouteItem();
+        }
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Set the position in the Route at the very next assessmentSection in the route sequence.
+     *
+     * * If there is no assessmentSection left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
+    public function closeAssessmentSection()
+    {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $route = $this->getRoute();
+        $from = $route->current();
+
+        while ($route->valid() === true && $route->current()->getAssessmentSection() === $from->getAssessmentSection()) {
+            $itemSession = $this->getCurrentAssessmentItemSession();
+            $itemSession->endItemSession();
+            $this->nextRouteItem();
+        }
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Set the position in the Route at the very next assessmentItem in the route sequence.
+     *
+     * * If there is no item left in the flow, the test session ends gracefully.
+     * * If there are still pending responses, they are processed.
+     *
+     * @throws AssessmentTestSessionException If the test is not running.
+     */
+    public function closeAssessmentItem()
+    {
+
+        if ($this->isRunning() === false) {
+            $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
+            throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
+        }
+
+        $itemSession = $this->getCurrentAssessmentItemSession();
+        $itemSession->endItemSession();
+        $this->nextRouteItem();
+
+        if ($this->isRunning() === true) {
+            $this->interactWithItemSession();
+        }
+
+        $this->triggerEventChange();
+    }
+
+    /**
+     * Closes a timer
+     * @param string $identifier
+     * @param string [$type]
+     */
+    public function closeTimer($identifier, $type = null)
+    {
+        switch ($type) {
+            case 'assessmentTest':
+                $places = AssessmentTestPlace::ASSESSMENT_TEST;
+                break;
+
+            case 'testPart':
+                $places = AssessmentTestPlace::TEST_PART;
+                break;
+
+            case 'assessmentSection':
+                $places = AssessmentTestPlace::ASSESSMENT_SECTION;
+                break;
+
+            case 'assessmentItemRef':
+                $places = AssessmentTestPlace::ASSESSMENT_ITEM;
+                break;
+
+            default:
+                $places = AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM;
+        }
+
+        $constraints = $this->getTimeConstraints($places);
+        foreach ($constraints as $constraint) {
+            $source = $constraint->getSource();
+            $placeId = $source->getIdentifier();
+            if ($placeId === $identifier) {
+                if (($timeLimits = $source->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
+                    $placeDuration = $this[$placeId . '.duration'];
+                    if ($placeDuration instanceof Duration) {
+                        $placeDuration->sub($placeDuration);
+                        $placeDuration->add($maxTime);
+                    }
+
+                    $constraintDuration = $constraint->getDuration();
+                    if ($constraintDuration instanceof Duration) {
+                        $constraintDuration->sub($constraintDuration);
+                        $constraintDuration->add($maxTime);
+                    }
+                }
+            }
+        }
+    }
+
     protected function triggerEventChange() {
         $event = new QtiTestChangeEvent($this);
         if ($event instanceof ServiceLocatorAwareInterface) {

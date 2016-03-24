@@ -60,7 +60,7 @@ define([
                     headers: headers,
                     async: true,
                     dataType: 'json',
-                    contentType : contentType
+                    contentType : contentType || undefined
                 })
                 .done(function(data) {
                     if (data && data.token) {
