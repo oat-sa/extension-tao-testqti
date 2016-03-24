@@ -557,6 +557,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 'test-taker-review-prevents-unseen' => 'reviewPreventsUnseen',
                 'test-taker-review-can-collapse'    => 'reviewCanCollapse',
                 'next-section'                      => 'nextSection',
+                'disableExitMessage'                => 'disableExitMessage',
             );
             foreach ($configMap as $configKey => $contextKey) {
                 if (isset($config[$configKey])) {

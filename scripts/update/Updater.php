@@ -242,6 +242,20 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.16.2';
         }
 
+        if ($currentVersion === '2.16.2') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['disableExitMessage'] = array(
+                'test' => false,
+                'testPart' => false,
+                'testSection' => false,
+
+            );
+            $extension->setConfig('testRunner', $config);
+
+            $currentVersion = '2.16.3';
+        }
+
         return $currentVersion;
     }
 }

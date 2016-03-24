@@ -356,10 +356,20 @@ function (
              */
             displayExitMessage: function(message, action, scope) {
                 var self = this;
-                var $confirmBox = $('.exit-modal-feedback');
-                var progression = this.getProgression(scope);
-                var unansweredCount = (progression.total - progression.answered);
-                var flaggedCount = progression.flagged;
+                var disableExitMessage = this.testContext.disableExitMessage || {};
+                var $confirmBox, progression, unansweredCount, flaggedCount;
+
+                if (disableExitMessage[scope]) {
+                    if (_.isFunction(action)) {
+                        action.call(this);
+                    }
+                    return $();
+                }
+
+                $confirmBox = $('.exit-modal-feedback');
+                progression = this.getProgression(scope);
+                unansweredCount = progression.total - progression.answered;
+                flaggedCount = progression.flagged;
 
                 if (unansweredCount && this.isCurrentItemAnswered()) {
                     unansweredCount--;

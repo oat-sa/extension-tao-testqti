@@ -120,4 +120,15 @@ return array(
      * @type boolean
      */
     'reset-timer-after-resume' => false,
+
+    /**
+     * Disable the exit message warning
+     * @type array
+     */
+    'disableExitMessage' => array(
+        'test' => false,
+        'testPart' => false,
+        'testSection' => false,
+
+    ),
 );
