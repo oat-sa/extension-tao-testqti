@@ -272,7 +272,7 @@ define([
                         self.trigger('error', err);
                     });
             })
-            .on('timeout', function(){
+            .on('timeout', function(scope, ref){
 
                 var context = self.getTestContext();
 
@@ -284,7 +284,10 @@ define([
                     .then(updateStats)
                     .then(function() {
                         self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
-                            computeNext('timeout');
+                            computeNext('timeout', {
+                                scope: scope,
+                                ref: ref
+                            });
                         });
                     })
                     .catch(function(err){

@@ -215,8 +215,9 @@ define([
                     //how many time elapsed from the last tick ?
                     var elapsed = self.stopwatch.tick();
                     var timeout = false;
+                    var timeoutScope, timeoutRef;
 
-                    _.forEach(currentTimers, function(timer) {
+                    _.forEach(currentTimers, function(timer, type) {
                         var currentVal,
                             warnMessage;
                         if (timer.running()) {
@@ -228,6 +229,8 @@ define([
                             if (currentVal === 0) {
                                 timer.running(false);
                                 timeout = true;
+                                timeoutRef = timer.id();
+                                timeoutScope = type;
                             }
 
                             if (!timeout) {
@@ -239,7 +242,7 @@ define([
                         }
                     });
                     if (timeout) {
-                        testRunner.timeout();
+                        testRunner.timeout(timeoutScope, timeoutRef);
                         self.disable();
                     }
                 },

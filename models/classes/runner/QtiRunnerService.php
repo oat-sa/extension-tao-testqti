@@ -681,9 +681,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function timeout(RunnerServiceContext $context, $scope, $ref)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var \taoQtiTest_helpers_TestSession $session */
             $session = $context->getTestSession();
             try {
+                $session->closeTimer($ref, $scope);
                 $session->checkTimeLimits(false, true, false);
             } catch (AssessmentTestSessionException $e) {
                 $this->onTimeout($context, $e);
@@ -891,37 +892,51 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
     {
-        /* @var AssessmentTestSession $session */
+        /* @var \taoQtiTest_helpers_TestSession $session */
         $session = $context->getTestSession();
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode());
         $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
-        if ($session->getCurrentNavigationMode() === NavigationMode::LINEAR) {
-            switch ($timeOutException->getCode()) {
-                case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
-                    $session->endTestSession();
-                    break;
+        $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
+        switch ($timeOutException->getCode()) {
+            case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                \common_Logger::i('TIMEOUT: closing the assessment test session');
+                $session->endTestSession();
+                break;
 
-                case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
+                if ($isLinear) {
+                    \common_Logger::i('TIMEOUT: moving to the next test part');
                     $session->moveNextTestPart();
-                    break;
+                } else {
+                    \common_Logger::i('TIMEOUT: closing the assessment test part');
+                    $session->closeTestPart();
+                }
+                break;
 
-                case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
+                if ($isLinear) {
+                    \common_Logger::i('TIMEOUT: moving to the next assessment section');
                     $session->moveNextAssessmentSection();
-                    break;
+                } else {
+                    \common_Logger::i('TIMEOUT: closing the assessment section session');
+                    $session->closeAssessmentSection();
+                }
+                break;
 
-                case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+            case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
+                if ($isLinear) {
+                    \common_Logger::i('TIMEOUT: moving to the next item');
                     $session->moveNextAssessmentItem();
-                    break;
-            }
-
-            $this->continueInteraction($context);
-
-        } else {
-            $itemSession = $session->getCurrentAssessmentItemSession();
-            $itemSession->endItemSession();
+                } else {
+                    \common_Logger::i('TIMEOUT: closing the assessment item session');
+                    $session->closeAssessmentItem();
+                }
+                break;
         }
+
+        $this->continueInteraction($context);
     }
 
     /**
