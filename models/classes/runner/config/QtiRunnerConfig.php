@@ -66,6 +66,9 @@ class QtiRunnerConfig implements RunnerConfig
                 'nextSection' => !empty($rawConfig['next-section']),
                 'resetTimerAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
                 'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
+                'security' => [ 
+                    'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
+                ]
             ];
         }
         return $this->config;

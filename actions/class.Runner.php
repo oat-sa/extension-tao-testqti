@@ -116,7 +116,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($checkToken) {
 
                 $config = $this->runnerService->getTestConfig();
-                if(isset($config['csrf-token']) && $config['csrf-token'] == true){
+                if(isset($config['security']) && isset($config['security']['csrfToken']) && $config['security']['csrfToken'] == true){
                     $csrfToken = $this->getRequestParameter('X-Auth-Token');
                     if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
                         \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
