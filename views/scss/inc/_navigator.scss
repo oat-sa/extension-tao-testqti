@@ -132,7 +132,8 @@
     }
 
     .qti-navigator-label {
-        display: block;
+        display: inline-block;
+        min-width: 100%;
         line-height: 30px;
         padding: 0 6px;
 
