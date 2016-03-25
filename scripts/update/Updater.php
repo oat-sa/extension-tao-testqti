@@ -269,5 +269,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('2.20.0','2.21.1');
+
+
+        if ($currentVersion == '2.21.1') {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $extension->setConfig('testRunner', array_merge($config, array(
+                'csrf-token' => false
+            )));
+
+            $currentVersion = '2.22.0';
+        }
     }
 }

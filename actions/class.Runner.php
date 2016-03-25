@@ -114,10 +114,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $testCompilation = $this->getRequestParameter('testCompilation');
 
             if ($checkToken) {
-                $csrfToken = $this->getRequestParameter('X-Auth-Token');
-                if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
-                    \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
-                    throw new \common_exception_Unauthorized();
+
+                $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+                if(isset($config['csrf-token']) && $config['csrf-token'] == true){
+                    $csrfToken = $this->getRequestParameter('X-Auth-Token');
+                    if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
+                        \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
+                        throw new \common_exception_Unauthorized();
+                    }
                 }
             }
 
@@ -125,10 +129,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $testExecution = $this->getRequestParameter('testServiceCallId');
             } else {
                 $testExecution = $this->getRequestParameter('serviceCallId');
-            }  
+            }
             $this->serviceContext = $this->runnerService->getServiceContext($testDefinition, $testCompilation, $testExecution, $check);
         }
-        
+
         return $this->serviceContext;
     }
 
