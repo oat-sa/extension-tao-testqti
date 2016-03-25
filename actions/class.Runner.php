@@ -115,7 +115,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($checkToken) {
 
-                $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+                $config = $this->runnerService->getTestConfig();
                 if(isset($config['csrf-token']) && $config['csrf-token'] == true){
                     $csrfToken = $this->getRequestParameter('X-Auth-Token');
                     if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
