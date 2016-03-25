@@ -139,5 +139,5 @@ return array(
      * Enable the cross site request forgery token
      * @type boolean
      */
-    'csrf-token' => false
+    'csrf-token' => true
 );
