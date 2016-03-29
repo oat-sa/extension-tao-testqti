@@ -250,12 +250,15 @@ class taoQtiTest_helpers_Utils {
     static public function getTestDefinition($qtiTestCompilation) {
         $directoryIds = explode('|', $qtiTestCompilation);
 
-        $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0])->getPath();
-        $testFilePath = $dirPath . TAOQTITEST_COMPILED_FILENAME;
+        $stream = \tao_models_classes_service_FileStorage::singleton()
+            ->getDirectoryById($directoryIds[0])
+            ->read(TAOQTITEST_COMPILED_FILENAME);
 
-        common_Logger::d("Loading QTI-PHP file at '${testFilePath}'.");
+        common_Logger::d("Loading QTI-PHP file from stream");
         $doc = new PhpDocument();
-        $doc->load($testFilePath);
+        $doc->loadFromStream($stream);
+
+        fclose($stream);
 
         return $doc->getDocumentComponent();
     }
