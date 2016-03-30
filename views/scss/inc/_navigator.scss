@@ -229,6 +229,25 @@
 
         ul {
             padding: 4px;
+
+            .qti-navigator-label {
+                span {
+                    display: table-cell;
+                    vertical-align: middle;
+                    float: none;
+
+                    &.qti-navigator-text {
+                        padding: 0 6px;
+                        min-width: 10rem;
+                    }
+                    &.qti-navigator-icon {
+                        min-width: 2rem;
+                    }
+                    &.qti-navigator-counter {
+                        min-width: 5rem;
+                    }
+                }
+            }
         }
     }
 
