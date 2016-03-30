@@ -258,7 +258,7 @@ class taoQtiTest_helpers_Utils {
         $doc = new PhpDocument();
         $doc->loadFromStream($stream);
 
-        fclose($stream);
+        $stream->close();
 
         return $doc->getDocumentComponent();
     }
