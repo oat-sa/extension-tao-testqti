@@ -252,7 +252,7 @@ class taoQtiTest_helpers_Utils {
 
         $stream = \tao_models_classes_service_FileStorage::singleton()
             ->getDirectoryById($directoryIds[0])
-            ->read(TAOQTITEST_COMPILED_FILENAME);
+            ->readStream(TAOQTITEST_COMPILED_FILENAME);
 
         common_Logger::d("Loading QTI-PHP file from stream");
         $doc = new PhpDocument();

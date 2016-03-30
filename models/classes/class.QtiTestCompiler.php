@@ -651,12 +651,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         // Compiling a test may require extra processing time.
         helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
 
-        $phpCompiledDoc = new PhpDocument('2.1');
-        $phpCompiledDoc->setDocumentComponent($test);
+        $phpCompiledDoc = new PhpDocument('2.1', $test);
         $stream = $phpCompiledDoc->getStream();
-        $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $stream);
+        $this->getPrivateDirectory()->writeStream(TAOQTITEST_COMPILED_FILENAME, $stream);
         $stream->close();
-        common_Logger::d("- - - - - - - - - - - - - -");
         common_Logger::d("QTI-PHP Test Compilation file registered from stream.");
     }
     
