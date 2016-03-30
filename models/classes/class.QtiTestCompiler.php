@@ -650,13 +650,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileTest(AssessmentTest $test) {
         // Compiling a test may require extra processing time.
         helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
-        
-        $compiledDocDir = $this->getPrivateDirectory()->getPath();
-        $compiledDocPath = $compiledDocDir . TAOQTITEST_COMPILED_FILENAME;
+
         $phpCompiledDoc = new PhpDocument('2.1');
         $phpCompiledDoc->setDocumentComponent($test);
-        $phpCompiledDoc->save($compiledDocPath);
-        common_Logger::d("QTI-PHP Test Compilation file registered at '" . $compiledDocPath . "'.");
+        $stream = $phpCompiledDoc->getStream();
+        $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $stream);
+        $stream->close();
+        common_Logger::d("- - - - - - - - - - - - - -");
+        common_Logger::d("QTI-PHP Test Compilation file registered from stream.");
     }
     
     /**
