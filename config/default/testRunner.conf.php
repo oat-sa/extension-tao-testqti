@@ -133,4 +133,11 @@ return array(
      * @type array
      */
     'plugins' => null,
+
+
+    /**
+     * Enable the cross site request forgery token
+     * @type boolean
+     */
+    'csrf-token' => true
 );
