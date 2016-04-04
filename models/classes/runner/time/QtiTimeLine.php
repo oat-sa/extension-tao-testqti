@@ -29,6 +29,10 @@ use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
 
+/**
+ * Class QtiTimeLine
+ * @package oat\taoQtiTest\models\runner\time
+ */
 class QtiTimeLine implements TimeLine
 {
     /**
