@@ -74,7 +74,7 @@ class QtiTimeStorage implements TimeStorage
 
         $storageService = \tao_models_classes_service_StateStorage::singleton();
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
-        $storageService->set($userUri, self::STORAGE_PREFIX.$this->testSessionId, $data);
+        $storageService->set($userUri, self::STORAGE_PREFIX . $this->testSessionId, $data);
 
         return $this;
     }
@@ -89,7 +89,7 @@ class QtiTimeStorage implements TimeStorage
         if (!isset($this->cache[$this->testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
-            $this->cache[$this->testSessionId] = $storageService->get($userUri, self::STORAGE_PREFIX.$this->testSessionId);
+            $this->cache[$this->testSessionId] = $storageService->get($userUri, self::STORAGE_PREFIX . $this->testSessionId);
         }
 
         return $this->cache[$this->testSessionId];
