@@ -658,7 +658,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $this->getPrivateDirectory()->writeStream(TAOQTITEST_COMPILED_FILENAME, $stream);
             $stream->close();
         }
-        common_Logger::d("QTI-PHP Test Compilation file registered from stream.");
+        common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
     
     /**
