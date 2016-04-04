@@ -139,18 +139,25 @@ class QtiTimeLine implements TimeLine
     }
 
     /**
-     * Finds all TimePoint corresponding to the provided criteria
+     * Gets a filtered TimeLine, containing the TimePoint corresponding to the provided criteria
      * @param string|array $tag A tag or a list of tags to filter
      * @param int $target The type of target TimePoint to filter
-     * @param int $type The tyoe of TimePoint to filter
+     * @param int $type The type of TimePoint to filter
      * @return TimeLine Returns a subset corresponding to the found TimePoints
      */
-    public function find($tag, $target = TimePoint::TARGET_ALL, $type = TimePoint::TYPE_ALL)
+    public function filter($tag = null, $target = TimePoint::TARGET_ALL, $type = TimePoint::TYPE_ALL)
     {
+        // the tag criteria can be omitted
+        $tags = null;
+        if (isset($tag)) {
+            $tags = is_array($tag) ? $tag : [$tag];
+        }
+        
+        // create a another instance of the same class
         $class = get_class($this);
         $subset = new $class();
-
-        $tags = is_array($tag) ? $tag : [$tag];
+        
+        // fill the new instance with filtered TimePoint
         foreach ($this->points as $idx => $point) {
             if ($point->match($tags, $target, $type)) {
                 $subset->add($point);
@@ -158,6 +165,31 @@ class QtiTimeLine implements TimeLine
         }
 
         return $subset;
+    }
+
+    /**
+     * Finds all TimePoint corresponding to the provided criteria
+     * @param string|array $tag A tag or a list of tags to filter
+     * @param int $target The type of target TimePoint to filter
+     * @param int $type The type of TimePoint to filter
+     * @return array Returns a list of the found TimePoints
+     */
+    public function find($tag = null, $target = TimePoint::TARGET_ALL, $type = TimePoint::TYPE_ALL)
+    {
+        // the tag criteria can be omitted
+        $tags = null;
+        if (isset($tag)) {
+            $tags = is_array($tag) ? $tag : [$tag];
+        }
+        
+        // gather filterer TimePoint
+        $points = [];
+        foreach ($this->points as $point) {
+            if ($point->match($tags, $target, $type)) {
+                $points [] = $point;
+            }
+        }
+        return $points;
     }
 
     /**
@@ -173,7 +205,7 @@ class QtiTimeLine implements TimeLine
         if (!$tag && $target == TimePoint::TARGET_ALL) {
             $points = $this->getPoints();
         } else {
-            $points = $this->filter($tag, $target, TimePoint::TYPE_ALL);
+            $points = $this->find($tag, $target, TimePoint::TYPE_ALL);
         }
         
         // we need a ordered list of points
@@ -218,6 +250,7 @@ class QtiTimeLine implements TimeLine
         foreach ($range as $point) {
             // grab the START TimePoint
             if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_START)) {
+                // we cannot have the START TimePoint twice
                 if ($start) {
                     throw new MalformedRangeException();
                 }
@@ -226,6 +259,7 @@ class QtiTimeLine implements TimeLine
 
             // grab the END TimePoint
             if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_END)) {
+                // we cannot have the END TimePoint twice
                 if ($end) {
                     throw new MalformedRangeException();
                 }
@@ -264,28 +298,5 @@ class QtiTimeLine implements TimeLine
         }
 
         return $rangeDuration;
-    }
-
-    /**
-     * Gets a list of filtered points
-     * @param string|array $tag
-     * @param int $target
-     * @param int $type
-     * @return array
-     */
-    protected function filter($tag, $target, $type)
-    {
-        $tags = null;
-        if (isset($tag)) {
-            $tags = is_array($tag) ? $tag : [$tag];
-        }
-        
-        $points = [];
-        foreach ($this->points as $point) {
-            if ($point->match($tags, $target, $type)) {
-                $points [] = $point;
-            }
-        }
-        return $points;
     }
 }
