@@ -606,28 +606,25 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return core_kernel_file_File The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an unexpected runtime error occurs.
      */
-    protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
-
-        foreach ($itemMapping as $itemRefId => $itemResource) {
-            $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
-            $itemRef->setHref($itemResource->getUri());
-        }
-
-        // Bind the newly created test content to the Test Resource in database.
-        $ds = DIRECTORY_SEPARATOR;
-        $testContent = $this->getTestFile($testResource);
-        if (is_null($testContent)) {
-            $testContent = $this->createContent($testResource);
-        }
-
-        $testPath = $testContent->getAbsolutePath();
-        $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, TAOQTITEST_FILENAME);
-
-        // Delete template test.xml file (created by self::createContent() method) from the root.
-        // (Absolutely necessary when the test.xml file is not in the root folder of the archive)
-        unlink($testPath . $ds . TAOQTITEST_FILENAME);
-
+    protected function importTestDefinition(
+        core_kernel_classes_Resource $testResource,
+        XmlDocument $testDefinition,
+        Resource $qtiResource,
+        array $itemMapping,
+        $extractionFolder
+    ) {
         try {
+            foreach ($itemMapping as $itemRefId => $itemResource) {
+                $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
+                $itemRef->setHref($itemResource->getUri());
+            }
+
+            $testContent = $this->getTestFile($testResource);
+            if (is_null($testContent)) {
+                $testContent = $this->createContent($testResource, false);
+            }
+
+            $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, TAOQTITEST_FILENAME);
             $testDefinition->save($finalPath);
         }
         catch (StorageException $e) {
