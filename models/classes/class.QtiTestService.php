@@ -727,7 +727,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $dir = $this->createContent($test);
         }
         $testFile = $dir->getAbsolutePath() . DIRECTORY_SEPARATOR . TAOQTITEST_FILENAME;
-        
+
         if (!file_exists($testFile)) {
             throw new Exception('No QTI-XML test file found.');
         }
