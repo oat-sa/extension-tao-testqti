@@ -239,6 +239,10 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
             new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
             new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
             new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+            new TimePoint(['test-a', 'item-b'], 1459519520.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+            new TimePoint(['test-a', 'item-b'], 1459519522.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+            new TimePoint(['test-a', 'item-b'], 1459519530.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
+            new TimePoint(['test-a', 'item-b'], 1459519532.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
         ];
         $timeLine = new QtiTimeLine($points);
 
