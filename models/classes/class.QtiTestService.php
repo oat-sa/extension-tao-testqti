@@ -856,35 +856,18 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     private function saveDoc( core_kernel_classes_Resource $test, XmlDocument $doc){
-        $saved = false;
 
         if(!is_null($test) && !is_null($doc)){
             $file = $this->getTestFile($test);
             if (!is_null($file)) {
                 $testPath = $file->getAbsolutePath();
                 try {
-                    // Search for the test.xml file in the test content directory.
-                    $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true, 'only' => tao_helpers_File::$FILE));
-                    $dirContent = array();
-
-                    foreach ($files as $f) {
-                        $pathinfo = pathinfo($f);
-
-                        if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
-                            $dirContent[] = $f;
-                        }
-                    }
-
-                    if (count($dirContent) === 0) {
+                    $testDefinition = $testPath . DIRECTORY_SEPARATOR .TAOQTITEST_FILENAME;
+                    if (!file_exists($testDefinition)) {
                         throw new Exception('No QTI-XML test file found.');
                     }
-                    else if (count($dirContent) > 1) {
-                        throw new Exception('Multiple QTI-XML test file found.');
-                    }
-
-                    $finalPath = current($dirContent);
-                    $doc->save($finalPath);
-                    $saved = true;
+                    $doc->save($testDefinition);
+                    return true;
                 } catch (Exception $e) {
                     throw new taoQtiTest_models_classes_QtiTestServiceException(
                         "An error occured while writing QTI-XML test '${testPath}': ".$e->getMessage(),
@@ -893,7 +876,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 }
             }
         }
-        return $saved;
+        return false;
     }
 
     /**
