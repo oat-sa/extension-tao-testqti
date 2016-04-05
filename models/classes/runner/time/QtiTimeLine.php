@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner\time;
 
 use oat\taoTests\models\runner\time\IncompleteRangeException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
+use oat\taoTests\models\runner\time\InvalidDataException;
 use oat\taoTests\models\runner\time\MalformedRangeException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
@@ -62,13 +63,7 @@ class QtiTimeLine implements TimeLine
      */
     public function serialize()
     {
-        $data = [];
-
-        foreach ($this->points as $point) {
-            $data [] = serialize($point);
-        }
-
-        return serialize($data);
+        return serialize($this->points);
     }
 
     /**
@@ -79,15 +74,13 @@ class QtiTimeLine implements TimeLine
      * </p>
      * @return void
      * @since 5.1.0
+     * @throws InvalidDataException
      */
     public function unserialize($serialized)
     {
-        $data = unserialize($serialized);
-
-        if ($data && is_array($data)) {
-            foreach ($data as $serializedPoint) {
-                $this->add(unserialize($serializedPoint));
-            }
+        $this->points = unserialize($serialized);
+        if (!is_array($this->points)) {
+            throw new InvalidDataException('The provided serialized data are invalid!');
         }
     }
 
