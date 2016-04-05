@@ -726,30 +726,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         if (is_null($dir)) {
             $dir = $this->createContent($test);
         }
-        $testPath = $dir->getAbsolutePath();
-        $files = tao_helpers_File::scandir($testPath, array(
-            'recursive' => true,
-            'absolute' => true,
-            'only' => tao_helpers_File::$FILE
-        ));
-        $dirContent = array();
-
-        foreach ($files as $f) {
-            $pathinfo = pathinfo($f);
-            if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
-                $dirContent[] = $f;
-            }
-        }
-
-        if (count($dirContent) === 0) {
+        $testFile = $dir->getAbsolutePath() . DIRECTORY_SEPARATOR . TAOQTITEST_FILENAME;
+        
+        if (!file_exists($testFile)) {
             throw new Exception('No QTI-XML test file found.');
         }
-        else if (count($dirContent) > 1) {
-            throw new Exception('Multiple QTI-XML test file found.');
-        }
-
-        $filePath = current($dirContent);
-        return $filePath;
+        return $testFile;
     }
 
     /**
