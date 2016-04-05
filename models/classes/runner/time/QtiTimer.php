@@ -78,11 +78,17 @@ class QtiTimer implements Timer
         
         // extract the TimePoint identification from the provided item, and find existing range
         $tags = $this->getItemTags($routeItem);
-        $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
+        $range = $this->getRange($tags);
 
         // validate the data consistence
-        if (count($range) % 2) {
-            throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
+        $nb = count($range);
+        if ($nb && ($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_START) {
+            // unclosed range found, auto closing
+            // auto generate the timestamp for the missing END point, one microsecond earlier
+            \common_Logger::i('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
+            $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $this->timeLine->add($point);
+            $range[] = $point;
         }
         $this->checkTimestampCoherence($range, $timestamp);
 
@@ -110,13 +116,14 @@ class QtiTimer implements Timer
 
         // extract the TimePoint identification from the provided item, and find existing range
         $tags = $this->getItemTags($routeItem);
-        $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
+        $range = $this->getRange($tags);
 
         // validate the data consistence
-        if (!(count($range) % 2)) {
+        $nb = count($range);
+        if (!$nb || (!($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_END)) {
             throw new InconsistentRangeException('The time range does not seem to be consistent, the range seems to be already complete!');
         }
-        $this->checkTimestampCoherence($tags, $timestamp);
+        $this->checkTimestampCoherence($range, $timestamp);
 
         // append the new END TimePoint
         $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
@@ -142,32 +149,29 @@ class QtiTimer implements Timer
 
         // extract the TimePoint identification from the provided item, and find existing range
         $tags = $this->getItemTags($routeItem);
-        $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
+        $itemTimeLine = $this->timeLine->filter([$routeItem->getAssessmentItemRef()->getIdentifier()], TimePoint::TARGET_SERVER);
+        $range = $itemTimeLine->getPoints();
 
         // validate the data consistence
-        $rangeLength = count($range);
+        $rangeLength = count($range->getPoints());
         if (!$rangeLength || ($rangeLength % 2)) {
             throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
         }
-        
-        // extract the last range and compute the server side duration
-        usort($range, function($a, $b) {
-            return $a->compare($b);
-        });
-        
-        $serverStart = $range[$rangeLength - 2];
-        $serverEnd = $range[$rangeLength - 1];
-        $serverDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
 
-        // validate the data consistence
-        if ($serverDuration < 0) {
-            throw new InconsistentRangeException('A duration cannot be negative!');
-        }
-        if ($duration > $serverDuration) {
+        // check if the client side duration is bound by the server side duration
+        if ($duration > $itemTimeLine->compute()) {
             throw new InconsistentRangeException('A client duration cannot be larger than the server time range!');
         }
         
-        // adjust the range by inserting the client duration
+        // extract range boundaries
+        usort($range, function($a, $b) {
+            return $a->compare($b);
+        });
+        $serverStart = $range[0];
+        $serverEnd = $range[$rangeLength - 1];
+        $serverDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
+
+        // adjust the range by inserting the client duration between the server time range boundaries
         $delay = ($serverDuration - $duration) / 2;
         
         $start = new TimePoint($tags, $serverStart->getTimestamp() + $delay, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT);
@@ -286,6 +290,23 @@ class QtiTimer implements Timer
             }
         }
     }
+
+    /**
+     * Extracts a sorted range of TimePoint
+     *
+     * @param array $tags
+     * @return array
+     */
+    protected function getRange($tags)
+    {
+        $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
+
+        usort($range, function($a, $b) {
+            return $a->compare($b);
+        });
+
+        return $range;
+    }
     
     /**
      * Gets the tags describing a particular item with an assessment test
@@ -294,22 +315,23 @@ class QtiTimer implements Timer
      */
     protected function getItemTags(RouteItem $routeItem)
     {
-        $tags = [];
-
-        $itemRef = $routeItem->getAssessmentItemRef();
+        $test = $routeItem->getAssessmentTest();
         $testPart = $routeItem->getTestPart();
         $sections = $routeItem->getAssessmentSections();
-
-        $occurrence = $routeItem->getOccurence();
-        $partId = $testPart->getIdentifier();
         $sectionId = key(current($sections));
+        $itemRef = $routeItem->getAssessmentItemRef();
         $itemId = $itemRef->getIdentifier();
-        
-        $tags []= $itemId;
-        $tags []= $itemId . '#' . $occurrence;
-        $tags []= $partId;
-        $tags []= $sectionId;
-        
+        $occurrence = $routeItem->getOccurence();
+
+        $tags = [
+            $itemId,
+            $itemId . '#' . $occurrence,
+            $sectionId,
+            $testPart->getIdentifier(),
+            $test->getIdentifier(),
+            $itemRef->getHref(),
+        ];
+
         return $tags;
     }
 
