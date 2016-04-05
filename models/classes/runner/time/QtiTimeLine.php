@@ -151,8 +151,7 @@ class QtiTimeLine implements TimeLine
         }
         
         // create a another instance of the same class
-        $class = get_class($this);
-        $subset = new $class();
+        $subset = new static();
         
         // fill the new instance with filtered TimePoint
         foreach ($this->points as $idx => $point) {
