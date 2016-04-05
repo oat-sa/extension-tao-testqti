@@ -248,7 +248,7 @@ class QtiTimeLine implements TimeLine
             if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_START)) {
                 // we cannot have the START TimePoint twice
                 if ($start) {
-                    throw new MalformedRangeException();
+                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice START found.');
                 }
                 $start = $point;
             }
@@ -257,7 +257,7 @@ class QtiTimeLine implements TimeLine
             if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_END)) {
                 // we cannot have the END TimePoint twice
                 if ($end) {
-                    throw new MalformedRangeException();
+                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice END found.');
                 }
                 $end = $point;
             }
@@ -284,13 +284,13 @@ class QtiTimeLine implements TimeLine
     {
         // the two TimePoint must have the same target to be consistent
         if ($start->getTarget() != $end->getTarget()) {
-            throw new InconsistentRangeException();
+            throw new InconsistentRangeException('A time range must be defined by two TimePoint with the same target');
         }
 
         // the two TimePoint must be correctly ordered
         $rangeDuration = $end->getTimestamp() - $start->getTimestamp();
         if ($rangeDuration < 0) {
-            throw new InconsistentRangeException();
+            throw new InconsistentRangeException('A START TimePoint cannot take place after the END!');
         }
 
         return $rangeDuration;
