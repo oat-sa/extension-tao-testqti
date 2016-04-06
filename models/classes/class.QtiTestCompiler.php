@@ -561,21 +561,19 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * in the public compilation directory.
      * 
      */
-    protected function copyPublicResources() {
-        
-        $compiledDocDir = $this->getPrivateDirectory()->getPath();
-        $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
-        
-        foreach (tao_helpers_File::scandir($compiledDocDir, array('recursive' => true, 'only' => tao_helpers_File::$FILE, 'absolute' => true)) as $file) {
+    protected function copyPublicResources()
+    {
+        $testService = taoQtiTest_models_classes_QtiTestService::singleton();
+        $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
+        $publicCompiledDocDir = $this->getPublicDirectory();
+
+        foreach (tao_helpers_File::scandir($testPath, array('recursive' => true, 'only' => tao_helpers_File::$FILE, 'absolute' => true)) as $file) {
             $mime = tao_helpers_File::getMimeType($file, true);
             $pathinfo = pathinfo($file);
             
             // Exclude CSS files because already copied when dealing with rubric blocks.
             if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                $file = str_replace($compiledDocDir, '', $file);
-                
-                common_Logger::t("Copying public resource '${file}'...");
-                taoQtiTest_helpers_Utils::storeQtiResource($publicCompiledDocDir, $file, $compiledDocDir);
+                $publicCompiledDocDir->writeStream($file, fopen($file, 'r'));
             }
         }
     }
