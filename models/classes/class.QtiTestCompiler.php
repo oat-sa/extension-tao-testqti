@@ -448,13 +448,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function copyPrivateResources() {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
-        
+
+        $privateDir = $this->getPrivateDirectory();
         $subContent = tao_helpers_File::scandir($testPath, array('recursive' => false, 'absolute' => true));
-        $privateDirPath = $this->getPrivateDirectory()->getPath();
-        
+
         // Recursive copy of each root level resources.
         foreach ($subContent as $subC) {
-            tao_helpers_File::copy($subC, $privateDirPath . basename($subC));
+            $mime = tao_helpers_File::getMimeType($subC, true);
+            $pathinfo = pathinfo($subC);
+
+            try {
+                if (($handle = fopen($subC,'r'))!==false) {
+                    $privateDir->writeStream($subC, $stream = \GuzzleHttp\Psr7\stream_for($handle));
+                    $stream->close();
+                }
+            } catch (\InvalidArgumentException $e) {
+                common_Logger::e('Unable to copy file into private directory: ' . $subC);
+            }
         }
     }
     
@@ -573,7 +583,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             // Exclude CSS files because already copied when dealing with rubric blocks.
             if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                $publicCompiledDocDir->writeStream($file, fopen($file, 'r'));
+                try {
+                    if (($handle = fopen($file,'r'))!==false) {
+                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
+                        $publicCompiledDocDir->writeStream($file, $stream);
+                        $stream->close();
+                    }
+                } catch (\InvalidArgumentException $e) {
+                    common_Logger::e('Unable to copy file into public directory: ' . $file);
+                }
             }
         }
     }
