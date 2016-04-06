@@ -95,6 +95,8 @@ class QtiTimer implements Timer
         // append the new START TimePoint
         $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_START, TimePoint::TARGET_SERVER);
         $this->timeLine->add($point);
+
+        return $this;
     }
 
     /**
@@ -128,6 +130,8 @@ class QtiTimer implements Timer
         // append the new END TimePoint
         $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
         $this->timeLine->add($point);
+
+        return $this;
     }
 
     /**
@@ -179,6 +183,8 @@ class QtiTimer implements Timer
         
         $end = new TimePoint($tags, $serverEnd->getTimestamp() - $delay, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT);
         $this->timeLine->add($end);
+
+        return $this;
     }
 
     /**
