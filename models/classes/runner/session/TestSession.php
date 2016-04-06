@@ -23,6 +23,8 @@ namespace oat\taoQtiTest\models\runner\session;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\TimePoint;
+use qtism\common\datatypes\Duration;
+use qtism\runtime\tests\AssessmentItemSession;
 use taoQtiTest_helpers_TestSession;
 
 /**
@@ -141,5 +143,31 @@ class TestSession extends taoQtiTest_helpers_TestSession
     {
         \common_Logger::i('Check time limit hacked');
         return true;
+    }
+
+    /**
+     * AssessmentTestSession implementations must override this method in order
+     * to submit item results from a given $assessmentItemSession to the appropriate
+     * data source.
+     *
+     * This method is triggered each time response processing takes place.
+     *
+     * @param AssessmentItemSession $itemSession The lastly updated AssessmentItemSession.
+     * @param integer $occurrence The occurrence number of the item bound to $assessmentItemSession.
+     * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while transmitting results.
+     */
+    public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
+    {
+        $itemRef = $itemSession->getAssessmentItem();
+        $identifier = $itemRef->getIdentifier();
+        $itemDuration = round($this->getTimer()->compute($identifier, TimePoint::TARGET_SERVER), 6);
+        $duration = new Duration('PT' . $itemDuration . 'S');
+
+        $itemDurationVar = $itemSession->getVariable('duration');
+        $sessionDuration = $itemDurationVar->getValue();
+        \common_Logger::i("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
+        $itemSession->getVariable('duration')->setValue($duration);
+
+        parent::submitItemResults($itemSession, $occurrence);
     }
 }

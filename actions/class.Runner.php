@@ -427,6 +427,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
+            $this->runnerService->endTimer($serviceContext, $itemDuration);
 
             if ($storeResponse) {
                 $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
@@ -434,7 +435,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $successResponse = true;
                 $displayFeedback = false;
-        }
+            }
 
             $response = [
                 'success' => $successState && $successResponse,
@@ -447,7 +448,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
             }
 
-            $this->runnerService->endTimer($serviceContext, $itemDuration);
             $this->runnerService->persist($serviceContext);
 
         } catch (common_Exception $e) {
