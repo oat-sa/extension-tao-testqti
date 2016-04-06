@@ -61,15 +61,15 @@ class QtiTimer implements Timer
 
     /**
      * Adds a "server start" TimePoint at a particular timestamp for the provided ItemRef
-     * @param RouteItem $routeItem
+     * @param mixed $itemRef
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function start($routeItem, $timestamp)
+    public function start($itemRef, $timestamp)
     {
         // check the provided arguments
-        if (!($routeItem instanceof RouteItem)) {
+        if (!($itemRef instanceof RouteItem)) {
             throw new InvalidDataException('start() needs a valid routeItem instance!');
         }
         if (!is_numeric($timestamp) || $timestamp < 0) {
@@ -77,7 +77,7 @@ class QtiTimer implements Timer
         }
         
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($routeItem);
+        $tags = $this->getItemTags($itemRef);
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -101,15 +101,15 @@ class QtiTimer implements Timer
 
     /**
      * Adds a "server end" TimePoint at a particular timestamp for the provided ItemRef
-     * @param RouteItem $routeItem
+     * @param mixed $itemRef
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function end($routeItem, $timestamp)
+    public function end($itemRef, $timestamp)
     {
         // check the provided arguments
-        if (!($routeItem instanceof RouteItem)) {
+        if (!($itemRef instanceof RouteItem)) {
             throw new InvalidDataException('end() needs a valid routeItem instance!');
         }
         if (!is_numeric($timestamp) || $timestamp < 0) {
@@ -117,7 +117,7 @@ class QtiTimer implements Timer
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($routeItem);
+        $tags = $this->getItemTags($itemRef);
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -136,15 +136,15 @@ class QtiTimer implements Timer
 
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
-     * @param RouteItem $routeItem
+     * @param mixed $itemRef
      * @param float $duration
      * @return Timer
      * @throws TimeException
      */
-    public function adjust($routeItem, $duration)
+    public function adjust($itemRef, $duration)
     {
         // check the provided arguments
-        if (!($routeItem instanceof RouteItem)) {
+        if (!($itemRef instanceof RouteItem)) {
             throw new InvalidDataException('adjust() needs a valid routeItem instance!');
         }
         if (!is_numeric($duration) || $duration < 0) {
@@ -152,8 +152,8 @@ class QtiTimer implements Timer
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($routeItem);
-        $itemTimeLine = $this->timeLine->filter([$routeItem->getAssessmentItemRef()->getIdentifier()], TimePoint::TARGET_SERVER);
+        $tags = $this->getItemTags($itemRef);
+        $itemTimeLine = $this->timeLine->filter([$itemRef->getAssessmentItemRef()->getIdentifier()], TimePoint::TARGET_SERVER);
         $range = $itemTimeLine->getPoints();
 
         // validate the data consistence
