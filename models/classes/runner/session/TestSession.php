@@ -22,9 +22,14 @@ namespace oat\taoQtiTest\models\runner\session;
 
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentTestPlace;
+use qtism\runtime\tests\AssessmentTestSessionException;
+use qtism\runtime\tests\TimeConstraint;
+use qtism\runtime\tests\TimeConstraintCollection;
 use taoQtiTest_helpers_TestSession;
 
 /**
@@ -39,6 +44,18 @@ class TestSession extends taoQtiTest_helpers_TestSession
      * @var QtiTimer
      */
     protected $timer;
+
+    /**
+     * The target from which compute the durations
+     * @var int
+     */
+    protected $timerTarget = TimePoint::TARGET_SERVER;
+
+    /**
+     * A temporary cache for computed durations
+     * @var array
+     */
+    protected $durationCache = [];
 
     /**
      * Gets the Timer bound to the test session
@@ -57,6 +74,37 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
+     * @return int
+     */
+    public function getTimerTarget()
+    {
+        return $this->timerTarget;
+    }
+
+    /**
+     * @param int $timerTarget
+     */
+    public function setTimerTarget($timerTarget)
+    {
+        $this->timerTarget = intval($timerTarget);
+    }
+
+    /**
+     * Initializes the timer for the current item in the TestSession
+     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     */
+    public function initItemTimer()
+    {
+        try {
+            // try to close existing time range if any, in order to be sure the test will start or restart a new range.
+            $this->getTimer()->end($this->getCurrentRouteItem(), microtime(true))->save();
+            \common_Logger::i('Existing timer initialized.');
+        } catch(InconsistentRangeException $e) {
+            \common_Logger::i('New timer initialized.');
+        }
+    }
+
+    /**
      * Starts the timer for the current item in the TestSession
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
@@ -67,6 +115,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
 
     /**
      * Ends the timer for the current item in the TestSession
+     * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function endItemTimer()
@@ -86,63 +135,135 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
-     * Gets the total duration for the current item in the TestSession
+     * Gets the timer duration for a particular identifier
+     * @param string|array $identifier
      * @param int $target
-     * @return float
+     * @return Duration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    public function computeItemTime($target = TimePoint::TARGET_SERVER)
+    public function getTimerDuration($identifier, $target = 0)
+    {
+        if (!$target) {
+            $target = $this->timerTarget;
+        }
+
+        $durationKey = $target . '-';
+        if (is_array($identifier)) {
+            sort($identifier);
+            $durationKey .= implode('-', $identifier);
+        } else {
+            $durationKey .= $identifier;
+        }
+
+        if (!isset($this->durationCache[$durationKey])) {
+            $duration = round($this->getTimer()->compute($identifier, $target), 6);
+            $this->durationCache[$durationKey] = new Duration('PT' . $duration . 'S');
+        }
+
+        return $this->durationCache[$durationKey];
+    }
+
+    /**
+     * Gets the total duration for the current item in the TestSession
+     * @param int $target
+     * @return Duration
+     * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
+     */
+    public function computeItemTime($target = 0)
     {
         $currentItem = $this->getCurrentAssessmentItemRef();
-        return $this->getTimer()->compute($currentItem->getIdentifier(), $target);
+        return $this->getTimerDuration($currentItem->getIdentifier(), $target);
     }
 
     /**
      * Gets the total duration for the current section in the TestSession
      * @param int $target
-     * @return float
+     * @return Duration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    public function computeSectionTime($target = TimePoint::TARGET_SERVER)
+    public function computeSectionTime($target = 0)
     {
         $routeItem = $this->getCurrentRouteItem();
         $sections = $routeItem->getAssessmentSections();
-        return $this->getTimer()->compute(key(current($sections)), $target);
+        return $this->getTimerDuration(key(current($sections)), $target);
     }
 
     /**
      * Gets the total duration for the current test part in the TestSession
      * @param int $target
-     * @return float
+     * @return Duration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    public function computeTestPartTime($target = TimePoint::TARGET_SERVER)
+    public function computeTestPartTime($target = 0)
     {
         $routeItem = $this->getCurrentRouteItem();
         $testPart = $routeItem->getTestPart();
-        return $this->getTimer()->compute($testPart->getIdentifier(), $target);
+        return $this->getTimerDuration($testPart->getIdentifier(), $target);
     }
 
     /**
      * Gets the total duration for the whole assessment test
      * @param int $target
-     * @return float
+     * @return Duration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    public function computeTestTime($target = TimePoint::TARGET_SERVER)
+    public function computeTestTime($target = 0)
     {
         $routeItem = $this->getCurrentRouteItem();
         $test = $routeItem->getAssessmentTest();
-        return $this->getTimer()->compute($test->getIdentifier(), $target);
+        return $this->getTimerDuration($test->getIdentifier(), $target);
     }
 
     /**
-     * Hack the check time limits
+     * Update the durations involved in the AssessmentTestSession to mirror the durations at the current time.
+     * This method can be useful for stateless systems that make use of QtiSm.
      */
-    public function checkTimeLimits($includeMinTime = false, $includeAssessmentItem = false, $acceptableLatency = true)
-    {
-        \common_Logger::i('Check time limit hacked');
-        return true;
+    public function updateDuration() {
+        // not needed anymore
+        \common_Logger::t('Call to disabled updateDuration()');
+    }
+
+    /**
+     * Get the time constraints running for the current testPart or/and current assessmentSection
+     * or/and assessmentItem.
+     *
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @return TimeConstraintCollection A collection of TimeConstraint objects.
+     * @qtism-test-duration-update
+     */
+    public function getTimeConstraints($places = null) {
+
+        if ($places === null) {
+            // Get the constraints from all places in the Assessment Test.
+            $places = (AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM);
+        }
+
+        $constraints = new TimeConstraintCollection();
+        $navigationMode = $this->getCurrentNavigationMode();
+        $routeItem = $this->getCurrentRouteItem();
+        $considerMinTime = $this->mustConsiderMinTime();
+
+        if ($places & AssessmentTestPlace::ASSESSMENT_TEST) {
+            $source = $routeItem->getAssessmentTest();
+            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+        }
+
+        if ($places & AssessmentTestPlace::TEST_PART) {
+            $source = $this->getCurrentTestPart();
+            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+        }
+
+        if ($places & AssessmentTestPlace::ASSESSMENT_SECTION) {
+            $source = $this->getCurrentAssessmentSection();
+            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+        }
+
+        if ($places & AssessmentTestPlace::ASSESSMENT_ITEM) {
+            $source = $routeItem->getAssessmentItemRef();
+            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+        }
+
+        return $constraints;
     }
 
     /**
@@ -160,8 +281,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     {
         $itemRef = $itemSession->getAssessmentItem();
         $identifier = $itemRef->getIdentifier();
-        $itemDuration = round($this->getTimer()->compute($identifier, TimePoint::TARGET_SERVER), 6);
-        $duration = new Duration('PT' . $itemDuration . 'S');
+        $duration = $this->getTimerDuration($identifier);
 
         $itemDurationVar = $itemSession->getVariable('duration');
         $sessionDuration = $itemDurationVar->getValue();

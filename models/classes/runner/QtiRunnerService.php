@@ -161,6 +161,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
+            $session->initItemTimer();
             if (\taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 \taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
