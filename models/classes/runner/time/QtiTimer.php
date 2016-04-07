@@ -157,7 +157,7 @@ class QtiTimer implements Timer
         $range = $itemTimeLine->getPoints();
 
         // validate the data consistence
-        $rangeLength = count($range->getPoints());
+        $rangeLength = count($range);
         if (!$rangeLength || ($rangeLength % 2)) {
             throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
         }
