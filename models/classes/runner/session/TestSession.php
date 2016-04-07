@@ -74,6 +74,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
+     * Gets the target from which compute the durations
      * @return int
      */
     public function getTimerTarget()
@@ -82,6 +83,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
+     * Set the target from which compute the durations
      * @param int $timerTarget
      */
     public function setTimerTarget($timerTarget)
@@ -224,6 +226,19 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
+     * Gets a TimeConstraint from a particular source
+     * @param $source
+     * @param $navigationMode
+     * @param $considerMinTime
+     * @return TimeConstraint
+     * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
+     */
+    protected function getTimeConstraint($source, $navigationMode, $considerMinTime)
+    {
+        return new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+    }
+
+    /**
      * Get the time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem.
      *
@@ -244,23 +259,19 @@ class TestSession extends taoQtiTest_helpers_TestSession
         $considerMinTime = $this->mustConsiderMinTime();
 
         if ($places & AssessmentTestPlace::ASSESSMENT_TEST) {
-            $source = $routeItem->getAssessmentTest();
-            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime);
         }
 
         if ($places & AssessmentTestPlace::TEST_PART) {
-            $source = $this->getCurrentTestPart();
-            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($this->getCurrentTestPart(), $navigationMode, $considerMinTime);
         }
 
         if ($places & AssessmentTestPlace::ASSESSMENT_SECTION) {
-            $source = $this->getCurrentAssessmentSection();
-            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($this->getCurrentAssessmentSection(), $navigationMode, $considerMinTime);
         }
 
         if ($places & AssessmentTestPlace::ASSESSMENT_ITEM) {
-            $source = $routeItem->getAssessmentItemRef();
-            $constraints[] = new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime);
         }
 
         return $constraints;

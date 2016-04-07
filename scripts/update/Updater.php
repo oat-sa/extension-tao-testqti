@@ -279,5 +279,14 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.22.0');
         }
+
+        if ($this->isVersion('2.22.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['timer']['target'] = 'server';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.23.0');
+        }
     }
 }

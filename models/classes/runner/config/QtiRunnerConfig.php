@@ -68,7 +68,8 @@ class QtiRunnerConfig implements RunnerConfig
                 'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
                 'security' => [ 
                     'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
-                ]
+                ],
+                'timer' => isset($rawConfig['timer']) ? $rawConfig['timer'] : null,
             ];
         }
         return $this->config;
