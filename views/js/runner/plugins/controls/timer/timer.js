@@ -27,12 +27,13 @@ define([
     'i18n',
     'core/polling',
     'core/timer',
+    'core/store',
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, pollingFactory, timerFactory, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function ($, _, __, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -77,6 +78,7 @@ define([
      * Creates the timer plugin
      */
     return pluginFactory({
+
         name: 'timer',
 
         /**
@@ -89,7 +91,6 @@ define([
             var testData     = testRunner.getTestData() || {};
             var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
-            var lastDiff;
 
             var currentTimers = {};
 
@@ -149,6 +150,8 @@ define([
              */
             var removeTimer = function removeTimer(type){
                 if(currentTimers[type]){
+                    self.storage.removeItem(currentTimers[type].id());
+
                     currentTimers[type].destroy();
                     currentTimers = _.omit(currentTimers, type);
                 }
@@ -172,7 +175,7 @@ define([
              * Update the timers.
              * It will remove, let, add or update the current timers based on the current context.
              */
-            var updateTimers = function updateTimers(){
+            var updateTimers = function updateTimers(checkStorage){
 
                 _.forEach(timerTypes, function(type){
                     var timerConfig = getTimerConfig(type);
@@ -184,22 +187,36 @@ define([
                             removeTimer(type);
                             addTimer(type, timerConfig);
                         }
-                    } else {
-                        addTimer(type, timerConfig);
+                    } else if(timerConfig){
+
+                        if(checkStorage){
+
+                            //check for the last value in the storage
+                            self.storage.getItem(timerConfig.id).then(function(savedTime){
+                                if(savedTime && savedTime < timerConfig.remaining){
+                                    timerConfig.remaining = savedTime;
+                                }
+                                addTimer(type, timerConfig);
+                            }).catch(function(err){
+                                //add the timer even if the storage doesn't work
+                                addTimer(type, timerConfig);
+                            });
+
+                        } else {
+                            addTimer(type, timerConfig);
+                        }
                     }
                 });
             };
+
+            //the timer's storage
+            this.storage = store('timer-' + testRunner.getConfig().serviceCallId);
 
             //the element that'll contain the timers
             this.$element = $(timerBoxTpl());
 
             //one stopwatch to count the time
             this.stopwatch = timerFactory({
-                autoStart : false
-            });
-
-            //a pausewatch that counts only during pauses (between items)
-            this.pausewatch = timerFactory({
                 autoStart : false
             });
 
@@ -233,6 +250,9 @@ define([
                                 timeoutScope = type;
                             }
 
+                            //update db
+                            self.storage.setItem(timer.id(), currentVal);
+
                             if (!timeout) {
                                 warnMessage = timer.warn();
                                 if(warnMessage){
@@ -250,11 +270,28 @@ define([
                 autoStart : false
             });
 
-            //create the initial timers
-            updateTimers();
+
 
             //change plugin state
             testRunner
+                .on('init', function(){
+
+                    //create the initial timers
+                    updateTimers(true);
+
+                })
+
+                .on('loaditem', function(){
+
+                    //check for new timers
+                    updateTimers();
+                })
+
+                .after('renderitem', function(){
+                    //start timers
+                    self.enable();
+                })
+
                 .before('move', function(e, type, scope, position){
                     var done = e.done();
 
@@ -268,11 +305,8 @@ define([
                         e.prevent();
                     };
 
+                    //pause the timers
                     if (self.getState('enabled')) {
-                        //start to count the time before the next content is shown
-                        self.pausewatch.start();
-
-                        //and pause the running ones
                         self.disable();
                     }
 
@@ -283,26 +317,14 @@ define([
                         doMove();
                     }
                 })
-                .on('loaditem', function(){
 
-                    //check for new timers
-                    updateTimers();
-                })
+                .before('finish', function(e){
+                    var done = e.done();
 
-                .after('renderitem', function(){
-                    //get the diff of the timers pause
-                    lastDiff = self.pausewatch.tick();
-                    self.pausewatch.stop();
-
-                    //start timers
-                    self.enable();
-
-                    //add the last diff to the next action call
-                    if(lastDiff && _.size(currentTimers) > 0){
-                        _.defer(function(){
-                            testRunner.getProxy().callTestAction('time', { timerPaused : lastDiff / precision });
-                        });
-                    }
+                    //clean up the storage at the end
+                    self.storage.clear()
+                        .then(done)
+                        .catch(done);
                 });
         },
 
@@ -324,7 +346,7 @@ define([
         },
 
         /**
-         * Enables the button
+         * Enables the timers
          */
         enable : function enable (){
             this.polling.start();
@@ -332,7 +354,7 @@ define([
         },
 
         /**
-         * Disables the button
+         * Disables the timers
          */
         disable : function disable (){
             this.polling.stop();
@@ -340,14 +362,14 @@ define([
         },
 
         /**
-         * Shows the button
+         * Shows the timers
          */
         show: function show(){
             hider.show(this.$element);
         },
 
         /**
-         * Hides the button
+         * Hides the timers
          */
         hide: function hide(){
             hider.hide(this.$element);

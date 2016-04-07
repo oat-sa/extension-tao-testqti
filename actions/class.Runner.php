@@ -749,32 +749,4 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-
-    /**
-     * Used to manage time
-     */
-    public function time()
-    {
-        $code = 200;
-
-        try {
-            if($this->hasRequestParameter('timerPaused')){
-                $duration = floatval($this->getRequestParameter('timerPaused'));
-                if($duration > 0){
-                    $serviceContext = $this->getServiceContext(false);
-                    $this->runnerService->updateTimers($serviceContext, $duration);
-                    $this->runnerService->persist($serviceContext);
-                }
-            }
-            $response = [
-                'success' => true
-            ];
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
-
-        $this->returnJson($response, $code);
-    }
 }
