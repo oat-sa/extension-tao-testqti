@@ -64,12 +64,14 @@ class QtiRunnerConfig implements RunnerConfig
                 ],
                 'exitButton' => !empty($rawConfig['exitButton']),
                 'nextSection' => !empty($rawConfig['next-section']),
-                'resetTimerAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
                 'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
                 'security' => [ 
                     'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
                 ],
-                'timer' => isset($rawConfig['timer']) ? $rawConfig['timer'] : null,
+                'timer' => [
+                    'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
+                    'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
+                ]
             ];
         }
         return $this->config;
