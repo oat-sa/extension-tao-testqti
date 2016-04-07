@@ -36,7 +36,9 @@ class SessionManager extends taoQtiTest_helpers_SessionManager
     /**
      * Instantiates an AssessmentTestSession with the default overriden TestSession.
      *
-     * @return AssessmentTestSession
+     * @param AssessmentTest $test
+     * @param Route $route
+     * @return TestSession
      */
     protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route)
     {

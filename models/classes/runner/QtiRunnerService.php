@@ -22,8 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-use alroniks\dtms\DateInterval;
-use alroniks\dtms\DateTime;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
@@ -32,6 +30,8 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String as QtismString;
@@ -117,6 +117,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
         $serviceContext->setServiceManager($this->getServiceManager());
 
+        $testSession = $serviceContext->getTestSession();
+        if ($testSession instanceof TestSession) {
+
+            $config = $this->getTestConfig()->getConfigValue('timer');
+
+            // sets the target from which computes the durations.
+            if (isset($config['target'])) {
+                switch (strtolower($config['target'])) {
+                    case 'client':
+                        $target = TimePoint::TARGET_CLIENT;
+                        break;
+
+                    case 'server':
+                    default:
+                        $target = TimePoint::TARGET_SERVER;
+                }
+
+                $testSession->setTimerTarget($target);
+            }
+        }
+
         if ($check) {
             // will throw exception if the test session is not valid
             $this->check($serviceContext);
@@ -162,6 +183,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
+            $session->initItemTimer();
             if (\taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
                 \taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
@@ -988,6 +1010,49 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
         }
+    }
+
+    /**
+     * Starts the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @return bool
+     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function startTimer(RunnerServiceContext $context)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            /* @var TestSession $session */
+            $session = $context->getTestSession();
+            $session->startItemTimer();
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+        return true;
+    }
+
+    /**
+     * Ends the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float $duration The client side duration to adjust the timer
+     * @return bool
+     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function endTimer(RunnerServiceContext $context, $duration = null)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            /* @var TestSession $session */
+            $session = $context->getTestSession();
+            $session->endItemTimer();
+
+            if (isset($duration)) {
+                $session->adjustItemTimer($duration);
+            }
+        } else {
+            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+        }
+        return true;
     }
 
     /**
