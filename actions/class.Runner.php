@@ -405,6 +405,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $itemDuration = $this->getRequestParameter('itemDuration');
 
         $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
+        if (isset($data['itemDuration'])) {
+            $itemDuration = $data['itemDuration'];
+        }
 
         $state = isset($data['itemState']) ? $data['itemState'] : new stdClass();
         $itemResponse = isset($data['itemResponse']) ? $data['itemResponse'] : [];
