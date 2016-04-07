@@ -454,17 +454,19 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
         // Recursive copy of each root level resources.
         foreach ($subContent as $subC) {
-            $privatePathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $subC);
-            if (!$privateDir->has($privatePathFile)) {
-                try {
-                    if (($handle = fopen($subC, 'r')) === false) {
-                        throw new \InvalidArgumentException('Unable to open file');
+            if (is_file($subC)) {
+                $privatePathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $subC);
+                if (!$privateDir->has($privatePathFile)) {
+                    try {
+                        if (($handle = fopen($subC, 'r')) === false) {
+                            throw new \InvalidArgumentException('Unable to open file');
+                        }
+                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
+                        $privateDir->writeStream($privatePathFile, $stream);
+                        $stream->close();
+                    } catch (\InvalidArgumentException $e) {
+                        common_Logger::e('Unable to copy file into private directory: ' . basename($subC));
                     }
-                    $stream = \GuzzleHttp\Psr7\stream_for($handle);
-                    $privateDir->writeStream($privatePathFile, $stream);
-                    $stream->close();
-                } catch (\InvalidArgumentException $e) {
-                    common_Logger::e('Unable to copy file into private directory: ' . basename($subC));
                 }
             }
         }
