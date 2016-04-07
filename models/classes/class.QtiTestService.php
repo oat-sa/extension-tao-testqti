@@ -914,6 +914,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
         $path = (string) current($props[PROPERTY_FILE_FILEPATH]);
 
+        common_Logger::i($path);
+
         // $directory is the directory where test related resources will be stored.
         $directory = $repository->createFile('', $path .DIRECTORY_SEPARATOR. md5($test->getUri()) . DIRECTORY_SEPARATOR);
         $dirPath = $directory->getAbsolutePath().DIRECTORY_SEPARATOR;

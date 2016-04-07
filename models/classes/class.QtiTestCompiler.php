@@ -247,7 +247,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testContentPath = $testService->getDocPath($this->getResource());
         $testDataPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
         $this->setExtraPath(str_replace(array($testDataPath, TAOQTITEST_FILENAME), '', $testContentPath));
-        
+
         // Initialize rendering engine.
         $renderingEngine = new XhtmlRenderingEngine();
         $renderingEngine->setStylesheetPolicy(XhtmlRenderingEngine::STYLESHEET_SEPARATE);
@@ -294,7 +294,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             // 1. Copy the resources composing the test into the private complilation directory.
             $this->copyPrivateResources();
-            
+
             // 2. Compact the test definition itself.
             $compiledDoc = $this->compactTest();
             
@@ -306,20 +306,20 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::ITEM_COMPILATION;
                 throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), $code);
             }
-            
+
             // 4. Explode the rubric blocks in the test into rubric block refs.
             $this->explodeRubricBlocks($compiledDoc);
             
             // 5. Update test definition with additional runtime info.
             $assessmentTest = $compiledDoc->getDocumentComponent();
             $this->updateTestDefinition($assessmentTest);
-            
+
             // 6. Compile rubricBlocks and serialize on disk.
             $this->compileRubricBlocks($assessmentTest);
-            
+
             // 7. Copy the needed files into the public directory.
             $this->copyPublicResources();
-            
+
             // 8. Compile the test definition into PHP source code and put it
             // into the private directory.
             $this->compileTest($assessmentTest);
@@ -327,7 +327,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 9. Compile the test meta data into PHP array source code and put it
             // into the private directory.
             $this->compileMeta($assessmentTest);
-            
+
             // 10. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
@@ -454,16 +454,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
         // Recursive copy of each root level resources.
         foreach ($subContent as $subC) {
-            $mime = tao_helpers_File::getMimeType($subC, true);
-            $pathinfo = pathinfo($subC);
-
             try {
-                if (($handle = fopen($subC,'r'))!==false) {
-                    $privateDir->writeStream($subC, $stream = \GuzzleHttp\Psr7\stream_for($handle));
-                    $stream->close();
+                if (($handle = fopen($subC,'r'))===false) {
+                    throw new \InvalidArgumentException('Unable to open file');
                 }
+                $stream = \GuzzleHttp\Psr7\stream_for($handle);
+                $privateDir->writeStream(basename($subC), $stream);
+                $stream->close();
             } catch (\InvalidArgumentException $e) {
-                common_Logger::e('Unable to copy file into private directory: ' . $subC);
+                common_Logger::e('Unable to copy file into private directory: ' . basename($subC));
             }
         }
     }
@@ -500,7 +499,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
-        
+
         foreach ($rubricBlockRefs as $rubricRef) {
             
             $rubricRefHref = $rubricRef->getHref();
@@ -508,8 +507,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $renderingEngine = $this->getRenderingEngine();
             $markupPostRenderer = $this->getMarkupPostRenderer();
             $compiledDocDir = $this->getPrivateDirectory()->getPath();
-            $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
-            
+            $publicCompiledDocDir = $this->getPublicDirectory();
+
+            $testService = taoQtiTest_models_classes_QtiTestService::singleton();
+            $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
+
             // -- loading...
             common_Logger::t("Loading rubricBlock '" . $rubricRefHref . "'...");
             
@@ -523,7 +525,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             $pathinfo = pathinfo($rubricRefHref);
             $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
-            
+
             $rubric = $rubricDoc->getDocumentComponent();
             $rubricStylesheets = $rubric->getStylesheets();
             $stylesheets = new StylesheetCollection();
@@ -539,29 +541,54 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 // ident token must begin by -|[a-zA-Z]
                 $rubric->setId('tao' . uniqid());
             }
-            
+
             // -- Copy eventual remote resources of the rubricBlock.
             $this->copyRemoteResources($rubric);
             
             $domRendering = $renderingEngine->render($rubric);
             $mainStringRendering = $markupPostRenderer->render($domRendering);
-            
+
             // Prepend stylesheets rendering to the main rendering.
             $styleRendering = $renderingEngine->getStylesheets();
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
-            
+
             foreach ($stylesheets as $rubricStylesheet) {
-                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($compiledDocDir . ltrim($this->getExtraPath(), '/'), $rubricStylesheet->getHref());
-                file_put_contents($stylesheetPath, $cssScoper->render($stylesheetPath, $rubric->getId()));
+                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath(
+                    $testPath . ltrim($this->getExtraPath(), '/'),
+                    $rubricStylesheet->getHref()
+                );
+
+                $qtiResource = $rubricStylesheet->getHref();
+                if ($qtiResource instanceof taoQti_models_classes_QTI_Resource) {
+                    $filePath = $qtiResource->getFile();
+                }
+                else if (is_string($qtiResource) === true) {
+                    $filePath = $qtiResource;
+                }
+                else {
+                    throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+                }
+
+                try {
+                    $stream = \GuzzleHttp\Psr7\stream_for($cssScoper->render($stylesheetPath, $rubric->getId()));
+                    $publicCompiledDocDir->writeStream($filePath, $stream);
+                    $stream->close();
+                } catch (\InvalidArgumentException $e) {
+                    common_Logger::e('Unable to copy file into public directory: ' . ltrim($this->getExtraPath(), '/'));
+                }
             }
             
             // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
             $mainStringRendering = str_replace(TAOQTITEST_PLACEHOLDER_BASE_URI, '<?php echo $' . TAOQTITEST_BASE_PATH_NAME . '; ?>', $mainStringRendering);
-            file_put_contents($renderingFile, $mainStringRendering);
-            common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
-            
-            // -- Clean up old rubric block and reference the new rubric block template.
-            unlink($compiledDocDir . $rubricRefHref);
+            try {
+                $stream = \GuzzleHttp\Psr7\stream_for($mainStringRendering);
+                $publicCompiledDocDir->writeStream($pathinfo['filename'] . '.php', $stream);
+                $stream->close();
+                common_Logger::i("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
+            } catch (\InvalidArgumentException $e) {
+                common_Logger::e('Unable to copy file into public directory: ' . ltrim($this->getExtraPath(), '/'));
+            }
+
             $rubricRef->setHref('./' . $pathinfo['filename'] . '.php');
         }
     }
@@ -583,14 +610,18 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             // Exclude CSS files because already copied when dealing with rubric blocks.
             if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                try {
-                    if (($handle = fopen($file,'r'))!==false) {
+                $publicPathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $file);
+                if (!$publicCompiledDocDir->has($publicPathFile)) {
+                    try {
+                        if (($handle = fopen($file,'r'))===false) {
+                            throw new \InvalidArgumentException('Unable to open file');
+                        }
                         $stream = \GuzzleHttp\Psr7\stream_for($handle);
-                        $publicCompiledDocDir->writeStream($file, $stream);
+                        $publicCompiledDocDir->writeStream($publicPathFile, $stream);
                         $stream->close();
+                    } catch (\InvalidArgumentException $e) {
+                        common_Logger::e('Unable to copy file into public directory: ' . $file);
                     }
-                } catch (\InvalidArgumentException $e) {
-                    common_Logger::e('Unable to copy file into public directory: ' . $file);
                 }
             }
         }
@@ -608,7 +639,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If a remote resource cannot be retrieved.
      */
     protected function copyRemoteResources(RubricBlock $rubricBlock) {
-        
         $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
         $ds = DIRECTORY_SEPARATOR;
         $destination = $publicCompiledDocDir . trim($this->getExtraPath(), $ds) . $ds . TAOQTITEST_REMOTE_FOLDER . $ds;
