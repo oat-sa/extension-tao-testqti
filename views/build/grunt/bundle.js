@@ -56,7 +56,7 @@ module.exports = function(grunt) {
             findNestedDependencies : true,
             paths : paths,
             include: runtimeLibs.concat([ 'tpl', 'json']),
-            excludeShallow : ['mathJax', 'ckeditor', 'lib/localforage', ''],
+            excludeShallow : ['mathJax', 'ckeditor'],
             exclude : ['json!i18ntr/messages.json'],
             name: "taoQtiTest/controller/runner/runner",
             out: out + "/qtiTestRunner.min.js"
