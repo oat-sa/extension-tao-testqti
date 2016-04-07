@@ -74,6 +74,15 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
         $this->assertEquals($timeLineUnserialized->getPoints(), $timeLine->getPoints());
     }
 
+    /**
+     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
+     */
+    public function testUnserializeInvalidDataException()
+    {
+        $timeLine = new QtiTimeLine();
+        $data = serialize('string');
+        $timeLine->unserialize($data);
+    }
 
     /**
      * Test the QtiTimeLine::getPoints()
