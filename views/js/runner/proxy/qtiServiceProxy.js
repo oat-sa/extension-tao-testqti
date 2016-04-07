@@ -23,9 +23,10 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/store',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, helpers, configFactory) {
+], function($, _, __, Promise, store, helpers, configFactory) {
     'use strict';
 
     /**
@@ -147,11 +148,11 @@ define([
         init: function init(config) {
             var initConfig = config || {};
 
-            // store config in a dedicated storage
-            this.storage = configFactory(initConfig);
+            // store config in a dedicated configStorage
+            this.configStorage = configFactory(initConfig);
 
             // request for initialization
-            return request(this, this.storage.getTestActionUrl('init'));
+            return request(this, this.configStorage.getTestActionUrl('init'));
         },
 
         /**
@@ -164,7 +165,7 @@ define([
             // the method must return a promise
             return new Promise(function(resolve) {
                 // no request, just a resources cleaning
-                self.storage = null;
+                self.configStorage = null;
                 self._runningPromise = null;
                 resolve();
             });
@@ -176,7 +177,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestData: function getTestData() {
-            return request(this, this.storage.getTestActionUrl('getTestData'));
+            return request(this, this.configStorage.getTestActionUrl('getTestData'));
         },
 
         /**
@@ -185,7 +186,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestContext: function getTestContext() {
-            return request(this, this.storage.getTestActionUrl('getTestContext'));
+            return request(this, this.configStorage.getTestActionUrl('getTestContext'));
         },
 
         /**
@@ -194,7 +195,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestMap: function getTestMap() {
-            return request(this, this.storage.getTestActionUrl('getTestMap'));
+            return request(this, this.configStorage.getTestActionUrl('getTestMap'));
         },
 
         /**
@@ -205,7 +206,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            return request(this, this.storage.getTestActionUrl(action), params);
+            return request(this, this.configStorage.getTestActionUrl(action), params);
         },
 
         /**
@@ -215,7 +216,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getItem: function getItem(uri) {
-            return request(this, this.storage.getItemActionUrl(uri, 'getItem'));
+            return request(this, this.configStorage.getItemActionUrl(uri, 'getItem'));
         },
 
         /**
@@ -226,11 +227,13 @@ define([
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        submitItem: function submitItem(uri, state, response) {
-            return request(this, this.storage.getItemActionUrl(uri, 'submitItem'), JSON.stringify({
+        submitItem: function submitItem(uri, state, response, params) {
+            var body = JSON.stringify( _.merge({
                 itemState : state,
                 itemResponse : response
-            }), 'application/json');
+            }, params || {}));
+
+            return request(this, this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
         },
 
         /**
@@ -242,7 +245,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
-            return request(this, this.storage.getItemActionUrl(uri, action), params);
+            return request(this, this.configStorage.getItemActionUrl(uri, action), params);
         },
 
         /**
@@ -255,7 +258,7 @@ define([
          * @fires telemetry
          */
         telemetry: function telemetry(uri, signal, params) {
-            return request(this, this.storage.getTelemetryUrl(uri, signal), params, null, true);
+            return request(this, this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
         }
     };
 
