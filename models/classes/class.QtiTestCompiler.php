@@ -511,6 +511,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $markupPostRenderer = $this->getMarkupPostRenderer();
             $compiledDocDir = $this->getPrivateDirectory()->getPath();
             $publicCompiledDocDir = $this->getPublicDirectory();
+            $privateCompiledDocDir = $this->getPrivateDirectory();
 
             $testService = taoQtiTest_models_classes_QtiTestService::singleton();
             $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
@@ -527,7 +528,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             common_Logger::t("Rendering rubricBlock '" . $rubricRefHref . "'...");
             
             $pathinfo = pathinfo($rubricRefHref);
-            $renderingFile = $compiledDocDir . $pathinfo['filename'] . '.php';
+            $renderingFile = $pathinfo['filename'] . '.php';
 
             $rubric = $rubricDoc->getDocumentComponent();
             $rubricStylesheets = $rubric->getStylesheets();
@@ -556,41 +557,38 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
 
             foreach ($stylesheets as $rubricStylesheet) {
-                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath(
-                    $testPath . ltrim($this->getExtraPath(), '/'),
-                    $rubricStylesheet->getHref()
-                );
+                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($testPath . ltrim($this->getExtraPath(), '/'), $rubricStylesheet->getHref());
 
-                $qtiResource = $rubricStylesheet->getHref();
-                if ($qtiResource instanceof taoQti_models_classes_QTI_Resource) {
-                    $filePath = $qtiResource->getFile();
-                }
-                else if (is_string($qtiResource) === true) {
-                    $filePath = $qtiResource;
-                }
-                else {
-                    throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
-                }
-
-                try {
-                    $stream = \GuzzleHttp\Psr7\stream_for($cssScoper->render($stylesheetPath, $rubric->getId()));
-                    $publicCompiledDocDir->writeStream($filePath, $stream);
-                    $stream->close();
-                } catch (\InvalidArgumentException $e) {
-                    common_Logger::e('Unable to copy file into public directory: ' . ltrim($this->getExtraPath(), '/'));
+                $publicPathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $stylesheetPath);
+                if (!$publicCompiledDocDir->has($publicPathFile)) {
+                    try {
+                        if (($handle = fopen($stylesheetPath,'r'))===false) {
+                            throw new \InvalidArgumentException('Unable to open file');
+                        }
+                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
+                        $publicCompiledDocDir->writeStream($publicPathFile, $stream);
+                        $stream->close();
+                    } catch (\InvalidArgumentException $e) {
+                        common_Logger::e('Unable to copy file into public directory: ' . $stylesheetPath);
+                    }
                 }
             }
-            
+
             // -- Replace the artificial 'tao://qti-directory' base path with a runtime call to the delivery time base path.
             $mainStringRendering = str_replace(TAOQTITEST_PLACEHOLDER_BASE_URI, '<?php echo $' . TAOQTITEST_BASE_PATH_NAME . '; ?>', $mainStringRendering);
-            try {
-                $stream = \GuzzleHttp\Psr7\stream_for($mainStringRendering);
-                $publicCompiledDocDir->writeStream($pathinfo['filename'] . '.php', $stream);
-                $stream->close();
-                common_Logger::i("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
-            } catch (\InvalidArgumentException $e) {
-                common_Logger::e('Unable to copy file into public directory: ' . ltrim($this->getExtraPath(), '/'));
+            if (!$privateCompiledDocDir->has($renderingFile)) {
+                try {
+                    $stream = \GuzzleHttp\Psr7\stream_for($mainStringRendering);
+                    $privateCompiledDocDir->writeStream($renderingFile, $stream);
+                    $stream->close();
+                    common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
+                } catch (\InvalidArgumentException $e) {
+                    common_Logger::e('Unable to copy file into public directory: ' . $renderingFile);
+                }
             }
+
+            // -- Clean up old rubric block and reference the new rubric block template.
+            $privateCompiledDocDir->delete($rubricRefHref);
 
             $rubricRef->setHref('./' . $pathinfo['filename'] . '.php');
         }
