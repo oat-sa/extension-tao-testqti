@@ -168,9 +168,7 @@ class QtiTimer implements Timer
         }
         
         // extract range boundaries
-        usort($range, function($a, $b) {
-            return $a->compare($b);
-        });
+        TimePoint::sort($range);
         $serverStart = $range[0];
         $serverEnd = $range[$rangeLength - 1];
         $serverDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
@@ -307,9 +305,7 @@ class QtiTimer implements Timer
     {
         $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
 
-        usort($range, function($a, $b) {
-            return $a->compare($b);
-        });
+        TimePoint::sort($range);
 
         return $range;
     }
