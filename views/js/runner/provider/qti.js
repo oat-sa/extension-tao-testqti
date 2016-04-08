@@ -25,7 +25,6 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'core/store',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
@@ -34,7 +33,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, store, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -169,38 +168,50 @@ define([
                 var states = self.getTestData().itemStates;
                 var itemRunner = self.itemRunner;
                 var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
+                var params = {};
 
+                var performSubmit = function performSubmit(){
+                    //we submit the responses
+                    return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
+                        .then(function(result){
+                            return new Promise(function(resolve){
+                                //if the submit results contains modal feedback we ask (gently) the IR to display them
+                                if(result.success) {
+                                    if (result.itemSession) {
+                                        context.itemAnswered = result.itemSession.itemAnswered;
+                                    }
+
+                                    if(result.displayFeedbacks === true && itemRunner){
+                                        return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
+                                    }
+                                }
+                                return resolve();
+                            });
+                        });
+                };
 
                 if(context.itemSessionState >= states.closed) {
                     return Promise.resolve(false);
                 }
 
-                //retrieving of the duration
-                return self.durationStore.getItem(itemAttemptId)
-                    .then(function(duration){
-                        var params = {};
-                        if(_.isNumber(duration) && duration > 0){
-                           params.itemDuration = duration;
-                        }
-
-                        //we submit the responses
-                        return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
-                            .then(function(result){
-                                return new Promise(function(resolve){
-                                    //if the submit results contains modal feedback we ask (gently) the IR to display them
-                                    if(result.success) {
-                                        if (result.itemSession) {
-                                            context.itemAnswered = result.itemSession.itemAnswered;
-                                        }
-
-                                        if(result.displayFeedbacks === true && itemRunner){
-                                            return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
-                                        }
-                                    }
-                                    return resolve();
-                                });
-                            });
+                //if the duration plugin is installed,
+                //we load the duration using an event
+                if(self.getPlugin('duration')){
+                    return new Promise(function(resolve, reject){
+                        //trigger the get event to retrieve the duration for that attempt
+                        self.getPlugin('duration').trigger('get', itemAttemptId, function receiver(p){
+                            p.then(function(duration){
+                                params.itemDuration = 0;
+                                if(_.isNumber(duration) && duration > 0){
+                                    params.itemDuration = duration;
+                                }
+                                return resolve(performSubmit());
+                            }).catch(reject);
+                        });
                     });
+                }
+
+                return performSubmit();
             };
 
             /**
@@ -229,8 +240,6 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             };
 
-            //where the duration of attempts are stored
-           this.durationStore = store('duration-' + this.getConfig().serviceCallId);
 
             /*
              * Install behavior on events
