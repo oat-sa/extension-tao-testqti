@@ -1046,7 +1046,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $session->endItemTimer();
 
-            if (isset($duration)) {
+            if (is_numeric($duration) || is_null($duration)) {
                 $session->adjustItemTimer($duration);
             }
         } else {
