@@ -25,8 +25,9 @@ define([
     'lodash',
     'core/polling',
     'core/timer',
+    'core/store',
     'taoTests/runner/plugin',
-], function (_, pollingFactory, timerFactory, pluginFactory) {
+], function (_, pollingFactory, timerFactory, store, pluginFactory) {
     'use strict';
 
     /**
@@ -51,6 +52,8 @@ define([
             var self = this;
             var testRunner   = this.getTestRunner();
 
+            //where the duration of attempts are stored
+            var durationStore = store('duration-' + testRunner.getConfig().serviceCallId);
 
             //one stopwatch to count the time
             this.stopwatch = timerFactory({
@@ -65,20 +68,17 @@ define([
                     //how many time elapsed from the last tick ?
                     var elapsed = self.stopwatch.tick();
                     var context = testRunner.getTestContext();
-                    var storage = testRunner.durationStore;
 
                     //store by attempt
                     var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
 
-                    if(storage){
-                        storage.getItem(itemAttemptId).then(function(duration){
-                            duration = _.isNumber(duration) ? duration : 0;
-                            elapsed  = _.isNumber(elapsed) && elapsed > 0 ? (elapsed / 1000) : 0;
+                    durationStore.getItem(itemAttemptId).then(function(duration){
+                        duration = _.isNumber(duration) ? duration : 0;
+                        elapsed  = _.isNumber(elapsed) && elapsed > 0 ? (elapsed / 1000) : 0;
 
-                            //store the last duration
-                            storage.setItem(itemAttemptId, duration + elapsed);
-                        });
-                    }
+                        //store the last duration
+                        durationStore.setItem(itemAttemptId, duration + elapsed);
+                    });
                 },
                 interval : refresh,
                 autoStart : false
@@ -94,6 +94,25 @@ define([
                 .before('move disableitem skip error', function(e){
                     if (self.getState('enabled')) {
                         self.disable();
+                    }
+                })
+
+                /**
+                 * @event duration.get
+                 * @param {String} attemptId - the attempt id to get the duration for
+                 * @param {getDuration} getDuration - a receiver callback
+                 */
+                .on('plugin-get.duration', function(e, attemptId, getDuration){
+                    if(_.isFunction(getDuration)){
+                        if(!/^(.*)+#+\d+$/.test(attemptId)){
+                            return getDuration(Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"')));
+                        }
+
+                        /**
+                        * @callback getDuration
+                        * @param {Promise} p - that resolve with the duration value
+                        */
+                        getDuration(durationStore.getItem(attemptId));
                     }
                 })
 
