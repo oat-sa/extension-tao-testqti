@@ -158,13 +158,13 @@ class QtiTimer implements Timer
         if (!($itemRef instanceof RouteItem)) {
             throw new InvalidDataException('adjust() needs a valid routeItem instance!');
         }
-        if (!is_numeric($duration) || $duration < 0) {
+        if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
             throw new InvalidDataException('adjust() needs a valid duration!');
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
         $tags = $this->getItemTags($itemRef);
-        $itemTimeLine = $this->timeLine->filter([$itemRef->getAssessmentItemRef()->getIdentifier()], TimePoint::TARGET_SERVER);
+        $itemTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_SERVER);
         $range = $itemTimeLine->getPoints();
 
         // validate the data consistence
@@ -174,18 +174,21 @@ class QtiTimer implements Timer
         }
 
         // check if the client side duration is bound by the server side duration
-        if ($duration > $itemTimeLine->compute()) {
+        $serverDuration = $itemTimeLine->compute();
+        if (is_null($duration)) {
+            $duration = $serverDuration;
+        } else if ($duration > $serverDuration) {
             throw new InconsistentRangeException('A client duration cannot be larger than the server time range!');
         }
-        
+
         // extract range boundaries
         TimePoint::sort($range);
         $serverStart = $range[0];
         $serverEnd = $range[$rangeLength - 1];
-        $serverDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
 
-        // adjust the range by inserting the client duration between the server time range boundaries
-        $delay = ($serverDuration - $duration) / 2;
+        // adjust the range by inserting the client duration between the server overall time range boundaries
+        $overallDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
+        $delay = ($overallDuration - $duration) / 2;
         
         $start = new TimePoint($tags, $serverStart->getTimestamp() + $delay, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT);
         $this->timeLine->add($start);

@@ -158,22 +158,23 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
 
     /**
      * Test the QtiTimer::adjust()
+     * * @dataProvider adjustDataProvider
      */
-    public function testAdjust()
+    public function testAdjust($startTimestamp, $endTimestamp, $duration, $expectedDuration)
     {
         $timer = new QtiTimer($this->getTestSessionMock());
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
         $routeItem = $this->getRouteItemMock();
-        $timer->start($routeItem, 1459335000.0000);
-        $timer->end($routeItem, 1459335020.0000);
+        $timer->start($routeItem, $startTimestamp);
+        $timer->end($routeItem, $endTimestamp);
         $timePoints = $timeLine->getPoints();
 
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals([], $timeLine->find(null, TimePoint::TARGET_CLIENT));
 
-        $timer->adjust($routeItem, 10);
+        $timer->adjust($routeItem, $duration);
         $timePoints = $timeLine->getPoints();
         $clientTimePoints = $timeLine->find(null, TimePoint::TARGET_CLIENT);
         $this->assertEquals(4, count($timePoints));
@@ -181,13 +182,21 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $clientStartPoint = $clientTimePoints[0];
         $clientEndPoint = $clientTimePoints[1];
 
-        $this->assertEquals(1459335000.0000 + (10/2), $clientStartPoint->getTimestamp());
+        $serverDuration = $endTimestamp - $startTimestamp;
+        if (is_null($duration)) {
+            $duration = $serverDuration;
+        }
+        $delay = ($serverDuration - $duration) / 2;
+
+        $this->assertEquals($startTimestamp + $delay, $clientStartPoint->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_CLIENT, $clientStartPoint->getTarget());
         $this->assertEquals(TimePoint::TYPE_START, $clientStartPoint->getType());
 
-        $this->assertEquals(1459335020.0000 - (10/2), $clientEndPoint->getTimestamp());
+        $this->assertEquals($endTimestamp - $delay, $clientEndPoint->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_CLIENT, $clientEndPoint->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $clientEndPoint->getType());
+
+        $this->assertEquals($expectedDuration, $timer->compute(null, TimePoint::TARGET_CLIENT));
     }
 
     /**
@@ -409,6 +418,27 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
                 $routeItem,
                 'wrong timestamp',
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function adjustDataProvider()
+    {
+        return [
+            [
+                1459335000.0000,
+                1459335020.0000,
+                10,
+                10
+            ],
+            [
+                1459335000.0000,
+                1459335020.0000,
+                null,
+                20
+            ]
         ];
     }
 

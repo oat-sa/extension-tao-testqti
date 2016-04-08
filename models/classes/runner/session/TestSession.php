@@ -133,7 +133,10 @@ class TestSession extends taoQtiTest_helpers_TestSession
      */
     public function adjustItemTimer($duration)
     {
-        $this->getTimer()->adjust($this->getCurrentRouteItem(), floatval($duration))->save();
+        if (!is_null($duration)) {
+            $duration = floatval($duration);
+        }
+        $this->getTimer()->adjust($this->getCurrentRouteItem(), $duration)->save();
     }
 
     /**
