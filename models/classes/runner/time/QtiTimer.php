@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -52,10 +53,20 @@ class QtiTimer implements Timer
     protected $storage;
 
     /**
-     * QtiTimer constructor.
+     * The related TestSession to which the timer is bound.
+     * @var TestSession
      */
-    public function __construct()
+    protected $testSession;
+
+    /**
+     * QtiTimer constructor.
+     * @param TestSession|null $session
+     */
+    public function __construct(TestSession $session = null)
     {
+        if ($session) {
+            $this->setTestSession($session);
+        }
         $this->timeLine = new QtiTimeLine();
     }
 
@@ -237,6 +248,26 @@ class QtiTimer implements Timer
     }
 
     /**
+     * Sets the related TestSession to which the timer is bound.
+     * @param TestSession $testSession
+     * @return $this
+     */
+    public function setTestSession(TestSession $testSession)
+    {
+        $this->testSession = $testSession;
+        return $this;
+    }
+
+    /**
+     * Gets the related TestSession to which the timer is bound.
+     * @return TestSession
+     */
+    public function getTestSession()
+    {
+        return $this->testSession;
+    }
+
+    /**
      * Saves the data to the storage
      * @return Timer
      * @throws InvalidStorageException
@@ -333,6 +364,12 @@ class QtiTimer implements Timer
             $test->getIdentifier(),
             $itemRef->getHref(),
         ];
+
+        $testSession = $this->getTestSession();
+        if ($testSession && $testSession->isRunning() === true) {
+            $itemSession = $testSession->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
+            $tags[] = $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
+        }
 
         return $tags;
     }

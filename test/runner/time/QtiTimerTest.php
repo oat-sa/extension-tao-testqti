@@ -47,10 +47,12 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testConstructor()
     {
-        $timer = new QtiTimer();
+        $testSession = $this->getTestSessionMock();
+        $timer = new QtiTimer($testSession);
         $this->assertInstanceOf('oat\taoTests\models\runner\time\Timer', $timer);
         $timeLine = $this->getTimeLine($timer);
         $this->assertInstanceOf('oat\taoQtiTest\models\runner\time\QtiTimeLine', $timeLine);
+        $this->assertEquals($testSession, $timer->getTestSession());
 
     }
 
@@ -59,7 +61,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testStart()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
@@ -114,7 +116,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testEnd()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
@@ -159,7 +161,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testAdjust()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
@@ -217,7 +219,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testCompute()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $routeItem = $this->getRouteItemMock();
         $timer->start($routeItem, 1459335000.0000);
         $timer->end($routeItem, 1459335020.0000);
@@ -241,7 +243,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testTimeout()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $routeItem = $this->getRouteItemMock();
         $timer->start($routeItem, 1459335000.0000);
         $timer->end($routeItem, 1459335020.0000);
@@ -284,7 +286,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testSave()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $routeItem = $this->getRouteItemMock();
         $timer->start($routeItem, 1459335000.0000);
         $timer->end($routeItem, 1459335020.0000);
@@ -322,7 +324,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testLoad()
     {
-        $timer = new QtiTimer();
+        $timer = new QtiTimer($this->getTestSessionMock());
         $routeItem = $this->getRouteItemMock();
         $timer->start($routeItem, 1459335000.0000);
         $timer->end($routeItem, 1459335020.0000);
@@ -458,6 +460,27 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
 
     //MOCKS
     /**
+     * Get AssessmentItemRef instance mock.
+     * @return object
+     */
+    private function getItemRefMock()
+    {
+        static $itemRef = null;
+
+        if (!$itemRef) {
+            $prophet = new Prophet();
+
+            //assessment item reference
+            $assessmentItemRefProphecy = $prophet->prophesize('qtism\data\AssessmentItemRef');
+            $assessmentItemRefProphecy->getIdentifier()->willReturn('item_fake_id');
+            $assessmentItemRefProphecy->getHref()->willReturn('item_fake_href');
+            $itemRef = $assessmentItemRefProphecy->reveal();
+        }
+
+        return $itemRef;
+    }
+
+    /**
      * Get RouteItem instance mock.
      * @return object
      */
@@ -475,12 +498,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $testPartProphecy->getIdentifier()->willReturn('test_part_fake_id');
         $testPart = $testPartProphecy->reveal();
 
-        //assessment item reference
-        $assessmentItemRefProphecy = $prophet->prophesize('qtism\data\AssessmentItemRef');
-        $assessmentItemRefProphecy->getIdentifier()->willReturn('item_fake_id');
-        $assessmentItemRefProphecy->getHref()->willReturn('item_fake_href');
-        $assessmentItemRef = $assessmentItemRefProphecy->reveal();
-
         //assessment section
         $assessmentSections = [['section_fake_id' => 'fake_section']];
 
@@ -488,10 +505,36 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $routeItem->getAssessmentTest()->willReturn($test);
         $routeItem->getTestPart()->willReturn($testPart);
         $routeItem->getAssessmentSections()->willReturn($assessmentSections);
-        $routeItem->getAssessmentItemRef()->willReturn($assessmentItemRef);
+        $routeItem->getAssessmentItemRef()->willReturn($this->getItemRefMock());
         $routeItem->getOccurence()->willReturn(1);
 
         return $routeItem->reveal();
+    }
+
+    /**
+     * Get TestSession instance mock.
+     * @return object
+     */
+    private function getTestSessionMock()
+    {
+        $prophet = new Prophet();
+
+        //numAttempts variable
+        $numAttempts = $prophet->prophesize('qtism\runtime\common\Variable');
+        $numAttempts->getValue()->willReturn(1);
+
+        //assessmentItemSession
+        $itemSession = ['numAttempts' => $numAttempts];
+
+        //assessmentItemSessionStore
+        $itemSessionStore = $prophet->prophesize('qtism\runtime\tests\AssessmentItemSessionStore');
+        $itemSessionStore->getAssessmentItemSession($this->getItemRefMock(), 1)->willReturn($itemSession);
+
+        //assessment test
+        $testSession = $prophet->prophesize('oat\taoQtiTest\models\runner\session\TestSession');
+        $testSession->getAssessmentItemSessionStore()->willReturn($itemSessionStore);
+        $testSession->isRunning()->willReturn(true);
+        return $testSession->reveal();
     }
 
     /**
