@@ -66,7 +66,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     public function getTimer()
     {
         if (!$this->timer) {
-            $this->timer = new QtiTimer();
+            $this->timer = new QtiTimer($this);
             $this->timer->setStorage(new QtiTimeStorage($this->getSessionId()));
             $this->timer->load();
         }

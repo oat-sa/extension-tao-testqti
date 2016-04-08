@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -52,10 +53,20 @@ class QtiTimer implements Timer
     protected $storage;
 
     /**
-     * QtiTimer constructor.
+     * The related TestSession to which the timer is bound.
+     * @var TestSession
      */
-    public function __construct()
+    protected $testSession;
+
+    /**
+     * QtiTimer constructor.
+     * @param TestSession|null $session
+     */
+    public function __construct(TestSession $session = null)
     {
+        if ($session) {
+            $this->setTestSession($session);
+        }
         $this->timeLine = new QtiTimeLine();
     }
 
@@ -168,9 +179,7 @@ class QtiTimer implements Timer
         }
         
         // extract range boundaries
-        usort($range, function($a, $b) {
-            return $a->compare($b);
-        });
+        TimePoint::sort($range);
         $serverStart = $range[0];
         $serverEnd = $range[$rangeLength - 1];
         $serverDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
@@ -236,6 +245,26 @@ class QtiTimer implements Timer
     public function getStorage()
     {
         return $this->storage;
+    }
+
+    /**
+     * Sets the related TestSession to which the timer is bound.
+     * @param TestSession $testSession
+     * @return $this
+     */
+    public function setTestSession(TestSession $testSession)
+    {
+        $this->testSession = $testSession;
+        return $this;
+    }
+
+    /**
+     * Gets the related TestSession to which the timer is bound.
+     * @return TestSession
+     */
+    public function getTestSession()
+    {
+        return $this->testSession;
     }
 
     /**
@@ -307,9 +336,7 @@ class QtiTimer implements Timer
     {
         $range = $this->timeLine->find($tags, TimePoint::TARGET_SERVER);
 
-        usort($range, function($a, $b) {
-            return $a->compare($b);
-        });
+        TimePoint::sort($range);
 
         return $range;
     }
@@ -337,6 +364,12 @@ class QtiTimer implements Timer
             $test->getIdentifier(),
             $itemRef->getHref(),
         ];
+
+        $testSession = $this->getTestSession();
+        if ($testSession && $testSession->isRunning() === true) {
+            $itemSession = $testSession->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
+            $tags[] = $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
+        }
 
         return $tags;
     }

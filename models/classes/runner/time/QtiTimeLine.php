@@ -205,9 +205,7 @@ class QtiTimeLine implements TimeLine
         }
         
         // we need a ordered list of points
-        usort($points, function($a, $b) {
-            return $a->compare($b);
-        });
+        TimePoint::sort($points);
         
         // gather points by ranges, relying on the points references
         $ranges = [];
