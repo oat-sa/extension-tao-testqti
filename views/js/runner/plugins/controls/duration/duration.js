@@ -68,7 +68,6 @@ define([
                     //how many time elapsed from the last tick ?
                     var elapsed = self.stopwatch.tick();
                     var context = testRunner.getTestContext();
-                    var storage = testRunner.durationStore;
 
                     //store by attempt
                     var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
