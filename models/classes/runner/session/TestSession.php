@@ -21,6 +21,7 @@
 namespace oat\taoQtiTest\models\runner\session;
 
 use oat\taoQtiTest\models\runner\time\QtiTimer;
+use oat\taoQtiTest\models\runner\time\QtiTimerItemRef;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\TimePoint;
@@ -66,7 +67,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     public function getTimer()
     {
         if (!$this->timer) {
-            $this->timer = new QtiTimer($this);
+            $this->timer = new QtiTimer();
             $this->timer->setStorage(new QtiTimeStorage($this->getSessionId()));
             $this->timer->load();
         }
@@ -99,7 +100,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
     {
         try {
             // try to close existing time range if any, in order to be sure the test will start or restart a new range.
-            $this->getTimer()->end($this->getCurrentRouteItem(), microtime(true))->save();
+            $itemRef = new QtiTimerItemRef($this);
+            $this->getTimer()->end($itemRef, microtime(true))->save();
             \common_Logger::i('Existing timer initialized.');
         } catch(InconsistentRangeException $e) {
             \common_Logger::i('New timer initialized.');
@@ -112,7 +114,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
      */
     public function startItemTimer()
     {
-        $this->getTimer()->start($this->getCurrentRouteItem(), microtime(true))->save();
+        $itemRef = new QtiTimerItemRef($this);
+        $this->getTimer()->start($itemRef, microtime(true))->save();
     }
 
     /**
@@ -122,7 +125,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
      */
     public function endItemTimer()
     {
-        $this->getTimer()->end($this->getCurrentRouteItem(), microtime(true))->save();
+        $itemRef = new QtiTimerItemRef($this);
+        $this->getTimer()->end($itemRef, microtime(true))->save();
     }
 
     /**
@@ -136,7 +140,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
         if (!is_null($duration)) {
             $duration = floatval($duration);
         }
-        $this->getTimer()->adjust($this->getCurrentRouteItem(), $duration)->save();
+        $itemRef = new QtiTimerItemRef($this);
+        $this->getTimer()->adjust($itemRef, $duration)->save();
     }
 
     /**

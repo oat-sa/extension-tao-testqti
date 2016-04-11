@@ -22,7 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -30,9 +29,9 @@ use oat\taoTests\models\runner\time\InvalidStorageException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimerItemRef;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
-use qtism\runtime\tests\RouteItem;
 
 /**
  * Class QtiTimer
@@ -53,42 +52,29 @@ class QtiTimer implements Timer
     protected $storage;
 
     /**
-     * The related TestSession to which the timer is bound.
-     * @var TestSession
-     */
-    protected $testSession;
-
-    /**
      * QtiTimer constructor.
-     * @param TestSession|null $session
      */
-    public function __construct(TestSession $session = null)
+    public function __construct()
     {
-        if ($session) {
-            $this->setTestSession($session);
-        }
         $this->timeLine = new QtiTimeLine();
     }
 
     /**
      * Adds a "server start" TimePoint at a particular timestamp for the provided ItemRef
-     * @param mixed $itemRef
+     * @param TimerItemRef $itemRef
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function start($itemRef, $timestamp)
+    public function start(TimerItemRef $itemRef, $timestamp)
     {
         // check the provided arguments
-        if (!($itemRef instanceof RouteItem)) {
-            throw new InvalidDataException('start() needs a valid routeItem instance!');
-        }
         if (!is_numeric($timestamp) || $timestamp < 0) {
             throw new InvalidDataException('start() needs a valid timestamp!');
         }
         
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($itemRef);
+        $tags = $itemRef->getItemTags();
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -112,23 +98,20 @@ class QtiTimer implements Timer
 
     /**
      * Adds a "server end" TimePoint at a particular timestamp for the provided ItemRef
-     * @param mixed $itemRef
+     * @param TimerItemRef $itemRef
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function end($itemRef, $timestamp)
+    public function end(TimerItemRef $itemRef, $timestamp)
     {
         // check the provided arguments
-        if (!($itemRef instanceof RouteItem)) {
-            throw new InvalidDataException('end() needs a valid routeItem instance!');
-        }
         if (!is_numeric($timestamp) || $timestamp < 0) {
             throw new InvalidDataException('end() needs a valid timestamp!');
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($itemRef);
+        $tags = $itemRef->getItemTags();
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -147,23 +130,20 @@ class QtiTimer implements Timer
 
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
-     * @param mixed $itemRef
+     * @param TimerItemRef $itemRef
      * @param float $duration
      * @return Timer
      * @throws TimeException
      */
-    public function adjust($itemRef, $duration)
+    public function adjust(TimerItemRef $itemRef, $duration)
     {
         // check the provided arguments
-        if (!($itemRef instanceof RouteItem)) {
-            throw new InvalidDataException('adjust() needs a valid routeItem instance!');
-        }
         if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
             throw new InvalidDataException('adjust() needs a valid duration!');
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $this->getItemTags($itemRef);
+        $tags = $itemRef->getItemTags();
         $itemTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_SERVER);
         $range = $itemTimeLine->getPoints();
 
@@ -251,26 +231,6 @@ class QtiTimer implements Timer
     }
 
     /**
-     * Sets the related TestSession to which the timer is bound.
-     * @param TestSession $testSession
-     * @return $this
-     */
-    public function setTestSession(TestSession $testSession)
-    {
-        $this->testSession = $testSession;
-        return $this;
-    }
-
-    /**
-     * Gets the related TestSession to which the timer is bound.
-     * @return TestSession
-     */
-    public function getTestSession()
-    {
-        return $this->testSession;
-    }
-
-    /**
      * Saves the data to the storage
      * @return Timer
      * @throws InvalidStorageException
@@ -344,39 +304,6 @@ class QtiTimer implements Timer
         return $range;
     }
     
-    /**
-     * Gets the tags describing a particular item with an assessment test
-     * @param RouteItem $routeItem
-     * @return array
-     */
-    protected function getItemTags(RouteItem $routeItem)
-    {
-        $test = $routeItem->getAssessmentTest();
-        $testPart = $routeItem->getTestPart();
-        $sections = $routeItem->getAssessmentSections();
-        $sectionId = key(current($sections));
-        $itemRef = $routeItem->getAssessmentItemRef();
-        $itemId = $itemRef->getIdentifier();
-        $occurrence = $routeItem->getOccurence();
-
-        $tags = [
-            $itemId,
-            $itemId . '#' . $occurrence,
-            $sectionId,
-            $testPart->getIdentifier(),
-            $test->getIdentifier(),
-            $itemRef->getHref(),
-        ];
-
-        $testSession = $this->getTestSession();
-        if ($testSession && $testSession->isRunning() === true) {
-            $itemSession = $testSession->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
-            $tags[] = $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
-        }
-
-        return $tags;
-    }
-
     /**
      * Checks if a binary flag contains exactly one flag set
      * @param $value
