@@ -21,7 +21,6 @@
 namespace oat\taoQtiTest\models\runner\session;
 
 use oat\taoQtiTest\models\runner\time\QtiTimer;
-use oat\taoQtiTest\models\runner\time\QtiTimerItemRef;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\TimePoint;
@@ -29,6 +28,7 @@ use qtism\common\datatypes\Duration;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
+use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\TimeConstraint;
 use qtism\runtime\tests\TimeConstraintCollection;
 use taoQtiTest_helpers_TestSession;
@@ -93,6 +93,38 @@ class TestSession extends taoQtiTest_helpers_TestSession
     }
 
     /**
+     * Gets the tags describing a particular item with an assessment test
+     * @param RouteItem $routeItem
+     * @return array
+     */
+    public function getItemTags(RouteItem $routeItem)
+    {
+        $test = $routeItem->getAssessmentTest();
+        $testPart = $routeItem->getTestPart();
+        $sections = $routeItem->getAssessmentSections();
+        $sectionId = key(current($sections));
+        $itemRef = $routeItem->getAssessmentItemRef();
+        $itemId = $itemRef->getIdentifier();
+        $occurrence = $routeItem->getOccurence();
+
+        $tags = [
+            $itemId,
+            $itemId . '#' . $occurrence,
+            $sectionId,
+            $testPart->getIdentifier(),
+            $test->getIdentifier(),
+            $itemRef->getHref(),
+        ];
+
+        if ($this->isRunning() === true) {
+            $itemSession = $this->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
+            $tags[] = $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
+        }
+
+        return $tags;
+    }
+
+    /**
      * Initializes the timer for the current item in the TestSession
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
@@ -100,8 +132,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
     {
         try {
             // try to close existing time range if any, in order to be sure the test will start or restart a new range.
-            $itemRef = new QtiTimerItemRef($this);
-            $this->getTimer()->end($itemRef, microtime(true))->save();
+            $tags = $this->getItemTags($this->getCurrentRouteItem());
+            $this->getTimer()->end($tags, microtime(true))->save();
             \common_Logger::i('Existing timer initialized.');
         } catch(InconsistentRangeException $e) {
             \common_Logger::i('New timer initialized.');
@@ -114,8 +146,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
      */
     public function startItemTimer()
     {
-        $itemRef = new QtiTimerItemRef($this);
-        $this->getTimer()->start($itemRef, microtime(true))->save();
+        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $this->getTimer()->start($tags, microtime(true))->save();
     }
 
     /**
@@ -125,8 +157,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
      */
     public function endItemTimer()
     {
-        $itemRef = new QtiTimerItemRef($this);
-        $this->getTimer()->end($itemRef, microtime(true))->save();
+        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $this->getTimer()->end($tags, microtime(true))->save();
     }
 
     /**
@@ -140,8 +172,8 @@ class TestSession extends taoQtiTest_helpers_TestSession
         if (!is_null($duration)) {
             $duration = floatval($duration);
         }
-        $itemRef = new QtiTimerItemRef($this);
-        $this->getTimer()->adjust($itemRef, $duration)->save();
+        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $this->getTimer()->adjust($tags, $duration)->save();
     }
 
     /**
