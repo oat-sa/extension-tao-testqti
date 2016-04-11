@@ -21,9 +21,10 @@
  * Default test runner config
  */
 return array(
-
-
-    //Show warning message if time remaining less than defined (in seconds)
+    /**
+     * Show warning message if time remaining less than defined (in seconds)
+     * @type array
+     */
     'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => null,
@@ -134,10 +135,24 @@ return array(
      */
     'plugins' => null,
 
-
     /**
      * Enable the cross site request forgery token
      * @type boolean
      */
-    'csrf-token' => true
+    'csrf-token' => true,
+
+    /**
+     * Config for the runner's timer
+     * @type array
+     */
+    'timer' => [
+        /**
+         * The target from which computes the durations. Could be either 'client' or 'server'.
+         * This config tells on which TimeLine to rely to compute the assessment test durations.
+         * Caution, if the server TimeLine is always filled, the client TimeLine must be explicitly
+         * provided by the implementation. If the client TimeLine is missing, the durations will be zeroed.
+         * @type string
+         */
+        'target' => 'server'
+    ]
 );
