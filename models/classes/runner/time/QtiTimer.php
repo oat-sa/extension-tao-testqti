@@ -29,7 +29,6 @@ use oat\taoTests\models\runner\time\InvalidStorageException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
-use oat\taoTests\models\runner\time\TimerItemRef;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
 
