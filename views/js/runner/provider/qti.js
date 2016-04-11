@@ -160,35 +160,58 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise} - resolve with a boolean at true if the response is stored
+             * @returns {Promise} - resolve with a boolean at true if the response is submitd
              */
-            var store = function store(){
+            var submit = function submit(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
                 var itemRunner = self.itemRunner;
+                var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
+                var params = {};
+
+                var performSubmit = function performSubmit(){
+                    //we submit the responses
+                    return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
+                        .then(function(result){
+                            return new Promise(function(resolve){
+                                //if the submit results contains modal feedback we ask (gently) the IR to display them
+                                if(result.success) {
+                                    if (result.itemSession) {
+                                        context.itemAnswered = result.itemSession.itemAnswered;
+                                    }
+
+                                    if(result.displayFeedbacks === true && itemRunner){
+                                        return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
+                                    }
+                                }
+                                return resolve();
+                            });
+                        });
+                };
 
                 if(context.itemSessionState >= states.closed) {
                     return Promise.resolve(false);
                 }
 
-                //we store the responses
-                return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses())
-                    .then(function(result){
-                        return new Promise(function(resolve){
-                            //if the store results contains modal feedback we ask (gently) the IR to display them
-                            if(result.success) {
-                                if (result.itemSession) {
-                                    context.itemAnswered = result.itemSession.itemAnswered;
+                //if the duration plugin is installed,
+                //we load the duration using an event
+                if(self.getPlugin('duration')){
+                    return new Promise(function(resolve, reject){
+                        //trigger the get event to retrieve the duration for that attempt
+                        self.getPlugin('duration').trigger('get', itemAttemptId, function receiver(p){
+                            p.then(function(duration){
+                                params.itemDuration = 0;
+                                if(_.isNumber(duration) && duration > 0){
+                                    params.itemDuration = duration;
                                 }
-
-                                if(result.displayFeedbacks === true && itemRunner){
-                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
-                                }
-                            }
-                            return resolve();
+                                return resolve(performSubmit());
+                            }).catch(reject);
                         });
                     });
+                }
+
+                return performSubmit();
             };
 
             /**
@@ -217,6 +240,7 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             };
 
+
             /*
              * Install behavior on events
              */
@@ -227,7 +251,7 @@ define([
             .on('move', function(direction, scope, position){
 
                 //ask to move:
-                // 1. try to store state and responses
+                // 1. try to submit state and responses
                 // 2. update stats on the map
                 // 3. compute the next item to load
 
@@ -240,7 +264,7 @@ define([
 
                 this.trigger('disablenav disabletools');
 
-                store()
+                submit()
                  .then(updateStats)
                  .then(computeNextMove)
                  .catch(function(err){
@@ -260,7 +284,7 @@ define([
                 var context = self.getTestContext();
                 self.disableItem(context.itemUri);
 
-                store()
+                submit()
                     .then(function() {
                         return self.getProxy()
                             .callTestAction('exitTest', {reason: why})
@@ -280,7 +304,7 @@ define([
 
                 self.disableItem(context.itemUri);
 
-                store()
+                submit()
                     .then(updateStats)
                     .then(function() {
                         self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {

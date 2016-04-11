@@ -346,7 +346,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $stateId = $this->getStateId();
             $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
             if (!count($itemState)) {
-                $itemState = new StdClass();
+                $itemState = new stdClass();
             }
 
             // TODO: make a better implementation
@@ -378,6 +378,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     'rubrics' => $rubrics
                 ];
             }
+
+            $this->runnerService->startTimer($serviceContext);
             
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -400,14 +402,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemRef = $this->getRequestParameter('itemDefinition');
+        $itemDuration = $this->getRequestParameter('itemDuration');
 
         $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
+        if (isset($data['itemDuration'])) {
+            $itemDuration = $data['itemDuration'];
+        }
 
-        $state = isset($data['itemState']) ? $data['itemState'] : new StdClass();
+        $state = isset($data['itemState']) ? $data['itemState'] : new stdClass();
         $itemResponse = isset($data['itemResponse']) ? $data['itemResponse'] : [];
 
         try {
             $serviceContext = $this->getServiceContext(false);
+            $this->runnerService->endTimer($serviceContext, $itemDuration);
+            
             $stateId = $this->getStateId();
             if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::CLOSED) {
                 throw new QtiRunnerClosedException();
@@ -421,7 +429,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 // allow to store the state but prevent to store the response
                 $storeResponse = false;
                 \common_Logger::i('Store item state after a test session pause');
-        }
+            }
 
             $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
 
@@ -431,7 +439,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $successResponse = true;
                 $displayFeedback = false;
-    }
+            }
 
             $response = [
                 'success' => $successState && $successResponse,
@@ -496,9 +504,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
+        $itemDuration = $this->getRequestParameter('itemDuration');
 
         try {
             $serviceContext = $this->getServiceContext();
+            $this->runnerService->endTimer($serviceContext, $itemDuration);
+            
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 
             $response = [
@@ -741,34 +752,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId());
             $eventManager->trigger($event);
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
-
-        $this->returnJson($response, $code);
-    }
-
-    /**
-     * Used to manage time
-     */
-    public function time()
-    {
-        $code = 200;
-
-        try {
-            if($this->hasRequestParameter('timerPaused')){
-                $duration = floatval($this->getRequestParameter('timerPaused'));
-                if($duration > 0){
-                    $serviceContext = $this->getServiceContext(false);
-                    $this->runnerService->updateTimers($serviceContext, $duration);
-                    $this->runnerService->persist($serviceContext);
-                }
-            }
-            $response = [
-                'success' => true
-            ];
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
