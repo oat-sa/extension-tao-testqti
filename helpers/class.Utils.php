@@ -44,7 +44,8 @@ class taoQtiTest_helpers_Utils {
      * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @throws common_Exception If the copy fails.
      */
-    static public function storeQtiResource($testContent, $qtiResource, $origin, $copy = true, $rename = '') {
+    static public function storeQtiResource($testContent, $qtiResource, $origin, $copy = true, $rename = '')
+    {
         if ($testContent instanceof core_kernel_file_File) {
             $contentPath = $testContent->getAbsolutePath();
         }
@@ -54,7 +55,6 @@ class taoQtiTest_helpers_Utils {
         else {
             throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
-        
         $ds = DIRECTORY_SEPARATOR;
         $contentPath = rtrim($contentPath, $ds);
         
@@ -67,27 +67,12 @@ class taoQtiTest_helpers_Utils {
         else {
             throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
-        
         $resourcePathinfo = pathinfo($filePath);
-        
-        if (empty($resourcePathinfo['dirname']) === false && $resourcePathinfo['dirname'] !== '.') {
-            // The resource file is not at the root of the archive but in a sub-folder.
-            // Let's copy it in the same way into the Test Content folder.
-            $breadCrumb = $contentPath . $ds . str_replace('/', $ds, $resourcePathinfo['dirname']);
-            $breadCrumb = rtrim($breadCrumb, $ds);
-            $finalName = (empty($rename) === true) ? ($resourcePathinfo['filename'] . '.' . $resourcePathinfo['extension']) : $rename;
-            $finalPath = $breadCrumb . $ds . $finalName;
-            
-            if (is_dir($breadCrumb) === false && @mkdir($breadCrumb, 0770, true) === false) {
-                throw new common_Exception("An error occured while creating the '${breadCrumb}' sub-directory where the QTI resource had to be copied.");
-            }
-        }
-        else {
-            // The resource file is at the root of the archive.
-            // Overwrite template test.xml (created by self::createContent() method above) file with the new one.
-            $finalName = (empty($rename) === true) ? ($resourcePathinfo['filename'] . '.' . $resourcePathinfo['extension']) : $rename;
-            $finalPath = $contentPath . $ds . $finalName;
-        }
+
+        // The resource file is at the root of the archive.
+        // Overwrite template test.xml (created by self::createContent() method above) file with the new one.
+        $finalName = (empty($rename) === true) ? ($resourcePathinfo['filename'] . '.' . $resourcePathinfo['extension']) : $rename;
+        $finalPath = $contentPath . $ds . $finalName;
         
         if ($copy === true) {
             $origin = str_replace('/', $ds, $origin);
