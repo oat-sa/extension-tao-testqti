@@ -193,7 +193,7 @@ define([
 
                             //check for the last value in the storage
                             self.storage.getItem(timerConfig.id).then(function(savedTime){
-                                if(savedTime && savedTime < timerConfig.remaining){
+                                if(savedTime){
                                     timerConfig.remaining = savedTime;
                                 }
                                 addTimer(type, timerConfig);
@@ -274,17 +274,11 @@ define([
 
             //change plugin state
             testRunner
-                .on('init', function(){
-
-                    //create the initial timers
-                    updateTimers(true);
-
-                })
 
                 .on('loaditem', function(){
 
                     //check for new timers
-                    updateTimers();
+                    updateTimers(true);
                 })
 
                 .after('renderitem', function(){
