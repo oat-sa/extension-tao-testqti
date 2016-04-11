@@ -24,7 +24,6 @@ use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\TimePoint;
 use oat\tao\test\TaoPhpUnitTestRunner;
-use Prophecy\Prophet;
 use ReflectionClass;
 
 /**
@@ -62,16 +61,24 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
-        $itemRef = $this->getQtiTimerItemRefMock();
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
 
-        $timer->start($itemRef, 1459335000.0000);
+        $timer->start($tags, 1459335000.0000);
         $timePoints = $timeLine->getPoints();
         $this->assertEquals(1, count($timePoints));
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[0]->getTarget());
         $this->assertEquals(TimePoint::TYPE_START, $timePoints[0]->getType());
 
 
-        $timer->start($itemRef, 1459335002.0000);
+        $timer->start($tags, 1459335002.0000);
         $timePoints = $timeLine->getPoints();
         $this->assertEquals(3, count($timePoints));
         //end time of the first range should be authomatically creted
@@ -102,9 +109,17 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testStartInconsistentRangeException()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->start($itemRef, 1459334999.0000);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->start($tags, 1459334999.0000);
     }
 
     /**
@@ -116,10 +131,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
 
-        $timer->end($itemRef, 1459335010.0000);
+        $timer->end($tags, 1459335010.0000);
         $timePoints = $timeLine->getPoints();
 
         $this->assertEquals(2, count($timePoints));
@@ -134,22 +157,30 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testEndInconsistentRangeException()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335010.0000);
-        $timer->end($itemRef, 1459335011.0000);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335010.0000);
+        $timer->end($tags, 1459335011.0000);
     }
 
     /**
      * @dataProvider endInvalidDataExceptionProvider
-     * @param $routeItem
+     * @param $tags
      * @param $timestamp
      * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function testEndInvalidDataException($routeItem, $timestamp)
+    public function testEndInvalidDataException($tags, $timestamp)
     {
         $timer = new QtiTimer();
-        $timer->end($routeItem, $timestamp);
+        $timer->end($tags, $timestamp);
     }
 
     /**
@@ -162,15 +193,23 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timeLine = $this->getTimeLine($timer);
         $timePoints = $timeLine->getPoints();
         $this->assertTrue(empty($timePoints));
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, $startTimestamp);
-        $timer->end($itemRef, $endTimestamp);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, $startTimestamp);
+        $timer->end($tags, $endTimestamp);
         $timePoints = $timeLine->getPoints();
 
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals([], $timeLine->find(null, TimePoint::TARGET_CLIENT));
 
-        $timer->adjust($itemRef, $duration);
+        $timer->adjust($tags, $duration);
         $timePoints = $timeLine->getPoints();
         $clientTimePoints = $timeLine->find(null, TimePoint::TARGET_CLIENT);
         $this->assertEquals(4, count($timePoints));
@@ -197,26 +236,26 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
 
     /**
      * @dataProvider adjustInvalidDataExceptionProvider
-     * @param $routeItem
+     * @param $tags
      * @param $timestamp
      * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function testAdjustInvalidDataException($routeItem, $timestamp)
+    public function testAdjustInvalidDataException($tags, $timestamp)
     {
         $timer = new QtiTimer();
-        $timer->adjust($routeItem, $timestamp);
+        $timer->adjust($tags, $timestamp);
     }
 
     /**
      * @dataProvider adjustInconsistentRangeProvider
      * @param $timer
-     * @param $routeItem
+     * @param $tags
      * @param $duration
      * @expectedException \oat\taoTests\models\runner\time\InconsistentRangeException
      */
-    public function testAdjustInconsistentRangeException($timer, $routeItem, $duration)
+    public function testAdjustInconsistentRangeException($timer, $tags, $duration)
     {
-        $timer->adjust($routeItem, $duration);
+        $timer->adjust($tags, $duration);
     }
 
     /**
@@ -225,10 +264,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testCompute()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335020.0000);
-        $timer->adjust($itemRef, 10);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335020.0000);
+        $timer->adjust($tags, 10);
 
         $this->assertEquals(20, $timer->compute([], TimePoint::TARGET_SERVER));
         $this->assertEquals(10, $timer->compute([], TimePoint::TARGET_CLIENT));
@@ -249,10 +296,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testTimeout()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335020.0000);
-        $timer->adjust($itemRef, 10);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335020.0000);
+        $timer->adjust($tags, 10);
 
         $this->assertFalse($timer->timeout(21, [], TimePoint::TARGET_SERVER));
         $this->assertTrue($timer->timeout(19, [], TimePoint::TARGET_SERVER));
@@ -292,9 +347,17 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testSave()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335020.0000);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335020.0000);
         $storage = new QtiTimeStorage('fake_session_id');
         $timer->setStorage($storage);
         $result = $timer->save();
@@ -330,9 +393,17 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testLoad()
     {
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335020.0000);
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335020.0000);
         $storage = new QtiTimeStorage('fake_session_id');
         $timer->setStorage($storage);
         $timer->save();
@@ -386,10 +457,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function startInvalidDataExceptionProvider()
     {
-        $itemRef = $this->getQtiTimerItemRefMock();
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
         return [
             [
-                $itemRef,
+                $tags,
                 'wrong timestamp',
             ],
         ];
@@ -400,10 +479,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function endInvalidDataExceptionProvider()
     {
-        $itemRef = $this->getQtiTimerItemRefMock();
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
         return [
             [
-                $itemRef,
+                $tags,
                 'wrong timestamp',
             ],
         ];
@@ -435,10 +522,18 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function adjustInvalidDataExceptionProvider()
     {
-        $itemRef = $this->getQtiTimerItemRefMock();
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
         return [
             [
-                $itemRef,
+                $tags,
                 'wrong timestamp',
             ],
         ];
@@ -451,36 +546,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     {
         $emptyTimer = new QtiTimer();
         $timer = new QtiTimer();
-        $itemRef = $this->getQtiTimerItemRefMock();
-        $timer->start($itemRef, 1459335000.0000);
-        $timer->end($itemRef, 1459335010.0000);
-
-        $itemRef = $this->getQtiTimerItemRefMock();
-        return [
-            [
-                $emptyTimer, //timer with empty time line
-                $itemRef,
-                1,
-            ],
-            [
-                $timer, //timer with only one time point in time line
-                $itemRef,
-                11,
-            ],
-        ];
-    }
-
-
-
-    //MOCKS
-    /**
-     * Get QtiTimerItemRef instance mock.
-     * @return object
-     */
-    private function getQtiTimerItemRefMock()
-    {
-        $prophet = new Prophet();
-
         $tags = [
             'test_fake_id',
             'test_part_fake_id',
@@ -490,11 +555,26 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
             'item_fake_id#0-1',
             'item_fake_href',
         ];
+        $timer->start($tags, 1459335000.0000);
+        $timer->end($tags, 1459335010.0000);
 
-        $itemRef = $prophet->prophesize('oat\taoQtiTest\models\runner\time\QtiTimerItemRef');
-        $itemRef->getItemTags()->willReturn($tags);
-        return $itemRef->reveal();
+        return [
+            [
+                $emptyTimer, //timer with empty time line
+                $tags,
+                1,
+            ],
+            [
+                $timer, //timer with only one time point in time line
+                $tags,
+                11,
+            ],
+        ];
     }
+
+
+
+    //MOCKS
 
     /**
      * @param QtiTimer $timer

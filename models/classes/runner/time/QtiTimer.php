@@ -29,7 +29,6 @@ use oat\taoTests\models\runner\time\InvalidStorageException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
-use oat\taoTests\models\runner\time\TimerItemRef;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
 
@@ -61,12 +60,12 @@ class QtiTimer implements Timer
 
     /**
      * Adds a "server start" TimePoint at a particular timestamp for the provided ItemRef
-     * @param TimerItemRef $itemRef
+     * @param string|array $tags
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function start(TimerItemRef $itemRef, $timestamp)
+    public function start($tags, $timestamp)
     {
         // check the provided arguments
         if (!is_numeric($timestamp) || $timestamp < 0) {
@@ -74,7 +73,6 @@ class QtiTimer implements Timer
         }
         
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $itemRef->getItemTags();
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -98,12 +96,12 @@ class QtiTimer implements Timer
 
     /**
      * Adds a "server end" TimePoint at a particular timestamp for the provided ItemRef
-     * @param TimerItemRef $itemRef
+     * @param string|array $tags
      * @param float $timestamp
      * @return Timer
      * @throws TimeException
      */
-    public function end(TimerItemRef $itemRef, $timestamp)
+    public function end($tags, $timestamp)
     {
         // check the provided arguments
         if (!is_numeric($timestamp) || $timestamp < 0) {
@@ -111,7 +109,6 @@ class QtiTimer implements Timer
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $itemRef->getItemTags();
         $range = $this->getRange($tags);
 
         // validate the data consistence
@@ -130,12 +127,12 @@ class QtiTimer implements Timer
 
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
-     * @param TimerItemRef $itemRef
+     * @param string|array $tags
      * @param float $duration
      * @return Timer
      * @throws TimeException
      */
-    public function adjust(TimerItemRef $itemRef, $duration)
+    public function adjust($tags, $duration)
     {
         // check the provided arguments
         if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
@@ -143,7 +140,6 @@ class QtiTimer implements Timer
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
-        $tags = $itemRef->getItemTags();
         $itemTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_SERVER);
         $range = $itemTimeLine->getPoints();
 
@@ -181,32 +177,32 @@ class QtiTimer implements Timer
 
     /**
      * Computes the total duration represented by the filtered TimePoints
-     * @param string|array $tag A tag or a list of tags to filter
+     * @param string|array $tags A tag or a list of tags to filter
      * @param int $target The type of target TimePoint to filter
      * @return float Returns the total computed duration
      * @throws TimeException
      */
-    public function compute($tag, $target)
+    public function compute($tags, $target)
     {
         // cannot compute a duration across different targets
         if (!$this->onlyOneFlag($target)) {
             throw new InconsistentCriteriaException('Cannot compute a duration across different targets!');    
         }
         
-        return $this->timeLine->compute($tag, $target);
+        return $this->timeLine->compute($tags, $target);
     }
 
     /**
      * Checks if the duration of a TimeLine subset reached the timeout
      * @param float $timeLimit The time limit against which compare the duration
-     * @param string|array $tag A tag or a list of tags to filter
+     * @param string|array $tags A tag or a list of tags to filter
      * @param int $target The type of target TimePoint to filter
      * @return bool Returns true if the timeout is reached
      * @throws TimeException
      */
-    public function timeout($timeLimit, $tag, $target)
+    public function timeout($timeLimit, $tags, $target)
     {
-        $duration = $this->compute($tag, $target);
+        $duration = $this->compute($tags, $target);
         return $duration >= $timeLimit;
     }
 
