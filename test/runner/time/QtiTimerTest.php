@@ -576,7 +576,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
 
         $data = [];
 
-        // existing client range will be replaced by summed duration
+        // existing client range will be replaced by new duration
         $timer = new QtiTimer();
         $timeLine = $this->getTimeLine($timer);
         $timeLine->add(new TimePoint($tags, 1459335005.0000, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT));
@@ -587,7 +587,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
             1459335000.0000,
             1459335020.0000,
             10,
-            15,
+            10,
         ];
 
         // existing partial client range will be replaced by new duration

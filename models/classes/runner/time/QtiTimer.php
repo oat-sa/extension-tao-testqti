@@ -163,14 +163,14 @@ class QtiTimer implements Timer
                 \common_Logger::i('Handled client range error');
             }
 
-            if ($clientDuration) {
-                if (is_null($duration)) {
+            if (is_null($duration)) {
+                if ($clientDuration) {
                     $duration = $clientDuration;
+                    \common_Logger::i("No client duration provided to adjust the timer, but a range already exist: ${duration}");
                 } else {
-                    $duration += $clientDuration;
+                    $duration = $serverDuration;
+                    \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
                 }
-            } else if (is_null($duration)) {
-                $duration = $serverDuration;
             }
 
             $removed = $this->timeLine->remove($tags, TimePoint::TARGET_CLIENT);
@@ -184,6 +184,7 @@ class QtiTimer implements Timer
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
+            \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
         } else if ($duration > $serverDuration) {
             throw new InconsistentRangeException('A client duration cannot be larger than the server time range!');
         }
