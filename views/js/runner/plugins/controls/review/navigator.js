@@ -99,6 +99,7 @@ define([
         items: '.qti-navigator-item',
         itemLabels: '.qti-navigator-item > .qti-navigator-label',
         itemIcons: '.qti-navigator-item > .qti-navigator-icon',
+        activeItem: '.qti-navigator-item.active',
         icons: '.qti-navigator-icon',
         linearStart: '.qti-navigator-linear-part button',
         counters: '.qti-navigator-counter',
@@ -239,6 +240,32 @@ define([
         },
 
         /**
+         * Keep a component element visible inside the container
+         * @param {String|jQuery|HTMLElement} element
+         * @returns {navigatorApi}
+         * @private
+         */
+        keepVisible: function keepVisible(element) {
+            var $element = $(element);
+            var $component = this.getElement();
+            var $container = $component.parent();
+            var currentScrollTop = $container.scrollTop();
+            var minScrollTop, maxScrollTop, scrollTop;
+
+            if ($container.length) {
+                maxScrollTop = $element.offset().top - $container.offset().top + currentScrollTop;
+                minScrollTop = maxScrollTop - $container.height() + $element.outerHeight();
+
+                scrollTop = Math.max(Math.min(maxScrollTop, currentScrollTop), minScrollTop);
+                if (scrollTop !== currentScrollTop) {
+                    $container.animate({scrollTop:scrollTop});
+                }
+            }
+
+            return this;
+        },
+
+        /**
          * Updates the review screen
          * @param {Object} map The current test map
          * @param {Object} context The current test context
@@ -267,6 +294,8 @@ define([
                 this.controls.$filterBar.show();
                 this.controls.$linearState.hide();
                 this.controls.$tree.html(navigatorTreeTpl(scopedMap));
+
+                this.keepVisible(this.controls.$tree.find(_selectors.activeItem));
 
                 if (this.config.preventsUnseen) {
                     // disables all unseen items to prevent the test taker has access to.
