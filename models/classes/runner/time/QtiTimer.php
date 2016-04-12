@@ -149,8 +149,39 @@ class QtiTimer implements Timer
             throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
         }
 
-        // check if the client side duration is bound by the server side duration
         $serverDuration = $itemTimeLine->compute();
+
+        // take care of existing client range
+        $clientTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_CLIENT);
+        $clientRange = $clientTimeLine->getPoints();
+        $clientRangeLength = count($clientRange);
+        if ($clientRangeLength) {
+            $clientDuration = 0;
+            try {
+                $clientDuration = $clientTimeLine->compute();
+            } catch(TimeException $e) {
+                \common_Logger::i('Handled client range error');
+            }
+
+            if ($clientDuration) {
+                if (is_null($duration)) {
+                    $duration = $clientDuration;
+                } else {
+                    $duration += $clientDuration;
+                }
+            } else if (is_null($duration)) {
+                $duration = $serverDuration;
+            }
+
+            $removed = $this->timeLine->remove($tags, TimePoint::TARGET_CLIENT);
+            if ($removed == $clientRangeLength) {
+                \common_Logger::i("Replace client duration in timer: ${clientDuration} to ${duration}");
+            } else {
+                \common_Logger::w("Unable to replace client duration in timer: ${clientDuration} to ${duration}");
+            }
+        }
+
+        // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
         } else if ($duration > $serverDuration) {
