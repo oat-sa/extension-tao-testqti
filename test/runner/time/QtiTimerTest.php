@@ -218,10 +218,52 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $clientEndPoint = $clientTimePoints[1];
 
         $serverDuration = $endTimestamp - $startTimestamp;
-        if (is_null($duration)) {
-            $duration = $serverDuration;
-        }
-        $delay = ($serverDuration - $duration) / 2;
+        $delay = ($serverDuration - $expectedDuration) / 2;
+
+        $this->assertEquals($startTimestamp + $delay, $clientStartPoint->getTimestamp());
+        $this->assertEquals(TimePoint::TARGET_CLIENT, $clientStartPoint->getTarget());
+        $this->assertEquals(TimePoint::TYPE_START, $clientStartPoint->getType());
+
+        $this->assertEquals($endTimestamp - $delay, $clientEndPoint->getTimestamp());
+        $this->assertEquals(TimePoint::TARGET_CLIENT, $clientEndPoint->getTarget());
+        $this->assertEquals(TimePoint::TYPE_END, $clientEndPoint->getType());
+
+        $this->assertEquals($expectedDuration, $timer->compute(null, TimePoint::TARGET_CLIENT));
+    }
+
+    /**
+     * Test the QtiTimer::adjust()
+     * * @dataProvider adjustExistingDataProvider
+     */
+    public function testAdjustExisting($timer, $tags, $startTimestamp, $endTimestamp, $duration, $expectedDuration)
+    {
+        $timeLine = $this->getTimeLine($timer);
+
+        $timePoints = $timeLine->getPoints();
+        $this->assertFalse(empty($timePoints));
+
+        $serverTimePoints = $timeLine->find(null, TimePoint::TARGET_SERVER);
+        $this->assertEquals(0, count($serverTimePoints));
+
+        $clientTimePoints = $timeLine->find(null, TimePoint::TARGET_CLIENT);
+        $this->assertNotEquals(0, count($clientTimePoints));
+
+        $timer->start($tags, $startTimestamp);
+        $timer->end($tags, $endTimestamp);
+
+        $timePoints = $timeLine->find(null, TimePoint::TARGET_SERVER);
+        $this->assertEquals(2, count($timePoints));
+
+        $timer->adjust($tags, $duration);
+
+        $clientTimePoints = $timeLine->find(null, TimePoint::TARGET_CLIENT);
+        $this->assertEquals(2, count($clientTimePoints));
+
+        $clientStartPoint = $clientTimePoints[0];
+        $clientEndPoint = $clientTimePoints[1];
+
+        $serverDuration = $endTimestamp - $startTimestamp;
+        $delay = ($serverDuration - $expectedDuration) / 2;
 
         $this->assertEquals($startTimestamp + $delay, $clientStartPoint->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_CLIENT, $clientStartPoint->getTarget());
@@ -515,6 +557,106 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
                 20
             ]
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function adjustExistingDataProvider()
+    {
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+
+        $data = [];
+
+        // existing client range will be replaced by new duration
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335005.0000, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT));
+        $timeLine->add(new TimePoint($tags, 1459335010.0000, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            10,
+            10,
+        ];
+
+        // existing partial client range will be replaced by new duration
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335005.0000, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            10,
+            10,
+        ];
+
+        // existing partial client range will be replaced by new duration
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335010.0000, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            10,
+            10,
+        ];
+
+        // existing client range will be kept if no new duration is provided
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335005.0000, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT));
+        $timeLine->add(new TimePoint($tags, 1459335010.0000, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            null,
+            5,
+        ];
+
+        // existing partial client range will be replaced by server duration if no duration is provided
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335005.0000, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            null,
+            20
+        ];
+
+        // existing partial client range will be replaced by server duration if no duration is provided
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timeLine->add(new TimePoint($tags, 1459335010.0000, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT));
+        $data[] = [
+            $timer,
+            $tags,
+            1459335000.0000,
+            1459335020.0000,
+            null,
+            20,
+        ];
+
+        return $data;
     }
 
     /**
