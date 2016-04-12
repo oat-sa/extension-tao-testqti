@@ -841,14 +841,21 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     /**
      * Retrieve the QTI Test Definition meta-data array stored
      * into the private compilation directory.
-     * 
+     *
      * @return array
      */
-    protected function retrieveTestMeta() {
+    protected function retrieveTestMeta()
+    {
         $directories = $this->getCompilationDirectory();
-        $privateDirectoryPath = $directories['private']->getPath();
-        $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
-        
+        /** @var tao_models_classes_service_StorageDirectory $privateDirectory */
+        $privateDirectory = $directories['private'];
+        $stream = $privateDirectory->readStream(TAOQTITEST_COMPILED_META_FILENAME);
+        $data = $stream->getContents();
+        $stream->close();
+
+        $data = str_replace('<?php', '', $data);
+        $data = str_replace('?>', '', $data);
+        $meta = eval($data);
         $this->setTestMeta($meta);
     }
 

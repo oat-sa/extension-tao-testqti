@@ -425,11 +425,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @param XmlCompactDocument $compiledDoc
      */
-    protected function explodeRubricBlocks(XmlCompactDocument $compiledDoc) {
-        $savePath = $this->getPrivateDirectory()->getPath() . 'compact-test.xml';
+    protected function explodeRubricBlocks(XmlCompactDocument $compiledDoc)
+    {
         $compiledDoc->setExplodeRubricBlocks(true);
-        $compiledDoc->save($savePath);
-        unlink($savePath);
+        $data = $compiledDoc->saveToString();
+        $stream = GuzzleHttp\Psr7\stream_for($data);
+        $privateDir = $this->getPrivateDirectory();
+        $privateDir->writeStream('compact-test.xml', $stream);
+        $stream->close();
     }
     
     /**
@@ -716,15 +719,16 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @param AssessmentTest $test
      */
-    protected function compileMeta(AssessmentTest $test) {
-        $compiledDocDir = $this->getPrivateDirectory()->getPath();
-        $compiledDocPath = $compiledDocDir . TAOQTITEST_COMPILED_META_FILENAME;
-        
+    protected function compileMeta(AssessmentTest $test)
+    {
+        $compiledDocDir = $this->getPrivateDirectory();
         $meta = taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
         $phpCode = common_Utils::toPHPVariableString($meta);
         $phpCode = '<?php return ' . $phpCode . '; ?>';
-        
-        file_put_contents($compiledDocPath, $phpCode);
+
+        $stream = GuzzleHttp\Psr7\stream_for($phpCode);
+        $compiledDocDir->writeStream(TAOQTITEST_COMPILED_META_FILENAME, $stream);
+        $stream->close();
     }
     
     /**
