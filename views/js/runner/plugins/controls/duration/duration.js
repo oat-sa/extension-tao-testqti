@@ -26,8 +26,9 @@ define([
     'core/polling',
     'core/timer',
     'core/store',
+    'core/promise',
     'taoTests/runner/plugin',
-], function (_, pollingFactory, timerFactory, store, pluginFactory) {
+], function (_, pollingFactory, timerFactory, store, Promise, pluginFactory) {
     'use strict';
 
     /**
