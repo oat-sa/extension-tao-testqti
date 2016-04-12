@@ -186,7 +186,8 @@ class QtiTimer implements Timer
             $duration = $serverDuration;
             \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
         } else if ($duration > $serverDuration) {
-            throw new InconsistentRangeException('A client duration cannot be larger than the server time range!');
+            \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
+            $duration = $serverDuration;
         }
 
         // extract range boundaries
