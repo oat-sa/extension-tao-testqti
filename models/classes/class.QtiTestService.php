@@ -1049,5 +1049,39 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
+        public function createInstanceNew( core_kernel_classes_Class $clazz, $label = '',$items)
+    {
+
+        $returnValue = null;
+
+        $test = parent::createInstanceNew($clazz, $label,(array)$items);
+        $this->setDefaultModelNew($test,$items);
+
+        //set the the default state to 'activ':
+        $test->setPropertyValue(new core_kernel_classes_Property(TEST_ACTIVE_PROP), GENERIS_TRUE);
+
+        $this->setTestModelNew($test,$this->getTestModel($test),$items);
+      
+        $returnValue = $test;
+      //   $del=new taoDelivery_actions_Delivery();
+     //    $deliveryUri=  $del->createDelivery($test);
+     //    $deliveryLink=new DeliveryLinks();
+     //    $result=  $deliveryLink->DeliveryLink($deliveryUri);
+
+        return $returnValue ;
+    }
+	
+	    public function getItemsData($items)
+    {
+        $returnValue = array();
+        $itemClazz = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+        foreach($itemClazz->getInstances(true) as $instance){
+            if (in_array($instance->getUri(),array_values($items[RDFS_ITEMSLIST]) )) {
+                $returnValue[$instance->getUri()]=$instance;
+            }
+
+    }
+        return (array) $returnValue;
+    }
 }
 ?>

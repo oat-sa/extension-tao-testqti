@@ -26,6 +26,8 @@ $todefine = array(
     'INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation',
     'INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId',
     'INSTANCE_TEST_MODEL_QTI' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel',
+    'TAO_QTITEST_QTIPACKAGE_PROPERTY' 	=>	 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestContent',
+	'RDFS_ITEMSLIST'         			=>	 		 'http://www.tao.lu/Ontologies/qtitest.rdf#itemsList',
                 
     // Configuration.
    'TAOQTITEST_FILENAME' => 'tao-qtitest-testdefinition.xml',
