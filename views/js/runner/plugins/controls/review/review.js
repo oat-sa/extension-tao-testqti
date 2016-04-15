@@ -228,6 +228,7 @@ define([
                                 canFlag: !context.isLinear && context.options.markReview
                             });
                         self.show();
+                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
                     } else {
                         self.hide();
                     }

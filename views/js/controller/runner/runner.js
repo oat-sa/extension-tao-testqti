@@ -49,11 +49,14 @@ define([
     /**
      * Catches errors
      * @param {Object} err
+     * @param {Boolean} quiet
      */
-    function onError(err) {
+    function onError(err, quiet) {
         loadingBar.stop();
 
-        feedback().error(err.message);
+        if (!quiet) {
+            feedback().error(err.message);
+        }
 
         //TODO to be replaced by the logger
         window.console.error(err);
@@ -94,8 +97,8 @@ define([
         runner('qti', plugins, config)
             .before('error', function (e, err) {
                 var self = this;
-
-                onError(err);
+                var returnValue;
+                var alreadyDisplayed = false;
 
                 // test has been closed/suspended => redirect to the index page after message acknowledge
                 if (err && err.type && err.type === 'TestState') {
@@ -109,10 +112,15 @@ define([
                             self.trigger('endsession', 'teststate', err.code);
                             destroyRunner.call(self);
                         });
+                        alreadyDisplayed = true;
                     }
                     // prevent other messages/warnings
-                    return false;
+                    returnValue = false;
                 }
+
+                onError(err, alreadyDisplayed);
+
+                return returnValue;
             })
             .on('ready', function () {
                 _.defer(function () {
