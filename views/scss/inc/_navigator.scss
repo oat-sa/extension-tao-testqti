@@ -7,12 +7,12 @@ $borderColor: $textHighlight;
 
 .qti-navigator {
     @include disableSelect();
+    @include flex-container();
+    @include vendor-prefix(flex-direction, column, property);
     padding: 0;
     cursor: default;
     min-width: calc(18rem - 8px);
     height: 100%;
-    display: flex;
-    flex-direction: column;
     position: relative;
 
     span {
@@ -50,7 +50,7 @@ $borderColor: $textHighlight;
 
     // all labels
     .qti-navigator-label {
-        display: flex;
+        @include flex-container();
         min-width: calc(100% - 12px);
         padding: 0 6px;
         line-height: $lineHeight;
@@ -160,7 +160,7 @@ $borderColor: $textHighlight;
         height: calc(#{$lineHeight} + (2 * #{$borderWidth}));
 
         ul {
-            display: flex;
+            @include flex-container();
         }
 
         li {
@@ -178,7 +178,7 @@ $borderColor: $textHighlight;
 
     // the panel listing the items
     .qti-navigator-tree {
-        flex: 1;
+        @include vendor-prefix(flex, 1, property);
         overflow-y: auto;
     }
 
@@ -338,7 +338,8 @@ $borderColor: $textHighlight;
         .qti-navigator-item {
             overflow: hidden;
             .qti-navigator-icon {
-                width: calc(#{$collapsedWidth} - 16px);
+                padding-left: 6px;
+                width: 2rem;
             }
             .qti-navigator-number {
                 display: inline-block;
