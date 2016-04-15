@@ -104,6 +104,7 @@ class QtiRunnerMap implements RunnerMap
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
                     'positionInSection' => $offsetSection,
+                    'index' => $offsetSection + 1,
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
                     'answered' => \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
