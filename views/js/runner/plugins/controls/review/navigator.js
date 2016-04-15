@@ -23,10 +23,11 @@ define([
     'lodash',
     'i18n',
     'ui/component',
+    'ui/autoscroll',
     'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigator',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigatorTree'
-], function ($, _, __, component, mapHelper, navigatorTpl, navigatorTreeTpl) {
+], function ($, _, __, component, autoscroll, mapHelper, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
     /**
@@ -50,7 +51,7 @@ define([
         active: 'active',
         collapsed: 'collapsed',
         collapsible: 'collapsible',
-        masked: 'masked',
+        hidden: 'hidden',
         disabled: 'disabled',
         flagged: 'flagged',
         answered: 'answered',
@@ -111,7 +112,7 @@ define([
         flagged: '.flagged',
         notFlagged: ':not(.flagged)',
         notAnswered: ':not(.answered)',
-        masked: '.masked'
+        hidden: '.hidden'
     };
 
     /**
@@ -125,7 +126,7 @@ define([
         unanswered: _selectors.answered,
         flagged: _selectors.notFlagged,
         answered: _selectors.notAnswered,
-        filtered: _selectors.masked
+        filtered: _selectors.hidden
     };
 
     /**
@@ -188,13 +189,13 @@ define([
             var self = this;
 
             // remove the current filter by restoring all items
-            var $items = this.controls.$tree.find(_selectors.items).removeClass(_cssCls.masked);
+            var $items = this.controls.$tree.find(_selectors.items).removeClass(_cssCls.hidden);
 
             // filter the items according to the provided criteria
             var filter = _filterMap[criteria];
             var filtered = _filterMap[filter ? 'filtered' : 'answered'];
             if (filter) {
-                $items.filter(filter).addClass(_cssCls.masked);
+                $items.filter(filter).addClass(_cssCls.hidden);
             }
 
             // update the section counters
@@ -240,29 +241,10 @@ define([
         },
 
         /**
-         * Keep a component element visible inside the container
-         * @param {String|jQuery|HTMLElement} element
-         * @returns {navigatorApi}
-         * @private
+         * Keep the active item visible, auto scroll if needed
          */
-        keepVisible: function keepVisible(element) {
-            var $element = $(element);
-            var $component = this.getElement();
-            var $container = $component.parent();
-            var currentScrollTop = $container.scrollTop();
-            var minScrollTop, maxScrollTop, scrollTop;
-
-            if ($container.length) {
-                maxScrollTop = $element.offset().top - $container.offset().top + currentScrollTop;
-                minScrollTop = maxScrollTop - $container.height() + $element.outerHeight();
-
-                scrollTop = Math.max(Math.min(maxScrollTop, currentScrollTop), minScrollTop);
-                if (scrollTop !== currentScrollTop) {
-                    $container.animate({scrollTop:scrollTop});
-                }
-            }
-
-            return this;
+        autoScroll: function autoScroll() {
+            autoscroll(this.controls.$tree.find(_selectors.activeItem), this.controls.$tree);
         },
 
         /**
@@ -295,8 +277,9 @@ define([
                 this.controls.$linearState.hide();
                 this.controls.$tree.html(navigatorTreeTpl(scopedMap));
 
-                this.keepVisible(this.controls.$tree.find(_selectors.activeItem));
+                this.autoScroll();
 
+                this.setState('prevents-unseen', this.config.preventsUnseen);
                 if (this.config.preventsUnseen) {
                     // disables all unseen items to prevent the test taker has access to.
                     this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
@@ -529,6 +512,11 @@ define([
             // uninstalls the component
             .on('destroy', function () {
                 this.controls = null;
+            })
+
+            // keep the activ item visible
+            .on('show', function () {
+                this.autoScroll();
             })
 
             // renders the component
