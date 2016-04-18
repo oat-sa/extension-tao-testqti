@@ -49,12 +49,48 @@ class QtiTimeStorage implements TimeStorage
     protected $testSessionId;
 
     /**
+     * The assessment test user identifier
+     * @var string
+     */
+    protected $userId;
+
+    /**
      * QtiTimeStorage constructor.
      * @param string $testSessionId
+     * @param string $userId
      */
-    public function __construct($testSessionId)
+    public function __construct($testSessionId, $userId)
     {
         $this->testSessionId = $testSessionId;
+        $this->userId = $userId;
+    }
+
+    /**
+     * Gets the key identifying the storage for the provided user
+     * @return string
+     */
+    protected function getStorageKey()
+    {
+        return self::STORAGE_PREFIX . $this->testSessionId;
+    }
+
+    /**
+     * Gets the user key to access the storage
+     * @return string
+     * @throws \common_exception_Error
+     */
+    protected function getUserKey()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Gets the StateStorage service
+     * @return \tao_models_classes_service_StateStorage
+     */
+    protected function getStorageService()
+    {
+        return \tao_models_classes_service_StateStorage::singleton();
     }
 
     /**
@@ -72,9 +108,7 @@ class QtiTimeStorage implements TimeStorage
 
         $this->cache[$this->testSessionId] = $data;
 
-        $storageService = \tao_models_classes_service_StateStorage::singleton();
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
-        $storageService->set($userUri, self::STORAGE_PREFIX . $this->testSessionId, $data);
+        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $data);
 
         return $this;
     }
@@ -87,9 +121,7 @@ class QtiTimeStorage implements TimeStorage
     public function load()
     {
         if (!isset($this->cache[$this->testSessionId])) {
-            $storageService = \tao_models_classes_service_StateStorage::singleton();
-            $userUri = \common_session_SessionManager::getSession()->getUserUri();
-            $this->cache[$this->testSessionId] = $storageService->get($userUri, self::STORAGE_PREFIX . $this->testSessionId);
+            $this->cache[$this->testSessionId] = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
         }
 
         return $this->cache[$this->testSessionId];
