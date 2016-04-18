@@ -381,13 +381,21 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function endTestSession()
     {
-        try {
-            // try to close existing time range if any, in order to be sure the test will be closed with a consistent timer.
-            $tags = $this->getItemTags($this->getCurrentRouteItem());
-            $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
-            \common_Logger::i('Timer correctly closed.');
-        } catch(InconsistentRangeException $e) {
-            \common_Logger::i('Timer already closed.');
+        // try to close existing time range if any, in order to be sure the test will be closed with a consistent timer.
+        if ($this->isRunning() === true) {
+            $route = $this->getRoute();
+            if ($route->valid()) {
+                $routeItem = $this->getCurrentRouteItem();
+            }
+            if (isset($routeItem)) {
+                try {
+                    $tags = $this->getItemTags($this->getCurrentRouteItem());
+                    $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
+                    \common_Logger::i('Timer correctly closed.');
+                } catch (InconsistentRangeException $e) {
+                    \common_Logger::i('Timer already closed.');
+                }
+            }
         }
 
         parent::endTestSession();
