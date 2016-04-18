@@ -23,10 +23,7 @@
  */
 class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
  	
-	 const QTI_TESTPACKAGE = 'qtiTestContent' ;
-	 
-	 const ITEMSLIST = 'itemsList';
-	
+	 const QTI_TESTPACKAGE = 'qtiTestContent' ;	 	
 
 	public function __construct()
 	{
@@ -42,49 +39,50 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 	protected function getParametersAliases()
 	{
 	    return array_merge(parent::getParametersAliases(), array(
-		"qtiPackage" => self::QTI_TESTPACKAGE,
-		"itemsList"  => self::ITEMSLIST
-		   
+		"qtiPackage" => self::QTI_TESTPACKAGE,	   
 	    ));
 	}
 	
 	
-	protected function importQtiPackage($parameters){
-		$report=null;
-		if(isset($_FILES["qtiPackage"]))
-		{
-			if($_FILES["qtiPackage"]["name"]) {
-				$filename = $_FILES["qtiPackage"]["name"];
-				$source = $_FILES["qtiPackage"]["tmp_name"];
-				$type = $_FILES["qtiPackage"]["type"];
+	protected function importQtiPackage(){
+		try {
+			if(isset($_FILES["qtiPackage"])){
+				if($_FILES["qtiPackage"]["name"]) {
+					$filename = $_FILES["qtiPackage"]["name"];
+					$source = $_FILES["qtiPackage"]["tmp_name"];
+					$type = $_FILES["qtiPackage"]["type"];
 
-				$name = explode(".", $filename);
-				$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
-				foreach ($accepted_types as $mime_type) {
-					if ($mime_type == $type) {
-						$okay = true;
-						break;
+					$name = explode(".", $filename);
+					$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+					foreach ($accepted_types as $mime_type) {
+						if ($mime_type == $type) {
+							$okay = true;
+							break;
+						}
 					}
-				}
-				$continue = strtolower($name[1]) == 'zip' ? true : false;
-				if (!$continue) {
+					$continue = strtolower($name[1]) == 'zip' ? true : false;
+					if (!$continue) {
+						throw new common_exception_InvalidArgumentType();
+					}
+					$path = dirname(__FILE__) . '/';  // absolute path to the directory where zipper.php is in
+					$filenoext = basename($filename, '.zip');  // absolute path to the directory where zipper.php is in (lowercase)
+					$filenoext = basename($filenoext, '.ZIP');  // absolute path to the directory where zipper.php is in (when uppercase)
+					$targetdir = $path . $filenoext; // target directory
+					$targetzip = $path . $filename; // target zip file
+					/* create directory if not exists', otherwise overwrite */
+					/* target directory is same as filename without extension */
+					if (is_dir($targetdir)) rmdir_recursive($targetdir);
+					if(move_uploaded_file($source, $targetzip)) {
+						$report = $this->service->importQtiTest($targetzip);
+					}
+				}else{
 					throw new common_exception_InvalidArgumentType();
-				}
-				$path = dirname(__FILE__) . '/';  // absolute path to the directory where zipper.php is in
-				$filenoext = basename($filename, '.zip');  // absolute path to the directory where zipper.php is in (lowercase)
-				$filenoext = basename($filenoext, '.ZIP');  // absolute path to the directory where zipper.php is in (when uppercase)
-				$targetdir = $path . $filenoext; // target directory
-				$targetzip = $path . $filename; // target zip file
-				/* create directory if not exists', otherwise overwrite */
-				/* target directory is same as filename without extension */
-				if (is_dir($targetdir)) rmdir_recursive($targetdir);
-				if(move_uploaded_file($source, $targetzip)) {
-					$report = $this->service->importFromArray($parameters, $targetzip);
-				}
-			}else{
-				throw new common_exception_InvalidArgumentType();
+				}			
 			}
 		}
+		catch (Exception $e) {
+            return common_report_Report::createFailure($e->getMessage());
+        }
 		return $report;
 	}
 	/**
@@ -101,7 +99,6 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
          *    @example :"post"=> array("login", "password")
 		*/
 		"post"=> array("qtiPackage"),
-		"itemsList"=> self::ITEMSLIST	
 	    );
 	}
 	
@@ -131,11 +128,7 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 								$itemsid[] = $item->getUri();                                          			
 					}		
 					$data = array('testId' => $testid, 'testItems' => $itemsid);
-				}
-			else{
-				// Create new Item
-				$data = $this->service->createFromArray($parameters);			
-			}
+				}			
 			
 		} catch (Exception $e) {
 			return $this->returnFailure($e);

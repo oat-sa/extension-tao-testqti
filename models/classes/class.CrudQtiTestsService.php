@@ -55,23 +55,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService
      * @param array $propertiesValues
      * @return core_kernel_classes_Resource
      */
-    public function createFromArray(array $propertiesValues){
-	
-		if (!isset($propertiesValues[RDFS_LABEL])) {
-			$propertiesValues[RDFS_LABEL] = "";
-		}
-		$type = isset($propertiesValues[RDF_TYPE]) ? $propertiesValues[RDF_TYPE] : $this->getRootClass();
-		$label = $propertiesValues[RDFS_LABEL];
-		unset($propertiesValues[RDFS_LABEL]);
-		unset($propertiesValues[RDF_TYPE]);
-		$resource =  parent::createListedTest($label, $type, $propertiesValues);
-		return $resource;
-    }
 
-    
-
-
-	public function importFromArray(array $propertiesValues,$uploadedFile){
+	public function importQtiTest($uploadedFile){
 
 		//test versioning
 		try {
