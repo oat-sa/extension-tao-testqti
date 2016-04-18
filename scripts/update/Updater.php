@@ -290,5 +290,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('2.23.0','2.24.0');
+
+        if ($this->isVersion('2.24.0')) {
+            $className = \taoQtiTest_helpers_SessionManager::DEFAULT_TEST_SESSION;
+            try {
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('deliveryServer');
+                if ($deliveryConfig) {
+                    $deliveryContainer = $deliveryConfig->getOption('deliveryContainer');
+                    if (false !== strpos($deliveryContainer, 'DeliveryClientContainer')) {
+                        $className = 'oat\\taoQtiTest\\models\\runner\\session\\TestSession';
+                    }
+                }
+            } catch(\common_ext_ExtensionException $e) {
+            }
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-session'] = $className;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.25.0');
+        }
     }
 }

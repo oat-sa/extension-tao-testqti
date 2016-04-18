@@ -154,5 +154,11 @@ return array(
          * @type string
          */
         'target' => 'server'
-    ]
+    ],
+
+    /**
+     * The namespace of the TestSession class
+     * @type string
+     */
+    'test-session' => '\taoQtiTest_helpers_TestSession',
 );
