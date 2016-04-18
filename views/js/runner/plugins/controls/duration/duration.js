@@ -120,7 +120,7 @@ define([
                 .before('finish', function(e){
                     var done = e.done();
 
-                    self.storage.clear()
+                    durationStore.clear()
                         .then(done)
                         .catch(done);
                 });
