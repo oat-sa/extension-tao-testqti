@@ -324,19 +324,28 @@ define([
                 var states = this.getTestData().itemStates;
                 var warning = false;
 
+                /**
+                 * Get the label of the current item
+                 * @returns {String} the label (fallback to the item identifier);
+                 */
+                var getItemLabel = function getItemLabel(){
+                    var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
+                    return item && item.label ? item.label : context.itemIdentifier;
+                };
+
                 this.trigger('enablenav enabletools');
 
 
                 //The item is rendered but in a state that prevents us from interacting
                 if (context.isTimeout) {
-                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
+                    warning = __('Time limit reached for item "%s".', getItemLabel());
 
                 } else if (context.itemSessionState > states.interacting) {
 
                     if (context.remainingAttempts === 0) {
-                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
+                        warning = __('No more attempts allowed for item "%s".',  getItemLabel());
                     } else {
-                        warning = __('Item "%s" is completed.', context.itemIdentifier);
+                        warning = __('Item "%s" is completed.', getItemLabel());
                     }
                 }
 
