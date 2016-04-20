@@ -21,6 +21,8 @@
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
 
  */
+use \common_exception_UserReadableException;
+use \Exception;
 class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
  	
 	 const QTI_TESTPACKAGE = 'qtiTestContent' ;	 	
@@ -45,6 +47,7 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 	
 	
 	protected function importQtiPackage(){
+		$report = new common_report_Report(common_report_Report::TYPE_INFO);
 		try {
 			if(isset($_FILES["qtiPackage"])){
 				if($_FILES["qtiPackage"]["name"]) {
@@ -76,11 +79,19 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 						$report = $this->service->importQtiTest($targetzip);
 					}
 				}else{
-					throw new common_exception_InvalidArgumentType();
+					
+					    
+						$msg = __("Unable to Upload QTI Packet");
+						$report->setMessage($msg);
+						$report->setType(common_report_Report::TYPE_ERROR);
 				}			
+			} else {
+					    $msg = __("The qtiPakage paramter in API is not selected.");
+						$report->setMessage($msg);
+						$report->setType(common_report_Report::TYPE_ERROR);
 			}
 		}
-		catch (Exception $e) {
+		catch (common_exception_Exception  $e) {
             return common_report_Report::createFailure($e->getMessage());
         }
 		return $report;
@@ -107,8 +118,8 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 	 * @author Rashid and Absar -PCG Team
 	 */	 
 	protected function post() {
-		try {
-			$parameters = $this->getParameters();
+		
+			    $parameters = $this->getParameters();
 			/**
 			 * This code snippet  import QTI Package or create new item
 			 *
@@ -117,22 +128,33 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule {
 			 * @package taoItems
 			 *
 			 *
-			 */
-				if(isset($parameters[self::QTI_TESTPACKAGE])){
+			 */			
 					// Import QTI Package			
-					$data = $this->importQtiPackage($parameters);
-					foreach ($data as $r) {
-						$values = $r->getData();
-						$testid = $values->rdfsResource->getUri();
+				$data = $this->importQtiPackage($parameters);				
+				if ($data->getType() === common_report_Report::TYPE_ERROR) 
+				    {
+					    //$msg = __("QTI TEST Could not be Imported");
+						
+						$e = new common_exception_Error($data->getMessage());
+						return $this->returnFailure($e);
+				}
+				else{
+            	    foreach ($data as $r) {
+					$values = $r->getData();
+					$testid = $values->rdfsResource->getUri();	
 							foreach ($values->items as $item) 			 
 								$itemsid[] = $item->getUri();                                          			
-					}		
-					$data = array('testId' => $testid, 'testItems' => $itemsid);
-				}			
+					    }	
+					$data = array('testId' => $testid, 'testItems' => $itemsid);				
+					return $this->returnSuccess($data);
+					
+					}	
+					
+			}
+      
+           // return common_report_Report::createFailure($e->getMessage());
 			
-		} catch (Exception $e) {
-			return $this->returnFailure($e);
-		}
-		return $this->returnSuccess($data);
-	}
+        
+		
+	
 }

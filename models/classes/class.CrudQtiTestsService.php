@@ -28,7 +28,7 @@
  *   
  */
  
- //use \oat\taoQtiTest\models\classes\testqti;
+use \common_exception_UserReadableException;
 class taoQtiTest_models_classes_CrudQtiTestsService
     extends tao_models_classes_CrudService
 {
@@ -68,8 +68,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService
                 tao_helpers_File::remove($uploadedFile);
                 return $report;
         }
-        catch (Exception $e) {
-            return common_report_Report::createFailure($e->getMessage());
+        catch (common_exception_UserReadableException $e) {
+            $report = new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
+            $report->add($e);
         }
 	}
 }
