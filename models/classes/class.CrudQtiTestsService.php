@@ -17,6 +17,7 @@
  * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA
  * 
  */
+use \common_exception_UserReadableException;
 
 /**
  * Crud services implements basic CRUD services, orginally intended for 
@@ -27,8 +28,6 @@
  * @author Absar Gilani, absar.gilani@gmail.com
  *   
  */
- 
-use \common_exception_UserReadableException;
 class taoQtiTest_models_classes_CrudQtiTestsService
     extends tao_models_classes_CrudService
 {
@@ -44,35 +43,31 @@ class taoQtiTest_models_classes_CrudQtiTestsService
      * (non-PHPdoc)
      * @see tao_models_classes_CrudService::delete()
      */    
-    public function delete( $resource){
-        $this->getClassService()->deleteTest(new core_kernel_classes_Resource($resource));
-        return true;
+    public function delete($uri)
+    {
+        $success = $this->getClassService()->deleteTest(new core_kernel_classes_Resource($uri));
     }
 
     /**
      * 
      * @author Rashid Mumtaz & Absar - PCG Team - {absar.gilani6@gmail.com & rashid.mumtaz372@gmail.com}
      * @param array $propertiesValues
-     * @return core_kernel_classes_Resource
+     * @return common_report_Report
      */
-
-	public function importQtiTest($uploadedFile){
+	public function importQtiTest($uploadedFile, $class = null)
+	{
 
 		//test versioning
 		try {
 		      //The zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
-                $class = new core_kernel_classes_Class(TAO_TEST_CLASS);
+                $class = is_null($class) ? new core_kernel_classes_Class(TAO_TEST_CLASS) : $class;
                 $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);               
                 helpers_TimeOutHelper::reset();
-                tao_helpers_File::remove($uploadedFile);
                 return $report;
         }
         catch (common_exception_UserReadableException $e) {
-            $report = new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
-            $report->add($e);
+            return new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
         }
 	}
 }
-
-?>
