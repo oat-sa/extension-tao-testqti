@@ -20,9 +20,6 @@
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-use \common_exception_UserReadableException;
-use \Exception;
-
 class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule
 {
     private static $accepted_types = array(
