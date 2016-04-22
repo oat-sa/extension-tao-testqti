@@ -16,7 +16,7 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
 define([
-    'taoTests/runner/pluginLoader',
+    'core/pluginLoader',
     'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
     'taoQtiTest/runner/plugins/content/overlay/overlay',
     'taoQtiTest/runner/plugins/content/dialog/dialog',

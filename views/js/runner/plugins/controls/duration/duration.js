@@ -26,8 +26,9 @@ define([
     'core/polling',
     'core/timer',
     'core/store',
+    'core/promise',
     'taoTests/runner/plugin',
-], function (_, pollingFactory, timerFactory, store, pluginFactory) {
+], function (_, pollingFactory, timerFactory, store, Promise, pluginFactory) {
     'use strict';
 
     /**
@@ -119,7 +120,7 @@ define([
                 .before('finish', function(e){
                     var done = e.done();
 
-                    self.storage.clear()
+                    durationStore.clear()
                         .then(done)
                         .catch(done);
                 });

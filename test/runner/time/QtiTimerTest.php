@@ -218,7 +218,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $clientEndPoint = $clientTimePoints[1];
 
         $serverDuration = $endTimestamp - $startTimestamp;
-        $delay = ($serverDuration - $expectedDuration) / 2;
+        $delay = max(0, ($serverDuration - $expectedDuration) / 2);
 
         $this->assertEquals($startTimestamp + $delay, $clientStartPoint->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_CLIENT, $clientStartPoint->getTarget());
@@ -286,18 +286,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     {
         $timer = new QtiTimer();
         $timer->adjust($tags, $timestamp);
-    }
-
-    /**
-     * @dataProvider adjustInconsistentRangeProvider
-     * @param $timer
-     * @param $tags
-     * @param $duration
-     * @expectedException \oat\taoTests\models\runner\time\InconsistentRangeException
-     */
-    public function testAdjustInconsistentRangeException($timer, $tags, $duration)
-    {
-        $timer->adjust($tags, $duration);
     }
 
     /**
@@ -544,18 +532,29 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function adjustDataProvider()
     {
         return [
+            // the provided duration will be translated to a client range inserted in the middle of the server range
             [
                 1459335000.0000,
                 1459335020.0000,
                 10,
                 10
             ],
+
+            // the missing duration will be replaced by the server range
             [
                 1459335000.0000,
                 1459335020.0000,
                 null,
                 20
-            ]
+            ],
+
+            // the provided duration is larger than the server range and will be truncated
+            [
+                1459335000.0000,
+                1459335020.0000,
+                30,
+                20
+            ],
         ];
     }
 
@@ -680,40 +679,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
             ],
         ];
     }
-
-    /**
-     * @return array
-     */
-    public function adjustInconsistentRangeProvider()
-    {
-        $emptyTimer = new QtiTimer();
-        $timer = new QtiTimer();
-        $tags = [
-            'test_fake_id',
-            'test_part_fake_id',
-            'section_fake_id',
-            'item_fake_id',
-            'item_fake_id#0',
-            'item_fake_id#0-1',
-            'item_fake_href',
-        ];
-        $timer->start($tags, 1459335000.0000);
-        $timer->end($tags, 1459335010.0000);
-
-        return [
-            [
-                $emptyTimer, //timer with empty time line
-                $tags,
-                1,
-            ],
-            [
-                $timer, //timer with only one time point in time line
-                $tags,
-                11,
-            ],
-        ];
-    }
-
 
 
     //MOCKS
