@@ -36,11 +36,18 @@ define([
 ], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
+    // asset strategy for portable elments
+    var assetPortableElement = {
+        name : 'portableElementLocation',
+        handle : assetStrategies.baseUrl.handle
+    };
+
     //the asset strategies
     var assetManager = assetManagerFactory([
         assetStrategies.external,
         assetStrategies.base64,
-        assetStrategies.baseUrl
+        assetStrategies.baseUrl,
+        assetPortableElement
     ], { baseUrl: '' });
 
     /**
