@@ -14,34 +14,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA
- *
+ * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
 namespace oat\taoQtiTest\models\runner\session;
 
-use qtism\runtime\tests\Route;
-use qtism\data\AssessmentTest;
-use taoQtiTest_helpers_SessionManager;
-
 /**
- * SessionManager that instantiate the runner's TestSession.
- *
- * @author Bertrand Chevrier <bertrand@taotesting.com>
- *
+ * Interface UserUriAware
+ * @package oat\taoQtiTest\models\runner\session
  */
-class SessionManager extends taoQtiTest_helpers_SessionManager
+interface UserUriAware
 {
+    /**
+     * Get the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+     *
+     * @return string
+     */
+    public function getUserUri();
 
     /**
-     * Instantiates an AssessmentTestSession with the default overriden TestSession.
+     * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      *
-     * @param AssessmentTest $test
-     * @param Route $route
-     * @return TestSession
+     * @param string $userUri
      */
-    protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route)
-    {
-        return new TestSession($test, $this, $route, $this->getResultServer(), $this->getTest());
-    }
+    public function setUserUri($userUri);
 }

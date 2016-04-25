@@ -38,6 +38,8 @@
         -ms-flex: 0 1 auto;
         flex: 0 1 auto;
 
+        height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer) + map-get($heights, horizontal-action-bar) * 2) * 1px});
+
         overflow-y: auto;
 
         max-width: 350px;

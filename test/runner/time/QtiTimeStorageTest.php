@@ -33,6 +33,11 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      * @var string
      */
     protected $testSessionId = 'fake_session_id';
+    
+    /**
+     * @var string
+     */
+    protected $userId = 'fake_user_id';
 
     /**
      * @throws \common_ext_ExtensionException
@@ -47,7 +52,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      */
     public function testConstructor()
     {
-        $storage = new QtiTimeStorage($this->testSessionId);
+        $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
         $this->assertInstanceOf('\oat\taoTests\models\runner\time\TimeStorage', $storage);
         $this->assertEquals($this->testSessionId, $this->getSessionId($storage));
     }
@@ -57,7 +62,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      */
     public function testStore()
     {
-        $storage = new QtiTimeStorage($this->testSessionId);
+        $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
         $result = $storage->store('string value');
         $this->assertEquals($storage, $result);
         $this->assertEquals('string value', $result->load());
@@ -68,7 +73,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      */
     public function testStoreInvalidDataException()
     {
-        $storage = new QtiTimeStorage($this->testSessionId);
+        $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
         $storage->store(null);
     }
 
@@ -77,7 +82,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      */
     public function testLoad()
     {
-        $storage = new QtiTimeStorage($this->testSessionId);
+        $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
         $storage->store('string value');
         $this->assertEquals('string value', $storage->load());
     }
