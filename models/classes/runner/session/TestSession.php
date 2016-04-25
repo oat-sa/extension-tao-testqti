@@ -38,7 +38,7 @@ use taoQtiTest_helpers_TestSession;
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-class TestSession extends taoQtiTest_helpers_TestSession
+class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 {
     /**
      * The Timer bound to the test session
@@ -59,6 +59,34 @@ class TestSession extends taoQtiTest_helpers_TestSession
     protected $durationCache = [];
 
     /**
+     * The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+     *
+     * @var string
+     */
+    private $userUri;
+
+    /**
+     * Get the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+     *
+     * @return string
+     */
+    public function getUserUri() {
+        if (is_null($this->userUri)) {
+            return \common_session_SessionManager::getSession()->getUserUri();
+        }
+        return $this->userUri;
+    }
+
+    /**
+     * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+     *
+     * @param string $userUri
+     */
+    public function setUserUri($userUri) {
+        $this->userUri = $userUri;
+    }
+
+    /**
      * Gets the Timer bound to the test session
      * @return QtiTimer
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
@@ -68,7 +96,7 @@ class TestSession extends taoQtiTest_helpers_TestSession
     {
         if (!$this->timer) {
             $this->timer = new QtiTimer();
-            $this->timer->setStorage(new QtiTimeStorage($this->getSessionId()));
+            $this->timer->setStorage(new QtiTimeStorage($this->getSessionId(), $this->getUserUri()));
             $this->timer->load();
         }
         return $this->timer;
@@ -340,5 +368,36 @@ class TestSession extends taoQtiTest_helpers_TestSession
         $itemSession->getVariable('duration')->setValue($duration);
 
         parent::submitItemResults($itemSession, $occurrence);
+    }
+
+    /**
+     * QTISM endTestSession method overriding.
+     *
+     * It consists of including an additional processing when the test ends,
+     * in order to send the LtiOutcome
+     *
+     * @see http://www.imsglobal.org/lis/ Outcome Management Service
+     * @throws \taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
+     */
+    public function endTestSession()
+    {
+        // try to close existing time range if any, in order to be sure the test will be closed with a consistent timer.
+        if ($this->isRunning() === true) {
+            $route = $this->getRoute();
+            if ($route->valid()) {
+                $routeItem = $this->getCurrentRouteItem();
+            }
+            if (isset($routeItem)) {
+                try {
+                    $tags = $this->getItemTags($this->getCurrentRouteItem());
+                    $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
+                    \common_Logger::i('Timer correctly closed.');
+                } catch (InconsistentRangeException $e) {
+                    \common_Logger::i('Timer already closed.');
+                }
+            }
+        }
+
+        parent::endTestSession();
     }
 }

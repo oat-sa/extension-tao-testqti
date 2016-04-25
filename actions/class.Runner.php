@@ -414,12 +414,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getServiceContext(false);
-            $this->runnerService->endTimer($serviceContext, $itemDuration);
-            
-            $stateId = $this->getStateId();
-            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::CLOSED) {
-                throw new QtiRunnerClosedException();
-            }
             $storeResponse = true;
 
             try {
@@ -431,7 +425,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 \common_Logger::i('Store item state after a test session pause');
             }
 
-            $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
+            $this->runnerService->endTimer($serviceContext, $itemDuration);
+            $successState = $this->runnerService->setItemState($serviceContext, $this->getStateId(), $state);
 
             if ($storeResponse) {
                 $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);

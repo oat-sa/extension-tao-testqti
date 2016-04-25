@@ -22,7 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-use oat\taoQtiTest\models\runner\session\SessionManager;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
@@ -148,7 +148,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
-        $sessionManager = new SessionManager($resultServer, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -188,6 +188,26 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $privateDirectoryPath = $directories['private']->getPath();
         $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
         $this->testMeta = $meta;
+    }
+
+    /**
+     * Sets the test session
+     * @param mixed $testSession
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function setTestSession($testSession)
+    {
+        if ($testSession instanceof TestSession) {
+            parent::setTestSession($testSession);
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerServiceContext',
+                'setTestSession',
+                0,
+                'oat\taoQtiTest\models\runner\session\TestSession',
+                $testSession
+            );
+        }
     }
 
     /**
