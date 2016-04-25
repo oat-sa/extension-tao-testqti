@@ -193,7 +193,7 @@ define([
 
                             //check for the last value in the storage
                             self.storage.getItem(timerConfig.id).then(function(savedTime){
-                                if(savedTime){
+                                if(_.isNumber(savedTime) && savedTime >= 0){
                                     timerConfig.remaining = savedTime;
                                 }
                                 addTimer(type, timerConfig);
@@ -236,33 +236,38 @@ define([
 
                     _.forEach(currentTimers, function(timer, type) {
                         var currentVal,
-                            warnMessage;
+                            warningMessage;
+                        var runTimeout = function runTimeout(){
+                            testRunner.timeout(timeoutScope, timeoutRef);
+                        };
+
                         if (timer.running()) {
                             currentVal = Math.max(timer.val() - elapsed, 0);
                             timer
                                 .val(currentVal)
                                 .refresh();
 
-                            if (currentVal === 0) {
+                            if (currentVal <= 0) {
                                 timer.running(false);
                                 timeout = true;
                                 timeoutRef = timer.id();
                                 timeoutScope = type;
-                            }
 
-                            //update db
-                            self.storage.setItem(timer.id(), currentVal);
+                                self.storage.setItem(timer.id(), 0)
+                                    .then(runTimeout)
+                                    .catch(runTimeout);
 
-                            if (!timeout) {
-                                warnMessage = timer.warn();
-                                if(warnMessage){
-                                    testRunner.trigger('warning', warnMessage);
+                            } else {
+                                self.storage.setItem(timer.id(), currentVal);
+
+                                warningMessage = timer.warn();
+                                if(warningMessage){
+                                    testRunner.trigger('warning', warningMessage);
                                 }
                             }
                         }
                     });
                     if (timeout) {
-                        testRunner.timeout(timeoutScope, timeoutRef);
                         self.disable();
                     }
                 },

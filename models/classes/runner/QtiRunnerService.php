@@ -70,7 +70,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Get the data folder from a given item definition
-     * @param string $itemRef - formated as itemURI|publicFolderURI|privateFolderURI
+     * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
      * @return string the path
      * @throws \common_Exception
      */
@@ -78,7 +78,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         $directoryIds = explode('|', $itemRef);
         if (count($directoryIds) < 3) {
-            throw new \common_exception_InvalidArgumentType('The itemRef is not formated correctly');
+            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
         }
 
         $itemUri = $directoryIds[0];
@@ -188,7 +188,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'init',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return true;
@@ -267,7 +273,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $response['config'] = $this->getTestConfig()->getConfig();
 
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getTestData',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return $response;
@@ -382,7 +394,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getTestContext',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return $response;
@@ -400,7 +418,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $map = new QtiRunnerMap();
             return $map->getMap($context, $this->getTestConfig());
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getTestMap',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -416,7 +440,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $map = new QtiRunnerRubric();
             return $map->getRubrics($context);
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getRubrics',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -442,7 +472,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 );
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getItemData',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -469,7 +505,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             return $state;
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getItemState',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -491,7 +533,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
             return is_null($userUri) ? false : $serviceService->set($userUri, $itemRef, json_encode($state));
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'setItemState',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -548,14 +596,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 return false;
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'storeItemResponse',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
 
     /**
      * Should we display feedbacks
-     * @param QtiRunnerServiceContext $context
+     * @param RunnerServiceContext $context
      * @return boolean
      * @throws \common_exception_InvalidArgumentType
      */
@@ -571,7 +625,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $displayFeedbacks = true;
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'displayFeedbacks',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
         return $displayFeedbacks;
     }
@@ -580,23 +640,21 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Get feedback definitions
      *
-     * @param QtiRunnerServiceContext $context
+     * @param RunnerServiceContext $context
      * @param string $itemRef  the item reference
      * @return array the feedbacks data
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
      * @throws \common_exception_InvalidArgumentType
+     * @throws \tao_models_classes_FileNotFoundException
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef)
     {
-
         $feedbacks = array();
 
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
-            $session = $context->getTestSession();
-
             $itemDirectory = $this->getItemDataFolder($itemRef);
             $varEltPath    = $itemDirectory . QtiJsonItemCompiler::VAR_ELT_FILE_NAME;
-
 
             if (file_exists($varEltPath)) {
                 $variableData = json_decode(file_get_contents($varEltPath), true); 
@@ -613,7 +671,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getFeedbacks',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return $feedbacks;
@@ -621,7 +685,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Should we display feedbacks
-     * @param QtiRunnerServiceContext $context
+     * @param RunnerServiceContext $context
      * @return AssessmentItemSession the item session
      * @throws \common_exception_InvalidArgumentType
      */
@@ -650,7 +714,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $output['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession);
 
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getItemSession',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
         return $output;
     }
@@ -685,7 +755,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'move',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return $result;
@@ -725,7 +801,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
             
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'timeout',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return true;
@@ -750,7 +832,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $session->endTestSession();
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'exitTest',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
 
@@ -781,7 +869,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $result = false;
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'finish',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return $result;
@@ -799,7 +893,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             // TODO: Implement pause() method.
             throw new \common_exception_NotImplemented('Not yet implemented!');
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'pause',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return true;
@@ -817,7 +917,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             // TODO: Implement resume() method.
             throw new \common_exception_NotImplemented('Not yet implemented!');
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'resume',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
 
         return true;
@@ -866,7 +972,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
             return $directory->getPublicAccessUrl().$userDataLang.'/';
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'getItemPublicUrl',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -1008,7 +1120,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             return true;
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'storeTraceVariable',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
     }
 
@@ -1026,7 +1144,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $session->startItemTimer();
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'startTimer',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
         return true;
     }
@@ -1050,7 +1174,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $session->adjustItemTimer($duration);
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'endTimer',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
         return true;
     }
@@ -1096,7 +1226,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
             }
         } else {
-            throw new \common_exception_InvalidArgumentType('Context must be an instance of QtiRunnerServiceContext');
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'updateTimers',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
         }
         return true;
     }

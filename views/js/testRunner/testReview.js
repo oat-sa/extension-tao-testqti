@@ -37,7 +37,7 @@ define([
         active : 'active',
         collapsed : 'collapsed',
         collapsible : 'collapsible',
-        masked : 'masked',
+        hidden : 'hidden',
         disabled : 'disabled',
         flagged : 'flagged',
         answered : 'answered',
@@ -86,7 +86,7 @@ define([
         flagged : '.flagged',
         notFlagged : ':not(.flagged)',
         notAnswered : ':not(.answered)',
-        masked : '.masked'
+        hidden : '.hidden'
     };
 
     /**
@@ -100,7 +100,7 @@ define([
         unanswered : _selectors.answered,
         flagged : _selectors.notFlagged,
         answered : _selectors.notAnswered,
-        filtered : _selectors.masked
+        filtered : _selectors.hidden
     };
 
     /**
@@ -316,10 +316,10 @@ define([
          * @private
          */
         _filter: function(criteria) {
-            var $items = this.$tree.find(_selectors.items).removeClass(_cssCls.masked);
+            var $items = this.$tree.find(_selectors.items).removeClass(_cssCls.hidden);
             var filter = _filterMap[criteria];
             if (filter) {
-                $items.filter(filter).addClass(_cssCls.masked);
+                $items.filter(filter).addClass(_cssCls.hidden);
             }
             this._updateSectionCounters(!!filter);
             this.currentFilter = criteria;
@@ -783,7 +783,7 @@ define([
         hide: function hide() {
             this.disabled = true;
             this.hidden = true;
-            this.$component.addClass(_cssCls.masked);
+            this.$component.addClass(_cssCls.hidden);
             return this;
         },
 
@@ -794,7 +794,7 @@ define([
         show: function show() {
             this.disabled = false;
             this.hidden = false;
-            this.$component.removeClass(_cssCls.masked);
+            this.$component.removeClass(_cssCls.hidden);
             return this;
         },
 
