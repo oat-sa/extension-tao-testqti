@@ -23,10 +23,11 @@ define([
     'lodash',
     'i18n',
     'ui/component',
+    'ui/autoscroll',
     'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigator',
     'tpl!taoQtiTest/runner/plugins/controls/review/navigatorTree'
-], function ($, _, __, component, mapHelper, navigatorTpl, navigatorTreeTpl) {
+], function ($, _, __, component, autoscroll, mapHelper, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
     /**
@@ -50,7 +51,7 @@ define([
         active: 'active',
         collapsed: 'collapsed',
         collapsible: 'collapsible',
-        masked: 'masked',
+        hidden: 'hidden',
         disabled: 'disabled',
         flagged: 'flagged',
         answered: 'answered',
@@ -99,6 +100,7 @@ define([
         items: '.qti-navigator-item',
         itemLabels: '.qti-navigator-item > .qti-navigator-label',
         itemIcons: '.qti-navigator-item > .qti-navigator-icon',
+        activeItem: '.qti-navigator-item.active',
         icons: '.qti-navigator-icon',
         linearStart: '.qti-navigator-linear-part button',
         counters: '.qti-navigator-counter',
@@ -110,7 +112,7 @@ define([
         flagged: '.flagged',
         notFlagged: ':not(.flagged)',
         notAnswered: ':not(.answered)',
-        masked: '.masked'
+        hidden: '.hidden'
     };
 
     /**
@@ -124,7 +126,7 @@ define([
         unanswered: _selectors.answered,
         flagged: _selectors.notFlagged,
         answered: _selectors.notAnswered,
-        filtered: _selectors.masked
+        filtered: _selectors.hidden
     };
 
     /**
@@ -187,13 +189,13 @@ define([
             var self = this;
 
             // remove the current filter by restoring all items
-            var $items = this.controls.$tree.find(_selectors.items).removeClass(_cssCls.masked);
+            var $items = this.controls.$tree.find(_selectors.items).removeClass(_cssCls.hidden);
 
             // filter the items according to the provided criteria
             var filter = _filterMap[criteria];
             var filtered = _filterMap[filter ? 'filtered' : 'answered'];
             if (filter) {
-                $items.filter(filter).addClass(_cssCls.masked);
+                $items.filter(filter).addClass(_cssCls.hidden);
             }
 
             // update the section counters
@@ -239,6 +241,13 @@ define([
         },
 
         /**
+         * Keep the active item visible, auto scroll if needed
+         */
+        autoScroll: function autoScroll() {
+            autoscroll(this.controls.$tree.find(_selectors.activeItem), this.controls.$tree);
+        },
+
+        /**
          * Updates the review screen
          * @param {Object} map The current test map
          * @param {Object} context The current test context
@@ -268,6 +277,9 @@ define([
                 this.controls.$linearState.hide();
                 this.controls.$tree.html(navigatorTreeTpl(scopedMap));
 
+                this.autoScroll();
+
+                this.setState('prevents-unseen', this.config.preventsUnseen);
                 if (this.config.preventsUnseen) {
                     // disables all unseen items to prevent the test taker has access to.
                     this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
@@ -500,6 +512,11 @@ define([
             // uninstalls the component
             .on('destroy', function () {
                 this.controls = null;
+            })
+
+            // keep the activ item visible
+            .on('show', function () {
+                this.autoScroll();
             })
 
             // renders the component

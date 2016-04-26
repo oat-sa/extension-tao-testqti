@@ -352,7 +352,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testSetStorage()
     {
-        $storage = new QtiTimeStorage('fake_session_id');
+        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer = new QtiTimer();
         $this->assertEquals(null, $timer->getStorage());
         $timer->setStorage($storage);
@@ -364,7 +364,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testGetStorage()
     {
-        $storage = new QtiTimeStorage('fake_session_id');
+        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer = new QtiTimer();
         $this->assertEquals(null, $timer->getStorage());
         $timer->setStorage($storage);
@@ -388,7 +388,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         ];
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335020.0000);
-        $storage = new QtiTimeStorage('fake_session_id');
+        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer->setStorage($storage);
         $result = $timer->save();
         $this->assertEquals($timer, $result);
@@ -434,12 +434,12 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         ];
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335020.0000);
-        $storage = new QtiTimeStorage('fake_session_id');
+        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer->setStorage($storage);
         $timer->save();
 
         $newTimer = new QtiTimer();
-        $newStorage = new QtiTimeStorage('fake_session_id');
+        $newStorage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timeLine = $this->getTimeLine($newTimer);
         $this->assertEquals([], $timeLine->getPoints());
 
@@ -472,7 +472,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testLoadInvalidDataException()
     {
         $timer = new QtiTimer();
-        $storage = new QtiTimeStorage('fake_session_id');
+        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer->setStorage($storage);
         $this->setTimeLine($timer, new \stdClass());
         $timer->save();

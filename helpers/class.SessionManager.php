@@ -34,7 +34,12 @@ use qtism\common\datatypes\Duration;
  *
  */
 class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
-   
+
+    /**
+     * The class name of the default TestSession
+     */
+    const DEFAULT_TEST_SESSION = '\\taoQtiTest_helpers_TestSession';
+
     /**
      * The result server to be used by tao_helpers_TestSession created by the factory.
      * 
@@ -100,11 +105,19 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     
     /**
      * Instantiates an AssessmentTestSession with the default implementation provided by QTISM.
-     *
+     * @param AssessmentTest $test
+     * @param Route $route
      * @return AssessmentTestSession
      */
     protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
-        return new taoQtiTest_helpers_TestSession($test, $this, $route, $this->getResultServer(), $this->getTest());
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        if (!isset($config) || !isset($config['test-session'])) {
+            $className = self::DEFAULT_TEST_SESSION;
+            \common_Logger::w("Missing configuration for TestRunner session class, using '${className}' by default!");
+        } else {
+            $className = $config['test-session'];
+        }
+        return new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
     }
     
     /**
