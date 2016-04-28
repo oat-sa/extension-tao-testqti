@@ -79,7 +79,7 @@ define([
          * @returns {proxy}
          */
         loadProxy : function loadProxy(){
-
+            var self = this;
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
@@ -89,7 +89,30 @@ define([
                 'serviceController',
                 'serviceExtension'
             ]);
-            return proxyFactory('qtiServiceProxy', proxyConfig);
+            return proxyFactory('qtiServiceProxy', proxyConfig)
+                .use(function (req, res, next) {
+                    var data = res && res.data;
+
+                    // test has been closed/suspended => redirect to the index page after message acknowledge
+                    if (data && data.type && data.type === 'TestState') {
+
+                        if(!self.getState('ready')){
+                            //if we open an inconsistent test (should never happen) we let a few sec to
+                            //read the error message then leave
+                            _.delay(function (){
+                                self.trigger('destroy');
+                            }, 2000);
+                        } else {
+                            self.trigger('alert', data.message, function() {
+                                self.trigger('endsession', 'teststate', data.code);
+                                self.trigger('leave');
+                            });
+                        }
+                    } else if (res.status == 'error') {
+                        self.trigger('error', data);
+                    }
+                    next();
+                });
         },
 
         /**
@@ -143,9 +166,6 @@ define([
                             }
 
                             load();
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
                         });
                 })
                 .unloadItem(context.itemUri);
@@ -273,10 +293,7 @@ define([
 
                 submit()
                  .then(updateStats)
-                 .then(computeNextMove)
-                 .catch(function(err){
-                    self.trigger('error', err);
-                 });
+                 .then(computeNextMove);
             })
             .on('skip', function(scope){
 
@@ -298,9 +315,6 @@ define([
                             .then(function(){
                                 return self.finish();
                             });
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
                     });
             })
             .on('timeout', function(scope, ref){
@@ -320,9 +334,6 @@ define([
                                 ref: ref
                             });
                         });
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
                     });
             })
             .on('renderitem', function(itemRef){
