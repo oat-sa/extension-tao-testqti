@@ -23,10 +23,9 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'core/store',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, store, helpers, configFactory) {
+], function($, _, __, Promise, helpers, configFactory) {
     'use strict';
 
     /**
