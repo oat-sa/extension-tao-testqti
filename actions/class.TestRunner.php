@@ -35,6 +35,8 @@ use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
+use oat\taoQtiTest\models\StateStorageQtiFileManager;
+
 /**
  * Runs a QTI Test.
  *
@@ -261,8 +263,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
+
+        $storage = new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri);
+       // $storage->
+        $this->setStorage($storage);
         $this->retrieveTestSession();
 
         // @TODO: use some storage to get the potential reason of the state (close/suspended)
@@ -712,7 +716,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 common_Logger::e($msg);
             }
 
+            $qtiFileManager = new StateStorageQtiFileManager(
+                $this->getTestSession(),
+                \common_session_SessionManager::getSession()
+            );
             $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            $filler->setFileManager($qtiFileManager);
 
             if (is_array($jsonPayload)) {
                 foreach ($jsonPayload as $id => $response) {
