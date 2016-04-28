@@ -111,6 +111,9 @@ define([
                                 self.trigger('leave');
                             });
                         }
+                        // break the chain to avoid uncaught exception in promise...
+                        // this will lead to unresolved promise, but the browser will be redirected soon!
+                        return;
                     } else if (res.status == 'error') {
                         self.trigger('error', data);
                     }
