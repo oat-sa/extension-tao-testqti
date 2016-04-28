@@ -90,7 +90,9 @@ define([
                 'serviceExtension'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig)
+                // middle ware invoked on every requests
                 .use(function (req, res, next) {
+                    var context = self.getTestContext();
                     var data = res && res.data;
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
@@ -103,6 +105,7 @@ define([
                                 self.trigger('destroy');
                             }, 2000);
                         } else {
+                            self.disableItem(context.itemUri);
                             self.trigger('alert', data.message, function() {
                                 self.trigger('endsession', 'teststate', data.code);
                                 self.trigger('leave');
@@ -558,6 +561,10 @@ define([
                     });
             }
 
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
             this.itemRunner = null;
         }
     };

@@ -80,14 +80,24 @@ define([
          * Enable the overlay
          */
         enable : function enable (){
+            var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginsConfig = testConfig.plugins || {};
+            var overlayConfig = pluginsConfig.overlay || {};
+
             this.$element.addClass('overlay');
+
+            if (overlayConfig.full) {
+                this.$element.addClass('overlay-full');
+            }
         },
 
         /**
          * Disable the overlay
          */
         disable : function disable (){
-            this.$element.removeClass('overlay');
+            this.$element.removeClass('overlay overlay-full');
         },
 
         /**

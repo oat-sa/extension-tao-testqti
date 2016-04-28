@@ -91,6 +91,11 @@
             bottom: 0;
             width: 100%;
             opacity : .9;
+
+            &-full {
+                background-color: Window;
+                opacity : 1;
+            }
         }
     }
 
