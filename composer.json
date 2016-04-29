@@ -47,7 +47,7 @@
   },
   "minimum-stability": "dev",
   "require": {
-    "oat-sa/lib-tao-qti": "dev-master",
+    "oat-sa/lib-tao-qti": "dev-refactor/qtism-dependencies-to-feature-branch",
     "oat-sa/oatbox-extension-installer": "dev-master"
   },
   "autoload": {
