@@ -41,7 +41,7 @@ module.exports = function(grunt) {
             modules : [{
                 name: 'taoQtiTest/controller/routes',
                 include : ext.getExtensionsControllers(['taoQtiTest']),
-                exclude : ['mathJax', 'mediaElement', 'taoQtiTest/controller/runner/runner'].concat(libs)
+                exclude : ['mathJax','taoQtiTest/controller/runner/runner'].concat(libs)
             }]
         }
     };
