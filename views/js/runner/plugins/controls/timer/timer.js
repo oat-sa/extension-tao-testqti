@@ -209,122 +209,125 @@ define([
                 });
             };
 
-            //the timer's storage
-            this.storage = store('timer-' + testRunner.getConfig().serviceCallId);
+            return store('timer-' + testRunner.getConfig().serviceCallId).then(function(timeStore){
 
-            //the element that'll contain the timers
-            this.$element = $(timerBoxTpl());
+                //the timer's storage
+                self.storage = timeStore;
 
-            //one stopwatch to count the time
-            this.stopwatch = timerFactory({
-                autoStart : false
-            });
+                //the element that'll contain the timers
+                self.$element = $(timerBoxTpl());
 
-            //update the timers at regular intervals
-            this.polling = pollingFactory({
+                //one stopwatch to count the time
+                self.stopwatch = timerFactory({
+                    autoStart : false
+                });
 
-                /**
-                 * The polling action consists in updating each timers,
-                 * checking timeout and warnings
-                 */
-                action : function updateTime() {
+                //update the timers at regular intervals
+                self.polling = pollingFactory({
 
-                    //how many time elapsed from the last tick ?
-                    var elapsed = self.stopwatch.tick();
-                    var timeout = false;
-                    var timeoutScope, timeoutRef;
+                    /**
+                    * The polling action consists in updating each timers,
+                    * checking timeout and warnings
+                    */
+                    action : function updateTime() {
 
-                    _.forEach(currentTimers, function(timer, type) {
-                        var currentVal,
-                            warningMessage;
-                        var runTimeout = function runTimeout(){
-                            testRunner.timeout(timeoutScope, timeoutRef);
-                        };
+                        //how many time elapsed from the last tick ?
+                        var elapsed = self.stopwatch.tick();
+                        var timeout = false;
+                        var timeoutScope, timeoutRef;
 
-                        if (timer.running()) {
-                            currentVal = Math.max(timer.val() - elapsed, 0);
-                            timer
-                                .val(currentVal)
-                                .refresh();
+                        _.forEach(currentTimers, function(timer, type) {
+                            var currentVal,
+                                warningMessage;
+                            var runTimeout = function runTimeout(){
+                                testRunner.timeout(timeoutScope, timeoutRef);
+                            };
 
-                            if (currentVal <= 0) {
-                                timer.running(false);
-                                timeout = true;
-                                timeoutRef = timer.id();
-                                timeoutScope = type;
+                            if (timer.running()) {
+                                currentVal = Math.max(timer.val() - elapsed, 0);
+                                timer
+                                    .val(currentVal)
+                                    .refresh();
 
-                                self.storage.setItem(timer.id(), 0)
-                                    .then(runTimeout)
-                                    .catch(runTimeout);
+                                if (currentVal <= 0) {
+                                    timer.running(false);
+                                    timeout = true;
+                                    timeoutRef = timer.id();
+                                    timeoutScope = type;
 
-                            } else {
-                                self.storage.setItem(timer.id(), currentVal);
+                                    self.storage.setItem(timer.id(), 0)
+                                        .then(runTimeout)
+                                        .catch(runTimeout);
 
-                                warningMessage = timer.warn();
-                                if(warningMessage){
-                                    testRunner.trigger('warning', warningMessage);
+                                } else {
+                                    self.storage.setItem(timer.id(), currentVal);
+
+                                    warningMessage = timer.warn();
+                                    if(warningMessage){
+                                        testRunner.trigger('warning', warningMessage);
+                                    }
                                 }
                             }
+                        });
+                        if (timeout) {
+                            self.disable();
                         }
-                    });
-                    if (timeout) {
-                        self.disable();
-                    }
-                },
-                interval : timerRefresh,
-                autoStart : false
-            });
-
-
-
-            //change plugin state
-            testRunner
-
-                .on('loaditem', function(){
-
-                    //check for new timers
-                    updateTimers(true);
-                })
-
-                .after('renderitem', function(){
-                    //start timers
-                    self.enable();
-                })
-
-                .before('move', function(e, type, scope, position){
-                    var done = e.done();
-
-                    var doMove = function doMove(){
-                        removeTimer(timerTypes.item);
-                        done();
-                    };
-
-                    var cancelMove = function cancelMove() {
-                        testRunner.trigger('enableitem enablenav');
-                        e.prevent();
-                    };
-
-                    //pause the timers
-                    if (self.getState('enabled')) {
-                        self.disable();
-                    }
-
-                    //display a mesage if we exit a timed section
-                    if(leaveTimedSection(type, scope, position)){
-                        testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
-                    } else {
-                        doMove();
-                    }
-                })
-
-                .before('finish', function(e){
-                    var done = e.done();
-
-                    //clean up the storage at the end
-                    self.storage.clear()
-                        .then(done)
-                        .catch(done);
+                    },
+                    interval : timerRefresh,
+                    autoStart : false
                 });
+
+
+
+                //change plugin state
+                testRunner
+
+                    .on('loaditem', function(){
+
+                        //check for new timers
+                        updateTimers(true);
+                    })
+
+                    .after('renderitem', function(){
+                        //start timers
+                        self.enable();
+                    })
+
+                    .before('move', function(e, type, scope, position){
+                        var done = e.done();
+
+                        var doMove = function doMove(){
+                            removeTimer(timerTypes.item);
+                            done();
+                        };
+
+                        var cancelMove = function cancelMove() {
+                            testRunner.trigger('enableitem enablenav');
+                            e.prevent();
+                        };
+
+                        //pause the timers
+                        if (self.getState('enabled')) {
+                            self.disable();
+                        }
+
+                        //display a mesage if we exit a timed section
+                        if(leaveTimedSection(type, scope, position)){
+                            testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
+                        } else {
+                            doMove();
+                        }
+                    })
+
+                    .before('finish', function(e){
+                        var done = e.done();
+
+                        //clean up the storage at the end
+                        self.storage.clear()
+                            .then(done)
+                            .catch(done);
+                    });
+            });
         },
 
         /**
