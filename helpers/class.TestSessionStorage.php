@@ -26,7 +26,8 @@ use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\storage\binary\QtiBinaryStreamAccessFsFile;
+use qtism\runtime\storage\binary\QtiBinaryStreamAccess;
+use qtism\common\datatypes\files\FileManager;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
@@ -52,7 +53,13 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
     * @var string
     */
    private $userUri;
-    
+
+    /**
+     * File manager to pass to QtiBinaryStreamAccess
+     * @var FileManager
+     */
+    protected $fileManager;
+
    /**
     * Create a new TestSessionStorage object.
     * 
@@ -159,8 +166,30 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        
        return $storageService->has($userUri, $sessionId);
    }
-   
-   protected function createBinaryStreamAccess(IStream $stream) {
-       return new QtiBinaryStreamAccessFsFile($stream);
+
+    /**
+     * @throws StorageException
+     * @return FileManager
+     */
+    public function getFileManager()
+    {
+        if (!isset($this->fileManager)) {
+            throw new StorageException('Missing file manager for test session storage.', StorageException::UNKNOWN);
+        }
+        return $this->fileManager;
+    }
+
+    /**
+     * @param FileManager $fileManager
+     */
+    public function setFileManager(FileManager $fileManager)
+    {
+        $this->fileManager = $fileManager;
+    }
+
+
+   protected function createBinaryStreamAccess(IStream $stream)
+   {
+       return new QtiBinaryStreamAccess($stream, $this->getFileManager());
    }
 }

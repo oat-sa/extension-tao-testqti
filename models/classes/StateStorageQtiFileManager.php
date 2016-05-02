@@ -36,21 +36,21 @@ class StateStorageQtiFileManager implements FileManager
 
     /**
      * Test session
-     * @var AssessmentTestSession
+     * @var Uri string
      */
-    protected $testSession;
+    protected $testId;
 
     /**
      * User session
-     * @var \common_session_Session
+     * @var Uri string
      */
-    protected $userSession;
+    protected $userId;
 
-    public function __construct(AssessmentTestSession $testSession, \common_session_Session $userSession)
+    public function __construct($testId, $userId)
     {
         $this->storageService = ServiceManager::getServiceManager()->get('tao/stateStorage');
-        $this->testSession = $testSession;
-        $this->userSession = $userSession;
+        $this->testId = $testId;
+        $this->userId = $userId;
     }
 
     public function createFromFile($path, $mimeType, $filename = '')
@@ -61,17 +61,17 @@ class StateStorageQtiFileManager implements FileManager
     public function createFromData($data, $mimeType, $filename = '')
     {
         $data = base64_encode($data);
-        $key = $this->generateUniqKey($this->testSession->getSessionId());
+        $key = $this->generateUniqKey($this->testId);
+        \common_Logger::i($key);
 
-        $this->storageService->set($this->userSession->getUserUri(), $key, $data);
-        \common_Logger::e(base64_decode($this->storageService->get($this->userSession->getUserUri(), $key)));
-        return new StateStorageQtiFile($key);
-//        return new StateStorageQtiFile($key);
+        $this->storageService->set($this->userId, $key, $data);
+        \common_Logger::e(base64_decode($this->storageService->get($this->userId, $key)));
+        return new StateStorageQtiFile($key, $mimeType, $filename);
     }
 
     public function retrieve($identifier)
     {
-        \common_Logger::i(__FUNCTION__);
+        return new StateStorageQtiFile($identifier);
     }
 
     public function delete(File $file)

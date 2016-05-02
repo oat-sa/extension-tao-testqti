@@ -224,6 +224,19 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 
     /**
+     * Return the State storage
+     * @return StateStorageQtiFileManager
+     * @throws common_exception_Error
+     */
+    protected function getStateStorageQtiFileManager()
+    {
+        return new StateStorageQtiFileManager(
+            $this->getServiceCallId(),
+            \common_session_SessionManager::getSession()->getUserUri()
+        );
+    }
+
+    /**
      * Print an error report into the response.
      * After you have called this method, you must prevent other actions to be processed and must close the response.
      * @param string $message
@@ -265,7 +278,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
 
         $storage = new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri);
-       // $storage->
+
+        $storage->setFileManager($this->getStateStorageQtiFileManager());
         $this->setStorage($storage);
         $this->retrieveTestSession();
 
@@ -344,7 +358,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         }
         
         common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
-	    $this->getStorage()->persist($testSession);
+        $this->getStorage()->persist($testSession);
     }
 
     /**
@@ -716,12 +730,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 common_Logger::e($msg);
             }
 
-            $qtiFileManager = new StateStorageQtiFileManager(
-                $this->getTestSession(),
-                \common_session_SessionManager::getSession()
-            );
             $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
-            $filler->setFileManager($qtiFileManager);
+            $filler->setFileManager($this->getStateStorageQtiFileManager());
 
             if (is_array($jsonPayload)) {
                 foreach ($jsonPayload as $id => $response) {
