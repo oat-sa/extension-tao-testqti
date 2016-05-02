@@ -44,7 +44,7 @@ define([
      */
 
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+    proxy.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
     /**
      * Catches errors
