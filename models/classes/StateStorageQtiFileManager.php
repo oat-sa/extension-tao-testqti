@@ -74,6 +74,10 @@ class StateStorageQtiFileManager implements FileManager, ServiceLocatorAwareInte
     protected function create($filename, $mimeType, $data)
     {
         $key = $this->generateUniqKey($this->testId);
+
+        if ($filename=='') {
+            $filename = $key;
+        }
 //
 //        // Filename
 //        $len = strlen($filename);
@@ -132,7 +136,7 @@ class StateStorageQtiFileManager implements FileManager, ServiceLocatorAwareInte
      * @return StateStorageQtiFile
      * @throws FileManagerException
      */
-    public function createFromData($data, $mimeType, $filename = '')
+    public function createFromData($data, $mimeType, $filename='')
     {
         try {
             return $this->create($filename, $mimeType, $data);
