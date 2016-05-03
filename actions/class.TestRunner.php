@@ -230,10 +230,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
     protected function getStateStorageQtiFileManager()
     {
-        return new StateStorageQtiFileManager(
+        $service = new StateStorageQtiFileManager(
             $this->getServiceCallId(),
             \common_session_SessionManager::getSession()->getUserUri()
         );
+        $service->setServiceLocator($this->getServiceManager());
+        return $service;
     }
 
     /**

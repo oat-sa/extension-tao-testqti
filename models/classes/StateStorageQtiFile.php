@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models;
 
+use Psr\Http\Message\StreamInterface;
 use qtism\common\datatypes\File;
 use qtism\common\datatypes\RuntimeException;
 use qtism\common\enums\BaseType;
@@ -27,9 +28,36 @@ use qtism\common\enums\Cardinality;
 
 class StateStorageQtiFile implements File
 {
+    /**
+     * When dealing with files, compare, read, write, ...
+     * in CHUNK_SIZE to not eat up memory.
+     *
+     * @var integer
+     */
+    const CHUNK_SIZE = 2048;
+
+    /**
+     * Key to identify file variable
+     * @var string
+     */
     protected $key;
-    protected $mimeType;
+
+    /**
+     * File name
+     * @var string
+     */
     protected $filename;
+
+    /**
+     * Mime type of file content
+     * @var string
+     */
+    protected $mimeType;
+
+    /**
+     * Content
+     * @var string
+     */
     protected $data;
 
     /**
@@ -47,6 +75,10 @@ class StateStorageQtiFile implements File
         $this->data = $data;
     }
 
+    /**
+     * Get data
+     * @return string
+     */
     public function getData()
     {
         \common_Logger::i(__FUNCTION__);
@@ -80,22 +112,71 @@ class StateStorageQtiFile implements File
         return $this->filename;
     }
 
+    /**
+     * Return the stream of file $data
+     * @todo use PSR7 stream, but not respect File::getStream signature
+     * @return StreamInterface
+     */
     public function getStream()
     {
-        \common_Logger::i(__FUNCTION__);
-        // TODO: Implement getStream() method.
+        if (empty($this->data)) {
+            return false;
+        }
+
+        $temp = tmpfile();
+        fwrite($temp, $this->getData());
+        fseek($temp, 0);
+
+        return $temp;
     }
 
+    /**
+     * Get identifier of the file e.q. $key
+     * @return string
+     */
     public function getIdentifier()
     {
-        \common_Logger::i(__FUNCTION__);
         return $this->key;
     }
 
+    /**
+     * Compare two File by checking filename, mime type & content
+     * @param mixed $obj
+     * @return bool
+     */
     public function equals($obj)
     {
-        \common_Logger::i(__FUNCTION__);
-        // TODO: Implement equals() method.
+        if (!$obj instanceof File) {
+            return false;
+        }
+
+        if ($this->getFilename() !== $obj->getFilename()) {
+            return false;
+        }
+
+        if ($this->getMimeType() !== $obj->getMimeType()) {
+            return false;
+        }
+
+        // We have to check the content of the file.
+        $myStream = $this->getStream();
+        $objStream = $obj->getStream();
+
+        while (feof($myStream) === false && feof($objStream) === false) {
+            $myChunk = fread($myStream, self::CHUNK_SIZE);
+            $objChjunk = fread($objStream, self::CHUNK_SIZE);
+
+            if ($myChunk !== $objChjunk) {
+                @fclose($myStream);
+                @fclose($objStream);
+                return false;
+            }
+        }
+
+        @fclose($myStream);
+        @fclose($objStream);
+
+        return true;
     }
 
     /**
@@ -116,18 +197,12 @@ class StateStorageQtiFile implements File
         return Cardinality::SINGLE;
     }
 
-    public function getPath()
-    {
-        \common_Logger::e(__FUNCTION__);
-    }
-
     /**
      * Return filename
      * @return string|void
      */
     public function __toString()
     {
-        \common_Logger::i(__FUNCTION__);
         return $this->getIdentifier();
     }
 }
