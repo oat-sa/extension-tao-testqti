@@ -54,15 +54,15 @@ define([
             var testRunner   = this.getTestRunner();
 
             //where the duration of attempts are stored
-            var durationStore = store('duration-' + testRunner.getConfig().serviceCallId);
+            return store('duration-' + testRunner.getConfig().serviceCallId).then(function(durationStore){
 
             //one stopwatch to count the time
-            this.stopwatch = timerFactory({
+            self.stopwatch = timerFactory({
                 autoStart : false
             });
 
             //update the duration on a regular basis
-            this.polling = pollingFactory({
+            self.polling = pollingFactory({
 
                 action : function updateDuration() {
 
@@ -124,6 +124,7 @@ define([
                         .then(done)
                         .catch(done);
                 });
+            });
         },
 
         /**
