@@ -81,7 +81,6 @@ class StateStorageQtiFile implements File
      */
     public function getData()
     {
-        \common_Logger::i(__FUNCTION__);
         return $this->data;
     }
 
@@ -115,7 +114,7 @@ class StateStorageQtiFile implements File
     /**
      * Return the stream of file $data
      * @todo use PSR7 stream, but not respect File::getStream signature
-     * @return StreamInterface
+     * @return Resource
      */
     public function getStream()
     {
@@ -204,5 +203,23 @@ class StateStorageQtiFile implements File
     public function __toString()
     {
         return $this->getIdentifier();
+    }
+
+    /**
+     * Transform current file to binary content
+     * @return string
+     */
+    public function toBinary()
+    {
+        // Filename
+        $len = strlen($this->filename);
+        $packedFilename = pack('S', $len) . $this->filename;
+
+        // MIME type.
+        $len = strlen($this->mimeType);
+        $packedMimeType = pack('S', $len) . $this->mimeType;
+
+        // Data
+        return $packedFilename . $packedMimeType . $this->data;
     }
 }

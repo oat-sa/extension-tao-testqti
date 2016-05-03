@@ -274,7 +274,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
-        
+
         $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());

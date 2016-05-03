@@ -20,7 +20,6 @@
 
 namespace oat\taoQtiTest\models;
 
-use oat\oatbox\service\ServiceManager;
 use qtism\common\datatypes\File;
 use qtism\common\datatypes\files\FileManager;
 use qtism\common\datatypes\files\FileManagerException;
@@ -58,9 +57,29 @@ class StateStorageQtiFileManager implements FileManager, ServiceLocatorAwareInte
      */
     public function __construct($testId, $userId)
     {
-        $this->storageService = $this->getServiceLocator()->get('tao/stateStorage');
         $this->testId = $testId;
         $this->userId = $userId;
+    }
+
+    /**
+     * Get state storage, retrieve it if empty
+     * @return array|object|\tao_models_classes_service_StateStorage
+     */
+    public function getStateStorage()
+    {
+        if (empty($this->storageService)) {
+            $this->storageService = $this->getServiceLocator()->get('tao/stateStorage');
+        }
+        return $this->storageService;
+    }
+
+    /**
+     * Set storage service
+     * @param $storageService
+     */
+    public function setStateStorage($storageService)
+    {
+        $this->storageService = $storageService;
     }
 
     /**
@@ -78,23 +97,15 @@ class StateStorageQtiFileManager implements FileManager, ServiceLocatorAwareInte
         if ($filename=='') {
             $filename = $key;
         }
-//
-//        // Filename
-//        $len = strlen($filename);
-//        $packedFilename = pack('S', $len) . $filename;
-//
-//        // MIME type.
-//        $len = strlen($mimeType);
-//        $packedMimeType = pack('S', $len) . $mimeType;
-//
-//        // Data
-//        //$data = $packedFilename . $packedMimeType . $data;
 
-        //State storage set
-        if (!$this->storageService->set($this->userId, $key, $data)) {
-            throw new \RuntimeException('Unable to store filename in key=>value system');
+        $stateStorageFile = new StateStorageQtiFile($key, $mimeType, $filename, $data);
+        $content = $stateStorageFile->toBinary();
+
+        //State storage update
+        if (!$this->getStateStorage()->set($this->userId, $key, $content)) {
+            throw new \RuntimeException('Unable to store file in state storage system');
         }
-        return new StateStorageQtiFile($key, $mimeType, $filename, $data);
+        return $stateStorageFile;
     }
 
     /**
@@ -156,11 +167,16 @@ class StateStorageQtiFileManager implements FileManager, ServiceLocatorAwareInte
         return new StateStorageQtiFile($identifier);
     }
 
+    /**
+     * Delete file in key=>value storage
+     * @param File $file
+     * @return bool
+     */
     public function delete(File $file)
     {
         $key = $file->getIdentifier();
-        if (!$this->storageService->del($this->userId, $key)) {
-            throw new \RuntimeException('Unable to delete filename in key=>value system');
+        if (!$this->getStateStorage()->del($this->userId, $key)) {
+            throw new \RuntimeException('Unable to delete file in state storage system');
         }
         return true;
     }
