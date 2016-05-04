@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *               
  * 
  */
@@ -881,6 +881,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
 	            $this->onTimeout($e);
 	        break;
+            default:
+                $msg = "An unexpected error occured in the QTI Test Runner: \n";
+                while ($e) {
+                    $msg .= $e->getMessage();
+                    if (($e = $e->getPrevious()) !== null) {
+                        $msg .= "\nCaused by:\n";
+                    }
+                }
+                common_Logger::e($msg);
+            break;
 	    }
 	}
 }
