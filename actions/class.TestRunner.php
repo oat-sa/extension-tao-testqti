@@ -29,6 +29,7 @@ use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String as QtismString;
+use qtism\common\datatypes\files\FileManager;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
@@ -75,6 +76,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * @var AbstractStorage
      */
     private $storage = null;
+
+    /**
+     * The service state storage of storage engine.
+     *
+     * @var FileManager
+     */
+    private $serviceStateStorage = null;
     
     /**
      * The error that occured during the current request.
@@ -230,12 +238,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      */
     protected function getStateStorageQtiFileManager()
     {
-        $service = new StateStorageQtiFileManager(
-            $this->getServiceCallId(),
-            \common_session_SessionManager::getSession()->getUserUri()
-        );
-        $service->setServiceLocator($this->getServiceManager());
-        return $service;
+        if (!$this->serviceStateStorage) {
+            $this->serviceStateStorage = new StateStorageQtiFileManager(
+                $this->getServiceCallId(),
+                \common_session_SessionManager::getSession()->getUserUri()
+            );
+            $this->serviceStateStorage->setServiceLocator($this->getServiceManager());
+        }
+        return $this->serviceStateStorage;
     }
 
     /**
