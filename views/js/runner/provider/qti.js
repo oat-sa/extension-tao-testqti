@@ -299,7 +299,10 @@ define([
 
                 submit()
                  .then(updateStats)
-                 .then(computeNextMove);
+                 .then(computeNextMove)
+                 .catch(function (err) {
+                    self.trigger('error', err);
+                 });
             })
             .on('skip', function(scope){
 
@@ -321,6 +324,9 @@ define([
                             .then(function(){
                                 return self.finish();
                             });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
                     });
             })
             .on('timeout', function(scope, ref){
@@ -340,6 +346,9 @@ define([
                                 ref: ref
                             });
                         });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
                     });
             })
             .on('renderitem', function(itemRef){
