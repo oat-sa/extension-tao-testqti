@@ -212,6 +212,19 @@ interface RunnerService
      */
     public function check(RunnerServiceContext $context);
 
+    /**
+     * Checks if the test is in paused state
+     * @param RunnerServiceContext $context
+     * @return boolean
+     */
+    public function isPaused(RunnerServiceContext $context);
+
+    /**
+     * Checks if the test is in terminated state
+     * @param RunnerServiceContext $context
+     * @return boolean
+     */
+    public function isTerminated(RunnerServiceContext $context);
 
     /**
      * Update the test timers duration

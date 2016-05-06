@@ -133,7 +133,18 @@ return array(
      * A collection of plugins related config sets
      * @type array
      */
-    'plugins' => null,
+    'plugins' => [
+        /**
+         * The plugin responsible of the runner's overlay mask
+         */
+        'overlay' => [
+            /**
+             * When set to `true`, completely obfuscate the current item when displayed
+             * @type bool
+             */
+            'full' => false
+        ]
+    ],
 
     /**
      * Enable the cross site request forgery token
