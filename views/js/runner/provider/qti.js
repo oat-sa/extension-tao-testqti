@@ -99,11 +99,8 @@ define([
                     if (data && data.type && data.type === 'TestState') {
 
                         if(!self.getState('ready')){
-                            //if we open an inconsistent test (should never happen) we let a few sec to
-                            //read the error message then leave
-                            _.delay(function (){
-                                self.trigger('destroy');
-                            }, 2000);
+                            //if we open an inconsistent test (should never happen) just leave
+                            self.trigger('destroy');
                         } else {
                             self.disableItem(context.itemUri);
                             self.trigger('alert', data.message, function() {
