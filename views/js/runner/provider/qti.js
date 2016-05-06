@@ -90,8 +90,8 @@ define([
                 'serviceExtension'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig)
-                // middle ware invoked on every requests
-                .use(function (req, res, next) {
+                // middleware invoked on every requests
+                .use(function qtiFilter(req, res, next) {
                     var context = self.getTestContext();
                     var data = res && res.data;
 
