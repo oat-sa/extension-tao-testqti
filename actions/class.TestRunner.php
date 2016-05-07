@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *               
  * 
  */
@@ -29,12 +29,15 @@ use qtism\runtime\common\ResponseVariable;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\String as QtismString;
+use qtism\common\datatypes\files\FileManager;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\storage\common\AbstractStorage;
 use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
+use oat\taoQtiTest\models\StateStorageQtiFileManager;
+
 /**
  * Runs a QTI Test.
  *
@@ -73,6 +76,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * @var AbstractStorage
      */
     private $storage = null;
+
+    /**
+     * The service state storage of storage engine.
+     *
+     * @var FileManager
+     */
+    private $serviceStateStorage = null;
     
     /**
      * The error that occured during the current request.
@@ -222,6 +232,23 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 
     /**
+     * Return the State storage
+     * @return StateStorageQtiFileManager
+     * @throws common_exception_Error
+     */
+    protected function getStateStorageQtiFileManager()
+    {
+        if (!$this->serviceStateStorage) {
+            $this->serviceStateStorage = new StateStorageQtiFileManager(
+                $this->getServiceCallId(),
+                \common_session_SessionManager::getSession()->getUserUri()
+            );
+            $this->serviceStateStorage->setServiceLocator($this->getServiceManager());
+        }
+        return $this->serviceStateStorage;
+    }
+
+    /**
      * Print an error report into the response.
      * After you have called this method, you must prevent other actions to be processed and must close the response.
      * @param string $message
@@ -257,12 +284,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
-        
+
         $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
+
+        $storage = new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri);
+
+        $storage->setFileManager($this->getStateStorageQtiFileManager());
+        $this->setStorage($storage);
         $this->retrieveTestSession();
 
         // @TODO: use some storage to get the potential reason of the state (close/suspended)
@@ -340,7 +370,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         }
         
         common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
-	    $this->getStorage()->persist($testSession);
+        $this->getStorage()->persist($testSession);
     }
 
     /**
@@ -713,6 +743,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             }
 
             $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            $filler->setFileManager($this->getStateStorageQtiFileManager());
 
             if (is_array($jsonPayload)) {
                 foreach ($jsonPayload as $id => $response) {
@@ -860,6 +891,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
 	            $this->onTimeout($e);
 	        break;
+            default:
+                $msg = "An unexpected error occured in the QTI Test Runner: \n";
+                while ($e) {
+                    $msg .= $e->getMessage();
+                    if (($e = $e->getPrevious()) !== null) {
+                        $msg .= "\nCaused by:\n";
+                    }
+                }
+                common_Logger::e($msg);
+            break;
 	    }
 	}
 }
