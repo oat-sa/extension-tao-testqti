@@ -111,8 +111,7 @@ define([
                             hider.hide(self.$form);
                             self.enable();
                         })
-                        .catch(function (err) {
-                            testRunner.trigger('error', err);
+                        .catch(function () {
                             hider.hide(self.$form);
                             self.enable();
                         });

@@ -951,6 +951,26 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Checks if the test is in paused state
+     * @param RunnerServiceContext $context
+     * @return boolean
+     */
+    public function isPaused(RunnerServiceContext $context)
+    {
+        return $context->getTestSession()->getState() == AssessmentTestSessionState::SUSPENDED;
+    }
+
+    /**
+     * Checks if the test is in terminated state
+     * @param RunnerServiceContext $context
+     * @return boolean
+     */
+    public function isTerminated(RunnerServiceContext $context)
+    {
+        return $context->getTestSession()->getState() == AssessmentTestSessionState::CLOSED;
+    }
+
+    /**
      * Get the base url to the item public directory
      * @param RunnerServiceContext $context
      * @param $itemRef
