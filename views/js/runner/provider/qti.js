@@ -79,7 +79,7 @@ define([
          * @returns {proxy}
          */
         loadProxy : function loadProxy(){
-
+            var self = this;
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
@@ -89,7 +89,33 @@ define([
                 'serviceController',
                 'serviceExtension'
             ]);
-            return proxyFactory('qtiServiceProxy', proxyConfig);
+            return proxyFactory('qtiServiceProxy', proxyConfig)
+                // middleware invoked on every requests
+                .use(function qtiFilter(req, res, next) {
+                    var context = self.getTestContext();
+                    var data = res && res.data;
+
+                    // test has been closed/suspended => redirect to the index page after message acknowledge
+                    if (data && data.type && data.type === 'TestState') {
+
+                        if(!self.getState('ready')){
+                            //if we open an inconsistent test (should never happen) just leave
+                            self.trigger('destroy');
+                        } else {
+                            self.disableItem(context.itemUri);
+                            self.trigger('alert', data.message, function() {
+                                self.trigger('endsession', 'teststate', data.code);
+                                self.trigger('leave');
+                            });
+                        }
+                        // break the chain to avoid uncaught exception in promise...
+                        // this will lead to unresolved promise, but the browser will be redirected soon!
+                        return;
+                    } else if (res.status == 'error') {
+                        self.trigger('error', data);
+                    }
+                    next();
+                });
         },
 
         /**
@@ -143,9 +169,6 @@ define([
                             }
 
                             load();
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
                         });
                 })
                 .unloadItem(context.itemUri);
@@ -274,7 +297,7 @@ define([
                 submit()
                  .then(updateStats)
                  .then(computeNextMove)
-                 .catch(function(err){
+                 .catch(function (err) {
                     self.trigger('error', err);
                  });
             })
@@ -547,6 +570,10 @@ define([
                     });
             }
 
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
             this.itemRunner = null;
         }
     };

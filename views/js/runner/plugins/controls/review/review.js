@@ -163,9 +163,7 @@ define([
                         self.navigator.setItemFlag(position, flag);
                         self.enable();
                     })
-                    .catch(function (err) {
-                        testRunner.trigger('error', err);
-
+                    .catch(function () {
                         // rollback on the item flag
                         self.navigator.setItemFlag(position, !flag);
                         self.enable();
