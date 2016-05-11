@@ -322,5 +322,21 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('2.26.0', '2.27.0');
+
+        if ($this->isVersion('2.27.0')) {
+            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+            if (array_key_exists('timerWarning', $testRunnerConfig)) {
+                foreach ($testRunnerConfig['timerWarning'] as &$value) {
+                    if ($value !== null && is_int($value)) {
+                        $value = [$value => 'warning'];
+                    }
+                }
+
+                \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $testRunnerConfig);
+            }
+
+            $this->setVersion('2.28.0');
+        }
     }
 }

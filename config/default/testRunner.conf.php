@@ -29,6 +29,7 @@ return array(
      *     300 => 'warning',
      *     120 => 'error'
      * )
+     * Available warning types: info (blue), warning (yellow), error (red)
      * @type array
      */
     'timerWarning' => array(
