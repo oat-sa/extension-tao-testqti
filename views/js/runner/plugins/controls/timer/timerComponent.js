@@ -77,7 +77,7 @@ define([
         data = _.defaults(config, {
             label:     '',
             remaining: 0,
-            warnings: [],
+            warnings: {},
             running:   true
         });
 
