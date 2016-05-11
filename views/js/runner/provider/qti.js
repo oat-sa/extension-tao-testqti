@@ -91,7 +91,6 @@ define([
             return proxyFactory('qtiServiceProxy', proxyConfig)
                 // middleware invoked on every requests
                 .use(function qtiFilter(req, res, next) {
-                    var context = self.getTestContext();
                     var data = res && res.data;
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
