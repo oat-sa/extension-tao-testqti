@@ -97,7 +97,7 @@ define([
             /**
              * Load the configuration of a timer from the current context
              * @param {String} type - the timer type/qtiClass
-             * @returns {Object?} the timer config if there's one for the given type
+             * @returns {Object} the timer config if there's one for the given type
              */
             var getTimerConfig = function getTimerConfig(type) {
                 var timeConstraint;
@@ -113,17 +113,21 @@ define([
                             type:      timeConstraint.qtiClassName,
                             remaining: timeConstraint.seconds * precision,
                             id:        timeConstraint.source,
-                            running:   true
+                            running:   true,
+                            warnings:  timerWarning[timeConstraint.qtiClassName]
                         };
 
-                        if (timerWarning[timer.type]) {
-                            timer.warning = parseInt(timerWarning[timer.type], 10) * precision;
-                        }
+                        _(timer.warnings).forEach(function (value, key) {
+                            timer.warnings[key] =  {
+                                type: value,
+                                showed: timer.remaining / precision <= key,
+                                point: parseInt(key, 10) * precision
+                            };
+                        });
                     }
                 }
                 return timer;
             };
-
 
             //TODO this kind of function is generic enough to be moved to a util/helper
             var leaveTimedSection = function leaveTimedSection(type, scope, position){
@@ -238,7 +242,7 @@ define([
 
                         _.forEach(currentTimers, function(timer, type) {
                             var currentVal,
-                                warningMessage;
+                                warning;
                             var runTimeout = function runTimeout(){
                                 testRunner.timeout(timeoutScope, timeoutRef);
                             };
@@ -261,10 +265,9 @@ define([
 
                                 } else {
                                     self.storage.setItem(timer.id(), currentVal);
-
-                                    warningMessage = timer.warn();
-                                    if(warningMessage){
-                                        testRunner.trigger('warning', warningMessage);
+                                    warning = timer.warn();
+                                    if (!_.isEmpty(warning)) {
+                                        testRunner.trigger(warning.type, warning.text);
                                     }
                                 }
                             }

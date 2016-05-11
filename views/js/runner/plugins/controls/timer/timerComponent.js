@@ -77,7 +77,7 @@ define([
         data = _.defaults(config, {
             label:     '',
             remaining: 0,
-            warning:   false,
+            warnings: [],
             running:   true
         });
 
@@ -134,36 +134,39 @@ define([
             },
 
             /**
-             * Warn about time remaining ?
-             * @returns {Boolean|String} if not false, the warning message
+             * Warn about time remaining
+             * @returns {Object} the warning message and type of popup
              */
             warn : function warn() {
-                var remaining;
-                var message = false;
+                var remaining,
+                    message = {},
+                    warning = _.findLast(data.warnings, { showed: false });
 
-                if(_.isFinite(data.warning) && data.remaining <= data.warning){
+                if (!_.isEmpty(warning) && _.isFinite(warning.point) && data.remaining <= warning.point) {
+
                     remaining = moment.duration(data.remaining / precision, "seconds").humanize();
 
                     this.$element.addClass('qti-timer__warning');
                     switch (data.type) {
                         case 'assessmentItemRef':
-                            message = __("Warning – You have %s remaining to complete this item.", remaining);
+                            message.text = __("Warning – You have %s remaining to complete this item.", remaining);
                             break;
 
                         case 'assessmentSection':
-                            message = __("Warning – You have %s remaining to complete this section.", remaining);
+                            message.text = __("Warning – You have %s remaining to complete this section.", remaining);
                             break;
 
                         case 'testPart':
-                            message = __("Warning – You have %s remaining to complete this test part.", remaining);
+                            message.text = __("Warning – You have %s remaining to complete this test part.", remaining);
                             break;
 
                         case 'assessmentTest':
-                            message = __("Warning – You have %s remaining to complete the test.", remaining);
+                            message.text = __("Warning – You have %s remaining to complete the test.", remaining);
                             break;
                     }
 
-                    data.warning = 0;
+                    data.warnings[warning.point / precision].showed = true;
+                    message.type = warning.type;
                 }
 
                 return message;
