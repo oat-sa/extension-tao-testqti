@@ -49,14 +49,11 @@ define([
     /**
      * Catches errors
      * @param {Object} err
-     * @param {Boolean} quiet
      */
-    function onError(err, quiet) {
+    function onError(err) {
         loadingBar.stop();
 
-        if (!quiet) {
-            feedback().error(err.message);
-        }
+        feedback().error(err.message);
 
         //TODO to be replaced by the logger
         window.console.error(err);
@@ -95,33 +92,7 @@ define([
 
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
-            .before('error', function (e, err) {
-                var self = this;
-                var returnValue;
-                var alreadyDisplayed = false;
-
-                // test has been closed/suspended => redirect to the index page after message acknowledge
-                if (err && err.type && err.type === 'TestState') {
-
-                    if(!this.getState('ready')){
-                        //if we open an inconstent test (should never happen) we let a few sec to
-                        //read the error message then leave
-                        _.delay(leave, 2000);
-                    } else {
-                        this.trigger('alert', err.message, function() {
-                            self.trigger('endsession', 'teststate', err.code);
-                            destroyRunner.call(self);
-                        });
-                        alreadyDisplayed = true;
-                    }
-                    // prevent other messages/warnings
-                    returnValue = false;
-                }
-
-                onError(err, alreadyDisplayed);
-
-                return returnValue;
-            })
+            .on('error', onError)
             .on('ready', function () {
                 _.defer(function () {
                     $('.runner').removeClass('hidden');
@@ -136,6 +107,9 @@ define([
                 loadingBar.stop();
             })
             .after('finish', function () {
+                this.trigger('leave');
+            })
+            .on('leave', function () {
                 destroyRunner.call(this);
             })
             .on('destroy', leave)

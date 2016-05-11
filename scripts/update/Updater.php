@@ -311,5 +311,16 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.25.0');
         }
+
+        if ($this->isVersion('2.25.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['overlay']['full'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.26.0');
+        }
+        
+        $this->skip('2.26.0', '2.27.0');
     }
 }
