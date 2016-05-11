@@ -322,5 +322,45 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('2.26.0', '2.27.0');
+
+        if ($this->isVersion('2.27.0')) {
+            $serviceExtension = 'taoQtiTest';
+            $serviceController = 'Runner';
+            try {
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('testRunner');
+                if ($deliveryConfig) {
+                    $serviceExtension = $deliveryConfig['serviceExtension'];
+                    $serviceController = $deliveryConfig['serviceController'];
+                }
+            } catch(\common_ext_ExtensionException $e) {
+            }
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap'] = [
+                'serviceExtension' => $serviceExtension,
+                'serviceController' => $serviceController,
+                'communication' => [
+                    'enabled' => false,
+                    'type' => 'poll',
+                    'extension' => null,
+                    'controller' => null,
+                    'action' => 'messages',
+                    'service' => null,
+                    'params' => []
+                ]
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            try {
+                $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+            } catch (ServiceNotFoundException $e) {
+                $service = new QtiCommunicationService();
+                $service->setServiceManager($this->getServiceManager());
+                $this->getServiceManager()->register(QtiCommunicationService::CONFIG_ID, $service);
+            }
+
+            $this->setVersion('2.28.0');
+        }
     }
 }

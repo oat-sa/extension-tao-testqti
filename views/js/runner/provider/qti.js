@@ -86,8 +86,7 @@ define([
                 'testDefinition',
                 'testCompilation',
                 'serviceCallId',
-                'serviceController',
-                'serviceExtension'
+                'bootstrap'
             ]);
             return proxyFactory('qtiServiceProxy', proxyConfig)
                 // middleware invoked on every requests
@@ -102,11 +101,7 @@ define([
                             //if we open an inconsistent test (should never happen) just leave
                             self.trigger('destroy');
                         } else {
-                            self.disableItem(context.itemUri);
-                            self.trigger('alert', data.message, function() {
-                                self.trigger('endsession', 'teststate', data.code);
-                                self.trigger('leave');
-                            });
+                            leaveRunner(self, data);
                         }
                         // break the chain to avoid uncaught exception in promise...
                         // this will lead to unresolved promise, but the browser will be redirected soon!
@@ -400,12 +395,29 @@ define([
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parrallel at initialization
+            //load data and current context in parallel at initialization
             return this.getProxy().init()
                        .then(function(results){
+                            var communicator = self.getProxy().getCommunicator();
+
                             self.setTestData(results.testData);
                             self.setTestContext(results.testContext);
                             self.setTestMap(results.testMap);
+
+                            // install the communication channel if enabled
+                            if (communicator) {
+                               return communicator
+                                   .channel('teststate', function (data) {
+                                       if (data && ('close' === data.type || 'pause' === data.type)) {
+                                           communicator.close();
+                                           leaveRunner(self, data);
+                                       }
+                                   })
+                                   .init()
+                                   .then(function () {
+                                       return communicator.open();
+                                   });
+                            }
                        });
         },
 
@@ -546,9 +558,15 @@ define([
 
             var probeOverseer = this.getProbeOverseer();
 
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
+            this.itemRunner = null;
+
             //if there is trace data collected by the probes
             if(probeOverseer){
-                probeOverseer.flush()
+                return probeOverseer.flush()
                     .then(function(data){
 
                         //we reformat the time set into a trace variables
@@ -569,14 +587,22 @@ define([
                         probeOverseer.stop();
                     });
             }
-
-            // prevent the item to be displayed while test runner is destroying
-            if (this.itemRunner) {
-                this.itemRunner.clear();
-            }
-            this.itemRunner = null;
         }
     };
+
+    /**
+     * Displays an exit message, then leaves the runner once the user has acknowledged
+     * @param {runner} runner
+     * @param {Object} data
+     */
+    function leaveRunner(runner, data) {
+        var context = runner.getTestContext();
+        runner.disableItem(context.itemUri);
+        runner.trigger('alert', data.message, function () {
+            runner.trigger('endsession', 'teststate', data.code);
+            runner.trigger('leave');
+        });
+    }
 
     return qtiProvider;
 });
