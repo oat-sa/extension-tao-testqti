@@ -81,6 +81,9 @@ define([
                     } catch (e) {
                         data = {
                             success: false,
+                            source: 'network',
+                            purpose: 'proxy',
+                            context: jqXHR,
                             code: jqXHR.status,
                             type: textStatus || 'error',
                             message: errorThrown || __('An error occurred!')
