@@ -78,10 +78,10 @@ define([
         QUnit.expect(6);
         assert.equal(typeof qtiServiceProxy, 'object', "The qtiServiceProxy module exposes an object");
         assert.equal(typeof proxyFactory, 'function', "The proxyFactory module exposes a function");
-        assert.equal(typeof proxyFactory.registerProxy, 'function', "The proxyFactory module exposes a registerProxy method");
-        assert.equal(typeof proxyFactory.getProxy, 'function', "The proxyFactory module exposes a getProxy method");
+        assert.equal(typeof proxyFactory.registerProvider, 'function', "The proxyFactory module exposes a registerProvider method");
+        assert.equal(typeof proxyFactory.getProvider, 'function', "The proxyFactory module exposes a getProvider method");
 
-        proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
         assert.equal(typeof proxyFactory('qtiServiceProxy'), 'object', "The proxyFactory factory has registered the qtiServiceProxy definition and produces an instance");
         assert.notStrictEqual(proxyFactory('qtiServiceProxy'), proxyFactory('qtiServiceProxy'), "The proxyFactory factory provides a different instance of qtiServiceProxy on each call");
@@ -153,7 +153,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = caseData.ajaxMock(caseData.response, function(ajaxConfig) {
                 assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
@@ -210,7 +210,7 @@ define([
 
         QUnit.expect(4);
 
-        proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
         $.ajax = ajaxMockSuccess({success: true});
 
@@ -289,7 +289,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -382,7 +382,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -475,7 +475,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -579,7 +579,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 7 : 8);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -683,7 +683,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -786,7 +786,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 8 : 9);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -897,7 +897,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 8 : 9);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -1006,7 +1006,7 @@ define([
 
             QUnit.expect(10);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
