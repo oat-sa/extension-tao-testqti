@@ -29,7 +29,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
-use qtism\common\datatypes\String;
+use qtism\common\datatypes\QtiString;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -134,7 +134,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $values = $testTaker->getPropertyValues($rdfPropUri);
                 $outcome = $session->getVariable($outcomeId);
                 if(!is_null($outcome) && count($values)){
-                    $outcome->setValue(new String($values[0]));
+                    $outcome->setValue(new QtiString($values[0]));
                 }
             }
         }

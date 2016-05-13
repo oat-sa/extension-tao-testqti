@@ -34,7 +34,7 @@ use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\common\datatypes\String as QtismString;
+use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\common\datatypes\Duration;
