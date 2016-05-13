@@ -29,7 +29,7 @@ use qtism\data\expressions\NumberPresented;
 use qtism\data\expressions\NumberCorrect;
 use qtism\common\enums\BaseType;
 use qtism\common\datatypes\QtiFloat;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -582,7 +582,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             if ($placeId === $identifier) {
                 if (($timeLimits = $source->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
                     $constraintDuration = $constraint->getDuration();
-                    if ($constraintDuration instanceof Duration) {
+                    if ($constraintDuration instanceof QtiDuration) {
                         $constraintDuration->sub($constraintDuration);
                         $constraintDuration->add($maxTime);
                     }

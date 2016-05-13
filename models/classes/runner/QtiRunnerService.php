@@ -37,7 +37,7 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;

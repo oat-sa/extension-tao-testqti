@@ -24,7 +24,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\TimePoint;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -240,7 +240,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
         if (!isset($this->durationCache[$durationKey])) {
             $duration = round($this->getTimer()->compute($identifier, $target), 6);
-            $this->durationCache[$durationKey] = new Duration('PT' . $duration . 'S');
+            $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
         }
 
         return $this->durationCache[$durationKey];
