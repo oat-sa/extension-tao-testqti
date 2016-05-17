@@ -79,7 +79,6 @@ define([
          * @returns {proxy}
          */
         loadProxy : function loadProxy(){
-            var self = this;
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
@@ -88,28 +87,8 @@ define([
                 'serviceCallId',
                 'bootstrap'
             ]);
-            return proxyFactory('qtiServiceProxy', proxyConfig)
-                // middleware invoked on every requests
-                .use(function qtiFilter(req, res, next) {
-                    var data = res && res.data;
 
-                    // test has been closed/suspended => redirect to the index page after message acknowledge
-                    if (data && data.type && data.type === 'TestState') {
-
-                        if(!self.getState('ready')){
-                            //if we open an inconsistent test (should never happen) just leave
-                            self.trigger('destroy');
-                        } else {
-                            leaveRunner(self, data);
-                        }
-                        // break the chain to avoid uncaught exception in promise...
-                        // this will lead to unresolved promise, but the browser will be redirected soon!
-                        return;
-                    } else if (res.status == 'error') {
-                        self.trigger('error', data);
-                    }
-                    next();
-                });
+            return proxyFactory('qtiServiceProxy', proxyConfig);
         },
 
         /**
@@ -387,6 +366,12 @@ define([
             })
             .on('error', function(){
                 this.trigger('disabletools enablenav');
+            })
+            .after('finish', function () {
+                this.trigger('leave');
+            })
+            .on('leave', function () {
+                this.destroy();
             });
 
             //starts the event collection
@@ -397,26 +382,9 @@ define([
             //load data and current context in parallel at initialization
             return this.getProxy().init()
                        .then(function(results){
-                            var communicator = self.getProxy().getCommunicator();
-
                             self.setTestData(results.testData);
                             self.setTestContext(results.testContext);
                             self.setTestMap(results.testMap);
-
-                            // install the communication channel if enabled
-                            if (communicator) {
-                               return communicator
-                                   .channel('teststate', function (data) {
-                                       if (data && ('close' === data.type || 'pause' === data.type)) {
-                                           communicator.close();
-                                           leaveRunner(self, data);
-                                       }
-                                   })
-                                   .init()
-                                   .then(function () {
-                                       return communicator.open();
-                                   });
-                            }
                        });
         },
 
@@ -588,20 +556,6 @@ define([
             }
         }
     };
-
-    /**
-     * Displays an exit message, then leaves the runner once the user has acknowledged
-     * @param {runner} runner
-     * @param {Object} data
-     */
-    function leaveRunner(runner, data) {
-        var context = runner.getTestContext();
-        runner.disableItem(context.itemUri);
-        runner.trigger('alert', data.message, function () {
-            runner.trigger('endsession', 'teststate', data.code);
-            runner.trigger('leave');
-        });
-    }
 
     return qtiProvider;
 });

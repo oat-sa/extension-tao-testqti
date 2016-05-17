@@ -69,13 +69,6 @@ define([
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
 
-        /**
-         *  At the end, we are redirected to the exit URL
-         */
-        var leave = function leave (){
-            window.location = config.exitUrl;
-        };
-
         config = _.defaults(config, {
             renderTo: $('.runner')
         });
@@ -96,13 +89,10 @@ define([
                 //TODO move the loading bar into a plugin
                 loadingBar.stop();
             })
-            .after('finish', function () {
-                this.trigger('leave');
+            .on('destroy', function () {
+                // at the end, we are redirected to the exit URL
+                window.location = config.exitUrl;
             })
-            .on('leave', function () {
-                this.destroy();
-            })
-            .on('destroy', leave)
             .init();
     }
 
