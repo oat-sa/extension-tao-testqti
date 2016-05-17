@@ -293,6 +293,13 @@ define([
                         self.enable();
                     })
 
+                    .on('disconnect', function() {
+                        //pause the timers when the connection is lost
+                        if (self.getState('enabled')) {
+                            self.disable();
+                        }
+                    })
+
                     .before('move', function(e, type, scope, position){
                         var done = e.done();
 

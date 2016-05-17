@@ -22,6 +22,8 @@ define([
     'taoQtiTest/runner/plugins/content/dialog/dialog',
     'taoQtiTest/runner/plugins/content/dialog/exitMessages',
     'taoQtiTest/runner/plugins/content/feedback/feedback',
+    'taoQtiTest/runner/plugins/controls/connectivity/connectivity',
+    'taoQtiTest/runner/plugins/controls/connectivity/autoPause',
     'taoQtiTest/runner/plugins/controls/testState/testState',
     'taoQtiTest/runner/plugins/controls/duration/duration',
     'taoQtiTest/runner/plugins/controls/title/title',
@@ -39,6 +41,8 @@ define([
             dialog,
             exitMessages,
             feedback,
+            connectivity,
+            autoPause,
             testState,
             duration,
             title,
@@ -57,7 +61,7 @@ define([
      */
     return pluginLoader({
         content    : [rubricBlock, overlay, dialog, feedback, exitMessages],
-        controls   : [title, timer, progressbar, duration, testState],
+        controls   : [title, timer, progressbar, duration, connectivity, autoPause, testState],
         navigation : [review, previous, next, nextSection, skip],
         tools      : [comment]
     });
