@@ -83,7 +83,7 @@ define([
                             success: false,
                             source: 'network',
                             purpose: 'proxy',
-                            context: jqXHR,
+                            context: this,
                             code: jqXHR.status,
                             type: textStatus || 'error',
                             message: errorThrown || __('An error occurred!')
