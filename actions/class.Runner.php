@@ -24,8 +24,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
-use qtism\runtime\tests\AssessmentTestSessionState;
 use \oat\taoTests\models\runner\CsrfToken;
 use \oat\taoTests\models\runner\SessionCsrfToken;
 
@@ -746,5 +746,40 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         $this->returnJson($response, $code);
+    }
+
+    /**
+     * Manage the bidirectional communication
+     */
+    public function messages()
+    {
+        // close the PHP session to prevent session overwriting and loss of security token for secured queries
+        session_write_close();
+
+        $code = 200;
+
+        try {
+            $input = \taoQtiCommon_helpers_Utils::readJsonPayload();
+            if (!$input) {
+                $input = [];
+            }
+
+            $serviceContext = $this->getServiceContext(false, false);
+
+            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+
+            $response = [
+                'responses' => $communicationService->processInput($serviceContext, $input),
+                'messages' => $communicationService->processOutput($serviceContext),
+                'success' => true,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code, false);
     }
 }
