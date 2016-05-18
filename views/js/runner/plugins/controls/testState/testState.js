@@ -37,8 +37,8 @@ define([
         install: function install() {
             var testRunner = this.getTestRunner();
 
-            testRunner.getProxy()
             // middleware invoked on every requests
+            testRunner.getProxy()
                 .use(function qtiFilter(req, res, next) {
                     var data = res && res.data;
 
@@ -64,6 +64,7 @@ define([
         init: function init() {
             var testRunner = this.getTestRunner();
 
+            // immediate handling of proctor's actions
             testRunner.getProxy()
                 .channel('teststate', function (data) {
                     if (data && ('close' === data.type || 'pause' === data.type)) {

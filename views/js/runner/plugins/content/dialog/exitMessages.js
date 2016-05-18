@@ -50,7 +50,7 @@ define([
             testRunner.before('leave', function leave(e, data) {
                 // safely stop the communicator to prevent inconsistent communication while leaving
                 testRunner.getProxy().getCommunicator()
-                    .then(function(communicator) {
+                    .then(function (communicator) {
                         return communicator.close();
                     })
                     .catch(_.noop);
