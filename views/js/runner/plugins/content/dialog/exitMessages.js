@@ -58,7 +58,14 @@ define([
                 if (_.isObject(data) && data.message) {
                     var done = e.done();
                     var context = testRunner.getTestContext();
-                    testRunner.disableItem(context.itemUri);
+
+                    // the leave can occurs when the runner is in inconsistent state (i.e. error)
+                    // prevent side error with item disabling
+                    if (context && context.itemUri) {
+                        testRunner.disableItem(context.itemUri);
+                    }
+
+                    // wait for the message acknowledge before leaving the runner
                     testRunner.trigger('alert', data.message, function () {
                         testRunner.trigger('endsession', 'teststate', data.code);
                         done();
