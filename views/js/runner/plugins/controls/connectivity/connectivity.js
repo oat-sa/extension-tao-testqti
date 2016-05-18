@@ -38,6 +38,13 @@ define([
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
+            // this function is mandatory
+        },
+
+        /**
+         * Installs the plugin (called when the runner bind the plugin)
+         */
+        install: function install() {
 
             var testRunner = this.getTestRunner();
 
