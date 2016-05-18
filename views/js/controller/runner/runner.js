@@ -26,6 +26,8 @@ define([
     'i18n',
     'module',
     'core/promise',
+    'core/communicator',
+    'core/communicator/poll',
     'layout/loading-bar',
     'ui/feedback',
     'taoTests/runner/runner',
@@ -34,7 +36,7 @@ define([
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/loader',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, loadingBar, feedback,
+], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
     'use strict';
 
@@ -44,7 +46,8 @@ define([
      */
 
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+    proxy.registerProvider('qtiServiceProxy', qtiServiceProxy);
+    communicator.registerProvider('poll', pollProvider);
 
     /**
      * Catches errors
@@ -60,31 +63,11 @@ define([
     }
 
     /**
-     * Call the destroy action of the test runner
-     * Must be applied on a test runner instance: destroyRunner.call(runner);
-     */
-    function destroyRunner() {
-        var self = this;
-        //FIXME this should be handled by the eventifier instead of doing a delay
-        _.delay(function(){
-            self.destroy();
-        }, 300); //let deferred exec a chance to finish
-    }
-
-
-    /**
      * Initializes and launches the test runner
      * @param {Object} config
      */
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
-
-        /**
-         *  At the end, we are redirected to the exit URL
-         */
-        var leave = function leave (){
-            window.location = config.exitUrl;
-        };
 
         config = _.defaults(config, {
             renderTo: $('.runner')
@@ -106,13 +89,10 @@ define([
                 //TODO move the loading bar into a plugin
                 loadingBar.stop();
             })
-            .after('finish', function () {
-                this.trigger('leave');
+            .on('destroy', function () {
+                // at the end, we are redirected to the exit URL
+                window.location = config.exitUrl;
             })
-            .on('leave', function () {
-                destroyRunner.call(this);
-            })
-            .on('destroy', leave)
             .init();
     }
 
@@ -139,8 +119,7 @@ define([
          * @param {String} options.testDefinition
          * @param {String} options.testCompilation
          * @param {String} options.serviceCallId
-         * @param {String} options.serviceController
-         * @param {String} options.serviceExtension
+         * @param {Object} options.bootstrap
          * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start: function start(options) {

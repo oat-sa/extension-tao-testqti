@@ -23,9 +23,10 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/communicator',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, helpers, configFactory) {
+], function($, _, __, Promise, communicatorFactory, helpers, configFactory) {
     'use strict';
 
     /**
@@ -80,6 +81,9 @@ define([
                     } catch (e) {
                         data = {
                             success: false,
+                            source: 'network',
+                            purpose: 'proxy',
+                            context: this,
                             code: jqXHR.status,
                             type: textStatus || 'error',
                             message: errorThrown || __('An error occurred!')
@@ -160,14 +164,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         destroy: function destroy() {
-            var self = this;
+            // no request, just a resources cleaning
+            this.configStorage = null;
+            this._runningPromise = null;
+
             // the method must return a promise
-            return new Promise(function(resolve) {
-                // no request, just a resources cleaning
-                self.configStorage = null;
-                self._runningPromise = null;
-                resolve();
-            });
+            return Promise.resolve();
         },
 
         /**
@@ -258,6 +260,18 @@ define([
          */
         telemetry: function telemetry(uri, signal, params) {
             return request(this, this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
+        },
+
+        /**
+         * Builds the communication channel
+         * @returns {communicator|null} the communication channel
+         */
+        loadCommunicator: function loadCommunicator() {
+            var config = this.configStorage.getCommunicationConfig();
+            if (config.enabled) {
+                return communicatorFactory(config.type, config.params);
+            }
+            return null;
         }
     };
 
