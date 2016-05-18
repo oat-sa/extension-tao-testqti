@@ -28,83 +28,91 @@ define([
     'ui/calculator',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, calculator, pluginFactory, buttonTpl) {
+], function ($, __, hider, calculatorFactory, pluginFactory, buttonTpl){
     'use strict';
+
+    var _default = {
+        height : 360,
+        width : 240
+    };
 
     /**
      * Returns the configured plugin
      */
     return pluginFactory({
-
-        name: 'calculator',
-
+        name : 'calculator',
         /**
          * Initialize the plugin (called during runner's init)
          */
-        init: function init() {
-            
-        },
+        init : function init(){
 
+        },
         /**
          * Called during the runner's render phase
          */
-        render: function render() {
-            
+        render : function render(){
+
             var self = this;
             var testRunner = this.getTestRunner();
-
+            var areaBroker = this.getAreaBroker();
+            
             /**
              * Is calculator activated ? if not, then we hide the plugin
              */
-            function togglePlugin() {
+            function togglePlugin(){
                 var context = testRunner.getTestContext();
                 //to be activated with the special category x-tao-option-calculator
-                if (context.options.calculator) {//allow calculator
+                if(context.options.calculator){//allow calculator
                     self.show();
-                } else {
+                }else{
                     self.hide();
                 }
             }
-            
+
             //build element (detached)
             this.$button = $(buttonTpl({
-                control: 'calculator',
-                title: __('Open Calculator'),
-                icon: 'maths',
-                text: __('Calculator')
+                control : 'calculator',
+                title : __('Open Calculator'),
+                icon : 'maths',
+                text : __('Calculator')
             }));
+            this.$calculatorContainer = $('<div class="widget-calculator">');
             
-            this.$calculator = $('<div class="widget-calculator">');
-            
-            ///build calculator widget
-            var calc = calculator({
-                renderTo: this.$calculator,
-                replace: true,
-                draggableContainer : $('.test-runner-sections')[0],
-                width : 280,
-                height : 360,
-                top : $(window).height() - 470
-            });
-            calc.hide();
-            
+            //init calculator instance var, it will be created only necessary
+            this.calculator = null;
+
             //attach behavior
-            this.$button.on('click', function (e) {
+            this.$button.on('click', function (e){
                 
+                //get the offset of the button to position the calculator widget close to it
+                var offset = $(this).offset();
+
                 //prevent action if the click is made inside the form which is a sub part of the button
-                if ($(e.target).closest('.widget-container').length) {
+                if($(e.target).closest('.widget-container').length){
                     return;
                 }
 
                 e.preventDefault();
 
-                if (self.getState('enabled') !== false) {
-                    //lazy loading...
-                    
-                    //just show/hide the calculator widget
-                    if (calc.is('hidden')) {
-                        calc.show();
+                if(self.getState('enabled') !== false){
+                    if(self.calculator){
+                        //just show/hide the calculator widget
+                        if(self.calculator.is('hidden')){
+                            self.calculator.show();
+                        }else{
+                            self.calculator.hide();
+                        }
                     }else{
-                        calc.hide();
+                        //build calculator widget
+                        self.calculator = calculatorFactory({
+                            renderTo : self.$calculatorContainer,
+                            replace : true,
+                            draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
+                            width : _default.width,
+                            height : _default.height,
+                            top : offset.top - _default.height - 40,
+                            left : offset.left
+                        });
                     }
                 }
             });
@@ -116,56 +124,62 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('renderitem', function () {
+                .on('renderitem', function (){
                     self.enable();
                 })
-                .on('unloaditem', function () {
+                .on('unloaditem', function (){
                     self.disable();
-                    calc.hide();
-                    calc.reset();
+                    if(self.calculator){
+                        //destroy calculator to create a new instance of calculator each time
+                        self.calculator.destroy();
+                        self.calculator = null;
+                    }
                 });
-                
-            this.getAreaBroker().getToolboxArea().append(this.$button);
-            this.getAreaBroker().getPanelArea().append(this.$calculator);
-        },
 
+            areaBroker.getToolboxArea().append(this.$button);
+            areaBroker.getPanelArea().append(this.$calculatorContainer);
+        },
         /**
          * Called during the runner's destroy phase
          */
-        destroy: function destroy() {
+        destroy : function destroy(){
             this.$button.remove();
+            this.$calculatorContainer.remove();
+            if(this.calculator){
+                this.calculator.destroy();
+            }
         },
-
         /**
          * Enable the button
          */
-        enable: function enable() {
+        enable : function enable(){
             this.$button.removeProp('disabled')
                 .removeClass('disabled');
         },
-
         /**
          * Disable the button
          */
-        disable: function disable() {
-            hider.hide(this.$form);
+        disable : function disable(){
             this.$button.prop('disabled', true)
                 .addClass('disabled');
+            if(this.calculator){
+                this.calculator.hide();
+            }
         },
-
         /**
          * Show the button
          */
-        show: function show() {
+        show : function show(){
             hider.show(this.$button);
         },
-
         /**
          * Hide the button
          */
-        hide: function hide() {
-            hider.hide(this.$form);
+        hide : function hide(){
             hider.hide(this.$button);
+            if(this.calculator){
+                this.calculator.hide();
+            }
         }
     });
 });
