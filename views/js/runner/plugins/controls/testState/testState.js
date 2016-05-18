@@ -67,10 +67,6 @@ define([
             testRunner.getProxy()
                 .channel('teststate', function (data) {
                     if (data && ('close' === data.type || 'pause' === data.type)) {
-                        testRunner.getProxy().getCommunicator()
-                            .then(function(communicator) {
-                                communicator.close();
-                            });
                         testRunner.trigger('leave', data);
                     }
                 });

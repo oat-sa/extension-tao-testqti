@@ -48,6 +48,13 @@ define([
             // intercepts the `leave` event,
             // then if a message needs to be displayed displays it and waits the user acknowledges it
             testRunner.before('leave', function leave(e, data) {
+                // safely stop the communicator to prevent inconsistent communication while leaving
+                testRunner.getProxy().getCommunicator()
+                    .then(function(communicator) {
+                        return communicator.close();
+                    })
+                    .catch(_.noop);
+
                 if (_.isObject(data) && data.message) {
                     var done = e.done();
                     var context = testRunner.getTestContext();
