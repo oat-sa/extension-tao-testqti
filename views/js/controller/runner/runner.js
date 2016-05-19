@@ -89,7 +89,7 @@ define([
                 //TODO move the loading bar into a plugin
                 loadingBar.stop();
             })
-            .before('destroy', function () {
+            .after('destroy', function () {
                 // at the end, we are redirected to the exit URL
                 window.location = config.exitUrl;
             })
