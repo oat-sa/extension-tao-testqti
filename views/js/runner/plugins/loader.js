@@ -21,6 +21,7 @@ define([
     'taoQtiTest/runner/plugins/content/overlay/overlay',
     'taoQtiTest/runner/plugins/content/dialog/dialog',
     'taoQtiTest/runner/plugins/content/dialog/exitMessages',
+    'taoQtiTest/runner/plugins/content/loading/loading',
     'taoQtiTest/runner/plugins/content/feedback/feedback',
     'taoQtiTest/runner/plugins/controls/testState/testState',
     'taoQtiTest/runner/plugins/controls/duration/duration',
@@ -38,6 +39,7 @@ define([
             overlay,
             dialog,
             exitMessages,
+            loading,
             feedback,
             testState,
             duration,
@@ -56,7 +58,7 @@ define([
      * Instantiate the plugin loader with all the required plugins configured
      */
     return pluginLoader({
-        content    : [rubricBlock, overlay, dialog, feedback, exitMessages],
+        content    : [rubricBlock, overlay, dialog, feedback, exitMessages, loading],
         controls   : [title, timer, progressbar, duration, testState],
         navigation : [review, previous, next, nextSection, skip],
         tools      : [comment]
