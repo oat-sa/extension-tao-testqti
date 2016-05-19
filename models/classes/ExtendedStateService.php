@@ -98,31 +98,4 @@ class ExtendedStateService
             ? $extra['review'][$itemRef]
             : false;
     }
-
-    /**
-     * Gets the timer delay
-     * @param string $testSessionId
-     * @return float
-     * @throws \common_exception_InconsistentData
-     */
-    public function getTimerDelay($testSessionId)
-    {
-        $extra = $this->getExtra($testSessionId);
-        return isset($extra['timer_delay'])
-            ? floatval($extra['timer_delay'])
-            : 0;
-    }
-
-    /**
-     * Gets the timer delay
-     * @param string $testSessionId
-     * @param float $delay
-     * @throws \common_exception_InconsistentData
-     */
-    public function setTimerDelay($testSessionId, $delay)
-    {
-        $extra = $this->getExtra($testSessionId);
-        $extra['timer_delay'] = floatval($delay);
-        $this->saveExtra($testSessionId, $extra);
-    }
 }
