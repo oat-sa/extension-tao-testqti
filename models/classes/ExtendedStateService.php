@@ -27,10 +27,15 @@ class ExtendedStateService
 {
     const STORAGE_PREFIX = 'extra_';
 
+    const VAR_REVIEW = 'review';
+    const VAR_SECURITY_TIMESTAMP = 'security_timestamp';
+    const VAR_SECURITY_TOKEN = 'security_token';
+    const VAR_SESSION_TOKEN = 'session_token';
+
     private $cache = null;
 
     /**
-     * Retrieve extended state informations
+     * Retrieves extended state information
      * @param string $testSessionId
      * @throws \common_Exception
      * @return array
@@ -49,7 +54,7 @@ class ExtendedStateService
                 }
             } else {
                 $data = array(
-                	'review' => array()
+                	self::VAR_REVIEW => array()
                 );
             }
             $this->cache[$testSessionId] = $data;
@@ -58,7 +63,7 @@ class ExtendedStateService
     }
 
     /**
-     * Store extended state informations
+     * Stores extended state information
      * @param string $testSessionId
      * @param array $extra
      */
@@ -72,16 +77,32 @@ class ExtendedStateService
     }
 
     /**
+     * Gets a value from the storage
+     * @param string $testSessionId
+     * @param string $name
+     * @param null $default
+     * @return mixed|null
+     * @throws \common_exception_InconsistentData
+     */
+    protected function getValue($testSessionId, $name, $default = null)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra[$name])
+            ? $extra[$name]
+            : $default;
+    }
+
+    /**
      * Set the marked for review state of an item
-     * @param string $sessionId
+     * @param string $testSessionId
      * @param string $itemRef
      * @param boolean $flag
      */
-    public function setItemFlag($sessionId, $itemRef, $flag)
+    public function setItemFlag($testSessionId, $itemRef, $flag)
     {
-        $extra = $this->getExtra($sessionId);
-        $extra['review'][$itemRef] = $flag;
-        $this->saveExtra($sessionId, $extra);
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_REVIEW][$itemRef] = $flag;
+        $this->saveExtra($testSessionId, $extra);
     }
 
     /**
@@ -94,8 +115,75 @@ class ExtendedStateService
     public function getItemFlag($testSessionId, $itemRef)
     {
         $extra = $this->getExtra($testSessionId);
-        return isset($extra['review'][$itemRef])
-            ? $extra['review'][$itemRef]
+        return isset($extra[self::VAR_REVIEW][$itemRef])
+            ? $extra[self::VAR_REVIEW][$itemRef]
             : false;
+    }
+
+    /**
+     * Gets the security token that validates the session.
+     * It will be also stored into the PHP session to ensure the test execution is processed by the right test taker.
+     * @param string $testSessionId
+     * @return string
+     * @throws \common_exception_InconsistentData
+     */
+    public function getSessionToken($testSessionId)
+    {
+        return $this->getValue($testSessionId, self::VAR_SESSION_TOKEN);
+    }
+
+    /**
+     * Gets the current security token
+     * @param string $testSessionId
+     * @return string
+     * @throws \common_exception_InconsistentData
+     */
+    public function getSecurityToken($testSessionId)
+    {
+        return $this->getValue($testSessionId, self::VAR_SECURITY_TOKEN);
+    }
+
+    /**
+     * Gets the current security timestamp
+     * @param string $testSessionId
+     * @return int
+     * @throws \common_exception_InconsistentData
+     */
+    public function getSecurityTimestamp($testSessionId)
+    {
+        return $this->getValue($testSessionId, self::VAR_SECURITY_TIMESTAMP);
+    }
+
+    /**
+     * Sets the current security token
+     * @param string $testSessionId
+     * @param string $token
+     * @throws \common_exception_InconsistentData
+     */
+    public function setSecurityToken($testSessionId, $token)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_SECURITY_TOKEN] = (string)$token;
+        $extra[self::VAR_SECURITY_TIMESTAMP] = time();
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Resets the current security context
+     * @param string $testSessionId
+     * @throws \common_exception_InconsistentData
+     */
+    public function resetSecurity($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        unset(
+            $extra[self::VAR_SECURITY_TOKEN],
+            $extra[self::VAR_SECURITY_TIMESTAMP]
+        );
+        
+        $extra[self::VAR_SESSION_TOKEN] = uniqid('', true);
+        
+        $this->saveExtra($testSessionId, $extra);
     }
 }
