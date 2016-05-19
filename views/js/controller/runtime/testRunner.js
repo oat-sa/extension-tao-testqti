@@ -726,8 +726,12 @@ function (
                                             type: value,
                                             showed: cst.seconds <= key,
                                             point: parseInt(key, 10)
-                                        }
+                                        };
                                     });
+                                    var closestPreviousWarning = _.find(cst.warnings, { showed: true });
+                                    if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
+                                        cst.warnings[closestPreviousWarning.point].showed = false;
+                                    }
                                 }
 
                                 (function (timerIndex, cst) {
