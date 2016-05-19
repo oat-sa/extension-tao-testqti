@@ -124,6 +124,11 @@ define([
                                 point: parseInt(key, 10) * precision
                             };
                         });
+
+                        var closestPreviousWarning = _.find(timer.warnings, { showed: true });
+                        if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
+                            timer.warnings[closestPreviousWarning.point / precision].showed = false;
+                        }
                     }
                 }
                 return timer;
