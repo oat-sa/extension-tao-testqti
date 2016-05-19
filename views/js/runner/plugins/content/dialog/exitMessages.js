@@ -53,6 +53,10 @@ define([
                     .then(function (communicator) {
                         return communicator.close();
                     })
+                    // Silently catch the potential errors to avoid polluting the console.
+                    // The code above is present to close an already open communicator in order to avoid later
+                    // communication while the test is destroying. So if any error occurs here it is not very important,
+                    // the most time it will be a missing communicator error, due to disabled config.
                     .catch(_.noop);
 
                 if (_.isObject(data) && data.message) {
