@@ -203,9 +203,15 @@
   "allowSkipping": false,
   "exitButton": true,
   "timerWarning": {
-    "assessmentItemRef": 15,
-    "assessmentSection": 15,
-    "testPart": 15
+    "assessmentItemRef": {
+      "15": "warning"
+    },
+    "assessmentSection": {
+      "15": "warning"
+    },
+    "testPart": {
+      "15": "warning"
+    }
   },
   "progressIndicator": "position",
   "progressIndicatorScope": "test",
