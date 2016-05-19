@@ -141,11 +141,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('init', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('init', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -204,8 +206,10 @@ define([
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
             serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-            serviceController: 'MockRunner',
-            serviceExtension: 'taoRunnerMock'
+            bootstrap: {
+                serviceController: 'MockRunner',
+                serviceExtension: 'MockExtension'
+            }
         };
 
         QUnit.expect(4);
@@ -277,11 +281,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestData', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -370,11 +376,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestContext', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestContext', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -463,11 +471,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestMap', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestMap', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -567,11 +577,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.action, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -670,11 +682,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getItem', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -773,11 +787,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('submitItem', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('submitItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -884,11 +900,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.action, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -993,11 +1011,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.signal, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.signal, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
