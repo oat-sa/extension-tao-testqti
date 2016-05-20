@@ -365,6 +365,22 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('2.28.0')) {
+            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+            if (array_key_exists('timerWarning', $testRunnerConfig)) {
+                foreach ($testRunnerConfig['timerWarning'] as &$value) {
+                    if ($value !== null && is_int($value)) {
+                        $value = [$value => 'warning'];
+                    }
+                }
+
+                \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $testRunnerConfig);
+            }
+
+            $this->setVersion('2.29.0');
+        }
+
+        if ($this->isVersion('2.29.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap'] = [
@@ -372,7 +388,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ];
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('2.29.0');
+            $this->setVersion('2.30.0');
         }
     }
 }

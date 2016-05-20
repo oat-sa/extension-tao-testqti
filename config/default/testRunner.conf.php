@@ -22,13 +22,21 @@
  */
 return array(
     /**
-     * Show warning message if time remaining less than defined (in seconds)
+     * Show warning messages if time remaining less than defined (in seconds) in key.
+     * Also you should define type of warning message in value.
+     * Example:
+     * 'assessmentItemRef' => array(
+     *     300 => 'warning',
+     *     120 => 'error'
+     * )
+     * Available warning types: info (blue), warning (yellow), error (red)
      * @type array
      */
     'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => null,
-        'testPart'          => null
+        'testPart'          => null,
+        'assessmentTest'    => null
     ),
 
     /**
