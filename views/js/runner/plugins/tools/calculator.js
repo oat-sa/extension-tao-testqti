@@ -45,13 +45,6 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init : function init(){
-
-        },
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-
             var self = this;
             var testRunner = this.getTestRunner();
             var areaBroker = this.getAreaBroker();
@@ -135,7 +128,12 @@ define([
                         self.calculator = null;
                     }
                 });
-
+        },
+        /**
+         * Called during the runner's render phase
+         */
+        render : function render(){
+            var areaBroker = this.getAreaBroker();    
             areaBroker.getToolboxArea().append(this.$button);
             areaBroker.getPanelArea().append(this.$calculatorContainer);
         },
