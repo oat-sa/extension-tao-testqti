@@ -37,6 +37,8 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
 {
     const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
 
+    const OPTION_CHANNELS = 'channels';
+
     /**
      * Processes the input messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
@@ -57,10 +59,9 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
                 throw new \common_exception_InconsistentData('Wrong message chunk received by the bidirectional communication service: either channel or message content is missing!');
             }
 
-            $channelHandler = 'channel' . ucfirst($data['channel']);
-            if (method_exists($this, $channelHandler)) {
+            if ($this->hasChannel($data['channel'])) {
                 // known channel, forward...
-                $responses[] = $this->{$channelHandler}($context, $data['message']);
+                $responses[] = $this->processChannel($context, $data['channel']);
             } else {
                 // unknown channel, fallback!
                 $responses[] = $this->fallback($context, $data['channel'], $data['message']);
@@ -90,6 +91,65 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         }
 
         return $messages;
+    }
+
+    /**
+     * @param CommunicationChannel $channel
+     * @throws \common_exception_InconsistentData
+     */
+    public function attachChannel(CommunicationChannel $channel)
+    {
+        if ($this->hasChannel($channel->getName())) {
+            throw new \common_exception_InconsistentData('Channel ' . $channel . ' already registered in ' . __CLASS__);
+        }
+
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+
+        $channels[$channel->getName()] = get_class($channel);
+        $this->setOption(self::OPTION_LISTENERS, $channels);
+    }
+
+    /**
+     * @param CommunicationChannel $channel
+     * @throws \common_exception_InconsistentData
+     */
+    public function detachChannel(CommunicationChannel $channel)
+    {
+        if (!$this->hasChannel($channel->getName())) {
+            throw new \common_exception_InconsistentData('Channel ' . $channel . 'is not registered in ' . __CLASS__);
+        }
+
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+        unset($channels[$channel->getName()]);
+        $this->setOption(self::OPTION_CHANNELS, $channels);
+    }
+
+    /**
+     * Check whether channel exists
+     * @param string $channelName
+     * @return bool
+     */
+    protected function hasChannel($channelName)
+    {
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+        return isset($channels[$channelName]);
+    }
+
+    /**
+     * @param QtiRunnerServiceContext $context
+     * @param $channelName
+     * @throws \common_exception_InconsistentData
+     * @return mixed channel response
+     */
+    protected function processChannel(QtiRunnerServiceContext $context, $channelName)
+    {
+        if (!$this->hasChannel($channelName)) {
+            throw new \common_exception_InconsistentData('Channel ' . $channelName . 'is not registered in ' . __CLASS__);
+        }
+
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+        $channel = new $channels($channelName);
+        return $channel->process($context, $channel);
     }
 
     /**

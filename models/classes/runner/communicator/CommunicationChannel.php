@@ -25,40 +25,26 @@ namespace oat\taoQtiTest\models\runner\communicator;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
- * Interface CommunicationService
+ * Interface CommunicationChannel
  *
- * Describes the API needed to manage bidirectional communication between client and server
+ * Describes the API of channel to process
  *
  * @package oat\taoQtiTest\models\runner\communicator
  */
-interface CommunicationService
+interface CommunicationChannel
 {
     /**
-     * Processes the input messages
+     * Get name of channel
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Processes the input message
      * @param QtiRunnerServiceContext $context - Needs the current runner context
      * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a message that can be any type
      * @return array - Returns a list of responses in the same order as the input list
      * @throws \common_Exception
      */
-    public function processInput(QtiRunnerServiceContext $context, array $input);
-
-    /**
-     * Builds the list of output messages
-     * @param QtiRunnerServiceContext $context - Needs the current runner context
-     * @return array - Returns a list of output, each one is represented by a channel's name that is a string and a message that can be any type
-     * @throws \common_Exception
-     */
-    public function processOutput(QtiRunnerServiceContext $context);
-
-    /**
-     * Register channel
-     * @param CommunicationChannel $channel
-     */
-    public function attachChannel(CommunicationChannel $channel);
-
-    /**
-     * Register channel
-     * @param CommunicationChannel $channel
-     */
-    public function detachChannel(CommunicationChannel $channel);
+    public function process(QtiRunnerServiceContext $context, array $input);
 }
