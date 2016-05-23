@@ -243,15 +243,18 @@ define([
         }, 10);
     });
 
-    QUnit.test('warn', function(assert) {
-        QUnit.expect(5);
+    QUnit.test('warn - yellow', function(assert) {
+        QUnit.expect(6);
 
         var $container = $('#qunit-fixture .timer-box');
         var config = {
             id : 'woo',
             type : 'assessmentItemRef',
             remaining: 1 * 60 * 1000,
-            warning: 5 * 60 * 1000
+            warnings: {
+                120: { type: 'warning', showed: false, point: 2 * 60 * 1000 },
+                300: { type: 'error', showed: true, point: 5 * 60 * 1000 }
+            }
         };
 
         assert.equal($container.length, 1, 'The container exists');
@@ -264,9 +267,66 @@ define([
         assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
 
         var result = timer.warn();
-        assert.equal(typeof result, 'string', 'The warn result is a string');
-        assert.equal(result, "Warning – You have a minute remaining to complete this item.", 'The warn result is a correct');
+        assert.equal(typeof result, 'object', 'The warn result is a object');
+        assert.equal(result.text, "Warning – You have a minute remaining to complete this item.", 'The warn message is a correct');
+        assert.equal(result.type, "warning", 'The warn type is a correct');
         assert.ok($('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element display in warning');
+    });
+
+    QUnit.test('warn - red', function(assert) {
+        QUnit.expect(6);
+
+        var $container = $('#qunit-fixture .timer-box');
+        var config = {
+            id : 'woo',
+            type : 'assessmentItemRef',
+            remaining: 3 * 60 * 1000,
+            warnings: {
+                120: { type: 'warning', showed: false, point: 2 * 60 * 1000 },
+                300: { type: 'error', showed: false, point: 5 * 60 * 1000 }
+            }
+        };
+
+        assert.equal($container.length, 1, 'The container exists');
+
+        var timer = timerComponentFactory(config);
+        timer.init()
+            .render($container)
+            .refresh();
+
+        assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
+
+        var result = timer.warn();
+        assert.equal(typeof result, 'object', 'The warn result is a object');
+        assert.equal(result.text, "Warning – You have 3 minutes remaining to complete this item.", 'The warn message is a correct');
+        assert.equal(result.type, "error", 'The warn type is a correct');
+        assert.ok($('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element display in warning');
+    });
+
+    QUnit.test('warn - empty', function(assert) {
+        QUnit.expect(5);
+
+        var $container = $('#qunit-fixture .timer-box');
+        var config = {
+            id : 'woo',
+            type : 'assessmentItemRef',
+            remaining: 1 * 60 * 1000,
+            warnings: {}
+        };
+
+        assert.equal($container.length, 1, 'The container exists');
+
+        var timer = timerComponentFactory(config);
+        timer.init()
+            .render($container)
+            .refresh();
+
+        assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
+
+        var result = timer.warn();
+        assert.equal(typeof result, 'object', 'The warn result is a object');
+        assert.ok(!result.text, 'The warn result not contain text field, that means it is empty');
+        assert.ok(!result.type, 'The warn result not contain type field, that means it is empty');
     });
 
 });

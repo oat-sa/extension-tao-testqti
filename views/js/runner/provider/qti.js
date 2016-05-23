@@ -79,43 +79,16 @@ define([
          * @returns {proxy}
          */
         loadProxy : function loadProxy(){
-            var self = this;
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
                 'testDefinition',
                 'testCompilation',
                 'serviceCallId',
-                'serviceController',
-                'serviceExtension'
+                'bootstrap'
             ]);
-            return proxyFactory('qtiServiceProxy', proxyConfig)
-                // middleware invoked on every requests
-                .use(function qtiFilter(req, res, next) {
-                    var context = self.getTestContext();
-                    var data = res && res.data;
 
-                    // test has been closed/suspended => redirect to the index page after message acknowledge
-                    if (data && data.type && data.type === 'TestState') {
-
-                        if(!self.getState('ready')){
-                            //if we open an inconsistent test (should never happen) just leave
-                            self.trigger('destroy');
-                        } else {
-                            self.disableItem(context.itemUri);
-                            self.trigger('alert', data.message, function() {
-                                self.trigger('endsession', 'teststate', data.code);
-                                self.trigger('leave');
-                            });
-                        }
-                        // break the chain to avoid uncaught exception in promise...
-                        // this will lead to unresolved promise, but the browser will be redirected soon!
-                        return;
-                    } else if (res.status == 'error') {
-                        self.trigger('error', data);
-                    }
-                    next();
-                });
+            return proxyFactory('qtiServiceProxy', proxyConfig);
         },
 
         /**
@@ -393,6 +366,12 @@ define([
             })
             .on('error', function(){
                 this.trigger('disabletools enablenav');
+            })
+            .after('finish', function () {
+                this.trigger('leave');
+            })
+            .on('leave', function () {
+                this.destroy();
             });
 
             //starts the event collection
@@ -400,7 +379,7 @@ define([
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parrallel at initialization
+            //load data and current context in parallel at initialization
             return this.getProxy().init()
                        .then(function(results){
                             self.setTestData(results.testData);
@@ -546,9 +525,15 @@ define([
 
             var probeOverseer = this.getProbeOverseer();
 
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
+            this.itemRunner = null;
+
             //if there is trace data collected by the probes
             if(probeOverseer){
-                probeOverseer.flush()
+                return probeOverseer.flush()
                     .then(function(data){
 
                         //we reformat the time set into a trace variables
@@ -569,12 +554,6 @@ define([
                         probeOverseer.stop();
                     });
             }
-
-            // prevent the item to be displayed while test runner is destroying
-            if (this.itemRunner) {
-                this.itemRunner.clear();
-            }
-            this.itemRunner = null;
         }
     };
 

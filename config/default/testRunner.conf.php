@@ -22,13 +22,21 @@
  */
 return array(
     /**
-     * Show warning message if time remaining less than defined (in seconds)
+     * Show warning messages if time remaining less than defined (in seconds) in key.
+     * Also you should define type of warning message in value.
+     * Example:
+     * 'assessmentItemRef' => array(
+     *     300 => 'warning',
+     *     120 => 'error'
+     * )
+     * Available warning types: info (blue), warning (yellow), error (red)
      * @type array
      */
     'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => null,
-        'testPart'          => null
+        'testPart'          => null,
+        'assessmentTest'    => null
     ),
 
     /**
@@ -172,4 +180,71 @@ return array(
      * @type string
      */
     'test-session' => '\taoQtiTest_helpers_TestSession',
+
+    /**
+     * A config set that will be provided though the bootstrap
+     * @type array
+     */
+    'bootstrap' => [
+        /**
+         * The extension containing the controller used as test runner service
+         * @type string
+         */
+        'serviceExtension' => 'taoQtiTest',
+
+        /**
+         * The name of the controller used as test runner service
+         * @type string
+         */
+        'serviceController' => 'Runner',
+
+        /**
+         * Config for the communication channel
+         * @type array
+         */
+        'communication' => [
+            /**
+             * Enables the communication channel
+             * @type boolean
+             */
+            'enabled' => false,
+
+            /**
+             * The type of communication channel to use. For now the only available type is 'poll'.
+             * @type string
+             */
+            'type' => 'poll',
+
+            /**
+             * The extension containing the remote service to connect
+             * @type string
+             */
+            'extension' => null,
+
+            /**
+             * The controller containing the remote service to connect
+             * @type string
+             */
+            'controller' => null,
+
+            /**
+             * The action corresponding to the remote service to connect
+             * @type string
+             */
+            'action' => 'messages',
+
+            /**
+             * The address of the remote service to connect.
+             * When this address is provided it is used instead of url building from extension/controller/action.
+             * @type string
+             */
+            'service' => null,
+
+            /**
+             * Some additional parameters to setup the communication channel
+             * @type array
+             */
+            'params' => []
+        ],
+    ],
 );

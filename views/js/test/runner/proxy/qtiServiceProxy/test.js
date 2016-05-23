@@ -78,10 +78,10 @@ define([
         QUnit.expect(6);
         assert.equal(typeof qtiServiceProxy, 'object', "The qtiServiceProxy module exposes an object");
         assert.equal(typeof proxyFactory, 'function', "The proxyFactory module exposes a function");
-        assert.equal(typeof proxyFactory.registerProxy, 'function', "The proxyFactory module exposes a registerProxy method");
-        assert.equal(typeof proxyFactory.getProxy, 'function', "The proxyFactory module exposes a getProxy method");
+        assert.equal(typeof proxyFactory.registerProvider, 'function', "The proxyFactory module exposes a registerProvider method");
+        assert.equal(typeof proxyFactory.getProvider, 'function', "The proxyFactory module exposes a getProvider method");
 
-        proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
         assert.equal(typeof proxyFactory('qtiServiceProxy'), 'object', "The proxyFactory factory has registered the qtiServiceProxy definition and produces an instance");
         assert.notStrictEqual(proxyFactory('qtiServiceProxy'), proxyFactory('qtiServiceProxy'), "The proxyFactory factory provides a different instance of qtiServiceProxy on each call");
@@ -141,11 +141,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('init', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('init', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -153,7 +155,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = caseData.ajaxMock(caseData.response, function(ajaxConfig) {
                 assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
@@ -204,13 +206,15 @@ define([
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
             serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-            serviceController: 'MockRunner',
-            serviceExtension: 'taoRunnerMock'
+            bootstrap: {
+                serviceController: 'MockRunner',
+                serviceExtension: 'MockExtension'
+            }
         };
 
         QUnit.expect(4);
 
-        proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
         $.ajax = ajaxMockSuccess({success: true});
 
@@ -277,11 +281,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestData', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -289,7 +295,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -370,11 +376,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestContext', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestContext', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -382,7 +390,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -463,11 +471,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getTestMap', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getTestMap', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -475,7 +485,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 5 : 6);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -567,11 +577,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.action, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 serviceCallId : initConfig.serviceCallId
@@ -579,7 +591,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 7 : 8);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -670,11 +682,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('getItem', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('getItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -683,7 +697,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -773,11 +787,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url('submitItem', initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url('submitItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -786,7 +802,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 8 : 9);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -884,11 +900,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.action, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -897,7 +915,7 @@ define([
 
             QUnit.expect('object' !== typeof caseData.response ? 8 : 9);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
@@ -993,11 +1011,13 @@ define([
                 testDefinition: 'http://tao.dev/mockTestDefinition#123',
                 testCompilation: 'http://tao.dev/mockTestCompilation#123',
                 serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                serviceController: 'MockRunner',
-                serviceExtension: 'taoRunnerMock'
+                bootstrap: {
+                    serviceController: 'MockRunner',
+                    serviceExtension: 'MockExtension'
+                }
             };
 
-            var expectedUrl = helpers._url(caseData.signal, initConfig.serviceController, initConfig.serviceExtension, {
+            var expectedUrl = helpers._url(caseData.signal, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
@@ -1006,7 +1026,7 @@ define([
 
             QUnit.expect(10);
 
-            proxyFactory.registerProxy('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.ajax = ajaxMockSuccess({success: true});
 
