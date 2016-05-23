@@ -36,6 +36,8 @@ use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
+use qtism\data\state\ResponseDeclaration;
+use qtism\data\state\ResponseDeclarationCollection;
 use qtism\data\SubmissionMode;
 use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\common\ResponseVariable;
@@ -571,8 +573,24 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::e($msg);
             }
 
+            // Check if SKIP and default values in response then return error: that response can't be with default values
+            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session) && is_array($response) ) {
+                /** @var ResponseDeclarationCollection $responseDeclarations */
+                $responseDeclarations = $currentItem->getResponseDeclarations();
+                foreach ($response as $id => $resp) {
+                    if (isset($responseDeclarations[$id]) && is_a($responseDeclarations[$id], ResponseDeclaration::class) ) {
+                        if ($responseDeclarations[$id]->hasDefaultValue() ) {
+                            if ( $responseDeclarations[$id]->getDefaultValue() !== $resp) {
+                                throw new QtiRunnerRequiredException();
+                            }
+                        }
+                    }
+                }
+            }
+            
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
             if (is_array($response)) {
+                
                 foreach ($response as $id => $resp) {
                     try {
                         $var = $filler->fill($id, $resp);
@@ -589,7 +607,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             } else {
                 \common_Logger::e('Invalid json payload');
             }
-
+            
             try {
                 \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
                 $session->endAttempt($responses, true);
