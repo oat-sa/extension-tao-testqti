@@ -36,15 +36,40 @@ define([
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
+            // this function is mandatory
+        },
+
+        /**
+         * Installs the plugin (called when the runner bind the plugin)
+         */
+        install: function install() {
             var testRunner = this.getTestRunner();
 
             // intercepts the `leave` event,
             // then if a message needs to be displayed displays it and waits the user acknowledges it
             testRunner.before('leave', function leave(e, data) {
+                // safely stop the communicator to prevent inconsistent communication while leaving
+                testRunner.getProxy().getCommunicator()
+                    .then(function (communicator) {
+                        return communicator.close();
+                    })
+                    // Silently catch the potential errors to avoid polluting the console.
+                    // The code above is present to close an already open communicator in order to avoid later
+                    // communication while the test is destroying. So if any error occurs here it is not very important,
+                    // the most time it will be a missing communicator error, due to disabled config.
+                    .catch(_.noop);
+
                 if (_.isObject(data) && data.message) {
                     var done = e.done();
                     var context = testRunner.getTestContext();
-                    testRunner.disableItem(context.itemUri);
+
+                    // the leave can occurs when the runner is in inconsistent state (i.e. error)
+                    // prevent side error with item disabling
+                    if (context && context.itemUri) {
+                        testRunner.disableItem(context.itemUri);
+                    }
+
+                    // wait for the message acknowledge before leaving the runner
                     testRunner.trigger('alert', data.message, function () {
                         testRunner.trigger('endsession', 'teststate', data.code);
                         done();
