@@ -561,6 +561,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
+            /** @var TestSession $session */
             $session = $context->getTestSession();
             $currentItem  = $session->getCurrentAssessmentItemRef();
             $responses = new State();
@@ -571,21 +572,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $msg .= "Session ID: " . $session->getSessionId() . "\n";
                 $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
                 \common_Logger::e($msg);
-            }
-
-            // Check if SKIP and default values in response then return error: that response can't be with default values
-            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session) && is_array($response) ) {
-                /** @var ResponseDeclarationCollection $responseDeclarations */
-                $responseDeclarations = $currentItem->getResponseDeclarations();
-                foreach ($response as $id => $resp) {
-                    if (isset($responseDeclarations[$id]) && is_a($responseDeclarations[$id], ResponseDeclaration::class) ) {
-                        if ($responseDeclarations[$id]->hasDefaultValue() ) {
-                            if ( $responseDeclarations[$id]->getDefaultValue() !== $resp) {
-                                throw new QtiRunnerRequiredException();
-                            }
-                        }
-                    }
-                }
             }
             
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
@@ -607,7 +593,42 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             } else {
                 \common_Logger::e('Invalid json payload');
             }
-            
+
+            // Check if SKIP and default values in response then return error: that response can't be with default values
+            // TODO setup default values on items initialization
+            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session) && is_array($response) ) {
+
+                /** @var ResponseDeclarationCollection $responseDeclarations */
+                $responseDeclarations = $currentItem->getResponseDeclarations();
+                foreach ($response as $id => $resp) {
+                    if (isset($responseDeclarations[$id]) && is_a($responseDeclarations[$id], ResponseDeclaration::class) ) {
+                        if ($responseDeclarations[$id]->hasDefaultValue() ) {
+                            
+                            $similar = true;
+                            /*
+                             * TODO from Sam:
+                             * 
+                             * I was thinking about a simple helper that takes an interaction object + user response in a standard format (associative array as described in http://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_Toc353965343)
+                             * and returns a boolean
+                             * the interaction object should be able to get the associated responseDeclaration, which contains all the data you need to make the comparison (cardinality, baseType, (optional) default value)
+                             * 
+                             * $defVal = $responseDeclarations[$id]->getDefaultValue();
+                             * foreach ($defVal->getValues() as $key => $value) {
+                                $responseVal = $responses->getVariable($key);
+                                if (!isset($responseVal) || $value->getValue() !== $responseVal) {
+                                    $similar = false;
+                                    break;
+                                }
+                            }*/
+                            
+                            if ($similar) {
+                                throw new QtiRunnerRequiredException();
+                            }
+                        }
+                    }
+                }
+            }
+
             try {
                 \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
                 $session->endAttempt($responses, true);
