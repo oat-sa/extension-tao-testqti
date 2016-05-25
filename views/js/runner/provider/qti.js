@@ -367,10 +367,13 @@ define([
             .on('error', function(){
                 this.trigger('disabletools enablenav');
             })
-            .after('finish', function () {
-                this.trigger('leave');
+            .on('finish', function () {
+                this.flush();
             })
             .on('leave', function () {
+                this.flush();
+            })
+            .on('flush', function () {
                 this.destroy();
             });
 
@@ -509,30 +512,28 @@ define([
             this.trigger('disablenav disabletools')
                 .trigger('endsession', 'finish');
 
-            return this.getProxy().callTestAction('finish');
+            // will be executed after the runner has been flushed
+            // use the "before" queue to ensure the query will be fully processed before destroying
+            // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
+            this.before('flush', function(e) {
+                var done = e.done();
+                this.getProxy().callTestAction('finish').then(done);
+            });
         },
 
         /**
-         * Destroy phase of the test runner
+         * Flushes the test variables before leaving the runner
          *
          * Clean up
          *
          * @this {runner} the runner context, not the provider
          */
-        destroy : function destroy(){
-
+        flush : function flush(){
             var self = this;
-
             var probeOverseer = this.getProbeOverseer();
 
-            // prevent the item to be displayed while test runner is destroying
-            if (this.itemRunner) {
-                this.itemRunner.clear();
-            }
-            this.itemRunner = null;
-
             //if there is trace data collected by the probes
-            if(probeOverseer){
+            if(probeOverseer && !this.getState('disconnected')){
                 return probeOverseer.flush()
                     .then(function(data){
 
@@ -548,12 +549,28 @@ define([
                                 traceData[id] = entry;
                             });
                             //and send them
-                            return self.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
+                            return self.getProxy().sendVariables(traceData);
                         }
-                    }).then(function(){
+                    })
+                    .then(function(){
                         probeOverseer.stop();
                     });
             }
+        },
+
+        /**
+         * Destroy phase of the test runner
+         *
+         * Clean up
+         *
+         * @this {runner} the runner context, not the provider
+         */
+        destroy : function destroy(){
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
+            this.itemRunner = null;
         }
     };
 

@@ -201,6 +201,17 @@ define([
         },
 
         /**
+         * Sends the test variables
+         * @param {Object} variables
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires sendVariables
+         */
+        sendVariables: function sendVariables(variables) {
+            return request(this, this.configStorage.getTestActionUrl('storeTraceData'), { traceData : JSON.stringify(variables) });
+        },
+
+        /**
          * Calls an action related to the test
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
