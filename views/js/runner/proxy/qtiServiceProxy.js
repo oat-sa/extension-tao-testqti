@@ -61,7 +61,8 @@ define([
                     headers: headers,
                     async: true,
                     dataType: 'json',
-                    contentType : contentType || undefined
+                    contentType : contentType || undefined,
+                    timeout: proxy.configStorage.getTimeout()
                 })
                 .done(function(data) {
                     if (data && data.token) {

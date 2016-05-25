@@ -45,7 +45,8 @@ define([
         testDefinition : true,
         testCompilation : true,
         serviceCallId : true,
-        bootstrap : false
+        bootstrap : false,
+        timeout : false
     };
 
     /**
@@ -79,6 +80,13 @@ define([
     function configFactory(config) {
         // protected storage
         var storage = getConfig(config);
+
+        // convert some values from seconds to milliseconds
+        if (storage.timeout) {
+            storage.timeout *= 1000;
+        } else {
+            storage.timeout = undefined;
+        }
 
         // returns only a proxy storage object : no direct access to data is provided
         return {
@@ -166,6 +174,14 @@ define([
             },
 
             /**
+             * Gets the request timeout
+             * @returns {Number}
+             */
+            getTimeout : function getTimeout() {
+                return storage.timeout;
+            },
+
+            /**
              * Gets the config for the communication channel
              * @returns {Object}
              */
@@ -191,6 +207,8 @@ define([
                 // convert some values from seconds to milliseconds
                 if (params.timeout) {
                     params.timeout *= 1000;
+                } else {
+                    params.timeout = storage.timeout;
                 }
                 if (params.interval) {
                     params.interval *= 1000;

@@ -32,19 +32,19 @@ define([
         name: 'testState',
 
         /**
-         * Initializes the plugin (called during runner's init)
+         * Installs the plugin (called when the runner bind the plugin)
          */
-        init: function init() {
+        install: function install() {
             var testRunner = this.getTestRunner();
 
+            // middleware invoked on every requests
             testRunner.getProxy()
-                // middleware invoked on every requests
                 .use(function qtiFilter(req, res, next) {
                     var data = res && res.data;
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     if (data && data.type && data.type === 'TestState') {
-                        if(!testRunner.getState('ready')){
+                        if (!testRunner.getState('ready')) {
                             //if we open an inconsistent test (should never happen) just leave
                             testRunner.trigger('destroy');
                         } else {
@@ -55,15 +55,19 @@ define([
                         return;
                     }
                     next();
-                })
+                });
+        },
 
-                // immediate handling of proctor's actions
+        /**
+         * Initializes the plugin (called during runner's init)
+         */
+        init: function init() {
+            var testRunner = this.getTestRunner();
+
+            // immediate handling of proctor's actions
+            testRunner.getProxy()
                 .channel('teststate', function (data) {
                     if (data && ('close' === data.type || 'pause' === data.type)) {
-                        testRunner.getProxy().getCommunicator()
-                            .then(function(communicator) {
-                                communicator.close();
-                            });
                         testRunner.trigger('leave', data);
                     }
                 });
