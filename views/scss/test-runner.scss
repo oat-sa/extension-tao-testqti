@@ -270,9 +270,24 @@
             max-width: 130px;
             @include font-size(12);
         }
+        &.qti-timer__success {
+            .qti-timer_time {
+                color: $success;
+            }
+        }
+        &.qti-timer__info {
+            .qti-timer_time {
+                color: $info;
+            }
+        }
         &.qti-timer__warning {
             .qti-timer_time {
                 color: $warning;
+            }
+        }
+        &.qti-timer__error {
+            .qti-timer_time {
+                color: $error;
             }
         }
         &::before {

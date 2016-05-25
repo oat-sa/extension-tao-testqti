@@ -793,9 +793,12 @@ function (
              */
             timeWarning: function (cst, warning) {
                 var message = '',
-                    remaining;
+                    remaining,
+                    $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName);
 
-                $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+                $timer.prop('class', $timer.prop('class').replace(/\bqti-timer__(success|info|warning|error)\b/g, '').trim());
+                $timer.addClass('qti-timer__' + warning.type);
+
                 remaining = moment.duration(warning.point, "seconds").humanize();
 
                 switch (cst.qtiClassName) {
