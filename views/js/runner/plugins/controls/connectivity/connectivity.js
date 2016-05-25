@@ -62,15 +62,12 @@ define([
 
             // immediate detection of connectivity loss using Offline API
             $(window).on('offline.connectivity', function() {
-                testRunner.trigger('error', {
-                    success: false,
-                    source: 'network',
-                    purpose: 'connectivity',
-                    context: this,
-                    code: 0,
-                    type: 'offline',
-                    message: __('Connectivity issue!')
-                });
+                disconnect();
+            });
+
+            // immediate detection of connectivity back using Offline API
+            $(window).on('online.connectivity', function() {
+                reconnect();
             });
 
             testRunner
@@ -102,6 +99,7 @@ define([
          */
         destroy : function destroy (){
             $(window).off('offline.connectivity');
+            $(window).off('online.connectivity');
         }
     });
 });
