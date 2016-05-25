@@ -272,7 +272,7 @@ define([
                                     self.storage.setItem(timer.id(), currentVal);
                                     warning = timer.warn();
                                     if (!_.isEmpty(warning)) {
-                                        testRunner.trigger(warning.type, warning.text);
+                                        testRunner.trigger(warning.type == 'error' ? 'danger' : warning.type, warning.text);
                                     }
                                 }
                             }
