@@ -146,7 +146,8 @@ define([
 
                     remaining = moment.duration(data.remaining / precision, "seconds").humanize();
 
-                    this.$element.addClass('qti-timer__warning');
+                    this.$element.prop('class', this.$element.prop('class').replace(/\bqti-timer__(success|info|warning|error)\b/g, '').trim());
+                    this.$element.addClass('qti-timer__' + warning.type);
                     switch (data.type) {
                         case 'assessmentItemRef':
                             message.text = __("Warning – You have %s remaining to complete this item.", remaining);
