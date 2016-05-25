@@ -81,14 +81,6 @@ define([
                     $('.runner').removeClass('hidden');
                 });
             })
-            .on('unloaditem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.start();
-            })
-            .on('renderitem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.stop();
-            })
             .after('destroy', function () {
                 // at the end, we are redirected to the exit URL
                 window.location = config.exitUrl;
