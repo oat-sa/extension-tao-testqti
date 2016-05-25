@@ -95,6 +95,7 @@ class TestCsrfToken implements CsrfToken
     {
         $service = self::getExtendedStateService();
 
+        // TODO: use a better implementation as the OpenSSL can lead to performances issue
         $token = bin2hex(openssl_random_pseudo_bytes(self::TOKEN_LENGTH / 2));
 
         $service->setSecurityToken($this->getSessionId(), $token);
