@@ -81,7 +81,7 @@ define([
                     $('.runner').removeClass('hidden');
                 });
             })
-            .on('destroy', function () {
+            .after('destroy', function () {
                 // at the end, we are redirected to the exit URL
                 window.location = config.exitUrl;
             })
