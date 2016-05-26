@@ -171,7 +171,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function init(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             // code borrowed from the previous implementation, but the reset timers option has been discarded
@@ -296,7 +296,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $response = [];
 
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             // The state of the test session.
@@ -618,7 +618,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $displayFeedbacks = false;
 
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             if($session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS){
@@ -692,7 +692,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemSession(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             $currentItem       = $session->getCurrentAssessmentItemRef();
@@ -791,7 +791,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function timeout(RunnerServiceContext $context, $scope, $ref)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var \taoQtiTest_helpers_TestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
             try {
                 $session->closeTimer($ref, $scope);
@@ -822,7 +822,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function exitTest(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
@@ -1042,7 +1042,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         $continue = false;
 
-        /* @var AssessmentTestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
         
         if ($session->isRunning() === true && \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
@@ -1062,7 +1062,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
     {
-        /* @var \taoQtiTest_helpers_TestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode());
