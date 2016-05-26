@@ -199,6 +199,12 @@ return array(
         'serviceController' => 'Runner',
 
         /**
+         * The network timeout, in seconds.
+         * @type int
+         */
+        'timeout' => 0,
+
+        /**
          * Config for the communication channel
          * @type array
          */

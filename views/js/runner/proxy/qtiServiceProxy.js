@@ -61,7 +61,8 @@ define([
                     headers: headers,
                     async: true,
                     dataType: 'json',
-                    contentType : contentType || undefined
+                    contentType : contentType || undefined,
+                    timeout: proxy.configStorage.getTimeout()
                 })
                 .done(function(data) {
                     if (data && data.token) {
@@ -197,6 +198,17 @@ define([
          */
         getTestMap: function getTestMap() {
             return request(this, this.configStorage.getTestActionUrl('getTestMap'));
+        },
+
+        /**
+         * Sends the test variables
+         * @param {Object} variables
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires sendVariables
+         */
+        sendVariables: function sendVariables(variables) {
+            return request(this, this.configStorage.getTestActionUrl('storeTraceData'), { traceData : JSON.stringify(variables) });
         },
 
         /**
