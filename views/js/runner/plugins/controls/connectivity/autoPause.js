@@ -25,30 +25,52 @@ define([
     'use strict';
 
     /**
+     * The name of the state used to persist the auto pause
+     * @type {String}
+     */
+    var pausedState = 'paused';
+
+    /**
      * Creates the autoPause plugin.
      * Auto pause the assessment when the connectivity is lost
      */
     return pluginFactory({
 
         name: 'autoPause',
+        
+        /**
+         * Installs the plugin (called when the runner bind the plugin)
+         */
+        install: function install() {
+            var testRunner = this.getTestRunner();
+            if (testRunner.getPersistentState(pausedState)) {
+                testRunner.getProxy().addCallActionParams({
+                    clientState: 'paused'
+                });
+            }
+        },
 
         /**
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
             var testRunner = this.getTestRunner();
+            var states = testRunner.getTestData().states;
 
-            // auto pause when disconnected
-            testRunner
-                .on('disconnect', function() {
-                    var states = testRunner.getTestData().states;
-                    testRunner
-                        .trigger('autopause')
-                        .trigger('leave', {
-                            message: __('You are encountering a connectivity loss. The test has been suspended.'),
-                            code: states.suspended
+            return testRunner.setPersistentState(pausedState, false).then(function() {
+                // auto pause when disconnected
+                testRunner
+                    .on('disconnect', function() {
+                        testRunner.setPersistentState(pausedState, true).then(function() {
+                            testRunner
+                                .trigger('autopause')
+                                .trigger('leave', {
+                                    message: __('You are encountering a connectivity loss. The test has been suspended.'),
+                                    code: states.suspended
+                                });    
                         });
-                });
+                    });    
+            });
         }
     });
 });
