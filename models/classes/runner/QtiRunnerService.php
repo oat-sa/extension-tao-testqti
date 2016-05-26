@@ -890,8 +890,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function pause(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            // TODO: Implement pause() method.
-            throw new \common_exception_NotImplemented('Not yet implemented!');
+
+            $context->getTestSession()->suspend();
+            $this->persist($context);
+
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -914,8 +916,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function resume(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            // TODO: Implement resume() method.
-            throw new \common_exception_NotImplemented('Not yet implemented!');
+
+            $context->getTestSession()->resume();
+            $this->persist($context);
+
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
