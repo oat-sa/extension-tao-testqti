@@ -44,9 +44,21 @@ define([
         install: function install() {
             var testRunner = this.getTestRunner();
             if (testRunner.getPersistentState(pausedState)) {
-                testRunner.getProxy().addCallActionParams({
-                    clientState: 'paused'
-                });
+                testRunner
+                    .before('destroy.autopause', function(e) {
+                        this.off('destroy.autopause');
+
+                        // if the server acknowledged the auto pause then the test has been suspended
+                        // so no need to keep the state
+                        if (testRunner.getState('closedOrSuspended')) {
+                            var done = e.done();
+                            testRunner.setPersistentState(pausedState, false).then(done);
+                        }
+                    })
+                    // will notify the server that the test was auto paused
+                    .getProxy().addCallActionParams({
+                        clientState: 'paused'
+                    });
             }
         },
 
