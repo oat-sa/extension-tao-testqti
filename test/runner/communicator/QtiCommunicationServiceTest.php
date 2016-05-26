@@ -78,8 +78,15 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     /**
      * Test CommunicationChannel::processOutput
      */
-    public function testProcessOutput(/*QtiRunnerServiceContext $context*/)
+    public function testProcessOutput()
     {
+        $closedSessionContext = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::CLOSED);
+        $suspendedSessionContext = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
+
+        $service = new QtiCommunicationService([]);
+
+        var_dump($service->processOutput($closedSessionContext));
+        var_dump($service->processOutput($suspendedSessionContext));
         /*$messages = [];
 
         $state = $context->getTestSession()->getState();
@@ -93,6 +100,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
         }
 
         return $messages;*/
+
     }
 
     /**
