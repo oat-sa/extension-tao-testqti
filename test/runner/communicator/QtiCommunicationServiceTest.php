@@ -44,8 +44,10 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
         $service = new QtiCommunicationService([]);
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
-        $service->attachChannel($channel);
-        $service->attachChannel($channel2);
+        $channel3 = new CommunicationChannel2();
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_INPUT);
+        $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
+        $service->attachChannel($channel3, QtiCommunicationService::CHANNEL_TYPE_OUTPUT); //should not be called
 
         $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
 
@@ -69,10 +71,23 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     {
         $service = new QtiCommunicationService([]);
         $channel = new CommunicationChannel();
-        $service->attachChannel($channel);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
 
         $service->processInput($context, [['channel' => $channel->getName()]]); //no message
+    }
+
+    /**
+     * @expectedException \common_exception_InconsistentData
+     */
+    public function testProcessInputException2()
+    {
+        $service = new QtiCommunicationService([]);
+        $channel = new CommunicationChannel();
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
+
+        $service->processInput($context, [['message' => 'foo']]); //no channel
     }
 
     /**
@@ -80,27 +95,30 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
      */
     public function testProcessOutput()
     {
-        $closedSessionContext = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::CLOSED);
-        $suspendedSessionContext = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
-
         $service = new QtiCommunicationService([]);
+        $channel = new CommunicationChannel();
+        $channel2 = new CommunicationChannel2();
+        $channel3 = new CommunicationChannel2();
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $service->attachChannel($channel3, QtiCommunicationService::CHANNEL_TYPE_INPUT); //should not be called
 
-        var_dump($service->processOutput($closedSessionContext));
-        var_dump($service->processOutput($suspendedSessionContext));
-        /*$messages = [];
+        $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
 
-        $state = $context->getTestSession()->getState();
-
-        if ($state == AssessmentTestSessionState::CLOSED) {
-            $messages[] = $this->buildTestStateMessage('close', $state, __('This test has been terminated'));
-        }
-
-        if ($state == AssessmentTestSessionState::SUSPENDED) {
-            $messages[] = $this->buildTestStateMessage('pause', $state, __('This test has been suspended'));
-        }
-
-        return $messages;*/
-
+        $responses = $service->processOutput($context);
+        $this->assertEquals(
+            [
+                [
+                    'channel' => 'TestChannel',
+                    'message' => 'Channel 1 output'
+                ],
+                [
+                    'channel' => 'TestChannel2',
+                    'message' => 'Channel 2 output'
+                ],
+            ],
+            $responses
+        );
     }
 
     /**
@@ -112,14 +130,23 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
         $this->assertEquals(null, $service->getOption(QtiCommunicationService::OPTION_CHANNELS));
 
         $channel = new CommunicationChannel();
-        $service->attachChannel($channel);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals([$channel->getName() => get_class($channel)], $service->getOption(QtiCommunicationService::OPTION_CHANNELS));
+        $this->assertEquals(
+            [QtiCommunicationService::CHANNEL_TYPE_OUTPUT => [$channel->getName() => get_class($channel)]],
+            $service->getOption(QtiCommunicationService::OPTION_CHANNELS)
+        );
 
         $channel2 = new CommunicationChannel2();
-        $service->attachChannel($channel2);
+        $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
 
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)));
+        $this->assertEquals(
+            [
+                QtiCommunicationService::CHANNEL_TYPE_OUTPUT => [$channel->getName() => get_class($channel)],
+                QtiCommunicationService::CHANNEL_TYPE_INPUT => [$channel2->getName() => get_class($channel2)]
+            ],
+            $service->getOption(QtiCommunicationService::OPTION_CHANNELS)
+        );
     }
 
     /**
@@ -129,8 +156,8 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     {
         $service = new QtiCommunicationService([]);
         $channel = new CommunicationChannel();
-        $service->attachChannel($channel);
-        $service->attachChannel($channel);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
     }
 
     /**
@@ -141,15 +168,31 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
         $service = new QtiCommunicationService([]);
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
-        $service->attachChannel($channel);
-        $service->attachChannel($channel2);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_INPUT);
+        $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
+        $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)));
+        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
+        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
 
-        $service->detachChannel($channel2);
+        $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)));
-        $this->assertEquals([$channel->getName() => get_class($channel)], $service->getOption(QtiCommunicationService::OPTION_CHANNELS));
+        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
+        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+
+        $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
+
+        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
+        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+
+        $this->assertEquals(
+            [
+                QtiCommunicationService::CHANNEL_TYPE_OUTPUT => [$channel->getName() => get_class($channel)],
+                QtiCommunicationService::CHANNEL_TYPE_INPUT => [$channel->getName() => get_class($channel)]
+            ],
+            $service->getOption(QtiCommunicationService::OPTION_CHANNELS)
+        );
     }
 
     /**
@@ -160,8 +203,8 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
         $service = new QtiCommunicationService([]);
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
-        $service->attachChannel($channel);
-        $service->detachChannel($channel2);
+        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+        $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
     }
 
     /**
@@ -189,7 +232,7 @@ class CommunicationChannel implements CommunicationChannelInterface
         return 'TestChannel';
     }
 
-    public function process(QtiRunnerServiceContext $context, array $input)
+    public function process(QtiRunnerServiceContext $context, array $input = [])
     {
         return 'Channel 1 output';
     }
@@ -202,7 +245,7 @@ class CommunicationChannel2 implements CommunicationChannelInterface
         return 'TestChannel2';
     }
 
-    public function process(QtiRunnerServiceContext $context, array $input)
+    public function process(QtiRunnerServiceContext $context, array $input = [])
     {
         return 'Channel 2 output';
     }

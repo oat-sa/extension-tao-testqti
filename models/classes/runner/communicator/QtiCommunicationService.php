@@ -55,12 +55,13 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
                 throw new \common_exception_InconsistentData('Wrong message chunk received by the bidirectional communication service: either channel or message content is missing!');
             }
 
-            if ($this->hasChannel($data['channel'])) {
+            if ($this->hasChannel($data['channel'], self::CHANNEL_TYPE_INPUT)) {
+                $channel = $this->getChannel($data['channel'], self::CHANNEL_TYPE_INPUT);
                 // known channel, forward...
-                $responses[] = $this->processChannel($context, $data['channel'], $data['message']);
+                $responses[] = $this->processChannel($channel, $context,  $data['message']);
             } else {
                 // unknown channel, fallback!
-                $responses[] = $this->fallback($context, $data['channel'], $data['message']);
+                $responses[] = $this->fallback($data['channel'], $context, $data['message']);
             }
         }
 
@@ -75,73 +76,85 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     public function processOutput(QtiRunnerServiceContext $context)
     {
         $messages = [];
-
-        $state = $context->getTestSession()->getState();
-
-        if ($state == AssessmentTestSessionState::CLOSED) {
-            $messages[] = $this->buildTestStateMessage('close', $state, __('This test has been terminated'));
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+        if (is_array($channels[self::CHANNEL_TYPE_OUTPUT])) {
+            foreach ($channels[self::CHANNEL_TYPE_OUTPUT] as $outputChannelName => $outputChannelClass) {
+                $channel = $this->getChannel($outputChannelName, self::CHANNEL_TYPE_OUTPUT);
+                $messages[] = [
+                    'channel' => $channel->getName(),
+                    'message' => $this->processChannel($channel, $context),
+                ];
+            }
         }
-
-        if ($state == AssessmentTestSessionState::SUSPENDED) {
-            $messages[] = $this->buildTestStateMessage('pause', $state, __('This test has been suspended'));
-        }
-
         return $messages;
     }
 
     /**
      * @param CommunicationChannel $channel
+     * @param integer $channelType
      * @throws \common_exception_InconsistentData
      */
-    public function attachChannel(CommunicationChannel $channel)
+    public function attachChannel(CommunicationChannel $channel, $channelType)
     {
-        if ($this->hasChannel($channel->getName())) {
+        if ($this->hasChannel($channel->getName(), $channelType)) {
             throw new \common_exception_InconsistentData('Channel ' . $channel->getName() . ' already registered in ' . __CLASS__);
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);
 
-        $channels[$channel->getName()] = get_class($channel);
+        $channels[$channelType][$channel->getName()] = get_class($channel);
         $this->setOption(self::OPTION_CHANNELS, $channels);
     }
 
     /**
      * @param CommunicationChannel $channel
+     * @param integer $channelType
      * @throws \common_exception_InconsistentData
      */
-    public function detachChannel(CommunicationChannel $channel)
+    public function detachChannel(CommunicationChannel $channel, $channelType)
     {
-        if (!$this->hasChannel($channel->getName())) {
+        if (!$this->hasChannel($channel->getName(), $channelType)) {
             throw new \common_exception_InconsistentData('Channel ' . $channel->getName() . 'is not registered in ' . __CLASS__);
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);
-        unset($channels[$channel->getName()]);
+        unset($channels[$channelType][$channel->getName()]);
         $this->setOption(self::OPTION_CHANNELS, $channels);
     }
 
     /**
      * Check whether channel exists
      * @param string $channelName
+     * @param integer $channelType
      * @return bool
      */
-    protected function hasChannel($channelName)
+    protected function hasChannel($channelName, $channelType)
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
-        return isset($channels[$channelName]);
+        return isset($channels[$channelType][$channelName]);
+    }
+
+    /**
+     * @param string $channelName
+     * @param integer $channelType
+     * @return CommunicationChannel
+     */
+    protected function getChannel($channelName, $channelType)
+    {
+        $channels = $this->getOption(self::OPTION_CHANNELS);
+        $channel = new $channels[$channelType][$channelName];
+        return $channel;
     }
 
     /**
      * @param QtiRunnerServiceContext $context
-     * @param $channelName
+     * @param CommunicationChannel $channel
      * @param array $data
      * @throws \common_exception_InconsistentData
      * @return mixed channel response
      */
-    protected function processChannel(QtiRunnerServiceContext $context, $channelName, array $data)
+    protected function processChannel(CommunicationChannel $channel, QtiRunnerServiceContext $context, array $data = [])
     {
-        $channels = $this->getOption(self::OPTION_CHANNELS);
-        $channel = new $channels[$channelName];
         return $channel->process($context, $data);
     }
 
@@ -152,7 +165,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param mixed $message
      * @return mixed
      */
-    protected function fallback(QtiRunnerServiceContext $context, $channel, $message)
+    protected function fallback($channel, QtiRunnerServiceContext $context,  $message)
     {
         // do nothing by default, need to be overwritten
         return null;
@@ -164,13 +177,13 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param mixed $message
      * @return array
      */
-    protected function buildMessage($channel, $message)
-    {
-        return [
-            'channel' => $channel,
-            'message' => $message
-        ];
-    }
+//    protected function buildMessage($channel, $message)
+//    {
+//        return [
+//            'channel' => $channel,
+//            'message' => $message
+//        ];
+//    }
 
     /**
      * Builds a TestState message
@@ -179,12 +192,12 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param string $label
      * @return array
      */
-    protected function buildTestStateMessage($type, $state, $label)
-    {
-        return $this->buildMessage('teststate', [
-            'type' => $type,
-            'code' => $state,
-            'message' => $label,
-        ]);
-    }
+//    protected function buildTestStateMessage($type, $state, $label)
+//    {
+//        return $this->buildMessage('teststate', [
+//            'type' => $type,
+//            'code' => $state,
+//            'message' => $label,
+//        ]);
+//    }
 }
