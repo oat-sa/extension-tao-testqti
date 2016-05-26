@@ -25,6 +25,7 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/persistence',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
@@ -33,10 +34,10 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, persistence, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
-    // asset strategy for portable elments
+    // asset strategy for portable elements
     var assetPortableElement = {
         name : 'portableElementLocation',
         handle : assetStrategies.baseUrl.handle
@@ -101,6 +102,50 @@ define([
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
             return probeOverseer(identifier, this);
+        },
+
+        /**
+         * Loads the persistent states storage
+         *
+         * @returns {Promise}
+         */
+        loadPersistentStates : function loadPersistentStates() {
+            var self = this;
+            var config = this.getConfig();
+            return persistence('test-states-' + config.serviceCallId)
+                .then(function(storage) {
+                    self.stateStorage = storage
+                        .on('error', function(err) {
+                            self.trigger('error', err);
+                        });
+                });
+        },
+
+        /**
+         * Checks a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @returns {Boolean} if active, false if not set
+         */
+        getPersistentState : function getPersistentState(name) {
+            if (this.stateStorage) {
+                return this.stateStorage.get(name);
+            }
+        },
+
+        /**
+         * Defines a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @param {Boolean} active - is the state active
+         * @returns {Promise} Returns a promise that:
+         *                      - will be resolved once the state is fully stored
+         *                      - will be rejected if any error occurs or if the state name is not a valid string
+         */
+        setPersistentState : function setPersistentState(name, active) {
+            if (this.stateStorage) {
+                return this.stateStorage.set(name, active);
+            }
         },
 
         /**
