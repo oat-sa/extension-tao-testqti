@@ -26,9 +26,9 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
- * Class CommunicationChannel
+ * Class TestStateChannel
  *
- * Describes the API of channel to process
+ * Describes the test session state
  *
  * @package oat\taoQtiTest\models\runner\communicator
  */
@@ -44,8 +44,8 @@ class TestStateChannel implements CommunicationChannel
     }
 
     /**
-     * Processes the input or output message
-     * @param QtiRunnerServiceContext $context - Needs the current runner context
+     * Generate output message based on test session state
+     * @param QtiRunnerServiceContext $context Current runner context
      * @param array $data
      * @return array
      */
@@ -53,14 +53,16 @@ class TestStateChannel implements CommunicationChannel
     {
         $state = $context->getTestSession()->getState();
 
+
         if ($state == AssessmentTestSessionState::CLOSED) {
             $type = 'close';
             $label = __('This test has been terminated');
-        }
-
-        if ($state == AssessmentTestSessionState::SUSPENDED) {
+        } else if ($state == AssessmentTestSessionState::SUSPENDED) {
             $type = 'pause';
             $label = __('This test has been suspended');
+        } else {
+            $type = null;
+            $label = null;
         }
 
         return [

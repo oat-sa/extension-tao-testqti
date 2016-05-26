@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class QtiCommunicationService
