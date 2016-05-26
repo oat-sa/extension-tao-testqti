@@ -79,10 +79,13 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         if (is_array($channels[self::CHANNEL_TYPE_OUTPUT])) {
             foreach ($channels[self::CHANNEL_TYPE_OUTPUT] as $outputChannelName => $outputChannelClass) {
                 $channel = $this->getChannel($outputChannelName, self::CHANNEL_TYPE_OUTPUT);
-                $messages[] = [
-                    'channel' => $channel->getName(),
-                    'message' => $this->processChannel($channel, $context),
-                ];
+                $message = $this->processChannel($channel, $context);
+                if ($message !== null) {
+                    $messages[] = [
+                        'channel' => $channel->getName(),
+                        'message' => $message,
+                    ];
+                }
             }
         }
         return $messages;
@@ -169,34 +172,4 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         // do nothing by default, need to be overwritten
         return null;
     }
-
-    /**
-     * Builds a message chunk
-     * @param string $channel
-     * @param mixed $message
-     * @return array
-     */
-//    protected function buildMessage($channel, $message)
-//    {
-//        return [
-//            'channel' => $channel,
-//            'message' => $message
-//        ];
-//    }
-
-    /**
-     * Builds a TestState message
-     * @param string $type
-     * @param int $state
-     * @param string $label
-     * @return array
-     */
-//    protected function buildTestStateMessage($type, $state, $label)
-//    {
-//        return $this->buildMessage('teststate', [
-//            'type' => $type,
-//            'code' => $state,
-//            'message' => $label,
-//        ]);
-//    }
 }

@@ -51,24 +51,23 @@ class TestStateChannel implements CommunicationChannel
      */
     public function process(QtiRunnerServiceContext $context, array $data = [])
     {
+        $result = null;
         $state = $context->getTestSession()->getState();
 
-
         if ($state == AssessmentTestSessionState::CLOSED) {
-            $type = 'close';
-            $label = __('This test has been terminated');
+            $result = [
+                'type' => 'close',
+                'code' => $state,
+                'message' => __('This test has been terminated'),
+            ];
         } else if ($state == AssessmentTestSessionState::SUSPENDED) {
-            $type = 'pause';
-            $label = __('This test has been suspended');
-        } else {
-            $type = null;
-            $label = null;
+            $result = [
+                'type' => 'pause',
+                'code' => $state,
+                'message' => __('This test has been suspended'),
+            ];
         }
 
-        return [
-            'type' => $type,
-            'code' => $state,
-            'message' => $label,
-        ];
+        return $result;
     }
 }

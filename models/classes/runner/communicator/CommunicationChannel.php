@@ -16,9 +16,6 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
-/**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
- */
 
 namespace oat\taoQtiTest\models\runner\communicator;
 
@@ -30,6 +27,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
  * Describes the API of channel to process
  *
  * @package oat\taoQtiTest\models\runner\communicator
+ * @author Aleh Hutnikau, <hutnikau@1pt.com>
  */
 interface CommunicationChannel
 {
