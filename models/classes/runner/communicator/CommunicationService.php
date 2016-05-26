@@ -36,12 +36,12 @@ interface CommunicationService
     /**
      * Channels to process input messages
      */
-    const CHANNEL_TYPE_INPUT = 1;
+    const CHANNEL_TYPE_INPUT = 'input';
 
     /**
      * Channels to process output messages
      */
-    const CHANNEL_TYPE_OUTPUT = 2;
+    const CHANNEL_TYPE_OUTPUT = 'output';
 
     /**
      * Processes the input messages
