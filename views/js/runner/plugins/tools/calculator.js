@@ -102,9 +102,7 @@ define([
                             replace : true,
                             draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
                             width : _default.width,
-                            height : _default.height,
-                            top : 'auto',
-                            left : offset.left
+                            height : _default.height
                         }).on('show', function(){
                             self.trigger('open');
                         }).on('hide', function(){
