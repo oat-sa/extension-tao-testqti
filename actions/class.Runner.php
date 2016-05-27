@@ -27,7 +27,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
-use \oat\taoTests\models\runner\SessionCsrfToken;
+use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -72,7 +72,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getCsrf()
     {
         if (!$this->csrf) {
-            $this->csrf = new SessionCsrfToken('TEST_RUNNER');
+            $this->csrf = new TestCsrfToken($this->getSessionId());
         }
         return $this->csrf;
     }
@@ -101,6 +101,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * Gets the identifier of the test session
+     * @return string
+     */
+    protected function getSessionId()
+    {
+        if ($this->hasRequestParameter('testServiceCallId')) {
+            return $this->getRequestParameter('testServiceCallId');
+        } else {
+            return $this->getRequestParameter('serviceCallId');
+        }
+    }
+
+    /**
      * Gets the test service context
      * @param bool [$check] Checks the context after create. Default to true.
      * @param bool [$checkToken] Checks the security token.
@@ -126,11 +139,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 }
             }
 
-            if ($this->hasRequestParameter('testServiceCallId')) {
-                $testExecution = $this->getRequestParameter('testServiceCallId');
-            } else {
-                $testExecution = $this->getRequestParameter('serviceCallId');
-            }
+            $testExecution = $this->getSessionId();
             $this->serviceContext = $this->runnerService->getServiceContext($testDefinition, $testCompilation, $testExecution, $check);
         }
 
