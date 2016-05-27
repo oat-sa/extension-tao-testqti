@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
@@ -389,6 +390,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('2.30.0');
+        }
+
+        if ($this->isVersion('2.30.0')) {
+            try {
+                $service = $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+            } catch (ServiceNotFoundException $e) {
+                $service = new QtiCommunicationService();
+            }
+
+            $service->setServiceManager($this->getServiceManager());
+
+            $service->attachChannel(new TestStateChannel(), QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+
+            $this->getServiceManager()->register(QtiCommunicationService::CONFIG_ID, $service);
+
+            $this->setVersion('2.31.0');
         }
     }
 }
