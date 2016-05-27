@@ -312,6 +312,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
                 $config = $this->getTestConfig();
                 $route = $session->getRoute();
+                $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
                 $itemRef = $session->getCurrentAssessmentItemRef();
                 $currentSection = $session->getCurrentAssessmentSection();
@@ -328,6 +329,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The number of current attempt (1 for the first time ...)
                 $response['attempt'] = $itemSession['numAttempts']->getValue();
+
+                // Duration of the current item attempt
+                $response['attemptDuration'] = $session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER)->getSeconds(true);
 
                 // Whether or not the current step is time out.
                 $response['isTimeout'] = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
@@ -356,7 +360,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
 
                 // The current item answered state
-                $response['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($route->getRouteItemAt($response['itemPosition']), $itemSession);
+                $response['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
