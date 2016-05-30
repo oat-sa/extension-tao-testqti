@@ -20,17 +20,14 @@
 
 namespace oat\taoQtiTest\models;
 
-use alroniks\dtms\DateInterval;
-use alroniks\dtms\DateTime;
+use oat\dtms\DateTime;
 use DateTimeZone;
-use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
 use taoResultServer_models_classes_TraceVariable;
-use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\RouteItem;
 
 /**
