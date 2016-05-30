@@ -405,5 +405,30 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.31.0');
         }
+
+        if ($this->isVersion('2.31.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            if (!isset($config['bootstrap']) || (isset($config['bootstrap']['timeout']) && count($config['bootstrap']) == 1)) {
+
+                $config['bootstrap'] = array_merge($config['bootstrap'], [
+                    'serviceExtension' => 'taoQtiTest',
+                    'serviceController' => 'Runner',
+                    'communication' => [
+                        'enabled' => false,
+                        'type' => 'poll',
+                        'extension' => null,
+                        'controller' => null,
+                        'action' => 'messages',
+                        'service' => null,
+                        'params' => []
+                    ],
+                ]);
+                
+                $extension->setConfig('testRunner', $config);
+            }
+            
+            $this->setVersion('2.31.1');
+        }
     }
 }
