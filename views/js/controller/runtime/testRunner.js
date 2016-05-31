@@ -722,11 +722,13 @@ function (
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
                                     cst.warnings = self.testContext.timerWarning[cst.qtiClassName];
                                     _(cst.warnings).forEach(function (value, key) {
-                                        cst.warnings[key] = {
-                                            type: value,
-                                            showed: cst.seconds <= key,
-                                            point: parseInt(key, 10)
-                                        };
+                                        if (_.indexOf(['info', 'warning', 'danger'], value) != -1) {
+                                            cst.warnings[key] = {
+                                                type: value,
+                                                showed: cst.seconds <= key,
+                                                point: parseInt(key, 10)
+                                            };
+                                        }
                                     });
                                     var closestPreviousWarning = _.find(cst.warnings, { showed: true });
                                     if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
@@ -796,8 +798,7 @@ function (
                     remaining,
                     $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName);
 
-                $timer.prop('class', $timer.prop('class').replace(/\bqti-timer__(success|info|warning|error)\b/g, '').trim());
-                $timer.addClass('qti-timer__' + warning.type);
+                $timer.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
 
                 remaining = moment.duration(warning.point, "seconds").humanize();
 
