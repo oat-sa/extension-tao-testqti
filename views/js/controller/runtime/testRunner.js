@@ -720,8 +720,8 @@ function (
                                 timerIndex = i;
 
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
-                                    cst.warnings = self.testContext.timerWarning[cst.qtiClassName];
-                                    _(cst.warnings).forEach(function (value, key) {
+                                    cst.warnings = {};
+                                    _(self.testContext.timerWarning[cst.qtiClassName]).forEach(function (value, key) {
                                         if (_.indexOf(['info', 'warning', 'danger'], value) != -1) {
                                             cst.warnings[key] = {
                                                 type: value,
