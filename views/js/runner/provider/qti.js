@@ -112,13 +112,16 @@ define([
         loadPersistentStates : function loadPersistentStates() {
             var self = this;
             var config = this.getConfig();
-            return persistence('test-states-' + config.serviceCallId)
-                .then(function(storage) {
-                    self.stateStorage = storage
-                        .on('error', function(err) {
-                            self.trigger('error', err);
-                        });
-                });
+            var persistencePromise = persistence('test-states-' + config.serviceCallId);
+
+            persistencePromise.catch(function(err) {
+                self.trigger('error', err);
+            });
+
+            return persistencePromise
+                    .then(function(storage) {
+                        self.stateStorage = storage;
+                    });
         },
 
         /**
@@ -143,8 +146,17 @@ define([
          *                      - will be rejected if any error occurs or if the state name is not a valid string
          */
         setPersistentState : function setPersistentState(name, active) {
+            var self = this;
+            var setPromise;
+
             if (this.stateStorage) {
-                return this.stateStorage.set(name, active);
+                setPromise = this.stateStorage.set(name, active);
+
+                setPromise.catch(function(err) {
+                    self.trigger('error', err);
+                });
+
+                return setPromise;
             }
         },
 
@@ -553,6 +565,7 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            var self = this;
 
             this.trigger('disablenav disabletools')
                 .trigger('endsession', 'finish');
@@ -562,7 +575,17 @@ define([
             // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
             this.before('flush', function(e) {
                 var done = e.done();
-                this.getProxy().callTestAction('finish').then(done);
+                this.getProxy().callTestAction('finish').then(function() {
+                    if (self.stateStorage) {
+                        self.stateStorage.clear()
+                            .then(done)
+                            .catch(function(err) {
+                                self.trigger('error', err);
+                            })
+                    } else {
+                        done();
+                    }
+                });
             });
         },
 
