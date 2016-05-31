@@ -130,7 +130,10 @@ define([
 
                         var closestPreviousWarning = _.find(timer.warnings, 'showed');
                         if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
-                            timer.warnings[closestPreviousWarning.point / precision].showed = false;
+                            var index = _.findIndex(timer.warnings, { point: closestPreviousWarning.point });
+                            if (index != -1) {
+                                timer.warnings[index].showed = false;
+                            }
                         }
                     }
                 }

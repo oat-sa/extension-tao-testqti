@@ -166,9 +166,9 @@ define([
                             break;
                     }
 
-                    var showed = _.findIndex(data.warnings, { point: warning.point });
-                    if (showed != -1 && data.warnings[showed]) {
-                        data.warnings[showed].showed = true;
+                    var index = _.findIndex(data.warnings, { point: warning.point });
+                    if (index != -1) {
+                        data.warnings[index].showed = true;
                     }
 
                     message.type = warning.type;
