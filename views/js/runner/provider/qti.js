@@ -25,7 +25,7 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'core/persistence',
+    'core/cachedStore',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
@@ -34,7 +34,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, persistence, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -112,7 +112,7 @@ define([
         loadPersistentStates : function loadPersistentStates() {
             var self = this;
             var config = this.getConfig();
-            var persistencePromise = persistence('test-states-' + config.serviceCallId);
+            var persistencePromise = cachedStore('test-states-' + config.serviceCallId, 'states');
 
             persistencePromise.catch(function(err) {
                 self.trigger('error', err);
@@ -132,7 +132,7 @@ define([
          */
         getPersistentState : function getPersistentState(name) {
             if (this.stateStorage) {
-                return this.stateStorage.get(name);
+                return this.stateStorage.getItem(name);
             }
         },
 
@@ -150,7 +150,7 @@ define([
             var setPromise;
 
             if (this.stateStorage) {
-                setPromise = this.stateStorage.set(name, active);
+                setPromise = this.stateStorage.setItem(name, active);
 
                 setPromise.catch(function(err) {
                     self.trigger('error', err);
