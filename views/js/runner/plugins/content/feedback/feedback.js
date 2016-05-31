@@ -84,7 +84,7 @@ define([
                     currentFeedback = feedback().error(message);
                 })
                 .on('danger', function(message){
-                    currentFeedback = feedback().error(message);
+                    currentFeedback = feedback().danger(message);
                 })
                 .on('warning', function(message){
                     currentFeedback = feedback().warning(message);
