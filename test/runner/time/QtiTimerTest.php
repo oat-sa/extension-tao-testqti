@@ -184,6 +184,72 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     }
 
     /**
+     * Test the QtiTimer::getFirstTimestamp()
+     */
+    public function testGetFirstTimestamp()
+    {
+        $startTimestamp = 1459335000.0000;
+        $endTimestamp = 1459335010.0000;
+
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timePoints = $timeLine->getPoints();
+        $this->assertTrue(empty($timePoints));
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, $startTimestamp);
+
+        $timer->end($tags, $endTimestamp);
+        $timePoints = $timeLine->getPoints();
+
+        $this->assertEquals(2, count($timePoints));
+        $this->assertEquals(1459335010.0000, $timePoints[1]->getTimestamp());
+        $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
+        $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
+        $this->assertEquals($timer->getFirstTimestamp($tags), $startTimestamp);
+    }
+
+    /**
+     * Test the QtiTimer::getLastTimestamp()
+     */
+    public function testGetLastTimestamp()
+    {
+        $startTimestamp = 1459335000.0000;
+        $endTimestamp = 1459335010.0000;
+
+        $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timePoints = $timeLine->getPoints();
+        $this->assertTrue(empty($timePoints));
+        $tags = [
+            'test_fake_id',
+            'test_part_fake_id',
+            'section_fake_id',
+            'item_fake_id',
+            'item_fake_id#0',
+            'item_fake_id#0-1',
+            'item_fake_href',
+        ];
+        $timer->start($tags, $startTimestamp);
+
+        $timer->end($tags, $endTimestamp);
+        $timePoints = $timeLine->getPoints();
+
+        $this->assertEquals(2, count($timePoints));
+        $this->assertEquals(1459335010.0000, $timePoints[1]->getTimestamp());
+        $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
+        $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
+        $this->assertEquals($timer->getLastTimestamp($tags), $endTimestamp);
+    }
+
+    /**
      * Test the QtiTimer::adjust()
      * * @dataProvider adjustDataProvider
      */
