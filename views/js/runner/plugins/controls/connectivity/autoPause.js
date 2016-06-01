@@ -46,12 +46,14 @@ define([
             if (testRunner.getPersistentState(pausedState)) {
                 testRunner
                     .before('destroy.autopause', function(e) {
+                        var done;
+
                         testRunner.off('destroy.autopause');
 
                         // if the server acknowledged the auto pause then the test has been suspended
                         // so no need to keep the state
                         if (testRunner.getState('closedOrSuspended')) {
-                            var done = e.done();
+                            done = e.done();
                             testRunner.setPersistentState(pausedState, false).then(done);
                         }
                     })
