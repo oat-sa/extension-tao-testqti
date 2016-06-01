@@ -722,7 +722,7 @@ function (
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
                                     cst.warnings = {};
                                     _(self.testContext.timerWarning[cst.qtiClassName]).forEach(function (value, key) {
-                                        if (_.indexOf(['info', 'warning', 'danger'], value) != -1) {
+                                        if (_.contains(['info', 'warning', 'danger'], value)) {
                                             cst.warnings[key] = {
                                                 type: value,
                                                 showed: cst.seconds <= key,

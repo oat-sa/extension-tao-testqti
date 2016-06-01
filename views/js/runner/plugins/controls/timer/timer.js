@@ -118,7 +118,7 @@ define([
                         };
 
                         _(timerWarning[timeConstraint.qtiClassName]).forEach(function (value, key) {
-                            if (_.indexOf(['info', 'warning', 'danger'], value) != -1) {
+                            if (_.contains(['info', 'warning', 'danger'], value)) {
                                 timer.warnings[key] = {
                                     type: value,
                                     showed: timer.remaining / precision <= key,
