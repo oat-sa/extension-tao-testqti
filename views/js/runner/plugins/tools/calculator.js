@@ -48,7 +48,7 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var areaBroker = this.getAreaBroker();
-            
+
             /**
              * Is calculator activated ? if not, then we hide the plugin
              */
@@ -70,13 +70,13 @@ define([
                 text : __('Calculator')
             }));
             this.$calculatorContainer = $('<div class="widget-calculator">');
-            
+
             //init calculator instance var, it will be created only necessary
             this.calculator = null;
 
             //attach behavior
             this.$button.on('click', function (e){
-                
+
                 //get the offset of the button to position the calculator widget close to it
                 var offset = $(this).offset();
 
@@ -102,10 +102,21 @@ define([
                             replace : true,
                             draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
                             width : _default.width,
-                            height : _default.height,
-                            top : offset.top - _default.height - 40,
-                            left : offset.left
+                            height : _default.height
+                        }).on('show', function(){
+                            self.trigger('open');
+                        }).on('hide', function(){
+                            self.trigger('close');
                         });
+                        
+                        //set initial position on init
+                        self.calculator.show().getElement().css({
+                            left : offset.left,
+                            top : 'auto',
+                            bottom : 45
+                        });
+                        
+                        self.trigger('open');
                     }
                 }
             });
@@ -133,9 +144,9 @@ define([
          * Called during the runner's render phase
          */
         render : function render(){
-            var areaBroker = this.getAreaBroker();    
+            var areaBroker = this.getAreaBroker();
             areaBroker.getToolboxArea().append(this.$button);
-            areaBroker.getPanelArea().append(this.$calculatorContainer);
+            areaBroker.getContainer().append(this.$calculatorContainer);
         },
         /**
          * Called during the runner's destroy phase
