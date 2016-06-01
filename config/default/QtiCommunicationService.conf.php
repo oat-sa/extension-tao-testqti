@@ -17,6 +17,15 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  *               
  * 
- */  
+ */
 
-return new oat\taoQtiTest\models\runner\communicator\QtiCommunicationService();
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+
+return new QtiCommunicationService(array(
+    'channels' => array(
+        QtiCommunicationService::CHANNEL_TYPE_OUTPUT => array(
+            'teststate' => 'oat\\taoQtiTest\\models\\runner\\communicator\\TestStateChannel'
+        )
+    )
+));
+
