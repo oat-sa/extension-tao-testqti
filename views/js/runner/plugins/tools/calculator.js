@@ -102,15 +102,20 @@ define([
                             replace : true,
                             draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
                             width : _default.width,
-                            height : _default.height,
-                            top : offset.top - _default.height - 40,
-                            left : offset.left
+                            height : _default.height
                         }).on('show', function(){
                             self.trigger('open');
                         }).on('hide', function(){
                             self.trigger('close');
                         });
-
+                        
+                        //set initial position on init
+                        self.calculator.show().getElement().css({
+                            left : offset.left,
+                            top : 'auto',
+                            bottom : 45
+                        });
+                        
                         self.trigger('open');
                     }
                 }
@@ -141,7 +146,7 @@ define([
         render : function render(){
             var areaBroker = this.getAreaBroker();
             areaBroker.getToolboxArea().append(this.$button);
-            areaBroker.getPanelArea().append(this.$calculatorContainer);
+            areaBroker.getContainer().append(this.$calculatorContainer);
         },
         /**
          * Called during the runner's destroy phase
