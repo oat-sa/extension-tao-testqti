@@ -249,6 +249,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
+
+            if ($this->hasRequestParameter('clientState')) {
+                $clientState = $this->getRequestParameter('clientState');
+                if ('paused' == $clientState) {
+                    $this->runnerService->pause($serviceContext);
+                    $this->runnerService->check($serviceContext);
+                }
+            }
+
             $result = $this->runnerService->init($serviceContext);
 
             $response = [

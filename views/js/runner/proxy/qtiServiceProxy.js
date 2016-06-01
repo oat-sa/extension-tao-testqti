@@ -146,17 +146,18 @@ define([
          * @param {String} config.testDefinition - The URI of the test
          * @param {String} config.testCompilation - The URI of the compiled delivery
          * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
          *                      Any error will be provided if rejected.
          */
-        init: function init(config) {
+        init: function init(config, params) {
             var initConfig = config || {};
 
             // store config in a dedicated configStorage
             this.configStorage = configFactory(initConfig);
 
             // request for initialization
-            return request(this, this.configStorage.getTestActionUrl('init'));
+            return request(this, this.configStorage.getTestActionUrl('init'), params);
         },
 
         /**
