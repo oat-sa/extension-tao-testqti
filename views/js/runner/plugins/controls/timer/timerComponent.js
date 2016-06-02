@@ -147,7 +147,7 @@ define([
                     && data.remaining <= warning.point
                 ) {
                     remaining = moment.duration(data.remaining / precision, "seconds").humanize();
-                    this.$element.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
+                    this.$display.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
                     switch (data.type) {
                         case 'assessmentItemRef':
                             message.text = __("Warning – You have %s remaining to complete this item.", remaining);
