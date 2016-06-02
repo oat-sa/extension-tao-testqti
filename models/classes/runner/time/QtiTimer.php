@@ -126,6 +126,45 @@ class QtiTimer implements Timer
     }
 
     /**
+     * Gets the first timestamp of the range for the provided tags
+     * @param string|array $tags
+     * @return float $timestamp
+     */
+    public function getFirstTimestamp($tags)
+    {
+        // extract the TimePoint identification from the provided item, and find existing range
+        $range = $this->getRange($tags);
+        $last = false;
+
+        if (count($range)) {
+            $last = $range[0]->getTimestamp();
+        }
+
+        return $last;
+    }
+
+
+    /**
+     * Gets the last timestamp of the range for the provided tags
+     * @param string|array $tags
+     * @return bool|float $timestamp Returns the last timestamp of the range or false if none
+     */
+    public function getLastTimestamp($tags)
+    {
+        // extract the TimePoint identification from the provided item, and find existing range
+        $range = $this->getRange($tags);
+        $length = count($range);
+        $last = false;
+
+        if ($length) {
+            $last = $range[$length - 1]->getTimestamp();
+        }
+
+        return $last;
+    }
+
+
+    /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
      * @param string|array $tags
      * @param float $duration

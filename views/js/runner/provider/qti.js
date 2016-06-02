@@ -25,6 +25,7 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/cachedStore',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
@@ -33,10 +34,10 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
-    // asset strategy for portable elments
+    // asset strategy for portable elements
     var assetPortableElement = {
         name : 'portableElementLocation',
         handle : assetStrategies.baseUrl.handle
@@ -101,6 +102,62 @@ define([
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
             return probeOverseer(identifier, this);
+        },
+
+        /**
+         * Loads the persistent states storage
+         *
+         * @returns {Promise}
+         */
+        loadPersistentStates : function loadPersistentStates() {
+            var self = this;
+            var config = this.getConfig();
+            var persistencePromise = cachedStore('test-states-' + config.serviceCallId, 'states');
+
+            persistencePromise.catch(function(err) {
+                self.trigger('error', err);
+            });
+
+            return persistencePromise
+                    .then(function(storage) {
+                        self.stateStorage = storage;
+                    });
+        },
+
+        /**
+         * Checks a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @returns {Boolean} if active, false if not set
+         */
+        getPersistentState : function getPersistentState(name) {
+            if (this.stateStorage) {
+                return this.stateStorage.getItem(name);
+            }
+        },
+
+        /**
+         * Defines a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @param {Boolean} active - is the state active
+         * @returns {Promise} Returns a promise that:
+         *                      - will be resolved once the state is fully stored
+         *                      - will be rejected if any error occurs or if the state name is not a valid string
+         */
+        setPersistentState : function setPersistentState(name, active) {
+            var self = this;
+            var setPromise;
+
+            if (this.stateStorage) {
+                setPromise = this.stateStorage.setItem(name, active);
+
+                setPromise.catch(function(err) {
+                    self.trigger('error', err);
+                });
+
+                return setPromise;
+            }
         },
 
         /**
@@ -508,6 +565,7 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            var self = this;
 
             this.trigger('disablenav disabletools')
                 .trigger('endsession', 'finish');
@@ -517,7 +575,17 @@ define([
             // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
             this.before('flush', function(e) {
                 var done = e.done();
-                this.getProxy().callTestAction('finish').then(done);
+                this.getProxy().callTestAction('finish').then(function() {
+                    if (self.stateStorage) {
+                        self.stateStorage.clear()
+                            .then(done)
+                            .catch(function(err) {
+                                self.trigger('error', err);
+                            })
+                    } else {
+                        done();
+                    }
+                });
             });
         },
 

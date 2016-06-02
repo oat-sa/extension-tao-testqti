@@ -23,7 +23,7 @@
 namespace oat\taoQtiTest\models\runner\session;
 
 use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoTests\models\runner\CsrfToken;
+use oat\taoTests\models\runner\AbstractCsrfToken;
 
 /**
  * Class TestCsrfToken
@@ -32,17 +32,12 @@ use oat\taoTests\models\runner\CsrfToken;
  *
  * @package oat\taoTests\models\runner
  */
-class TestCsrfToken implements CsrfToken
+class TestCsrfToken extends AbstractCsrfToken
 {
     /**
      * The name of the storage key for the current session token
      */
     const TOKEN_KEY = 'SECURITY_TOKEN_';
-
-    /**
-     * The desired length of the CSRF token string
-     */
-    const TOKEN_LENGTH = 40;
 
     /**
      * The token name
@@ -95,8 +90,7 @@ class TestCsrfToken implements CsrfToken
     {
         $service = self::getExtendedStateService();
 
-        // TODO: use a better implementation as the OpenSSL can lead to performances issue
-        $token = bin2hex(openssl_random_pseudo_bytes(self::TOKEN_LENGTH / 2));
+        $token = $this->generateToken();
 
         $service->setSecurityToken($this->getSessionId(), $token);
         
