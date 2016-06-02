@@ -26,10 +26,11 @@ return array(
      * Also you should define type of warning message in value.
      * Example:
      * 'assessmentItemRef' => array(
+     *     999 => 'info',
      *     300 => 'warning',
      *     120 => 'error'
      * )
-     * Available warning types: info (blue), warning (yellow), error (red)
+     * Available warning types: info (blue), warning (yellow), danger (red orange)
      * @type array
      */
     'timerWarning' => array(

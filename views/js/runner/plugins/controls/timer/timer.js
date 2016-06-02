@@ -114,19 +114,21 @@ define([
                             remaining: timeConstraint.seconds * precision,
                             id:        timeConstraint.source,
                             running:   true,
-                            warnings:  timerWarning[timeConstraint.qtiClassName]
+                            warnings:  {}
                         };
 
-                        _(timer.warnings).forEach(function (value, key) {
-                            timer.warnings[key] =  {
-                                type: value,
-                                showed: timer.remaining / precision <= key,
-                                point: parseInt(key, 10) * precision
-                            };
+                        _(timerWarning[timeConstraint.qtiClassName]).forEach(function (value, key) {
+                            if (_.contains(['info', 'warning', 'danger'], value)) {
+                                timer.warnings[key] = {
+                                    type: value,
+                                    showed: timer.remaining / precision <= key,
+                                    point: parseInt(key, 10) * precision
+                                };
+                            }
                         });
 
                         var closestPreviousWarning = _.find(timer.warnings, { showed: true });
-                        if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
+                        if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point && timer.warnings[closestPreviousWarning.point / precision]) {
                             timer.warnings[closestPreviousWarning.point / precision].showed = false;
                         }
                     }

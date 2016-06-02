@@ -142,11 +142,12 @@ define([
                     message = {},
                     warning = _.findLast(data.warnings, { showed: false });
 
-                if (!_.isEmpty(warning) && _.isFinite(warning.point) && data.remaining <= warning.point) {
-
+                if (!_.isEmpty(warning)
+                    && _.isFinite(warning.point)
+                    && data.remaining <= warning.point
+                ) {
                     remaining = moment.duration(data.remaining / precision, "seconds").humanize();
-
-                    this.$element.addClass('qti-timer__warning');
+                    this.$element.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
                     switch (data.type) {
                         case 'assessmentItemRef':
                             message.text = __("Warning – You have %s remaining to complete this item.", remaining);
@@ -165,7 +166,11 @@ define([
                             break;
                     }
 
-                    data.warnings[warning.point / precision].showed = true;
+                    var showed = _.find(data.warnings, { point: warning.point });
+                    if (showed && showed.point && data.warnings[showed.point / precision]) {
+                        data.warnings[showed.point / precision].showed = true;
+                    }
+
                     message.type = warning.type;
                 }
 
