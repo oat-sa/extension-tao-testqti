@@ -796,9 +796,10 @@ function (
             timeWarning: function (cst, warning) {
                 var message = '',
                     remaining,
-                    $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName);
+                    $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName),
+                    $time = $timer.find('.qti-timer_time');
 
-                $timer.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
+                $time.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
 
                 remaining = moment.duration(warning.point, "seconds").humanize();
 
