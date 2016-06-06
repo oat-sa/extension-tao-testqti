@@ -26,10 +26,11 @@ return array(
      * Also you should define type of warning message in value.
      * Example:
      * 'assessmentItemRef' => array(
+     *     999 => 'info',
      *     300 => 'warning',
      *     120 => 'error'
      * )
-     * Available warning types: info (blue), warning (yellow), error (red)
+     * Available warning types: info (blue), warning (yellow), danger (red orange)
      * @type array
      */
     'timerWarning' => array(
@@ -197,6 +198,12 @@ return array(
          * @type string
          */
         'serviceController' => 'Runner',
+
+        /**
+         * The network timeout, in seconds.
+         * @type int
+         */
+        'timeout' => 0,
 
         /**
          * Config for the communication channel

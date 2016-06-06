@@ -145,11 +145,24 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         ];
 
         if ($this->isRunning() === true) {
-            $itemSession = $this->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
-            $tags[] = $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
+            $tags[] = $this->getItemAttemptTag($routeItem);
         }
 
         return $tags;
+    }
+
+    /**
+     * Gets the item tags for its last occurrence
+     * @param RouteItem $routeItem
+     * @return string
+     */
+    public function getItemAttemptTag(RouteItem $routeItem)
+    {
+        $itemRef = $routeItem->getAssessmentItemRef();
+        $itemId = $itemRef->getIdentifier();
+        $occurrence = $routeItem->getOccurence();
+        $itemSession = $this->getAssessmentItemSessionStore()->getAssessmentItemSession($itemRef, $occurrence);
+        return $itemId . '#' . $occurrence . '-' . $itemSession['numAttempts']->getValue();
     }
 
     /**
