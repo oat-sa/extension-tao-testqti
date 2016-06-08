@@ -255,6 +255,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.16.3';
         }
+        
+        if ($currentVersion === '2.16.3') {
+            $currentVersion = '2.16.4';
+        }
 
         return $currentVersion;
     }
