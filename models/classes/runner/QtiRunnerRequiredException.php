@@ -21,10 +21,8 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-
 class QtiRunnerRequiredException extends \common_Exception implements \common_exception_UserReadableException
 {
-    
     public function getUserMessage() {
         return __('Please, make your selection');
     }

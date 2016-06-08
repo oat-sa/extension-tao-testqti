@@ -36,18 +36,13 @@ use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
-use qtism\data\state\ResponseDeclaration;
-use qtism\data\state\ResponseDeclarationCollection;
 use qtism\data\SubmissionMode;
-use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use qtism\runtime\tests\AssessmentTestPlace;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -575,11 +570,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
             
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+
             if (is_array($response)) {
-                
-                foreach ($response as $id => $resp) {
+                foreach ($response as $id => $responseData) {
                     try {
-                        $var = $filler->fill($id, $resp);
+                        $var = $filler->fill($id, $responseData);
                         // Do not take into account QTI File placeholders.
                         if (\taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
                             $responses->setVariable($var);
@@ -593,39 +588,23 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             } else {
                 \common_Logger::e('Invalid json payload');
             }
+            
+            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session)) {
 
-            // Check if SKIP and default values in response then return error: that response can't be with default values
-            // TODO setup default values on items initialization
-            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session) && is_array($response) ) {
+                $similar = false;
 
-                /** @var ResponseDeclarationCollection $responseDeclarations */
-                $responseDeclarations = $currentItem->getResponseDeclarations();
-                foreach ($response as $id => $resp) {
-                    if (isset($responseDeclarations[$id]) && is_a($responseDeclarations[$id], ResponseDeclaration::class) ) {
-                        if ($responseDeclarations[$id]->hasDefaultValue() ) {
-                            
-                            $similar = true;
-                            /*
-                             * TODO from Sam:
-                             * 
-                             * I was thinking about a simple helper that takes an interaction object + user response in a standard format (associative array as described in http://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_Toc353965343)
-                             * and returns a boolean
-                             * the interaction object should be able to get the associated responseDeclaration, which contains all the data you need to make the comparison (cardinality, baseType, (optional) default value)
-                             * 
-                             * $defVal = $responseDeclarations[$id]->getDefaultValue();
-                             * foreach ($defVal->getValues() as $key => $value) {
-                                $responseVal = $responses->getVariable($key);
-                                if (!isset($responseVal) || $value->getValue() !== $responseVal) {
-                                    $similar = false;
-                                    break;
-                                }
-                            }*/
-                            
-                            if ($similar) {
-                                throw new QtiRunnerRequiredException();
-                            }
-                        }
+                /** @var ResponseVariable $responseVariable */
+                foreach ($responses as $responseVariable) {
+                    $defaultValue = $responseVariable->getDefaultValue();
+                    $value = $responseVariable->getValue();
+                    if ($value->equals($defaultValue)) {
+                        $similar = true;
+                        break;
                     }
+                }
+
+                if ($similar) {
+                    throw new QtiRunnerRequiredException();
                 }
             }
 
