@@ -25,7 +25,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\data\AssessmentTest;
 use qtism\data\IAssessmentItem;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 
 /**
  * A TAO specific implementation of QTISM's AbstractSessionManager.
@@ -62,7 +62,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      */
     public function __construct(taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
         parent::__construct();
-        $this->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
+        $this->setAcceptableLatency(new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
         $this->setResultServer($resultServer);
         $this->setTest($test);
     }
