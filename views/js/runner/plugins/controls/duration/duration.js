@@ -52,78 +52,93 @@ define([
 
             var self = this;
             var testRunner   = this.getTestRunner();
+            var initContext  = testRunner.getTestContext();
+            var initItemAttemptId = initContext.itemIdentifier + '#' + initContext.attempt;
 
             //where the duration of attempts are stored
             return store('duration-' + testRunner.getConfig().serviceCallId).then(function(durationStore){
 
-            //one stopwatch to count the time
-            self.stopwatch = timerFactory({
-                autoStart : false
-            });
-
-            //update the duration on a regular basis
-            self.polling = pollingFactory({
-
-                action : function updateDuration() {
-
-                    //how many time elapsed from the last tick ?
-                    var elapsed = self.stopwatch.tick();
-                    var context = testRunner.getTestContext();
-
-                    //store by attempt
-                    var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
-
-                    durationStore.getItem(itemAttemptId).then(function(duration){
-                        duration = _.isNumber(duration) ? duration : 0;
-                        elapsed  = _.isNumber(elapsed) && elapsed > 0 ? (elapsed / 1000) : 0;
-
-                        //store the last duration
-                        durationStore.setItem(itemAttemptId, duration + elapsed);
-                    });
-                },
-                interval : refresh,
-                autoStart : false
-            });
-
-            //change plugin state
-            testRunner
-
-                .after('renderitem enableitem', function(){
-                    self.enable();
-                })
-
-                .before('move disableitem skip error', function(e){
-                    if (self.getState('enabled')) {
-                        self.disable();
-                    }
-                })
-
-                /**
-                 * @event duration.get
-                 * @param {String} attemptId - the attempt id to get the duration for
-                 * @param {getDuration} getDuration - a receiver callback
-                 */
-                .on('plugin-get.duration', function(e, attemptId, getDuration){
-                    if(_.isFunction(getDuration)){
-                        if(!/^(.*)+#+\d+$/.test(attemptId)){
-                            return getDuration(Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"')));
-                        }
-
-                        /**
-                        * @callback getDuration
-                        * @param {Promise} p - that resolve with the duration value
-                        */
-                        getDuration(durationStore.getItem(attemptId));
-                    }
-                })
-
-                .before('finish', function(e){
-                    var done = e.done();
-
-                    durationStore.clear()
-                        .then(done)
-                        .catch(done);
+                //one stopwatch to count the time
+                self.stopwatch = timerFactory({
+                    autoStart : false
                 });
+
+                return durationStore.getItem(initItemAttemptId)
+                    .then(function(initDuration){
+                        initDuration = _.isNumber(initDuration) ? initDuration : 0;
+
+                        // if the current item attempt duration is empty in the client storage,
+                        // the test has probably been started in another browser or computer and a crash occurred,
+                        // so take the server provided duration to take care of elapsed time on the same attempt
+                        if (!initDuration && initContext.attemptDuration) {
+                            return durationStore.setItem(initItemAttemptId, initContext.attemptDuration || 0);
+                        }
+                    })
+                    .then(function(){
+                        //update the duration on a regular basis
+                        self.polling = pollingFactory({
+
+                            action : function updateDuration() {
+
+                                //how many time elapsed from the last tick ?
+                                var elapsed = self.stopwatch.tick();
+                                var context = testRunner.getTestContext();
+
+                                //store by attempt
+                                var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
+
+                                durationStore.getItem(itemAttemptId).then(function(duration){
+                                    duration = _.isNumber(duration) ? duration : 0;
+                                    elapsed  = _.isNumber(elapsed) && elapsed > 0 ? (elapsed / 1000) : 0;
+
+                                    //store the last duration
+                                    durationStore.setItem(itemAttemptId, duration + elapsed);
+                                });
+                            },
+                            interval : refresh,
+                            autoStart : false
+                        });
+
+                        //change plugin state
+                        testRunner
+
+                            .after('renderitem enableitem', function(){
+                                self.enable();
+                            })
+
+                            .before('move disableitem skip error', function(e){
+                                if (self.getState('enabled')) {
+                                    self.disable();
+                                }
+                            })
+
+                            /**
+                             * @event duration.get
+                             * @param {String} attemptId - the attempt id to get the duration for
+                             * @param {getDuration} getDuration - a receiver callback
+                             */
+                            .on('plugin-get.duration', function(e, attemptId, getDuration){
+                                if(_.isFunction(getDuration)){
+                                    if(!/^(.*)+#+\d+$/.test(attemptId)){
+                                        return getDuration(Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"')));
+                                    }
+
+                                    /**
+                                     * @callback getDuration
+                                     * @param {Promise} p - that resolve with the duration value
+                                     */
+                                    getDuration(durationStore.getItem(attemptId));
+                                }
+                            })
+
+                            .before('finish', function(e){
+                                var done = e.done();
+
+                                durationStore.clear()
+                                    .then(done)
+                                    .catch(done);
+                            });
+                    });
             });
         },
 

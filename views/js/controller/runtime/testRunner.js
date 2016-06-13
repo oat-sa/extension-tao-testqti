@@ -720,13 +720,15 @@ function (
                                 timerIndex = i;
 
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
-                                    cst.warnings = self.testContext.timerWarning[cst.qtiClassName];
-                                    _(cst.warnings).forEach(function (value, key) {
-                                        cst.warnings[key] = {
-                                            type: value,
-                                            showed: cst.seconds <= key,
-                                            point: parseInt(key, 10)
-                                        };
+                                    cst.warnings = {};
+                                    _(self.testContext.timerWarning[cst.qtiClassName]).forEach(function (value, key) {
+                                        if (_.contains(['info', 'warning', 'danger'], value)) {
+                                            cst.warnings[key] = {
+                                                type: value,
+                                                showed: cst.seconds <= key,
+                                                point: parseInt(key, 10)
+                                            };
+                                        }
                                     });
                                     var closestPreviousWarning = _.find(cst.warnings, { showed: true });
                                     if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
@@ -793,9 +795,12 @@ function (
              */
             timeWarning: function (cst, warning) {
                 var message = '',
-                    remaining;
+                    remaining,
+                    $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName),
+                    $time = $timer.find('.qti-timer_time');
 
-                $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+                $time.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
+
                 remaining = moment.duration(warning.point, "seconds").humanize();
 
                 switch (cst.qtiClassName) {

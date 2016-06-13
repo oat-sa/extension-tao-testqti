@@ -171,7 +171,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function init(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             // code borrowed from the previous implementation, but the reset timers option has been discarded
@@ -296,7 +296,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $response = [];
 
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             // The state of the test session.
@@ -312,6 +312,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
                 $config = $this->getTestConfig();
                 $route = $session->getRoute();
+                $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
                 $itemRef = $session->getCurrentAssessmentItemRef();
                 $currentSection = $session->getCurrentAssessmentSection();
@@ -328,6 +329,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The number of current attempt (1 for the first time ...)
                 $response['attempt'] = $itemSession['numAttempts']->getValue();
+
+                // Duration of the current item attempt
+                $response['attemptDuration'] = $session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER)->getSeconds(true);
 
                 // Whether or not the current step is time out.
                 $response['isTimeout'] = \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session);
@@ -356,7 +360,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
 
                 // The current item answered state
-                $response['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($route->getRouteItemAt($response['itemPosition']), $itemSession);
+                $response['itemAnswered'] = \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = \taoQtiTest_helpers_TestRunnerUtils::buildTimeConstraints($session);
@@ -618,7 +622,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $displayFeedbacks = false;
 
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             if($session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS){
@@ -692,7 +696,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemSession(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
 
             $currentItem       = $session->getCurrentAssessmentItemRef();
@@ -791,7 +795,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function timeout(RunnerServiceContext $context, $scope, $ref)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var \taoQtiTest_helpers_TestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
             try {
                 $session->closeTimer($ref, $scope);
@@ -822,7 +826,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function exitTest(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            /* @var AssessmentTestSession $session */
+            /* @var TestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
@@ -890,8 +894,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function pause(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            // TODO: Implement pause() method.
-            throw new \common_exception_NotImplemented('Not yet implemented!');
+
+            $context->getTestSession()->suspend();
+            $this->persist($context);
+
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -914,8 +920,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function resume(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            // TODO: Implement resume() method.
-            throw new \common_exception_NotImplemented('Not yet implemented!');
+
+            $context->getTestSession()->resume();
+            $this->persist($context);
+
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1038,7 +1046,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         $continue = false;
 
-        /* @var AssessmentTestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
         
         if ($session->isRunning() === true && \taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
@@ -1058,7 +1066,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
     {
-        /* @var \taoQtiTest_helpers_TestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode());
