@@ -577,7 +577,7 @@ define([
                 var done = e.done();
                 this.getProxy().callTestAction('finish').then(function() {
                     if (self.stateStorage) {
-                        self.stateStorage.clear()
+                        self.stateStorage.removeStore()
                             .then(done)
                             .catch(function(err) {
                                 self.trigger('error', err);
