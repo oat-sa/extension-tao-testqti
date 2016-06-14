@@ -318,7 +318,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             if (is_array($value)) {
                 return $this->createComponentCollection(new ReflectionClass($class->name), $value);
             } else
-                if ($class->name === 'qtism\common\datatypes\Duration') {
+                if ($class->name === 'qtism\common\datatypes\QtiDuration') {
                     return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
                 }
         }
