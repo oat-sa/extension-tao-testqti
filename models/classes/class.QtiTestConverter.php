@@ -310,7 +310,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param mixed $value
      * @param object $class
-     * @return \qtism\common\datatypes\Duration
+     * @return \qtism\common\datatypes\QtiDuration
      */
     private function componentValue($value, $class)
     {
