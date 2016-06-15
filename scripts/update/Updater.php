@@ -430,6 +430,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.31.1');
         }
-        $this->skip('2.31.1', '2.34.0');
+        $this->skip('2.31.1', '2.34.1');
     }
 }
