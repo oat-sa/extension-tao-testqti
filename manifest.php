@@ -33,11 +33,11 @@ return array(
     'label' => 'QTI test model',
 	'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '2.35.0',
+    'version' => '2.36.0',
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=2.19.0',
-        'taoQtiItem' => '>=2.28'
+        'taoQtiItem' => '>=2.33'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
