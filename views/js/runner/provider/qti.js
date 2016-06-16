@@ -378,6 +378,16 @@ define([
                         self.trigger('error', err);
                     });
             })
+            .on('pause', function(){
+                self.setPersistentState('paused', true).then(function() {
+                    self.trigger('leave', {
+                        code: self.getTestData().states.suspended
+                    });
+                })
+                .catch(function(err){
+                    self.trigger('error', err);
+                });
+            })
             .on('renderitem', function(itemRef){
 
                 var context = this.getTestContext();
