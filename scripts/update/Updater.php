@@ -260,6 +260,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $currentVersion = '2.16.4';
         }
 
-        return $currentVersion;
+        $this->skip('2.16.4', '2.16.5');
+
     }
 }
