@@ -591,19 +591,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             
             if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session)) {
 
-                $similar = false;
+                $similar = 0;
 
                 /** @var ResponseVariable $responseVariable */
                 foreach ($responses as $responseVariable) {
                     $defaultValue = $responseVariable->getDefaultValue();
                     $value = $responseVariable->getValue();
                     if ($value->equals($defaultValue)) {
-                        $similar = true;
-                        break;
+                        $similar++;
                     }
                 }
 
-                if ($similar) {
+                if ($similar == count($responses)) {
                     throw new QtiRunnerRequiredException();
                 }
             }
