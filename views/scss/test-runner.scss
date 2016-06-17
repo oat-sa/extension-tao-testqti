@@ -271,11 +271,6 @@
             max-width: 130px;
             @include font-size(12);
         }
-        &.qti-timer__warning {
-            .qti-timer_time {
-                color: $warning;
-            }
-        }
         &::before {
             content: ' ';
             background: white(.3);

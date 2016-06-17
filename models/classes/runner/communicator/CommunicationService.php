@@ -34,6 +34,16 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 interface CommunicationService
 {
     /**
+     * Channels to process input messages
+     */
+    const CHANNEL_TYPE_INPUT = 'input';
+
+    /**
+     * Channels to process output messages
+     */
+    const CHANNEL_TYPE_OUTPUT = 'output';
+
+    /**
      * Processes the input messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
      * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a message that can be any type
@@ -49,4 +59,18 @@ interface CommunicationService
      * @throws \common_Exception
      */
     public function processOutput(QtiRunnerServiceContext $context);
+
+    /**
+     * Register channel
+     * @param CommunicationChannel $channel
+     * @param integer $channelType
+     */
+    public function attachChannel(CommunicationChannel $channel, $channelType);
+
+    /**
+     * Register channel
+     * @param CommunicationChannel $channel
+     * @param integer $channelType
+     */
+    public function detachChannel(CommunicationChannel $channel, $channelType);
 }

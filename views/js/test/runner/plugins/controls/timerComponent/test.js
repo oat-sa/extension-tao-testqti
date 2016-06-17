@@ -253,7 +253,7 @@ define([
             remaining: 1 * 60 * 1000,
             warnings: {
                 120: { type: 'warning', showed: false, point: 2 * 60 * 1000 },
-                300: { type: 'error', showed: true, point: 5 * 60 * 1000 }
+                300: { type: 'danger', showed: true, point: 5 * 60 * 1000 }
             }
         };
 
@@ -264,13 +264,13 @@ define([
              .render($container)
              .refresh();
 
-        assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
+        assert.ok( ! $('.qti-timer .qti-timer_time', $container).hasClass('txt-warning'), 'The element does not display in warning');
 
         var result = timer.warn();
         assert.equal(typeof result, 'object', 'The warn result is a object');
         assert.equal(result.text, "Warning – You have a minute remaining to complete this item.", 'The warn message is a correct');
         assert.equal(result.type, "warning", 'The warn type is a correct');
-        assert.ok($('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element display in warning');
+        assert.ok($('.qti-timer .qti-timer_time', $container).hasClass('txt-warning'), 'The element display in warning');
     });
 
     QUnit.test('warn - red', function(assert) {
@@ -283,7 +283,7 @@ define([
             remaining: 3 * 60 * 1000,
             warnings: {
                 120: { type: 'warning', showed: false, point: 2 * 60 * 1000 },
-                300: { type: 'error', showed: false, point: 5 * 60 * 1000 }
+                300: { type: 'danger', showed: false, point: 5 * 60 * 1000 }
             }
         };
 
@@ -294,13 +294,13 @@ define([
             .render($container)
             .refresh();
 
-        assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
+        assert.ok( ! $('.qti-timer .qti-timer_time', $container).hasClass('txt-danger'), 'The element does not display in warning');
 
         var result = timer.warn();
         assert.equal(typeof result, 'object', 'The warn result is a object');
         assert.equal(result.text, "Warning – You have 3 minutes remaining to complete this item.", 'The warn message is a correct');
-        assert.equal(result.type, "error", 'The warn type is a correct');
-        assert.ok($('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element display in warning');
+        assert.equal(result.type, "danger", 'The warn type is a correct');
+        assert.ok($('.qti-timer .qti-timer_time', $container).hasClass('txt-danger'), 'The element display in warning');
     });
 
     QUnit.test('warn - empty', function(assert) {
@@ -321,7 +321,7 @@ define([
             .render($container)
             .refresh();
 
-        assert.ok( ! $('.qti-timer', $container).hasClass('qti-timer__warning'), 'The element does not display in warning');
+        assert.ok( ! $('.qti-timer .qti-timer_time', $container).hasClass('txt-warning'), 'The element does not display in warning');
 
         var result = timer.warn();
         assert.equal(typeof result, 'object', 'The warn result is a object');
