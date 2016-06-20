@@ -55,7 +55,7 @@ $packages = 0;
 $imported = 0;
 foreach ($regex as $archive) {
     $packages++;
-    echo 'importing archive '.$archive[0].'...';
+    echo 'importing archive '.$archive[0].'...'.PHP_EOL;
     try {
         $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests(
             new core_kernel_classes_Class(TAO_TEST_CLASS),
