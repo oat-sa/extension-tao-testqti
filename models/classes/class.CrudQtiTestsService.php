@@ -17,7 +17,6 @@
  * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA
  * 
  */
-use \common_exception_UserReadableException;
 
 /**
  * Crud services implements basic CRUD services, orginally intended for 
