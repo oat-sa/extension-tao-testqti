@@ -597,6 +597,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 foreach ($responses as $responseVariable) {
                     $defaultValue = $responseVariable->getDefaultValue();
                     $value = $responseVariable->getValue();
+
+                    if (!$defaultValue) {
+                        $class = get_class($value);
+                        $defaultValue = new $class($responseVariable->getBaseType(), array());
+                    }
+
                     if ($value->equals($defaultValue)) {
                         $similar++;
                     }
