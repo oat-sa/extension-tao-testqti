@@ -1069,7 +1069,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        $event = new TestTimeoutEvent($session, $timeOutException->getCode());
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode(), true);
         $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
@@ -1109,6 +1109,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
                 break;
         }
+
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode(), false);
+        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
         $this->continueInteraction($context);
     }
