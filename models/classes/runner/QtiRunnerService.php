@@ -608,7 +608,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     }
                 }
 
-                if ($similar == count($responses)) {
+                if (($respCount = count($responses)) > 0 && $similar == $respCount) {
                     throw new QtiRunnerRequiredException();
                 }
             }
