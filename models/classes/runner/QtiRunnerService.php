@@ -595,43 +595,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 /** @var ResponseVariable $responseVariable */
                 foreach ($responses as $responseVariable) {
-                    $defaultValue = $responseVariable->getDefaultValue();
                     $value = $responseVariable->getValue();
-
-                    if (!$defaultValue) {
-                        $defaultValue = null;
-                        $class = get_class($value);
-
-                        if ($responseVariable->getCardinality() === Cardinality::ORDERED
-                            || $responseVariable->getCardinality() === Cardinality::MULTIPLE
-                        ) {
-                            $defaultValue = new $class($responseVariable->getBaseType(), array());
-                        } else {
-                            switch ($responseVariable->getBaseType()) {
-                                case BaseType::INTEGER:
-                                    $defaultValue = (int)$defaultValue;
-                                    break;
-                                case BaseType::FLOAT:
-                                    $defaultValue = (double)$defaultValue;
-                                    break;
-                                case BaseType::BOOLEAN:
-                                    $defaultValue = (bool)$defaultValue;
-                                    break;
-                                case BaseType::STRING:
-                                case BaseType::URI:
-                                case BaseType::IDENTIFIER:
-                                case BaseType::INT_OR_IDENTIFIER:
-                                    $defaultValue = (string)$defaultValue;
-                                    break;
-                                case BaseType::POINT:
-                                    $defaultValue = [];
-                                    break;
-                            }
-                            $defaultValue = new $class($defaultValue);
+                    $default = $responseVariable->getDefaultValue();
+                    
+                    // Similar to default ?
+                    if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($value) === true) {
+                        if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($default) === true) {
+                            $similar++;
                         }
-                    }
-
-                    if ($value && $value->equals($defaultValue)) {
+                    } elseif ($value->equals($default) === true) {
                         $similar++;
                     }
                 }
