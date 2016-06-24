@@ -599,11 +599,39 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $value = $responseVariable->getValue();
 
                     if (!$defaultValue) {
+                        $defaultValue = null;
                         $class = get_class($value);
-                        $defaultValue = new $class($responseVariable->getBaseType(), array());
+
+                        if ($responseVariable->getCardinality() === Cardinality::ORDERED
+                            || $responseVariable->getCardinality() === Cardinality::MULTIPLE
+                        ) {
+                            $defaultValue = new $class($responseVariable->getBaseType(), array());
+                        } else {
+                            switch ($responseVariable->getBaseType()) {
+                                case BaseType::INTEGER:
+                                    $defaultValue = (int)$defaultValue;
+                                    break;
+                                case BaseType::FLOAT:
+                                    $defaultValue = (double)$defaultValue;
+                                    break;
+                                case BaseType::BOOLEAN:
+                                    $defaultValue = (bool)$defaultValue;
+                                    break;
+                                case BaseType::STRING:
+                                case BaseType::URI:
+                                case BaseType::IDENTIFIER:
+                                case BaseType::INT_OR_IDENTIFIER:
+                                    $defaultValue = (string)$defaultValue;
+                                    break;
+                                case BaseType::POINT:
+                                    $defaultValue = [];
+                                    break;
+                            }
+                            $defaultValue = new $class($defaultValue);
+                        }
                     }
 
-                    if ($value->equals($defaultValue)) {
+                    if ($value && $value->equals($defaultValue)) {
                         $similar++;
                     }
                 }
