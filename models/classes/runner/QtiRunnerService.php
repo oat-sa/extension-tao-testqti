@@ -37,15 +37,12 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
-use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use qtism\runtime\tests\AssessmentTestPlace;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -559,6 +556,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
+            /** @var TestSession $session */
             $session = $context->getTestSession();
             $currentItem  = $session->getCurrentAssessmentItemRef();
             $responses = new State();
@@ -570,12 +568,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
                 \common_Logger::e($msg);
             }
-
+            
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+
             if (is_array($response)) {
-                foreach ($response as $id => $resp) {
+                foreach ($response as $id => $responseData) {
                     try {
-                        $var = $filler->fill($id, $resp);
+                        $var = $filler->fill($id, $responseData);
                         // Do not take into account QTI File placeholders.
                         if (\taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
                             $responses->setVariable($var);
@@ -588,6 +587,30 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
             } else {
                 \common_Logger::e('Invalid json payload');
+            }
+            
+            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session)) {
+
+                $similar = 0;
+
+                /** @var ResponseVariable $responseVariable */
+                foreach ($responses as $responseVariable) {
+                    $value = $responseVariable->getValue();
+                    $default = $responseVariable->getDefaultValue();
+                    
+                    // Similar to default ?
+                    if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($value) === true) {
+                        if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($default) === true) {
+                            $similar++;
+                        }
+                    } elseif ($value->equals($default) === true) {
+                        $similar++;
+                    }
+                }
+
+                if (($respCount = count($responses)) > 0 && $similar == $respCount) {
+                    throw new QtiRunnerRequiredException();
+                }
             }
 
             try {
