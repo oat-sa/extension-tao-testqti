@@ -517,6 +517,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             
                             // 4. Import metadata for the resource (use same mechanics as item resources).
+                            // Metadata will be set as property values.
                             $itemImportService->importItemMetadata(
                                 $metadataValues,
                                 $qtiTestResource,
