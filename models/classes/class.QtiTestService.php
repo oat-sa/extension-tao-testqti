@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -518,7 +518,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
-                            $itemImportService->importItemMetadata(
+                            $itemImportService->importResourceMetadata(
                                 $metadataValues,
                                 $qtiTestResource,
                                 $testResource,
