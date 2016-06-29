@@ -28,7 +28,7 @@ define([
     'taoTests/runner/plugin',
     'ui/hider',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
-    'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
+    'tpl!taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
 ], function ($, _, __, pluginFactory, hider, buttonTpl, commentTpl) {
     'use strict';
 
@@ -49,13 +49,13 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginsConfig = testConfig.plugins || {};
-            var itemThemeSwitcherConfig = _.defaults(pluginsConfig.itemThemeSwitcher || {}, defaults);
-
+            // var testData = testRunner.getTestData() || {};
+            // var testConfig = testData.config || {};
+            // var pluginsConfig = testConfig.plugins || {};
+            // var itemThemeSwitcherConfig = _.defaults(pluginsConfig.itemThemeSwitcher || {}, defaults);
+            //
             function togglePlugin() {
-                if (itemThemeSwitcherConfig.enabled) {
+                if (true === true) { //todo: change that !
                     self.show();
                 } else {
                     self.hide();

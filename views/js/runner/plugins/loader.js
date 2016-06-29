@@ -36,7 +36,7 @@ define([
     'taoQtiTest/runner/plugins/navigation/skip',
     'taoQtiTest/runner/plugins/tools/comment/comment',
     'taoQtiTest/runner/plugins/tools/calculator',
-    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher'
+    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
 ], function(pluginLoader,
             rubricBlock,
             overlay,

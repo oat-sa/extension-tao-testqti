@@ -23,7 +23,7 @@ define([
     'helpers',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher'
+    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
 ], function(_, helpers, runnerFactory, providerMock, itemThemeSwitcher) {
     'use strict';
 
