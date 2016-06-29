@@ -35,7 +35,8 @@ define([
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
     'taoQtiTest/runner/plugins/tools/comment/comment',
-    'taoQtiTest/runner/plugins/tools/calculator'
+    'taoQtiTest/runner/plugins/tools/calculator',
+    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher'
 ], function(pluginLoader,
             rubricBlock,
             overlay,
@@ -55,7 +56,9 @@ define([
             nextSection,
             skip,
             comment,
-            calculator) {
+            calculator,
+            itemThemeSwitcher
+) {
     'use strict';
 
     /**
@@ -65,6 +68,6 @@ define([
         content    : [rubricBlock, overlay, dialog, feedback, exitMessages, loading],
         controls   : [title, timer, progressbar, duration, connectivity, testState],
         navigation : [review, previous, next, nextSection, skip],
-        tools      : [comment, calculator]
+        tools      : [comment, calculator, itemThemeSwitcher]
     });
 });
