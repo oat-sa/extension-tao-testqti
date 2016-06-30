@@ -3,6 +3,8 @@
 
 .test-runner-scope {
 
+    position: relative;
+
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
@@ -37,6 +39,8 @@
         -webkit-flex: 0 1 auto;
         -ms-flex: 0 1 auto;
         flex: 0 1 auto;
+
+        height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer) + map-get($heights, horizontal-action-bar) * 2) * 1px});
 
         overflow-y: auto;
 
@@ -89,6 +93,11 @@
             bottom: 0;
             width: 100%;
             opacity : .9;
+
+            &-full {
+                background-color: $uiGeneralContentBg;
+                opacity : 1;
+            }
         }
     }
 

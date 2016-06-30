@@ -719,11 +719,23 @@ function (
                                 timeDiffs[i] = 0;
                                 timerIndex = i;
 
-                                cst.warningTime = Number.NEGATIVE_INFINITY;
-
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
-                                    cst.warningTime = parseInt(self.testContext.timerWarning[cst.qtiClassName], 10);
+                                    cst.warnings = {};
+                                    _(self.testContext.timerWarning[cst.qtiClassName]).forEach(function (value, key) {
+                                        if (_.contains(['info', 'warning', 'danger'], value)) {
+                                            cst.warnings[key] = {
+                                                type: value,
+                                                showed: cst.seconds <= key,
+                                                point: parseInt(key, 10)
+                                            };
+                                        }
+                                    });
+                                    var closestPreviousWarning = _.find(cst.warnings, { showed: true });
+                                    if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point) {
+                                        cst.warnings[closestPreviousWarning.point].showed = false;
+                                    }
                                 }
+
                                 (function (timerIndex, cst) {
                                     timerIds[timerIndex] = setInterval(function () {
 
@@ -750,8 +762,10 @@ function (
                                             lastDates[timerIndex] = new Date();
                                         }
 
-                                        if (_.isFinite(cst.warningTime) && currentTimes[timerIndex] <= cst.warningTime) {
-                                            self.timeWarning(cst);
+                                        var warning = _.findLast(cst.warnings, { showed: false });
+
+                                        if (!_.isEmpty(warning) && _.isFinite(warning.point) && currentTimes[timerIndex] <= warning.point) {
+                                            self.timeWarning(cst, warning);
                                         }
 
                                     }, 1000);
@@ -770,21 +784,43 @@ function (
              *
              * @param {object} cst - Time constraint
              * @param {integer} cst.warningTime - Warning time in seconds.
-             * @param {integer} cst.qtiClassName - Class name of qti instance for which the timer is set (assessmentItemRef | assessmentSection | testPart).
+             * @param {integer} cst.qtiClassName - Class name of qti instance for which the timer is set (assessmentItemRef | assessmentSection | testPart | assessmentTest).
              * @param {integer} cst.seconds - Initial timer value.
+             * @param {object} warning - Current actual warning
+             * @param {integer} warning.point - Warning time point in seconds, when show message
+             * @param {boolean} warning.showed - boolean flag for mark already showed warnings
+             * @param {string} warning.type - type of warning (from config), can be info, warning or error
+             *
              * @returns {undefined}
              */
-            timeWarning: function (cst) {
-                var message = '';
-                $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName).addClass('qti-timer__warning');
+            timeWarning: function (cst, warning) {
+                var message = '',
+                    remaining,
+                    $timer = $controls.$timerWrapper.find('.qti-timer__type-' + cst.qtiClassName),
+                    $time = $timer.find('.qti-timer_time');
 
-                // Initial time more than warning time in config
-                if (cst.seconds > cst.warningTime) {
-                    message = moment.duration(cst.warningTime, "seconds").humanize();
-                    feedback().warning(__("Warning – You have %s remaining to complete the test.", message));
+                $time.removeClass('txt-info txt-warning txt-danger').addClass('txt-' + warning.type);
+
+                remaining = moment.duration(warning.point, "seconds").humanize();
+
+                switch (cst.qtiClassName) {
+                    case 'assessmentItemRef':
+                        message = __("Warning – You have %s remaining to complete this item.", remaining);
+                        break;
+                    case 'assessmentSection':
+                        message = __("Warning – You have %s remaining to complete this section.", remaining);
+                        break;
+                    case 'testPart':
+                        message = __("Warning – You have %s remaining to complete this test part.", remaining);
+                        break;
+                    case 'assessmentTest':
+                        message = __("Warning – You have %s remaining to complete the test.", remaining);
+                        break;
                 }
 
-                cst.warningTime = Number.NEGATIVE_INFINITY;
+                feedback()[warning.type](message);
+
+                cst.warnings[warning.point].showed = true;
             },
 
             /**

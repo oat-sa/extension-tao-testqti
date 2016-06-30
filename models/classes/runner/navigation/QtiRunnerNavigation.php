@@ -41,7 +41,7 @@ class QtiRunnerNavigation
      * @param string $direction
      * @param string $scope
      * @return RunnerNavigation
-     * @throws \common_exception_InvalidArgumentType
+     * @throws \common_exception_InconsistentData
      * @throws \common_exception_NotImplemented
      */
     public static function getNavigator($direction, $scope)
@@ -52,7 +52,7 @@ class QtiRunnerNavigation
             if ($navigator instanceof RunnerNavigation) {
                 return $navigator;
             } else {
-                throw new \common_exception_InvalidArgumentType('Navigator must be an instance of RunnerNavigation');
+                throw new \common_exception_InconsistentData('Navigator must be an instance of RunnerNavigation');
             }
         } else {
             throw new \common_exception_NotImplemented('The action is invalid!');

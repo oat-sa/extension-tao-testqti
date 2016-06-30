@@ -26,6 +26,8 @@ define([
     'i18n',
     'module',
     'core/promise',
+    'core/communicator',
+    'core/communicator/poll',
     'layout/loading-bar',
     'ui/feedback',
     'taoTests/runner/runner',
@@ -34,7 +36,7 @@ define([
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/loader',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, loadingBar, feedback,
+], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
     'use strict';
 
@@ -44,7 +46,8 @@ define([
      */
 
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
+    proxy.registerProvider('qtiServiceProxy', qtiServiceProxy);
+    communicator.registerProvider('poll', pollProvider);
 
     /**
      * Catches errors
@@ -60,31 +63,11 @@ define([
     }
 
     /**
-     * Call the destroy action of the test runner
-     * Must be applied on a test runner instance: destroyRunner.call(runner);
-     */
-    function destroyRunner() {
-        var self = this;
-        //FIXME this should be handled by the eventifier instead of doing a delay
-        _.delay(function(){
-            self.destroy();
-        }, 300); //let deferred exec a chance to finish
-    }
-
-
-    /**
      * Initializes and launches the test runner
      * @param {Object} config
      */
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
-
-        /**
-         *  At the end, we are redirected to the exit URL
-         */
-        var leave = function leave (){
-            window.location = config.exitUrl;
-        };
 
         config = _.defaults(config, {
             renderTo: $('.runner')
@@ -92,45 +75,16 @@ define([
 
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
-            .before('error', function (e, err) {
-                var self = this;
-
-                onError(err);
-
-                // test has been closed/suspended => redirect to the index page after message acknowledge
-                if (err && err.type && err.type === 'TestState') {
-
-                    if(!this.getState('ready')){
-                        //if we open an inconstent test (should never happen) we let a few sec to
-                        //read the error message then leave
-                        _.delay(leave, 2000);
-                    } else {
-                        this.trigger('alert', err.message, function() {
-                            self.trigger('endsession', 'teststate', err.code);
-                            destroyRunner.call(self);
-                        });
-                    }
-                    // prevent other messages/warnings
-                    return false;
-                }
-            })
+            .on('error', onError)
             .on('ready', function () {
                 _.defer(function () {
                     $('.runner').removeClass('hidden');
                 });
             })
-            .on('unloaditem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.start();
+            .after('destroy', function () {
+                // at the end, we are redirected to the exit URL
+                window.location = config.exitUrl;
             })
-            .on('renderitem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.stop();
-            })
-            .after('finish', function () {
-                destroyRunner.call(this);
-            })
-            .on('destroy', leave)
             .init();
     }
 
@@ -157,8 +111,7 @@ define([
          * @param {String} options.testDefinition
          * @param {String} options.testCompilation
          * @param {String} options.serviceCallId
-         * @param {String} options.serviceController
-         * @param {String} options.serviceExtension
+         * @param {Object} options.bootstrap
          * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start: function start(options) {

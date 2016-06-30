@@ -25,6 +25,7 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/cachedStore',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
@@ -33,14 +34,21 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
+
+    // asset strategy for portable elements
+    var assetPortableElement = {
+        name : 'portableElementLocation',
+        handle : assetStrategies.baseUrl.handle
+    };
 
     //the asset strategies
     var assetManager = assetManagerFactory([
         assetStrategies.external,
         assetStrategies.base64,
-        assetStrategies.baseUrl
+        assetStrategies.baseUrl,
+        assetPortableElement
     ], { baseUrl: '' });
 
     /**
@@ -72,16 +80,15 @@ define([
          * @returns {proxy}
          */
         loadProxy : function loadProxy(){
-
             var config = this.getConfig();
 
             var proxyConfig = _.pick(config, [
                 'testDefinition',
                 'testCompilation',
                 'serviceCallId',
-                'serviceController',
-                'serviceExtension'
+                'bootstrap'
             ]);
+
             return proxyFactory('qtiServiceProxy', proxyConfig);
         },
 
@@ -95,6 +102,62 @@ define([
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
             return probeOverseer(identifier, this);
+        },
+
+        /**
+         * Loads the persistent states storage
+         *
+         * @returns {Promise}
+         */
+        loadPersistentStates : function loadPersistentStates() {
+            var self = this;
+            var config = this.getConfig();
+            var persistencePromise = cachedStore('test-states-' + config.serviceCallId, 'states');
+
+            persistencePromise.catch(function(err) {
+                self.trigger('error', err);
+            });
+
+            return persistencePromise
+                    .then(function(storage) {
+                        self.stateStorage = storage;
+                    });
+        },
+
+        /**
+         * Checks a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @returns {Boolean} if active, false if not set
+         */
+        getPersistentState : function getPersistentState(name) {
+            if (this.stateStorage) {
+                return this.stateStorage.getItem(name);
+            }
+        },
+
+        /**
+         * Defines a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @param {Boolean} active - is the state active
+         * @returns {Promise} Returns a promise that:
+         *                      - will be resolved once the state is fully stored
+         *                      - will be rejected if any error occurs or if the state name is not a valid string
+         */
+        setPersistentState : function setPersistentState(name, active) {
+            var self = this;
+            var setPromise;
+
+            if (this.stateStorage) {
+                setPromise = this.stateStorage.setItem(name, active);
+
+                setPromise.catch(function(err) {
+                    self.trigger('error', err);
+                });
+
+                return setPromise;
+            }
         },
 
         /**
@@ -136,9 +199,6 @@ define([
                             }
 
                             load();
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
                         });
                 })
                 .unloadItem(context.itemUri);
@@ -160,35 +220,58 @@ define([
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise} - resolve with a boolean at true if the response is stored
+             * @returns {Promise} - resolve with a boolean at true if the response is submitd
              */
-            var store = function store(){
+            var submit = function submit(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
                 var itemRunner = self.itemRunner;
+                var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
+                var params = {};
+
+                var performSubmit = function performSubmit(){
+                    //we submit the responses
+                    return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
+                        .then(function(result){
+                            return new Promise(function(resolve){
+                                //if the submit results contains modal feedback we ask (gently) the IR to display them
+                                if(result.success) {
+                                    if (result.itemSession) {
+                                        context.itemAnswered = result.itemSession.itemAnswered;
+                                    }
+
+                                    if(result.displayFeedbacks === true && itemRunner){
+                                        return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
+                                    }
+                                }
+                                return resolve();
+                            });
+                        });
+                };
 
                 if(context.itemSessionState >= states.closed) {
                     return Promise.resolve(false);
                 }
 
-                //we store the responses
-                return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses())
-                    .then(function(result){
-                        return new Promise(function(resolve){
-                            //if the store results contains modal feedback we ask (gently) the IR to display them
-                            if(result.success) {
-                                if (result.itemSession) {
-                                    context.itemAnswered = result.itemSession.itemAnswered;
+                //if the duration plugin is installed,
+                //we load the duration using an event
+                if(self.getPlugin('duration')){
+                    return new Promise(function(resolve, reject){
+                        //trigger the get event to retrieve the duration for that attempt
+                        self.getPlugin('duration').trigger('get', itemAttemptId, function receiver(p){
+                            p.then(function(duration){
+                                params.itemDuration = 0;
+                                if(_.isNumber(duration) && duration > 0){
+                                    params.itemDuration = duration;
                                 }
-
-                                if(result.displayFeedbacks === true && itemRunner){
-                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
-                                }
-                            }
-                            return resolve();
+                                return resolve(performSubmit());
+                            }).catch(reject);
                         });
                     });
+                }
+
+                return performSubmit();
             };
 
             /**
@@ -217,6 +300,7 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             };
 
+
             /*
              * Install behavior on events
              */
@@ -227,7 +311,7 @@ define([
             .on('move', function(direction, scope, position){
 
                 //ask to move:
-                // 1. try to store state and responses
+                // 1. try to submit state and responses
                 // 2. update stats on the map
                 // 3. compute the next item to load
 
@@ -240,10 +324,10 @@ define([
 
                 this.trigger('disablenav disabletools');
 
-                store()
+                submit()
                  .then(updateStats)
                  .then(computeNextMove)
-                 .catch(function(err){
+                 .catch(function (err) {
                     self.trigger('error', err);
                  });
             })
@@ -260,7 +344,7 @@ define([
                 var context = self.getTestContext();
                 self.disableItem(context.itemUri);
 
-                store()
+                submit()
                     .then(function() {
                         return self.getProxy()
                             .callTestAction('exitTest', {reason: why})
@@ -280,7 +364,7 @@ define([
 
                 self.disableItem(context.itemUri);
 
-                store()
+                submit()
                     .then(updateStats)
                     .then(function() {
                         self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
@@ -294,25 +378,44 @@ define([
                         self.trigger('error', err);
                     });
             })
+            .on('pause', function(){
+                self.setPersistentState('paused', true).then(function() {
+                    self.trigger('leave', {
+                        code: self.getTestData().states.suspended
+                    });
+                })
+                .catch(function(err){
+                    self.trigger('error', err);
+                });
+            })
             .on('renderitem', function(itemRef){
 
                 var context = this.getTestContext();
                 var states = this.getTestData().itemStates;
                 var warning = false;
 
+                /**
+                 * Get the label of the current item
+                 * @returns {String} the label (fallback to the item identifier);
+                 */
+                var getItemLabel = function getItemLabel(){
+                    var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
+                    return item && item.label ? item.label : context.itemIdentifier;
+                };
+
                 this.trigger('enablenav enabletools');
 
 
                 //The item is rendered but in a state that prevents us from interacting
                 if (context.isTimeout) {
-                    warning = __('Time limit reached for item "%s".', context.itemIdentifier);
+                    warning = __('Time limit reached for item "%s".', getItemLabel());
 
                 } else if (context.itemSessionState > states.interacting) {
 
                     if (context.remainingAttempts === 0) {
-                        warning = __('No more attempts allowed for item "%s".', context.itemIdentifier);
+                        warning = __('No more attempts allowed for item "%s".',  getItemLabel());
                     } else {
-                        warning = __('Item "%s" is completed.', context.itemIdentifier);
+                        warning = __('Item "%s" is completed.', getItemLabel());
                     }
                 }
 
@@ -330,6 +433,15 @@ define([
             })
             .on('error', function(){
                 this.trigger('disabletools enablenav');
+            })
+            .on('finish', function () {
+                this.flush();
+            })
+            .on('leave', function () {
+                this.flush();
+            })
+            .on('flush', function () {
+                this.destroy();
             });
 
             //starts the event collection
@@ -337,7 +449,7 @@ define([
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parrallel at initialization
+            //load data and current context in parallel at initialization
             return this.getProxy().init()
                        .then(function(results){
                             self.setTestData(results.testData);
@@ -463,29 +575,44 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
+            var self = this;
 
             this.trigger('disablenav disabletools')
                 .trigger('endsession', 'finish');
 
-            return this.getProxy().callTestAction('finish');
+            // will be executed after the runner has been flushed
+            // use the "before" queue to ensure the query will be fully processed before destroying
+            // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
+            this.before('flush', function(e) {
+                var done = e.done();
+                this.getProxy().callTestAction('finish').then(function() {
+                    if (self.stateStorage) {
+                        self.stateStorage.clear()
+                            .then(done)
+                            .catch(function(err) {
+                                self.trigger('error', err);
+                            })
+                    } else {
+                        done();
+                    }
+                });
+            });
         },
 
         /**
-         * Destroy phase of the test runner
+         * Flushes the test variables before leaving the runner
          *
          * Clean up
          *
          * @this {runner} the runner context, not the provider
          */
-        destroy : function destroy(){
-
+        flush : function flush(){
             var self = this;
-
             var probeOverseer = this.getProbeOverseer();
 
             //if there is trace data collected by the probes
-            if(probeOverseer){
-                probeOverseer.flush()
+            if(probeOverseer && !this.getState('disconnected')){
+                return probeOverseer.flush()
                     .then(function(data){
 
                         //we reformat the time set into a trace variables
@@ -500,13 +627,27 @@ define([
                                 traceData[id] = entry;
                             });
                             //and send them
-                            return self.getProxy().callTestAction('storeTraceData', { traceData : JSON.stringify(traceData) });
+                            return self.getProxy().sendVariables(traceData);
                         }
-                    }).then(function(){
+                    })
+                    .then(function(){
                         probeOverseer.stop();
                     });
             }
+        },
 
+        /**
+         * Destroy phase of the test runner
+         *
+         * Clean up
+         *
+         * @this {runner} the runner context, not the provider
+         */
+        destroy : function destroy(){
+            // prevent the item to be displayed while test runner is destroying
+            if (this.itemRunner) {
+                this.itemRunner.clear();
+            }
             this.itemRunner = null;
         }
     };

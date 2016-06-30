@@ -172,7 +172,7 @@ class taoQtiTest_helpers_Utils {
     static public function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath) {
         $assessmentItemRefs = $test->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         $map = array('items' => array(), 'dependencies' => array());
-        $itemResources = $manifestParser->getResources(array('imsqti_item_xmlv2p1', 'imsqti_apipitem_xmlv2p1'), taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
+        $itemResources = $manifestParser->getResources(Resource::getItemTypes(), taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
         $allResources = $manifestParser->getResources();
 
         // cleanup $basePath.

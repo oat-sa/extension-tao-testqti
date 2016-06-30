@@ -21,13 +21,23 @@
  * Default test runner config
  */
 return array(
-
-
-    //Show warning message if time remaining less than defined (in seconds)
+    /**
+     * Show warning messages if time remaining less than defined (in seconds) in key.
+     * Also you should define type of warning message in value.
+     * Example:
+     * 'assessmentItemRef' => array(
+     *     999 => 'info',
+     *     300 => 'warning',
+     *     120 => 'error'
+     * )
+     * Available warning types: info (blue), warning (yellow), danger (red orange)
+     * @type array
+     */
     'timerWarning' => array(
         'assessmentItemRef' => null,
         'assessmentSection' => null,
-        'testPart'          => null
+        'testPart'          => null,
+        'assessmentTest'    => null
     ),
 
     /**
@@ -132,12 +142,116 @@ return array(
      * A collection of plugins related config sets
      * @type array
      */
-    'plugins' => null,
-
+    'plugins' => [
+        /**
+         * The plugin responsible of the runner's overlay mask
+         */
+        'overlay' => [
+            /**
+             * When set to `true`, completely obfuscate the current item when displayed
+             * @type bool
+             */
+            'full' => false
+        ]
+    ],
 
     /**
      * Enable the cross site request forgery token
      * @type boolean
      */
-    'csrf-token' => true
+    'csrf-token' => true,
+
+    /**
+     * Config for the runner's timer
+     * @type array
+     */
+    'timer' => [
+        /**
+         * The target from which computes the durations. Could be either 'client' or 'server'.
+         * This config tells on which TimeLine to rely to compute the assessment test durations.
+         * Caution, if the server TimeLine is always filled, the client TimeLine must be explicitly
+         * provided by the implementation. If the client TimeLine is missing, the durations will be zeroed.
+         * @type string
+         */
+        'target' => 'server'
+    ],
+
+    /**
+     * The namespace of the TestSession class
+     * @type string
+     */
+    'test-session' => '\taoQtiTest_helpers_TestSession',
+
+    /**
+     * A config set that will be provided though the bootstrap
+     * @type array
+     */
+    'bootstrap' => [
+        /**
+         * The extension containing the controller used as test runner service
+         * @type string
+         */
+        'serviceExtension' => 'taoQtiTest',
+
+        /**
+         * The name of the controller used as test runner service
+         * @type string
+         */
+        'serviceController' => 'Runner',
+
+        /**
+         * The network timeout, in seconds.
+         * @type int
+         */
+        'timeout' => 0,
+
+        /**
+         * Config for the communication channel
+         * @type array
+         */
+        'communication' => [
+            /**
+             * Enables the communication channel
+             * @type boolean
+             */
+            'enabled' => false,
+
+            /**
+             * The type of communication channel to use. For now the only available type is 'poll'.
+             * @type string
+             */
+            'type' => 'poll',
+
+            /**
+             * The extension containing the remote service to connect
+             * @type string
+             */
+            'extension' => null,
+
+            /**
+             * The controller containing the remote service to connect
+             * @type string
+             */
+            'controller' => null,
+
+            /**
+             * The action corresponding to the remote service to connect
+             * @type string
+             */
+            'action' => 'messages',
+
+            /**
+             * The address of the remote service to connect.
+             * When this address is provided it is used instead of url building from extension/controller/action.
+             * @type string
+             */
+            'service' => null,
+
+            /**
+             * Some additional parameters to setup the communication channel
+             * @type array
+             */
+            'params' => []
+        ],
+    ],
 );

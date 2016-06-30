@@ -27,12 +27,13 @@ define([
     'i18n',
     'core/polling',
     'core/timer',
+    'core/store',
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, pollingFactory, timerFactory, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function ($, _, __, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -77,6 +78,7 @@ define([
      * Creates the timer plugin
      */
     return pluginFactory({
+
         name: 'timer',
 
         /**
@@ -89,14 +91,13 @@ define([
             var testData     = testRunner.getTestData() || {};
             var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
-            var lastDiff;
 
             var currentTimers = {};
 
             /**
              * Load the configuration of a timer from the current context
              * @param {String} type - the timer type/qtiClass
-             * @returns {Object?} the timer config if there's one for the given type
+             * @returns {Object} the timer config if there's one for the given type
              */
             var getTimerConfig = function getTimerConfig(type) {
                 var timeConstraint;
@@ -112,17 +113,28 @@ define([
                             type:      timeConstraint.qtiClassName,
                             remaining: timeConstraint.seconds * precision,
                             id:        timeConstraint.source,
-                            running:   true
+                            running:   true,
+                            warnings:  {}
                         };
 
-                        if (timerWarning[timer.type]) {
-                            timer.warning = parseInt(timerWarning[timer.type], 10) * precision;
+                        _(timerWarning[timeConstraint.qtiClassName]).forEach(function (value, key) {
+                            if (_.contains(['info', 'warning', 'danger'], value)) {
+                                timer.warnings[key] = {
+                                    type: value,
+                                    showed: timer.remaining / precision <= key,
+                                    point: parseInt(key, 10) * precision
+                                };
+                            }
+                        });
+
+                        var closestPreviousWarning = _.find(timer.warnings, { showed: true });
+                        if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point && timer.warnings[closestPreviousWarning.point / precision]) {
+                            timer.warnings[closestPreviousWarning.point / precision].showed = false;
                         }
                     }
                 }
                 return timer;
             };
-
 
             //TODO this kind of function is generic enough to be moved to a util/helper
             var leaveTimedSection = function leaveTimedSection(type, scope, position){
@@ -149,6 +161,8 @@ define([
              */
             var removeTimer = function removeTimer(type){
                 if(currentTimers[type]){
+                    self.storage.removeItem(currentTimers[type].id());
+
                     currentTimers[type].destroy();
                     currentTimers = _.omit(currentTimers, type);
                 }
@@ -172,7 +186,7 @@ define([
              * Update the timers.
              * It will remove, let, add or update the current timers based on the current context.
              */
-            var updateTimers = function updateTimers(){
+            var updateTimers = function updateTimers(checkStorage){
 
                 _.forEach(timerTypes, function(type){
                     var timerConfig = getTimerConfig(type);
@@ -184,126 +198,160 @@ define([
                             removeTimer(type);
                             addTimer(type, timerConfig);
                         }
-                    } else {
-                        addTimer(type, timerConfig);
+                    } else if(timerConfig){
+
+                        if(checkStorage){
+
+                            //check for the last value in the storage
+                            self.storage.getItem(timerConfig.id).then(function(savedTime){
+                                if(_.isNumber(savedTime) && savedTime >= 0){
+                                    timerConfig.remaining = savedTime;
+                                }
+                                addTimer(type, timerConfig);
+                            }).catch(function(err){
+                                //add the timer even if the storage doesn't work
+                                addTimer(type, timerConfig);
+                            });
+
+                        } else {
+                            addTimer(type, timerConfig);
+                        }
                     }
                 });
             };
 
-            //the element that'll contain the timers
-            this.$element = $(timerBoxTpl());
+            return store('timer-' + testRunner.getConfig().serviceCallId).then(function(timeStore){
 
-            //one stopwatch to count the time
-            this.stopwatch = timerFactory({
-                autoStart : false
-            });
+                //the timer's storage
+                self.storage = timeStore;
 
-            //a pausewatch that counts only during pauses (between items)
-            this.pausewatch = timerFactory({
-                autoStart : false
-            });
+                //the element that'll contain the timers
+                self.$element = $(timerBoxTpl());
 
-            //update the timers at regular intervals
-            this.polling = pollingFactory({
+                //one stopwatch to count the time
+                self.stopwatch = timerFactory({
+                    autoStart : false
+                });
 
-                /**
-                 * The polling action consists in updating each timers,
-                 * checking timeout and warnings
-                 */
-                action : function updateTime() {
+                //update the timers at regular intervals
+                self.polling = pollingFactory({
 
-                    //how many time elapsed from the last tick ?
-                    var elapsed = self.stopwatch.tick();
-                    var timeout = false;
-                    var timeoutScope, timeoutRef;
+                    /**
+                    * The polling action consists in updating each timers,
+                    * checking timeout and warnings
+                    */
+                    action : function updateTime() {
 
-                    _.forEach(currentTimers, function(timer, type) {
-                        var currentVal,
-                            warnMessage;
-                        if (timer.running()) {
-                            currentVal = Math.max(timer.val() - elapsed, 0);
-                            timer
-                                .val(currentVal)
-                                .refresh();
+                        //how many time elapsed from the last tick ?
+                        var elapsed = self.stopwatch.tick();
+                        var timeout = false;
+                        var timeoutScope, timeoutRef;
 
-                            if (currentVal === 0) {
-                                timer.running(false);
-                                timeout = true;
-                                timeoutRef = timer.id();
-                                timeoutScope = type;
-                            }
+                        _.forEach(currentTimers, function(timer, type) {
+                            var currentVal,
+                                warning;
+                            var runTimeout = function runTimeout(){
+                                testRunner.timeout(timeoutScope, timeoutRef);
+                            };
 
-                            if (!timeout) {
-                                warnMessage = timer.warn();
-                                if(warnMessage){
-                                    testRunner.trigger('warning', warnMessage);
+                            if (timer.running()) {
+                                currentVal = Math.max(timer.val() - elapsed, 0);
+                                timer
+                                    .val(currentVal)
+                                    .refresh();
+
+                                if (currentVal <= 0) {
+                                    timer.running(false);
+                                    timeout = true;
+                                    timeoutRef = timer.id();
+                                    timeoutScope = type;
+
+                                    self.storage.setItem(timer.id(), 0)
+                                        .then(runTimeout)
+                                        .catch(runTimeout);
+
+                                } else {
+                                    self.storage.setItem(timer.id(), currentVal);
+                                    warning = timer.warn();
+                                    if (!_.isEmpty(warning)) {
+                                        testRunner.trigger(warning.type, warning.text);
+                                    }
                                 }
                             }
-                        }
-                    });
-                    if (timeout) {
-                        testRunner.timeout(timeoutScope, timeoutRef);
-                        self.disable();
-                    }
-                },
-                interval : timerRefresh,
-                autoStart : false
-            });
-
-            //create the initial timers
-            updateTimers();
-
-            //change plugin state
-            testRunner
-                .before('move', function(e, type, scope, position){
-                    var done = e.done();
-
-                    var doMove = function doMove(){
-                        removeTimer(timerTypes.item);
-                        done();
-                    };
-
-                    var cancelMove = function cancelMove() {
-                        testRunner.trigger('enableitem enablenav');
-                        e.prevent();
-                    };
-
-                    if (self.getState('enabled')) {
-                        //start to count the time before the next content is shown
-                        self.pausewatch.start();
-
-                        //and pause the running ones
-                        self.disable();
-                    }
-
-                    //display a mesage if we exit a timed section
-                    if(leaveTimedSection(type, scope, position)){
-                        testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
-                    } else {
-                        doMove();
-                    }
-                })
-                .on('loaditem', function(){
-
-                    //check for new timers
-                    updateTimers();
-                })
-
-                .after('renderitem', function(){
-                    //get the diff of the timers pause
-                    lastDiff = self.pausewatch.tick();
-                    self.pausewatch.stop();
-
-                    //start timers
-                    self.enable();
-
-                    //add the last diff to the next action call
-                    if(lastDiff && _.size(currentTimers) > 0){
-                        _.defer(function(){
-                            testRunner.getProxy().callTestAction('time', { timerPaused : lastDiff / precision });
                         });
-                    }
+                        if (timeout) {
+                            self.disable();
+                        }
+                    },
+                    interval : timerRefresh,
+                    autoStart : false
                 });
+
+
+
+                //change plugin state
+                testRunner
+
+                    .on('loaditem', function(){
+
+                        //check for new timers
+                        updateTimers(true);
+                    })
+
+                    .on('enableitem', function() {
+                        self.enable();
+                    })
+                    .on('disableitem', function() {
+                        self.disable();
+                    })
+
+                    .after('renderitem', function(){
+                        //start timers
+                        self.enable();
+                    })
+
+                    .on('disconnect', function() {
+                        //pause the timers when the connection is lost
+                        if (self.getState('enabled')) {
+                            self.disable();
+                        }
+                    })
+
+                    .before('move', function(e, type, scope, position){
+                        var done = e.done();
+
+                        var doMove = function doMove(){
+                            removeTimer(timerTypes.item);
+                            done();
+                        };
+
+                        var cancelMove = function cancelMove() {
+                            testRunner.trigger('enableitem enablenav');
+                            e.prevent();
+                        };
+
+                        //pause the timers
+                        if (self.getState('enabled')) {
+                            self.disable();
+                        }
+
+                        //display a mesage if we exit a timed section
+                        if(leaveTimedSection(type, scope, position)){
+                            testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
+                        } else {
+                            doMove();
+                        }
+                    })
+
+                    .before('finish', function(e){
+                        var done = e.done();
+
+                        //clean up the storage at the end
+                        self.storage.clear()
+                            .then(done)
+                            .catch(done);
+                    });
+            });
         },
 
         /**
@@ -324,7 +372,7 @@ define([
         },
 
         /**
-         * Enables the button
+         * Enables the timers
          */
         enable : function enable (){
             this.polling.start();
@@ -332,7 +380,7 @@ define([
         },
 
         /**
-         * Disables the button
+         * Disables the timers
          */
         disable : function disable (){
             this.polling.stop();
@@ -340,14 +388,14 @@ define([
         },
 
         /**
-         * Shows the button
+         * Shows the timers
          */
         show: function show(){
             hider.show(this.$element);
         },
 
         /**
-         * Hides the button
+         * Hides the timers
          */
         hide: function hide(){
             hider.hide(this.$element);

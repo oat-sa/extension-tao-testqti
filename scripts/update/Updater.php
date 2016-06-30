@@ -14,11 +14,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2016 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
@@ -279,7 +281,155 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.22.0');
         }
+
+        if ($this->isVersion('2.22.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['timer']['target'] = 'server';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.23.0');
+        }
         
-        $this->skip('2.22.0','2.23.0');
+        $this->skip('2.23.0','2.24.0');
+
+        if ($this->isVersion('2.24.0')) {
+            $className = \taoQtiTest_helpers_SessionManager::DEFAULT_TEST_SESSION;
+            try {
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('deliveryServer');
+                if ($deliveryConfig) {
+                    $deliveryContainer = $deliveryConfig->getOption('deliveryContainer');
+                    if (false !== strpos($deliveryContainer, 'DeliveryClientContainer')) {
+                        $className = 'oat\\taoQtiTest\\models\\runner\\session\\TestSession';
+                    }
+                }
+            } catch(\common_ext_ExtensionException $e) {
+            }
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-session'] = $className;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.25.0');
+        }
+
+        if ($this->isVersion('2.25.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['overlay']['full'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.26.0');
+        }
+        
+        $this->skip('2.26.0', '2.27.0');
+
+        if ($this->isVersion('2.27.0')) {
+            $serviceExtension = 'taoQtiTest';
+            $serviceController = 'Runner';
+            try {
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('testRunner');
+                if ($deliveryConfig) {
+                    $serviceExtension = $deliveryConfig['serviceExtension'];
+                    $serviceController = $deliveryConfig['serviceController'];
+                }
+            } catch(\common_ext_ExtensionException $e) {
+            }
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap'] = [
+                'serviceExtension' => $serviceExtension,
+                'serviceController' => $serviceController,
+                'communication' => [
+                    'enabled' => false,
+                    'type' => 'poll',
+                    'extension' => null,
+                    'controller' => null,
+                    'action' => 'messages',
+                    'service' => null,
+                    'params' => []
+                ]
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            try {
+                $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+            } catch (ServiceNotFoundException $e) {
+                $service = new QtiCommunicationService();
+                $service->setServiceManager($this->getServiceManager());
+                $this->getServiceManager()->register(QtiCommunicationService::CONFIG_ID, $service);
+            }
+
+            $this->setVersion('2.28.0');
+        }
+
+        if ($this->isVersion('2.28.0')) {
+            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+            if (array_key_exists('timerWarning', $testRunnerConfig)) {
+                foreach ($testRunnerConfig['timerWarning'] as &$value) {
+                    if ($value !== null && is_int($value)) {
+                        $value = [$value => 'warning'];
+                    }
+                }
+
+                \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $testRunnerConfig);
+            }
+
+            $this->setVersion('2.29.0');
+        }
+
+        if ($this->isVersion('2.29.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['timeout'] = 0;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('2.30.0');
+        }
+
+        if ($this->isVersion('2.30.0')) {
+            try {
+                $service = $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+            } catch (ServiceNotFoundException $e) {
+                $service = new QtiCommunicationService();
+            }
+
+            $service->setServiceManager($this->getServiceManager());
+
+            $service->attachChannel(new TestStateChannel(), QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
+
+            $this->getServiceManager()->register(QtiCommunicationService::CONFIG_ID, $service);
+
+            $this->setVersion('2.31.0');
+        }
+
+        if ($this->isVersion('2.31.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            if (!isset($config['bootstrap']) || (isset($config['bootstrap']['timeout']) && count($config['bootstrap']) == 1)) {
+
+                $config['bootstrap'] = array_merge($config['bootstrap'], [
+                    'serviceExtension' => 'taoQtiTest',
+                    'serviceController' => 'Runner',
+                    'communication' => [
+                        'enabled' => false,
+                        'type' => 'poll',
+                        'extension' => null,
+                        'controller' => null,
+                        'action' => 'messages',
+                        'service' => null,
+                        'params' => []
+                    ],
+                ]);
+                
+                $extension->setConfig('testRunner', $config);
+            }
+            
+            $this->setVersion('2.31.1');
+        }
+        $this->skip('2.31.1', '2.36.0');
     }
 }

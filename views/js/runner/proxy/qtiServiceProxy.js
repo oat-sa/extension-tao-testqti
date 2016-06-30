@@ -23,9 +23,10 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/communicator',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, helpers, configFactory) {
+], function($, _, __, Promise, communicatorFactory, helpers, configFactory) {
     'use strict';
 
     /**
@@ -60,7 +61,8 @@ define([
                     headers: headers,
                     async: true,
                     dataType: 'json',
-                    contentType : contentType || undefined
+                    contentType : contentType || undefined,
+                    timeout: proxy.configStorage.getTimeout()
                 })
                 .done(function(data) {
                     if (data && data.token) {
@@ -80,6 +82,9 @@ define([
                     } catch (e) {
                         data = {
                             success: false,
+                            source: 'network',
+                            purpose: 'proxy',
+                            context: this,
                             code: jqXHR.status,
                             type: textStatus || 'error',
                             message: errorThrown || __('An error occurred!')
@@ -141,17 +146,18 @@ define([
          * @param {String} config.testDefinition - The URI of the test
          * @param {String} config.testCompilation - The URI of the compiled delivery
          * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
          *                      Any error will be provided if rejected.
          */
-        init: function init(config) {
+        init: function init(config, params) {
             var initConfig = config || {};
 
-            // store config in a dedicated storage
-            this.storage = configFactory(initConfig);
+            // store config in a dedicated configStorage
+            this.configStorage = configFactory(initConfig);
 
             // request for initialization
-            return request(this, this.storage.getTestActionUrl('init'));
+            return request(this, this.configStorage.getTestActionUrl('init'), params);
         },
 
         /**
@@ -160,14 +166,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         destroy: function destroy() {
-            var self = this;
+            // no request, just a resources cleaning
+            this.configStorage = null;
+            this._runningPromise = null;
+
             // the method must return a promise
-            return new Promise(function(resolve) {
-                // no request, just a resources cleaning
-                self.storage = null;
-                self._runningPromise = null;
-                resolve();
-            });
+            return Promise.resolve();
         },
 
         /**
@@ -176,7 +180,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestData: function getTestData() {
-            return request(this, this.storage.getTestActionUrl('getTestData'));
+            return request(this, this.configStorage.getTestActionUrl('getTestData'));
         },
 
         /**
@@ -185,7 +189,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestContext: function getTestContext() {
-            return request(this, this.storage.getTestActionUrl('getTestContext'));
+            return request(this, this.configStorage.getTestActionUrl('getTestContext'));
         },
 
         /**
@@ -194,7 +198,18 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestMap: function getTestMap() {
-            return request(this, this.storage.getTestActionUrl('getTestMap'));
+            return request(this, this.configStorage.getTestActionUrl('getTestMap'));
+        },
+
+        /**
+         * Sends the test variables
+         * @param {Object} variables
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires sendVariables
+         */
+        sendVariables: function sendVariables(variables) {
+            return request(this, this.configStorage.getTestActionUrl('storeTraceData'), { traceData : JSON.stringify(variables) });
         },
 
         /**
@@ -205,7 +220,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            return request(this, this.storage.getTestActionUrl(action), params);
+            return request(this, this.configStorage.getTestActionUrl(action), params);
         },
 
         /**
@@ -215,7 +230,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getItem: function getItem(uri) {
-            return request(this, this.storage.getItemActionUrl(uri, 'getItem'));
+            return request(this, this.configStorage.getItemActionUrl(uri, 'getItem'));
         },
 
         /**
@@ -226,11 +241,13 @@ define([
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        submitItem: function submitItem(uri, state, response) {
-            return request(this, this.storage.getItemActionUrl(uri, 'submitItem'), JSON.stringify({
+        submitItem: function submitItem(uri, state, response, params) {
+            var body = JSON.stringify( _.merge({
                 itemState : state,
                 itemResponse : response
-            }), 'application/json');
+            }, params || {}));
+
+            return request(this, this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
         },
 
         /**
@@ -242,7 +259,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
-            return request(this, this.storage.getItemActionUrl(uri, action), params);
+            return request(this, this.configStorage.getItemActionUrl(uri, action), params);
         },
 
         /**
@@ -255,7 +272,19 @@ define([
          * @fires telemetry
          */
         telemetry: function telemetry(uri, signal, params) {
-            return request(this, this.storage.getTelemetryUrl(uri, signal), params, null, true);
+            return request(this, this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
+        },
+
+        /**
+         * Builds the communication channel
+         * @returns {communicator|null} the communication channel
+         */
+        loadCommunicator: function loadCommunicator() {
+            var config = this.configStorage.getCommunicationConfig();
+            if (config.enabled) {
+                return communicatorFactory(config.type, config.params);
+            }
+            return null;
         }
     };
 

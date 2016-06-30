@@ -20,14 +20,15 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
+use oat\taoQtiTest\models\runner\QtiRunnerRequiredException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
-use qtism\runtime\tests\AssessmentTestSessionState;
 use \oat\taoTests\models\runner\CsrfToken;
-use \oat\taoTests\models\runner\SessionCsrfToken;
+use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -72,7 +73,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getCsrf()
     {
         if (!$this->csrf) {
-            $this->csrf = new SessionCsrfToken('TEST_RUNNER');
+            $this->csrf = new TestCsrfToken($this->getSessionId());
         }
         return $this->csrf;
     }
@@ -101,6 +102,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * Gets the identifier of the test session
+     * @return string
+     */
+    protected function getSessionId()
+    {
+        if ($this->hasRequestParameter('testServiceCallId')) {
+            return $this->getRequestParameter('testServiceCallId');
+        } else {
+            return $this->getRequestParameter('serviceCallId');
+        }
+    }
+
+    /**
      * Gets the test service context
      * @param bool [$check] Checks the context after create. Default to true.
      * @param bool [$checkToken] Checks the security token.
@@ -126,11 +140,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 }
             }
 
-            if ($this->hasRequestParameter('testServiceCallId')) {
-                $testExecution = $this->getRequestParameter('testServiceCallId');
-            } else {
-                $testExecution = $this->getRequestParameter('serviceCallId');
-            }
+            $testExecution = $this->getSessionId();
             $this->serviceContext = $this->runnerService->getServiceContext($testDefinition, $testCompilation, $testExecution, $check);
         }
 
@@ -240,6 +250,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
+
+            if ($this->hasRequestParameter('clientState')) {
+                $clientState = $this->getRequestParameter('clientState');
+                if ('paused' == $clientState) {
+                    $this->runnerService->pause($serviceContext);
+                    $this->runnerService->check($serviceContext);
+                }
+            }
+
             $result = $this->runnerService->init($serviceContext);
 
             $response = [
@@ -346,7 +365,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $stateId = $this->getStateId();
             $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
             if (!count($itemState)) {
-                $itemState = new StdClass();
+                $itemState = new stdClass();
             }
 
             // TODO: make a better implementation
@@ -378,6 +397,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     'rubrics' => $rubrics
                 ];
             }
+
+            $this->runnerService->startTimer($serviceContext);
             
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -400,38 +421,31 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemRef = $this->getRequestParameter('itemDefinition');
+        $itemDuration = $this->getRequestParameter('itemDuration');
 
         $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
+        if (isset($data['itemDuration'])) {
+            $itemDuration = $data['itemDuration'];
+        }
 
-        $state = isset($data['itemState']) ? $data['itemState'] : new StdClass();
+        $state = isset($data['itemState']) ? $data['itemState'] : new stdClass();
         $itemResponse = isset($data['itemResponse']) ? $data['itemResponse'] : [];
 
         try {
             $serviceContext = $this->getServiceContext(false);
-            $stateId = $this->getStateId();
-            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::CLOSED) {
-                throw new QtiRunnerClosedException();
-            }
-            $storeResponse = true;
 
-            try {
-                // do not allow to store the response if the session is in a wrong state
-                $this->runnerService->check($serviceContext);
-            } catch (QtiRunnerPausedException $e) {
-                // allow to store the state but prevent to store the response
-                $storeResponse = false;
-                \common_Logger::i('Store item state after a test session pause');
-        }
-
-            $successState = $this->runnerService->setItemState($serviceContext, $stateId, $state);
-
-            if ($storeResponse) {
-                $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
-                $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
+            if (!$this->runnerService->isTerminated($serviceContext)) {
+                $this->runnerService->endTimer($serviceContext, $itemDuration);
+                $successState = $this->runnerService->setItemState($serviceContext, $this->getStateId(), $state);
             } else {
-                $successResponse = true;
-                $displayFeedback = false;
-    }
+                $successState = false;
+            }
+
+            // do not allow to store the response if the session is in a wrong state
+            $this->runnerService->check($serviceContext);
+
+            $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $itemResponse);
+            $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
 
             $response = [
                 'success' => $successState && $successResponse,
@@ -440,12 +454,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($displayFeedback == true) {
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
-                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
             }
 
             $this->runnerService->persist($serviceContext);
 
+        } catch (QtiRunnerRequiredException $e) {
+            // we need to restart timer
+            $this->runnerService->startTimer($this->getServiceContext());
+
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+            
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -496,9 +517,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
+        $itemDuration = $this->getRequestParameter('itemDuration');
 
         try {
             $serviceContext = $this->getServiceContext();
+            $this->runnerService->endTimer($serviceContext, $itemDuration);
+            
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 
             $response = [
@@ -751,23 +775,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Used to manage time
+     * Manage the bidirectional communication
      */
-    public function time()
+    public function messages()
     {
+        // close the PHP session to prevent session overwriting and loss of security token for secured queries
+        session_write_close();
+
         $code = 200;
 
         try {
-            if($this->hasRequestParameter('timerPaused')){
-                $duration = floatval($this->getRequestParameter('timerPaused'));
-                if($duration > 0){
-                    $serviceContext = $this->getServiceContext(false);
-                    $this->runnerService->updateTimers($serviceContext, $duration);
-                    $this->runnerService->persist($serviceContext);
-                }
+            $input = \taoQtiCommon_helpers_Utils::readJsonPayload();
+            if (!$input) {
+                $input = [];
             }
+
+            $serviceContext = $this->getServiceContext(false, false);
+
+            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+
             $response = [
-                'success' => true
+                'responses' => $communicationService->processInput($serviceContext, $input),
+                'messages' => $communicationService->processOutput($serviceContext),
+                'success' => true,
             ];
 
         } catch (common_Exception $e) {
@@ -775,6 +806,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->returnJson($response, $code);
+        $this->returnJson($response, $code, false);
     }
 }
