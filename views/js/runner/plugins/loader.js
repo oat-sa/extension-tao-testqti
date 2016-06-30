@@ -56,8 +56,7 @@ define([
             nextSection,
             skip,
             comment,
-            calculator,
-            itemThemeSwitcher
+            calculator
 ) {
     'use strict';
 
@@ -68,6 +67,6 @@ define([
         content    : [rubricBlock, overlay, dialog, feedback, exitMessages, loading],
         controls   : [title, timer, progressbar, duration, connectivity, testState],
         navigation : [review, previous, next, nextSection, skip],
-        tools      : [comment, calculator, itemThemeSwitcher]
+        tools      : [comment, calculator]
     });
 });

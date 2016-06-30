@@ -27,14 +27,11 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
+    'ui/themes',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
-], function ($, _, __, pluginFactory, hider, buttonTpl, commentTpl) {
+], function ($, _, __, pluginFactory, hider, themeHandler, buttonTpl, itemThemeSwitcherTpl) {
     'use strict';
-
-    var defaults = {
-        enabled: false
-    };
 
     /**
      * Returns the configured plugin
@@ -49,18 +46,12 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            // var testData = testRunner.getTestData() || {};
-            // var testConfig = testData.config || {};
-            // var pluginsConfig = testConfig.plugins || {};
-            // var itemThemeSwitcherConfig = _.defaults(pluginsConfig.itemThemeSwitcher || {}, defaults);
-            //
-            function togglePlugin() {
-                if (true === true) { //todo: change that !
-                    self.show();
-                } else {
-                    self.hide();
-                }
-            }
+            var themesConfig = themeHandler.get('items') || {};
+            var state = {
+                availableThemes: [],
+                defaultTheme: '',
+                selectedTheme: ''
+            };
 
             //build element (detached)
             this.$button = $(buttonTpl({
@@ -70,76 +61,76 @@ define([
                 text: __('Color contrast')
             }));
 
+            //init plugin state
+            if (themesConfig) {
+                if (themesConfig.default) {
+                    state.defaultTheme = themesConfig.default;
+                    state.selectedTheme = themesConfig.default;
+                }
+                if (themesConfig.available) {
+                    _.forEach(themesConfig.available, function (theme) {
+                        state.availableThemes.push({
+                            id: theme.id,
+                            label: theme.name
+                        });
+                    });
+                }
+            }
+
             //get access to controls
-            this.$form = $(commentTpl()).appendTo(this.$button);
-            // this.$input = this.$button.find('[data-control="qti-comment-text"]');
-            // this.$cancel = this.$button.find('[data-control="qti-comment-cancel"]');
-            // this.$submit = this.$button.find('[data-control="qti-comment-send"]');
+            this.$menu = $(itemThemeSwitcherTpl({
+                themes: state.availableThemes
+            }));
+            this.$menu.appendTo(this.$button);
+            this.$ul = this.$button.find('[data-control="item-theme-switcher-list"]');
+
+            //handle state change
+            function changeTheme(id) {
+                var $qtiItem = $('.qti-item');
+                if (state.selectedTheme) {
+                    self.$ul.find('[data-control="' + state.selectedTheme + '"]').removeClass('selected');
+                }
+                state.selectedTheme = id;
+
+                self.$ul.find('[data-control="' + state.selectedTheme + '"]').addClass('selected');
+
+                if ($qtiItem) {
+                    _.defer(function(){
+                        $qtiItem.trigger('themechange', [state.selectedTheme]);
+                    });
+                }
+            }
 
             //attach behavior
             this.$button.on('click', function (e) {
-                //prevent action if the click is made inside the form which is a sub part of the button
-                if ($(e.target).closest('[data-control="qti-comment"]').length) {
-                    return;
-                }
-
                 e.preventDefault();
-
                 if (self.getState('enabled') !== false) {
-                    //just show/hide the form
-                    hider.toggle(self.$form);
-                    if (!hider.isHidden(self.$form)) {
-                        //reset the form on each display
-                        // self.$input.val('').focus();
-                    }
+                    hider.toggle(self.$menu);
                 }
             });
 
-            /*
-            //hide the form without submit
-            this.$cancel.on('click', function () {
-                hider.hide(self.$form);
+            this.$ul.find('li').on('click', function (e) {
+                var themeId = e.currentTarget.getAttribute('data-control');
+                e.preventDefault();
+                changeTheme(themeId);
             });
-
-            //submit the comment, then hide the form
-            this.$submit.on('click', function () {
-                var comment = self.$input.val();
-
-                if (comment) {
-                    self.disable();
-
-                    testRunner.getProxy()
-                        .callTestAction('comment', {
-                            comment: comment
-                        })
-                        .then(function () {
-                            hider.hide(self.$form);
-                            self.enable();
-                        })
-                        .catch(function () {
-                            hider.hide(self.$form);
-                            self.enable();
-                        });
-                }
-            });
-            */
 
             //start disabled
-            togglePlugin();
             this.disable();
 
             //update plugin state based on changes
             testRunner
-                .on('loaditem', togglePlugin)
+                .on('loaditem', function() {
+                    self.show();
+                })
                 .on('renderitem', function () {
                     self.enable();
+                    changeTheme(state.selectedTheme);
                 })
                 .on('unloaditem', function () {
                     self.disable();
                 });
         },
-
-
 
 
         /**
@@ -169,7 +160,7 @@ define([
          * Disable the button
          */
         disable: function disable() {
-            hider.hide(this.$form);
+            hider.hide(this.$menu);
             this.$button.prop('disabled', true)
                 .addClass('disabled');
         },
@@ -185,7 +176,7 @@ define([
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$form);
+            hider.hide(this.$menu);
             hider.hide(this.$button);
         }
     });
