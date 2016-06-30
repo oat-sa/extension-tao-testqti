@@ -135,20 +135,6 @@ define([
                     });
                 }
             }
-            
-            /**
-             * Is calculator activated ? if not, then we hide the plugin
-             */
-            function togglePlugin(){
-                //var context = testRunner.getTestContext();
-                //to be activated always
-                /*if(context.options.zoom) {
-                    self.show();
-                }else{
-                    self.hide();
-                }*/
-                self.show();
-            }
 
             //build element (detached)
             this.$buttonZoomOut = $(buttonTpl({
@@ -164,8 +150,6 @@ define([
                 icon : 'add',
                 text : __('Zoom in')
             }));
-
-            this.zoom = standard;
             
             //attach behavior
             this.$buttonZoomOut.on('click', function (e){
@@ -181,13 +165,15 @@ define([
             });
             
             //start disabled
-            togglePlugin();
+            this.show();
             this.disable();
 
             //update plugin state based on changes
             testRunner
                 .on('loaditem', function (){
-                    togglePlugin();
+                    self.zoom = standard;
+
+                    self.show();
                     self.disable();
                 })
                 .on('renderitem', function (){
