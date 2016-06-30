@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -499,7 +499,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                     // If items did not produce errors, we import the test definition.
                     if ($itemError === false) {
-                        common_Logger::i('Importing test...');
+                        $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
+                        common_Logger::i("Importing test with manifest identifier '${qtiTestResourceIdentifier}'...");
 
                         // Second step is to take care of the test definition and the related media (auxiliary files).
 
@@ -515,7 +516,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             
-                            // 4. if $targetClass does not contain any instances (because everything resolved by class lookups),
+                            // 4. Import metadata for the resource (use same mechanics as item resources).
+                            // Metadata will be set as property values.
+                            $itemImportService->importResourceMetadata(
+                                $metadataValues,
+                                $qtiTestResource,
+                                $testResource,
+                                $metadataInjectors
+                            );
+                            
+                            // 5. if $targetClass does not contain any instances (because everything resolved by class lookups),
                             // Just delete it.
                             if ($targetClass->countInstances() == 0) {
                                 $targetClass->delete();
