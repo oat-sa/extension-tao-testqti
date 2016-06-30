@@ -35,8 +35,7 @@ define([
     'taoQtiTest/runner/plugins/navigation/nextSection',
     'taoQtiTest/runner/plugins/navigation/skip',
     'taoQtiTest/runner/plugins/tools/comment/comment',
-    'taoQtiTest/runner/plugins/tools/calculator',
-    'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
+    'taoQtiTest/runner/plugins/tools/calculator'
 ], function(pluginLoader,
             rubricBlock,
             overlay,
@@ -56,8 +55,7 @@ define([
             nextSection,
             skip,
             comment,
-            calculator
-) {
+            calculator) {
     'use strict';
 
     /**
