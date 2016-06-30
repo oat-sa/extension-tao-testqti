@@ -70,19 +70,13 @@ define([
 
 
 
-
-    /*
-    QUnit.asyncTest('timer.init', function(assert) {
+    QUnit.asyncTest('itemThemeSwitcher.init', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(timer.polling.is('stopped'), true, 'The timer must not start the polling before an item is loaded');
-                assert.equal(timer.stopwatch.is('started'), false, 'The timer must not start the countdown before an item is loaded');
-                assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
-                assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
-                assert.equal(timer.getState('init'), true, 'The timer is initialised');
+                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
 
                 QUnit.start();
             })
@@ -94,21 +88,22 @@ define([
     });
 
 
-    QUnit.asyncTest('timer.render', function(assert) {
+
+    QUnit.asyncTest('itemThemeSwitcher.render', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
-                assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
+                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
+                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
 
-                timer.render()
+                switcher.render()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
+                        var $container = runner.getAreaBroker().getToolboxArea();
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
+                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
 
                         QUnit.start();
                     })
@@ -126,39 +121,33 @@ define([
     });
 
 
-    QUnit.asyncTest('timer.destroy', function(assert) {
+    QUnit.asyncTest('itemThemeSwitcher.destroy', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(timer.getState('init'), true, 'The timer is initialised');
-                assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
-                assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
+                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
+                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
+                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
 
-                timer.render()
+                switcher.render()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
+                        var $container = runner.getAreaBroker().getToolboxArea();
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
+                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
 
-                        timer.enable()
+                        switcher.enable()
                             .then(function() {
-                                assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
-                                assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                                assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
-                                assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
+                                assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
 
-                                timer.destroy()
+                                switcher.destroy()
                                     .then(function() {
-                                        var $container = runner.getAreaBroker().getControlArea();
+                                        var $container = runner.getAreaBroker().getToolboxArea();
 
-                                        assert.equal(timer.getState('init'), false, 'The timer is destroyed');
-                                        assert.equal($container.find(timer.$element).length, 0, 'The timer has removed its content from the layout');
-
-                                        assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                        assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
+                                        assert.equal(switcher.getState('init'), false, 'The switcher is destroyed');
+                                        assert.equal($container.find(switcher.$menu).length, 0, 'The switcher has removed its content from the layout');
 
                                         QUnit.start();
                                     })
@@ -188,27 +177,22 @@ define([
     });
 
 
-    QUnit.asyncTest('timer.enable', function(assert) {
+    QUnit.asyncTest('itemThemeSwitcher.enable', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(timer.getState('init'), true, 'The timer is initialised');
-                assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
+                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
+                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
 
-                timer.enable()
+                switcher.enable()
                     .then(function() {
-                        assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
-                        assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                        assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
-                        assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
+                        assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
 
-                        timer.destroy()
+                        switcher.destroy()
                             .then(function() {
-                                assert.equal(timer.getState('init'), false, 'The timer is destroyed');
-                                assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
+                                assert.equal(switcher.getState('init'), false, 'The switcher is destroyed');
 
                                 QUnit.start();
                             })
@@ -232,28 +216,22 @@ define([
     });
 
 
-    QUnit.asyncTest('timer.disable', function(assert) {
+    QUnit.asyncTest('itemThemeSwitcher.disable', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(timer.getState('init'), true, 'The timer is initialised');
-                assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
+                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
+                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
 
-                timer.enable()
+                switcher.enable()
                     .then(function() {
-                        assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
-                        assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                        assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
-                        assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
+                        assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
 
-                        timer.disable()
+                        switcher.disable()
                             .then(function() {
-                                assert.equal(timer.getState('enabled'), false, 'The timer is disabled');
-                                assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                assert.equal(timer.stopwatch.is('started'), true, 'The timer has keeped the countdown');
-                                assert.equal(timer.stopwatch.is('running'), false, 'The timer is not running the countdown');
+                                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
 
                                 QUnit.start();
                             })
@@ -277,33 +255,33 @@ define([
     });
 
 
-    QUnit.asyncTest('timer.show/timer.hide', function(assert) {
+    QUnit.asyncTest('itemThemeSwitcher.show/itemThemeSwitcher.hide', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
 
-        timer.init()
+        switcher.init()
             .then(function() {
-                assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
-                assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
+                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
+                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
 
-                timer.render()
+                switcher.render()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
-                        timer.setState('visible', true);
+                        var $container = runner.getAreaBroker().getToolboxArea();
+                        switcher.setState('visible', true);
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal(timer.getState('visible'), true, 'The timer is visible');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
+                        assert.equal(switcher.getState('visible'), true, 'The switcher is visible');
+                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
 
-                        timer.hide()
+                        switcher.hide()
                             .then(function() {
-                                assert.equal(timer.getState('visible'), false, 'The timer is not visible');
-                                assert.equal(timer.$element.css('display'), 'none', 'The timer element is hidden');
+                                assert.equal(switcher.getState('visible'), false, 'The switcher is not visible');
+                                assert.equal(switcher.$button.css('display'), 'none', 'The switcher element is hidden');
 
-                                timer.show()
+                                switcher.show()
                                     .then(function() {
-                                        assert.equal(timer.getState('visible'), true, 'The timer is visible');
-                                        assert.notEqual(timer.$element.css('display'), 'none', 'The timer element is visible');
+                                        assert.equal(switcher.getState('visible'), true, 'The switcher is visible');
+                                        assert.notEqual(switcher.$button.css('display'), 'none', 'The switcher element is visible');
 
                                         QUnit.start();
                                     })
@@ -331,5 +309,4 @@ define([
                 QUnit.start();
             });
     });
-    */
 });
