@@ -16,7 +16,6 @@
  *
  */
 
-use \Request;
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
@@ -54,7 +53,7 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
         $file = tao_helpers_Http::getUploadedFile("qtiPackage");
         $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
         if (!in_array($mimeType, self::$accepted_types)) {
-            return new common_report_Report(common_report_Report::TYPE_ERROR, __("Incorrect File Type"));
+            $this->returnFailure(new common_exception_BadRequest());
         } else {
             $report = $this->service->importQtiTest($file['tmp_name']);
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
