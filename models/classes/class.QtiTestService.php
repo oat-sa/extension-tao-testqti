@@ -30,6 +30,7 @@ use qtism\data\AssessmentItemRef;
 use oat\oatbox\filesystem\FileSystemService;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\File;
+use League\Flysystem\Directory;
 
 /**
  * the QTI TestModel service.
@@ -837,6 +838,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
         return count($itemRefs);
     }
+
+    /**
+     * 
+     * @param core_kernel_classes_Resource $test
+     * @return \League\Flysystem\Directory
+     */
+    public function getQtiTestDir(core_kernel_classes_Resource $test)
+    {
+        $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $dir = $this->createContent($test);
+        }
+        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
+        $fs = $fss->getFilesystem($dir->getFileSystem()->getUri());
+        return new Directory($fs, $dir->getRelativePath());
+    }
     
     /**
      * Return the File containing the test definition
@@ -847,19 +864,31 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     private function getQtiTestFile(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getTestFile($test);
-        if (is_null($dir)) {
-            $dir = $this->createContent($test);
-        }
-        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
-        $fs = $fss->getFilesystem($dir->getFileSystem()->getUri());
-        $contents = $fs->listContents($dir->getRelativePath(), true);
-        foreach ($contents as $object) {
+        $dir = $this->getQtiTestDir($test);
+        foreach ($dir->listContents(true) as $object) {
             if ($object['basename'] === TAOQTITEST_FILENAME) {
-                return new File($fs, $object['path']);
+                return new File($dir->getFilesystem(), $object['path']);
             }
         }
         throw new Exception('No QTI-XML test file found.');
+    }
+    
+    /**
+     * 
+     * @param core_kernel_classes_Resource $test
+     * @throws Exception
+     * @return string
+     */
+    public function getRelTestPath(core_kernel_classes_Resource $test)
+    {
+        $dir = $this->getQtiTestDir($test);
+        foreach ($dir->listContents(true) as $object) {
+            if ($object['basename'] === TAOQTITEST_FILENAME) {
+                $relPath = str_replace($dir->getPath(), '', $object['path']);
+                return $relPath;
+            }
+        }
+        throw new Exception('No QTI-XML test file found.'); 
     }
 
     /**

@@ -38,7 +38,9 @@ use qtism\data\state\ValueCollection;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\utils\Url;
+use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
+use League\Flysystem\FileExistsException;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -245,9 +247,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         // Extra path.
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testContentPath = $testService->getDocPath($this->getResource());
-        $testDataPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
-        $this->setExtraPath(str_replace(array($testDataPath, TAOQTITEST_FILENAME), '', $testContentPath));
+        $testDefinitionDir = dirname($testService->getRelTestPath($this->getResource()));
+        $this->setExtraPath($testDefinitionDir);
 
         // Initialize rendering engine.
         $renderingEngine = new XhtmlRenderingEngine();
@@ -346,6 +347,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         }
         catch (Exception $e) {
+            var_dump($e->getTraceAsString());
             common_Logger::e($e->getMessage());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
@@ -451,27 +453,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function copyPrivateResources() {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
+        $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
 
         $privateDir = $this->getPrivateDirectory();
-        $subContent = tao_helpers_File::scandir($testPath, array('recursive' => false, 'absolute' => true));
-
-        // Recursive copy of each root level resources.
-        foreach ($subContent as $subC) {
-            if (is_file($subC)) {
-                $privatePathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $subC);
-                if (!$privateDir->has($privatePathFile)) {
-                    try {
-                        if (($handle = fopen($subC, 'r')) === false) {
-                            throw new \InvalidArgumentException('Unable to open file');
-                        }
-                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
-                        $privateDir->writeStream($privatePathFile, $stream);
-                        $stream->close();
-                    } catch (\InvalidArgumentException $e) {
-                        common_Logger::e('Unable to copy file into private directory: ' . basename($subC));
-                    }
-                }
+        foreach ($testDefinitionDir->listContents(true) as $object) {
+            if ($object['type'] === 'file') {
+                $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
+                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->readStream($object['path']));
             }
         }
     }
@@ -608,26 +596,22 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function copyPublicResources()
     {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
+        $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
+        $filesystem = $testDefinitionDir->getFileSystem();
+        
         $publicCompiledDocDir = $this->getPublicDirectory();
-
-        foreach (tao_helpers_File::scandir($testPath, array('recursive' => true, 'only' => tao_helpers_File::$FILE, 'absolute' => true)) as $file) {
-            $mime = tao_helpers_File::getMimeType($file, true);
-            $pathinfo = pathinfo($file);
-            
-            // Exclude CSS files because already copied when dealing with rubric blocks.
-            if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                $publicPathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $file);
-                if (!$publicCompiledDocDir->has($publicPathFile)) {
+        foreach ($testDefinitionDir->listContents(true) as $object) {
+            if ($object['type'] === 'file') {
+                $mime = $filesystem->getMimetype($object['path']);
+                $pathinfo = pathinfo($object['path']);
+                
+                if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
+                    $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
                     try {
-                        if (($handle = fopen($file,'r'))===false) {
-                            throw new \InvalidArgumentException('Unable to open file');
-                        }
-                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
-                        $publicCompiledDocDir->writeStream($publicPathFile, $stream);
-                        $stream->close();
-                    } catch (\InvalidArgumentException $e) {
-                        common_Logger::e('Unable to copy file into public directory: ' . $file);
+                        common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
+                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->readStream($object['path']));
+                    } catch (FileExistsException $e) {
+                        common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                     }
                 }
             }
