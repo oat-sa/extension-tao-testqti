@@ -347,7 +347,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         }
         catch (Exception $e) {
-            var_dump($e->getTraceAsString());
             common_Logger::e($e->getMessage());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
