@@ -65,9 +65,8 @@ class taoQtiTest_helpers_ItemResolver implements Resolver {
         // where it is supposed to be located.
         
         // strip xinclude, we don't need that at the moment.
-        $item = $this->service->getDataItemByRdfItem($this->getResource($url));
+        $raw = $this->service->getXmlByRdfItem($this->getResource($url));
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
-        $raw = $item->toXML(false);
         $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
         
         file_put_contents($tmpfile, $raw);
