@@ -69,7 +69,7 @@
                         }
                     },
                     "400": {
-                        "description": "Mising or invalid QTI test package",
+                        "description": "Missing or invalid QTI test package",
                         "examples": {
                             "application/json": {
                                 "success": false,
