@@ -371,10 +371,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
-        $itemResolver = new taoQtiTest_helpers_ItemResolver(Service::singleton());
+        $resolver = new taoQtiTest_helpers_ItemResolver(Service::singleton());
         $originalDoc = $testService->getDoc($test);
         
-        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
+        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $resolver, $resolver);
         common_Logger::t("QTI Test XML transformed in a compact version.");
         
         return $compiledDoc;
