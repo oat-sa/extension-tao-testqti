@@ -38,6 +38,7 @@ use qtism\data\state\ValueCollection;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\utils\Url;
+use oat\taoQtiItem\model\qti\Service;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -370,10 +371,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
-        $itemResolver = new taoQtiTest_helpers_ItemResolver('');
+        $resolver = new taoQtiTest_helpers_ItemResolver(Service::singleton());
         $originalDoc = $testService->getDoc($test);
         
-        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $itemResolver);
+        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $resolver, $resolver);
         common_Logger::t("QTI Test XML transformed in a compact version.");
         
         return $compiledDoc;

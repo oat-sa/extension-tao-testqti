@@ -21,6 +21,8 @@
 use oat\taoQtiItem\model\qti\Resource;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\php\PhpDocument;
+use oat\oatbox\service\ServiceManager;
+use oat\oatbox\filesystem\FileSystemService;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -35,7 +37,7 @@ class taoQtiTest_helpers_Utils {
      * by $qtiResource contains sub-directories, they will be created before copying the file (even
      * if $copy = false).
      * 
-     * @param core_kernel_file_File|string $testContent The pointer to the TAO Test Content folder.
+     * @param core_kernel_file_File $testContent The pointer to the TAO Test Content folder.
      * @param oat\taoQtiItem\model\qti\Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the IMS QTI Package) path to the resource file.
      * @param string $origin The path to the directory (root folder of extracted IMS QTI package) containing the QTI resource to be copied.
      * @param boolean $copy If set to false, the file will not be actually copied.
@@ -44,15 +46,13 @@ class taoQtiTest_helpers_Utils {
      * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @throws common_Exception If the copy fails.
      */
-    static public function storeQtiResource($testContent, $qtiResource, $origin, $copy = true, $rename = '') {
+    static public function storeQtiResource(core_kernel_file_File $testContent, $qtiResource, $origin, $copy = true, $rename = '') {
         if ($testContent instanceof core_kernel_file_File) {
-            $contentPath = $testContent->getAbsolutePath();
-        }
-        else if (is_string($testContent) === true) {
-            $contentPath = $testContent;
-        }
-        else {
-            throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+            $fss = ServiceManager::getServiceManager()->get(FileSystemService::SERVICE_ID);
+            $fs = $fss->getFileSystem($testContent->getFileSystem()->getUri());
+            $contentPath = $testContent->getRelativePath();
+        } else {
+            throw new InvalidArgumentException("The 'testContent' argument must be a core_kernel_file_File.");
         }
         
         $ds = DIRECTORY_SEPARATOR;
@@ -77,10 +77,6 @@ class taoQtiTest_helpers_Utils {
             $breadCrumb = rtrim($breadCrumb, $ds);
             $finalName = (empty($rename) === true) ? ($resourcePathinfo['filename'] . '.' . $resourcePathinfo['extension']) : $rename;
             $finalPath = $breadCrumb . $ds . $finalName;
-            
-            if (is_dir($breadCrumb) === false && @mkdir($breadCrumb, 0770, true) === false) {
-                throw new common_Exception("An error occured while creating the '${breadCrumb}' sub-directory where the QTI resource had to be copied.");
-            }
         }
         else {
             // The resource file is at the root of the archive.
@@ -94,9 +90,18 @@ class taoQtiTest_helpers_Utils {
             $origin = rtrim($origin, $ds);
             $sourcePath = $origin . $ds . str_replace('/', $ds, $filePath);
 
-            if (is_readable($sourcePath) === false || tao_helpers_File::copy($sourcePath, $finalPath) === false) {
+            if (is_readable($sourcePath) === false) {
                 throw new common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
             }
+            
+            $fh = fopen($sourcePath, 'r');
+            $success = $fs->writeStream($finalPath, $fh);
+            fclose($fh);
+            
+            if (!$success) {
+                throw new common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
+            }
+            
         }
         
         return $finalPath;
