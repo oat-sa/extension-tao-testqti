@@ -429,12 +429,24 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function explodeRubricBlocks(XmlCompactDocument $compiledDoc)
     {
-        $compiledDoc->setExplodeRubricBlocks(true);
+        $privateDir = $this->getPrivateDirectory();
+        $explodedRubricBlocks = $compiledDoc->explodeRubricBlocks();
+        
+        // Saving main test document...
         $data = $compiledDoc->saveToString();
         $stream = GuzzleHttp\Psr7\stream_for($data);
-        $privateDir = $this->getPrivateDirectory();
         $privateDir->writeStream('compact-test.xml', $stream);
         $stream->close();
+        
+        foreach ($explodedRubricBlocks as $href => $rubricBlock) {
+            $doc = new XmlDocument();
+            $doc->setDocumentComponent($rubricBlock);
+            
+            $data = $doc->saveToString();
+            $stream = GuzzleHttp\Psr7\stream_for($data);
+            $privateDir->writeStream($href, $stream);
+            $stream->close();
+        }
     }
     
     /**
