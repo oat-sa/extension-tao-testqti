@@ -64,6 +64,45 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @var RunnerConfig
      */
     protected $testConfig;
+    
+    /**
+     * Get the data folder from a given item definition
+     * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
+     * @return string the path
+     * @throws \common_Exception
+     */
+    private function loadItemData($itemRef, $path)
+    {
+        $directoryIds = explode('|', $itemRef);
+        if (count($directoryIds) < 3) {
+            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
+        }
+        
+        $itemUri = $directoryIds[0];
+        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2]);
+        
+        if ($directory->has($userDataLang))
+        {
+            $lang = $userDataLang;
+        } elseif ($directory->has(DEFAULT_LANG)) {
+            \common_Logger::i(
+                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
+            );
+            $lang = DEFAULT_LANG;
+        } else {
+            throw new \common_Exception(
+                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
+            );
+        }
+        try {
+            return $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+        } catch (FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
+        }
+    }
 
     /**
      * Get the data folder from a given item definition
@@ -462,16 +501,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
-            $itemDirectory = $this->getItemDataFolder($itemRef);
-            $itemFilePath = $itemDirectory . QtiJsonItemCompiler::ITEM_FILE_NAME;
+            return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
 
-            if (file_exists($itemFilePath)) {
-                return file_get_contents($itemFilePath);
-            } else {
-                throw new \tao_models_classes_FileNotFoundException(
-                    $itemFilePath . ' for item reference ' . $itemRef
-                );
-            }
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -680,23 +711,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $feedbacks = array();
 
         if ($context instanceof QtiRunnerServiceContext) {
-            $itemDirectory = $this->getItemDataFolder($itemRef);
-            $varEltPath    = $itemDirectory . QtiJsonItemCompiler::VAR_ELT_FILE_NAME;
-
-            if (file_exists($varEltPath)) {
-                $variableData = json_decode(file_get_contents($varEltPath), true); 
-                foreach( $variableData as $key => $element){
-                    if(isset($element['qtiClass']) && $element['qtiClass'] == 'modalFeedback'){
-                        $feedbacks[$key] = $element;
-                    }
-                }
-
-            } else {
-                throw new \tao_models_classes_FileNotFoundException(
-                    $varEltPath . ' for item reference' . $itemRef
-                );
-            }
-
+            return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1017,8 +1032,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
 
             $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
-            $basepath = $directory->getPath();
-            if (!file_exists($basepath.$userDataLang) && file_exists($basepath.DEFAULT_LANG)) {
+            if (!$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
             return $directory->getPublicAccessUrl().$userDataLang.'/';
