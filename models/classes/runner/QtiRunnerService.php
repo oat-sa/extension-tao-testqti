@@ -639,7 +639,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     }
                 }
 
-                if (($respCount = count($responses)) > 0 && $similar == $respCount) {
+                if ($this->getTestConfig()->getConfigValue('enableAllowSkipping') === true && ($respCount = count($responses)) > 0 && $similar == $respCount) {
                     throw new QtiRunnerRequiredException();
                 }
             }
