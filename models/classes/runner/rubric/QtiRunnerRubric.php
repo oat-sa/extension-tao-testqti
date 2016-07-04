@@ -60,7 +60,11 @@ class QtiRunnerRubric implements RunnerRubric
 
         ob_start();
         foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
-            include($compilationDirs['private']->getPath() . $rubric->getHref());
+            $data = $compilationDirs['private']->read($rubric->getHref());
+            $tmpFile = \tao_helpers_File::createTempDir().basename($rubric->getHref());
+            file_put_contents($tmpFile, $data);
+            include($tmpFile);
+            unlink($tmpFile);
         }
         $rubrics = ob_get_contents();
         ob_end_clean();
