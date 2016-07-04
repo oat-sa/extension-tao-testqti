@@ -254,4 +254,9 @@ return array(
             'params' => []
         ],
     ],
+    /*
+     * Enable Allow/Disallow Skipping feature.
+     * @type boolean
+     */
+    'enable-allow-skipping' => false
 );
