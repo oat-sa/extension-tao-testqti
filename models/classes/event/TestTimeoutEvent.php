@@ -37,15 +37,30 @@ class TestTimeoutEvent extends AbstractTestEvent
     protected $timeoutCode;
 
     /**
+     * @var boolean
+     */
+    protected $beforeTimeout;
+
+    /**
      * TestTimeoutEvent constructor.
      * @param AssessmentTestSession $session
      * @see \qtism\runtime\tests\AssessmentTestSessionException
      * @param $timeoutCode
+     * @param boolean $beforeTimeout whether event triggered before of after timeout
      */
-    public function __construct(AssessmentTestSession $session, $timeoutCode)
+    public function __construct(AssessmentTestSession $session, $timeoutCode, $beforeTimeout = true)
     {
         parent::__construct($session);
         $this->timeoutCode = $timeoutCode;
+        $this->beforeTimeout = $beforeTimeout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBeforeTimeout()
+    {
+        return $this->beforeTimeout === true;
     }
 
     /**

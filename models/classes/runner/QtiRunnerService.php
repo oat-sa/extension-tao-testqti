@@ -37,15 +37,12 @@ use qtism\common\enums\Cardinality;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
-use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use qtism\runtime\tests\AssessmentTestPlace;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -67,6 +64,45 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @var RunnerConfig
      */
     protected $testConfig;
+    
+    /**
+     * Get the data folder from a given item definition
+     * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
+     * @return string the path
+     * @throws \common_Exception
+     */
+    private function loadItemData($itemRef, $path)
+    {
+        $directoryIds = explode('|', $itemRef);
+        if (count($directoryIds) < 3) {
+            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
+        }
+        
+        $itemUri = $directoryIds[0];
+        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2]);
+        
+        if ($directory->has($userDataLang))
+        {
+            $lang = $userDataLang;
+        } elseif ($directory->has(DEFAULT_LANG)) {
+            \common_Logger::i(
+                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
+            );
+            $lang = DEFAULT_LANG;
+        } else {
+            throw new \common_Exception(
+                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
+            );
+        }
+        try {
+            return $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+        } catch (FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
+        }
+    }
 
     /**
      * Get the data folder from a given item definition
@@ -465,16 +501,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
-            $itemDirectory = $this->getItemDataFolder($itemRef);
-            $itemFilePath = $itemDirectory . QtiJsonItemCompiler::ITEM_FILE_NAME;
+            return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
 
-            if (file_exists($itemFilePath)) {
-                return file_get_contents($itemFilePath);
-            } else {
-                throw new \tao_models_classes_FileNotFoundException(
-                    $itemFilePath . ' for item reference ' . $itemRef
-                );
-            }
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -559,6 +587,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
+            /** @var TestSession $session */
             $session = $context->getTestSession();
             $currentItem  = $session->getCurrentAssessmentItemRef();
             $responses = new State();
@@ -570,12 +599,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
                 \common_Logger::e($msg);
             }
-
+            
             $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+
             if (is_array($response)) {
-                foreach ($response as $id => $resp) {
+                foreach ($response as $id => $responseData) {
                     try {
-                        $var = $filler->fill($id, $resp);
+                        $var = $filler->fill($id, $responseData);
                         // Do not take into account QTI File placeholders.
                         if (\taoQtiCommon_helpers_Utils::isQtiFilePlaceHolder($var) === false) {
                             $responses->setVariable($var);
@@ -588,6 +618,30 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
             } else {
                 \common_Logger::e('Invalid json payload');
+            }
+            
+            if (!\taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session)) {
+
+                $similar = 0;
+
+                /** @var ResponseVariable $responseVariable */
+                foreach ($responses as $responseVariable) {
+                    $value = $responseVariable->getValue();
+                    $default = $responseVariable->getDefaultValue();
+                    
+                    // Similar to default ?
+                    if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($value) === true) {
+                        if (\taoQtiTest_helpers_TestRunnerUtils::isQtiValueNull($default) === true) {
+                            $similar++;
+                        }
+                    } elseif ($value->equals($default) === true) {
+                        $similar++;
+                    }
+                }
+
+                if ($this->getTestConfig()->getConfigValue('enableAllowSkipping') === true && ($respCount = count($responses)) > 0 && $similar == $respCount) {
+                    throw new QtiRunnerRequiredException();
+                }
             }
 
             try {
@@ -657,23 +711,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $feedbacks = array();
 
         if ($context instanceof QtiRunnerServiceContext) {
-            $itemDirectory = $this->getItemDataFolder($itemRef);
-            $varEltPath    = $itemDirectory . QtiJsonItemCompiler::VAR_ELT_FILE_NAME;
-
-            if (file_exists($varEltPath)) {
-                $variableData = json_decode(file_get_contents($varEltPath), true); 
-                foreach( $variableData as $key => $element){
-                    if(isset($element['qtiClass']) && $element['qtiClass'] == 'modalFeedback'){
-                        $feedbacks[$key] = $element;
-                    }
-                }
-
-            } else {
-                throw new \tao_models_classes_FileNotFoundException(
-                    $varEltPath . ' for item reference' . $itemRef
-                );
-            }
-
+            return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -994,8 +1032,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
 
             $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
-            $basepath = $directory->getPath();
-            if (!file_exists($basepath.$userDataLang) && file_exists($basepath.DEFAULT_LANG)) {
+            if (!$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
             return $directory->getPublicAccessUrl().$userDataLang.'/';
@@ -1069,7 +1106,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        $event = new TestTimeoutEvent($session, $timeOutException->getCode());
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode(), true);
         $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
@@ -1109,6 +1146,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
                 break;
         }
+
+        $event = new TestTimeoutEvent($session, $timeOutException->getCode(), false);
+        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
 
         $this->continueInteraction($context);
     }
