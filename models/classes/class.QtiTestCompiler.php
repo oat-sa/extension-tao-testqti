@@ -41,6 +41,7 @@ use qtism\common\utils\Url;
 use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
+use League\Flysystem\File;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -507,25 +508,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
-
+        $testService = taoQtiTest_models_classes_QtiTestService::singleton();
+        $sourceDir = $testService->getQtiTestDir($this->getResource());
+        
         foreach ($rubricBlockRefs as $rubricRef) {
             
             $rubricRefHref = $rubricRef->getHref();
             $cssScoper = $this->getCssScoper();
             $renderingEngine = $this->getRenderingEngine();
             $markupPostRenderer = $this->getMarkupPostRenderer();
-            $compiledDocDir = $this->getPrivateDirectory()->getPath();
             $publicCompiledDocDir = $this->getPublicDirectory();
             $privateCompiledDocDir = $this->getPrivateDirectory();
-
-            $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-            $testPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
 
             // -- loading...
             common_Logger::t("Loading rubricBlock '" . $rubricRefHref . "'...");
             
             $rubricDoc = new XmlDocument();
-            $rubricDoc->load($compiledDocDir . $rubricRefHref);
+            $rubricDoc->loadFromString($this->getPrivateDirectory()->read($rubricRefHref));
             
             common_Logger::t("rubricBlock '" . $rubricRefHref . "' successfully loaded.");
             
@@ -562,19 +561,17 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
 
             foreach ($stylesheets as $rubricStylesheet) {
-                $stylesheetPath = taoQtiTest_helpers_Utils::storedQtiResourcePath($testPath . ltrim($this->getExtraPath(), '/'), $rubricStylesheet->getHref());
-
-                $publicPathFile = str_replace($testPath . DIRECTORY_SEPARATOR, '', $stylesheetPath);
-                if (!$publicCompiledDocDir->has($publicPathFile)) {
+                $relPath = trim($this->getExtraPath(), '/');
+                $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
+                    . $rubricStylesheet->getHref();
+                $sourceFile = new File($sourceDir->getFilesystem(), $sourceDir->getPath().DIRECTORY_SEPARATOR.$relPath);
+                
+                if (!$publicCompiledDocDir->has($relPath)) {
                     try {
-                        if (($handle = fopen($stylesheetPath,'r'))===false) {
-                            throw new \InvalidArgumentException('Unable to open file');
-                        }
-                        $stream = \GuzzleHttp\Psr7\stream_for($handle);
-                        $publicCompiledDocDir->writeStream($publicPathFile, $stream);
-                        $stream->close();
+                        $handle = $sourceFile->readStream();
+                        $publicCompiledDocDir->write($relPath, $handle);
                     } catch (\InvalidArgumentException $e) {
-                        common_Logger::e('Unable to copy file into public directory: ' . $stylesheetPath);
+                        common_Logger::e('Unable to copy file into public directory: ' . $relPath);
                     }
                 }
             }
@@ -641,14 +638,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If a remote resource cannot be retrieved.
      */
     protected function copyRemoteResources(RubricBlock $rubricBlock) {
-        $publicCompiledDocDir = $this->getPublicDirectory()->getPath();
         $ds = DIRECTORY_SEPARATOR;
-        $destination = $publicCompiledDocDir . trim($this->getExtraPath(), $ds) . $ds . TAOQTITEST_REMOTE_FOLDER . $ds;
-        
-        // If remote directory does not exist yet, create it.
-        if (file_exists($destination) === false) {
-            mkdir($destination, 0770, true);
-        }
+        $tmpDir = tao_helpers_File::createTempDir();
+        $destPath = trim($this->getExtraPath(), $ds) . $ds . TAOQTITEST_REMOTE_FOLDER . $ds;
         
         // Search for all class-attributes in QTI-XML that might reference a remote file.
         $search = $rubricBlock->getComponentsByClassName(array('a', 'object', 'img'));
@@ -665,8 +657,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             }
             
             if (isset($url) && !preg_match('@^' . ROOT_URL . '@', $url) && !Url::isRelative($url)) {
-                $finalDestination = taoItems_helpers_Deployment::retrieveFile($url, $destination);
-                $pathinfo = pathinfo($finalDestination);
+                 
+                $tmpFile = taoItems_helpers_Deployment::retrieveFile($url, $tmpDir);
+                $pathinfo = pathinfo($tmpFile);
+                $handle = fopen($tmpFile, 'r');
+                $this->getPublicDirectory()->write($destPath.$pathinfo['basename'], $handle);
+                fclose($handle);
+                unlink($tmpFile);
+                
                 
                 if ($finalDestination !== false) {
                     $newUrl =  TAOQTITEST_REMOTE_FOLDER . '/' . $pathinfo['basename'];
