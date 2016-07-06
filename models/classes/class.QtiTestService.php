@@ -458,13 +458,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
-                                    $isApip = ($qtiDependency->getType() === 'imsqti_apipitem_xmlv2p1');
-
                                     $itemReport = $itemImportService->importQtiItem(
                                         $folder, 
                                         $qtiDependency, 
                                         (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), 
-                                        $isApip,
                                         $dependencies['dependencies'],
                                         $metadataValues,
                                         $metadataInjectors,
