@@ -67,7 +67,7 @@ class taoQtiTest_models_classes_import_TestImportForm
     {
     	//create file upload form box
 		$fileElt = tao_helpers_form_FormFactory::getElement('source', 'AsyncFile');
-		$fileElt->setDescription(__("Add a zip file containing QTI tests and items"));
+		$fileElt->setDescription(__("Add a zip file containing QTI/APIP tests and items"));
     	if(isset($_POST['import_sent_qti'])){
 			$fileElt->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
 		}
@@ -87,7 +87,7 @@ class taoQtiTest_models_classes_import_TestImportForm
 		$disableValidationElt->setOptions(array("on" => ""));
 		$this->form->addElement($disableValidationElt);
 		*/
-		$this->form->createGroup('file', __('Import a QTI 2.1 Test Package'), array('source'));
+		$this->form->createGroup('file', __('Import a QTI/APIP Content Package'), array('source'));
 		
 		$qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
 		$qtiSentElt->setValue(1);
