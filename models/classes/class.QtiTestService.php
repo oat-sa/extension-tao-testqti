@@ -857,9 +857,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * If it doesn't exist, it will be created
      *
      * @param core_kernel_classes_Resource $test
+     * @throws \Exception If file is not found.
      * @return \League\Flysystem\File
      */
-    private function getQtiTestFile(core_kernel_classes_Resource $test)
+    public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
         foreach ($dir->listContents(true) as $object) {
@@ -926,7 +927,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         if ($createTestFile === true) {
             $emptyTestXml = $this->getQtiTestTemplateFileAsString();
 
-            $doc = new DOMDocument();
+            $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($emptyTestXml);
 
             // Set the test label as title.
@@ -942,16 +943,23 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             
             $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
 
-            try {
-                $file->write($doc->saveXML());
-            } catch (\League\Flysystem\FileExistsException $e) {
-                if (!$file->update($doc->saveXML())){
-                    $msg = "Unable to write raw QTI Test template.";
-                    throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
-                }
+            if (!$file->write($doc->saveXML())) {
+                $msg = "Unable to write raw QTI Test template.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
 
             common_Logger::i("Created QTI Test content for file '" . $directory->getUri() . "'.");
+        } else if ($file->exists()) {
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadXML($file->read());
+            
+            // Label update only.
+            $doc->documentElement->setAttribute('title', $test->getLabel());
+            
+            if (!$file->update($doc->saveXML())) {
+                $msg = "Unable to update QTI Test file.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+            }
         }
 
         $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
