@@ -115,8 +115,6 @@ define([
                             top : 'auto',
                             bottom : 45
                         });
-                        
-                        self.trigger('open');
                     }
                 }
             });

@@ -20,9 +20,10 @@
  */
 
 use oat\taoQtiItem\helpers\QtiFile;
-
-use qtism\data\storage\FileResolver;
 use qtism\common\ResolutionException;
+use qtism\common\Resolver;
+use oat\taoQtiItem\model\qti\Service;
+use oat\generis\model\OntologyAwareTrait;
 
 /**
  * The ItemResolver class implements the logic to resolve TAO Item URIs to
@@ -31,8 +32,18 @@ use qtism\common\ResolutionException;
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_helpers_ItemResolver extends FileResolver {
+class taoQtiTest_helpers_ItemResolver implements Resolver {
     
+    use OntologyAwareTrait;
+    
+    /**
+     * @var Service
+     */
+    private $service;
+    
+    public function __construct(Service $itemService) {
+        $this->service = $itemService;
+    }
     /**
      * Resolve the given TAO Item URI in the path to
      * the related QTI-XML file.
@@ -54,9 +65,8 @@ class taoQtiTest_helpers_ItemResolver extends FileResolver {
         // where it is supposed to be located.
         
         // strip xinclude, we don't need that at the moment.
-        $file = QtiFile::getQtiFilePath(new core_kernel_classes_Resource($url));
+        $raw = $this->service->getXmlByRdfItem($this->getResource($url));
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
-        $raw = file_get_contents($file);
         $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
         
         file_put_contents($tmpfile, $raw);

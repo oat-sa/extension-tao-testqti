@@ -185,9 +185,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     protected function retrieveTestMeta() {
         $directories = $this->getCompilationDirectory();
-        $privateDirectoryPath = $directories['private']->getPath();
-        $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
-        $this->testMeta = $meta;
+        $data = $directories['private']->read(TAOQTITEST_COMPILED_META_FILENAME);
+        $data = str_replace('<?php', '', $data);
+        $data = str_replace('?>', '', $data);
+        $this->testMeta = eval($data);
     }
 
     /**
