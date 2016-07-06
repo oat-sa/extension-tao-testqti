@@ -87,7 +87,7 @@ class taoQtiTest_models_classes_import_TestImportForm
 		$disableValidationElt->setOptions(array("on" => ""));
 		$this->form->addElement($disableValidationElt);
 		*/
-		$this->form->createGroup('file', __('Import a QTI 2.1 Test Package'), array('qti_desc', 'source'));
+		$this->form->createGroup('file', __('Import a QTI 2.1 Test Package'), array('source'));
 		
 		$qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
 		$qtiSentElt->setValue(1);
