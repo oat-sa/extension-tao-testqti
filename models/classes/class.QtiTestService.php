@@ -942,9 +942,13 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             
             $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
 
-            if (!$file->write($doc->saveXML())) {
-                $msg = "Unable to write raw QTI Test template.";
-                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+            try {
+                $file->write($doc->saveXML());
+            } catch (\League\Flysystem\FileExistsException $e) {
+                if (!$file->update($doc->saveXML())){
+                    $msg = "Unable to write raw QTI Test template.";
+                    throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+                }
             }
 
             common_Logger::i("Created QTI Test content for file '" . $directory->getUri() . "'.");
