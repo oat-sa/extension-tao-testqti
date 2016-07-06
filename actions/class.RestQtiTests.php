@@ -47,31 +47,36 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
      */
     public function import()
     {
+        $fileUploadName = "qtiPackage";
         if ($this->getRequestMethod() != Request::HTTP_POST) {
             throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
         }
-        $file = tao_helpers_Http::getUploadedFile("qtiPackage");
-        $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
-        if (!in_array($mimeType, self::$accepted_types)) {
-            $this->returnFailure(new common_exception_BadRequest());
-        } else {
-            $report = $this->service->importQtiTest($file['tmp_name']);
-            if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
-                $data = array();
-                foreach ($report as $r) {
-                    $values = $r->getData();
-                    $testid = $values->rdfsResource->getUri();
-                    foreach ($values->items as $item) {
-                        $itemsid[] = $item->getUri();
-                    }
-                    $data[] = array(
-                        'testId' => $testid,
-                        'testItems' => $itemsid);
-                }
-                return $this->returnSuccess($data);
+        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+            $file = tao_helpers_Http::getUploadedFile($fileUploadName);
+            $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
+            if (!in_array($mimeType, self::$accepted_types)) {
+                $this->returnFailure(new common_exception_BadRequest());
             } else {
-                return $this->returnFailure(new common_exception_InvalidArgumentType($report->getMessage()));
+                $report = $this->service->importQtiTest($file['tmp_name']);
+                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
+                    $data = array();
+                    foreach ($report as $r) {
+                        $values = $r->getData();
+                        $testid = $values->rdfsResource->getUri();
+                        foreach ($values->items as $item) {
+                            $itemsid[] = $item->getUri();
+                        }
+                        $data[] = array(
+                            'testId' => $testid,
+                            'testItems' => $itemsid);
+                    }
+                    return $this->returnSuccess($data);
+                } else {
+                    return $this->returnFailure(new common_exception_InvalidArgumentType($report->getMessage()));
+                }
             }
+        } else {
+            return $this->returnFailure(new common_exception_BadRequest());
         }
     }
 }
