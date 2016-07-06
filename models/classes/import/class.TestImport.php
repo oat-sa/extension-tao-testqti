@@ -34,7 +34,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
      * @see tao_models_classes_import_ImportHandler::getLabel()
      */
     public function getLabel() {
-    	return __('QTI Test Package');
+    	return __('QTI/APIP Test Content Package');
     }
     
     /**
