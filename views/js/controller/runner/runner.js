@@ -35,9 +35,10 @@ define([
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/plugins/loader',
+    'urlParser',
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
+             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader, urlParser) {
     'use strict';
 
 
@@ -73,6 +74,7 @@ define([
             renderTo: $('.runner')
         });
 
+        var params = {};
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
             .on('error', onError)
@@ -81,9 +83,23 @@ define([
                     $('.runner').removeClass('hidden');
                 });
             })
+            .on('pause', function(data) {
+                if (data && data.reason) {
+                    // change exit Url
+                    params.reason = data.reason;                    
+                }
+            })
             .after('destroy', function () {
+                
                 // at the end, we are redirected to the exit URL
-                window.location = config.exitUrl;
+                var url = config.exitUrl;
+                if (params && params.reason) {
+                    url = new urlParser(url);
+                    url.addParam('warning', params.reason);
+                    url = url.getUrl();
+                }
+                
+                window.location = url;
             })
             .init();
     }
