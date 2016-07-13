@@ -444,10 +444,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('3.1.0');
         }
+
+        $this->skip('3.1.0', '3.3.0');
         
-        $this->skip('3.1.0', '3.1.2');
-        
-        if ($this->isVersion('3.1.2')) {
+        if ($this->isVersion('3.3.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $oldConfigKey = 'qtiTestFolder';
             $oldFileSystemId = $ext->getConfig($oldConfigKey);
