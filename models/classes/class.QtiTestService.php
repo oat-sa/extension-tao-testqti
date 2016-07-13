@@ -861,9 +861,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     private function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
-        common_Logger::i('-------------> ' . $dir->getPath());
+
         foreach ($dir->listContents(true) as $object) {
-            common_Logger::i('-------------==== ' . $object['basename']);
+
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 return new File($dir->getFilesystem(), $object['path']);
             }
@@ -880,7 +880,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
-        \common_Logger::i('-------------> ' . $dir->getPath());
+
         foreach ($dir->listContents(true) as $object) {
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 $relPath = str_replace($dir->getPath(), '', $object['path']);
