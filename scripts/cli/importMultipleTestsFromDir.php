@@ -18,33 +18,29 @@ class importMultipleTestsFromDir implements Action
     protected function init()
     {
         $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
+        if (!file_exists($this->uploadDirectoryPath)) {
+            throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
+        }
 
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $directoriesConfig = \common_ext_ExtensionsManager::singleton()
-            ->getExtensionById('generis')
-            ->getConfig('filesystem')
-            ->getOptions();
 
-        foreach ($directoriesConfig['adapters'] as $key => $config) {
-            if (isset($config['options']) && (isset($config['options']['root']))) {
-                if (strpos($config['options']['root'], 'upload') !== false) {
-                    $this->uploadDirectoryUri = $key;
-                }
-            }
-        }
+        $this->uploadDirectoryUri = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('tao')
+            ->getConfig('defaultUploadFileSource');
 
     }
 
     public function __invoke($params = [])
     {
-        $this->init();
-
         try {
+            $this->init();
+
             $uploadFileSystem = new \core_kernel_fileSystem_FileSystem($this->uploadDirectoryUri);
 
             $dir = new \tao_models_classes_service_StorageDirectory(
                 $this->uploadDirectoryUri,
-                $uploadFileSystem, '', null
+                $uploadFileSystem,
+                '/import', null
             );
             $dir->setServiceLocator(ServiceManager::getServiceManager());
 
