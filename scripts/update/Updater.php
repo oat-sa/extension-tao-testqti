@@ -456,7 +456,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $fsService = $serviceManager->get(FileSystemService::SERVICE_ID);
             $fsService->unregisterFileSystem($oldFileSystemId);
             
-            $ext->unsetConfig(qtiTestFolder);
+            $ext->unsetConfig('qtiTestFolder');
             
             $addQtiTestFolder = new AddQtiTestFolder();
             $addQtiTestFolder->invoke(array());
