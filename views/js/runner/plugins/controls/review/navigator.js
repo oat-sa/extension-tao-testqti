@@ -230,13 +230,6 @@ define([
             scopeClass = _cssCls.scope[this.config.scope || _defaults.scope];
             $component.addClass(scopeClass);
 
-            // update component visibility
-            if (config.hidden) {
-                this.hide();
-            } else {
-                this.show();
-            }
-
             return this;
         },
 
