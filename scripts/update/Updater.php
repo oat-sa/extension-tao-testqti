@@ -23,6 +23,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\taoQtiTest\scripts\install\AddQtiTestFolder;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -443,5 +444,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('3.1.0', '3.3.0');
+        
+        if ($this->isVersion('3.3.0')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $ext->unsetConfig('qtiTestFolder');
+            
+            $addQtiTestFolder = new AddQtiTestFolder();
+            $addQtiTestFolder->__invoke(array());
+            $this->setVersion('4.0.0');
+        }
     }
 }

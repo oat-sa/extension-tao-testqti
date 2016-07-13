@@ -49,7 +49,7 @@ class taoQtiTest_helpers_Utils {
     static public function storeQtiResource(core_kernel_file_File $testContent, $qtiResource, $origin, $copy = true, $rename = '') {
         if ($testContent instanceof core_kernel_file_File) {
             $fss = ServiceManager::getServiceManager()->get(FileSystemService::SERVICE_ID);
-            $fs = $fss->getFileSystem($testContent->getFileSystem()->getUri());
+            $fs = $fss->getFileSystem('taoQtiTest');
             $contentPath = $testContent->getRelativePath();
         } else {
             throw new InvalidArgumentException("The 'testContent' argument must be a core_kernel_file_File.");

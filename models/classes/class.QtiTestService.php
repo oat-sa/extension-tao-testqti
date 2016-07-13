@@ -43,8 +43,6 @@ use League\Flysystem\Directory;
  */
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
 
-    const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
-
     const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
 
     /**
@@ -685,11 +683,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
                );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        if(!is_null($file)){
-            return new core_kernel_file_File($file);
-        }
-        return null;
+        
+        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
+        $fs = $fss->getFilesystem('taoQtiTest');
+        return new Directory($fs, md5($test->getUri()));
     }
 
     /**
@@ -850,9 +847,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         if (is_null($dir)) {
             $dir = $this->createContent($test);
         }
-        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
-        $fs = $fss->getFilesystem($dir->getFileSystem()->getUri());
-        return new Directory($fs, $dir->getRelativePath());
+        
+        return $dir;
     }
     
     /**
@@ -865,7 +861,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     private function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
+
         foreach ($dir->listContents(true) as $object) {
+
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 return new File($dir->getFilesystem(), $object['path']);
             }
@@ -882,6 +880,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
+
         foreach ($dir->listContents(true) as $object) {
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 $relPath = str_replace($dir->getPath(), '', $object['path']);
@@ -913,17 +912,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function createContent( core_kernel_classes_Resource $test, $createTestFile = true) {
 
-    	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
-				PROPERTY_FILE_FILESYSTEM,
-				PROPERTY_FILE_FILEPATH
-			));
-
-        $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
-        $path = ((string)current($props[PROPERTY_FILE_FILEPATH])).'/'. md5($test->getUri());
+        $repository = new core_kernel_versioning_Repository('taoQtiTest');
+        $path = md5($test->getUri());
 
         // $directory is the directory where test related resources will be stored.
         $directory = $repository->createFile('', $path );
-        $fs = $this->getServiceManager()->get(FileSystemService::SERVICE_ID)->getFileSystem($repository->getUri());
+        $fs = $this->getServiceManager()->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTest');
         $file = new File($fs, $path.DIRECTORY_SEPARATOR.TAOQTITEST_FILENAME);
         
         if ($createTestFile === true) {
@@ -988,29 +982,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
-     * Set the directory where the tests' contents are stored.
-     * @param core_kernel_file_File $folder
-     */
-    public function setQtiTestDirectory(core_kernel_file_File $folder)
-    {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
-    }
-
-    /**
      * Get the directory where the tests' contents are stored.
      *
-     * @return core_kernel_file_File
-     * @throws common_Exception
+     * @return \League\FlySystem\Directory
      */
     public function getQtiTestDirectory()
     {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $uri = $ext->getConfig(self::CONFIG_QTITEST_FOLDER);
-        if (empty($uri)) {
-            throw new common_Exception('No default repository defined for uploaded files storage.');
-        }
-        return new core_kernel_file_File($uri);
+        $fs = $this->getServiceManager()->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTest');
+        return new Directory($fs, '/');
     }
 
     /**
