@@ -430,6 +430,18 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.31.1');
         }
-        $this->skip('2.31.1', '2.37.0');
+
+        $this->skip('2.31.1', '3.0.0');
+        
+        if ($this->isVersion('3.0.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-allow-skipping'] = false;
+            $extension->setConfig('testRunner', $config);
+            
+            $this->setVersion('3.1.0');
+        }
+
+        $this->skip('3.1.0', '3.3.0');
     }
 }

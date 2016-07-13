@@ -21,6 +21,7 @@
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\data\View;
+use qtism\runtime\common\Container;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -261,8 +262,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @return boolean
      */
     static public function doesAllowSkipping(AssessmentTestSession $session) {
-        $doesAllowSkipping = false;
-        $navigationMode = $session->getCurrentNavigationMode();
+        $doesAllowSkipping = true;
         $submissionMode = $session->getCurrentSubmissionMode();
          
         $routeItem = $session->getRoute()->current();
@@ -272,7 +272,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $doesAllowSkipping = $routeControl->getItemSessionControl()->doesAllowSkipping();
         }
          
-        return $doesAllowSkipping && $navigationMode === NavigationMode::LINEAR && $submissionMode === SubmissionMode::INDIVIDUAL;
+        return $doesAllowSkipping && $submissionMode === SubmissionMode::INDIVIDUAL;
     }
     
     /**
@@ -1128,5 +1128,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function getCategories(AssessmentTestSession $session){
         return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+    }
+    
+    /**
+     * Whether or not $value is considered as a null QTI value.
+     * 
+     * @param $value
+     * @return boolean
+     */
+    static public function isQtiValueNull($value){
+        return is_null($value) === true || ($value instanceof QtiString && $value->getValue() === '') || ($value instanceof Container && count($value) === 0);
     }
 }

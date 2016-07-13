@@ -20,6 +20,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
+use oat\taoQtiTest\models\runner\QtiRunnerRequiredException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
@@ -453,12 +454,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($displayFeedback == true) {
                 //FIXME there is here a performance issue, at the end we need the defitions only once, not at each storage
-                $response['feedbacks']   = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
+                $response['feedbacks'] = $this->runnerService->getFeedbacks($serviceContext, $itemRef);
                 $response['itemSession'] = $this->runnerService->getItemSession($serviceContext);
             }
 
             $this->runnerService->persist($serviceContext);
 
+        } catch (QtiRunnerRequiredException $e) {
+            // we need to restart timer
+            $this->runnerService->startTimer($this->getServiceContext());
+
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+            
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);

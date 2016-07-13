@@ -20,7 +20,7 @@
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule
+class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
 {
     private static $accepted_types = array(
         'application/zip',
@@ -29,6 +29,11 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule
         'application/x-compressed'
     );
 
+    public function index()
+    {
+        $this->returnFailure(new \common_exception_NotImplemented('This API does not support this call.'));
+    }
+    
     public function __construct()
     {
         parent::__construct();
@@ -37,58 +42,41 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_CommonRestModule
     }
 
     /**
-     *
-     * Uploads and Import a QTI Test Package containing one or more QTI Test definitions.
-     *
-     * @param array file description
-     * @return common_report_Report An import report.
-     * @throws common_exception_InvalidArgumentType
+     * Import file entry point by using $this->service
+     * Check POST method & get valid uploaded file
      */
-    protected function importQtiPackage($file)
+    public function import()
     {
-        $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
-        if (!in_array($mimeType, self::$accepted_types)) {
-            return new common_report_Report(common_report_Report::TYPE_ERROR, __("Incorrect File Type"));
+        $fileUploadName = "qtiPackage";
+        if ($this->getRequestMethod() != Request::HTTP_POST) {
+            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
         }
-        return $this->service->importQtiTest($file['tmp_name']);
-    }
-
-    /**
-     * Requires qtiPackage as a parameter
-     */
-    protected function getParametersRequirements()
-    {
-        return array(
-            "post" => array(
-                "qtiPackage"
-            )
-        );
-    }
-
-    /**
-     * This code snippet import QTI Package
-     *
-     * @author Rashid Mumtaz & Absar - PCG Team - {absar.gilani6@gmail.com & rashid.mumtaz372@gmail.com}
-     * @return returnSuccess and returnFailure
-     */
-    protected function post()
-    {
-        $data = $this->importQtiPackage(tao_helpers_Http::getUploadedFile("qtiPackage"));
-        if ($data->getType() === common_report_Report::TYPE_ERROR) {
-            $e = new common_exception_Error($data->getMessage());
-            return $this->returnFailure($e);
-        } else {
-            foreach ($data as $r) {
-                $values = $r->getData();
-                $testid = $values->rdfsResource->getUri();
-                foreach ($values->items as $item) {
-                    $itemsid[] = $item->getUri();
+        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+            $file = tao_helpers_Http::getUploadedFile($fileUploadName);
+            $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
+            if (!in_array($mimeType, self::$accepted_types)) {
+                $this->returnFailure(new common_exception_BadRequest());
+            } else {
+                $report = $this->service->importQtiTest($file['tmp_name']);
+                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
+                    $data = array();
+                    foreach ($report as $r) {
+                        $values = $r->getData();
+                        $testid = $values->rdfsResource->getUri();
+                        foreach ($values->items as $item) {
+                            $itemsid[] = $item->getUri();
+                        }
+                        $data[] = array(
+                            'testId' => $testid,
+                            'testItems' => $itemsid);
+                    }
+                    return $this->returnSuccess($data);
+                } else {
+                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
                 }
-                $data = array(
-                    'testId' => $testid,
-                    'testItems' => $itemsid);
-                return $this->returnSuccess($data);
             }
+        } else {
+            return $this->returnFailure(new common_exception_BadRequest());
         }
     }
 }
