@@ -683,11 +683,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
                );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        if(!is_null($file)){
-            return new core_kernel_file_File($file);
-        }
-        return null;
+        
+        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
+        $fs = $fss->getFilesystem('taoQtiTest');
+        return new Directory($fs, md5($test->getUri()));
     }
 
     /**
@@ -848,9 +847,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         if (is_null($dir)) {
             $dir = $this->createContent($test);
         }
-        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
-        $fs = $fss->getFilesystem('taoQtiTest');
-        return new Directory($fs, $dir->getRelativePath());
+        
+        return $dir;
     }
     
     /**
@@ -863,7 +861,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     private function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
+        common_Logger::i('-------------> ' . $dir->getPath());
         foreach ($dir->listContents(true) as $object) {
+            common_Logger::i('-------------==== ' . $object['basename']);
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 return new File($dir->getFilesystem(), $object['path']);
             }
@@ -880,6 +880,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
+        \common_Logger::i('-------------> ' . $dir->getPath());
         foreach ($dir->listContents(true) as $object) {
             if ($object['basename'] === TAOQTITEST_FILENAME) {
                 $relPath = str_replace($dir->getPath(), '', $object['path']);
