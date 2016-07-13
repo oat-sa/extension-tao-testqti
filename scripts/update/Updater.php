@@ -27,8 +27,6 @@ use oat\taoQtiTest\scripts\install\AddQtiTestFolder;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\tao\scripts\update\OntologyUpdater;
-use oat\oatbox\service\ServiceManager;
-use oat\oatbox\filesystem\FileSystemService;
 
 /**
  *
@@ -449,17 +447,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         if ($this->isVersion('3.3.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $oldConfigKey = 'qtiTestFolder';
-            $oldFileSystemId = $ext->getConfig($oldConfigKey);
-            
-            $serviceManager = ServiceManager::getServiceManager();
-            $fsService = $serviceManager->get(FileSystemService::SERVICE_ID);
-            $fsService->unregisterFileSystem($oldFileSystemId);
-            
             $ext->unsetConfig('qtiTestFolder');
             
             $addQtiTestFolder = new AddQtiTestFolder();
-            $addQtiTestFolder->invoke(array());
+            $addQtiTestFolder->__invoke(array());
             $this->setVersion('4.0.0');
         }
     }
