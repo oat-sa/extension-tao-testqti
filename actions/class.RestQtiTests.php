@@ -72,7 +72,7 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
                     }
                     return $this->returnSuccess($data);
                 } else {
-                    return $this->returnFailure(new common_exception_InvalidArgumentType($report->getMessage()));
+                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
                 }
             }
         } else {
