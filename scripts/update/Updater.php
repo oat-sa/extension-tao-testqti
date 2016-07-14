@@ -443,5 +443,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('3.1.0', '3.3.0');
+        
+        if ($this->isVersion('3.3.0')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
+            $dir = new \core_kernel_file_File($uri);
+            
+            $fs = $dir->getFileSystem();
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
+            
+            $this->setVersion('4.0.0');
+        }
     }
 }
