@@ -1003,7 +1003,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $uri = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
         if (empty($uri)) {
-            throw new common_Exception('No default repository defined for uploaded files storage.');
+            throw new common_Exception('No default file system defined for QTI test files storage.');
         }
         return new core_kernel_versioning_Repository($uri);
     }
