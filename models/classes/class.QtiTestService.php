@@ -21,6 +21,7 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -43,7 +44,7 @@ use League\Flysystem\Directory;
  */
 class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
 
-    const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
+    const CONFIG_QTITEST_FILESYSTEM = 'qtiTestFolder';
 
     const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
 
@@ -88,6 +89,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $converter->fromJson($json);
 
             $saved = $this->saveDoc($test, $doc);
+
+            $this->getEventManager()->trigger(new TestUpdatedEvent($test->getUri()));
+
         }
         return $saved;
     }
@@ -913,13 +917,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function createContent( core_kernel_classes_Resource $test, $createTestFile = true) {
 
-    	$props = self::getQtiTestDirectory()->getPropertiesValues(array(
-				PROPERTY_FILE_FILESYSTEM,
-				PROPERTY_FILE_FILEPATH
-			));
-
-        $repository = new core_kernel_versioning_Repository(current($props[PROPERTY_FILE_FILESYSTEM]));
-        $path = ((string)current($props[PROPERTY_FILE_FILEPATH])).DIRECTORY_SEPARATOR. md5($test->getUri());
+        $repository = self::getQtiTestFileSystem();
+        $path = md5($test->getUri());
 
         // $directory is the directory where test related resources will be stored.
         $directory = $repository->createFile('', $path );
@@ -989,28 +988,28 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
     /**
      * Set the directory where the tests' contents are stored.
-     * @param core_kernel_file_File $folder
+     * @param core_kernel_versioning_Repository $folder
      */
-    public function setQtiTestDirectory(core_kernel_file_File $folder)
+    public function setQtiTestFileSystem(core_kernel_versioning_Repository $folder)
     {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
+        $ext->setConfig(self::CONFIG_QTITEST_FILESYSTEM, $folder->getUri());
     }
 
     /**
      * Get the directory where the tests' contents are stored.
      *
-     * @return core_kernel_file_File
+     * @return core_kernel_versioning_Repository
      * @throws common_Exception
      */
-    public function getQtiTestDirectory()
+    public function getQtiTestFileSystem()
     {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $uri = $ext->getConfig(self::CONFIG_QTITEST_FOLDER);
+        $uri = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
         if (empty($uri)) {
-            throw new common_Exception('No default repository defined for uploaded files storage.');
+            throw new common_Exception('No default file system defined for QTI test files storage.');
         }
-        return new core_kernel_file_File($uri);
+        return new core_kernel_versioning_Repository($uri);
     }
 
     /**
