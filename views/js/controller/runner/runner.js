@@ -69,12 +69,12 @@ define([
      */
     function initRunner(config) {
         var plugins = pluginLoader.getPlugins();
+        var reason = '';
 
         config = _.defaults(config, {
             renderTo: $('.runner')
         });
-
-        var reason = '';
+        
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
             .on('error', onError)
