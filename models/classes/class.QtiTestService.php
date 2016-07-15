@@ -21,6 +21,7 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -88,6 +89,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             $converter->fromJson($json);
 
             $saved = $this->saveDoc($test, $doc);
+
+            $this->getEventManager()->trigger(new TestUpdatedEvent($test->getUri()));
+
         }
         return $saved;
     }
