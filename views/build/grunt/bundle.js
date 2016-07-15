@@ -55,7 +55,7 @@ module.exports = function(grunt) {
             mainConfigFile : './config/requirejs.build.js',
             findNestedDependencies : true,
             paths : paths,
-            include: runtimeLibs.concat([ 'tpl', 'json']),
+            include: ['lib/require', 'loader/bootstrap'].concat(runtimeLibs),
             excludeShallow : ['mathJax', 'ckeditor'],
             exclude : ['json!i18ntr/messages.json'],
             name: "taoQtiTest/controller/runner/runner",
@@ -70,8 +70,8 @@ module.exports = function(grunt) {
         files: [
             { src: [out + '/taoQtiTest/controller/routes.js'],  dest: root + '/taoQtiTest/views/js/controllers.min.js' },
             { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' },
-            { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/qtiTestRunner.min.js' },
-            { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/qtiTestRunner.min.js.map' }
+            { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js' },
+            { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' }
         ]
     };
 

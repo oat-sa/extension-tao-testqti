@@ -3,7 +3,7 @@
     "info": {
         "version": "1.0.0",
         "title": "QTI Test REST API",
-        "description": "#### The QTI Test REST API\nAn API for the QTI Test specific actions. For generic CRUD actions on tests please see the taoTest Rest API\n"
+        "description": "#### The QTI Test REST API. An API for the QTI Test specific actions. For generic CRUD actions on tests please see the taoTest Rest API"
     },
     "schemes": [
         "https",
@@ -22,7 +22,7 @@
     "paths": {
         "/taoQtiTest/RestQtiTests/import": {
             "post": {
-                "description": "Import a QTI test package into the TAO platform.\n\nAvailable since Tao 3.1.\n",
+                "description": "Import a QTI test package into the TAO platform. Available since Tao 3.1.",
                 "tags": [
                     "test"
                 ],
