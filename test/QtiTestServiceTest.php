@@ -189,9 +189,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     {
         $attrValue = '"A & B < C"';
         
-        $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
-        $qtiTest->setLabel($attrValue);
-        $this->testService->createContent($qtiTest);
+        $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), $attrValue);
         $xmlFilePath = $this->testService->getDocPath($qtiTest);
         $this->assertTrue(file_exists($xmlFilePath));
         
