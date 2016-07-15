@@ -214,6 +214,14 @@ define([
 
             //change plugin state
             testRunner
+                .on('render', function () {
+                    if (isEnabled()) {
+                        self.show();
+                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                    } else {
+                        self.hide();
+                    }
+                })
                 .on('loaditem', function () {
                     var context = testRunner.getTestContext();
                     var map = testRunner.getTestMap();
@@ -225,10 +233,6 @@ define([
                             .updateConfig({
                                 canFlag: !context.isLinear && context.options.markReview
                             });
-                        self.show();
-                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
-                    } else {
-                        self.hide();
                     }
                 })
                 .on('enabletools', function () {
