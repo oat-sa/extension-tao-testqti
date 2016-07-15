@@ -31,7 +31,7 @@ class RestTestImportTest extends RestTestRunner
 {
     public function testImport()
     {
-        $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests';
+        $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests/import';
         $post_data = array(
             'qtiPackage' => new \CURLFile(__DIR__.'/samples/archives/basic/Basic.zip')
         );
@@ -45,14 +45,17 @@ class RestTestImportTest extends RestTestRunner
         $this->assertTrue(is_array($data), 'Should return json encoded array');
         $this->assertTrue($data['success']);
         $this->assertTrue(isset($data['data']));
-        $this->assertTrue(isset($data['data']['testId']));
+        $this->assertTrue(is_array($data['data']));
+        $this->assertCount(1, $data['data']);
+        $testData = reset($data['data']);
+        $this->assertTrue(isset($testData['testId']));
         
-        $uri = $data['data']['testId'];
+        $uri = $testData['testId'];
         $test = new \core_kernel_classes_Resource($uri);
         
         $this->assertTrue($test->exists());
         
-        $deletionCall = ROOT_URL.'taoQtiTest/RestQtiTests?uri='.urlencode($uri);
+        $deletionCall = ROOT_URL.'taoTests/RestTests?uri='.urlencode($uri);
         $content = $this->curl($deletionCall, 'DELETE', "data");
         $data = json_decode($content, true);
         
@@ -63,7 +66,6 @@ class RestTestImportTest extends RestTestRunner
         // should return an error, instance no longer exists
         $content = $this->curl($deletionCall, 'DELETE', "data");
         $data = json_decode($content, true);
-        
         $this->assertTrue(is_array($data), 'Should return json encoded array');
         $this->assertFalse($data['success']);
     }
