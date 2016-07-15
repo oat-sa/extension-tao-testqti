@@ -442,9 +442,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('3.1.0');
         }
 
-        $this->skip('3.1.0', '3.3.0');
+        $this->skip('3.1.0', '3.4.0');
         
-        if ($this->isVersion('3.3.0')) {
+        if ($this->isVersion('3.4.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
             $dir = new \core_kernel_file_File($uri);
