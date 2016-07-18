@@ -227,12 +227,15 @@ define([
                     var map = testRunner.getTestMap();
 
                     if (isEnabled()) {
+                        self.show();
                         updateButton(self.$flagItemButton, getFlagItemButtonData(context));
                         self.navigator
                             .update(map, context)
                             .updateConfig({
                                 canFlag: !context.isLinear && context.options.markReview
                             });
+                    } else {
+                        self.hide();
                     }
                 })
                 .on('enabletools', function () {
