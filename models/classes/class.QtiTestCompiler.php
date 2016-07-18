@@ -439,8 +439,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             $data = $doc->saveToString();
             $stream = GuzzleHttp\Psr7\stream_for($data);
-            $privateDir->writeStream($href, $stream);
-            $stream->close();
+            $privateDir->write($href, $stream->detach());
         }
     }
     
@@ -575,8 +574,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             if (!$privateCompiledDocDir->has($renderingFile)) {
                 try {
                     $stream = \GuzzleHttp\Psr7\stream_for($mainStringRendering);
-                    $privateCompiledDocDir->writeStream($renderingFile, $stream);
-                    $stream->close();
+                    $privateCompiledDocDir->write($renderingFile, $stream->detach());
                     common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
                 } catch (\InvalidArgumentException $e) {
                     common_Logger::e('Unable to copy file into public directory: ' . $renderingFile);
@@ -695,8 +693,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $data = $phpCompiledDoc->saveToString();
         if (($resource = fopen('data://text/plain;base64,' . base64_encode($data),'r'))!==false) {
             $stream = \GuzzleHttp\Psr7\stream_for($resource);
-            $this->getPrivateDirectory()->writeStream(TAOQTITEST_COMPILED_FILENAME, $stream);
-            $stream->close();
+            $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $stream->detach());
         }
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
@@ -715,8 +712,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $phpCode = '<?php return ' . $phpCode . '; ?>';
 
         $stream = GuzzleHttp\Psr7\stream_for($phpCode);
-        $compiledDocDir->writeStream(TAOQTITEST_COMPILED_META_FILENAME, $stream);
-        $stream->close();
+        $compiledDocDir->write(TAOQTITEST_COMPILED_META_FILENAME, $stream->detach());
     }
     
     /**
