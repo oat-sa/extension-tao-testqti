@@ -324,6 +324,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         parent::suspend();
         $this->triggerEventChange();
         $this->triggerEventPaused();
+        common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' suspended.");
     }
 
     /**
@@ -333,6 +334,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         parent::resume();
         $this->triggerEventChange();
         $this->triggerEventResumed();
+        common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' resumed.");
     }
 
     /**
