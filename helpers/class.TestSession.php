@@ -606,7 +606,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     protected function triggerEventPaused()
     {
         $event = new TestExecutionPausedEvent(
-            $this->getSessionId();
+            $this->getSessionId()
         );
         $this->getEventManager()->trigger($event);
     }
@@ -614,7 +614,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     protected function triggerEventResumed()
     {
         $event = new TestExecutionResumedEvent(
-            $this->getSessionId();
+            $this->getSessionId()
         );
         $this->getEventManager()->trigger($event);
     }
