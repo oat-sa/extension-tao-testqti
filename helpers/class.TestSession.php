@@ -43,6 +43,8 @@ use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
+use oat\taoTests\models\event\TestExecutionPausedEvent;
+use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
@@ -321,6 +323,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function suspend() {
         parent::suspend();
         $this->triggerEventChange();
+        $this->triggerEventPaused();
+        common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' suspended.");
     }
 
     /**
@@ -329,6 +333,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function resume() {
         parent::resume();
         $this->triggerEventChange();
+        $this->triggerEventResumed();
+        common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' resumed.");
     }
 
     /**
@@ -596,6 +602,22 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         if ($event instanceof ServiceLocatorAwareInterface) {
             $event->setServiceLocator($this->getServiceLocator());
         }
+        $this->getEventManager()->trigger($event);
+    }
+    
+    protected function triggerEventPaused()
+    {
+        $event = new TestExecutionPausedEvent(
+            $this->getSessionId()
+        );
+        $this->getEventManager()->trigger($event);
+    }
+    
+    protected function triggerEventResumed()
+    {
+        $event = new TestExecutionResumedEvent(
+            $this->getSessionId()
+        );
         $this->getEventManager()->trigger($event);
     }
     
