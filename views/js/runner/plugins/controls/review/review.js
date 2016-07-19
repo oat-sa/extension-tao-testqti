@@ -192,12 +192,15 @@ define([
                 }
             });
 
+            this.explicitlyHidden = false;
             this.$toggleButton = createButton(getToggleButtonData(this.navigator), function (e) {
                 e.preventDefault();
                 if (self.getState('enabled') !== false) {
                     if (self.navigator.is('hidden')) {
+                        self.explicitlyHidden = false;
                         self.navigator.show();
                     } else {
+                        self.explicitlyHidden = true;
                         self.navigator.hide();
                     }
 
@@ -227,13 +230,14 @@ define([
                     var map = testRunner.getTestMap();
 
                     if (isEnabled()) {
-                        self.show();
                         updateButton(self.$flagItemButton, getFlagItemButtonData(context));
                         self.navigator
                             .update(map, context)
                             .updateConfig({
                                 canFlag: !context.isLinear && context.options.markReview
                             });
+                        self.show();
+                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
                     } else {
                         self.hide();
                     }
@@ -307,7 +311,11 @@ define([
                 hider.hide(this.$flagItemButton);
             }
             hider.show(this.$toggleButton);
-            this.navigator.show();
+            if (!this.explicitlyHidden) {
+                this.navigator.show();
+            } else {
+                this.navigator.hide();
+            }
         },
 
         /**
