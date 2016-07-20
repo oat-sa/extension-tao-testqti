@@ -48,17 +48,6 @@ define([
             // intercepts the `leave` event,
             // then if a message needs to be displayed displays it and waits the user acknowledges it
             testRunner.before('leave', function leave(e, data) {
-                // safely stop the communicator to prevent inconsistent communication while leaving
-                testRunner.getProxy().getCommunicator()
-                    .then(function (communicator) {
-                        return communicator.close();
-                    })
-                    // Silently catch the potential errors to avoid polluting the console.
-                    // The code above is present to close an already open communicator in order to avoid later
-                    // communication while the test is destroying. So if any error occurs here it is not very important,
-                    // the most time it will be a missing communicator error, due to disabled config.
-                    .catch(_.noop);
-
                 if (_.isObject(data) && data.message) {
                     var done = e.done();
                     var context = testRunner.getTestContext();
