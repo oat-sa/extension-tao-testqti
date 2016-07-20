@@ -379,7 +379,8 @@ define([
                     });
             })
             .on('pause', function(){
-                self.setPersistentState('paused', true).then(function() {
+                // will notify the server that the test was auto paused
+                self.getProxy().callTestAction('pause').then(function() {
                     self.trigger('leave', {
                         code: self.getTestData().states.suspended
                     });
