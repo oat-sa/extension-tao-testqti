@@ -587,17 +587,17 @@ define([
                 this.before('flush', function(e) {
                     var done = e.done();
 
-                    this.getProxy().callTestAction('finish').then(function() {
-                        if (self.stateStorage) {
-                            self.stateStorage.clear()
-                                .then(done)
-                                .catch(function(err) {
-                                    self.trigger('error', err);
-                                })
-                        } else {
-                            done();
-                        }
-                    });
+                    this.getProxy()
+                        .callTestAction('finish')
+                        .then(function() {
+                            if (self.stateStorage) {
+                                return self.stateStorage.clear();
+                            }
+                        })
+                        .then(done)
+                        .catch(function(err) {
+                            self.trigger('error', err);
+                        });
                 });
             }
         },
