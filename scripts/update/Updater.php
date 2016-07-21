@@ -430,6 +430,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.31.1');
         }
+
         $this->skip('2.31.1', '3.0.0');
         
         if ($this->isVersion('3.0.0')) {
@@ -440,7 +441,20 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('3.1.0');
         }
+
+        $this->skip('3.1.0', '3.4.0');
         
-        $this->skip('3.1.0', '3.1.1');
+        if ($this->isVersion('3.4.0')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
+            $dir = new \core_kernel_file_File($uri);
+            
+            $fs = $dir->getFileSystem();
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
+            
+            $this->setVersion('4.0.0');
+        }
+
+        $this->skip('4.0.0', '4.2.1');
     }
 }

@@ -157,38 +157,51 @@ define(['lodash', 'i18n'], function(_, __){
          * @returns {Object}
          */
         consolidateModel : function consolidateModel(model){
-            if(model && model.testParts && _.isArray(model.testParts) && model.testParts[0]){
-                var testPart = model.testParts[0];
-                if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
-                     _.forEach(testPart.assessmentSections, function(assessmentSection, key) {
+            if(model && model.testParts && _.isArray(model.testParts)){
+                
+                _.forEach(model.testParts, function(testPart) {
 
-                         //remove ordering is shuffle is false
-                         if(assessmentSection.ordering &&
-                                 assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
-                             delete assessmentSection.ordering;
-                         }
+                    if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
+                        
+                        _.forEach(testPart.assessmentSections, function(assessmentSection) {
 
-                          if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
+                            //remove ordering is shuffle is false
+                            if(assessmentSection.ordering &&
+                                assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
+                                delete assessmentSection.ordering;
+                            }
 
-                              //remove rubrick blocks if empty
-                              if (assessmentSection.rubricBlocks.length === 0 ||
-                                      (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
+                            // clean categories (QTI identifier can't be empty string)
+                            if(assessmentSection.sectionParts && _.isArray(assessmentSection.sectionParts)) {
+                                _.forEach(assessmentSection.sectionParts, function(part) {
+                                    if(part.categories && _.isArray(part.categories) && (part.categories.length === 0 || part.categories[0].length === 0)) {
+                                        part.categories = [];
+                                    }
+                                });
+                            }
 
-                                  delete assessmentSection.rubricBlocks;
-                              }
-                              //ensure the view attribute is present
-                              else if(assessmentSection.rubricBlocks.length > 0){
-                                _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
+                            if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
+
+                                //remove rubrick blocks if empty
+                                if (assessmentSection.rubricBlocks.length === 0 ||
+                                    (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
+
+                                    delete assessmentSection.rubricBlocks;
+                                }
+                                //ensure the view attribute is present
+                                else if(assessmentSection.rubricBlocks.length > 0){
+                                    _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
                                         rubricBlock.views = ['candidate'];
                                         //change once views are supported
                                         //if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
-                                            //rubricBlock.views = ['candidate'];
+                                        //rubricBlock.views = ['candidate'];
                                         //}
-                                  });
-                              }
-                        }
-                     });
-                }
+                                    });
+                                }
+                            }
+                        });
+                    } 
+                });
             }
             return model;
         }

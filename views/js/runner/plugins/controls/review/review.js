@@ -192,12 +192,15 @@ define([
                 }
             });
 
+            this.explicitlyHidden = false;
             this.$toggleButton = createButton(getToggleButtonData(this.navigator), function (e) {
                 e.preventDefault();
                 if (self.getState('enabled') !== false) {
                     if (self.navigator.is('hidden')) {
+                        self.explicitlyHidden = false;
                         self.navigator.show();
                     } else {
+                        self.explicitlyHidden = true;
                         self.navigator.hide();
                     }
 
@@ -214,6 +217,14 @@ define([
 
             //change plugin state
             testRunner
+                .on('render', function () {
+                    if (isEnabled()) {
+                        self.show();
+                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                    } else {
+                        self.hide();
+                    }
+                })
                 .on('loaditem', function () {
                     var context = testRunner.getTestContext();
                     var map = testRunner.getTestMap();
@@ -300,7 +311,11 @@ define([
                 hider.hide(this.$flagItemButton);
             }
             hider.show(this.$toggleButton);
-            this.navigator.show();
+            if (!this.explicitlyHidden) {
+                this.navigator.show();
+            } else {
+                this.navigator.hide();
+            }
         },
 
         /**

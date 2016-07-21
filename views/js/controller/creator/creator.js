@@ -24,7 +24,7 @@ define([
     'lodash',
     'helpers',
     'i18n',
-    'history',
+    'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
     'taoQtiTest/controller/creator/views/item',
