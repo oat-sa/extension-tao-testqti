@@ -195,7 +195,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	/**
 	 * Get the path to the directory where the test is compiled.
 	 * 
-	 * @return string
+	 * @return tao_models_classes_service_StorageDirectory
 	 */
 	protected function getCompilationDirectory() {
 	    return $this->compilationDirectory;
@@ -849,9 +849,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $directories = $this->getCompilationDirectory();
         /** @var tao_models_classes_service_StorageDirectory $privateDirectory */
         $privateDirectory = $directories['private'];
-        $stream = $privateDirectory->readStream(TAOQTITEST_COMPILED_META_FILENAME);
-        $data = $stream->getContents();
-        $stream->close();
+        $data = $privateDirectory->read(TAOQTITEST_COMPILED_META_FILENAME);
+        if ($data == false) {
+            throw new common_exception_InconsistentData('Missing data for compiled test');
+        }
 
         $data = str_replace('<?php', '', $data);
         $data = str_replace('?>', '', $data);
