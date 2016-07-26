@@ -240,6 +240,11 @@
                 .action {
                     line-height: 1.6;
                 }
+                .icon {
+                    &.no-label {
+                        padding-right: 0;
+                    }
+                }
             }
         }
     }
