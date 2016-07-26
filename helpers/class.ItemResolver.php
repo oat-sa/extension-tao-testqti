@@ -52,8 +52,8 @@ class taoQtiTest_helpers_ItemResolver implements Resolver {
      * @return string The path to the related QTI-XML file.
 	 * @throws ResolutionException If an error occurs during the resolution of $url.
      */
-    public function resolve($url) {
-        
+    public function resolve($url)
+    {
         $taoItem = new core_kernel_classes_Resource($url);
         if ($taoItem->exists() === false) {
             $msg = "The QTI Item with URI '${url}' cannot be found.";
@@ -65,8 +65,10 @@ class taoQtiTest_helpers_ItemResolver implements Resolver {
         // where it is supposed to be located.
         
         // strip xinclude, we don't need that at the moment.
-        $raw = $this->service->getXmlByRdfItem($this->getResource($url));
+        $file = $this->service->getXmlByRdfItem($this->getResource($url));
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
+
+        $raw = $file->read();
         $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
         
         file_put_contents($tmpfile, $raw);

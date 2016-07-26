@@ -2,9 +2,12 @@
 
 namespace oat\taoQtiTest\scripts\cli;
 
+use League\Flysystem\FilesystemInterface;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
+use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceManager;
+use oat\tao\model\service\Directory;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
 
@@ -17,7 +20,7 @@ class importMultipleTestsFromDir implements Action
 
     protected function init()
     {
-        $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
+        $this->uploadDirectoryPath = FILES_PATH . 'tao/upload';
         if (!file_exists($this->uploadDirectoryPath)) {
             throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
         }
@@ -35,21 +38,19 @@ class importMultipleTestsFromDir implements Action
         try {
             $this->init();
 
-            $uploadFileSystem = new \core_kernel_fileSystem_FileSystem($this->uploadDirectoryUri);
+            /** @var FilesystemInterface $uploadDir */
+            $uploadDir = ServiceManager::getServiceManager()
+                ->get(FileSystemService::SERVICE_ID)
+                ->getFileSystem($this->uploadDirectoryUri);
 
-            $dir = new \tao_models_classes_service_StorageDirectory(
-                $this->uploadDirectoryUri,
-                $uploadFileSystem,
-                '/import', null
-            );
-            $dir->setServiceLocator(ServiceManager::getServiceManager());
+            $dir = new Directory($uploadDir, 'import');
 
             /** @var \ArrayIterator $iterator */
             $tests = 0;
-            $iterator = $dir->getIterator();
+            $iterator = $dir->getIteratorWithRelativePath();
             while ($iterator->valid()) {
                 if (substr($iterator->current(), 0, 1) !== '.') {
-                    $this->importTest($this->uploadDirectoryPath . $iterator->current());
+                    $this->importTest($this->uploadDirectoryPath . '/' . $iterator->current());
                     $tests++;
                     echo $iterator->current() . ' imported.' . PHP_EOL;
                 } else {

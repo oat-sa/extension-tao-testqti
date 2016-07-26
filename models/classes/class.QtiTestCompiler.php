@@ -463,7 +463,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         foreach ($testDefinitionDir->listContents(true) as $object) {
             if ($object['type'] === 'file') {
                 $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
+                $privateDir->writeStream($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
             }
         }
     }
@@ -607,7 +607,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
                     try {
                         common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
+                        $publicCompiledDocDir->writeStream($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
                     } catch (FileExistsException $e) {
                         common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                     }
