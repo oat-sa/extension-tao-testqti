@@ -580,7 +580,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             }
 
             // -- Clean up old rubric block and reference the new rubric block template.
-            $privateCompiledDocDir->delete($rubricRefHref);
+            $privateCompiledDocDir->deleteContent($rubricRefHref);
 
             $rubricRef->setHref('./' . $pathinfo['filename'] . '.php');
         }
