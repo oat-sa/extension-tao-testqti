@@ -560,8 +560,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 
                 if (!$publicCompiledDocDir->has($relPath)) {
                     try {
-                        $handle = $sourceFile->readStream();
-                        $publicCompiledDocDir->writeStream($relPath, $handle);
+                        $data = $sourceFile->read();
+                        $tmpDir = \tao_helpers_File::createTempDir();
+                        $tmpFile = $tmpDir.'tmp.css';
+                        file_put_contents($tmpFile, $data);
+                        $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
+                        unlink($tmpFile);
+                        rmdir($tmpDir);
+                        $publicCompiledDocDir->write($relPath, $scopedCss);
+                        
                     } catch (\InvalidArgumentException $e) {
                         common_Logger::e('Unable to copy file into public directory: ' . $relPath);
                     }
