@@ -140,15 +140,13 @@ define([
             this.$buttonZoomOut = $(buttonTpl({
                 control : 'zoomOut',
                 title : __('Zoom out'),
-                icon : 'remove',
-                text : __('Zoom out')
+                icon : 'remove'
             }));
 
             this.$buttonZoomIn = $(buttonTpl({
                 control : 'zoomIn',
                 title : __('Zoom in'),
-                icon : 'add',
-                text : __('Zoom in')
+                icon : 'add'
             }));
             
             //attach behavior
