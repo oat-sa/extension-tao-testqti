@@ -67,11 +67,13 @@ define([
          */
         init: function init() {
             var testRunner = this.getTestRunner();
+            var isLeaving = false;
 
             // immediate handling of proctor's actions
             testRunner.getProxy()
                 .channel('teststate', function (data) {
-                    if (data && ('close' === data.type || 'pause' === data.type)) {
+                    if (!isLeaving && data && ('close' === data.type || 'pause' === data.type)) {
+                        isLeaving = true;
                         testRunner.trigger('leave', data);
                     }
                 });
