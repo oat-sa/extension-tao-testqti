@@ -456,5 +456,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('4.0.0', '4.5.2');
+
+
+        if ($this->isVersion('4.5.2')) {
+
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            $config = $registry->get(TestRunnerClientConfigRegistry::RUNNER);
+            $runnerConfig = $registry->get(TestRunnerClientConfigRegistry::RUNNER);
+            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
+                foreach($runnerConfig['plugins'] as $plugin){
+                    //if the plugin is registered
+                    if($plugin['module'] == 'taoQtiTest/runner/plugins/controls/disableRightClick'){
+                        //we migrate the category
+                        $registry->removePlugin('taoQtiTest/runner/plugins/controls/disableRightClick', 'controls', null);
+                        $registry->registerPlugin('taoQtiTest/runner/plugins/security/disableRightClick', 'security', null);
+                        break;
+                    }
+                }
+            }
+
+            $this->setVersion('4.6.0');
+        }
     }
 }
