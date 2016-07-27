@@ -409,6 +409,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
             try {
                 $testDefinition->load($expectedTestFile, true);
+                
+                // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
+                $testDefinition->includeAssessmentSectionRefs(true);
 
                 // -- Load all items related to test.
                 $itemError = false;
