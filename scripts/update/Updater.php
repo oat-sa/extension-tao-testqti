@@ -32,16 +32,16 @@ use oat\tao\scripts\update\OntologyUpdater;
  * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
-    
+
     /**
-     * 
+     *
      * @param string $initialVersion
      * @return string $versionUpdatedTo
      */
     public function update($initialVersion) {
 
         $currentVersion = $initialVersion;
-        
+
         // add testrunner config
         if ($currentVersion == '2.6') {
 
@@ -56,7 +56,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.6.1';
         }
-   
+
         if ($currentVersion == '2.6.1') {
             $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
             $config['exitButton'] = false;
@@ -64,7 +64,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.6.2';
         }
-        
+
         // add testrunner review screen config
         if ($currentVersion == '2.6.2') {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -78,7 +78,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.6.3';
         }
-        
+
         // adjust testrunner config
         if ($currentVersion == '2.6.3') {
             $defaultConfig = array(
@@ -115,13 +115,13 @@ class Updater extends \common_ext_ExtensionUpdater {
         // add markForReview button
         if ($currentVersion === '2.7.0') {
             $registry = TestRunnerClientConfigRegistry::getRegistry();
-            
+
             $registry->registerQtiTools('markForReview', array(
                 'label' => 'Mark for review',
                 'icon' => 'anchor',
                 'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
             ));
-            
+
             $currentVersion = '2.8.0';
          }
 
@@ -140,7 +140,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         // adjust testrunner config: set the "can collapse" option
         if ($currentVersion == '2.9.0') {
             $registry = TestRunnerClientConfigRegistry::getRegistry();
-            
+
             $registry->registerQtiTools('collapseReview', array(
                 'title' => 'Show/Hide the review screen',
                 'label' => 'Review',
@@ -181,7 +181,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.12.0';
         }
-        
+
         // update the test taker review action buttons
         if ($currentVersion == '2.12.0') {
             $registry = TestRunnerClientConfigRegistry::getRegistry();
@@ -214,7 +214,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.14.0';
         }
-        
+
         if ($currentVersion === '2.14.0') {
             try {
                 $this->getServiceManager()->get('taoQtiTest/SessionStateService');
@@ -236,7 +236,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $currentVersion = '2.16.0';
         }
-        
+
         $this->setVersion($currentVersion);
 
         if ($this->isBetween('2.16.0','2.17.0')) {
@@ -252,12 +252,12 @@ class Updater extends \common_ext_ExtensionUpdater {
 
                 $this->getServiceManager()->register(QtiRunnerService::CONFIG_ID, $service);
             }
-            
+
             $this->setVersion('2.17.0');
         }
-        
+
         $this->skip('2.17.0','2.19.1');
-        
+
         if ($this->isVersion('2.19.1')) {
             // sets default plugin options
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -290,7 +290,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.23.0');
         }
-        
+
         $this->skip('2.23.0','2.24.0');
 
         if ($this->isVersion('2.24.0')) {
@@ -322,7 +322,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('2.26.0');
         }
-        
+
         $this->skip('2.26.0', '2.27.0');
 
         if ($this->isVersion('2.27.0')) {
@@ -424,37 +424,58 @@ class Updater extends \common_ext_ExtensionUpdater {
                         'params' => []
                     ],
                 ]);
-                
+
                 $extension->setConfig('testRunner', $config);
             }
-            
+
             $this->setVersion('2.31.1');
         }
 
         $this->skip('2.31.1', '3.0.0');
-        
+
         if ($this->isVersion('3.0.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['enable-allow-skipping'] = false;
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('3.1.0');
         }
 
         $this->skip('3.1.0', '3.4.0');
-        
+
         if ($this->isVersion('3.4.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
             $dir = new \core_kernel_file_File($uri);
-            
+
             $fs = $dir->getFileSystem();
             \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
-            
+
             $this->setVersion('4.0.0');
         }
 
-        $this->skip('4.0.0', '4.7.0');
+        $this->skip('4.0.0', '4.6.0');
+
+        if ($this->isVersion('4.6.0')) {
+
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            $runnerConfig = $registry->get(TestRunnerClientConfigRegistry::RUNNER);
+            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
+                foreach($runnerConfig['plugins'] as $plugin){
+                    //if the plugin is registered
+                    if($plugin['module'] == 'taoQtiTest/runner/plugins/controls/disableRightClick'){
+                        //we migrate the category
+                        $registry->removePlugin('taoQtiTest/runner/plugins/controls/disableRightClick', 'controls', null);
+                        $registry->registerPlugin('taoQtiTest/runner/plugins/security/disableRightClick', 'security', null);
+                        break;
+                    }
+                }
+            }
+
+            $this->setVersion('4.7.0');
+        }
+        
+        $this->skip('4.7.0', '4.8.0');
     }
 }

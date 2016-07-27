@@ -29,7 +29,7 @@ define([
     'taoQtiTest/runner/plugins/controls/title/title',
     'taoQtiTest/runner/plugins/controls/timer/timer',
     'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'taoQtiTest/runner/plugins/controls/review/review',
+    'taoQtiTest/runner/plugins/navigation/review/review',
     'taoQtiTest/runner/plugins/navigation/next',
     'taoQtiTest/runner/plugins/navigation/previous',
     'taoQtiTest/runner/plugins/navigation/nextSection',
