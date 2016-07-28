@@ -74,7 +74,7 @@ define([
         config = _.defaults(config, {
             renderTo: $('.runner')
         });
-        
+
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
             .on('error', onError)
@@ -86,11 +86,11 @@ define([
             .on('pause', function(data) {
                 if (data && data.reason) {
                     // change exit Url
-                    reason = data.reason;                    
+                    reason = data.reason;
                 }
             })
             .after('destroy', function () {
-                
+
                 // at the end, we are redirected to the exit URL
                 var url = config.exitUrl;
                 if (reason && reason.length) {
@@ -98,7 +98,7 @@ define([
                         warning: reason
                     });
                 }
-                
+
                 window.location = url;
             })
             .init();
@@ -112,7 +112,8 @@ define([
         'testDefinition',
         'testCompilation',
         'serviceCallId',
-        'exitUrl'
+        'exitUrl',
+        'plugins'
     ];
 
     /**
@@ -131,8 +132,8 @@ define([
          * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start: function start(options) {
+
             var startOptions = options || {};
-            var config = module.config();
             var missingOption = false;
 
             // verify required options
@@ -152,11 +153,9 @@ define([
             if (!missingOption) {
                 loadingBar.start();
 
-                if (config) {
-                    _.forEach(config.plugins, function (plugin) {
-                        pluginLoader.add(plugin.module, plugin.category, plugin.position);
-                    });
-                }
+                _.forEach(options.plugins, function (plugin, module) {
+                    pluginLoader.add(module, plugin.category);
+                });
 
                 pluginLoader.load()
                     .then(function () {
