@@ -16,10 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
- *
- *
  */
-
 
 namespace oat\taoQtiTest\scripts\install;
 
@@ -28,6 +25,11 @@ use common_report_Report as Report;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 
+/**
+ * Installation action that registers the test runner plugins
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ */
 class RegisterTestRunnerPlugins extends InstallAction
 {
 
@@ -195,18 +197,18 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'active' => true,
                 'tags' => [ 'core' ]
             ], [
-                'id' => 'itemThemeSwitcher',
-                'name' => 'Item themes switcher',
-                'module' => 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
-                'description' => 'Allow to switch between themes',
-                'category' => 'tools',
-                'active' => false,
-                'tags' => [ 'core' ]
-            ], [
                 'id' => 'zoom',
                 'name' => 'Zoom',
                 'module' =>'taoQtiTest/runner/plugins/tools/zoom',
                 'description' => 'Zoom in and out the item content',
+                'category' => 'tools',
+                'active' => false,
+                'tags' => [ 'core' ]
+            ], [
+                'id' => 'itemThemeSwitcher',
+                'name' => 'Item themes switcher',
+                'module' => 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
+                'description' => 'Allow to switch between themes',
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ 'core' ]
