@@ -41,9 +41,10 @@ define([
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
     'use strict';
 
+    var pluginLoader = pluginLoaderFactory();
 
     /*
-     *TODO plugins list, provider registration should be loaded dynamically
+     *TODO provider registration should be loaded dynamically
      */
 
     runner.registerProvider('qti', qtiProvider);
@@ -135,7 +136,7 @@ define([
 
             var startOptions = options || {};
             var missingOption = false;
-            var pluginLoader = pluginLoaderFactory();
+
 
             // verify required options
             _.forEach(requiredOptions, function(name) {
