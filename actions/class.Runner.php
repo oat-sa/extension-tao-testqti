@@ -763,7 +763,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
             $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
-            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId());
+            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
 
         } catch (common_Exception $e) {

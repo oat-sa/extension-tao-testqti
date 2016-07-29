@@ -25,8 +25,8 @@ define([
     'ui/component',
     'ui/autoscroll',
     'taoQtiTest/runner/helpers/map',
-    'tpl!taoQtiTest/runner/plugins/controls/review/navigator',
-    'tpl!taoQtiTest/runner/plugins/controls/review/navigatorTree'
+    'tpl!taoQtiTest/runner/plugins/navigation/review/navigator',
+    'tpl!taoQtiTest/runner/plugins/navigation/review/navigatorTree'
 ], function ($, _, __, component, autoscroll, mapHelper, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
