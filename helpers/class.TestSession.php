@@ -43,7 +43,10 @@ use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
+use oat\taoTests\models\event\TestExecutionPausedEvent;
+use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -319,16 +322,26 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * Suspend the current test session if it is running.
      */
     public function suspend() {
+        $running = $this->isRunning();
         parent::suspend();
-        $this->triggerEventChange();
+        if ($running) {
+            $this->triggerEventChange();
+            $this->triggerEventPaused();
+            common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' suspended.");
+        }
     }
 
     /**
      * Resume the current test session if it is suspended.
      */
     public function resume() {
+        $suspended = $this->getState() === AssessmentTestSessionState::SUSPENDED;
         parent::resume();
-        $this->triggerEventChange();
+        if ($suspended) {
+            $this->triggerEventChange();
+            $this->triggerEventResumed();
+            common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' resumed.");
+        }
     }
 
     /**
@@ -596,6 +609,22 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         if ($event instanceof ServiceLocatorAwareInterface) {
             $event->setServiceLocator($this->getServiceLocator());
         }
+        $this->getEventManager()->trigger($event);
+    }
+    
+    protected function triggerEventPaused()
+    {
+        $event = new TestExecutionPausedEvent(
+            $this->getSessionId()
+        );
+        $this->getEventManager()->trigger($event);
+    }
+    
+    protected function triggerEventResumed()
+    {
+        $event = new TestExecutionResumedEvent(
+            $this->getSessionId()
+        );
         $this->getEventManager()->trigger($event);
     }
     

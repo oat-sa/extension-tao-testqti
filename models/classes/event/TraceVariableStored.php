@@ -31,6 +31,7 @@ class TraceVariableStored implements Event
 {
 
     private $deliveryExecutionId;
+    private $traceData;
 
     private $deliveryExecution;
 
@@ -38,9 +39,10 @@ class TraceVariableStored implements Event
      * DeliveryExecutionState constructor.
      * @param $deliveryExecutionId
      */
-    public function __construct($deliveryExecutionId)
+    public function __construct($deliveryExecutionId, $traceData)
     {
         $this->deliveryExecutionId = $deliveryExecutionId;
+        $this->traceData = $traceData;
     }
 
     /**
@@ -61,6 +63,11 @@ class TraceVariableStored implements Event
     {
         $deliveryExecution = $this->getDeliveryExecution();
         return $deliveryExecution->getState()->getUri();
+    }
+
+    public function getTraceData()
+    {
+        return $this->traceData;
     }
 
 

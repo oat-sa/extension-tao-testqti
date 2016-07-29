@@ -438,9 +438,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $doc->setDocumentComponent($rubricBlock);
             
             $data = $doc->saveToString();
-            $stream = GuzzleHttp\Psr7\stream_for($data);
-            $privateDir->writeStream($href, $stream);
-            $stream->close();
+            $privateDir->write($href, $data);
         }
     }
     
@@ -465,7 +463,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         foreach ($testDefinitionDir->listContents(true) as $object) {
             if ($object['type'] === 'file') {
                 $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->readStream($object['path']));
+                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
             }
         }
     }
@@ -562,8 +560,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 
                 if (!$publicCompiledDocDir->has($relPath)) {
                     try {
-                        $handle = $sourceFile->readStream();
-                        $publicCompiledDocDir->write($relPath, $handle);
+                        $data = $sourceFile->read();
+                        $tmpDir = \tao_helpers_File::createTempDir();
+                        $tmpFile = $tmpDir.'tmp.css';
+                        file_put_contents($tmpFile, $data);
+                        $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
+                        unlink($tmpFile);
+                        rmdir($tmpDir);
+                        $publicCompiledDocDir->write($relPath, $scopedCss);
+                        
                     } catch (\InvalidArgumentException $e) {
                         common_Logger::e('Unable to copy file into public directory: ' . $relPath);
                     }
@@ -574,9 +579,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $mainStringRendering = str_replace(TAOQTITEST_PLACEHOLDER_BASE_URI, '<?php echo $' . TAOQTITEST_BASE_PATH_NAME . '; ?>', $mainStringRendering);
             if (!$privateCompiledDocDir->has($renderingFile)) {
                 try {
-                    $stream = \GuzzleHttp\Psr7\stream_for($mainStringRendering);
-                    $privateCompiledDocDir->writeStream($renderingFile, $stream);
-                    $stream->close();
+                    $privateCompiledDocDir->write($renderingFile, $mainStringRendering);
                     common_Logger::t("rubricBlockRef '" . $rubricRefHref . "' successfully rendered.");
                 } catch (\InvalidArgumentException $e) {
                     common_Logger::e('Unable to copy file into public directory: ' . $renderingFile);
@@ -611,7 +614,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
                     try {
                         common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->readStream($object['path']));
+                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
                     } catch (FileExistsException $e) {
                         common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                     }
@@ -653,21 +656,19 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             if (isset($url) && !preg_match('@^' . ROOT_URL . '@', $url) && !Url::isRelative($url)) {
                  
                 $tmpFile = taoItems_helpers_Deployment::retrieveFile($url, $tmpDir);
-                $pathinfo = pathinfo($tmpFile);
-                $handle = fopen($tmpFile, 'r');
-                $this->getPublicDirectory()->write($destPath.$pathinfo['basename'], $handle);
-                fclose($handle);
-                unlink($tmpFile);
-                
-                
-                if ($finalDestination !== false) {
+                if ($tmpFile !== false) {
+                    $pathinfo = pathinfo($tmpFile);
+                    $handle = fopen($tmpFile, 'r');
+                    $this->getPublicDirectory()->writeStream($destPath.$pathinfo['basename'], $handle);
+                    fclose($handle);
+                    unlink($tmpFile);
                     $newUrl =  TAOQTITEST_REMOTE_FOLDER . '/' . $pathinfo['basename'];
-                     
+
                     switch ($component->getQtiClassName()) {
                         case 'object':
                             $component->setData($newUrl);
                         break;
-                         
+
                         case 'img':
                             $component->setSrc($newUrl);
                         break;
@@ -693,11 +694,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
         $phpCompiledDoc = new PhpDocument('2.1', $test);
         $data = $phpCompiledDoc->saveToString();
-        if (($resource = fopen('data://text/plain;base64,' . base64_encode($data),'r'))!==false) {
-            $stream = \GuzzleHttp\Psr7\stream_for($resource);
-            $this->getPrivateDirectory()->writeStream(TAOQTITEST_COMPILED_FILENAME, $stream);
-            $stream->close();
-        }
+        $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $data);
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
     
@@ -713,10 +710,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $meta = taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
         $phpCode = common_Utils::toPHPVariableString($meta);
         $phpCode = '<?php return ' . $phpCode . '; ?>';
-
-        $stream = GuzzleHttp\Psr7\stream_for($phpCode);
-        $compiledDocDir->writeStream(TAOQTITEST_COMPILED_META_FILENAME, $stream);
-        $stream->close();
+        $compiledDocDir->write(TAOQTITEST_COMPILED_META_FILENAME, $phpCode);
     }
     
     /**

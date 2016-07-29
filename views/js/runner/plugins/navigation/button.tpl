@@ -1,6 +1,6 @@
 <li data-control="{{control}}" class="small btn-info action" title="{{title}}">
     <a class="li-inner" href="#">
-        <span class="icon icon-{{icon}}"></span>
-        <span class="text">{{text}}</span>
+        {{#if icon}}<span class="icon icon-{{icon}}{{#unless text}} no-label{{/unless}}"></span>{{/if}}
+        {{#if text}}<span class="text">{{text}}</span>{{/if}}
     </a>
 </li>

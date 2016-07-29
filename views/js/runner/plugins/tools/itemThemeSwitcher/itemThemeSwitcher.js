@@ -58,7 +58,7 @@ define([
                 control: 'color-contrast',
                 title: __('Change the current color preset'),
                 icon: 'preview',
-                text: __('Color contrast')
+                text: __('Contrast')
             }));
 
             //init plugin state

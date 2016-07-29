@@ -379,7 +379,8 @@ define([
                     });
             })
             .on('pause', function(){
-                self.setPersistentState('paused', true).then(function() {
+                // will notify the server that the test was auto paused
+                self.getProxy().callTestAction('pause').then(function() {
                     self.trigger('leave', {
                         code: self.getTestData().states.suspended
                     });
@@ -569,7 +570,7 @@ define([
         /**
          * Finish phase of the test runner
          *
-         * Calls proxy.finish to close the testj
+         * Calls proxy.finish to close the test
          *
          * @this {runner} the runner context, not the provider
          * @returns {Promise} proxy.finish
@@ -577,26 +578,29 @@ define([
         finish : function finish(){
             var self = this;
 
-            this.trigger('disablenav disabletools')
-                .trigger('endsession', 'finish');
+            if (!this.getState('finish')) {
+                this.trigger('disablenav disabletools')
+                    .trigger('endsession', 'finish');
 
-            // will be executed after the runner has been flushed
-            // use the "before" queue to ensure the query will be fully processed before destroying
-            // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
-            this.before('flush', function(e) {
-                var done = e.done();
-                this.getProxy().callTestAction('finish').then(function() {
-                    if (self.stateStorage) {
-                        self.stateStorage.clear()
-                            .then(done)
-                            .catch(function(err) {
-                                self.trigger('error', err);
-                            })
-                    } else {
-                        done();
-                    }
+                // will be executed after the runner has been flushed
+                // use the "before" queue to ensure the query will be fully processed before destroying
+                // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
+                this.before('flush', function(e) {
+                    var done = e.done();
+
+                    this.getProxy()
+                        .callTestAction('finish')
+                        .then(function() {
+                            if (self.stateStorage) {
+                                return self.stateStorage.clear();
+                            }
+                        })
+                        .then(done)
+                        .catch(function(err) {
+                            self.trigger('error', err);
+                        });
                 });
-            });
+            }
         },
 
         /**
@@ -609,10 +613,12 @@ define([
         flush : function flush(){
             var self = this;
             var probeOverseer = this.getProbeOverseer();
+            var proxy = this.getProxy();
+            var flushPromise;
 
             //if there is trace data collected by the probes
             if(probeOverseer && !this.getState('disconnected')){
-                return probeOverseer.flush()
+                flushPromise = probeOverseer.flush()
                     .then(function(data){
 
                         //we reformat the time set into a trace variables
@@ -633,7 +639,24 @@ define([
                     .then(function(){
                         probeOverseer.stop();
                     });
+            } else {
+                flushPromise = Promise.resolve();
             }
+            
+            return flushPromise.then(function () {
+                // safely stop the communicator to prevent inconsistent communication while leaving
+                if (proxy.hasCommunicator()) {
+                    proxy.getCommunicator()
+                        .then(function (communicator) {
+                            return communicator.close();
+                        })
+                        // Silently catch the potential errors to avoid polluting the console.
+                        // The code above is present to close an already open communicator in order to avoid later
+                        // communication while the test is destroying. So if any error occurs here it is not very important,
+                        // the most time it will be a missing communicator error, due to disabled config.
+                        .catch(_.noop);
+                }
+            });
         },
 
         /**
