@@ -29,21 +29,21 @@ $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
 
 return array(
-    'name' => 'taoQtiTest',
+	'name' => 'taoQtiTest',
     'label' => 'QTI test model',
-    'description' => 'TAO QTI test implementation',
+	'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '4.8.2',
-    'author' => 'Open Assessment Technologies',
+    'version' => '5.0.0',
+	'author' => 'Open Assessment Technologies',
     'requires' => array(
-        'taoTests'   => '>=2.23.0',
+        'taoTests' => '>=3.0.0',
         'taoQtiItem' => '>=3.4',
         'tao'        => '>=6.0.0'
     ),
-    'models' => array(
-        'http://www.tao.lu/Ontologies/TAOTest.rdf'
-    ),
-    'install' => array(
+	'models' => array(
+		'http://www.tao.lu/Ontologies/TAOTest.rdf'
+	),
+	'install' => array(
 		'rdf' => array(
 			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
 		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf'
@@ -51,10 +51,11 @@ return array(
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
-		    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
+                    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
+                    'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins'
 		)
 	),
-    'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
+	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
     'local'	=> array(
         'php'	=> array(
             dirname(__FILE__).'/install/local/addQTIExamples.php'

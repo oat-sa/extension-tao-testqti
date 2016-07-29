@@ -25,6 +25,8 @@ use oat\tao\model\ClientLibConfigRegistry;
  * Description of TestRunnerConfigRegistry
  *
  * @author sam
+ *
+ * @deprecated use oat\taoTests\models\runner\plugins\PluginRegistry instead
  */
 class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 {

@@ -19,12 +19,15 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
 
 /**
@@ -477,5 +480,42 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('4.7.0', '4.8.2');
+
+        if ($this->isVersion('4.8.2')) {
+
+            //regsiter the core plugins into taoTests
+            $registerCorePlugins = new RegisterTestRunnerPlugins();
+            $registerCorePlugins([]);
+
+            $registry = PluginRegistry::getRegistry();
+
+            //list the installed plugins
+            $oldRegistry = TestRunnerClientConfigRegistry::getRegistry();
+            $runnerConfig = $oldRegistry->get(TestRunnerClientConfigRegistry::RUNNER);
+            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
+                foreach($runnerConfig['plugins'] as $plugin){
+
+                    //if they are not yet in the config, migrate them automatically
+                    if( ! $registry->isRegistered($plugin['module']) ) {
+                        $pluginId = basename($plugin['module']);
+                        $pluginName = ucfirst(join(preg_split('/(?=[A-Z])/', $pluginId), ' '));
+                        $registry->register(TestPlugin::fromArray([
+                            'id'       => $pluginId,
+                            'name'     => $pluginName,
+                            'module'   => $plugin['module'],
+                            'category' => $plugin['category'],
+                            'position' => $plugin['position'],
+                            'active'   => true
+                        ]));
+                    }
+                }
+            }
+
+            //then remove the old config
+            $registry->remove(TestRunnerClientConfigRegistry::RUNNER);
+            $registry->remove(TestRunnerClientConfigRegistry::RUNNER_PROD);
+
+            $this->setVersion('5.0.0');
+        }
     }
 }
