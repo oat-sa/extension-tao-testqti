@@ -485,7 +485,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             //regsiter the core plugins into taoTests
             $registerCorePlugins = new RegisterTestRunnerPlugins();
-            $registerCorePlugins(null);
+            $registerCorePlugins([]);
 
             $registry = PluginRegistry::getRegistry();
 
