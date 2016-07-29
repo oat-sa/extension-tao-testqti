@@ -34,11 +34,11 @@ define([
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-    'taoQtiTest/runner/plugins/loader',
+    'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader, urlUtil) {
+             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
     'use strict';
 
 
@@ -135,6 +135,7 @@ define([
 
             var startOptions = options || {};
             var missingOption = false;
+            var pluginLoader = pluginLoaderFactory();
 
             // verify required options
             _.forEach(requiredOptions, function(name) {

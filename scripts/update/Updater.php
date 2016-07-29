@@ -19,15 +19,16 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
-use oat\tao\scripts\update\OntologyUpdater;
+use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
@@ -478,9 +479,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('4.7.0');
         }
         
-        $this->skip('4.7.0', '4.8.0');
+        $this->skip('4.7.0', '4.8.1');
 
-        if ($this->isVersion('4.8.0')) {
+        if ($this->isVersion('4.8.1')) {
 
             //regsiter the core plugins into taoTests
             $registerCorePlugins = new RegisterTestRunnerPlugins();
