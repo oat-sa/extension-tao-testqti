@@ -479,9 +479,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('4.7.0');
         }
         
-        $this->skip('4.7.0', '4.8.1');
+        $this->skip('4.7.0', '4.8.2');
 
-        if ($this->isVersion('4.8.1')) {
+        if ($this->isVersion('4.8.2')) {
 
             //regsiter the core plugins into taoTests
             $registerCorePlugins = new RegisterTestRunnerPlugins();
