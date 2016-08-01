@@ -349,6 +349,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
         catch (Exception $e) {
             common_Logger::e($e->getMessage());
+            common_Logger::e($e->getTraceAsString());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);
@@ -614,7 +615,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
                     try {
                         common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
+                        $publicCompiledDocDir->writeStream($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
                     } catch (FileExistsException $e) {
                         common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                     }
