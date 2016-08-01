@@ -349,6 +349,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
         catch (Exception $e) {
             common_Logger::e($e->getMessage());
+            common_Logger::e($e->getTraceAsString());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);
@@ -463,7 +464,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         foreach ($testDefinitionDir->listContents(true) as $object) {
             if ($object['type'] === 'file') {
                 $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->writeStream($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
+                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
             }
         }
     }
