@@ -600,7 +600,7 @@ define([
                                 if (!$item.hasClass(_cssCls.unseen)) {
                                     flagItem($item);
                                 }
-                            } else {
+                            } else if (!$item.hasClass(_cssCls.active)){
                                 // go to the selected item
                                 self.select($item);
                                 jump($item);
