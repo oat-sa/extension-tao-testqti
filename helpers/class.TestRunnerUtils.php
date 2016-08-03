@@ -451,7 +451,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
             // Number of items composing the test session.
-            $context['numberItems'] = $session->getRoute()->count();
+            $context['numberItems'] = $session->getRouteCount(AssessmentTestSession::ROUTECOUNT_FLOW);
              
             // Number of items completed during the test session.
             $context['numberCompleted'] = self::testCompletion($session);
