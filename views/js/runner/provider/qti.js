@@ -34,7 +34,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -52,7 +52,7 @@ define([
     ], { baseUrl: '' });
 
     /**
-     * A Test runner provider to be registered againt the runner
+     * A Test runner provider to be registered against the runner
      */
     var qtiProvider = {
 
@@ -101,7 +101,7 @@ define([
 
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
-            return probeOverseer(identifier, this);
+            return probeOverseerFactory(identifier, this);
         },
 
         /**
@@ -119,9 +119,9 @@ define([
             });
 
             return persistencePromise
-                    .then(function(storage) {
-                        self.stateStorage = storage;
-                    });
+                .then(function(storage) {
+                    self.stateStorage = storage;
+                });
         },
 
         /**
@@ -175,9 +175,9 @@ define([
             /**
              * Compute the next item for the given action
              * @param {String} action - item action like move/next, skip, etc.
-             * @param {Object} [params] - the item action additionnal params
+             * @param {Object} [params] - the item action additional params
              */
-            var computeNext = function computeNext(action, params){
+            function computeNext(action, params){
 
                 var context = self.getTestContext();
 
@@ -200,14 +200,15 @@ define([
 
                             load();
                         });
-                })
-                .unloadItem(context.itemUri);
-            };
+                });
+
+                self.unloadItem(context.itemUri);
+            }
 
             /**
              * Load the next action: load the current item or call finish based the test state
              */
-            var load = function load(){
+            function load(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
@@ -216,13 +217,13 @@ define([
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            };
+            }
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise} - resolve with a boolean at true if the response is submitd
+             * @returns {Promise} - resolve with a boolean at true if the response is submitted
              */
-            var submit = function submit(){
+            function submit(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
@@ -272,12 +273,12 @@ define([
                 }
 
                 return performSubmit();
-            };
+            }
 
             /**
              * Update the stats on the TestMap
              */
-            var updateStats = function updateStats(){
+            function updateStats(){
 
                 var context = self.getTestContext();
                 var testMap = self.getTestMap();
@@ -292,158 +293,160 @@ define([
                 item.viewed = true;
 
                 //flag as answered only if a response has been set
-                if (undefined !== context.itemAnswered) {
+                if ("undefined" !== typeof context.itemAnswered) {
                     item.answered = context.itemAnswered;
                 }
 
                 //update the map stats, then reassign the map
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
-            };
+            }
 
 
             /*
              * Install behavior on events
              */
-            this.on('ready', function(){
-                //load the 1st item
-                load();
-            })
-            .on('move', function(direction, scope, position){
+            this
+                .on('ready', function(){
+                    //load the 1st item
+                    load();
+                })
+                .on('move', function(direction, scope, position){
 
-                //ask to move:
-                // 1. try to submit state and responses
-                // 2. update stats on the map
-                // 3. compute the next item to load
+                    //ask to move:
+                    // 1. try to submit state and responses
+                    // 2. update stats on the map
+                    // 3. compute the next item to load
 
-                var computeNextMove = _.partial(computeNext, 'move', {
+                    var computeNextMove = _.partial(computeNext, 'move', {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
                     });
 
 
-                this.trigger('disablenav disabletools');
+                    this.trigger('disablenav disabletools');
 
-                submit()
-                 .then(updateStats)
-                 .then(computeNextMove)
-                 .catch(function (err) {
-                    self.trigger('error', err);
-                 });
-            })
-            .on('skip', function(scope){
-
-                this.trigger('disablenav disabletools');
-
-                computeNext('skip', {
-                    scope     : scope || 'item'
-                });
-
-            })
-            .on('exit', function(why){
-                var context = self.getTestContext();
-                self.disableItem(context.itemUri);
-
-                submit()
-                    .then(function() {
-                        return self.getProxy()
-                            .callTestAction('exitTest', {reason: why})
-                            .then(function(){
-                                return self.finish();
-                            });
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
-                    });
-            })
-            .on('timeout', function(scope, ref){
-
-                var context = self.getTestContext();
-
-                context.isTimeout = true;
-
-                self.disableItem(context.itemUri);
-
-                submit()
-                    .then(updateStats)
-                    .then(function() {
-                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
-                            computeNext('timeout', {
-                                scope: scope,
-                                ref: ref
-                            });
+                    submit()
+                        .then(updateStats)
+                        .then(computeNextMove)
+                        .catch(function (err) {
+                            self.trigger('error', err);
                         });
-                    })
-                    .catch(function(err){
-                        self.trigger('error', err);
-                    });
-            })
-            .on('pause', function(){
-                // will notify the server that the test was auto paused
-                self.getProxy().callTestAction('pause').then(function() {
-                    self.trigger('leave', {
-                        code: self.getTestData().states.suspended
-                    });
                 })
-                .catch(function(err){
-                    self.trigger('error', err);
-                });
-            })
-            .on('renderitem', function(itemRef){
+                .on('skip', function(scope){
 
-                var context = this.getTestContext();
-                var states = this.getTestData().itemStates;
-                var warning = false;
+                    this.trigger('disablenav disabletools');
 
-                /**
-                 * Get the label of the current item
-                 * @returns {String} the label (fallback to the item identifier);
-                 */
-                var getItemLabel = function getItemLabel(){
-                    var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
-                    return item && item.label ? item.label : context.itemIdentifier;
-                };
+                    computeNext('skip', {
+                        scope     : scope || 'item'
+                    });
 
-                this.trigger('enablenav enabletools');
-
-
-                //The item is rendered but in a state that prevents us from interacting
-                if (context.isTimeout) {
-                    warning = __('Time limit reached for item "%s".', getItemLabel());
-
-                } else if (context.itemSessionState > states.interacting) {
-
-                    if (context.remainingAttempts === 0) {
-                        warning = __('No more attempts allowed for item "%s".',  getItemLabel());
-                    } else {
-                        warning = __('Item "%s" is completed.', getItemLabel());
-                    }
-                }
-
-                //we disable the item and warn the user
-                if (warning) {
+                })
+                .on('exit', function(why){
+                    var context = self.getTestContext();
                     self.disableItem(context.itemUri);
-                    self.trigger('warning', warning);
-                }
-            })
-            .on('disableitem', function(){
-                this.trigger('disabletools');
-            })
-            .on('enableitem', function(){
-                this.trigger('enabletools');
-            })
-            .on('error', function(){
-                this.trigger('disabletools enablenav');
-            })
-            .on('finish', function () {
-                this.flush();
-            })
-            .on('leave', function () {
-                this.flush();
-            })
-            .on('flush', function () {
-                this.destroy();
-            });
+
+                    submit()
+                        .then(function() {
+                            return self.getProxy()
+                                .callTestAction('exitTest', {reason: why})
+                                .then(function(){
+                                    return self.finish();
+                                });
+                        })
+                        .catch(function(err){
+                            self.trigger('error', err);
+                        });
+                })
+                .on('timeout', function(scope, ref){
+
+                    var context = self.getTestContext();
+
+                    context.isTimeout = true;
+
+                    self.disableItem(context.itemUri);
+
+                    submit()
+                        .then(updateStats)
+                        .then(function() {
+                            self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                                computeNext('timeout', {
+                                    scope: scope,
+                                    ref: ref
+                                });
+                            });
+                        })
+                        .catch(function(err){
+                            self.trigger('error', err);
+                        });
+                })
+                .on('pause', function(){
+                    // will notify the server that the test was auto paused
+                    self.getProxy().callTestAction('pause')
+                        .then(function() {
+                            self.trigger('leave', {
+                                code: self.getTestData().states.suspended
+                            });
+                        })
+                        .catch(function(err){
+                            self.trigger('error', err);
+                        });
+                })
+                .on('renderitem', function(){
+
+                    var context = this.getTestContext();
+                    var states = this.getTestData().itemStates;
+                    var warning = false;
+
+                    /**
+                     * Get the label of the current item
+                     * @returns {String} the label (fallback to the item identifier);
+                     */
+                    var getItemLabel = function getItemLabel(){
+                        var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
+                        return item && item.label ? item.label : context.itemIdentifier;
+                    };
+
+                    this.trigger('enablenav enabletools');
+
+
+                    //The item is rendered but in a state that prevents us from interacting
+                    if (context.isTimeout) {
+                        warning = __('Time limit reached for item "%s".', getItemLabel());
+
+                    } else if (context.itemSessionState > states.interacting) {
+
+                        if (context.remainingAttempts === 0) {
+                            warning = __('No more attempts allowed for item "%s".',  getItemLabel());
+                        } else {
+                            warning = __('Item "%s" is completed.', getItemLabel());
+                        }
+                    }
+
+                    //we disable the item and warn the user
+                    if (warning) {
+                        self.disableItem(context.itemUri);
+                        self.trigger('warning', warning);
+                    }
+                })
+                .on('disableitem', function(){
+                    this.trigger('disabletools');
+                })
+                .on('enableitem', function(){
+                    this.trigger('enabletools');
+                })
+                .on('error', function(){
+                    this.trigger('disabletools enablenav');
+                })
+                .on('finish', function () {
+                    this.flush();
+                })
+                .on('leave', function () {
+                    this.flush();
+                })
+                .on('flush', function () {
+                    this.destroy();
+                });
 
             //starts the event collection
             if(this.getProbeOverseer()){
@@ -451,12 +454,13 @@ define([
             }
 
             //load data and current context in parallel at initialization
-            return this.getProxy().init()
-                       .then(function(results){
-                            self.setTestData(results.testData);
-                            self.setTestContext(results.testContext);
-                            self.setTestMap(results.testMap);
-                       });
+            return this.getProxy()
+                .init()
+                .then(function(results){
+                    self.setTestData(results.testData);
+                    self.setTestContext(results.testContext);
+                    self.setTestMap(results.testMap);
+                });
         },
 
         /**
@@ -500,7 +504,7 @@ define([
         /**
          * RenderItem phase of the test runner
          *
-         * Here we iniitialize the item runner and wrap it's call to the test runner
+         * Here we initialize the item runner and wrap it's call to the test runner
          *
          * @this {runner} the runner context, not the provider
          * @returns {Promise} resolves when the item is ready
@@ -522,24 +526,24 @@ define([
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
-                .on('error', function(err){
-                    self.trigger('enablenav');
-                    reject(err);
-                })
-                .on('init', function(){
-                    if(itemData.state){
-                        this.setState(itemData.state);
-                    }
-                    this.render(self.getAreaBroker().getContentArea());
-                })
-                .on('render', function(){
+                    .on('error', function(err){
+                        self.trigger('enablenav');
+                        reject(err);
+                    })
+                    .on('init', function(){
+                        if(itemData.state){
+                            this.setState(itemData.state);
+                        }
+                        this.render(self.getAreaBroker().getContentArea());
+                    })
+                    .on('render', function(){
 
-                    this.on('responsechange', changeState);
-                    this.on('statechange', changeState);
+                        this.on('responsechange', changeState);
+                        this.on('statechange', changeState);
 
-                    resolve();
-                })
-                .init();
+                        resolve();
+                    })
+                    .init();
             });
         },
 
@@ -551,12 +555,12 @@ define([
          * @this {runner} the runner context, not the provider
          * @returns {Promise} resolves when the item is cleared
          */
-        unloadItem : function unloadItem(itemRef){
+        unloadItem : function unloadItem(){
             var self = this;
 
             self.trigger('disablenav disabletools');
 
-            return new Promise(function(resolve, reject){
+            return new Promise(function(resolve){
                 if(self.itemRunner){
                     self.itemRunner
                         .on('clear', resolve)
@@ -620,10 +624,10 @@ define([
             if(probeOverseer && !this.getState('disconnected')){
                 flushPromise = probeOverseer.flush()
                     .then(function(data){
+                        var traceData = {};
 
                         //we reformat the time set into a trace variables
                         if(data && data.length){
-                            var traceData = {};
                             _.forEach(data, function(entry){
                                 var id = entry.type + '-' + entry.id;
 
@@ -642,7 +646,7 @@ define([
             } else {
                 flushPromise = Promise.resolve();
             }
-            
+
             return flushPromise.then(function () {
                 // safely stop the communicator to prevent inconsistent communication while leaving
                 if (proxy.hasCommunicator()) {
