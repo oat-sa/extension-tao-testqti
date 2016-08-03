@@ -515,7 +515,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $registry->remove(TestRunnerClientConfigRegistry::RUNNER);
             $registry->remove(TestRunnerClientConfigRegistry::RUNNER_PROD);
 
-            $this->setVersion('5.0.0');
+            $this->setVersion('5.0.1');
         }
     }
 }
