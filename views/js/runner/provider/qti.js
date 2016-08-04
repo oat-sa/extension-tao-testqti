@@ -592,7 +592,7 @@ define([
                         .callTestAction('finish')
                         .then(function() {
                             if (self.stateStorage) {
-                                return self.stateStorage.clear();
+                                return self.stateStorage.removeStore();
                             }
                         })
                         .then(done)
