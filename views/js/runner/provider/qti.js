@@ -380,12 +380,21 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .on('pause', function(){
-                    // will notify the server that the test was auto paused
-                    self.getProxy().callTestAction('pause')
+                .on('pause', function(data){
+                    var pause;
+
+                    if (!self.getState('disconnected')) {
+                        // will notify the server that the test was auto paused
+                        pause = self.getProxy().callTestAction('pause');
+                    } else {
+                        pause = Promise.resolve();
+                    }
+
+                    pause
                         .then(function() {
                             self.trigger('leave', {
-                                code: self.getTestData().states.suspended
+                                code: self.getTestData().states.suspended,
+                                message: data && data.message
                             });
                         })
                         .catch(function(err){
