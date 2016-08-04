@@ -32,7 +32,7 @@ class ExtendedStateService
     const VAR_SECURITY_TOKEN = 'security_token';
     const VAR_SESSION_TOKEN = 'session_token';
 
-    private $cache = null;
+    private static $cache = null;
 
     /**
      * Retrieves extended state information
@@ -42,7 +42,7 @@ class ExtendedStateService
      */
     protected function getExtra($testSessionId)
     {
-        if (!isset($this->cache[$testSessionId])) {
+        if (!isset(self::$cache[$testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
 
@@ -54,12 +54,12 @@ class ExtendedStateService
                 }
             } else {
                 $data = array(
-                	self::VAR_REVIEW => array()
+                    self::VAR_REVIEW => array()
                 );
             }
-            $this->cache[$testSessionId] = $data;
+            self::$cache[$testSessionId] = $data;
         }
-        return $this->cache[$testSessionId];
+        return self::$cache[$testSessionId];
     }
 
     /**
@@ -69,7 +69,9 @@ class ExtendedStateService
      */
     protected function saveExtra($testSessionId, $extra)
     {
-        $this->cache[$testSessionId] = $extra;
+
+        self::$cache[$testSessionId] = $extra;
+
         $storageService = \tao_models_classes_service_StateStorage::singleton();
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
 
@@ -102,6 +104,7 @@ class ExtendedStateService
     {
         $extra = $this->getExtra($testSessionId);
         $extra[self::VAR_REVIEW][$itemRef] = $flag;
+
         $this->saveExtra($testSessionId, $extra);
     }
 

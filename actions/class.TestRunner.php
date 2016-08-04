@@ -195,7 +195,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	/**
 	 * Get the path to the directory where the test is compiled.
 	 * 
-	 * @return string
+	 * @return tao_models_classes_service_StorageDirectory
 	 */
 	protected function getCompilationDirectory() {
 	    return $this->compilationDirectory;
@@ -841,14 +841,22 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     /**
      * Retrieve the QTI Test Definition meta-data array stored
      * into the private compilation directory.
-     * 
+     *
      * @return array
      */
-    protected function retrieveTestMeta() {
+    protected function retrieveTestMeta()
+    {
         $directories = $this->getCompilationDirectory();
-        $privateDirectoryPath = $directories['private']->getPath();
-        $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
-        
+        /** @var tao_models_classes_service_StorageDirectory $privateDirectory */
+        $privateDirectory = $directories['private'];
+        $data = $privateDirectory->read(TAOQTITEST_COMPILED_META_FILENAME);
+        if ($data == false) {
+            throw new common_exception_InconsistentData('Missing data for compiled test');
+        }
+
+        $data = str_replace('<?php', '', $data);
+        $data = str_replace('?>', '', $data);
+        $meta = eval($data);
         $this->setTestMeta($meta);
     }
 

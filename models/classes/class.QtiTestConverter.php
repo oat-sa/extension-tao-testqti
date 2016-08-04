@@ -310,7 +310,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param mixed $value
      * @param object $class
-     * @return \qtism\common\datatypes\Duration
+     * @return \qtism\common\datatypes\QtiDuration
      */
     private function componentValue($value, $class)
     {
@@ -318,7 +318,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             if (is_array($value)) {
                 return $this->createComponentCollection(new ReflectionClass($class->name), $value);
             } else
-                if ($class->name === 'qtism\common\datatypes\Duration') {
+                if ($class->name === 'qtism\common\datatypes\QtiDuration') {
                     return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
                 }
         }

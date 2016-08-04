@@ -23,13 +23,14 @@
 /*
  * This post-installation script creates a fodler for the QTI Tests
  */
-$dataPath = FILES_PATH . 'taoQtiTest' . DIRECTORY_SEPARATOR;
+$dataPath = FILES_PATH . 'taoQtiTest' . DIRECTORY_SEPARATOR. 'testData' . DIRECTORY_SEPARATOR;
 if (file_exists($dataPath)) {
     helpers_File::emptyDirectory($dataPath);
 }
 
-$source = tao_models_classes_FileSourceService::singleton()->addLocalSource('QTI test datasource', $dataPath);
-mkdir($dataPath.'testData');
-$directory = new core_kernel_file_File($source->createFile('', 'testData'));
+$serviceManager = oat\oatbox\service\ServiceManager::getServiceManager();
+$fsService = $serviceManager->get(oat\oatbox\filesystem\FileSystemService::SERVICE_ID); 
+$fsService->createFileSystem('http://taoQtiTest#fs', 'taoQtiTest');
+$serviceManager->register(oat\oatbox\filesystem\FileSystemService::SERVICE_ID, $fsService);
 
-taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestDirectory($directory);
+taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem(new core_kernel_fileSystem_FileSystem('http://taoQtiTest#fs'));

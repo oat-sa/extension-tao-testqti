@@ -19,12 +19,15 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
 
 /**
@@ -430,6 +433,91 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('2.31.1');
         }
-        $this->skip('2.31.1', '2.35.0');
+
+        $this->skip('2.31.1', '3.0.0');
+
+        if ($this->isVersion('3.0.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-allow-skipping'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('3.1.0');
+        }
+
+        $this->skip('3.1.0', '3.4.0');
+
+        if ($this->isVersion('3.4.0')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
+            $dir = new \core_kernel_file_File($uri);
+
+            $fs = $dir->getFileSystem();
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
+
+            $this->setVersion('4.0.0');
+        }
+
+        $this->skip('4.0.0', '4.6.0');
+
+        if ($this->isVersion('4.6.0')) {
+
+            $registry = TestRunnerClientConfigRegistry::getRegistry();
+            $runnerConfig = $registry->get(TestRunnerClientConfigRegistry::RUNNER);
+            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
+                foreach($runnerConfig['plugins'] as $plugin){
+                    //if the plugin is registered
+                    if($plugin['module'] == 'taoQtiTest/runner/plugins/controls/disableRightClick'){
+                        //we migrate the category
+                        $registry->removePlugin('taoQtiTest/runner/plugins/controls/disableRightClick', 'controls', null);
+                        $registry->registerPlugin('taoQtiTest/runner/plugins/security/disableRightClick', 'security', null);
+                        break;
+                    }
+                }
+            }
+
+            $this->setVersion('4.7.0');
+        }
+
+        $this->skip('4.7.0', '4.8.2');
+
+        if ($this->isVersion('4.8.2')) {
+
+            //regsiter the core plugins into taoTests
+            $registerCorePlugins = new RegisterTestRunnerPlugins();
+            $registerCorePlugins([]);
+
+            $registry = PluginRegistry::getRegistry();
+
+            //list the installed plugins
+            $oldRegistry = TestRunnerClientConfigRegistry::getRegistry();
+            $runnerConfig = $oldRegistry->get(TestRunnerClientConfigRegistry::RUNNER);
+            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
+                foreach($runnerConfig['plugins'] as $plugin){
+
+                    //if they are not yet in the config, migrate them automatically
+                    if( ! $registry->isRegistered($plugin['module']) ) {
+                        $pluginId = basename($plugin['module']);
+                        $pluginName = ucfirst(join(preg_split('/(?=[A-Z])/', $pluginId), ' '));
+                        $registry->register(TestPlugin::fromArray([
+                            'id'       => $pluginId,
+                            'name'     => $pluginName,
+                            'module'   => $plugin['module'],
+                            'category' => $plugin['category'],
+                            'position' => $plugin['position'],
+                            'active'   => true
+                        ]));
+                    }
+                }
+            }
+
+            //then remove the old config
+            $registry->remove(TestRunnerClientConfigRegistry::RUNNER);
+            $registry->remove(TestRunnerClientConfigRegistry::RUNNER_PROD);
+
+            $this->setVersion('5.0.0');
+        }
+
+        $this->skip('5.0.0', '5.1.0');
     }
 }

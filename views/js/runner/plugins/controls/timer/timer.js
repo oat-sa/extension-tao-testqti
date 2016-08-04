@@ -298,6 +298,13 @@ define([
                         updateTimers(true);
                     })
 
+                    .on('enableitem', function() {
+                        self.enable();
+                    })
+                    .on('disableitem', function() {
+                        self.disable();
+                    })
+
                     .after('renderitem', function(){
                         //start timers
                         self.enable();
