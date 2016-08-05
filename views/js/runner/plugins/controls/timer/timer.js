@@ -85,19 +85,12 @@ define([
          * Installation of the plugin (called before init)
          */
         install : function install() {
-
+            var self = this;
             //the storechange event is fired early (before runner's init is done)
             //so we attach the handler early
             var testRunner = this.getTestRunner();
             testRunner.on('storechange', function handleStoreChange() {
-                var storeName = 'store-' + testRunner.getConfig().serviceCallId;
-
-                //if we are not on the same store, we remove it
-                store(storeName).then(function(timeStore){
-                    timeStore.clear();
-                }).catch(function(err){
-                    testRunner.trigger('error', err);
-                });
+                self.shouldClearStorage = true;
             });
         },
 
@@ -241,130 +234,138 @@ define([
                 });
             };
 
-            return store('timer-' + testRunner.getConfig().serviceCallId).then(function(timeStore){
+            return store('timer-' + testRunner.getConfig().serviceCallId)
+                .then(function(timeStore){
+                    if(self.shouldClearStorage){
+                        return timeStore.clear().then(function(){
+                            return timeStore;
+                        });
+                    }
+                    return Promise.resolve(timeStore);
+                }).then(function(timeStore){
 
-                //the timer's storage
-                self.storage = timeStore;
+                    //the timer's storage
+                    self.storage = timeStore;
 
-                //the element that'll contain the timers
-                self.$element = $(timerBoxTpl());
+                    //the element that'll contain the timers
+                    self.$element = $(timerBoxTpl());
 
-                //one stopwatch to count the time
-                self.stopwatch = timerFactory({
-                    autoStart : false
-                });
+                    //one stopwatch to count the time
+                    self.stopwatch = timerFactory({
+                        autoStart : false
+                    });
 
-                //update the timers at regular intervals
-                self.polling = pollingFactory({
+                    //update the timers at regular intervals
+                    self.polling = pollingFactory({
 
-                    /**
-                    * The polling action consists in updating each timers,
-                    * checking timeout and warnings
-                    */
-                    action : function updateTime() {
+                        /**
+                        * The polling action consists in updating each timers,
+                        * checking timeout and warnings
+                        */
+                        action : function updateTime() {
 
-                        //how many time elapsed from the last tick ?
-                        var elapsed = self.stopwatch.tick();
-                        var timeout = false;
-                        var timeoutScope, timeoutRef;
+                            //how many time elapsed from the last tick ?
+                            var elapsed = self.stopwatch.tick();
+                            var timeout = false;
+                            var timeoutScope, timeoutRef;
 
-                        _.forEach(currentTimers, function(timer, type) {
-                            var currentVal,
-                                warning;
-                            var runTimeout = function runTimeout(){
-                                testRunner.timeout(timeoutScope, timeoutRef);
-                            };
+                            _.forEach(currentTimers, function(timer, type) {
+                                var currentVal,
+                                    warning;
+                                var runTimeout = function runTimeout(){
+                                    testRunner.timeout(timeoutScope, timeoutRef);
+                                };
 
-                            if (timer.running()) {
-                                currentVal = Math.max(timer.val() - elapsed, 0);
-                                timer
-                                    .val(currentVal)
-                                    .refresh();
+                                if (timer.running()) {
+                                    currentVal = Math.max(timer.val() - elapsed, 0);
+                                    timer
+                                        .val(currentVal)
+                                        .refresh();
 
-                                if (currentVal <= 0) {
-                                    timer.running(false);
-                                    timeout = true;
-                                    timeoutRef = timer.id();
-                                    timeoutScope = type;
+                                    if (currentVal <= 0) {
+                                        timer.running(false);
+                                        timeout = true;
+                                        timeoutRef = timer.id();
+                                        timeoutScope = type;
 
-                                    self.storage.setItem(timer.id(), 0)
-                                        .then(runTimeout)
-                                        .catch(runTimeout);
+                                        self.storage.setItem(timer.id(), 0)
+                                            .then(runTimeout)
+                                            .catch(runTimeout);
 
-                                } else {
-                                    self.storage.setItem(timer.id(), currentVal);
-                                    warning = timer.warn();
-                                    if (!_.isEmpty(warning)) {
-                                        testRunner.trigger(warning.type, warning.text);
+                                    } else {
+                                        self.storage.setItem(timer.id(), currentVal);
+                                        warning = timer.warn();
+                                        if (!_.isEmpty(warning)) {
+                                            testRunner.trigger(warning.type, warning.text);
+                                        }
                                     }
                                 }
+                            });
+                            if (timeout) {
+                                self.disable();
                             }
-                        });
-                        if (timeout) {
-                            self.disable();
-                        }
-                    },
-                    interval : timerRefresh,
-                    autoStart : false
-                });
-
-                //change plugin state
-                testRunner
-                    .on('loaditem', function(){
-
-                        //check for new timers
-                        updateTimers(true);
-                    })
-                    .on('enableitem', function() {
-                        self.enable();
-                    })
-                    .on('disableitem', function() {
-                        self.disable();
-                    })
-                    .after('renderitem', function(){
-                        //start timers
-                        self.enable();
-                    })
-                    .on('disconnect', function() {
-                        //pause the timers when the connection is lost
-                        if (self.getState('enabled')) {
-                            self.disable();
-                        }
-                    })
-                    .before('move', function(e, type, scope, position){
-                        var done = e.done();
-
-                        var doMove = function doMove(){
-                            removeTimer(timerTypes.item);
-                            done();
-                        };
-
-                        var cancelMove = function cancelMove() {
-                            testRunner.trigger('enableitem enablenav');
-                            e.prevent();
-                        };
-
-                        //pause the timers
-                        if (self.getState('enabled')) {
-                            self.disable();
-                        }
-
-                        //display a mesage if we exit a timed section
-                        if(leaveTimedSection(type, scope, position)){
-                            testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
-                        } else {
-                            doMove();
-                        }
-                    })
-                    .before('finish', function(e){
-                        var done = e.done();
-
-                        //clean up the storage at the end
-                        self.storage.removeStore()
-                            .then(done)
-                            .catch(done);
+                        },
+                        interval : timerRefresh,
+                        autoStart : false
                     });
-            });
+
+                    //change plugin state
+                    testRunner
+                        .on('loaditem', function(){
+
+                            //check for new timers
+                            updateTimers(true);
+                        })
+                        .on('enableitem', function() {
+                            self.enable();
+                        })
+                        .on('disableitem', function() {
+                            self.disable();
+                        })
+                        .after('renderitem', function(){
+                            //start timers
+                            self.enable();
+                        })
+                        .on('disconnect', function() {
+                            //pause the timers when the connection is lost
+                            if (self.getState('enabled')) {
+                                self.disable();
+                            }
+                        })
+                        .before('move', function(e, type, scope, position){
+                            var done = e.done();
+
+                            var doMove = function doMove(){
+                                removeTimer(timerTypes.item);
+                                done();
+                            };
+
+                            var cancelMove = function cancelMove() {
+                                testRunner.trigger('enableitem enablenav');
+                                e.prevent();
+                            };
+
+                            //pause the timers
+                            if (self.getState('enabled')) {
+                                self.disable();
+                            }
+
+                            //display a mesage if we exit a timed section
+                            if(leaveTimedSection(type, scope, position)){
+                                testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
+                            } else {
+                                doMove();
+                            }
+                        })
+                        .before('finish', function(e){
+                            var done = e.done();
+
+                            //clean up the storage at the end
+                            self.storage.removeStore()
+                                .then(done)
+                                .catch(done);
+                        });
+                });
         },
 
         /**
