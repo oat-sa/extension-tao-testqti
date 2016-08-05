@@ -31,6 +31,7 @@ class ExtendedStateService
     const VAR_SECURITY_TIMESTAMP = 'security_timestamp';
     const VAR_SECURITY_TOKEN = 'security_token';
     const VAR_SESSION_TOKEN = 'session_token';
+    const VAR_STORE_ID = 'client_store_id';
 
     private static $cache = null;
 
@@ -188,5 +189,18 @@ class ExtendedStateService
         $extra[self::VAR_SESSION_TOKEN] = uniqid('', true);
         
         $this->saveExtra($testSessionId, $extra);
+    }
+
+    public function setStoreId($testSessionId, $storeId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_STORE_ID] = $storeId;
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    public function getStoreId($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra[self::VAR_STORE_ID]) ? $extra[self::VAR_STORE_ID] : false;
     }
 }

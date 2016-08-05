@@ -29,6 +29,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
 use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
+use \oat\taoQtiTest\models\ExtendedStateService;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -250,12 +251,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
+            
 
             if ($this->hasRequestParameter('clientState')) {
                 $clientState = $this->getRequestParameter('clientState');
                 if ('paused' == $clientState) {
                     $this->runnerService->pause($serviceContext);
                     $this->runnerService->check($serviceContext);
+                }
+            }
+
+            $lastStoreId = false;
+            if($this->hasRequestParameter('storeId')){
+                $receivedStoreId =  $this->getRequestParameter('storeId');
+                if(preg_match('/^[a-z0-9\-]+$/i', $receivedStoreId)) {
+
+                    $testSession = $serviceContext->getTestSession();
+                    $sessionId = $testSession->getSessionId();
+
+                    $stateService = new ExtendedStateService();
+                    $lastStoreId = $stateService->getStoreId($sessionId);
+
+                    if($lastStoreId != $receivedStoreId){
+                        $stateService->setStoreId($sessionId, $receivedStoreId);
+                    }
                 }
             }
 
@@ -269,6 +288,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testData'] = $this->runnerService->getTestData($serviceContext);
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
                 $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                $response['lastStoreId'] = $lastStoreId;
             }
             
             $this->runnerService->persist($serviceContext);
