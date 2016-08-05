@@ -24,6 +24,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/store',
     'core/promise',
     'core/cachedStore',
     'taoTests/runner/areaBroker',
@@ -34,7 +35,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, store, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -450,13 +451,29 @@ define([
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parallel at initialization
-            return this.getProxy().init()
-                       .then(function(results){
-                            self.setTestData(results.testData);
-                            self.setTestContext(results.testContext);
-                            self.setTestMap(results.testMap);
-                       });
+            //get the current store identifier to send it along with the init call
+            return store.getIdentifier().then(function(storeId){
+
+                //load data and current context in parallel at initialization
+                return self.getProxy().init({
+                    storeId : storeId
+                }).then(function(results){
+                    //
+                    self.setTestData(results.testData);
+                    self.setTestContext(results.testContext);
+                    self.setTestMap(results.testMap);
+
+                    //check if we need to trigger a storeChange
+                    if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
+
+                        /**
+                         * We are changed the local storage engine (could be a browser change)
+                         * @event runner/provider/qti#storechange
+                         */
+                        self.trigger('storechange');
+                    }
+                });
+            });
         },
 
         /**
@@ -642,7 +659,7 @@ define([
             } else {
                 flushPromise = Promise.resolve();
             }
-            
+
             return flushPromise.then(function () {
                 // safely stop the communicator to prevent inconsistent communication while leaving
                 if (proxy.hasCommunicator()) {

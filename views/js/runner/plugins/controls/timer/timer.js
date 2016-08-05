@@ -82,6 +82,26 @@ define([
         name: 'timer',
 
         /**
+         * Installation of the plugin (called before init)
+         */
+        install : function install() {
+
+            //the storechange event is fired early (before runner's init is done)
+            //so we attach the handler early
+            var testRunner = this.getTestRunner();
+            testRunner.on('storechange', function handleStoreChange() {
+                var storeName = 'store-' + testRunner.getConfig().serviceCallId;
+
+                //if we are not on the same store, we remove it
+                store(storeName).then(function(timeStore){
+                    timeStore.clear();
+                }).catch(function(err){
+                    testRunner.trigger('error', err);
+                });
+            });
+        },
+
+        /**
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
@@ -102,6 +122,7 @@ define([
             var getTimerConfig = function getTimerConfig(type) {
                 var timeConstraint;
                 var timer;
+                var closestPreviousWarning;
                 var context = testRunner.getTestContext();
 
                 // get the config of each timer
@@ -127,7 +148,7 @@ define([
                             }
                         });
 
-                        var closestPreviousWarning = _.find(timer.warnings, { showed: true });
+                        closestPreviousWarning = _.find(timer.warnings, { showed: true });
                         if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point && timer.warnings[closestPreviousWarning.point / precision]) {
                             timer.warnings[closestPreviousWarning.point / precision].showed = false;
                         }
@@ -208,7 +229,7 @@ define([
                                     timerConfig.remaining = savedTime;
                                 }
                                 addTimer(type, timerConfig);
-                            }).catch(function(err){
+                            }).catch(function(){
                                 //add the timer even if the storage doesn't work
                                 addTimer(type, timerConfig);
                             });
@@ -287,36 +308,29 @@ define([
                     autoStart : false
                 });
 
-
-
                 //change plugin state
                 testRunner
-
                     .on('loaditem', function(){
 
                         //check for new timers
                         updateTimers(true);
                     })
-
                     .on('enableitem', function() {
                         self.enable();
                     })
                     .on('disableitem', function() {
                         self.disable();
                     })
-
                     .after('renderitem', function(){
                         //start timers
                         self.enable();
                     })
-
                     .on('disconnect', function() {
                         //pause the timers when the connection is lost
                         if (self.getState('enabled')) {
                             self.disable();
                         }
                     })
-
                     .before('move', function(e, type, scope, position){
                         var done = e.done();
 
@@ -342,7 +356,6 @@ define([
                             doMove();
                         }
                     })
-
                     .before('finish', function(e){
                         var done = e.done();
 
