@@ -132,6 +132,12 @@ define([
         }
     }
 
+    /**
+     * Give the list of tao pre-defined test option categories
+     * Useful to have this list somewhere in the code.
+     *
+     * @returns {array}
+     */
     function getTaoOptionCategories(){
         return [
             {
@@ -158,7 +164,7 @@ define([
                 name : 'x-tao-option-calculator',
                 description : __('enable calculator')
             }
-        ]
+        ];
     }
 
     return {
