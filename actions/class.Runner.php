@@ -29,7 +29,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
 use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
-use \oat\taoQtiTest\models\ExtendedStateService;
+
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -265,16 +265,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if($this->hasRequestParameter('storeId')){
                 $receivedStoreId =  $this->getRequestParameter('storeId');
                 if(preg_match('/^[a-z0-9\-]+$/i', $receivedStoreId)) {
-
-                    $testSession = $serviceContext->getTestSession();
-                    $sessionId = $testSession->getSessionId();
-
-                    $stateService = new ExtendedStateService();
-                    $lastStoreId = $stateService->getStoreId($sessionId);
-
-                    if($lastStoreId != $receivedStoreId){
-                        $stateService->setStoreId($sessionId, $receivedStoreId);
-                    }
+                    $lastStoreId = $this->runnerService->switchClientStoreId($serviceContext, $receivedStoreId);
                 }
             }
 
