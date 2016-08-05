@@ -17,8 +17,9 @@
  */
 define([
     'lodash',
+    'i18n',
     'core/errorHandler'
-], function (_, errorHandler){
+], function (_, __, errorHandler){
 
     'use strict';
 
@@ -131,11 +132,41 @@ define([
         }
     }
 
+    function getTaoOptionCategories(){
+        return [
+            {
+                name : 'x-tao-option-nextSectionWarning',
+                description : __('displays a next section button that warns the user that they will not be able to return to the section')
+            },
+            {
+                name : 'x-tao-option-nextSection',
+                description : __('displays a next section button')
+            },
+            {
+                name : 'x-tao-option-exit',
+                description : __('displays an exit button')
+            },
+            {
+                name : 'x-tao-option-markReview',
+                description : __('displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option')
+            },
+            {
+                name : 'x-tao-option-reviewScreen',
+                description : __('displays the review screen / navigator')
+            },
+            {
+                name : 'x-tao-option-calculator',
+                description : __('enable calculator')
+            }
+        ]
+    }
+
     return {
         isValidSectionModel : isValidSectionModel,
         setCategories : setCategories,
         getCategories : getCategories,
         addCategories : addCategories,
-        removeCategories : removeCategories
+        removeCategories : removeCategories,
+        getTaoOptionCategories : getTaoOptionCategories
     };
 });

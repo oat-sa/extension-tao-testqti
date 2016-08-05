@@ -285,11 +285,10 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            
             var $select = $('[name=section-category]', $view);
             $select.select2({
                 width: '100%',
-                tags : [],
+                tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
                 multiple : true,
                 tokenSeparators: [",", " ", ";"],
                 formatNoMatches : function(){
