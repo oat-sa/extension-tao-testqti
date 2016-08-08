@@ -23,8 +23,9 @@ define([
 'jquery',
 'lodash', 
 'i18n',
-'taoQtiTest/controller/creator/views/actions'],
-function($, _, __, actions){
+'taoQtiTest/controller/creator/views/actions',
+'taoQtiTest/controller/creator/helpers/sectionCategory'],
+function($, _, __, actions, sectionCategory){
     'use strict';
 
    /**
@@ -68,11 +69,10 @@ function($, _, __, actions){
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            
             var $select = $view.find('[name=itemref-category]');
             $select.select2({
                 width: '100%',
-                tags : [],
+                tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
                 multiple : true,
                 tokenSeparators: [",", " ", ";"],
                 formatNoMatches : function(){

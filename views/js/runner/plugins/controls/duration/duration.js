@@ -134,7 +134,7 @@ define([
                             .before('finish', function(e){
                                 var done = e.done();
 
-                                durationStore.clear()
+                                durationStore.removeStore()
                                     .then(done)
                                     .catch(done);
                             });

@@ -24,6 +24,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/store',
     'core/promise',
     'core/cachedStore',
     'taoTests/runner/areaBroker',
@@ -34,7 +35,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, store, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -119,9 +120,9 @@ define([
             });
 
             return persistencePromise
-                .then(function(storage) {
-                    self.stateStorage = storage;
-                });
+                    .then(function(storage) {
+                        self.stateStorage = storage;
+                    });
         },
 
         /**
@@ -307,84 +308,84 @@ define([
              */
             this
                 .on('ready', function(){
-                    //load the 1st item
-                    load();
-                })
-                .on('move', function(direction, scope, position){
+                //load the 1st item
+                load();
+            })
+            .on('move', function(direction, scope, position){
 
-                    //ask to move:
-                    // 1. try to submit state and responses
-                    // 2. update stats on the map
-                    // 3. compute the next item to load
+                //ask to move:
+                // 1. try to submit state and responses
+                // 2. update stats on the map
+                // 3. compute the next item to load
 
-                    var computeNextMove = _.partial(computeNext, 'move', {
+                var computeNextMove = _.partial(computeNext, 'move', {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
                     });
 
 
-                    this.trigger('disablenav disabletools');
+                this.trigger('disablenav disabletools');
 
-                    submit()
-                        .then(updateStats)
-                        .then(computeNextMove)
-                        .catch(function (err) {
-                            self.trigger('error', err);
-                        });
-                })
-                .on('skip', function(scope){
+                submit()
+                 .then(updateStats)
+                 .then(computeNextMove)
+                 .catch(function (err) {
+                    self.trigger('error', err);
+                 });
+            })
+            .on('skip', function(scope){
 
-                    this.trigger('disablenav disabletools');
+                this.trigger('disablenav disabletools');
 
-                    computeNext('skip', {
-                        scope     : scope || 'item'
-                    });
+                computeNext('skip', {
+                    scope     : scope || 'item'
+                });
 
-                })
-                .on('exit', function(why){
-                    var context = self.getTestContext();
-                    self.disableItem(context.itemUri);
+            })
+            .on('exit', function(why){
+                var context = self.getTestContext();
+                self.disableItem(context.itemUri);
 
-                    submit()
-                        .then(function() {
-                            return self.getProxy()
-                                .callTestAction('exitTest', {reason: why})
-                                .then(function(){
-                                    return self.finish();
-                                });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
-                })
-                .on('timeout', function(scope, ref){
-
-                    var context = self.getTestContext();
-
-                    context.isTimeout = true;
-
-                    self.disableItem(context.itemUri);
-
-                    submit()
-                        .then(updateStats)
-                        .then(function() {
-                            self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
-                                computeNext('timeout', {
-                                    scope: scope,
-                                    ref: ref
-                                });
+                submit()
+                    .then(function() {
+                        return self.getProxy()
+                            .callTestAction('exitTest', {reason: why})
+                            .then(function(){
+                                return self.finish();
                             });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+            })
+            .on('timeout', function(scope, ref){
+
+                var context = self.getTestContext();
+
+                context.isTimeout = true;
+
+                self.disableItem(context.itemUri);
+
+                submit()
+                    .then(updateStats)
+                    .then(function() {
+                        self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            computeNext('timeout', {
+                                scope: scope,
+                                ref: ref
+                            });
                         });
-                })
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+            })
                 .on('pause', function(data){
                     var pause;
 
                     if (!self.getState('disconnected')) {
-                        // will notify the server that the test was auto paused
+                // will notify the server that the test was auto paused
                         pause = self.getProxy().callTestAction('pause');
                     } else {
                         pause = Promise.resolve();
@@ -392,84 +393,98 @@ define([
 
                     pause
                         .then(function() {
-                            self.trigger('leave', {
+                    self.trigger('leave', {
                                 code: self.getTestData().states.suspended,
                                 message: data && data.message
-                            });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    });
                 })
+                .catch(function(err){
+                    self.trigger('error', err);
+                });
+            })
                 .on('renderitem', function(){
 
-                    var context = this.getTestContext();
-                    var states = this.getTestData().itemStates;
-                    var warning = false;
+                var context = this.getTestContext();
+                var states = this.getTestData().itemStates;
+                var warning = false;
 
-                    /**
-                     * Get the label of the current item
-                     * @returns {String} the label (fallback to the item identifier);
-                     */
-                    var getItemLabel = function getItemLabel(){
-                        var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
-                        return item && item.label ? item.label : context.itemIdentifier;
-                    };
+                /**
+                 * Get the label of the current item
+                 * @returns {String} the label (fallback to the item identifier);
+                 */
+                var getItemLabel = function getItemLabel(){
+                    var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
+                    return item && item.label ? item.label : context.itemIdentifier;
+                };
 
-                    this.trigger('enablenav enabletools');
+                this.trigger('enablenav enabletools');
 
 
-                    //The item is rendered but in a state that prevents us from interacting
-                    if (context.isTimeout) {
-                        warning = __('Time limit reached for item "%s".', getItemLabel());
+                //The item is rendered but in a state that prevents us from interacting
+                if (context.isTimeout) {
+                    warning = __('Time limit reached for item "%s".', getItemLabel());
 
-                    } else if (context.itemSessionState > states.interacting) {
+                } else if (context.itemSessionState > states.interacting) {
 
-                        if (context.remainingAttempts === 0) {
-                            warning = __('No more attempts allowed for item "%s".',  getItemLabel());
-                        } else {
-                            warning = __('Item "%s" is completed.', getItemLabel());
-                        }
+                    if (context.remainingAttempts === 0) {
+                        warning = __('No more attempts allowed for item "%s".',  getItemLabel());
+                    } else {
+                        warning = __('Item "%s" is completed.', getItemLabel());
                     }
+                }
 
-                    //we disable the item and warn the user
-                    if (warning) {
-                        self.disableItem(context.itemUri);
-                        self.trigger('warning', warning);
-                    }
-                })
-                .on('disableitem', function(){
-                    this.trigger('disabletools');
-                })
-                .on('enableitem', function(){
-                    this.trigger('enabletools');
-                })
-                .on('error', function(){
-                    this.trigger('disabletools enablenav');
-                })
-                .on('finish', function () {
-                    this.flush();
-                })
-                .on('leave', function () {
-                    this.flush();
-                })
-                .on('flush', function () {
-                    this.destroy();
-                });
+                //we disable the item and warn the user
+                if (warning) {
+                    self.disableItem(context.itemUri);
+                    self.trigger('warning', warning);
+                }
+            })
+            .on('disableitem', function(){
+                this.trigger('disabletools');
+            })
+            .on('enableitem', function(){
+                this.trigger('enabletools');
+            })
+            .on('error', function(){
+                this.trigger('disabletools enablenav');
+            })
+            .on('finish', function () {
+                this.flush();
+            })
+            .on('leave', function () {
+                this.flush();
+            })
+            .on('flush', function () {
+                this.destroy();
+            });
 
             //starts the event collection
             if(this.getProbeOverseer()){
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parallel at initialization
-            return this.getProxy()
-                .init()
-                .then(function(results){
+            //get the current store identifier to send it along with the init call
+            return store.getIdentifier().then(function(storeId){
+
+                //load data and current context in parallel at initialization
+                return self.getProxy().init({
+                    storeId : storeId
+                }).then(function(results){
                     self.setTestData(results.testData);
                     self.setTestContext(results.testContext);
                     self.setTestMap(results.testMap);
+
+                    //check if we need to trigger a storeChange
+                    if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
+
+                        /**
+                         * We are changed the local storage engine (could be a browser change)
+                         * @event runner/provider/qti#storechange
+                         */
+                        self.trigger('storechange');
+                    }
                 });
+            });
         },
 
         /**
@@ -535,24 +550,24 @@ define([
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
-                    .on('error', function(err){
-                        self.trigger('enablenav');
-                        reject(err);
-                    })
-                    .on('init', function(){
-                        if(itemData.state){
-                            this.setState(itemData.state);
-                        }
-                        this.render(self.getAreaBroker().getContentArea());
-                    })
-                    .on('render', function(){
+                .on('error', function(err){
+                    self.trigger('enablenav');
+                    reject(err);
+                })
+                .on('init', function(){
+                    if(itemData.state){
+                        this.setState(itemData.state);
+                    }
+                    this.render(self.getAreaBroker().getContentArea());
+                })
+                .on('render', function(){
 
-                        this.on('responsechange', changeState);
-                        this.on('statechange', changeState);
+                    this.on('responsechange', changeState);
+                    this.on('statechange', changeState);
 
-                        resolve();
-                    })
-                    .init();
+                    resolve();
+                })
+                .init();
             });
         },
 
@@ -605,7 +620,7 @@ define([
                         .callTestAction('finish')
                         .then(function() {
                             if (self.stateStorage) {
-                                return self.stateStorage.clear();
+                                return self.stateStorage.removeStore();
                             }
                         })
                         .then(done)
@@ -655,7 +670,7 @@ define([
             } else {
                 flushPromise = Promise.resolve();
             }
-
+            
             return flushPromise.then(function () {
                 // safely stop the communicator to prevent inconsistent communication while leaving
                 if (proxy.hasCommunicator()) {
