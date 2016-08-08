@@ -126,10 +126,10 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('renderitem', function (){
+                .on('enabletools renderitem', function (){
                     self.enable();
                 })
-                .on('unloaditem', function (){
+                .on('disabletools unloaditem', function (){
                     self.disable();
                     if(self.calculator){
                         //destroy calculator to create a new instance of calculator each time
