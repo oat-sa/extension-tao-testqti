@@ -255,6 +255,9 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
 
+        // Possibility to apply post-processing to the test.xml definition.
+        $this->postProcessing($tmpPath);
+
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
         $this->referenceTest($testHref, $itemIdentifiers);
@@ -355,5 +358,10 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function getTestResourceType()
     {
         return 'imsqti_test_xmlv2p1';
+    }
+    
+    protected function postProcessing($path)
+    {
+        return;
     }
 }
