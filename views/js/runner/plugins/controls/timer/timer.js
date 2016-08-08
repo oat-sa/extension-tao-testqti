@@ -347,7 +347,7 @@ define([
                         var done = e.done();
 
                         //clean up the storage at the end
-                        self.storage.clear()
+                        self.storage.removeStore()
                             .then(done)
                             .catch(done);
                     });
