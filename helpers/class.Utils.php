@@ -152,7 +152,7 @@ class taoQtiTest_helpers_Utils {
      * @return DOMDocument
      */
     static public function emptyImsManifest($version = '2.1') {
-        $manifestFileName = ($version === '2.1') ? 'imsmanifest' : 'imsmanifest22';
+        $manifestFileName = ($version === '2.1') ? 'imsmanifest' : 'imsmanifestQti22';
         $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . 'taoQtiItem/model/qti/templates/' . $manifestFileName . '.tpl.php', array(
             'qtiItems' => array(),
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
