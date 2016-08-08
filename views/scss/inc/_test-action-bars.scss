@@ -177,6 +177,17 @@
                 [class^="btn-"], [class*=" btn-"] {
                     white-space: nowrap;
                 }
+
+                .no-tool-label {
+                    &, &-hover li:not(:hover) {
+                        .text {
+                            display: none;
+                        }
+                        .icon {
+                            padding: 0;
+                        }
+                    }
+                }
             }
             .tools-box {
                 .action {
