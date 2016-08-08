@@ -24,7 +24,6 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'module',
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
@@ -37,7 +36,7 @@ define([
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
+], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
              runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
     'use strict';
 
