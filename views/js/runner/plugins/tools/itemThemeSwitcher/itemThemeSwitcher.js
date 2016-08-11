@@ -127,7 +127,10 @@ define([
                     self.enable();
                     changeTheme(state.selectedTheme);
                 })
-                .on('unloaditem', function () {
+                .on('enabletools', function() {
+                    self.enable();
+                })
+                .on('disabletools unloaditem', function () {
                     self.disable();
                 });
         },
