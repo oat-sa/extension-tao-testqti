@@ -24,6 +24,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/store',
     'core/promise',
     'core/cachedStore',
     'taoTests/runner/areaBroker',
@@ -34,7 +35,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, Promise, cachedStore, areaBroker, proxyFactory, probeOverseer, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function($, _, __, store, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -52,7 +53,7 @@ define([
     ], { baseUrl: '' });
 
     /**
-     * A Test runner provider to be registered againt the runner
+     * A Test runner provider to be registered against the runner
      */
     var qtiProvider = {
 
@@ -102,7 +103,7 @@ define([
 
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
-            return probeOverseer(identifier, this);
+            return probeOverseerFactory(identifier, this);
         },
 
         /**
@@ -176,9 +177,9 @@ define([
             /**
              * Compute the next item for the given action
              * @param {String} action - item action like move/next, skip, etc.
-             * @param {Object} [params] - the item action additionnal params
+             * @param {Object} [params] - the item action additional params
              */
-            var computeNext = function computeNext(action, params){
+            function computeNext(action, params){
 
                 var context = self.getTestContext();
 
@@ -201,14 +202,15 @@ define([
 
                             load();
                         });
-                })
-                .unloadItem(context.itemUri);
-            };
+                });
+
+                self.unloadItem(context.itemUri);
+            }
 
             /**
              * Load the next action: load the current item or call finish based the test state
              */
-            var load = function load(){
+            function load(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
@@ -217,13 +219,13 @@ define([
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            };
+            }
 
             /**
              * Store the item state and responses, if needed
-             * @returns {Promise} - resolve with a boolean at true if the response is submitd
+             * @returns {Promise} - resolve with a boolean at true if the response is submitted
              */
-            var submit = function submit(){
+            function submit(){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
@@ -273,12 +275,12 @@ define([
                 }
 
                 return performSubmit();
-            };
+            }
 
             /**
              * Update the stats on the TestMap
              */
-            var updateStats = function updateStats(){
+            function updateStats(){
 
                 var context = self.getTestContext();
                 var testMap = self.getTestMap();
@@ -293,19 +295,20 @@ define([
                 item.viewed = true;
 
                 //flag as answered only if a response has been set
-                if (undefined !== context.itemAnswered) {
+                if ("undefined" !== typeof context.itemAnswered) {
                     item.answered = context.itemAnswered;
                 }
 
                 //update the map stats, then reassign the map
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
-            };
+            }
 
 
             /*
              * Install behavior on events
              */
-            this.on('ready', function(){
+            this
+                .on('ready', function(){
                 //load the 1st item
                 load();
             })
@@ -379,18 +382,28 @@ define([
                         self.trigger('error', err);
                     });
             })
-            .on('pause', function(){
+                .on('pause', function(data){
+                    var pause;
+
+                    if (!self.getState('disconnected')) {
                 // will notify the server that the test was auto paused
-                self.getProxy().callTestAction('pause').then(function() {
+                        pause = self.getProxy().callTestAction('pause');
+                    } else {
+                        pause = Promise.resolve();
+                    }
+
+                    pause
+                        .then(function() {
                     self.trigger('leave', {
-                        code: self.getTestData().states.suspended
+                                code: self.getTestData().states.suspended,
+                                message: data && data.message
                     });
                 })
                 .catch(function(err){
                     self.trigger('error', err);
                 });
             })
-            .on('renderitem', function(itemRef){
+                .on('renderitem', function(){
 
                 var context = this.getTestContext();
                 var states = this.getTestData().itemStates;
@@ -451,13 +464,28 @@ define([
                 this.getProbeOverseer().start();
             }
 
-            //load data and current context in parallel at initialization
-            return this.getProxy().init()
-                       .then(function(results){
-                            self.setTestData(results.testData);
-                            self.setTestContext(results.testContext);
-                            self.setTestMap(results.testMap);
-                       });
+            //get the current store identifier to send it along with the init call
+            return store.getIdentifier().then(function(storeId){
+
+                //load data and current context in parallel at initialization
+                return self.getProxy().init({
+                    storeId : storeId
+                }).then(function(results){
+                    self.setTestData(results.testData);
+                    self.setTestContext(results.testContext);
+                    self.setTestMap(results.testMap);
+
+                    //check if we need to trigger a storeChange
+                    if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
+
+                        /**
+                         * We are changed the local storage engine (could be a browser change)
+                         * @event runner/provider/qti#storechange
+                         */
+                        self.trigger('storechange');
+                    }
+                });
+            });
         },
 
         /**
@@ -501,7 +529,7 @@ define([
         /**
          * RenderItem phase of the test runner
          *
-         * Here we iniitialize the item runner and wrap it's call to the test runner
+         * Here we initialize the item runner and wrap it's call to the test runner
          *
          * @this {runner} the runner context, not the provider
          * @returns {Promise} resolves when the item is ready
@@ -552,12 +580,12 @@ define([
          * @this {runner} the runner context, not the provider
          * @returns {Promise} resolves when the item is cleared
          */
-        unloadItem : function unloadItem(itemRef){
+        unloadItem : function unloadItem(){
             var self = this;
 
             self.trigger('disablenav disabletools');
 
-            return new Promise(function(resolve, reject){
+            return new Promise(function(resolve){
                 if(self.itemRunner){
                     self.itemRunner
                         .on('clear', resolve)
@@ -621,10 +649,10 @@ define([
             if(probeOverseer && !this.getState('disconnected')){
                 flushPromise = probeOverseer.flush()
                     .then(function(data){
+                        var traceData = {};
 
                         //we reformat the time set into a trace variables
                         if(data && data.length){
-                            var traceData = {};
                             _.forEach(data, function(entry){
                                 var id = entry.type + '-' + entry.id;
 

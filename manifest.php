@@ -33,11 +33,11 @@ return array(
     'label' => 'QTI test model',
 	'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '5.3.0',
+    'version' => '5.4.0',
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=3.0.0',
-        'taoQtiItem' => '>=3.4',
+        'taoQtiItem' => '>=3.6',
         'tao'        => '>=6.0.0'
     ),
 	'models' => array(
@@ -51,7 +51,7 @@ return array(
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
-		    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
+                    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
                     'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins'
 		)
 	),

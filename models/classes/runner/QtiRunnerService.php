@@ -22,19 +22,24 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use \oat\taoQtiTest\models\ExtendedStateService;
+use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
+use oat\taoQtiTest\models\event\TestExitEvent;
+use oat\taoQtiTest\models\event\TestInitEvent;
+use oat\taoQtiTest\models\event\TestTimeoutEvent;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
-use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoTests\models\runner\time\TimePoint;
+use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\common\datatypes\QtiString as QtismString;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
@@ -43,10 +48,6 @@ use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\event\TestInitEvent;
-use oat\taoQtiTest\models\event\TestExitEvent;
-use oat\taoQtiTest\models\event\TestTimeoutEvent;
 
 /**
  * Class QtiRunnerService
@@ -64,6 +65,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @var RunnerConfig
      */
     protected $testConfig;
+
+    private $extendedStateService;
+
     
     /**
      * Get the data folder from a given item definition
@@ -1251,5 +1255,39 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         return true;
+    }
+
+    /**
+     * Switch the received client store ids. Put the received id if different from the last stored.
+     * This enables us to check wether the stores has been changed during a test session.
+     * @param RunnerServiceContext $context
+     * @param string $receivedStoreId The identifier of the client side store
+     * @return string the identifier of the LAST saved client side store
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function switchClientStoreId(RunnerServiceContext $context, $receivedStoreId)
+    {
+        if ($context instanceof QtiRunnerServiceContext){
+            /* @var TestSession $session */
+            $session = $context->getTestSession();
+            $sessionId = $session->getSessionId();
+
+            $stateService = new ExtendedStateService();
+            $lastStoreId = $stateService->getStoreId($sessionId);
+
+            if($lastStoreId == false || $lastStoreId != $receivedStoreId){
+                $stateService->setStoreId($sessionId, $receivedStoreId);
+            }
+
+            return $lastStoreId;
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'switchClientStoreId',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
     }
 }
