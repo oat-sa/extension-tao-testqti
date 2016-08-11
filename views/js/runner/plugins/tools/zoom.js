@@ -14,7 +14,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2016  (original work) Open Assessment Technologies SA;
- * 
+ *
  * @author dieter <dieter@taotesting.com>
  * @author Alexander Zagovorichev <zagovorichev@1pt.com>
  */
@@ -28,7 +28,7 @@ define([
     'tpl!taoQtiTest/runner/plugins/navigation/button'
 ], function ($, __, hider, transformer, pluginFactory, buttonTpl){
     'use strict';
-    
+
     /**
      * The standard zoom level, in percentage
      * @type {Number}
@@ -81,14 +81,14 @@ define([
             sel.style.display = '';
         }
     };
-    
+
     /**
      * Returns the configured plugin
      */
     return pluginFactory({
-        
+
         name : 'zoom',
-        
+
         /**
          * Initialize the plugin (called during runner's init)
          */
@@ -103,7 +103,7 @@ define([
 
                 if (self.$zoomTarget) {
                     el = self.$zoomTarget[0];
-                    
+
                     before = el.getBoundingClientRect();
 
                     sx = self.$container.scrollLeft();
@@ -148,7 +148,7 @@ define([
                 title : __('Zoom in'),
                 icon : 'add'
             }));
-            
+
             //attach behavior
             this.$buttonZoomOut.on('click', function (e){
 
@@ -161,7 +161,7 @@ define([
                 e.preventDefault();
                 zoomAction(1);
             });
-            
+
             //start disabled
             this.show();
             this.disable();
@@ -180,7 +180,10 @@ define([
 
                     self.enable();
                 })
-                .on('unloaditem', function (){
+                .on('enabletools', function() {
+                    self.enable();
+                })
+                .on('disabletools unloaditem', function (){
                     self.disable();
                 });
         },
