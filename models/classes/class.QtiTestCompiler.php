@@ -41,7 +41,6 @@ use qtism\common\utils\Url;
 use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
-use League\Flysystem\File;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -370,7 +369,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compactTest() {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $test = $this->getResource();
-        $testContent = $testService->getTestContent($test);
         
         common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
@@ -557,7 +555,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $relPath = trim($this->getExtraPath(), '/');
                 $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
                     . $rubricStylesheet->getHref();
-                $sourceFile = new File($sourceDir->getFilesystem(), $sourceDir->getPath().DIRECTORY_SEPARATOR.$relPath);
+                $sourceFile = $sourceDir->getFile($relPath);
                 
                 if (!$publicCompiledDocDir->has($relPath)) {
                     try {
