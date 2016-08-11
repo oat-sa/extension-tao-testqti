@@ -193,22 +193,29 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $report = common_report_Report::createSuccess();
         $subReport = common_report_Report::createSuccess();
         $identifiers = array();
-        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+
+        $testDirectory = $this->getTestService()->getTestDirectory($this->getItem());
+        $testDirectory->getPrefix();
+
+//        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
+//        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
+//            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+        $extraPath = $this->getTestService()->getDocPath($this->getItem()) . DIRECTORY_SEPARATOR;
         $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
+        $extraPath = trim($extraPath, DIRECTORY_SEPARATOR);
 
-        $extraReversePath = '';
-        if (empty($extraPath) === false) {
-            $n = count(explode('/', $extraPath));
-            $parts = array();
 
-            for ($i = 0; $i < $n; $i++) {
-                $parts[] = '..';
-            }
-
-            $extraReversePath = implode('/', $parts) . DIRECTORY_SEPARATOR;
-        }
+//        $extraReversePath = '';
+//        if (empty($extraPath) === false) {
+//            $n = count(explode('/', $extraPath));
+//            $parts = array();
+//
+//            for ($i = 0; $i < $n; $i++) {
+//                $parts[] = '..';
+//            }
+//
+//            $extraReversePath = implode('/', $parts) . DIRECTORY_SEPARATOR;
+//        }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
@@ -218,7 +225,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             }
 
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = $extraPath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
