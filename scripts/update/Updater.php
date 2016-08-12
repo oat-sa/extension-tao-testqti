@@ -435,26 +435,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('2.31.1', '3.0.0');
-        
+
         if ($this->isVersion('3.0.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['enable-allow-skipping'] = false;
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('3.1.0');
         }
 
         $this->skip('3.1.0', '3.4.0');
-        
+
         if ($this->isVersion('3.4.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
             $dir = new \core_kernel_file_File($uri);
-            
+
             $fs = $dir->getFileSystem();
             \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
-            
+
             $this->setVersion('4.0.0');
         }
 
@@ -478,7 +478,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('4.7.0');
         }
-        
+
         $this->skip('4.7.0', '4.8.2');
 
         if ($this->isVersion('4.8.2')) {
@@ -516,6 +516,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $registry->remove(TestRunnerClientConfigRegistry::RUNNER_PROD);
 
             $this->setVersion('5.0.0');
+        }
+
+        $this->skip('5.0.0', '5.3.0');
+
+        if ($this->isVersion('5.3.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['collapser'] = [
+                'collapseTools' => true,
+                'collapseNavigation' => false,
+                'hover' => false
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.5.0');
         }
     }
 }
