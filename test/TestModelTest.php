@@ -89,7 +89,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
     {
         $model = new taoQtiTest_models_classes_TestModel();
         $handlers = $model->getExportHandlers();
-        $this->assertCount(1, $handlers);
+        $this->assertCount(2, $handlers);
         $handler = reset($handlers);
         $this->assertInstanceOf('taoQtiTest_models_classes_export_TestExport', $handler);
     }
