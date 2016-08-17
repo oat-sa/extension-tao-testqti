@@ -111,13 +111,22 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      */
     protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        
+        // Test Session class instantiation, depending on configuration.
         if (!isset($config) || !isset($config['test-session'])) {
             $className = self::DEFAULT_TEST_SESSION;
             \common_Logger::w("Missing configuration for TestRunner session class, using '${className}' by default!");
         } else {
             $className = $config['test-session'];
         }
-        return new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
+        
+        $assessmentTestSession = new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
+        
+        // Force branchrules/preconditions execution even if current navigation mode is non-linear.
+        $assessmentTestSession->setForceBranching($config['force-branchrules']);
+        $assessmentTestSession->setForcePreconditions($config['force-preconditions']);
+        
+        return $assessmentTestSession;
     }
     
     /**
