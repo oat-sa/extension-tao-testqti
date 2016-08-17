@@ -281,5 +281,15 @@ return array(
      * Enable Allow/Disallow Skipping feature.
      * @type boolean
      */
-    'enable-allow-skipping' => false
+    'enable-allow-skipping' => false,
+    
+    /*
+     * Force branch rules to be executed even if the current navigation mode is non-linear. 
+     */
+    'force-branchrules' => false,
+    
+    /*
+     * Force preconditions to be executed even if the current navigation mode is non-linear. 
+     */
+    'force-preconditions' => false
 );
