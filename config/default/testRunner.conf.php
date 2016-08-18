@@ -284,12 +284,20 @@ return array(
     'enable-allow-skipping' => false,
     
     /*
-     * Force branch rules to be executed even if the current navigation mode is non-linear. 
+     * Force branch rules to be executed even if the current navigation mode is non-linear.
+     * @type boolean
      */
     'force-branchrules' => false,
     
     /*
-     * Force preconditions to be executed even if the current navigation mode is non-linear. 
+     * Force preconditions to be executed even if the current navigation mode is non-linear.
+     * @type boolean
      */
-    'force-preconditions' => false
+    'force-preconditions' => false,
+    
+    /**
+     * Enable path tracking (consider taken route items, rather than default route item flow for navigation).
+     * @type boolean
+     */
+    'path-tracking' => false
 );

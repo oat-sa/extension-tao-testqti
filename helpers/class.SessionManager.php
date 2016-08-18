@@ -122,9 +122,9 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
         
         $assessmentTestSession = new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
         
-        // Force branchrules/preconditions execution even if current navigation mode is non-linear.
         $assessmentTestSession->setForceBranching($config['force-branchrules']);
         $assessmentTestSession->setForcePreconditions($config['force-preconditions']);
+        $assessmentTestSession->setPathTracking($config['path-tracking']);
         
         return $assessmentTestSession;
     }

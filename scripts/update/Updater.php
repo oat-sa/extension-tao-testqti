@@ -543,6 +543,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config = $extension->getConfig('testRunner');
             $config['force-branchrules'] = false;
             $config['force-preconditions'] = false;
+            $config['path-tracking'] = false;
             
             $extension->setConfig('testRunner', $config);
             
