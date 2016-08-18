@@ -65,6 +65,7 @@ class QtiRunnerMap implements RunnerMap
             $offsetSection = 0;
             $lastPart = null;
             $lastSection = null;
+            /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 // access the item reference
                 $itemRef = $routeItem->getAssessmentItemRef();
@@ -76,9 +77,8 @@ class QtiRunnerMap implements RunnerMap
                 // load item infos
                 $testPart = $routeItem->getTestPart();
                 $partId = $testPart->getIdentifier();
-                $sections = $routeItem->getAssessmentSections();
-                $sectionId = key(current($sections));
-                $section = $sections[$sectionId];
+                $section = $routeItem->getAssessmentSection();
+                $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
                 $itemUri = strstr($itemRef->getHref(), '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
