@@ -66,7 +66,7 @@ define([
             this.$button = $(buttonTpl({
                 control : 'calculator',
                 title : __('Open Calculator'),
-                icon : 'maths',
+                icon : 'table',
                 text : __('Calculator')
             }));
             this.$calculatorContainer = $('<div class="widget-calculator">');
@@ -108,7 +108,7 @@ define([
                         }).on('hide', function(){
                             self.trigger('close');
                         });
-                        
+
                         //set initial position on init
                         self.calculator.show().getElement().css({
                             left : offset.left,
@@ -126,10 +126,10 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('renderitem', function (){
+                .on('enabletools renderitem', function (){
                     self.enable();
                 })
-                .on('unloaditem', function (){
+                .on('disabletools unloaditem', function (){
                     self.disable();
                     if(self.calculator){
                         //destroy calculator to create a new instance of calculator each time

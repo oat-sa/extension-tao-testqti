@@ -148,10 +148,12 @@ class taoQtiTest_helpers_Utils {
      * Returns an empty IMS Manifest file as a DOMDocument, ready to be fill with
      * new information about IMS QTI Items and Tests.
      * 
+     * @param $version The requested QTI version. Can be "2.1" or "2.2". Default is "2.1".
      * @return DOMDocument
      */
-    static public function emptyImsManifest() {
-        $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . 'taoQtiItem/model/qti/templates/imsmanifest.tpl.php', array(
+    static public function emptyImsManifest($version = '2.1') {
+        $manifestFileName = ($version === '2.1') ? 'imsmanifest' : 'imsmanifestQti22';
+        $templateRenderer = new taoItems_models_classes_TemplateRenderer(ROOT_PATH . 'taoQtiItem/model/qti/templates/' . $manifestFileName . '.tpl.php', array(
             'qtiItems' => array(),
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
         ));
@@ -258,12 +260,9 @@ class taoQtiTest_helpers_Utils {
     {
         $directoryIds = explode('|', $qtiTestCompilation);
 
-        $stream = \tao_models_classes_service_FileStorage::singleton()
+        $data = \tao_models_classes_service_FileStorage::singleton()
             ->getDirectoryById($directoryIds[0])
-            ->readStream(TAOQTITEST_COMPILED_FILENAME);
-
-        $data = $stream->getContents();
-        $stream->close();
+            ->read(TAOQTITEST_COMPILED_FILENAME);
 
         common_Logger::d("Loading QTI-PHP file from stream");
         $doc = new PhpDocument();

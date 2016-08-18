@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
 use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
 
+
 /**
  * Class taoQtiTest_actions_Runner
  * 
@@ -250,12 +251,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
+            
 
             if ($this->hasRequestParameter('clientState')) {
                 $clientState = $this->getRequestParameter('clientState');
                 if ('paused' == $clientState) {
                     $this->runnerService->pause($serviceContext);
                     $this->runnerService->check($serviceContext);
+                }
+            }
+
+            $lastStoreId = false;
+            if($this->hasRequestParameter('storeId')){
+                $receivedStoreId =  $this->getRequestParameter('storeId');
+                if(preg_match('/^[a-z0-9\-]+$/i', $receivedStoreId)) {
+                    $lastStoreId = $this->runnerService->switchClientStoreId($serviceContext, $receivedStoreId);
                 }
             }
 
@@ -269,6 +279,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testData'] = $this->runnerService->getTestData($serviceContext);
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
                 $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                $response['lastStoreId'] = $lastStoreId;
             }
             
             $this->runnerService->persist($serviceContext);
@@ -763,7 +774,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
             $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
-            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId());
+            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
 
         } catch (common_Exception $e) {

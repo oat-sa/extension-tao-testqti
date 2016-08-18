@@ -25,8 +25,8 @@ define([
     'ui/component',
     'ui/autoscroll',
     'taoQtiTest/runner/helpers/map',
-    'tpl!taoQtiTest/runner/plugins/controls/review/navigator',
-    'tpl!taoQtiTest/runner/plugins/controls/review/navigatorTree'
+    'tpl!taoQtiTest/runner/plugins/navigation/review/navigator',
+    'tpl!taoQtiTest/runner/plugins/navigation/review/navigatorTree'
 ], function ($, _, __, component, autoscroll, mapHelper, navigatorTpl, navigatorTreeTpl) {
     'use strict';
 
@@ -600,7 +600,7 @@ define([
                                 if (!$item.hasClass(_cssCls.unseen)) {
                                     flagItem($item);
                                 }
-                            } else {
+                            } else if (!$item.hasClass(_cssCls.active)){
                                 // go to the selected item
                                 self.select($item);
                                 jump($item);

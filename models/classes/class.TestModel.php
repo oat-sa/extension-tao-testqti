@@ -116,7 +116,8 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
 
     public function getExportHandlers() {
         return array(
-            new taoQtiTest_models_classes_export_TestExport()
+            new taoQtiTest_models_classes_export_TestExport(),
+            new taoQtiTest_models_classes_export_TestExport22()
         );
     }
 

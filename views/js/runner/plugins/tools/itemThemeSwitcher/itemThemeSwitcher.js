@@ -58,7 +58,7 @@ define([
                 control: 'color-contrast',
                 title: __('Change the current color preset'),
                 icon: 'preview',
-                text: __('Color contrast')
+                text: __('Contrast')
             }));
 
             //init plugin state
@@ -127,7 +127,10 @@ define([
                     self.enable();
                     changeTheme(state.selectedTheme);
                 })
-                .on('unloaditem', function () {
+                .on('enabletools', function() {
+                    self.enable();
+                })
+                .on('disabletools unloaditem', function () {
                     self.disable();
                 });
         },

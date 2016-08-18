@@ -147,7 +147,26 @@
                                 content: none;
                             }
                         }
-
+                        &.qti-timer__type-assessmentTest{
+                            -ms-flex-order: 0;
+                            -webkit-order: 0;
+                            order: 0;
+                        }
+                        &.qti-timer__type-assessmentTestPart{
+                            -ms-flex-order: 1;
+                            -webkit-order: 1;
+                            order: 1;
+                        }
+                        &.qti-timer__type-assessmentSection{
+                            -ms-flex-order: 2;
+                            -webkit-order: 2;
+                            order: 2;
+                        }
+                        &.qti-timer__type-assessmentItemRef{
+                            -ms-flex-order: 3;
+                            -webkit-order: 3;
+                            order: 3;
+                        }
                     }
                 }
                 .progressbar {
@@ -176,6 +195,17 @@
                 }
                 [class^="btn-"], [class*=" btn-"] {
                     white-space: nowrap;
+                }
+
+                .no-tool-label {
+                    &, &-hover li:not(:hover) {
+                        .text {
+                            display: none;
+                        }
+                        .icon {
+                            padding: 0;
+                        }
+                    }
                 }
             }
             .tools-box {
@@ -239,6 +269,11 @@
                 overflow: visible;
                 .action {
                     line-height: 1.6;
+                }
+                .icon {
+                    &.no-label {
+                        padding-right: 0;
+                    }
                 }
             }
         }

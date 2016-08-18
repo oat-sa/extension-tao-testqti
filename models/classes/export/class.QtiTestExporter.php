@@ -211,7 +211,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
-            $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+            $itemExporter = $this->createItemExporter($item);
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
                 $identifiers[] = $itemExporter->buildIdentifier();
                 $subReport = $itemExporter->export();
@@ -255,6 +255,9 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
 
+        // Possibility to apply post-processing to the test.xml definition.
+        $this->postProcessing($tmpPath);
+
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
         $this->referenceTest($testHref, $itemIdentifiers);
@@ -291,7 +294,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // Create the IMS Manifest <resource> element.
         $resourceElt = $manifest->createElement('resource');
         $resourceElt->setAttribute('identifier', $identifier);
-        $resourceElt->setAttribute('type', 'imsqti_test_xmlv2p1');
+        $resourceElt->setAttribute('type', $this->getTestResourceType());
         $resourceElt->setAttribute('href', $href);
         $targetElt->appendChild($resourceElt);
 
@@ -345,5 +348,20 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $fileElt->setAttribute('href', ltrim($href, '/'));
 
         $firstDependencyElt->parentNode->insertBefore($fileElt, $firstDependencyElt);
+    }
+    
+    protected function createItemExporter(core_kernel_classes_Resource $item)
+    {
+        return new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+    }
+    
+    protected function getTestResourceType()
+    {
+        return 'imsqti_test_xmlv2p1';
+    }
+    
+    protected function postProcessing($path)
+    {
+        return;
     }
 }

@@ -24,7 +24,6 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'module',
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
@@ -34,16 +33,17 @@ define([
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-    'taoQtiTest/runner/plugins/loader',
+    'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader, urlUtil) {
+], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
+             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
     'use strict';
 
+    var pluginLoader = pluginLoaderFactory();
 
     /*
-     *TODO plugins list, provider registration should be loaded dynamically
+     *TODO provider registration should be loaded dynamically
      */
 
     runner.registerProvider('qti', qtiProvider);
@@ -74,7 +74,7 @@ define([
         config = _.defaults(config, {
             renderTo: $('.runner')
         });
-        
+
         //instantiate the QtiTestRunner
         runner('qti', plugins, config)
             .on('error', onError)
@@ -86,11 +86,11 @@ define([
             .on('pause', function(data) {
                 if (data && data.reason) {
                     // change exit Url
-                    reason = data.reason;                    
+                    reason = data.reason;
                 }
             })
             .after('destroy', function () {
-                
+
                 // at the end, we are redirected to the exit URL
                 var url = config.exitUrl;
                 if (reason && reason.length) {
@@ -98,7 +98,7 @@ define([
                         warning: reason
                     });
                 }
-                
+
                 window.location = url;
             })
             .init();
@@ -112,7 +112,8 @@ define([
         'testDefinition',
         'testCompilation',
         'serviceCallId',
-        'exitUrl'
+        'exitUrl',
+        'plugins'
     ];
 
     /**
@@ -131,9 +132,10 @@ define([
          * @param {String} options.exitUrl - the full URL where to return at the final end of the test
          */
         start: function start(options) {
+
             var startOptions = options || {};
-            var config = module.config();
             var missingOption = false;
+
 
             // verify required options
             _.forEach(requiredOptions, function(name) {
@@ -152,11 +154,9 @@ define([
             if (!missingOption) {
                 loadingBar.start();
 
-                if (config) {
-                    _.forEach(config.plugins, function (plugin) {
-                        pluginLoader.add(plugin.module, plugin.category, plugin.position);
-                    });
-                }
+                _.forEach(options.plugins, function (plugin, module) {
+                    pluginLoader.add(module, plugin.category);
+                });
 
                 pluginLoader.load()
                     .then(function () {

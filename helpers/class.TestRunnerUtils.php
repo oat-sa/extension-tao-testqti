@@ -451,7 +451,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $context['sectionTitle'] = $session->getCurrentAssessmentSection()->getTitle();
              
             // Number of items composing the test session.
-            $context['numberItems'] = $session->getRoute()->count();
+            $context['numberItems'] = $session->getRouteCount(AssessmentTestSession::ROUTECOUNT_FLOW);
              
             // Number of items completed during the test session.
             $context['numberCompleted'] = self::testCompletion($session);
@@ -538,9 +538,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
             $$viewsName = array(View::CANDIDATE);
              
             foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
+                $data = $compilationDirs['private']->read($rubric->getHref());
+                $tmpDir = \tao_helpers_File::createTempDir();
+                $tmpFile = $tmpDir.basename($rubric->getHref());
+                file_put_contents($tmpFile, $data);
                 ob_start();
-                include($compilationDirs['private']->getPath() . $rubric->getHref());
+                include($tmpFile);
                 $rubrics[] = ob_get_clean();
+                unlink($tmpFile);
+                rmdir($tmpDir);
             }
              
             $context['rubrics'] = $rubrics;
