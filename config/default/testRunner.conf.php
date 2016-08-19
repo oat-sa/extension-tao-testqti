@@ -49,7 +49,7 @@ return array(
     'progress-indicator' => 'percentage',
 
     /**
-     * When the `progress-indicator` option is set to `position`, define the scope of progress 
+     * When the `progress-indicator` option is set to `position`, define the scope of progress
      * (i. e.: the number of items on which the ratio is computed). Can be:
      * - testSection : The progression within the current section
      * - testPart : The progression within the current part
@@ -83,11 +83,11 @@ return array(
      * @type string
      */
     'test-taker-review-force-title' => false,
-    
+
     /**
      * A unique title for all test items, when the option `test-taker-review-force-title` is enabled.
-     * This title will be processed through a sprintf() call, with the item sequence number as argument, 
-     * so you can easily insert the sequence number inside the title. 
+     * This title will be processed through a sprintf() call, with the item sequence number as argument,
+     * so you can easily insert the sequence number inside the title.
      * @type string
      */
     'test-taker-review-item-title' => 'Item %d',
@@ -106,7 +106,7 @@ return array(
      * @type boolean
      */
     'test-taker-review-prevents-unseen' => true,
-    
+
     /**
      * Allows the test taker to collapse the review screen: when collapsed the component is reduced to one tiny column.
      * @type boolean
@@ -152,6 +152,29 @@ return array(
              * @type bool
              */
             'full' => false
+        ],
+
+        /**
+         * The plugin responsible of the tools bar size in order to ensure it is always displayed well.
+         */
+        'collapser' => [
+            /**
+             * Manage the size of the tools bar
+             * @type bool
+             */
+            'collapseTools' => true,
+
+            /**
+             * Manage the size of the navigation bar
+             * @type bool
+             */
+            'collapseNavigation' => false,
+
+            /**
+             * When the buttons are reduced, allow an expand when the mouse is over a button
+             * @type bool
+             */
+            'hover' => false
         ]
     ],
 

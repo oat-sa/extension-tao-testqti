@@ -29,15 +29,15 @@ $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
 
 return array(
-	'name' => 'taoQtiTest',
+    'name' => 'taoQtiTest',
     'label' => 'QTI test model',
-	'description' => 'TAO QTI test implementation',
+    'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '5.3.1',
-	'author' => 'Open Assessment Technologies',
+    'version' => '5.5.4',
+    'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=3.0.0',
-        'taoQtiItem' => '>=3.6',
+        'taoQtiItem' => '>=4.0.0',
         'tao'        => '>=6.0.0'
     ),
 	'models' => array(

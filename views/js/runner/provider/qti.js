@@ -71,6 +71,7 @@ define([
                 toolbox:    $('.tools-box-list', $layout),
                 navigation: $('.navi-box-list', $layout),
                 control:    $('.top-action-bar .control-box', $layout),
+                actionsBar: $('.bottom-action-bar .control-box', $layout),
                 panel:      $('.test-sidebar-left', $layout),
                 header:     $('.title-box', $layout)
             });
@@ -670,7 +671,7 @@ define([
             } else {
                 flushPromise = Promise.resolve();
             }
-            
+
             return flushPromise.then(function () {
                 // safely stop the communicator to prevent inconsistent communication while leaving
                 if (proxy.hasCommunicator()) {
