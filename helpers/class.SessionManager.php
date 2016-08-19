@@ -122,9 +122,13 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
         
         $assessmentTestSession = new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
         
-        $assessmentTestSession->setForceBranching($config['force-branchrules']);
-        $assessmentTestSession->setForcePreconditions($config['force-preconditions']);
-        $assessmentTestSession->setPathTracking($config['path-tracking']);
+        $forceBranchrules = (isset($config['force-branchrules'])) ? $config['force-branchrules'] : false;
+        $forcePreconditions = (isset($config['force-preconditions'])) ? $config['force-preconditions'] : false;
+        $pathTracking = (isset($config['path-tracking'])) ? $config['path-tracking'] : false;
+        
+        $assessmentTestSession->setForceBranching($forceBranchrules);
+        $assessmentTestSession->setForcePreconditions($forcePreconditions);
+        $assessmentTestSession->setPathTracking($pathTracking);
         
         return $assessmentTestSession;
     }
