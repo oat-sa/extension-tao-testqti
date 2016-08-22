@@ -535,5 +535,19 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.5.0', '5.5.3');
+        
+        if ($this->isVersion('5.5.3')) {
+            
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            
+            $config = $extension->getConfig('testRunner');
+            $config['force-branchrules'] = false;
+            $config['force-preconditions'] = false;
+            $config['path-tracking'] = false;
+            
+            $extension->setConfig('testRunner', $config);
+            
+            $this->setVersion('5.6.0');
+        }
     }
 }
