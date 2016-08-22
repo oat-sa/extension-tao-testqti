@@ -233,7 +233,7 @@ define([
                 var itemRunner = self.itemRunner;
                 var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
                 var params = {
-                    emptyAllowed: !!force
+                    emptyAllowed: context.isTimeout || !!force
                 };
 
                 var performSubmit = function performSubmit(){
@@ -241,15 +241,21 @@ define([
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve, reject){
-                                if (result.notAllowed) {
-                                    self.trigger('resumeitem enablenav enabletools');
 
+                                function resumeItem() {
+                                    self.trigger('resumeitem');
+                                }
+
+                                if (result.notAllowed) {
                                     if (result.message) {
-                                        self.trigger('alert', result.message);
+                                        self.trigger('alert', result.message, resumeItem);
+                                    } else {
+                                        resumeItem();
                                     }
 
                                     return reject(true);
                                 }
+
                                 if (result.itemSession) {
                                     context.itemAnswered = result.itemSession.itemAnswered;
                                 }
@@ -454,6 +460,9 @@ define([
                         self.disableItem(context.itemUri);
                         self.trigger('warning', warning);
                     }
+                })
+                .on('resumeitem', function(){
+                    this.trigger('enableitem enablenav');
                 })
                 .on('disableitem', function(){
                     this.trigger('disabletools');
