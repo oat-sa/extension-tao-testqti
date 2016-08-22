@@ -299,5 +299,11 @@ return array(
      * Enable path tracking (consider taken route items, rather than default route item flow for navigation).
      * @type boolean
      */
-    'path-tracking' => false
+    'path-tracking' => false,
+    
+    /**
+     * Always allow jumps, even if the current navigation mode is linear.
+     * @type boolean
+     */
+    'always-allow-jumps' => false
 );
