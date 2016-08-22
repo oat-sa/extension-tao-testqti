@@ -238,15 +238,12 @@ define([
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve){
-                                //if the submit results contains modal feedback we ask (gently) the IR to display them
-                                if(result.success) {
-                                    if (result.itemSession) {
-                                        context.itemAnswered = result.itemSession.itemAnswered;
-                                    }
+                                if (result.itemSession) {
+                                    context.itemAnswered = result.itemSession.itemAnswered;
+                                }
 
-                                    if(result.displayFeedbacks === true && itemRunner){
-                                        return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
-                                    }
+                                if(result.displayFeedbacks === true && itemRunner){
+                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
                                 }
                                 return resolve();
                             });
