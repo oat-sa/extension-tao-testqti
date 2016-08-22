@@ -223,21 +223,33 @@ define([
 
             /**
              * Store the item state and responses, if needed
+             * @param {Boolean} [force=false] - Forces the submit even if responses are empty
              * @returns {Promise} - resolve with a boolean at true if the response is submitted
              */
-            function submit(){
+            function submit(force){
 
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
                 var itemRunner = self.itemRunner;
                 var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
-                var params = {};
+                var params = {
+                    emptyAllowed: !!force
+                };
 
                 var performSubmit = function performSubmit(){
                     //we submit the responses
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
-                            return new Promise(function(resolve){
+                            return new Promise(function(resolve, reject){
+                                if (result.notAllowed) {
+                                    self.trigger('resumeitem enablenav enabletools');
+
+                                    if (result.message) {
+                                        self.trigger('alert', result.message);
+                                    }
+
+                                    return reject(true);
+                                }
                                 if (result.itemSession) {
                                     context.itemAnswered = result.itemSession.itemAnswered;
                                 }
@@ -325,11 +337,15 @@ define([
 
                     this.trigger('disablenav disabletools');
 
+                    // submit the response, but can break if empty
                     submit()
                         .then(updateStats)
                         .then(computeNextMove)
                         .catch(function (err) {
-                            self.trigger('error', err);
+                            // do no trigger error if the promise is rejected for an architectural purpose
+                            if (err !== true) {
+                                self.trigger('error', err);
+                            }
                         });
                 })
                 .on('skip', function(scope){
@@ -345,7 +361,8 @@ define([
                     var context = self.getTestContext();
                     self.disableItem(context.itemUri);
 
-                    submit()
+                    // submit the response even if empty
+                    submit(true)
                         .then(function() {
                             return self.getProxy()
                                 .callTestAction('exitTest', {reason: why})
@@ -365,7 +382,8 @@ define([
 
                     self.disableItem(context.itemUri);
 
-                    submit()
+                    // submit the response even if empty
+                    submit(true)
                         .then(updateStats)
                         .then(function() {
                             self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
