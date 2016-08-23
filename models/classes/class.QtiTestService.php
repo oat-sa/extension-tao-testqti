@@ -707,7 +707,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDoc(core_kernel_classes_Resource $test) {
 
         $doc = new XmlDocument('2.1');
-        $doc->loadFromString($this->getTestDefintionFile($test)->read());
+        $doc->loadFromString($this->getTestDefinitionFile($test)->read());
         return $doc;
     }
 
@@ -907,7 +907,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     private function saveDoc(core_kernel_classes_Resource $test, XmlDocument $doc)
     {
-        return $this->getTestDefintionFile($test)->put($doc->saveToString());
+        return $this->getTestDefinitionFile($test)->put($doc->saveToString());
     }
 
     /**
@@ -1028,31 +1028,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
     /**
      * Delete the content of a QTI test
+     *
      * @param core_kernel_classes_Resource $test
-     * @throws common_exception_Error
+     * @throws core_kernel_persistence_Exception
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     public function deleteContent(core_kernel_classes_Resource $test)
     {
-        $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        $directory = $this->unserializeTestDirectory($test);
+        if (! is_null($directory)) {
+            $directory->deleteSelf();
+        }
 
-        if (!is_null($content)) {
-            $file = new core_kernel_file_File($content);
-
-            try {
-                $path = $file->getAbsolutePath();
-
-                if (is_dir($path)) {
-                    if (!tao_helpers_File::delTree($path)) {
-                        throw new common_exception_Error("Unable to remove test content directory located at '" . $file->getAbsolutePath() . "'.");
-                    }
-                }
-            }
-            catch (common_Exception $e) {
-                // Empty file...
-            }
-
-            $file->delete();
-            $test->removePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
+        $content = $test->getOnePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP));
+        if (! is_null($content)) {
+            $this->getFileReferenceSerializer()->cleanUp($content);
+            $test->removePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP), $content);
         }
     }
 
@@ -1126,16 +1117,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * Get QTI test directory associated to a test
      *
      * @param core_kernel_classes_Resource $test
-     * @throws core_kernel_persistence_Exception
+     * @return null|Directory
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     public function getTestDirectory(core_kernel_classes_Resource $test)
     {
-        $dir = $this->unserializeTestDirectory($test);
-        if (is_null($dir)) {
-            $dir = $this->createTestContent($test);
+        $directory = $this->unserializeTestDirectory($test);
+        if (is_null($directory)) {
+            $directory = $this->createTestContent($test);
         }
-        return $dir;
+        return $directory;
     }
 
     /**
@@ -1145,18 +1136,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return \oat\oatbox\filesystem\File
      * @throws Exception
      */
-    public function getTestDefintionFile(core_kernel_classes_Resource $test)
+    public function getTestDefinitionFile(core_kernel_classes_Resource $test)
     {
         $testDirectory = $this->getTestDirectory($test);
+        $iterator = $testDirectory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
 
-        if (! is_null($testDirectory) && $testDirectory->exists()) {
-            $iterator = $testDirectory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
-
-            /** @var \oat\oatbox\filesystem\File $file */
-            foreach ($iterator as $file) {
-                if ($file->getBasename() == TAOQTITEST_FILENAME) {
-                    return $file;
-                }
+        /** @var \oat\oatbox\filesystem\File $file */
+        foreach ($iterator as $file) {
+            if ($file->getBasename() == TAOQTITEST_FILENAME) {
+                return $file;
             }
         }
 
