@@ -357,11 +357,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @return XmlCompactDocument.
      */
-    protected function compactTest() {
+    protected function compactTest()
+    {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $test = $this->getResource();
-        $testContent = $testService->getTestContent($test);
-        
+
         common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
         $resolver = new taoQtiTest_helpers_ItemResolver(Service::singleton());
@@ -446,16 +446,16 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     /**
      * Copy the resources (e.g. images) of the test to the private compilation directory.
      */
-    protected function copyPrivateResources() {
+    protected function copyPrivateResources()
+    {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
+        $testDefinitionDirectory = $testService->getTestDirectory($this->getResource());
 
-        $privateDir = $this->getPrivateDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
-            }
+        $privateDirectory = $this->getPrivateDirectory();
+
+        $iterator = $testDefinitionDirectory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
+        foreach ($iterator as $file) {
+            $privateDirectory->getFile($file->getPrefix())->write($file->readStream());
         }
     }
     

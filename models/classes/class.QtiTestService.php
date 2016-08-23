@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +41,8 @@ use oat\generis\model\fileReference\FileReferenceSerializer;
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
+class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService
+{
 
     const CONFIG_QTITEST_FILESYSTEM = 'qtiTestFolder';
 
