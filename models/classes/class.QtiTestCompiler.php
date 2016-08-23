@@ -27,21 +27,13 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
-use qtism\data\content\RubricBlockRef;
 use qtism\data\content\RubricBlock;
-use qtism\data\content\Stylesheet;
 use qtism\data\content\StylesheetCollection;
-use qtism\data\state\OutcomeDeclaration;
-use qtism\data\state\DefaultValue;
-use qtism\data\state\Value;
-use qtism\data\state\ValueCollection;
-use qtism\common\enums\BaseType;
-use qtism\common\enums\Cardinality;
 use qtism\common\utils\Url;
-use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\File;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -239,16 +231,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * for the next compilation process.
      */
-    protected function initCompilation() {
-        $ds = DIRECTORY_SEPARATOR;
-        
+    protected function initCompilation()
+    {
         // Initialize public and private compilation directories.
         $this->setPrivateDirectory($this->spawnPrivateDirectory());
         $this->setPublicDirectory($this->spawnPublicDirectory());
         
         // Extra path.
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testDefinitionDir = dirname($testService->getRelTestPath($this->getResource()));
+        $testDefinitionDir = dirname($testService->getTestDefinitionFile($this->getResource())->getPrefix());
         $this->setExtraPath($testDefinitionDir);
 
         // Initialize rendering engine.
@@ -259,7 +250,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $renderingEngine->setViewPolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
         $renderingEngine->setPrintedVariablePolicy(XhtmlRenderingEngine::TEMPLATE_ORIENTED);
         $renderingEngine->setStateName(TAOQTITEST_RENDERING_STATE_NAME);
-        $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI . rtrim($this->getExtraPath(), $ds));
+        $renderingEngine->setRootBase(TAOQTITEST_PLACEHOLDER_BASE_URI . $this->getExtraPath());
         $renderingEngine->setViewsName(TAOQTITEST_VIEWS_NAME);
         $this->setRenderingEngine($renderingEngine);
         
@@ -501,7 +492,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $sourceDir = $testService->getQtiTestDir($this->getResource());
+        $sourceDirectory = $testService->getTestDirectory($this->getResource());
         
         foreach ($rubricBlockRefs as $rubricRef) {
             
@@ -601,23 +592,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function copyPublicResources()
     {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
-        $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
-        $filesystem = $testDefinitionDir->getFileSystem();
-        
-        $publicCompiledDocDir = $this->getPublicDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $mime = $filesystem->getMimetype($object['path']);
-                $pathinfo = pathinfo($object['path']);
-                
-                if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                    $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                    try {
-                        common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
-                    } catch (FileExistsException $e) {
-                        common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
-                    }
+        $testDefinitionDirectory = $testService->getTestDirectory($this->getResource());
+
+        $publicCompiledDocDirectory = $this->getPublicDirectory();
+
+        $iterator = $testDefinitionDirectory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
+        /** @var \oat\oatbox\filesystem\File $file */
+        foreach($iterator as $file) {
+            $mime = $file->getMimetype();
+            $extension = array_pop(explode('.', $file->getPrefix()));
+
+            if (in_array($mime, self::getPublicMimeTypes()) === true && $extension !== 'php') {
+                $publicFile = $publicCompiledDocDirectory->getFile($file->getPrefix());
+                try {
+                    $publicFile->write($file->readStream());
+                    common_Logger::d('Public ' . $publicFile->getPrefix() . '(' . $mime . ') to ' . $file->getPrefix());
+                } catch (FileExistsException $e) {
+                    common_Logger::w('File ' . $publicFile->getPrefix() . ' copied twice to public test folder during compilation');
                 }
             }
         }

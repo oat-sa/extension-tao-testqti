@@ -751,32 +751,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
-     * Convenience method that extracts entries of a $path array that correspond
-     * to a given $fileName.
-     *
-     * @param array $paths An array of strings representing absolute paths within a given directory.
-     * @return array $extractedPath The paths that meet the $fileName criterion.
-     */
-    private function filterTestContentDirectory(array $paths, $fileName) {
-        $returnValue = array();
-
-        foreach ($paths as $path) {
-            $pathinfo = pathinfo($path);
-            $pattern = $pathinfo['filename'];
-
-            if (!empty($pathinfo['extension'])) {
-                $pattern .= $pathinfo['extension'];
-            }
-
-            if ($fileName === $pattern) {
-                $returnValue[] = $path;
-            }
-        }
-
-        return $returnValue;
-    }
-
-    /**
      * Get the items from a QTI test document.
      *
      * @param \qtism\data\storage\xml\XmlDocument $doc The QTI XML document to be inspected to retrieve the items.
@@ -844,7 +818,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
-     * 
+     * @deprecated use $this->getTestDirectory() instead
+     *
      * @param core_kernel_classes_Resource $test
      * @return \League\Flysystem\Directory
      */
@@ -888,14 +863,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getQtiTestDir($test);
-        foreach ($dir->listContents(true) as $object) {
-            if ($object['basename'] === TAOQTITEST_FILENAME) {
-                $relPath = str_replace($dir->getPath(), '', $object['path']);
-                return $relPath;
-            }
-        }
-        throw new Exception('No QTI-XML test file found.'); 
+        return $this->getTestDefinitionFile($test)->getPrefix();
     }
 
     /**
@@ -911,6 +879,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
+     * @deprecated use $this->createTestContent() instead
+     * 
      * Create the defautl content directory of a QTI test.
      *
      * @param core_kernel_classes_Resource $test
@@ -970,6 +940,18 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         return $directory;
     }
 
+    /**
+     * Create test definition file content
+     * - create empty file if specified
+     * - OR, if file exists, update content
+     *
+     * @param core_kernel_classes_Resource $test
+     * @param bool $createTestFile
+     * @return Directory
+     * @throws FileNotFoundException
+     * @throws common_Exception
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
     public function createTestContent(core_kernel_classes_Resource $test, $createTestFile = true)
     {
         $path = md5($test->getUri());
@@ -1058,6 +1040,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
+     * @deprecated $this->getTestFileSystem() instead
+     *
      * Get the directory where the tests' contents are stored.
      *
      * @return core_kernel_versioning_Repository
