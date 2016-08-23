@@ -29,9 +29,9 @@ use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
 use oat\oatbox\filesystem\FileSystemService;
-use League\Flysystem\FileExistsException;
 use League\Flysystem\File;
-use League\Flysystem\Directory;
+use oat\oatbox\filesystem\Directory;
+use oat\generis\model\fileReference\FileReferenceSerializer;
 
 /**
  * the QTI TestModel service.
@@ -707,7 +707,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getDoc(core_kernel_classes_Resource $test) {
 
         $doc = new XmlDocument('2.1');
-        $doc->loadFromString($this->getQtiTestFile($test)->read());
+        $doc->loadFromString($this->getTestDefintionFile($test)->read());
         return $doc;
     }
 
@@ -856,10 +856,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
         $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
         $fs = $fss->getFilesystem($dir->getFileSystem()->getUri());
-        return new Directory($fs, $dir->getRelativePath());
+        return new League\Flysystem\Directory($fs, $dir->getRelativePath());
     }
     
     /**
+     * @deprecated use $this->getTestDefinition() instead
+     *
      * Return the File containing the test definition
      * If it doesn't exist, it will be created
      *
@@ -903,9 +905,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @return boolean true if saved
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function saveDoc( core_kernel_classes_Resource $test, XmlDocument $doc){
-        $file = $this->getQtiTestFile($test);
-        return $file->update($doc->saveToString());
+    private function saveDoc(core_kernel_classes_Resource $test, XmlDocument $doc)
+    {
+        return $this->getTestDefintionFile($test)->put($doc->saveToString());
     }
 
     /**
@@ -965,6 +967,62 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
 
         $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
+        return $directory;
+    }
+
+    public function createTestContent(core_kernel_classes_Resource $test, $createTestFile = true)
+    {
+        $path = md5($test->getUri());
+        $directory = $this->getTestFileSystem()->getDirectory($path);
+
+        $file = $directory->getFile(TAOQTITEST_FILENAME);
+
+        if ($createTestFile === true) {
+            $emptyTestXml = $this->getQtiTestTemplateFileAsString();
+
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadXML($emptyTestXml);
+
+            // Set the test label as title.
+            $doc->documentElement->setAttribute('title', $test->getLabel());
+
+            //generate a valid qti identifier
+            $identifier = tao_helpers_Display::textCleaner($test->getLabel(), '*', 32);
+            $identifier = str_replace('_', '-', $identifier);
+            if(preg_match('/^[0-9]/', $identifier)){
+                $identifier = '_'.$identifier;
+            }
+
+            $doc->documentElement->setAttribute('identifier', $identifier);
+            $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
+
+            if (! $file->write($doc->saveXML())) {
+                $msg = "Unable to write raw QTI Test template.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    $msg,
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+                );
+            }
+
+            common_Logger::i("Created QTI Test content for file '" . $file->getPrefix() . "'.");
+        } else if ($file->exists()) {
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadXML($file->read());
+
+            // Label update only.
+            $doc->documentElement->setAttribute('title', $test->getLabel());
+
+            if (! $file->update($doc->saveXML())) {
+                $msg = "Unable to update QTI Test file.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    $msg,
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+                );
+            }
+        }
+
+        $serial = $this->getFileReferenceSerializer()->serialize($directory);
+        $test->editPropertyValues($this->getProperty(TEST_TESTCONTENT_PROP), $serial);
         return $directory;
     }
 
@@ -1068,16 +1126,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * Get QTI test directory associated to a test
      *
      * @param core_kernel_classes_Resource $test
-     * @return null|Directory
      * @throws core_kernel_persistence_Exception
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     public function getTestDirectory(core_kernel_classes_Resource $test)
     {
-
-        $dir = $this->getTestFile($test);
+        $dir = $this->unserializeTestDirectory($test);
         if (is_null($dir)) {
-            $dir = $this->createContent($test);
+            $dir = $this->createTestContent($test);
         }
         return $dir;
     }
@@ -1086,15 +1142,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * Get QTI test definition file e.q. tao-qtitest-testdefinition.xml associated to a test
      *
      * @param core_kernel_classes_Resource $test
-     * @return File
+     * @return \oat\oatbox\filesystem\File
      * @throws Exception
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     public function getTestDefintionFile(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getQtiTestDir($test);
-
-
         $testDirectory = $this->getTestDirectory($test);
 
         if (! is_null($testDirectory) && $testDirectory->exists()) {
@@ -1111,7 +1163,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         throw new Exception('No QTI-XML test file found.');
     }
 
-    protected function getTestSerial(core_kernel_classes_Resource $test)
+    protected function unserializeTestDirectory(core_kernel_classes_Resource $test)
     {
         if (is_null($test)) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
