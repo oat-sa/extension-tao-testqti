@@ -1063,5 +1063,110 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
+
+    /**
+     * Get QTI test directory associated to a test
+     *
+     * @param core_kernel_classes_Resource $test
+     * @return null|Directory
+     * @throws core_kernel_persistence_Exception
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    public function getTestDirectory(core_kernel_classes_Resource $test)
+    {
+
+        $dir = $this->getTestFile($test);
+        if (is_null($dir)) {
+            $dir = $this->createContent($test);
+        }
+        return $dir;
+    }
+
+    /**
+     * Get QTI test definition file e.q. tao-qtitest-testdefinition.xml associated to a test
+     *
+     * @param core_kernel_classes_Resource $test
+     * @return File
+     * @throws Exception
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     */
+    public function getTestDefintionFile(core_kernel_classes_Resource $test)
+    {
+        $dir = $this->getQtiTestDir($test);
+
+
+        $testDirectory = $this->getTestDirectory($test);
+
+        if (! is_null($testDirectory) && $testDirectory->exists()) {
+            $iterator = $testDirectory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
+
+            /** @var \oat\oatbox\filesystem\File $file */
+            foreach ($iterator as $file) {
+                if ($file->getBasename() == TAOQTITEST_FILENAME) {
+                    return $file;
+                }
+            }
+        }
+
+        throw new Exception('No QTI-XML test file found.');
+    }
+
+    protected function getTestSerial(core_kernel_classes_Resource $test)
+    {
+        if (is_null($test)) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                'The selected test is null',
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+            );
+        }
+
+        $testModel = $test->getOnePropertyValue($this->getProperty(PROPERTY_TEST_TESTMODEL));
+        if (is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                'The selected test is not a QTI test',
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+            );
+        }
+
+        $serial = $test->getOnePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP));
+
+        if (! is_null($serial)) {
+            return $this->getFileReferenceSerializer()->unserializeDirectory($serial);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the filesystem test directory
+     *
+     * @return Directory
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
+     */
+    protected function getTestFileSystem()
+    {
+        $fileSystemId = common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
+
+        if (empty($fileSystemId)) {
+            throw new common_Exception('No default file system defined for QTI test files storage.');
+        }
+
+        return $this->getServiceLocator()
+            ->get(FileSystemService::SERVICE_ID)
+            ->getDirectory($fileSystemId);
+    }
+
+    /**
+     * Get serializer to persist filesystem object
+     *
+     * @return FileReferenceSerializer
+     */
+    protected function getFileReferenceSerializer()
+    {
+        return $this->getServiceManager()->get(FileReferenceSerializer::SERVICE_ID);
+    }
+
 }
-?>
