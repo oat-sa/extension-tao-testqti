@@ -1163,7 +1163,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         throw new Exception('No QTI-XML test file found.');
     }
 
-    protected function unserializeTestDirectory(core_kernel_classes_Resource $test)
+    public function unserializeTestDirectory(core_kernel_classes_Resource $test)
     {
         if (is_null($test)) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
