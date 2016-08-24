@@ -22,8 +22,8 @@ namespace oat\taoQtiTest\models\pack;
 use oat\taoTests\models\pack\Packable;
 use oat\taoTests\models\pack\TestPack;
 use oat\taoQtiItem\model\pack\QtiItemPacker;
+use tao_models_classes_service_StorageDirectory;
 use \taoQtiTest_models_classes_QtiTestService;
-use \taoItems_models_classes_ItemsService;
 use \core_kernel_classes_Resource;
 use \InvalidArgumentException;
 use \common_Exception;
@@ -51,7 +51,7 @@ class QtiTestPacker implements Packable
      * @throws InvalidArgumentException
      * @throws common_Exception
      */
-    public function packTest(core_kernel_classes_Resource $test)
+    public function packTest(core_kernel_classes_Resource $test, tao_models_classes_service_StorageDirectory $directory)
     {
         $testPack = null;
 
@@ -64,7 +64,7 @@ class QtiTestPacker implements Packable
             $itemPacker     = new QtiItemPacker();
             $items          = array();
             foreach($qtiTestService->getItems($test) as $item){
-                $items[$item->getUri()] = $itemPacker->packItem($item);
+                $items[$item->getUri()] = $itemPacker->packItem($item, '', $directory);
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
         } catch(common_Exception $e){
