@@ -25,9 +25,9 @@ use oat\taoQtiTest\models\runner\config\RunnerConfig;
 
 /**
  * Interface RunnerService
- * 
+ *
  * Describes a test runner dedicated service
- * 
+ *
  * @package oat\taoQtiTest\models
  */
 interface RunnerService
@@ -62,7 +62,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function getTestContext(RunnerServiceContext $context);
-    
+
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
@@ -108,14 +108,33 @@ interface RunnerService
     public function setItemState(RunnerServiceContext $context, $itemRef, $state);
 
     /**
-     * Stores the response of a particular item
+     * Parses the responses provided for a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $response
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function parsesItemResponse(RunnerServiceContext $context, $itemRef, $response);
+
+    /**
+     * Checks if the provided responses are empty
+     * @param RunnerServiceContext $context
+     * @param $responses
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function emptyResponse(RunnerServiceContext $context, $responses);
+
+    /**
+     * Stores the responses of a particular item
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @param $responses
      * @return boolean
      * @throws \common_Exception
      */
-    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response);
+    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses);
 
     /**
      * Should we display feedbacks
@@ -171,7 +190,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function timeout(RunnerServiceContext $context, $scope, $ref);
-    
+
     /**
      * Exits the test before its end
      * @param RunnerServiceContext $context
@@ -179,7 +198,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function exitTest(RunnerServiceContext $context);
-    
+
     /**
      * Finishes the test
      * @param RunnerServiceContext $context
