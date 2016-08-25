@@ -311,7 +311,7 @@ define([
 
                     //change plugin state
                     testRunner
-                        .on('loaditem', function(){
+                        .on('loaditem resumeitem', function(){
 
                             //check for new timers
                             updateTimers(true);

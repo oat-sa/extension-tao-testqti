@@ -4,6 +4,8 @@ namespace oat\taoQtiTest\scripts\cli;
 
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
+use oat\oatbox\filesystem\Directory;
+use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
@@ -12,51 +14,40 @@ class importMultipleTestsFromDir implements Action
 {
     use OntologyAwareTrait;
 
-    protected $uploadDirectoryPath;
-    protected $uploadDirectoryUri;
+    /** @var  Directory */
+    protected $directory;
 
     protected function init()
     {
         $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
-        if (!file_exists($this->uploadDirectoryPath)) {
-            throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
-        }
 
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
-        $this->uploadDirectoryUri = \common_ext_ExtensionsManager::singleton()
+        $uriDirectory = \common_ext_ExtensionsManager::singleton()
             ->getExtensionById('tao')
             ->getConfig('defaultUploadFileSource');
 
+        $this->directory = ServiceManager::getServiceManager()
+            ->get(FileSystemService::SERVICE_ID)
+            ->getDirectory($uriDirectory)
+            ->getDirectory('import');
     }
 
     public function __invoke($params = [])
     {
         try {
             $this->init();
+            $iterator = $this->directory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
 
-            $uploadFileSystem = new \core_kernel_fileSystem_FileSystem($this->uploadDirectoryUri);
-
-            $dir = new \tao_models_classes_service_StorageDirectory(
-                $this->uploadDirectoryUri,
-                $uploadFileSystem,
-                '/import', null
-            );
-            $dir->setServiceLocator(ServiceManager::getServiceManager());
-
-            /** @var \ArrayIterator $iterator */
             $tests = 0;
-            $iterator = $dir->getIterator();
-            while ($iterator->valid()) {
-                if (substr($iterator->current(), 0, 1) !== '.') {
-                    $this->importTest($this->uploadDirectoryPath . $iterator->current());
+            foreach ($iterator as $file) {
+                try {
+                    $this->importTest($this->uploadDirectoryPath . $file->getPrefix());
+                    echo $file->getPrefix() . ' imported.' . PHP_EOL;
                     $tests++;
-                    echo $iterator->current() . ' imported.' . PHP_EOL;
-                } else {
-                    echo $iterator->current() . ' skipped.' . PHP_EOL;
+                } catch (\Exception $e) {
+                    echo 'Error on package ' . $file->getPrefix() . ': ' . $e->getMessage();
                 }
-                \tao_helpers_File::remove($this->uploadDirectoryPath . $iterator->current());
-                $iterator->next();
             }
             return $this->returnSuccess($tests);
         } catch (ExtractException $e) {
