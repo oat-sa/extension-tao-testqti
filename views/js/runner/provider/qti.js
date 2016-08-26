@@ -318,6 +318,27 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
+            /**
+             * Check whether test taker leaving section
+             *
+             * @param {string} direction
+             * @param {string} scope
+             * @param {integer} position
+             * @todo this kind of function is generic enough to be moved to a util/helper
+             * @returns {boolean}
+             */
+            function leaveSection(direction, scope, position)
+            {
+                var context = self.getTestContext();
+                var map     = self.getTestMap();
+                var section = map.parts[context.testPartId].sections[context.sectionId];
+                var nbItems = _.size(section.items);
+                var item    = section.items[context.itemIdentifier];
+
+                return (direction === 'next' && (scope === 'section' || item.positionInSection + 1 === nbItems)) ||
+                    (direction === 'previous' && item.positionInSection === 0) ||
+                    (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
+            }
 
             /*
              * Install behavior on events
@@ -340,8 +361,7 @@ define([
                         ref       : position
                     });
 
-
-                    this.trigger('disablenav disabletools');
+                    this.trigger('disablenav disabletools')
 
                     // submit the response, but can break if empty
                     submit()
@@ -353,6 +373,12 @@ define([
                                 self.trigger('error', err);
                             }
                         });
+
+                })
+                .after('move', function (direction, scope, position) {
+                    if (leaveSection(direction, scope, position)) {
+                        self.trigger('endsession');
+                    }
                 })
                 .on('skip', function(scope){
 
@@ -402,6 +428,11 @@ define([
                         .catch(function(err){
                             self.trigger('error', err);
                         });
+                })
+                .after('timeout', function (scope, ref) {
+                    if (scope === 'assessmentSection' || scope === 'testPart') {
+                        self.trigger('endsession');
+                    }
                 })
                 .on('pause', function(data){
                     var pause;
@@ -632,8 +663,7 @@ define([
             var self = this;
 
             if (!this.getState('finish')) {
-                this.trigger('disablenav disabletools')
-                    .trigger('endsession', 'finish');
+                this.trigger('disablenav disabletools');
 
                 // will be executed after the runner has been flushed
                 // use the "before" queue to ensure the query will be fully processed before destroying
