@@ -242,15 +242,11 @@ define([
                         .then(function(result){
                             return new Promise(function(resolve, reject){
 
-                                function resumeItem() {
-                                    self.trigger('resumeitem');
-                                }
-
                                 if (result.notAllowed) {
+                                    self.trigger('resumeitem');
+
                                     if (result.message) {
-                                        self.trigger('alert', result.message, resumeItem);
-                                    } else {
-                                        resumeItem();
+                                        self.trigger('alert', result.message);
                                     }
 
                                     return reject(true);
