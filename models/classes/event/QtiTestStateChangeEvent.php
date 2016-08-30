@@ -20,37 +20,46 @@
 
 namespace oat\taoQtiTest\models\event;
 
-use oat\taoTests\models\event\TestChangedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use oat\taoQtiTest\models\SessionStateService;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+
 /**
- *
+ * Class QtiTestStateChangeEvent
+ * @author Aleh Hutnikau <aleh@taotesting.com>
  */
-class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAwareInterface
+class QtiTestStateChangeEvent extends QtiTestChangeEvent
 {
     use ServiceLocatorAwareTrait;
-     
-    protected $session;
-    
-    public function __construct(\taoQtiTest_helpers_TestSession $testSession)
+
+    const EVENT_NAME = __CLASS__;
+
+    /**
+     * The state of the AssessmentTestSession before changing.
+     *
+     * @var integer
+     */
+    private $previousState;
+
+    /**
+     * QtiTestStateChangeEvent constructor.
+     * @param \taoQtiTest_helpers_TestSession $testSession
+     * @param $previousState
+     */
+    public function __construct(\taoQtiTest_helpers_TestSession $testSession, $previousState)
     {
         $this->session = $testSession;
+        $this->previousState = $previousState;
     }
 
-    public function getSession()
+    public function getName()
     {
-        return $this->session;
+        return static::EVENT_NAME;
     }
 
-    public function getServiceCallId()
+    /**
+     * @return int
+     */
+    public function getPreviousState()
     {
-        return $this->session->getSessionId();
-    }
-
-    public function getNewStateDescription()
-    {
-        $sessionService = $this->getServiceLocator()->get(SessionStateService::SERVICE_ID);
-        return $sessionService->getSessionDescription($this->session);
+        return $this->previousState;
     }
 }
