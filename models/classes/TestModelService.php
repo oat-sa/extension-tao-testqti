@@ -128,16 +128,16 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     public function getImportHandlers() {
-        if($this->hasOption('importHandler')){
-            return $this->getOption('importHandler');
+        if($this->hasOption('importHandlers')){
+            return $this->getOption('importHandlers');
         } else {
             return array();
         }
     }
 
     public function getExportHandlers() {
-        if($this->hasOption('exportHandler')){
-            return $this->getOption('exportHandler');
+        if($this->hasOption('exportHandlers')){
+            return $this->getOption('exportHandlers');
         } else {
             return array();
         }

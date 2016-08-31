@@ -268,11 +268,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('2.16.8')) {
             OntologyUpdater::syncModels();
             $testModelService = new TestModelService(array(
-                'exportHandler' => array(
+                'exportHandlers' => array(
                     new \taoQtiTest_models_classes_export_TestExport(),
                     new \taoQtiTest_models_classes_export_TestExport22()
                 ),
-                'importHandler' => array(
+                'importHandlers' => array(
                     new \taoQtiTest_models_classes_import_TestImport()
                 )
             ));
