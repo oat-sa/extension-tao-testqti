@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -562,5 +563,22 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.7.0', '5.8.3');
+
+        if ($this->isVersion('5.8.3')) {
+            OntologyUpdater::syncModels();
+            $testModelService = new TestModelService(array(
+                'exportHandler' => array(
+                    new \taoQtiTest_models_classes_export_TestExport(),
+                    new \taoQtiTest_models_classes_export_TestExport22()
+                ),
+                'importHandler' => array(
+                    new \taoQtiTest_models_classes_import_TestImport()
+                )
+            ));
+            $testModelService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+            $this->setVersion('6.0.0');
+        }
     }
 }
