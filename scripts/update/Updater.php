@@ -578,7 +578,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $testModelService->setServiceManager($this->getServiceManager());
 
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
-            $this->setVersion('6.0.0');
+            $this->setVersion('5.9.0');
         }
     }
 }
