@@ -23,11 +23,12 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'taoTests/runner/plugin',
     'ui/dialog/alert',
-    'ui/dialog/confirm',
-], function ($, __, pluginFactory, dialogAlert, dialogConfirm){
+    'ui/dialog/confirm'
+], function ($, _, __, pluginFactory, dialogAlert, dialogConfirm){
     'use strict';
 
     /**
@@ -40,13 +41,64 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init : function init(){
-            var self = this;
             var testRunner = this.getTestRunner();
+            var alerts = [];
+            var confirms = [];
+
+            function addHandle(namespace, stack, dialog) {
+                stack.push({
+                    context: namespace,
+                    dialog: dialog
+                });
+
+                dialog.on('closed.modal', function() {
+                    removeHandle(stack, dialog);
+                });
+            }
+
+            function removeHandle(stack, dialog) {
+                _.forEach(stack, function(handle, index) {
+                    if (handle && dialog && dialog === handle.dialog) {
+                        stack[index] = null;
+                    }
+                });
+            }
+
+            function closeDialogs(namespace, accept, stack) {
+                if (stack) {
+                    _.forEach(stack, function(handle) {
+                        if (handle && (namespace === '@' || namespace === handle.context)) {
+                            if (accept) {
+                                handle.dialog.trigger('okbtn.modal');
+                            }
+                            handle.dialog.hide();
+                        }
+                    });
+                } else {
+                    closeDialogs(namespace, accept, alerts);
+                    closeDialogs(namespace, accept, confirms);
+                }
+            }
+
+            function cleanUp() {
+                alerts = _.compact(alerts);
+                confirms = _.compact(confirms);
+            }
 
             //change plugin state
             testRunner
-                .on('alert',  dialogAlert)
-                .on('confirm', dialogConfirm);
+                .before('alert.*', function(e, msg, accept) {
+                    addHandle(e.namespace, alerts, dialogAlert(msg, accept));
+                    _.defer(cleanUp);
+                })
+                .before('confirm.*', function(e, msg, accept, reject) {
+                    addHandle(e.namespace, confirms, dialogConfirm(msg, accept, reject));
+                    _.defer(cleanUp);
+                })
+                .before('closedialog.*', function(e, accept) {
+                    closeDialogs(e.namespace, accept);
+                    _.defer(cleanUp);
+                });
         }
     });
 });
