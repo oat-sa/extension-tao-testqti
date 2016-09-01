@@ -634,20 +634,20 @@ define([
                 // will be executed after the runner has been flushed
                 // use the "before" queue to ensure the query will be fully processed before destroying
                 // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
-                this.before('flush', function(e) {
-                    var done = e.done();
-
-                    this.getProxy()
+                this.before('flush', function() {
+                    var finishPromise = this.getProxy()
                         .callTestAction('finish')
                         .then(function() {
                             if (self.stateStorage) {
                                 return self.stateStorage.removeStore();
                             }
-                        })
-                        .then(done)
-                        .catch(function(err) {
-                            self.trigger('error', err);
                         });
+
+                    finishPromise.catch(function(err) {
+                        self.trigger('error', err);
+                    });
+
+                    return finishPromise;
                 });
             }
         },
