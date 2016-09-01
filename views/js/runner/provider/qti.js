@@ -331,9 +331,10 @@ define([
             {
                 var context = self.getTestContext();
                 var map     = self.getTestMap();
-                var section = map.parts[context.testPartId].sections[context.sectionId];
-                var nbItems = _.size(section.items);
-                var item    = section.items[context.itemIdentifier];
+                var section = mapHelper.getSection(map, context.sectionId);
+                var sectionStats = mapHelper.getSectionStats(map, context.sectionId);
+                var nbItems = sectionStats && sectionStats.total;
+                var item = mapHelper.getItem(map, context.itemIdentifier);
 
                 return (direction === 'next' && (scope === 'section' || item.positionInSection + 1 === nbItems)) ||
                     (direction === 'previous' && item.positionInSection === 0) ||
