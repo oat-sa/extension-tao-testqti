@@ -98,8 +98,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            return $directory->read($lang.DIRECTORY_SEPARATOR.$path);
-        } catch (FileNotFoundException $e) {
+            return json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+        } catch (\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
