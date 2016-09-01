@@ -246,7 +246,7 @@ define([
                                     self.trigger('resumeitem');
 
                                     if (result.message) {
-                                        self.trigger('alert', result.message);
+                                        self.trigger('alert.notallowed', result.message);
                                     }
 
                                     return reject(true);
@@ -388,7 +388,7 @@ define([
                     submit(true)
                         .then(updateStats)
                         .then(function() {
-                            self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
                                 computeNext('timeout', {
                                     scope: scope,
                                     ref: ref

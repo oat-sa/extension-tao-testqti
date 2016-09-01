@@ -352,7 +352,7 @@ define([
 
                             //display a mesage if we exit a timed section
                             if(leaveTimedSection(type, scope, position)){
-                                testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
+                                testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
                             } else {
                                 doMove();
                             }

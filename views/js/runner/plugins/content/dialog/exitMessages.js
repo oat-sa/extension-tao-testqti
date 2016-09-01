@@ -59,7 +59,7 @@ define([
                     }
 
                     // wait for the message acknowledge before leaving the runner
-                    testRunner.trigger('alert', data.message, function () {
+                    testRunner.trigger('alert.leave', data.message, function () {
                         testRunner.trigger('endsession', 'teststate', data.code);
                         done();
                     });
