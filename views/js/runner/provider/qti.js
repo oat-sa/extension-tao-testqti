@@ -34,8 +34,26 @@ define([
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
-    'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, store, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+    'tpl!taoQtiTest/runner/provider/layout',
+    'taoQtiItem/runner/plugins/modalFeedback',
+    'module'
+], function(
+    $,
+    _,
+    __,
+    store,
+    Promise,
+    cachedStore,
+    areaBroker,
+    proxyFactory,
+    probeOverseerFactory,
+    mapHelper,
+    qtiItemRunner,
+    assetManagerFactory,
+    assetStrategies,
+    layoutTpl,
+    modalFeedback,
+    module) {
     'use strict';
 
     // asset strategy for portable elements
@@ -238,6 +256,8 @@ define([
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve){
+                                var modalFeedbackPlugin;
+
                                 //if the submit results contains modal feedback we ask (gently) the IR to display them
                                 if(result.success) {
                                     if (result.itemSession) {
@@ -245,7 +265,16 @@ define([
                                     }
 
                                     if(result.displayFeedbacks === true && itemRunner){
-                                        return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
+                                        self.on('plugin-resume.QtiModalFeedback', function () {
+                                            resolve();
+                                        });
+
+                                        modalFeedbackPlugin = modalFeedback(self, self.getAreaBroker());
+                                        modalFeedbackPlugin.init({
+                                            itemSession: result.itemSession,
+                                            inlineMessage: !!module.config().inlineModalFeedback
+                                        });
+                                        modalFeedbackPlugin.render();
                                     }
                                 }
                                 return resolve();
