@@ -19,11 +19,11 @@
 
 namespace oat\taoQtiTest\models\pack;
 
+use oat\oatbox\service\ServiceManager;
+use oat\taoItems\model\pack\Packer;
 use oat\taoTests\models\pack\Packable;
 use oat\taoTests\models\pack\TestPack;
-use oat\taoQtiItem\model\pack\QtiItemPacker;
 use \taoQtiTest_models_classes_QtiTestService;
-use \taoItems_models_classes_ItemsService;
 use \core_kernel_classes_Resource;
 use \InvalidArgumentException;
 use \common_Exception;
@@ -61,10 +61,11 @@ class QtiTestPacker implements Packable
 
             $doc            = $qtiTestService->getDoc($test);
             $converter      = new \taoQtiTest_models_classes_QtiTestConverter($doc);
-            $itemPacker     = new QtiItemPacker();
             $items          = array();
             foreach($qtiTestService->getItems($test) as $item){
-                $items[$item->getUri()] = $itemPacker->packItem($item);
+                $items[$item->getUri()] = (new Packer($item, ''))
+                    ->setServiceLocator(ServiceManager::getServiceManager())
+                    ->pack();
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
         } catch(common_Exception $e){
