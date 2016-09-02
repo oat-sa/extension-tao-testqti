@@ -289,8 +289,7 @@ define([
                                                 .off('plugin-resume.QtiModalFeedback')
                                                 .on('plugin-resume.QtiModalFeedback', function () {
                                                     resolve();
-                                            });
-
+                                                });
                                             modalFeedbackPlugin = modalFeedback(self, self.getAreaBroker());
                                             modalFeedbackPlugin.init({
                                                 itemSession: result.itemSession,
