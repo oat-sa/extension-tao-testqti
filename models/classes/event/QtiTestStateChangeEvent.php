@@ -20,15 +20,12 @@
 
 namespace oat\taoQtiTest\models\event;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-
 /**
  * Class QtiTestStateChangeEvent
  * @author Aleh Hutnikau <aleh@taotesting.com>
  */
 class QtiTestStateChangeEvent extends QtiTestChangeEvent
 {
-    use ServiceLocatorAwareTrait;
 
     const EVENT_NAME = __CLASS__;
 
