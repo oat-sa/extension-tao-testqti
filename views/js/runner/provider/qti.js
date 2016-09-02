@@ -36,7 +36,8 @@ define([
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout',
     'taoQtiItem/runner/plugins/modalFeedback',
-    'module'
+    'module',
+    'taoQtiItem/qtiItem/core/Loader'
 ], function(
     $,
     _,
@@ -53,7 +54,8 @@ define([
     assetStrategies,
     layoutTpl,
     modalFeedback,
-    module) {
+    module,
+    QtiLoader) {
     'use strict';
 
     // asset strategy for portable elements
@@ -260,7 +262,7 @@ define([
                         .then(function(result){
                             return new Promise(function(resolve, reject){
                                 var modalFeedbackPlugin;
-                                
+
                                 if (result.notAllowed) {
                                     self.trigger('resumeitem');
 
@@ -275,19 +277,31 @@ define([
                                     context.itemAnswered = result.itemSession.itemAnswered;
                                 }
 
-                                if(result.displayFeedbacks === true && itemRunner){
-                                    self.on('plugin-resume.QtiModalFeedback', function () {
-                                        resolve();
-                                    });
+                                if(result.displayFeedbacks === true && itemRunner && result.feedbacks && result.itemSession){
+                                    var _renderer = self.itemRunner._item.getRenderer();
+                                    var _loader   = new QtiLoader(self.itemRunner._item);
 
-                                    modalFeedbackPlugin = modalFeedback(self, self.getAreaBroker());
-                                    modalFeedbackPlugin.init({
-                                        itemSession: result.itemSession,
-                                        inlineMessage: !!module.config().inlineModalFeedback
+                                    // loading feedbacks from response into the current item
+                                    _loader.loadElements(result.feedbacks, function () {
+                                        _renderer.load(function () {
+
+                                            self
+                                                .off('plugin-resume.QtiModalFeedback')
+                                                .on('plugin-resume.QtiModalFeedback', function () {
+                                                    resolve();
+                                            });
+
+                                            modalFeedbackPlugin = modalFeedback(self, self.getAreaBroker());
+                                            modalFeedbackPlugin.init({
+                                                itemSession: result.itemSession,
+                                                inlineMessage: !!module.config().inlineModalFeedback
+                                            });
+                                            modalFeedbackPlugin.render();
+                                        }, this.getLoadedClasses());
                                     });
-                                    modalFeedbackPlugin.render();
+                                } else {
+                                    return resolve();
                                 }
-                                return resolve();
                             });
                         });
                 };
