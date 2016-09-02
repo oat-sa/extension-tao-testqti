@@ -35,7 +35,7 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout',
-    'taoQtiItem/runner/plugins/modalFeedback',
+    'taoQtiTest/runner/plugins/content/modalFeedback',
     'module',
     'taoQtiItem/qtiItem/core/Loader'
 ], function(
