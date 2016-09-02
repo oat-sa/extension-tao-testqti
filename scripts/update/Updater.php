@@ -580,5 +580,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
             $this->setVersion('5.9.0');
         }
+
+        $this->skip('5.9.0', '5.9.1');
     }
 }
