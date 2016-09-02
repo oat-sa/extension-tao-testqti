@@ -57,11 +57,13 @@ define([
             }
 
             function removeHandle(stack, dialog) {
-                _.forEach(stack, function(handle, index) {
-                    if (handle && dialog && dialog === handle.dialog) {
-                        stack[index] = null;
-                    }
-                });
+                if (dialog) {
+                    _.remove(stack, function(handle) {
+                        if (handle && dialog === handle.dialog) {
+                            return true;
+                        }
+                    });
+                }
             }
 
             function closeDialogs(namespace, accept, stack) {
@@ -69,6 +71,7 @@ define([
                     _.forEach(stack, function(handle) {
                         if (handle && (namespace === '@' || namespace === handle.context)) {
                             if (accept) {
+                                // TODO: improve the dialog implementation in order to provide a better API
                                 handle.dialog.trigger('okbtn.modal');
                             }
                             handle.dialog.hide();
@@ -80,24 +83,16 @@ define([
                 }
             }
 
-            function cleanUp() {
-                alerts = _.compact(alerts);
-                confirms = _.compact(confirms);
-            }
-
             //change plugin state
             testRunner
                 .before('alert.*', function(e, msg, accept) {
                     addHandle(e.namespace, alerts, dialogAlert(msg, accept));
-                    _.defer(cleanUp);
                 })
                 .before('confirm.*', function(e, msg, accept, reject) {
                     addHandle(e.namespace, confirms, dialogConfirm(msg, accept, reject));
-                    _.defer(cleanUp);
                 })
                 .before('closedialog.*', function(e, accept) {
                     closeDialogs(e.namespace, accept);
-                    _.defer(cleanUp);
                 });
         }
     });
