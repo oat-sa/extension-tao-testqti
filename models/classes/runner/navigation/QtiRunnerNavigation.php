@@ -74,7 +74,7 @@ class QtiRunnerNavigation
 
         if ($context instanceof QtiRunnerServiceContext) {
             $from = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
-            $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_BEFORE, $context->getTestSession(), $from, null, $navigator);
+            $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_BEFORE, $context->getTestSession(), $from);
             ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
         }
 
@@ -82,7 +82,7 @@ class QtiRunnerNavigation
 
         if ($context instanceof QtiRunnerServiceContext) {
             $to = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
-            $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_AFTER, $context->getTestSession(), $from, $to, $navigator);
+            $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_AFTER, $context->getTestSession(), $from, $to);
             ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
         }
 

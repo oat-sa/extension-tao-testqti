@@ -23,7 +23,6 @@ namespace oat\taoQtiTest\models\event;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\Event;
-use oat\taoQtiTest\models\runner\navigation\RunnerNavigation;
 
 /**
  *
@@ -37,10 +36,6 @@ class QtiMoveEvent implements Event
     private $to;
     private $session;
     private $context;
-    /**
-     * @var null|RunnerNavigation
-     */
-    private $navigator;
 
     /**
      * @return string
@@ -56,15 +51,13 @@ class QtiMoveEvent implements Event
      * @param AssessmentTestSession $session
      * @param null|RouteItem $from
      * @param null|RouteItem $to
-     * @param RunnerNavigation $navigator
      */
-    public function __construct($context, AssessmentTestSession $session, RouteItem $from = null, RouteItem $to = null, $navigator = null)
+    public function __construct($context, AssessmentTestSession $session, RouteItem $from = null, RouteItem $to = null)
     {
         $this->context = $context;
         $this->session = $session;
         $this->from = $from;
         $this->to = $to;
-        $this->navigator = $navigator;
     }
 
     /**
@@ -95,14 +88,6 @@ class QtiMoveEvent implements Event
      * @return null|RouteItem
      */
     public function getTo()
-    {
-        return $this->to;
-    }
-
-    /**
-     * @return null|RunnerNavigation
-     */
-    public function getNavigator()
     {
         return $this->to;
     }
