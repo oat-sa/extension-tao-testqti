@@ -68,7 +68,7 @@ define([
 
                     if(context.options.nextSectionWarning){
                         testRunner.trigger(
-                            'confirm',
+                            'confirm.nextsection',
                             messages.getExitMessage(
                                 __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
                                 'section', testRunner),
