@@ -536,32 +536,32 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.5.0', '5.5.3');
-        
+
         if ($this->isVersion('5.5.3')) {
-            
+
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            
+
             $config = $extension->getConfig('testRunner');
             $config['force-branchrules'] = false;
             $config['force-preconditions'] = false;
             $config['path-tracking'] = false;
-            
+
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('5.6.0');
         }
-        
+
         if ($this->isVersion('5.6.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            
+
             $config = $extension->getConfig('testRunner');
             $config['always-allow-jumps'] = false;
-            
+
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('5.7.0');
         }
-        
+
         $this->skip('5.7.0', '5.8.4');
 
         if ($this->isVersion('5.8.4')) {
@@ -581,6 +581,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.9.0');
         }
 
-        $this->skip('5.9.0', '5.9.1');
+        $this->skip('5.9.0', '5.10.0');
     }
 }

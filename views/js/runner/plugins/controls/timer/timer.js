@@ -25,6 +25,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/promise',
     'core/polling',
     'core/timer',
     'core/store',
@@ -33,7 +34,7 @@ define([
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function ($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -333,37 +334,36 @@ define([
                             }
                         })
                         .before('move', function(e, type, scope, position){
-                            var done = e.done();
+                            var movePromise = new Promise(function(resolve, reject) {
+                                //pause the timers
+                                if (self.getState('enabled')) {
+                                    self.disable();
+                                }
 
-                            var doMove = function doMove(){
-                                removeTimer(timerTypes.item);
-                                done();
-                            };
+                                //display a message if we exit a timed section
+                                if(leaveTimedSection(type, scope, position)){
+                                    testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
+                                } else {
+                                    resolve();
+                                }
+                            });
 
-                            var cancelMove = function cancelMove() {
-                                testRunner.trigger('enableitem enablenav');
-                                e.prevent();
-                            };
+                            movePromise
+                                .then(function doMove(){
+                                    removeTimer(timerTypes.item);
+                                })
+                                .catch(function cancelMove() {
+                                    testRunner.trigger('enableitem enablenav');
+                                });
 
-                            //pause the timers
-                            if (self.getState('enabled')) {
-                                self.disable();
-                            }
-
-                            //display a mesage if we exit a timed section
-                            if(leaveTimedSection(type, scope, position)){
-                                testRunner.trigger('confirm', messages.getExitMessage(exitMessage, 'section', testRunner), doMove, cancelMove);
-                            } else {
-                                doMove();
-                            }
+                            return movePromise;
                         })
-                        .before('finish', function(e){
-                            var done = e.done();
-
-                            //clean up the storage at the end
-                            self.storage.removeStore()
-                                .then(done)
-                                .catch(done);
+                        .before('finish', function(){
+                            return new Promise(function(resolve) {
+                                self.storage.removeStore()
+                                    .then(resolve)
+                                    .catch(resolve);
+                            });
                         });
                 });
         },

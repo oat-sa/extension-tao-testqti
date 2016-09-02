@@ -20,8 +20,9 @@
  */
 define([
     'lodash',
+    'core/promise',
     'taoTests/runner/plugin'
-], function (_, pluginFactory) {
+], function (_, Promise, pluginFactory) {
     'use strict';
 
     /**
@@ -49,18 +50,17 @@ define([
             // then if a message needs to be displayed displays it and waits the user acknowledges it
             testRunner.before('leave', function leave(e, data) {
                 if (_.isObject(data) && data.message) {
-                    var done = e.done();
-                    var context = testRunner.getTestContext();
+                    return new Promise(function(resolve) {
+                        var context = testRunner.getTestContext();
 
-                    // the leave can occurs when the runner is in inconsistent state (i.e. error)
-                    // prevent side error with item disabling
-                    if (context && context.itemUri) {
-                        testRunner.disableItem(context.itemUri);
-                    }
+                        // the leave can occurs when the runner is in inconsistent state (i.e. error)
+                        // prevent side error with item disabling
+                        if (context && context.itemUri) {
+                            testRunner.disableItem(context.itemUri);
+                        }
 
-                    // wait for the message acknowledge before leaving the runner
-                    testRunner.trigger('alert', data.message, function () {
-                        done();
+                        // wait for the message acknowledge before leaving the runner
+                        testRunner.trigger('alert.leave', data.message, resolve);
                     });
                 }
             });
