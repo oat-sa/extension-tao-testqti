@@ -240,8 +240,6 @@ define([
 
             if (content.inlineMessage) {
 
-                // todo timer pause on render, resume on resume
-
                 testRunner
                     .off('plugin-resume.itemInlineMessage')
                     .on('plugin-resume.itemInlineMessage', function () {
