@@ -596,6 +596,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
         }
 
-        $this->isVersion('5.10.2');
+        $this->isVersion('5.11.0');
     }
 }
