@@ -261,7 +261,7 @@ define([
                                     self.trigger('resumeitem');
 
                                     if (result.message) {
-                                        self.trigger('alert', result.message);
+                                        self.trigger('alert.notallowed', result.message);
                                     }
 
                                     return reject(true);
@@ -360,6 +360,28 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
+            /**
+             * Check whether test taker leaving section
+             *
+             * @param {string} direction
+             * @param {string} scope
+             * @param {integer} position
+             * @todo this kind of function is generic enough to be moved to a util/helper
+             * @returns {boolean}
+             */
+            function leaveSection(direction, scope, position)
+            {
+                var context = self.getTestContext();
+                var map     = self.getTestMap();
+                var section = mapHelper.getSection(map, context.sectionId);
+                var sectionStats = mapHelper.getSectionStats(map, context.sectionId);
+                var nbItems = sectionStats && sectionStats.total;
+                var item = mapHelper.getItem(map, context.itemIdentifier);
+
+                return (direction === 'next' && (scope === 'section' || item.positionInSection + 1 === nbItems)) ||
+                    (direction === 'previous' && item.positionInSection === 0) ||
+                    (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
+            }
 
             /*
              * Install behavior on events
@@ -382,8 +404,7 @@ define([
                         ref       : position
                     });
 
-
-                    this.trigger('disablenav disabletools');
+                    this.trigger('disablenav disabletools')
 
                     // submit the response, but can break if empty
                     submit()
@@ -395,6 +416,12 @@ define([
                                 self.trigger('error', err);
                             }
                         });
+
+                })
+                .after('move', function (direction, scope, position) {
+                    if (leaveSection(direction, scope, position)) {
+                        self.trigger('endsession');
+                    }
                 })
                 .on('skip', function(scope){
 
@@ -434,7 +461,7 @@ define([
                     submit(true)
                         .then(updateStats)
                         .then(function() {
-                            self.trigger('alert', __('Time limit reached, this part of the test has ended.'), function() {
+                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
                                 computeNext('timeout', {
                                     scope: scope,
                                     ref: ref
@@ -444,6 +471,11 @@ define([
                         .catch(function(err){
                             self.trigger('error', err);
                         });
+                })
+                .after('timeout', function (scope, ref) {
+                    if (scope === 'assessmentSection' || scope === 'testPart') {
+                        self.trigger('endsession');
+                    }
                 })
                 .on('pause', function(data){
                     var pause;
@@ -674,26 +706,25 @@ define([
             var self = this;
 
             if (!this.getState('finish')) {
-                this.trigger('disablenav disabletools')
-                    .trigger('endsession', 'finish');
+                this.trigger('disablenav disabletools');
 
                 // will be executed after the runner has been flushed
                 // use the "before" queue to ensure the query will be fully processed before destroying
                 // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
-                this.before('flush', function(e) {
-                    var done = e.done();
-
-                    this.getProxy()
+                this.before('flush', function() {
+                    var finishPromise = this.getProxy()
                         .callTestAction('finish')
                         .then(function() {
                             if (self.stateStorage) {
                                 return self.stateStorage.removeStore();
                             }
-                        })
-                        .then(done)
-                        .catch(function(err) {
-                            self.trigger('error', err);
                         });
+
+                    finishPromise.catch(function(err) {
+                        self.trigger('error', err);
+                    });
+
+                    return finishPromise;
                 });
             }
         },

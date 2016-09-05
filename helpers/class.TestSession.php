@@ -43,6 +43,7 @@ use qtism\common\enums\Cardinality;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
+use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoTests\models\event\TestExecutionPausedEvent;
 use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -604,6 +605,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         }
     }
 
+    /**
+     * @inheritdoc
+     * @param int $state
+     */
+    public function setState($state)
+    {
+        $previousState = $this->getState();
+        parent::setState($state);
+        if ($previousState !== null && $previousState !== $state) {
+            $this->triggerStateChanged($previousState);
+        }
+    }
+
     protected function triggerEventChange() {
         $event = new QtiTestChangeEvent($this);
         if ($event instanceof ServiceLocatorAwareInterface) {
@@ -627,7 +641,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         );
         $this->getEventManager()->trigger($event);
     }
-    
+
+    /**
+     * @param int $previousState
+     */
+    protected function triggerStateChanged($previousState)
+    {
+        $event = new QtiTestStateChangeEvent($this, $previousState);
+        if ($event instanceof ServiceLocatorAwareInterface) {
+            $event->setServiceLocator($this->getServiceLocator());
+        }
+        $this->getEventManager()->trigger($event);
+    }
+
     /**
      * @return EventManager
      */

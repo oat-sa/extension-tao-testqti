@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -28,6 +29,7 @@ use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
@@ -534,35 +536,54 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.5.0', '5.5.3');
-        
+
         if ($this->isVersion('5.5.3')) {
-            
+
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            
+
             $config = $extension->getConfig('testRunner');
             $config['force-branchrules'] = false;
             $config['force-preconditions'] = false;
             $config['path-tracking'] = false;
-            
+
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('5.6.0');
         }
-        
+
         if ($this->isVersion('5.6.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            
+
             $config = $extension->getConfig('testRunner');
             $config['always-allow-jumps'] = false;
-            
+
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('5.7.0');
         }
-        
-        $this->skip('5.7.0', '5.9.0');
 
-        if ($this->isVersion('5.9.0')) {
+        $this->skip('5.7.0', '5.8.4');
+
+        if ($this->isVersion('5.8.4')) {
+            OntologyUpdater::syncModels();
+            $testModelService = new TestModelService(array(
+                'exportHandlers' => array(
+                    new \taoQtiTest_models_classes_export_TestExport(),
+                    new \taoQtiTest_models_classes_export_TestExport22()
+                ),
+                'importHandlers' => array(
+                    new \taoQtiTest_models_classes_import_TestImport()
+                )
+            ));
+            $testModelService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+            $this->setVersion('5.9.0');
+        }
+
+        $this->skip('5.9.0', '5.10.1');
+        
+        if ($this->isVersion('5.10.1')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'modalFeedback',
@@ -575,6 +596,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
         }
 
-        $this->isVersion('5.9.1');
+        $this->isVersion('5.10.2');
     }
 }
