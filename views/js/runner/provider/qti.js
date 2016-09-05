@@ -34,10 +34,7 @@ define([
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
-    'tpl!taoQtiTest/runner/provider/layout',
-    'taoQtiTest/runner/plugins/content/modalFeedback',
-    'module',
-    'taoQtiItem/qtiItem/core/Loader'
+    'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
     _,
@@ -52,10 +49,7 @@ define([
     qtiItemRunner,
     assetManagerFactory,
     assetStrategies,
-    layoutTpl,
-    modalFeedback,
-    module,
-    QtiLoader) {
+    layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -261,7 +255,7 @@ define([
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve, reject){
-                                var modalFeedbackPlugin;
+                                var feedbackLoaded;
 
                                 if (result.notAllowed) {
                                     self.trigger('resumeitem');
@@ -277,7 +271,17 @@ define([
                                     context.itemAnswered = result.itemSession.itemAnswered;
                                 }
 
-                                if(result.displayFeedbacks === true && itemRunner && result.feedbacks && result.itemSession){
+                                if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
+
+                                    feedbackLoaded = new Promise(function(done){
+                                        self.itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, done);
+                                    });
+
+                                    feedbackLoaded.then(function(queue){
+                                        self.trigger('modalFeedbacks', queue);
+                                    });
+
+/*
                                     var _renderer = self.itemRunner._item.getRenderer();
                                     var _loader   = new QtiLoader(self.itemRunner._item);
 
@@ -298,6 +302,7 @@ define([
                                             modalFeedbackPlugin.render();
                                         }, this.getLoadedClasses());
                                     });
+*/
                                 } else {
                                     return resolve();
                                 }

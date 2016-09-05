@@ -91,6 +91,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'controls',
                 'active' => true,
                 'tags' => [ 'core' ]
+            ], [
+                'id' => 'modalFeedback',
+                'name' => 'QTI modal feedbacks',
+                'module' => 'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
+                'description' => 'Display Qti modalFeedback element',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti', 'required' ]
             ]
         ],
         'controls' => [

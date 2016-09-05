@@ -28,7 +28,6 @@ use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
-use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
@@ -562,5 +561,20 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('5.7.0', '5.9.0');
+
+        if ($this->isVersion('5.9.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'modalFeedback',
+                'name' => 'QTI modal feedbacks',
+                'module' => 'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
+                'description' => 'Display Qti modalFeedback element',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti', 'required' ]
+            ]));
+        }
+
+        $this->isVersion('5.9.1');
     }
 }
