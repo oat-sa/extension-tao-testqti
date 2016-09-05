@@ -273,11 +273,7 @@ define([
 
                                 if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
 
-                                    feedbackLoaded = new Promise(function(done){
-                                        self.itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, done);
-                                    });
-
-                                    feedbackLoaded.then(function(queue){
+                                    itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, function(queue){
                                         self.trigger('modalFeedbacks', queue);
                                     });
 

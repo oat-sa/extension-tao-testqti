@@ -25,11 +25,12 @@
 define([
     'jquery',
     'lodash',
+    'module',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/content/dialog/itemInlineMessage',
     'taoQtiTest/runner/plugins/content/dialog/itemAlertMessage',
     'ui/autoscroll'
-], function ($, _, pluginFactory, inlineMessage, alertMessage, autoscroll) {
+], function ($, _, module, pluginFactory, inlineMessage, alertMessage, autoscroll) {
     'use strict';
 
     /**
@@ -85,13 +86,46 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
-            var self = this;
-            var testRunner = this.getTestRunner();
             inlineMode = !!module.config().inlineModalFeedback;
 
             messagePlugin = inlineMode ? inlineMessage : alertMessage;
             renderedFeedbacks = [];
             isDestroyed = false;
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        render: function render() {
+            var self = this;
+            var testRunner = this.getTestRunner();
+
+            var createMessages = function createMessages(renderingQueue){
+                if (renderingQueue.length) {
+
+                    _.each(renderingQueue, function (renderingToken) {
+
+                        var feedback = messagePlugin(testRunner, testRunner.getAreaBroker());
+                        feedback.init({
+                            dom: renderingToken.feedback.render({
+                                inline: inlineMode
+                            }),
+                            // for alerts will be used #modalMessages container
+                            $container: inlineMode ? renderingToken.$container : null
+                        });
+                        feedback.render();
+
+                        renderedFeedbacks.push(feedback);
+                    });
+
+                    // auto scroll to the first feedback, only for the "inline" mode
+                    if (inlineMode && renderedFeedbacks) {
+                        autoscroll($('.qti-modalFeedback', testRunner.getAreaBroker().getContentArea()).first(), testRunner.getAreaBroker().getContentArea().parents('.content-wrapper'));
+                    }
+                } else {
+                    self.trigger('resume');
+                }
+            };
 
             if (inlineMode) {
                 testRunner
@@ -108,42 +142,8 @@ define([
             }
 
             testRunner.on('modalFeedbacks', function(renderingQueue) {
-                self.render(renderingQueue);
+                createMessages(renderingQueue);
             });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render: function render(renderingQueue) {
-            var self = this;
-            var testRunner = this.getTestRunner();
-
-            if (renderingQueue.length) {
-
-                _.each(renderingQueue, function (renderingToken) {
-
-                    var feedback = messagePlugin(testRunner, testRunner.getAreaBroker());
-                    feedback.init({
-                        dom: renderingToken.feedback.render({
-                            inline: inlineMode
-                        }),
-                        // for alerts will be used #modalMessages container
-                        $container: inlineMode ? renderingToken.$container : null
-                    });
-                    feedback.render();
-
-                    renderedFeedbacks.push(feedback);
-                });
-
-                // auto scroll to the first feedback, only for the "inline" mode
-                if (inlineMode && renderedFeedbacks) {
-                    autoscroll($('.qti-modalFeedback', testRunner.getAreaBroker().getContentArea()).first(), testRunner.getAreaBroker().getContentArea().parents('.content-wrapper'));
-                }
-            } else {
-                self.trigger('resume');
-            }
-
         },
 
         /**
