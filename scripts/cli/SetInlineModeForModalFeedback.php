@@ -42,7 +42,7 @@ class SetInlineModeForModalFeedback implements Action
         $inlineModel = in_array('inline', $params) || in_array('--inline', $params);
 
         ClientLibConfigRegistry::getRegistry()->register(
-            'taoQtiTest/runner/provider/qti',
+            'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
             array(
                 'inlineModalFeedback' => $inlineModel
             )

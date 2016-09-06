@@ -274,31 +274,15 @@ define([
                                 if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
 
                                     itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, function(queue){
+                                        self
+                                            .off('plugin-resume.QtiModalFeedback')
+                                            .on('plugin-resume.QtiModalFeedback', function () {
+                                                resolve();
+                                            });
+
                                         self.trigger('modalFeedbacks', queue);
                                     });
 
-/*
-                                    var _renderer = self.itemRunner._item.getRenderer();
-                                    var _loader   = new QtiLoader(self.itemRunner._item);
-
-                                    // loading feedbacks from response into the current item
-                                    _loader.loadElements(result.feedbacks, function () {
-                                        _renderer.load(function () {
-
-                                            self
-                                                .off('plugin-resume.QtiModalFeedback')
-                                                .on('plugin-resume.QtiModalFeedback', function () {
-                                                    resolve();
-                                                });
-                                            modalFeedbackPlugin = modalFeedback(self, self.getAreaBroker());
-                                            modalFeedbackPlugin.init({
-                                                itemSession: result.itemSession,
-                                                inlineMessage: !!module.config().inlineModalFeedback
-                                            });
-                                            modalFeedbackPlugin.render();
-                                        }, this.getLoadedClasses());
-                                    });
-*/
                                 } else {
                                     return resolve();
                                 }

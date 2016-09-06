@@ -75,6 +75,11 @@ define([
         }
     }
 
+    function defineMode(inline) {
+        inlineMode = inline;
+        messagePlugin = inlineMode ? inlineMessage : alertMessage;
+    }
+
     /**
      * Returns the configured plugin
      */
@@ -86,11 +91,10 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
-            inlineMode = !!module.config().inlineModalFeedback;
-
-            messagePlugin = inlineMode ? inlineMessage : alertMessage;
             renderedFeedbacks = [];
             isDestroyed = false;
+
+            defineMode(!!module.config().inlineModalFeedback);
         },
 
         /**
@@ -100,7 +104,14 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
-            var createMessages = function createMessages(renderingQueue){
+            var createMessages = function createMessages(renderingQueue, inline){
+
+                var bInlineMode = inlineMode;
+
+                if (inline === true || inline === false) {
+                    defineMode(inline);
+                }
+
                 if (renderingQueue.length) {
 
                     _.each(renderingQueue, function (renderingToken) {
@@ -125,6 +136,9 @@ define([
                 } else {
                     self.trigger('resume');
                 }
+
+                // restore global feedback mode
+                defineMode(bInlineMode);
             };
 
             if (inlineMode) {
@@ -141,8 +155,8 @@ define([
                     });
             }
 
-            testRunner.on('modalFeedbacks', function(renderingQueue) {
-                createMessages(renderingQueue);
+            testRunner.on('modalFeedbacks', function(renderingQueue, inline) {
+                createMessages(renderingQueue, inline);
             });
         },
 

@@ -24,11 +24,12 @@ define([
     'module',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/content/modalFeedback',
+    'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
     'taoQtiItem/runner/qtiItemRunner',
     'json!taoQtiItem/test/samples/json/inlineModalFeedback.json',
     'taoQtiItem/qtiItem/core/Loader',
-    'taoQtiItem/qtiCommonRenderer/renderers/Renderer'
+    'taoQtiItem/qtiCommonRenderer/renderers/Renderer',
+    'taoQtiItem/qtiItem/helper/modalFeedback'
 ], function ($,
              _,
              taoModule,
@@ -38,7 +39,8 @@ define([
              qtiItemRunner,
              itemData,
              QtiLoader,
-             QtiRenderer) {
+             QtiRenderer,
+             modalFeedbackHelper) {
 
     'use strict';
 
@@ -252,6 +254,7 @@ define([
 
                     var result, $result, mFeedback;
                     var $choiceInteraction, $orderInteraction, $textEntryInteraction, $inlineChoiceInteraction, $inlineInteractionContainer;
+                    var renderingQueue;
 
                     item = _item;
                     item.setRenderer(this);
@@ -331,11 +334,11 @@ define([
                         });
 
                     mFeedback = modalFeedback(testRunner, testRunner.getAreaBroker());
-                    mFeedback.init({
-                        itemSession: testCase.itemSession,
-                        inlineMessage: true
-                    });
+                    mFeedback.init();
                     mFeedback.render();
+                    renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
+                    testRunner.trigger('modalFeedbacks', renderingQueue, true);
+
                 }, self.getLoadedClasses());
             });
         });
@@ -351,6 +354,7 @@ define([
 
                     var result, $result, mFeedback;
                     var $choiceInteraction, $orderInteraction, $textEntryInteraction, $inlineChoiceInteraction, $inlineInteractionContainer;
+                    var renderingQueue;
 
                     item = _item;
                     item.setRenderer(this);
@@ -390,7 +394,6 @@ define([
                             var $modalsBlock = $('#modalFeedbacks', $result);
                             var countFeedbacks = testCase.feedbacks.choice.length + testCase.feedbacks.inline.length + testCase.feedbacks.order.length;
                             assert.equal(feedback.getState('ready'), true, 'The feedback is rendered');
-
                             assert.equal($('.qti-modalFeedback', $modalsBlock).length, countFeedbacks, 'modal feedbacks in the special dom element');
 
                             feedbacks = testCase.feedbacks.choice.concat(testCase.feedbacks.order, testCase.feedbacks.inline);
@@ -430,11 +433,11 @@ define([
                         });
 
                     mFeedback = modalFeedback(testRunner, testRunner.getAreaBroker());
-                    mFeedback.init({
-                        itemSession: testCase.itemSession,
-                        inlineMessage: false
-                    });
+                    mFeedback.init();
                     mFeedback.render();
+                    renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
+                    testRunner.trigger('modalFeedbacks', renderingQueue, false);
+
                 }, self.getLoadedClasses());
             });
         });
