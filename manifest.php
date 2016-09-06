@@ -36,7 +36,7 @@ return array(
     'version' => '2.16.8',
 	'author' => 'Open Assessment Technologies',
     'requires' => array(
-        'taoTests' => '>=2.6',
+        'taoTests' => '>=2.8.2',
         'taoQtiItem' => '>=2.6'
     ),
 	'models' => array(
@@ -51,6 +51,7 @@ return array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
 		    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
+                    'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins'
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

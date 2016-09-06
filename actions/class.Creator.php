@@ -34,7 +34,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             
             $labels = array();
             $testUri   =  $this->getRequestParameter('uri');
-            $testModel = new taoQtiTest_models_classes_TestModel();
+            $testModel = $this->getServiceManager()->get(\oat\taoQtiTest\models\TestModel::SERVICE_ID);
 
             $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
             foreach($items as $item){

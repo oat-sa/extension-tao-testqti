@@ -24,6 +24,8 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestModelService;
+use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
@@ -263,5 +265,21 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->setVersion($currentVersion);
         $this->skip('2.16.4', '2.16.8');
 
+        if ($this->isVersion('2.16.8')) {
+            OntologyUpdater::syncModels();
+            $testModelService = new TestModelService(array(
+                'exportHandler' => array(
+                    new \taoQtiTest_models_classes_export_TestExport(),
+                    new \taoQtiTest_models_classes_export_TestExport22()
+                ),
+                'importHandler' => array(
+                    new \taoQtiTest_models_classes_import_TestImport()
+                )
+            ));
+            $testModelService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+            $this->setVersion('2.16.9');
+        }
     }
 }
