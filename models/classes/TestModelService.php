@@ -19,34 +19,40 @@
  *
  *
  */
+namespace oat\taoQtiTest\models;
 
+use oat\oatbox\service\ConfigurableService;
 /**
  * the qti TestModel
  *
  * @access public
  * @author Joel Bout, <joel.bout@tudor.lu>
  * @package taoQtiTest
-
  */
-class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_TestModel, tao_models_classes_import_ImportProvider, tao_models_classes_export_ExportProvider
+class TestModelService extends ConfigurableService implements \taoTests_models_classes_TestModel, \tao_models_classes_import_ImportProvider, \tao_models_classes_export_ExportProvider
 {
 
-    const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
+	const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
+	
+    const SERVICE_ID = 'taoQtiTest/TestModel';
 
     /**
      * default constructor to ensure the implementation
      * can be instanciated
+     * @param array $options
+     *
      */
-    public function __construct() {
-        common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    public function __construct($options = array()) {
+        parent::__construct($options);
+        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
 
     /**
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::prepareContent()
      */
-    public function prepareContent( core_kernel_classes_Resource $test, $items = array()) {
-        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+    public function prepareContent( \core_kernel_classes_Resource $test, $items = array()) {
+        $service = \taoQtiTest_models_classes_QtiTestService::singleton();
         $service->save($test, $items);
     }
 
@@ -54,8 +60,8 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::deleteContent()
      */
-    public function deleteContent( core_kernel_classes_Resource $test) {
-        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+    public function deleteContent( \core_kernel_classes_Resource $test) {
+        $service = \taoQtiTest_models_classes_QtiTestService::singleton();
         $service->deleteContent($test);
     }
 
@@ -63,8 +69,8 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::getItems()
      */
-    public function getItems( core_kernel_classes_Resource $test) {
-    	$service = taoQtiTest_models_classes_QtiTestService::singleton();
+    public function getItems( \core_kernel_classes_Resource $test) {
+    	$service = \taoQtiTest_models_classes_QtiTestService::singleton();
         return $service->getItems($test);
     }
 
@@ -72,7 +78,7 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
      * (non-PHPdoc)
      * @see taoTests_models_classes_TestModel::onChangeTestLabel()
      */
-    public function onChangeTestLabel( core_kernel_classes_Resource $test) {
+    public function onChangeTestLabel( \core_kernel_classes_Resource $test) {
     	// do nothing
     }
 
@@ -80,57 +86,61 @@ class taoQtiTest_models_classes_TestModel implements taoTests_models_classes_Tes
      * @deprecated
      * @see taoTests_models_classes_TestModel::getAuthoring()
      */
-    public function getAuthoring( core_kernel_classes_Resource $test) {
+    public function getAuthoring( \core_kernel_classes_Resource $test) {
     	return "";
     }
 
     /**
      * @see taoTests_models_classes_TestModel::getAuthoringUrl()
      */
-    public function getAuthoringUrl( core_kernel_classes_Resource $test) {
+    public function getAuthoringUrl( \core_kernel_classes_Resource $test) {
         return _url('index', 'Creator', 'taoQtiTest', array('uri' => $test->getUri()));
     }
 
-    public static function setQtiTestDirectory(core_kernel_file_File $folder) {
-    	$ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    public static function setQtiTestDirectory(\core_kernel_file_File $folder) {
+    	$ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     	$ext->setConfig(self::CONFIG_QTITEST_FOLDER, $folder->getUri());
     }
 
     public static function getQtiTestDirectory() {
-    	$service = taoQtiTest_models_classes_QtiTestService::singleton();
+    	$service = \taoQtiTest_models_classes_QtiTestService::singleton();
     	return $service->getQtiTestDirectory();
     }
 
     /**
      * Clone a QTI Test Resource.
      *
-     * @param core_kernel_classes_Resource $source The resource to be cloned.
-     * @param core_kernel_classes_Resource $destination An existing resource to be filled as the clone of $source.
+     * @param \core_kernel_classes_Resource $source The resource to be cloned.
+     * @param \core_kernel_classes_Resource $destination An existing resource to be filled as the clone of $source.
      */
-    public function cloneContent( core_kernel_classes_Resource $source, core_kernel_classes_Resource $destination) {
-        $contentProperty = new core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
-        $existingDir = new core_kernel_file_File($source->getUniquePropertyValue($contentProperty));
+    public function cloneContent( \core_kernel_classes_Resource $source, \core_kernel_classes_Resource $destination) {
+        $contentProperty = new \core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
+        $existingDir = new \core_kernel_file_File($source->getUniquePropertyValue($contentProperty));
 
-        $service = taoQtiTest_models_classes_QtiTestService::singleton();
+        $service = \taoQtiTest_models_classes_QtiTestService::singleton();
         $dir = $service->createContent($destination, false);
 
         if ($existingDir->fileExists()) {
-            tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
+            \tao_helpers_File::copy($existingDir->getAbsolutePath(), $dir->getAbsolutePath(), true, false);
         } else {
-            common_Logger::w('Test "'.$source->getUri().'" had no content, nothing to clone');
+            \common_Logger::w('Test "'.$source->getUri().'" had no content, nothing to clone');
         }
     }
 
     public function getImportHandlers() {
-        return array(
-            new taoQtiTest_models_classes_import_TestImport()
-        );
+        if($this->hasOption('importHandler')){
+            return $this->getOption('importHandler');
+        } else {
+            return array();
+        }
     }
 
     public function getExportHandlers() {
-        return array(
-            new taoQtiTest_models_classes_export_TestExport()
-        );
+        if($this->hasOption('exportHandler')){
+            return $this->getOption('exportHandler');
+        } else {
+            return array();
+        }
     }
 
     public function getCompilerClass() {
