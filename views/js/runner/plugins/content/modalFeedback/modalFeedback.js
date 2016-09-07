@@ -114,7 +114,7 @@ define([
 
                 var bInlineMode = inlineMode;
 
-                if (inline === true || inline === false) {
+                if (_.isBoolean(inline)) {
                     defineMode(inline);
                 }
 
