@@ -327,17 +327,16 @@ define([
                             });
 
                             feedback.destroy();
-                        })
-                        .on('plugin-resume.QtiModalFeedback', function () {
-                            assert.ok(true, 'testRunner was resumed');
-                            QUnit.start();
                         });
 
                     mFeedback = modalFeedback(testRunner, testRunner.getAreaBroker());
                     mFeedback.init();
                     mFeedback.render();
                     renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
-                    testRunner.trigger('modalFeedbacks', renderingQueue, true);
+                    testRunner.trigger('modalFeedbacks', renderingQueue, function(){
+                        assert.ok(true, 'testRunner was resumed');
+                        QUnit.start();
+                    }, true);
 
                 }, self.getLoadedClasses());
             });
@@ -426,17 +425,16 @@ define([
                             });
 
                             feedback.destroy();
-                        })
-                        .on('plugin-resume.QtiModalFeedback', function () {
-                            assert.ok(true, 'testRunner was resumed');
-                            QUnit.start();
                         });
 
                     mFeedback = modalFeedback(testRunner, testRunner.getAreaBroker());
                     mFeedback.init();
                     mFeedback.render();
                     renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
-                    testRunner.trigger('modalFeedbacks', renderingQueue, false);
+                    testRunner.trigger('modalFeedbacks', renderingQueue, function () {
+                        assert.ok(true, 'testRunner was resumed');
+                        QUnit.start();
+                    }, false);
 
                 }, self.getLoadedClasses());
             });

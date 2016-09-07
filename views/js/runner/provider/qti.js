@@ -255,7 +255,6 @@ define([
                     return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve, reject){
-                                var feedbackLoaded;
 
                                 if (result.notAllowed) {
                                     self.trigger('resumeitem');
@@ -274,13 +273,7 @@ define([
                                 if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
 
                                     itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, function(queue){
-                                        self
-                                            .off('plugin-resume.QtiModalFeedback')
-                                            .on('plugin-resume.QtiModalFeedback', function () {
-                                                resolve();
-                                            });
-
-                                        self.trigger('modalFeedbacks', queue);
+                                        self.trigger('modalFeedbacks', queue, resolve);
                                     });
 
                                 } else {

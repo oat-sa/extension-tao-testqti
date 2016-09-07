@@ -50,11 +50,16 @@ define([
     var renderedFeedbacks;
 
     /**
-     * modalFeedback was resolved
+     * modalFeedback was resolved and all components were destroyed
      */
     var isDestroyed;
 
-    function destroyFeedback(selfPlugin, feedback) {
+    /**
+     * Method which should be halted after modalFeedbacks confirmation action
+     */
+    var nextStep;
+
+    function destroyFeedback(feedback) {
 
         var removed = false;
         _.remove(renderedFeedbacks, function (storedFeedback) {
@@ -70,7 +75,7 @@ define([
             feedback.destroy();
 
             if (!renderedFeedbacks.length) {
-                selfPlugin.trigger('resume');
+                nextStep();
             }
         }
     }
@@ -93,6 +98,7 @@ define([
         init: function init() {
             renderedFeedbacks = [];
             isDestroyed = false;
+            nextStep = function(){};
 
             defineMode(!!module.config().inlineModalFeedback);
         },
@@ -134,7 +140,7 @@ define([
                         autoscroll($('.qti-modalFeedback', testRunner.getAreaBroker().getContentArea()).first(), testRunner.getAreaBroker().getContentArea().parents('.content-wrapper'));
                     }
                 } else {
-                    self.trigger('resume');
+                    nextStep();
                 }
 
                 // restore global feedback mode
@@ -151,11 +157,12 @@ define([
                 testRunner
                     .off('plugin-resume.itemAlertMessage')
                     .on('plugin-resume.itemAlertMessage', function (feedback) {
-                        destroyFeedback(self, feedback);
+                        destroyFeedback(feedback);
                     });
             }
 
-            testRunner.on('modalFeedbacks', function(renderingQueue, inline) {
+            testRunner.on('modalFeedbacks', function(renderingQueue, done, inline) {
+                nextStep = done;
                 createMessages(renderingQueue, inline);
             });
         },
@@ -170,7 +177,7 @@ define([
                 isDestroyed = true;
                 tFeedbacks = renderedFeedbacks.slice(0);
                 for (i in tFeedbacks) {
-                    destroyFeedback(this, tFeedbacks[i]);
+                    destroyFeedback(tFeedbacks[i]);
                 }
             }
         }
