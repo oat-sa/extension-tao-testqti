@@ -50,35 +50,6 @@ define([
     };
 
     /**
-     * Create the button based on the current context
-     * @param {Object} selfPlugin
-     * @param {Object} context - the test context
-     * @returns {*|jQuery|HTMLElement} the button
-     */
-    var createOkButton = function createElement(selfPlugin, context){
-        var dataType = !!context.isLast ? 'end' : 'next';
-        var $btn = $(buttonTpl(buttonData[dataType]));
-        $btn.addClass('modalFeedback-button');
-
-        //plugin behavior
-        $btn.on('click', function(e){
-            e.preventDefault();
-
-            selfPlugin.disable();
-            if($(this).data('control') === 'move-end'){
-                selfPlugin.trigger('end');
-            }
-
-            $btn.remove();
-            selfPlugin.$element.remove();
-
-            selfPlugin.trigger('resume', selfPlugin);
-        });
-
-        return $btn;
-    };
-
-    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -91,7 +62,35 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
-            this.$button = createOkButton(self, testRunner.getTestContext());
+
+            /**
+             * Create the button based on the current context
+             * @returns {*|jQuery|HTMLElement} the button
+             */
+            var createOkButton = function createElement(){
+                var dataType = !!testRunner.getTestContext().isLast ? 'end' : 'next';
+                var $btn = $(buttonTpl(buttonData[dataType]));
+                $btn.addClass('modalFeedback-button');
+
+                //plugin behavior
+                $btn.on('click', function(e){
+                    e.preventDefault();
+
+                    self.disable();
+                    if($(this).data('control') === 'move-end'){
+                        self.trigger('end');
+                    }
+
+                    $btn.remove();
+                    self.$element.remove();
+
+                    self.trigger('resume', self);
+                });
+
+                return $btn;
+            };
+
+            this.$button = createOkButton();
             this.$element = $(this.getContent().dom);
         },
 
