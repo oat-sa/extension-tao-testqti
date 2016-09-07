@@ -120,7 +120,7 @@ define([
 
                 if (renderingQueue.length) {
 
-                    _.each(renderingQueue, function (renderingToken) {
+                    _.forEach(renderingQueue, function (renderingToken) {
 
                         var feedback = messagePlugin(testRunner, testRunner.getAreaBroker());
                         feedback.init({
