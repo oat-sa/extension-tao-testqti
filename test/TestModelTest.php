@@ -21,8 +21,7 @@
 namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
-use \taoQtiTest_models_classes_TestModel;
-
+use oat\taoQtiTest\models\TestModelService;
 
 include_once dirname(__FILE__) . '/../includes/raw_start.php';
 
@@ -52,7 +51,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
     
         return $resourceMock;
     }
-    
+
     /**
      *
      * @author Lionel Lecaque, lionel@taotesting.com
@@ -60,7 +59,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
     public function testGetAuthoringUrl()
     {
         $fakeUri = 'http://fakens.rdf#fakeItemUri';
-        $model = new taoQtiTest_models_classes_TestModel();
+        $model = new TestModelService();
         $resourceMock = $this->getResourceMock($fakeUri);
         $resourceMock->expects($this->once())
         ->method('getUri')
@@ -75,7 +74,9 @@ class TestModelTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelImportHandlers()
     {
-        $model = new taoQtiTest_models_classes_TestModel();
+        $model = new TestModelService(['importHandlers' => array(
+            new taoQtiTest_models_classes_import_TestImport()
+        )]);
         $handlers = $model->getImportHandlers();
         $this->assertCount(1, $handlers);
         $handler = reset($handlers);
@@ -87,9 +88,11 @@ class TestModelTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelExportHandlers()
     {
-        $model = new taoQtiTest_models_classes_TestModel();
+        $model = new TestModelService(['exportHandlers' => array(
+            new taoQtiTest_models_classes_export_TestExport()
+        )]);
         $handlers = $model->getExportHandlers();
-        $this->assertCount(2, $handlers);
+        $this->assertCount(1, $handlers);
         $handler = reset($handlers);
         $this->assertInstanceOf('taoQtiTest_models_classes_export_TestExport', $handler);
     }
@@ -99,7 +102,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelCompilerClass()
     {
-        $model = new taoQtiTest_models_classes_TestModel();
+        $model = new TestModelService();
         $this->assertEquals('taoQtiTest_models_classes_QtiTestCompiler', $model->getCompilerClass());
     }
     
