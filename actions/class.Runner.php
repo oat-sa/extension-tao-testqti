@@ -33,7 +33,7 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 /**
  * Class taoQtiTest_actions_Runner
- * 
+ *
  * Serves QTI implementation of the test runner
  */
 class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
@@ -150,7 +150,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Gets an error response object
-     * @param Exception [$e] Optional exception from which extract the error context 
+     * @param Exception [$e] Optional exception from which extract the error context
      * @return array
      */
     protected function getErrorResponse($e = null) {
@@ -158,7 +158,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             'success' => false,
             'type' => 'error',
         ];
-        
+
         if ($e) {
             if ($e instanceof \Exception) {
                 $response['type'] = 'exception';
@@ -170,13 +170,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $response['message'] = __('An error occurred!');
             }
-            
+
             switch (true) {
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     $response['type'] = 'TestState';
                     break;
-                
+
                 case $e instanceof \tao_models_classes_FileNotFoundException:
                     $response['type'] = 'FileNotFound';
                     $response['message'] = __('File not found');
@@ -187,7 +187,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     break;
             }
         }
-        
+
         return $response;
     }
 
@@ -212,7 +212,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 case $e instanceof \common_exception_Unauthorized:
                     $code = 403;
                     break;
-                
+
                 case $e instanceof \tao_models_classes_FileNotFoundException:
                     $code = 404;
                     break;
@@ -247,11 +247,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function init()
     {
         $code = 200;
-        
+
         try {
             $this->getCsrf()->revokeCsrfToken();
             $serviceContext = $this->getServiceContext();
-            
+
 
             if ($this->hasRequestParameter('clientState')) {
                 $clientState = $this->getRequestParameter('clientState');
@@ -281,13 +281,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
             }
-            
+
             $this->runnerService->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
-        
+
 
         $this->returnJson($response, $code);
     }
@@ -298,15 +298,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function getTestData()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
             $response = [
                 'testData' => $this->runnerService->getTestData($serviceContext),
                 'success' => true,
             ];
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -321,15 +321,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function getTestContext()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
             $response = [
                 'testContext' => $this->runnerService->getTestContext($serviceContext),
                 'success' => true,
             ];
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -337,22 +337,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the map of the test items
      */
     public function getTestMap()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
             $response = [
                 'testMap' => $this->runnerService->getTestMap($serviceContext),
                 'success' => true,
             ];
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -360,16 +360,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the definition data and the state for a particular item
      */
     public function getItem()
     {
         $code = 200;
-        
+
         $itemRef = $this->getRequestParameter('itemDefinition');
-        
+
         try {
             $serviceContext = $this->getServiceContext();
 
@@ -387,7 +387,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $rubrics = null;
             }
-            
+
             $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
             $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
             if (is_string($itemData)) {
@@ -410,7 +410,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->startTimer($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -460,11 +460,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $allowed = true;
             $session = $serviceContext->getTestSession();
-            if (!$emptyAllowed && !TestRunnerUtils::doesAllowSkipping($session) && 
+            if (!$emptyAllowed && !TestRunnerUtils::doesAllowSkipping($session) &&
                 $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')) {
                 $allowed = !$this->runnerService->emptyResponse($serviceContext, $responses);
             }
-            
+
             if ($allowed) {
                 $successResponse = $this->runnerService->storeItemResponse($serviceContext, $itemRef, $responses);
                 $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
@@ -486,7 +486,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response = [
                     'success' => true,
                     'notAllowed' => true,
-                    'message' => __('You must answer the question before leaving this item!'),
+                    'message' => __('A response to this item is required.'),
                 ];
             }
 
@@ -504,7 +504,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function move()
     {
         $code = 200;
-        
+
         $ref = $this->getRequestParameter('ref');
         $direction = $this->getRequestParameter('direction');
         $scope = $this->getRequestParameter('scope');
@@ -513,7 +513,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext();
             $serviceContext->getTestSession()->initItemTimer();
             $result = $this->runnerService->move($serviceContext, $direction, $scope, $ref);
-            
+
             $response = [
                 'success' => $result,
             ];
@@ -521,9 +521,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
-            
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -531,14 +531,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Skip the current position to the provided scope: item, section, part
      */
     public function skip()
     {
         $code = 200;
-        
+
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
         $itemDuration = $this->getRequestParameter('itemDuration');
@@ -546,7 +546,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             $this->runnerService->endTimer($serviceContext, $itemDuration);
-            
+
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 
             $response = [
@@ -558,7 +558,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -566,14 +566,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Handles a test timeout
      */
     public function timeout()
     {
         $code = 200;
-        
+
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
 
@@ -590,7 +590,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -598,23 +598,23 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Exits the test before its end
      */
     public function exitTest()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
             $response = [
                 'success' => $this->runnerService->exitTest($serviceContext),
             ];
-            
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -622,7 +622,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Finishes the test
      */
@@ -630,7 +630,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         try {
             $serviceContext = $this->getServiceContext(false);
-            
+
             $response = [
                 'success' => $this->runnerService->finish($serviceContext),
             ];
@@ -647,16 +647,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function pause()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
-            
+
             $response = [
                 'success' => $this->runnerService->pause($serviceContext),
             ];
-            
+
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -671,7 +671,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function resume()
     {
         $code = 200;
-        
+
         try {
             $serviceContext = $this->getServiceContext();
             $result = $this->runnerService->resume($serviceContext);
@@ -685,7 +685,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -704,13 +704,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
             $testSession = $serviceContext->getTestSession();
-            
+
             if ($this->hasRequestParameter('position')) {
                 $itemPosition = intval($this->getRequestParameter('position'));
             } else {
                 $itemPosition = $testSession->getRoute()->getPosition();
             }
-            
+
             if ($this->hasRequestParameter('flag')) {
                 $flag = $this->getRequestParameter('flag');
                 if (is_numeric($flag)) {
@@ -721,13 +721,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $flag = true;
             }
-            
+
             TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
-            
+
             $response = [
                 'success' => true,
             ];
-            
+
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -735,7 +735,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Comment the test
      */
@@ -744,7 +744,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $comment = $this->getRequestParameter('comment');
-        
+
         try {
             $serviceContext = $this->getServiceContext();
             $result = $this->runnerService->comment($serviceContext, $comment);
