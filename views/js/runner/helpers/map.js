@@ -29,6 +29,7 @@ define([
      */
     function getEmptyStats() {
         return {
+            questions: 0,
             answered: 0,
             flagged: 0,
             viewed: 0,
@@ -153,15 +154,61 @@ define([
 
             switch (scope) {
                 case 'section':
+                case 'testSection':
                     return this.getSectionStats(map, jump && jump.section);
 
                 case 'part':
+                case 'testPart':
                     return this.getPartStats(map, jump && jump.part);
 
                 default:
                 case 'test':
                     return this.getTestStats(map);
             }
+        },
+
+        /**
+         * Gets the map of a particular scope from a particular position
+         * @param {Object} map - The assessment test map
+         * @param {Number} position - The current position
+         * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
+         * @returns {object} The scoped map
+         */
+        getScopeMap: function getScopeMap(map, position, scope) {
+            // need a clone of the map as we will change some properties
+            var scopeMap = _.cloneDeep(map || {});
+
+            // gets the current part and section
+            var jump = this.getJump(map, position);
+            var part = this.getPart(scopeMap, jump && jump.part);
+            var section = this.getSection(scopeMap, jump && jump.section);
+
+            // reduce the map to the scope part
+            if (scope && scope !== 'test') {
+                scopeMap.parts = {};
+                if (part) {
+                    scopeMap.parts[jump.part] = part;
+                }
+            }
+
+            // reduce the map to the scope section
+            if (part && (scope === 'section' || scope === 'testSection')) {
+                part.sections = {};
+                if (section) {
+                    part.sections[jump.section] = section;
+                }
+            }
+
+            // update the stats to reflect the scope
+            if (section) {
+                section.stats = this.computeItemStats(section.items);
+            }
+            if (part) {
+                part.stats = this.computeStats(part.sections);
+            }
+            scopeMap.stats = this.computeStats(scopeMap.parts);
+
+            return scopeMap;
         },
 
         /**
@@ -204,6 +251,25 @@ define([
         },
 
         /**
+         * Applies a callback on each item of the provided map
+         * @param {Object} map - The assessment test map
+         * @param {Function} callback(item, section, part, map) - A callback to apply on each item
+         * @returns {Object}
+         */
+        each: function each(map, callback) {
+            if (_.isFunction(callback)) {
+                _.each(map && map.parts, function(part) {
+                    _.each(part && part.sections, function(section) {
+                        _.each(section && section.items, function(item) {
+                            callback(item, section, part, map);
+                        });
+                    });
+                });
+            }
+            return map;
+        },
+
+        /**
          * Update the map stats from a particular item
          * @param {Object} map - The assessment test map
          * @param {Number} position - The position of the item
@@ -215,9 +281,15 @@ define([
             var sections = part && part.sections;
             var section = sections && sections[jump && jump.section];
 
-            section.stats = this.computeItemStats(section.items);
-            part.stats = this.computeStats(part.sections);
-            map.stats = this.computeStats(this.getParts(map));
+            if (section) {
+                section.stats = this.computeItemStats(section.items);
+            }
+            if (part) {
+                part.stats = this.computeStats(part.sections);
+            }
+            if (map) {
+                map.stats = this.computeStats(map.parts);
+            }
 
             return map;
         },
@@ -229,6 +301,9 @@ define([
          */
         computeItemStats: function computeItemStats(items) {
             return _.reduce(items, function accStats(acc, item) {
+                if (!item.informational) {
+                    acc.questions++;
+                }
                 if (item.answered) {
                     acc.answered++;
                 }
@@ -245,11 +320,12 @@ define([
 
         /**
          * Computes the global stats of a collection of stats
-         * @param {Array} collection
+         * @param {Object} collection
          * @returns {Object}
          */
         computeStats: function computeStats(collection) {
             return _.reduce(collection, function accStats(acc, item) {
+                acc.questions += item.stats.questions;
                 acc.answered += item.stats.answered;
                 acc.flagged += item.stats.flagged;
                 acc.viewed += item.stats.viewed;
