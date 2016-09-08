@@ -113,7 +113,7 @@ class QtiRunnerMap implements RunnerMap
                 ];
                 
                 if ($checkInformational) {
-                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($itemSession);
+                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
                 }
                 
                 // update the map
