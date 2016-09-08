@@ -21,7 +21,6 @@
 namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
-use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestModelService;
 
 include_once dirname(__FILE__) . '/../includes/raw_start.php';
