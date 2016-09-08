@@ -670,6 +670,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
+     * Checks if an item is informational
+     * @param AssessmentItemSession $itemSession
+     * @return bool
+     */
+    static public function isItemInformational(AssessmentItemSession $itemSession) {
+        return !count($itemSession->getAssessmentItem()->getResponseDeclarations());
+    }
+
+    /**
      * Checks if an item has been completed
      * @param RouteItem $routeItem
      * @param AssessmentItemSession $itemSession
