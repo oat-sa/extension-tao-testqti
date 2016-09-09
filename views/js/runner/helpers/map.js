@@ -258,9 +258,9 @@ define([
          */
         each: function each(map, callback) {
             if (_.isFunction(callback)) {
-                _.each(map && map.parts, function(part) {
-                    _.each(part && part.sections, function(section) {
-                        _.each(section && section.items, function(item) {
+                _.forEach(map && map.parts, function(part) {
+                    _.forEach(part && part.sections, function(section) {
+                        _.forEach(section && section.items, function(item) {
                             callback(item, section, part, map);
                         });
                     });
