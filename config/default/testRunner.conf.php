@@ -305,5 +305,12 @@ return array(
      * Always allow jumps, even if the current navigation mode is linear.
      * @type boolean
      */
-    'always-allow-jumps' => false
+    'always-allow-jumps' => false,
+
+    /**
+     * Checks if items are informational. This will change the behavior of the review panel: 
+     * the informational items are not taken into account in the answered/flagged counters
+     * @type boolean
+     */
+    'check-informational' => false,
 );
