@@ -35,7 +35,21 @@ define([
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
     'tpl!taoQtiTest/runner/provider/layout'
-], function($, _, __, store, Promise, cachedStore, areaBroker, proxyFactory, probeOverseerFactory, mapHelper, qtiItemRunner, assetManagerFactory, assetStrategies, layoutTpl) {
+], function(
+    $,
+    _,
+    __,
+    store,
+    Promise,
+    cachedStore,
+    areaBroker,
+    proxyFactory,
+    probeOverseerFactory,
+    mapHelper,
+    qtiItemRunner,
+    assetManagerFactory,
+    assetStrategies,
+    layoutTpl) {
     'use strict';
 
     // asset strategy for portable elements
@@ -256,10 +270,15 @@ define([
                                     context.itemAnswered = result.itemSession.itemAnswered;
                                 }
 
-                                if(result.displayFeedbacks === true && itemRunner){
-                                    return itemRunner.trigger('feedback', result.feedbacks, result.itemSession, resolve);
+                                if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
+
+                                    itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, function(queue){
+                                        self.trigger('modalFeedbacks', queue, resolve);
+                                    });
+
+                                } else {
+                                    return resolve();
                                 }
-                                return resolve();
                             });
                         });
                 };

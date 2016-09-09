@@ -593,5 +593,19 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.11.0');
         }
+
+        if ($this->isVersion('5.11.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'modalFeedback',
+                'name' => 'QTI modal feedbacks',
+                'module' => 'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
+                'description' => 'Display Qti modalFeedback element',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti', 'required' ]
+            ]));
+            $this->setVersion('5.12.0');
+        }
     }
 }
