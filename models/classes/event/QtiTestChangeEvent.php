@@ -31,7 +31,7 @@ class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAware
 {
     use ServiceLocatorAwareTrait;
      
-    private $session;
+    protected $session;
     
     public function __construct(\taoQtiTest_helpers_TestSession $testSession)
     {

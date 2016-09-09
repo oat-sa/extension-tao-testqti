@@ -29,9 +29,9 @@
                 </span>
                 <ul class="qti-navigator-items collapsible-panel plain">
                     {{#each items}}
-                    <li class="qti-navigator-item{{#if active}} active{{/if}}{{#if flagged}} flagged{{/if}}{{#if answered}} answered{{/if}}{{#if viewed}} viewed{{else}} unseen{{/if}}" data-id="{{id}}" data-position="{{position}}">
+                    <li class="qti-navigator-item {{cls}}" data-id="{{id}}" data-position="{{position}}">
                         <span class="qti-navigator-label truncate" title="{{label}}">
-                            <span class="qti-navigator-icon icon-{{#if flagged}}flagged{{else}}{{#if answered}}answered{{else}}{{#if viewed}}viewed{{else}}unseen{{/if}}{{/if}}{{/if}}"></span>
+                            <span class="qti-navigator-icon icon-{{icon}}"></span>
                             <span class="qti-navigator-number">{{index}}</span>
                             {{label}}
                         </span>
