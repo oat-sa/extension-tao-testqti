@@ -5,22 +5,11 @@ namespace oat\taoQtiTest\scripts\cli;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
 use oat\oatbox\filesystem\Directory;
-use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
 
-/**
- * Class importMultipleTestsFromDir
- * It will scan 'testImport' directory inside upload directory
- * Then import all test package found
- *
- * To launch this script:
- * php index.php '\oat\taoQtiTest\scripts\cli\importMultipleTestsFromDir'
- *
- * @package oat\taoQtiTest\scripts\cli
- */
 class importMultipleTestsFromDir implements Action
 {
     use OntologyAwareTrait;
@@ -30,15 +19,7 @@ class importMultipleTestsFromDir implements Action
      */
     const TEST_FOLDER_IMPORT = 'testImport';
 
-    /**
-     * Absolute path to directory to ensure importTest
-     * @var string
-     */
-    protected $uploadDirectoryPath;
-
-    /**
-     * @var Directory
-     */
+    /** @var  Directory */
     protected $directory;
 
     /**
@@ -51,25 +32,19 @@ class importMultipleTestsFromDir implements Action
     {
         try {
             $this->init();
-
-            $count = 0;
             $iterator = $this->directory->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
 
-            /** @var File $test */
-            foreach ($iterator as $test) {
-                if (substr($test->getPrefix(), 0, 1) === '.') {
-                    echo $test->getPrefix() . ' skipped.' . PHP_EOL;
-                    continue;
+            $tests = 0;
+            foreach ($iterator as $file) {
+                try {
+                    $this->importTest($this->uploadDirectoryPath . $file->getPrefix());
+                    echo $file->getPrefix() . ' imported.' . PHP_EOL;
+                    $tests++;
+                } catch (\Exception $e) {
+                    echo 'Error on package ' . $file->getPrefix() . ': ' . $e->getMessage();
                 }
-
-                $this->importTest($this->uploadDirectoryPath . $test->getPrefix());
-                $count++;
-                echo $test->getPrefix() . ' imported.' . PHP_EOL;
-
-                $test->delete();
             }
-
-            return $this->returnSuccess($count);
+            return $this->returnSuccess($tests);
         } catch (ExtractException $e) {
             return $this->returnFailure('The ZIP archive containing the IMS QTI Item cannot be extracted.');
         } catch (ParsingException $e) {
@@ -115,6 +90,7 @@ class importMultipleTestsFromDir implements Action
      */
     protected function importTest($package)
     {
+        // Call service to import package
         \helpers_TimeOutHelper::setTimeOutLimit(\helpers_TimeOutHelper::LONG);
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($this->getDestinationClass(), $package);

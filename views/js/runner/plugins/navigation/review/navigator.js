@@ -57,6 +57,7 @@ define([
         answered: 'answered',
         viewed: 'viewed',
         unseen: 'unseen',
+        info: 'info',
         icon: 'qti-navigator-icon',
         scope: {
             test: 'scope-test',
@@ -71,6 +72,7 @@ define([
      * @private
      */
     var _iconCls = [
+        _cssCls.info,
         _cssCls.flagged,
         _cssCls.answered,
         _cssCls.viewed
@@ -112,6 +114,7 @@ define([
         flagged: '.flagged',
         notFlagged: ':not(.flagged)',
         notAnswered: ':not(.answered)',
+        notInformational: ':not(.info)',
         hidden: '.hidden'
     };
 
@@ -154,6 +157,24 @@ define([
         },
 
         /**
+         * Gets the total number of items for the provided target
+         * @param {Object} progression
+         * @param {String} target
+         * @returns {Number}
+         */
+        getProgressionTotal: function getProgressionTotal(progression, target) {
+            var total;
+
+            if ('questions' === target) {
+                total = progression.questions;
+            } else {
+                total = progression.total;
+            }
+
+            return total;
+        },
+
+        /**
          * Set the marked state of an item
          * @param {Number|String|jQuery} position
          * @param {Boolean} flag
@@ -175,7 +196,7 @@ define([
 
             // update the info panel
             progression.flagged = this.controls.$tree.find(_selectors.flagged).length;
-            this.writeCount(this.controls.$infoFlagged, progression.flagged, progression.total);
+            this.writeCount(this.controls.$infoFlagged, progression.flagged, this.getProgressionTotal(progression, 'questions'));
 
             // recompute the filters
             this.filter(this.currentFilter);
@@ -201,7 +222,7 @@ define([
             // update the section counters
             this.controls.$tree.find(_selectors.sections).each(function () {
                 var $section = $(this);
-                var $items = $section.find(_selectors.items);
+                var $items = $section.find(_selectors.items + _selectors.notInformational);
                 var $filtered = $items.filter(filtered);
                 var total = $items.length;
                 var nb = total - $filtered.length;
@@ -249,20 +270,22 @@ define([
         update: function update(map, context) {
             var scopedMap = this.getScopedMap(map, context);
             var progression = scopedMap.stats || {
-                    answered: 0,
-                    flagged: 0,
-                    viewed: 0,
-                    total: 0
-                };
+                questions: 0,
+                answered: 0,
+                flagged: 0,
+                viewed: 0,
+                total: 0
+            };
+            var totalQuestions = this.getProgressionTotal(progression, 'questions');
 
             this.map = map;
             this.progression = progression;
 
             // update the info panel
-            this.writeCount(this.controls.$infoAnswered, progression.answered, progression.total);
-            this.writeCount(this.controls.$infoUnanswered, progression.total - progression.answered, progression.total);
-            this.writeCount(this.controls.$infoViewed, progression.viewed, progression.total);
-            this.writeCount(this.controls.$infoFlagged, progression.flagged, progression.total);
+            this.writeCount(this.controls.$infoAnswered, progression.answered, totalQuestions);
+            this.writeCount(this.controls.$infoUnanswered, totalQuestions - progression.answered, totalQuestions);
+            this.writeCount(this.controls.$infoViewed, progression.viewed, this.getProgressionTotal(progression, 'total'));
+            this.writeCount(this.controls.$infoFlagged, progression.flagged, totalQuestions);
 
             // rebuild the tree
             if (!context.isLinear) {
@@ -296,48 +319,47 @@ define([
          * @returns {object} The scoped map
          */
         getScopedMap: function getScopedMap(map, context) {
-            // need a clone of the map as we will change some properties
-            var scopedMap = _.cloneDeep(map || {});
-
-            // gets the current part/section/item
-            var testPart = scopedMap.parts[context.testPartId] || {};
-            var section = testPart.sections && testPart.sections[context.sectionId] || {};
-            var item = section.items && section.items[context.itemIdentifier] || {};
+            var scopedMap = mapHelper.getScopeMap(map, context.itemPosition, this.config.scope);
+            var testPart = mapHelper.getPart(scopedMap, context.testPartId) || {};
+            var section = mapHelper.getSection(scopedMap, context.sectionId) || {};
+            var item = mapHelper.getItem(scopedMap, context.itemIdentifier) || {};
 
             // set the active part/section/item
             testPart.active = true;
             section.active = true;
             item.active = true;
 
-            // select the scoped map fragment
-            switch (this.config.scope) {
-                case 'testSection':
-                    // build a scoped map containing only the current part, the current section and its items
-                    scopedMap = {
-                        parts: {},
-                        stats: section.stats
-                    };
-                    testPart.sections = {};
-                    testPart.sections[context.sectionId] = section;
-                    scopedMap.parts[context.testPartId] = testPart;
-                    break;
+            // adjust each item with additional meta
+            return mapHelper.each(scopedMap, function(itm) {
+                var cls = [];
+                var icon = '';
 
-                case 'testPart':
-                    // build a scoped map containing only the current part and its sections
-                    scopedMap = {
-                        parts: {},
-                        stats: testPart.stats
-                    };
-                    scopedMap.parts[context.testPartId] = testPart;
-                    break;
+                if (itm.active) {
+                    cls.push('active');
+                }
+                if (itm.informational) {
+                    cls.push('info');
+                    icon = icon || 'info';
+                }
+                if (itm.flagged) {
+                    cls.push('flagged');
+                    icon = icon || 'flagged';
+                }
+                if (itm.answered) {
+                    cls.push('answered');
+                    icon = icon || 'answered';
+                }
+                if (itm.viewed) {
+                    cls.push('viewed');
+                    icon = icon || 'viewed';
+                } else {
+                    cls.push('unseen');
+                    icon = icon || 'unseen';
+                }
 
-                default:
-                case 'test':
-                    // keep the whole map
-                    break;
-            }
-
-            return scopedMap;
+                itm.cls = cls.join(' ');
+                itm.icon = icon;
+            });
         },
 
         /**
@@ -597,10 +619,10 @@ define([
                             $target = $(event.target);
                             if (self.config.canFlag && $target.is(_selectors.icons) && !$component.hasClass(_cssCls.collapsed)) {
                                 // click on the icon, just flag the item, unless the panel is collapsed
-                                if (!$item.hasClass(_cssCls.unseen)) {
+                                if (!$item.hasClass(_cssCls.unseen) && !$item.hasClass(_cssCls.info)) {
                                     flagItem($item);
                                 }
-                            } else {
+                            } else if (!$item.hasClass(_cssCls.active)){
                                 // go to the selected item
                                 self.select($item);
                                 jump($item);

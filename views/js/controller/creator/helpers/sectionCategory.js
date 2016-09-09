@@ -17,26 +17,27 @@
  */
 define([
     'lodash',
+    'i18n',
     'core/errorHandler'
-], function (_, errorHandler){
+], function (_, __, errorHandler){
 
     'use strict';
 
     var _ns = '.sectionCategory';
-    
+
     /**
      * Check if the given object is a valid assessmentSection model object
-     * 
+     *
      * @param {object} model
      * @returns {boolean}
      */
     function isValidSectionModel(model){
         return (_.isObject(model) && model['qti-type'] === 'assessmentSection' && _.isArray(model.sectionParts));
     }
-    
+
     /**
      * Set an array of categories to the section model (affect the childen itemRef)
-     * 
+     *
      * @param {object} model
      * @param {array} categories
      * @returns {undefined}
@@ -44,21 +45,21 @@ define([
     function setCategories(model, categories){
 
         var oldCategories = getCategories(model);
-        
+
         //the categories that are no longer in the new list of categories should be removed
         var removed = _.difference(oldCategories.all, categories);
-        
+
         //the categories that are not in the old categories collection should be added to the children
         var propagated = _.difference(categories, oldCategories.all);
-        
+
         //process the modification
         addCategories(model, propagated);
         removeCategories(model, removed);
     }
-    
+
     /**
      * Get the categories assign to the section model, infered by its interal itemRefs
-     * 
+     *
      * @param {object} model
      * @returns {object}
      */
@@ -73,13 +74,13 @@ define([
             //array of categories
             var arrays = _.values(categories);
             var union = _.union.apply(null, arrays);
-            
+
             //categories that are common to all itemRef
             var propagated = _.intersection.apply(null, arrays);
-            
+
             //the categories that are only partially covered on the section level : complementary of "propagated"
             var partial = _.difference(union, propagated);
-            
+
             return {
                 all : union.sort(),
                 propagated : propagated.sort(),
@@ -89,10 +90,10 @@ define([
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
-    
+
     /**
      * Add an array of categories to a section model (affect the childen itemRef)
-     * 
+     *
      * @param {object} model
      * @param {array} categories
      * @returns {undefined}
@@ -111,10 +112,10 @@ define([
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
-    
+
     /**
      * Remove an array of categories from a section model (affect the childen itemRef)
-     * 
+     *
      * @param {object} model
      * @param {array} categories
      * @returns {undefined}
@@ -131,11 +132,51 @@ define([
         }
     }
 
+    /**
+     * Give the list of tao pre-defined test option categories
+     * Useful to have this list somewhere in the code.
+     *
+     * @returns {array}
+     */
+    function getTaoOptionCategories(){
+        return [
+            {
+                name : 'x-tao-option-nextSectionWarning',
+                description : __('displays a next section button that warns the user that they will not be able to return to the section')
+            },
+            {
+                name : 'x-tao-option-nextSection',
+                description : __('displays a next section button')
+            },
+            {
+                name : 'x-tao-option-exit',
+                description : __('displays an exit button')
+            },
+            {
+                name : 'x-tao-option-markReview',
+                description : __('displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option')
+            },
+            {
+                name : 'x-tao-option-reviewScreen',
+                description : __('displays the review screen / navigator')
+            },
+            {
+                name : 'x-tao-option-calculator',
+                description : __('enable calculator')
+            },
+            {
+                name : 'x-tao-itemusage-informational',
+                description : __('describe the item as informational')
+            }
+        ];
+    }
+
     return {
         isValidSectionModel : isValidSectionModel,
         setCategories : setCategories,
         getCategories : getCategories,
         addCategories : addCategories,
-        removeCategories : removeCategories
+        removeCategories : removeCategories,
+        getTaoOptionCategories : getTaoOptionCategories
     };
 });

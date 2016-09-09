@@ -22,9 +22,7 @@ namespace oat\taoQtiTest\test;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
-use \core_kernel_classes_Property;
 use \common_ext_ExtensionsManager;
-use \taoQtiTest_models_classes_TestModel;
 use \common_report_Report;
 
 

@@ -19,6 +19,9 @@
  *
  */
 
+use oat\oatbox\PhpSerializable;
+use oat\oatbox\PhpSerializeStateless;
+
 /**
  * Export Handler for QTI tests.
  *
@@ -26,8 +29,9 @@
  * @author Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
  */
-class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler
+class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler, PhpSerializable
 {
+    use PhpSerializeStateless;
 
     /**
      * (non-PHPdoc)
@@ -80,12 +84,11 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
                     throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
                 }
                 // Create an empty IMS Manifest as a basis.
-                $manifest = taoQtiTest_helpers_Utils::emptyImsManifest();
+                $manifest = $this->createManifest();
 
                 foreach ($instances as $instance) {
                     $testResource = new core_kernel_classes_Resource($instance);
-                    $testExporter = new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip,
-                        $manifest);
+                    $testExporter = $this->createExporter($testResource, $zip, $manifest);
                     common_Logger::d('Export ' . $instance);
                     $subReport = $testExporter->export();
                     if ($report->getType() !== common_report_Report::TYPE_ERROR &&
@@ -109,5 +112,15 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
         }
 
         return $report;
+    }
+    
+    protected function createExporter(core_kernel_classes_Resource $testResource, ZipArchive $zip, DOMDocument $manifest)
+    {
+        return new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
+    }
+    
+    protected function createManifest()
+    {
+        return taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
     }
 }

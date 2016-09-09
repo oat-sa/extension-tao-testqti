@@ -106,7 +106,7 @@ define([
                                 self.enable();
                             })
 
-                            .before('move disableitem skip error', function(e){
+                            .before('move disableitem skip error', function(){
                                 if (self.getState('enabled')) {
                                     self.disable();
                                 }
@@ -131,12 +131,12 @@ define([
                                 }
                             })
 
-                            .before('finish', function(e){
-                                var done = e.done();
-
-                                durationStore.clear()
-                                    .then(done)
-                                    .catch(done);
+                            .before('finish', function(){
+                                return new Promise(function(resolve) {
+                                    durationStore.removeStore()
+                                        .then(resolve)
+                                        .catch(resolve);
+                                });
                             });
                     });
             });

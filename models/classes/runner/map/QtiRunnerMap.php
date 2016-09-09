@@ -25,9 +25,8 @@ namespace oat\taoQtiTest\models\runner\map;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
-use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\RouteItem;
+use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 /**
  * Class QtiRunnerMap
@@ -50,6 +49,7 @@ class QtiRunnerMap implements RunnerMap
 
         // get config for the sequence number option
         $reviewConfig = $config->getConfigValue('review');
+        $checkInformational = $config->getConfigValue('checkInformational');
         $forceTitles = !empty($reviewConfig['forceTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         
@@ -65,6 +65,7 @@ class QtiRunnerMap implements RunnerMap
             $offsetSection = 0;
             $lastPart = null;
             $lastSection = null;
+            /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 // access the item reference
                 $itemRef = $routeItem->getAssessmentItemRef();
@@ -76,9 +77,8 @@ class QtiRunnerMap implements RunnerMap
                 // load item infos
                 $testPart = $routeItem->getTestPart();
                 $partId = $testPart->getIdentifier();
-                $sections = $routeItem->getAssessmentSections();
-                $sectionId = key(current($sections));
-                $section = $sections[$sectionId];
+                $section = $routeItem->getAssessmentSection();
+                $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
                 $itemUri = strstr($itemRef->getHref(), '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
@@ -107,10 +107,14 @@ class QtiRunnerMap implements RunnerMap
                     'index' => $offsetSection + 1,
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                    'answered' => \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
-                    'flagged' => \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $routeItem),
+                    'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
+                    'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
+                
+                if ($checkInformational) {
+                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
+                }
                 
                 // update the map
                 $map['jumps'][] = [
@@ -156,11 +160,16 @@ class QtiRunnerMap implements RunnerMap
     {
         if (!isset($target['stats'])) {
             $target['stats'] = [
+                'questions' => 0,
                 'answered' => 0,
                 'flagged' => 0,
                 'viewed' => 0,
                 'total' => 0,
             ];
+        }
+
+        if (empty($itemInfos['informational'])) {
+            $target['stats']['questions'] ++;
         }
         
         if (!empty($itemInfos['answered'])) {

@@ -18,6 +18,8 @@
  * 
  */
 
+use oat\oatbox\PhpSerializable;
+use oat\oatbox\PhpSerializeStateless;
 /**
  * Imprthandler for QTI packages
  *
@@ -26,15 +28,15 @@
  * @package taoQTI
  
  */
-class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler
+class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler, PhpSerializable
 {
-
+    use PhpSerializeStateless;
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
      */
     public function getLabel() {
-    	return __('QTI Test Package');
+    	return __('QTI/APIP Test Content Package');
     }
     
     /**

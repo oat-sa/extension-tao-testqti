@@ -14,16 +14,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016  (original work) Open Assessment Technologies SA;
- * 
- * @author Alexander Zagovorichev <zagovorichev@1pt.com>
+ * Copyright (c) 2014-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *
  */
 
-namespace oat\taoQtiTest\models\runner;
+use oat\taoQtiItem\model\Export\QTIPackedItem22Exporter;
 
-class QtiRunnerRequiredException extends \common_Exception implements \common_exception_UserReadableException
-{
-    public function getUserMessage() {
-        return __('Please, make your selection');
+class taoQtiTest_models_classes_export_QtiItemExporter22 extends QTIPackedItem22Exporter {
+    
+    public function buildBasePath() {
+        $basePath = parent::buildBasePath();
+        return 'items/' . $basePath;
     }
 }
