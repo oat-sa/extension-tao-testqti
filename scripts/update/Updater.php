@@ -581,9 +581,20 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.9.0');
         }
 
-        $this->skip('5.9.0', '5.10.1');
+        $this->skip('5.9.0', '5.10.2');
+
+        if ($this->isVersion('5.10.2')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['check-informational'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.11.0');
+        }
         
-        if ($this->isVersion('5.10.1')) {
+        if ($this->isVersion('5.11.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'modalFeedback',
@@ -596,6 +607,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
         }
 
-        $this->isVersion('5.11.0');
+        $this->isVersion('5.12.0');
     }
 }

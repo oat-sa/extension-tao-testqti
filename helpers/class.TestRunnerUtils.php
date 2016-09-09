@@ -670,6 +670,38 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
+     * Gets the usage of an item
+     * @param RouteItem $routeItem
+     * @return string Return the usage, can be: default, informational, seeding
+     */
+    static public function getItemUsage(RouteItem $routeItem)
+    {
+        $itemRef = $routeItem->getAssessmentItemRef();
+        $categories = $itemRef->getCategories()->getArrayCopy();
+        $prefixCategory = 'x-tao-itemusage-';
+        $prefixCategoryLen = strlen($prefixCategory);
+        foreach ($categories as $category) {
+            if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
+                // extract the option name from the category, transform to camelCase if needed
+                return lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
+            }
+        }
+        
+        return 'default';
+    }
+
+    /**
+     * Checks if an item is informational
+     * @param RouteItem $routeItem
+     * @param AssessmentItemSession $itemSession
+     * @return bool
+     */
+    static public function isItemInformational(RouteItem $routeItem, AssessmentItemSession $itemSession)
+    {
+        return !count($itemSession->getAssessmentItem()->getResponseDeclarations()) || 'informational' == self::getItemUsage($routeItem);
+    }
+
+    /**
      * Checks if an item has been completed
      * @param RouteItem $routeItem
      * @param AssessmentItemSession $itemSession

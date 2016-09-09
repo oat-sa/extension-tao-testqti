@@ -27,9 +27,10 @@ define([
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, hider, pluginFactory, navigator, buttonTpl) {
+], function ($, _, __, hider, pluginFactory, mapHelper, navigator, buttonTpl) {
     'use strict';
 
     /**
@@ -106,6 +107,18 @@ define([
             $button.find('.icon').attr('icon ' + data.icon);
             $button.find('.text').text(data.text);
         }
+    }
+
+    /**
+     * Checks if the current context allows to mark the item for review
+     * @param {Object} testRunner
+     * @returns {Boolean}
+     */
+    function canFlag(testRunner) {
+        var context = testRunner.getTestContext();
+        var map = testRunner.getTestMap();
+        var item = mapHelper.getItemAt(map, context.itemPosition);
+        return !!(!context.isLinear && context.options.markReview && !(item && item.informational));
     }
 
     /**
@@ -283,7 +296,6 @@ define([
             this.$flagItemButton.removeClass('disabled')
                 .removeProp('disabled');
             this.$toggleButton.removeClass('disabled')
-
                 .removeProp('disabled');
             this.navigator.enable();
         },
@@ -304,8 +316,7 @@ define([
          */
         show: function show() {
             var testRunner = this.getTestRunner();
-            var context = testRunner.getTestContext();
-            if(!context.isLinear && context.options.markReview){
+            if (canFlag(testRunner)) {
                 hider.show(this.$flagItemButton);
             } else {
                 hider.hide(this.$flagItemButton);

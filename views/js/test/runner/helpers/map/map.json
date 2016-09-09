@@ -20,6 +20,7 @@
               "positionInSection": 0,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": true,
               "answered": false,
               "flagged": false,
               "viewed": true
@@ -33,6 +34,7 @@
               "positionInSection": 1,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
@@ -46,12 +48,14 @@
               "positionInSection": 2,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
             }
           },
           "stats": {
+            "questions": 2,
             "answered": 0,
             "flagged": 0,
             "viewed": 1,
@@ -72,6 +76,7 @@
               "positionInSection": 0,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
@@ -85,6 +90,7 @@
               "positionInSection": 1,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
@@ -98,12 +104,14 @@
               "positionInSection": 2,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
             }
           },
           "stats": {
+            "questions": 3,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -112,6 +120,7 @@
         }
       },
       "stats": {
+        "questions": 5,
         "answered": 0,
         "flagged": 0,
         "viewed": 1,
@@ -138,6 +147,7 @@
               "positionInSection": 0,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
@@ -151,12 +161,14 @@
               "positionInSection": 1,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
             }
           },
           "stats": {
+            "questions": 2,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -177,6 +189,7 @@
               "positionInSection": 0,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
@@ -190,12 +203,14 @@
               "positionInSection": 1,
               "occurrence": 0,
               "remainingAttempts": -1,
+              "informational": false,
               "answered": false,
               "flagged": false,
               "viewed": false
             }
           },
           "stats": {
+            "questions": 2,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -204,6 +219,7 @@
         }
       },
       "stats": {
+        "questions": 4,
         "answered": 0,
         "flagged": 0,
         "viewed": 0,
@@ -284,6 +300,7 @@
     }
   ],
   "stats": {
+    "questions": 9,
     "answered": 0,
     "flagged": 0,
     "viewed": 1,
