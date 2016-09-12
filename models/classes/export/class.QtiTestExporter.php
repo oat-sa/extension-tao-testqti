@@ -194,12 +194,16 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $subReport = common_report_Report::createSuccess();
         $identifiers = array();
 
+        //var_dump($this->getTestService());
+
         $testDirectory = $this->getTestService()->getTestDirectory($this->getItem());
-        $testDirectory->getPrefix();
+
 
 //        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
 //        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
 //            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+
+
         $extraPath = $this->getTestService()->getDocPath($this->getItem()) . DIRECTORY_SEPARATOR;
         $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
         $extraPath = trim($extraPath, DIRECTORY_SEPARATOR);
@@ -253,6 +257,11 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // it to the archive.
         $tmpPath = tempnam('/tmp', 'tao');
         $this->getTestDocument()->save($tmpPath);
+        $testPath = $this->getTestService()->getDocPath($this->getItem());
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        var_dump($file->getPrefix());
+        var_dump($file->getBasename());
+        exit();
         $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
 
         // Add the test definition in the archive.

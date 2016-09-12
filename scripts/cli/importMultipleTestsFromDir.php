@@ -22,6 +22,9 @@ class importMultipleTestsFromDir implements Action
     /** @var  Directory */
     protected $directory;
 
+    /** @var  Directory */
+    protected $uploadDirectoryPath;
+
     /**
      * Entry point, init & import test from $this->directory
      *
