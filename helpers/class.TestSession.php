@@ -78,7 +78,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @var core_kernel_classes_Resource
      */
     private $test;
-    
+
+    /**
+     * test session state at a certain point in time.
+     * @var TestSessionMemento
+     */
+    private $memento;
+
+    /**
+     * @var int
+     */
+    private $timeoutCode = null;
+
     /**
      * Create a new TAO QTI Test Session.
      * 
@@ -574,6 +585,29 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
 
     /**
+     * @param bool $includeMinTime
+     * @param bool $includeAssessmentItem
+     * @param bool $acceptableLatency
+     * @throws AssessmentTestSessionException
+     */
+    public function checkTimeLimits($includeMinTime = false, $includeAssessmentItem = false, $acceptableLatency = true) {
+        try {
+            parent::checkTimeLimits($includeMinTime, $includeAssessmentItem, $acceptableLatency);
+        } catch (AssessmentTestSessionException $e) {
+            $this->timeoutCode = $e->getCode();
+            throw $e;
+        }
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getTimeoutCode()
+    {
+        return $this->timeoutCode;
+    }
+
+    /**
      * Closes a timer
      * @param string $identifier
      * @param string [$type]
@@ -634,12 +668,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * @param TestSessionMemento $sessionMemento
      */
-    protected function triggerEventChange(TestSessionMemento $sessionMemento) {
+    protected function triggerEventChange(TestSessionMemento $sessionMemento)
+    {
         $event = new QtiTestChangeEvent($this, $sessionMemento);
         if ($event instanceof ServiceLocatorAwareInterface) {
             $event->setServiceLocator($this->getServiceLocator());
         }
         $this->getEventManager()->trigger($event);
+        $this->memento->update();
     }
     
     protected function triggerEventPaused()
@@ -686,6 +722,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     protected function getSessionMemento()
     {
-        return new TestSessionMemento($this);
+        if ($this->memento === null) {
+            $this->memento = new TestSessionMemento($this);
+        }
+        return $this->memento;
     }
 }

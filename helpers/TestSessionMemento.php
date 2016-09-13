@@ -60,9 +60,24 @@ class TestSessionMemento
     public function __construct(AssessmentTestSession $session)
     {
         $this->session = $session;
-        $this->item = $session->getCurrentAssessmentItemRef();
-        $this->section = $session->getCurrentAssessmentSection();
+        $this->update();
+    }
+
+    /**
+     * Update memento
+     */
+    public function update()
+    {
+        $session = $this->session;
         $this->state = $session->getState();
+        $route = $session->getRoute();
+        if ($route->valid()) {
+            $this->item = $session->getCurrentAssessmentItemRef();
+            $this->section = $session->getCurrentAssessmentSection();
+        } else {
+            $this->item = false;
+            $this->section = false;
+        }
     }
 
     /**
