@@ -257,6 +257,12 @@ define([
                             return new Promise(function(resolve, reject){
 
                                 if (result.notAllowed) {
+                                    // the context might be updated
+                                    if (result.testContext) {
+                                        self.setTestContext(result.testContext);
+                                        context = self.getTestContext();
+                                    }
+
                                     self.trigger('resumeitem');
 
                                     if (result.message) {

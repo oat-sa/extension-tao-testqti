@@ -444,6 +444,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $emptyAllowed = isset($data['emptyAllowed']) ? $data['emptyAllowed'] : false;
 
         try {
+            // get the service context, but do not perform the test state check,
+            // as we need to store the item state whatever the test state is 
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
@@ -482,12 +484,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
                 $this->runnerService->persist($serviceContext);
             } else {
-                $this->runnerService->startTimer($serviceContext);
+                // we need a complete service context in order to build the test context
+                $serviceContext->init();
+                
                 $response = [
                     'success' => true,
                     'notAllowed' => true,
                     'message' => __('A response to this item is required.'),
+                    
+                    // send an updated version of the test context
+                    'testContext' => $this->runnerService->getTestContext($serviceContext),
                 ];
+                
+                // start the timer only after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
             }
 
         } catch (common_Exception $e) {
