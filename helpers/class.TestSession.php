@@ -80,12 +80,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     private $test;
 
     /**
-     * test session state at a certain point in time.
-     * @var TestSessionMemento
-     */
-    private $memento;
-
-    /**
      * @var int
      */
     private $timeoutCode = null;
@@ -675,7 +669,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $event->setServiceLocator($this->getServiceLocator());
         }
         $this->getEventManager()->trigger($event);
-        $this->memento->update();
     }
     
     protected function triggerEventPaused()
@@ -722,9 +715,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     protected function getSessionMemento()
     {
-        if ($this->memento === null) {
-            $this->memento = new TestSessionMemento($this);
-        }
-        return $this->memento;
+        return new TestSessionMemento($this);
     }
 }
