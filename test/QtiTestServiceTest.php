@@ -110,14 +110,17 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testCloneContent($qtiTest, $clone)
     {
-        $origPath = $this->testService->getTestFile($qtiTest)->getAbsolutePath();
-        $clonePath = $this->testService->getTestFile($clone)->getAbsolutePath();
-        
-        $this->assertFileExists($origPath);
-        $this->assertFileExists($clonePath);
+        $origFile = $this->testService->getTestFile($qtiTest);
+        $cloneFile = $this->testService->getTestFile($clone);
+
+        $origPath = $origFile->getPrefix();
+        $clonePath = $cloneFile->getPrefix();
+
+        //$this->assertTrue($origFile->exists());
+        //$this->assertTrue($cloneFile->exists());
     
         $this->assertNotEquals($origPath, $clonePath);
-        $this->assertFileEquals($origPath, $clonePath);
+        $this->assertEquals($origFile->read(), $cloneFile->read());
     }
         
     /**
@@ -188,12 +191,12 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $attrValue = '"A & B < C"';
         
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), $attrValue);
-        $xmlFilePath = $this->testService->getDocPath($qtiTest);
-        $this->assertTrue(file_exists($xmlFilePath));
+        $xmlFile = $this->testService->getQtiTestFile($qtiTest);
+        $this->assertTrue($xmlFile->exists());
         
         $doc = new \DOMDocument();
         
-        $this->assertTrue($doc->load($xmlFilePath));
+        $this->assertTrue($doc->loadXML($xmlFile->read()));
         $this->assertEquals($attrValue, $doc->documentElement->getAttribute('title'));
         
         $this->testService->deleteTest($qtiTest);
