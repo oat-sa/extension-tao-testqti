@@ -24,25 +24,49 @@ use oat\taoTests\models\event\TestChangedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use oat\taoQtiTest\models\SessionStateService;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use oat\taoQtiTest\helpers\TestSessionMemento;
+
 /**
  *
  */
 class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
-     
+
+    /**
+     * @var \taoQtiTest_helpers_TestSession
+     */
     protected $session;
-    
-    public function __construct(\taoQtiTest_helpers_TestSession $testSession)
+
+    /**
+     * Object represents test session state before event
+     *
+     * @var TestSessionMemento
+     */
+    protected $sessionMemento;
+
+    /**
+     * QtiTestChangeEvent constructor.
+     * @param \taoQtiTest_helpers_TestSession $testSession
+     * @param $sessionMemento TestSessionMemento
+     */
+    public function __construct(\taoQtiTest_helpers_TestSession $testSession, TestSessionMemento $sessionMemento)
     {
+        $this->sessionMemento = $sessionMemento;
         $this->session = $testSession;
     }
 
+    /**
+     * @return \taoQtiTest_helpers_TestSession
+     */
     public function getSession()
     {
         return $this->session;
     }
 
+    /**
+     * @return string
+     */
     public function getServiceCallId()
     {
         return $this->session->getSessionId();
@@ -52,5 +76,13 @@ class QtiTestChangeEvent extends TestChangedEvent implements ServiceLocatorAware
     {
         $sessionService = $this->getServiceLocator()->get(SessionStateService::SERVICE_ID);
         return $sessionService->getSessionDescription($this->session);
+    }
+
+    /**
+     * @return TestSessionMemento
+     */
+    public function getSessionMemento()
+    {
+        return $this->sessionMemento;
     }
 }
