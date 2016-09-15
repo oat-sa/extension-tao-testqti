@@ -235,6 +235,24 @@ define([
                 });
             };
 
+            /**
+             * Secured call to enable
+             */
+            function doEnable() {
+                if (!self.getState('enabled')) {
+                    self.enable();
+                }
+            }
+
+            /**
+             * Secured call to disable
+             */
+            function doDisable() {
+                if (self.getState('enabled')) {
+                    self.disable();
+                }
+            }
+
             return store('timer-' + testRunner.getConfig().serviceCallId)
                 .then(function(timeStore){
                     if(self.shouldClearStorage){
@@ -313,33 +331,14 @@ define([
                     //change plugin state
                     testRunner
                         .on('loaditem resumeitem', function(){
-
                             //check for new timers
                             updateTimers(true);
                         })
-                        .on('enableitem', function() {
-                            self.enable();
-                        })
-                        .on('disableitem', function() {
-                            self.disable();
-                        })
-                        .after('renderitem', function(){
-                            //start timers
-                            self.enable();
-                        })
-                        .on('disconnect', function() {
-                            //pause the timers when the connection is lost
-                            if (self.getState('enabled')) {
-                                self.disable();
-                            }
-                        })
+                        .on('enableitem', doEnable)
+                        .on('disableitem disconnect', doDisable)
+                        .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position){
                             var movePromise = new Promise(function(resolve, reject) {
-                                //pause the timers
-                                if (self.getState('enabled')) {
-                                    self.disable();
-                                }
-
                                 //display a message if we exit a timed section
                                 if(leaveTimedSection(type, scope, position)){
                                     testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
@@ -350,6 +349,8 @@ define([
 
                             movePromise
                                 .then(function doMove(){
+                                    //pause the timers when moving
+                                    doDisable();
                                     removeTimer(timerTypes.item);
                                 })
                                 .catch(function cancelMove() {
