@@ -6,13 +6,15 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\FileSystemService;
-use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-class importMultipleTestsFromDir implements Action
+class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
 {
     use OntologyAwareTrait;
+    use ServiceLocatorAwareTrait;
 
     /**
      * Location of directory inside upload filesystem
@@ -65,15 +67,14 @@ class importMultipleTestsFromDir implements Action
      */
     protected function init()
     {
-        $this->directory = $this->getServiceManager()
+        $this->directory = $this->getServiceLocator()
             ->get(FileSystemService::SERVICE_ID)
             ->getDirectory(
                 \common_ext_ExtensionsManager::singleton()
                     ->getExtensionById('tao')
                     ->getConfig('defaultUploadFileSource')
             )
-            ->getDirectory(self::TEST_FOLDER_IMPORT)
-        ;
+            ->getDirectory(self::TEST_FOLDER_IMPORT);
 
         if (!$this->directory->exists()) {
             throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
@@ -134,13 +135,5 @@ class importMultipleTestsFromDir implements Action
     protected function getDestinationClass()
     {
         return $this->getClass(TAO_TEST_CLASS);
-    }
-
-    /**
-     * @return ServiceManager
-     */
-    protected function getServiceManager()
-    {
-        return ServiceManager::getServiceManager();
     }
 }

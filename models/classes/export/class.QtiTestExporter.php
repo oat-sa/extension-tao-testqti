@@ -19,6 +19,7 @@
  */
 
 use qtism\data\storage\xml\XmlDocument;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * A specialization of QTI ItemExporter aiming at exporting IMS QTI Test definitions from the TAO
@@ -197,8 +198,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        $extraPath = str_replace($rootDir->getPrefix(), '', dirname($file->getPrefix()));
-        $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
+        $extraPath = dirname($rootDir->getRelPath($file));
         $extraPath = trim($extraPath, '/');
 
         $extraReversePath = '';
@@ -249,24 +249,22 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
-        $testRootPath = $testRootDir->getPrefix();
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
 
-        $testHref = $newTestDir . str_replace($testRootPath, '', dirname($file->getPrefix())) . '/test.xml';
+        $testHref = $newTestDir . dirname($testRootDir->getRelPath($file)) . '/test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
         $this->referenceTest($testHref, $itemIdentifiers);
 
-        $iterator = $testRootDir->getFlyIterator($testRootDir::ITERATOR_RECURSIVE|$testRootDir::ITERATOR_FILE);
+        $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
         foreach ($iterator as $f) {
             // Only add dependency files...
             if ($f->getBasename() !== TAOQTITEST_FILENAME) {
                 // Add the file to the archive.
-                $fileHref = $newTestDir . '/' . ltrim(str_replace($testRootPath, '', $f->getPrefix()), '/');
+                $fileHref = $newTestDir . $testRootDir->getRelPath($f);
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFromString($fileHref, $f->read());
-                //$this->getZip()->addFile($f, $fileHref);
                 $this->referenceAuxiliaryFile($fileHref);
             }
         }

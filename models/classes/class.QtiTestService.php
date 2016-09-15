@@ -29,8 +29,6 @@ use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
 use oat\oatbox\filesystem\FileSystemService;
-use oat\oatbox\filesystem\FileSystem;
-use League\Flysystem\FileExistsException;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\Directory;
 
@@ -846,7 +844,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
-        $iterator = $dir->getFlyIterator($dir::ITERATOR_RECURSIVE|$dir::ITERATOR_FILE);
+        $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
         $files = [];
 
         foreach ($iterator as $file) {
@@ -875,8 +873,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
         $testRootDir = $this->getQtiTestDir($test);
-        $filePath = $this->getQtiTestFile($test)->getPrefix();
-        return str_replace($testRootDir->getPrefix(), '', $filePath);
+        return $testRootDir->getRelPath($this->getQtiTestFile($test));
     }
 
     /**

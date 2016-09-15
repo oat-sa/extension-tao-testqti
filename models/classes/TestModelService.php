@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\fileReference\FileReferenceSerializer;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * the qti TestModel
@@ -113,7 +114,7 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
         $dir = $fileReferenceSerializer->unserializeDirectory($service->createContent($destination, false));
 
         if ($existingDir->exists()) {
-            $iterator = $existingDir->getFlyIterator($existingDir::ITERATOR_FILE|$existingDir::ITERATOR_RECURSIVE);
+            $iterator = $existingDir->getFlyIterator(Directory::ITERATOR_FILE|Directory::ITERATOR_RECURSIVE);
             /** @var File $file */
             foreach($iterator as $file) {
                 $dir->getFile($file->getPrefix())->write($file->readStream());

@@ -27,20 +27,12 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
-use qtism\data\content\RubricBlockRef;
 use qtism\data\content\RubricBlock;
-use qtism\data\content\Stylesheet;
 use qtism\data\content\StylesheetCollection;
-use qtism\data\state\OutcomeDeclaration;
-use qtism\data\state\DefaultValue;
-use qtism\data\state\Value;
-use qtism\data\state\ValueCollection;
-use qtism\common\enums\BaseType;
-use qtism\common\enums\Cardinality;
 use qtism\common\utils\Url;
-use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -357,7 +349,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
         catch (Exception $e) {
             common_Logger::e($e->getMessage());
-            common_Logger::e($e->getTraceAsString());
             // All exception that were not catched in the compilation steps
             // above have a last chance here.
             $report->setType(common_report_Report::TYPE_ERROR);
@@ -468,9 +459,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
 
         $privateDir = $this->getPrivateDirectory();
-        $iterator = $testDefinitionDir->getFlyIterator($testDefinitionDir::ITERATOR_RECURSIVE|$testDefinitionDir::ITERATOR_FILE);
+        $iterator = $testDefinitionDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
         foreach ($iterator as $object) {
-            $relPath = str_replace($testDefinitionDir->getPrefix(), '', $object->getPrefix());
+            $relPath = $testDefinitionDir->getRelPath($object);
             $privateDir->getFile($relPath)->write($object->readStream());
         }
     }
@@ -611,14 +602,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
 
         $publicCompiledDocDir = $this->getPublicDirectory();
-        $iterator = $testDefinitionDir->getFlyIterator($testDefinitionDir::ITERATOR_RECURSIVE|$testDefinitionDir::ITERATOR_FILE);
+        $iterator = $testDefinitionDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
         foreach ($iterator as $file) {
             /** @var \oat\oatbox\filesystem\File $file */
             $mime = $file->getMimeType();
             $pathinfo = pathinfo($file->getBasename());
 
             if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                $publicPathFile = str_replace($testDefinitionDir->getPrefix(), '', $file->getPrefix());
+                $publicPathFile = $testDefinitionDir->getRelPath($file);
                 try {
                     common_Logger::d('Public '.$file->getPrefix().'('.$mime.') to '.$publicPathFile);
                     $publicCompiledDocDir->getFile($publicPathFile)->write($file->readStream());
