@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -561,6 +562,52 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.7.0');
         }
 
-        $this->skip('5.7.0', '5.8.3');
+        $this->skip('5.7.0', '5.8.4');
+
+        if ($this->isVersion('5.8.4')) {
+            OntologyUpdater::syncModels();
+            $testModelService = new TestModelService(array(
+                'exportHandlers' => array(
+                    new \taoQtiTest_models_classes_export_TestExport(),
+                    new \taoQtiTest_models_classes_export_TestExport22()
+                ),
+                'importHandlers' => array(
+                    new \taoQtiTest_models_classes_import_TestImport()
+                )
+            ));
+            $testModelService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+            $this->setVersion('5.9.0');
+        }
+
+        $this->skip('5.9.0', '5.10.2');
+
+        if ($this->isVersion('5.10.2')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['check-informational'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.11.0');
+        }
+
+        if ($this->isVersion('5.11.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'modalFeedback',
+                'name' => 'QTI modal feedbacks',
+                'module' => 'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
+                'description' => 'Display Qti modalFeedback element',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti', 'required' ]
+            ]));
+            $this->setVersion('5.12.0');
+        }
+
+        $this->skip('5.12.0', '5.12.3');
     }
 }

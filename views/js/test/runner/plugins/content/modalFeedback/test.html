@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Plugin for the modalFeedback element of the QTI</title>
+    <base href="../../../../../../../../tao/views/" />
+    <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
+    <script type="text/javascript" src="js/lib/require.js"></script>
+    <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
+    <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
+    <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="js/runner/plugins/content/modalFeedback.js"></script>
+    <script  type="text/javascript">
+        QUnit.config.autostart = false;
+        require(['/tao/ClientConfig/config'], function(){
+            require(['taoQtiTest/test/runner/plugins/content/modalFeedback/test'], function(){
+                QUnit.start();
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">
+    <div id="item-container"></div>
+</div>
+</body>
+</html>

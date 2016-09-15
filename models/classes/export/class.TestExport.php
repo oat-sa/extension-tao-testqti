@@ -19,6 +19,9 @@
  *
  */
 
+use oat\oatbox\PhpSerializable;
+use oat\oatbox\PhpSerializeStateless;
+
 /**
  * Export Handler for QTI tests.
  *
@@ -26,8 +29,9 @@
  * @author Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
  */
-class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler
+class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler, PhpSerializable
 {
+    use PhpSerializeStateless;
 
     /**
      * (non-PHPdoc)
