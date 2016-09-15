@@ -194,32 +194,24 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $subReport = common_report_Report::createSuccess();
         $identifiers = array();
 
-        //var_dump($this->getTestService());
 
-        $testDirectory = $this->getTestService()->getTestDirectory($this->getItem());
-
-
-//        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
-//        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-//            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
-
-
-        $extraPath = $this->getTestService()->getDocPath($this->getItem()) . DIRECTORY_SEPARATOR;
+        $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        $extraPath = str_replace($rootDir->getPrefix(), '', dirname($file->getPrefix()));
         $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
-        $extraPath = trim($extraPath, DIRECTORY_SEPARATOR);
+        $extraPath = trim($extraPath, '/');
 
+        $extraReversePath = '';
+        if (empty($extraPath) === false) {
+            $n = count(explode('/', $extraPath));
+            $parts = array();
 
-//        $extraReversePath = '';
-//        if (empty($extraPath) === false) {
-//            $n = count(explode('/', $extraPath));
-//            $parts = array();
-//
-//            for ($i = 0; $i < $n; $i++) {
-//                $parts[] = '..';
-//            }
-//
-//            $extraReversePath = implode('/', $parts) . DIRECTORY_SEPARATOR;
-//        }
+            for ($i = 0; $i < $n; $i++) {
+                $parts[] = '..';
+            }
+
+            $extraReversePath = implode('/', $parts) . '/';
+        }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = $this->createItemExporter($item);
@@ -229,7 +221,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             }
 
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = $extraPath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
@@ -253,40 +245,28 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     protected function exportTest(array $itemIdentifiers)
     {
-        // Serialize the test definition somewhere and add
-        // it to the archive.
-        $tmpPath = tempnam('/tmp', 'tao');
-        $this->getTestDocument()->save($tmpPath);
-        $testPath = $this->getTestService()->getDocPath($this->getItem());
+        $testXmlDocument = $this->postProcessing($this->getTestDocument()->saveToString());
+
+        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
+        $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
+        $testRootPath = $testRootDir->getPrefix();
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        var_dump($file->getPrefix());
-        var_dump($file->getBasename());
-        exit();
-        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
 
-        // Add the test definition in the archive.
-        $testBasePath = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
-
-        $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
-
-        // Possibility to apply post-processing to the test.xml definition.
-        $this->postProcessing($tmpPath);
+        $testHref = $newTestDir . str_replace($testRootPath, '', dirname($file->getPrefix())) . '/test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
-        $this->addFile($tmpPath, $testHref);
+        $this->getZip()->addFromString($testHref, $testXmlDocument);
         $this->referenceTest($testHref, $itemIdentifiers);
 
-
-        $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true));
-        foreach ($files as $f) {
+        $iterator = $testRootDir->getFlyIterator($testRootDir::ITERATOR_RECURSIVE|$testRootDir::ITERATOR_FILE);
+        foreach ($iterator as $f) {
             // Only add dependency files...
-            if (is_dir($f) === false && strpos($f, TAOQTITEST_FILENAME) === false) {
+            if ($f->getBasename() !== TAOQTITEST_FILENAME) {
                 // Add the file to the archive.
-                $fileHref = $testBasePath . ltrim(str_replace($testPath, '', $f), '/');
+                $fileHref = $newTestDir . '/' . ltrim(str_replace($testRootPath, '', $f->getPrefix()), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
-                $this->getZip()->addFile($f, $fileHref);
+                $this->getZip()->addFromString($fileHref, $f->read());
+                //$this->getZip()->addFile($f, $fileHref);
                 $this->referenceAuxiliaryFile($fileHref);
             }
         }
@@ -376,7 +356,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         return 'imsqti_test_xmlv2p1';
     }
     
-    protected function postProcessing($path)
+    protected function postProcessing($testXmlDocument)
     {
         return;
     }

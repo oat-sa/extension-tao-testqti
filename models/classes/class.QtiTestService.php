@@ -809,15 +809,14 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
         $section->setSectionParts($itemRefs);
 
-
-
         return count($itemRefs);
     }
 
     /**
-     * 
+     * Get root qti test directory
+     *
      * @param core_kernel_classes_Resource $test
-     * @return \League\Flysystem\Directory
+     * @return Directory
      */
     public function getQtiTestDir(core_kernel_classes_Resource $test)
     {
@@ -875,14 +874,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getQtiTestDir($test);
-        foreach ($dir->listContents(true) as $object) {
-            if ($object['basename'] === TAOQTITEST_FILENAME) {
-                $relPath = str_replace($dir->getPath(), '', $object['path']);
-                return $relPath;
-            }
-        }
-        throw new Exception('No QTI-XML test file found.'); 
+        $testRootDir = $this->getQtiTestDir($test);
+        $filePath = $this->getQtiTestFile($test)->getPrefix();
+        return str_replace($testRootDir->getPrefix(), '', $filePath);
     }
 
     /**

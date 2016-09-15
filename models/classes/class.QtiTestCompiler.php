@@ -468,11 +468,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
 
         $privateDir = $this->getPrivateDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
-            }
+        $iterator = $testDefinitionDir->getFlyIterator($testDefinitionDir::ITERATOR_RECURSIVE|$testDefinitionDir::ITERATOR_FILE);
+        foreach ($iterator as $object) {
+            $relPath = str_replace($testDefinitionDir->getPrefix(), '', $object->getPrefix());
+            $privateDir->getFile($relPath)->write($object->readStream());
         }
     }
     
@@ -610,22 +609,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
-        $filesystem = $testDefinitionDir->getFileSystem();
-        
+
         $publicCompiledDocDir = $this->getPublicDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $mime = $filesystem->getMimetype($object['path']);
-                $pathinfo = pathinfo($object['path']);
-                
-                if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                    $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                    try {
-                        common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->writeStream($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
-                    } catch (FileExistsException $e) {
-                        common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
-                    }
+        $iterator = $testDefinitionDir->getFlyIterator($testDefinitionDir::ITERATOR_RECURSIVE|$testDefinitionDir::ITERATOR_FILE);
+        foreach ($iterator as $file) {
+            /** @var \oat\oatbox\filesystem\File $file */
+            $mime = $file->getMimeType();
+            $pathinfo = pathinfo($file->getBasename());
+
+            if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
+                $publicPathFile = str_replace($testDefinitionDir->getPrefix(), '', $file->getPrefix());
+                try {
+                    common_Logger::d('Public '.$file->getPrefix().'('.$mime.') to '.$publicPathFile);
+                    $publicCompiledDocDir->getFile($publicPathFile)->write($file->readStream());
+                } catch (FileExistsException $e) {
+                    common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                 }
             }
         }

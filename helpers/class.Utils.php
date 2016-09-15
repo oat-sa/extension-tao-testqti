@@ -49,8 +49,8 @@ class taoQtiTest_helpers_Utils {
      */
     static public function storeQtiResource(File $testContent, $qtiResource, $origin, $copy = true, $rename = '') {
         $fss = ServiceManager::getServiceManager()->get(FileSystemService::SERVICE_ID);
-        $fs = $fss->getFileSystem($testContent->getFileSystem()->getUri());
-        $contentPath = $testContent->getRelativePath();
+        $fs = $fss->getFileSystem($testContent->getFileSystem()->getId());
+        $contentPath = $testContent->getPrefix();
 
         $ds = DIRECTORY_SEPARATOR;
         $contentPath = rtrim($contentPath, $ds);
