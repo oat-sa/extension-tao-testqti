@@ -334,20 +334,9 @@ define([
                             //check for new timers
                             updateTimers(true);
                         })
-                        .on('enableitem', function() {
-                            doEnable();
-                        })
-                        .on('disableitem', function() {
-                            doDisable();
-                        })
-                        .after('renderitem', function(){
-                            //start timers
-                            doEnable();
-                        })
-                        .on('disconnect', function() {
-                            //pause the timers when the connection is lost
-                            doDisable();
-                        })
+                        .on('enableitem', doEnable)
+                        .on('disableitem disconnect', doDisable)
+                        .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position){
                             var movePromise = new Promise(function(resolve, reject) {
                                 //display a message if we exit a timed section
