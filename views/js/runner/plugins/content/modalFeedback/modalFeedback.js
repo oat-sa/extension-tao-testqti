@@ -96,8 +96,6 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
-            renderedFeedbacks = [];
-            isDestroyed = false;
             nextStep = function(){};
 
             defineMode(!!module.config().inlineModalFeedback);
@@ -113,6 +111,9 @@ define([
             var createMessages = function createMessages(renderingQueue, inline){
 
                 var bInlineMode = inlineMode;
+
+                isDestroyed = false;
+                renderedFeedbacks = [];
 
                 if (_.isBoolean(inline)) {
                     defineMode(inline);

@@ -30,23 +30,8 @@ class QtiTestStateChangeEvent extends QtiTestChangeEvent
     const EVENT_NAME = __CLASS__;
 
     /**
-     * The state of the AssessmentTestSession before changing.
-     *
-     * @var integer
+     * @return string
      */
-    private $previousState;
-
-    /**
-     * QtiTestStateChangeEvent constructor.
-     * @param \taoQtiTest_helpers_TestSession $testSession
-     * @param $previousState
-     */
-    public function __construct(\taoQtiTest_helpers_TestSession $testSession, $previousState)
-    {
-        $this->session = $testSession;
-        $this->previousState = $previousState;
-    }
-
     public function getName()
     {
         return static::EVENT_NAME;
@@ -57,6 +42,6 @@ class QtiTestStateChangeEvent extends QtiTestChangeEvent
      */
     public function getPreviousState()
     {
-        return $this->previousState;
+        return $this->getSessionMemento()->getState();
     }
 }

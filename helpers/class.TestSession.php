@@ -48,6 +48,7 @@ use oat\taoTests\models\event\TestExecutionPausedEvent;
 use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use oat\taoQtiTest\helpers\TestSessionMemento;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -77,7 +78,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @var core_kernel_classes_Resource
      */
     private $test;
-    
+
+    /**
+     * @var int
+     */
+    private $timeoutCode = null;
+
     /**
      * Create a new TAO QTI Test Session.
      * 
@@ -199,6 +205,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @throws taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
      */
     public function endTestSession() {
+        $sessionMemento = $this->getSessionMemento();
         parent::endTestSession();
         
         common_Logger::i('Ending test session.');
@@ -227,7 +234,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
         
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -323,10 +330,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * Suspend the current test session if it is running.
      */
     public function suspend() {
+        $sessionMemento = $this->getSessionMemento();
         $running = $this->isRunning();
         parent::suspend();
         if ($running) {
-            $this->triggerEventChange();
+            $this->triggerEventChange($sessionMemento);
             $this->triggerEventPaused();
             common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' suspended.");
         }
@@ -336,10 +344,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * Resume the current test session if it is suspended.
      */
     public function resume() {
+        $sessionMemento = $this->getSessionMemento();
         $suspended = $this->getState() === AssessmentTestSessionState::SUSPENDED;
         parent::resume();
         if ($suspended) {
-            $this->triggerEventChange();
+            $this->triggerEventChange($sessionMemento);
             $this->triggerEventResumed();
             common_Logger::i("QTI Test with session ID '" . $this->getSessionId() . "' resumed.");
         }
@@ -354,8 +363,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function beginTestSession()
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::beginTestSession();
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -370,8 +380,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function jumpTo($position, $allowTimeout = false)
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::jumpTo($position);
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -391,8 +402,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function moveNext($allowTimeout = false)
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::moveNext($allowTimeout);
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -413,8 +425,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function moveBack($allowTimeout = false)
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::moveBack($allowTimeout);
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -426,8 +439,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function skip()
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::skip();
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -439,8 +453,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function moveNextTestPart()
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::moveNextTestPart();
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -453,8 +468,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function moveNextAssessmentSection()
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::moveNextAssessmentSection();
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -467,8 +483,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function moveNextAssessmentItem()
     {
+        $sessionMemento = $this->getSessionMemento();
         parent::moveNextAssessmentItem();
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -480,7 +497,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function closeTestPart()
     {
-
+        $sessionMemento = $this->getSessionMemento();
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
@@ -499,7 +516,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $this->interactWithItemSession();
         }
 
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -512,7 +529,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function closeAssessmentSection()
     {
-
+        $sessionMemento = $this->getSessionMemento();
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or CLOSED.";
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
@@ -531,7 +548,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $this->interactWithItemSession();
         }
 
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
     }
 
     /**
@@ -544,7 +561,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function closeAssessmentItem()
     {
-
+        $sessionMemento = $this->getSessionMemento();
         if ($this->isRunning() === false) {
             $msg = "Cannot move to the next testPart while the state of the test session is INITIAL or CLOSED.";
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
@@ -558,7 +575,30 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $this->interactWithItemSession();
         }
 
-        $this->triggerEventChange();
+        $this->triggerEventChange($sessionMemento);
+    }
+
+    /**
+     * @param bool $includeMinTime
+     * @param bool $includeAssessmentItem
+     * @param bool $acceptableLatency
+     * @throws AssessmentTestSessionException
+     */
+    public function checkTimeLimits($includeMinTime = false, $includeAssessmentItem = false, $acceptableLatency = true) {
+        try {
+            parent::checkTimeLimits($includeMinTime, $includeAssessmentItem, $acceptableLatency);
+        } catch (AssessmentTestSessionException $e) {
+            $this->timeoutCode = $e->getCode();
+            throw $e;
+        }
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getTimeoutCode()
+    {
+        return $this->timeoutCode;
     }
 
     /**
@@ -612,14 +652,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function setState($state)
     {
         $previousState = $this->getState();
+        $sessionMemento = $this->getSessionMemento();
         parent::setState($state);
         if ($previousState !== null && $previousState !== $state) {
-            $this->triggerStateChanged($previousState);
+            $this->triggerStateChanged($sessionMemento);
         }
     }
 
-    protected function triggerEventChange() {
-        $event = new QtiTestChangeEvent($this);
+    /**
+     * @param TestSessionMemento $sessionMemento
+     */
+    protected function triggerEventChange(TestSessionMemento $sessionMemento)
+    {
+        $event = new QtiTestChangeEvent($this, $sessionMemento);
         if ($event instanceof ServiceLocatorAwareInterface) {
             $event->setServiceLocator($this->getServiceLocator());
         }
@@ -643,11 +688,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
 
     /**
-     * @param int $previousState
+     * @param TestSessionMemento $sessionMemento
      */
-    protected function triggerStateChanged($previousState)
+    protected function triggerStateChanged(TestSessionMemento $sessionMemento)
     {
-        $event = new QtiTestStateChangeEvent($this, $previousState);
+        $event = new QtiTestStateChangeEvent($this, $sessionMemento);
         if ($event instanceof ServiceLocatorAwareInterface) {
             $event->setServiceLocator($this->getServiceLocator());
         }
@@ -663,5 +708,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     
     protected function getServiceLocator() {
         return ServiceManager::getServiceManager();
+    }
+
+    /**
+     * @return TestSessionMemento
+     */
+    protected function getSessionMemento()
+    {
+        return new TestSessionMemento($this);
     }
 }
