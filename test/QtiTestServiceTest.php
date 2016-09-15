@@ -116,9 +116,6 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $origPath = $origFile->getPrefix();
         $clonePath = $cloneFile->getPrefix();
 
-        //$this->assertTrue($origFile->exists());
-        //$this->assertTrue($cloneFile->exists());
-    
         $this->assertNotEquals($origPath, $clonePath);
         $this->assertEquals($origFile->read(), $cloneFile->read());
     }
