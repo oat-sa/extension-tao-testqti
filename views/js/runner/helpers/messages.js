@@ -27,38 +27,91 @@ define([
     'use strict';
 
     /**
+     * List of QTI model cardinalities
+     * @type {Object}
+     */
+    var responseCardinalities = {
+        single : 'base',
+        multiple : 'list',
+        ordered : 'list',
+        record : 'record'
+    };
+
+    /**
+     * Checks if the provided value can be considered as null
+     * @param {Object} value
+     * @param {String} baseType
+     * @param {String} cardinality
+     * @returns {boolean}
+     */
+    function isQtiValueNull(value, baseType, cardinality) {
+        var mappedCardinality = responseCardinalities[cardinality];
+        if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
+            value = value[mappedCardinality][baseType];
+        }
+        return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
+    }
+
+    /**
+     * Convert a value to a response object
+     * @param {Array} value
+     * @param {String} baseType
+     * @param {String} cardinality
+     * @returns {Object}
+     */
+    function toResponse(value, baseType, cardinality) {
+        var mappedCardinality = responseCardinalities[cardinality];
+        var response = {};
+
+        if (mappedCardinality) {
+            if (mappedCardinality === 'base') {
+                if (!value || value.length === 0) {
+                    //return empty response:
+                    response.base = null;
+                } else {
+                    response.base = {};
+                    response.base[baseType] = value[0];
+                }
+            } else {
+                response[mappedCardinality] = {};
+                response[mappedCardinality][baseType] = value;
+            }
+        }
+
+        return response;
+    }
+
+    /**
      * Tells is the current item has been answered or not
      * The item is considered answered when at least one response has been set to not empty {base : null}
      *
      * @returns {Boolean}
      */
     function isCurrentItemAnswered(runner) {
-        var answered = false;
-        _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
-            var response = state && state.response;
+        var itemRunner = runner.itemRunner;
+        var responses = itemRunner && itemRunner.getResponses();
+        var count = 0;
+        var empty = 0;
 
-            if (_.isObject(response)) {
-                // base or record defined: the interaction has a response, so the item is responded
-                if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
-                    answered = true;
-                }
-                else if (_.isObject(response.list)) {
-                    _.forEach(response.list, function(entry) {
-                        // list defined, and something is listed: the interaction has a response, so the item is responded
-                        if (_.isArray(entry) && entry.length) {
-                            answered = true;
-                            return false;
-                        }
-                    });
-                }
+        if (itemRunner) {
+            _.forEach(itemRunner._item && itemRunner._item.responses, function (declaration) {
+                var attributes = declaration.attributes || {};
+                var response = responses[attributes.identifier];
+                var baseType = attributes.baseType;
+                var cardinality = attributes.cardinality;
 
-                if (answered) {
-                    return false;
+                count ++;
+                if (isQtiValueNull(response, baseType, cardinality)) {
+                    if (isQtiValueNull(declaration.defaultValue, baseType, cardinality)) {
+                        empty++;
+                    }
+                } else if (_.isEqual(response, toResponse(declaration.defaultValue, baseType, cardinality))) {
+                    empty++;
                 }
-            }
-        });
+            });
+        }
 
-        return answered;
+        return count !== 0 && empty !== count;
     }
 
     /**
