@@ -104,23 +104,20 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
      * @param \core_kernel_classes_Resource $source The resource to be cloned.
      * @param \core_kernel_classes_Resource $destination An existing resource to be filled as the clone of $source.
      */
-    public function cloneContent( \core_kernel_classes_Resource $source, \core_kernel_classes_Resource $destination) {
+    public function cloneContent(\core_kernel_classes_Resource $source, \core_kernel_classes_Resource $destination)
+    {
         $service = \taoQtiTest_models_classes_QtiTestService::singleton();
-        $fileReferenceSerializer = $this->getServiceManager()->get(FileReferenceSerializer::SERVICE_ID);
-        $contentProperty = new \core_kernel_classes_Property(TEST_TESTCONTENT_PROP);
-        $existingDir = new \core_kernel_file_File($source->getUniquePropertyValue($contentProperty));
-        /** @var \oat\oatbox\filesystem\Directory $existingDir */
-        $existingDir = $fileReferenceSerializer->unserializeDirectory($existingDir);
-        $dir = $fileReferenceSerializer->unserializeDirectory($service->createContent($destination, false));
+        $existingDir = $service->unserializeTestDirectory($source);
+        $destinationDir = $service->getQtiTestDir($destination, false);
 
         if ($existingDir->exists()) {
             $iterator = $existingDir->getFlyIterator(Directory::ITERATOR_FILE|Directory::ITERATOR_RECURSIVE);
             /** @var File $file */
             foreach($iterator as $file) {
-                $dir->getFile($file->getPrefix())->write($file->readStream());
+                $destinationDir->getFile($existingDir->getRelPath($file))->write($file->readStream());
             }
         } else {
-            \common_Logger::w('Test "'.$source->getUri().'" had no content, nothing to clone');
+            \common_Logger::w('Test "' . $source->getUri() . '" had no content, nothing to clone');
         }
     }
 
