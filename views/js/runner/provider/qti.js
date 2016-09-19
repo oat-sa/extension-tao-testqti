@@ -34,6 +34,7 @@ define([
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
+    'taoQtiItem/portableElementRegistry/assetManager/portableAssetStrategy',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -49,14 +50,9 @@ define([
     qtiItemRunner,
     assetManagerFactory,
     assetStrategies,
+    assetPortableElement,
     layoutTpl) {
     'use strict';
-
-    // asset strategy for portable elements
-    var assetPortableElement = {
-        name : 'portableElementLocation',
-        handle : assetStrategies.baseUrl.handle
-    };
 
     //the asset strategies
     var assetManager = assetManagerFactory([
@@ -257,6 +253,12 @@ define([
                             return new Promise(function(resolve, reject){
 
                                 if (result.notAllowed) {
+                                    // the context might be updated
+                                    if (result.testContext) {
+                                        self.setTestContext(result.testContext);
+                                        context = self.getTestContext();
+                                    }
+
                                     self.trigger('resumeitem');
 
                                     if (result.message) {
