@@ -21,6 +21,7 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
@@ -376,8 +377,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             \common_Logger::i("Metadata Class Lookup '{$classLookup}' registered.");
         }
         
+        $extractors = array();
         foreach ($metadataMapping['extractors'] as $extractor) {
             $metadataExtractor = new $extractor();
+            $extractors[] = $metadataExtractor;
             \common_Logger::i("Metatada Extractor '${extractor}' registered.");
             $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
         }
@@ -427,7 +430,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                         if ($qtiDependency !== false) {
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
-                                
+
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
                                 
                                 // Check if the item is already stored in the bank.
@@ -461,6 +464,21 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
+
+                                // If metadata should be aware of the test context...
+                                foreach ($extractors as $extractor) {
+                                    if ($extractor instanceof MetadataTestContextAware) {
+                                        $metadataValues = array_merge(
+                                            $metadataValues, 
+                                            $extractor->contextualizeWithTest(
+                                                $qtiTestResource->getIdentifier(),
+                                                $testDefinition->getDomDocument(),
+                                                $resourceIdentifier,
+                                                $metadataValues
+                                            )
+                                        );
+                                    }
+                                }
 
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
