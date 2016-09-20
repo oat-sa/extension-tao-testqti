@@ -468,11 +468,15 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // If metadata should be aware of the test context...
                                 foreach ($extractors as $extractor) {
                                     if ($extractor instanceof MetadataTestContextAware) {
+                                        $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
+                                        $transitionalDoc->loadXML(
+                                            $testDefinition->saveToString()
+                                        );
                                         $metadataValues = array_merge(
                                             $metadataValues, 
                                             $extractor->contextualizeWithTest(
                                                 $qtiTestResource->getIdentifier(),
-                                                $testDefinition->getDomDocument(),
+                                                $transitionalDoc,
                                                 $resourceIdentifier,
                                                 $metadataValues
                                             )
