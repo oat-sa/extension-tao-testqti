@@ -63,9 +63,13 @@ define([
         var mappedCardinality = responseCardinalities[cardinality];
         var response = {};
 
+        value = _.map(value || [], function(v){
+            return (baseType === 'boolean') ? (v === true || v === 'true') : v;
+        });
+
         if (mappedCardinality) {
             if (mappedCardinality === 'base') {
-                if (!value || value.length === 0) {
+                if (value.length === 0) {
                     //return empty response:
                     response.base = null;
                 } else {
