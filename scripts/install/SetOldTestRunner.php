@@ -26,6 +26,6 @@ class SetOldTestRunner extends \common_ext_action_InstallAction
         $testRunnerConfig['test-session'] = '\\taoQtiTest_helpers_TestSession';
         $testQtiExt->setConfig('testRunner', $testRunnerConfig);
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'New test runner activated');
+        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'Old test runner activated');
     }
 }
