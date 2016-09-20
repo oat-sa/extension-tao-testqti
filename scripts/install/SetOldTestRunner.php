@@ -14,7 +14,7 @@ class SetOldTestRunner extends \common_ext_action_InstallAction
     {
         $deliveryExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery');
         $deliveryServerConfig = $deliveryExt->getConfig('deliveryServer');
-        $deliveryServerConfig->setOption('deliveryContainer', 'oat\\taoDelivery\\helper\\container\\DeliveryClientService');
+        $deliveryServerConfig->setOption('deliveryContainer', 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer');
         $deliveryExt->setConfig('deliveryServer', $deliveryServerConfig);
 
         $itemQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiItem');
