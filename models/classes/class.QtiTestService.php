@@ -498,7 +498,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $metadataClassLookups,
                                         $sharedFiles
                                     );
-
+                                    
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
@@ -508,8 +508,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
                                     }
                                     else {
+
+                                        if (! $itemReport->getMessage()) {
+                                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiDependency->getIdentifier()));
+                                        }
                                         $itemReport->setType(common_report_Report::TYPE_ERROR);
-                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiDependency->getIdentifier()));
                                         $itemError = ($itemError === false) ? true : $itemError;
                                     }
 
