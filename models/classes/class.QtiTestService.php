@@ -333,6 +333,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $itemImportService = ImportService::singleton();
         $itemService = taoItems_models_classes_ItemsService::singleton();
         $testClass = $targetClass;
+        $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
 
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
@@ -394,6 +395,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $reportCtx->rdfsResource = $testResource;
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = array();
+        $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
@@ -529,7 +531,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                     // If items did not produce errors, we import the test definition.
                     if ($itemError === false) {
-                        $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
                         common_Logger::i("Importing test with manifest identifier '${qtiTestResourceIdentifier}'...");
 
                         // Second step is to take care of the test definition and the related media (auxiliary files).
