@@ -417,12 +417,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-
+                
                 // -- Load all items related to test.
                 $itemError = false;
 
                 // discover test's base path.
                 $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
+                
+                // Build a DOM version of the fully resolved AssessmentTest for later usage.
+                $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
+                $transitionalDoc->loadXML($testDefinition->saveToString());
                 
                 if (count($dependencies['items']) > 0) {
 
@@ -470,10 +474,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // If metadata should be aware of the test context...
                                 foreach ($extractors as $extractor) {
                                     if ($extractor instanceof MetadataTestContextAware) {
-                                        $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
-                                        $transitionalDoc->loadXML(
-                                            $testDefinition->saveToString()
-                                        );
                                         $metadataValues = array_merge(
                                             $metadataValues, 
                                             $extractor->contextualizeWithTest(
