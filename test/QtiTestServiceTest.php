@@ -110,8 +110,8 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testCloneContent($qtiTest, $clone)
     {
-        $origFile = $this->testService->getTestFile($qtiTest);
-        $cloneFile = $this->testService->getTestFile($clone);
+        $origFile = $this->testService->getQtiTestFile($qtiTest);
+        $cloneFile = $this->testService->getQtiTestFile($clone);
 
         $origPath = $origFile->getPrefix();
         $clonePath = $cloneFile->getPrefix();
