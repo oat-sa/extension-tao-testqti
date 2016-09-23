@@ -610,13 +610,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.12.0');
         }
 
-        $this->skip('5.12.0', '5.15.0');
+        $this->skip('5.12.0', '5.16.2');
 
-        if ($this->isVersion('5.15.0')) {
+        if ($this->isVersion('5.16.2')) {
             $service = new TestExporter();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
-            $this->setVersion('5.16.0');
+            $this->setVersion('5.17.0');
         }
     }
 }

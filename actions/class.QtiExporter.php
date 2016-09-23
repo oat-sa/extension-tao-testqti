@@ -39,7 +39,7 @@ class taoQtiTest_actions_QtiExporter extends \tao_actions_Export
         ];
     }
 
-    protected function isExportable($formData)
+    protected function isExportable(array $formData)
     {
         /** @var \core_kernel_classes_Resource $model */
         $model = \taoQtiTest_models_classes_QtiTestService::singleton()->getTestModel($formData['instance']);

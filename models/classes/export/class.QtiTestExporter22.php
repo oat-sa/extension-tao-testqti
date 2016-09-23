@@ -31,22 +31,21 @@ class taoQtiTest_models_classes_export_QtiTestExporter22 extends taoQtiTest_mode
         return 'imsqti_test_xmlv2p2';
     }
     
-    protected function postProcessing($path)
+    protected function postProcessing($testXmlDocument)
     {
-        $content = file_get_contents($path);
-        
-        $content = str_replace(
+
+        $testXmlDocument = str_replace(
             'http://www.imsglobal.org/xsd/imsqti_v2p1',
             'http://www.imsglobal.org/xsd/imsqti_v2p2',
-            $content
+            $testXmlDocument
         );
-        
-        $content = str_replace(
+
+        $testXmlDocument = str_replace(
             'http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd',
             'http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd',
-            $content
+            $testXmlDocument
         );
         
-        file_put_contents($path, $content);
+        return $testXmlDocument;
     }
 }
