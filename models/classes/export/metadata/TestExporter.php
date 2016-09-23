@@ -44,9 +44,9 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     {
         /** @var ItemExporter $itemExporter */
         $itemExporter = $this->getServiceManager()->get(SimpleExporter::SERVICE_ID);
-        $itemExporter->setItems(
-            \taoQtiTest_models_classes_QtiTestService::singleton()->getItems($this->getResource($uri))
+        return $itemExporter->export(
+            \taoQtiTest_models_classes_QtiTestService::singleton()->getItems($this->getResource($uri)),
+            true
         );
-        return $itemExporter->export($uri, true);
     }
 }
