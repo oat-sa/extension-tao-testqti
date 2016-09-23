@@ -75,7 +75,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
     public function testTestModelImportHandlers()
     {
         $model = new TestModelService(['importHandlers' => array(
-            new taoQtiTest_models_classes_import_TestImport()
+            new \taoQtiTest_models_classes_import_TestImport()
         )]);
         $handlers = $model->getImportHandlers();
         $this->assertCount(1, $handlers);
@@ -89,7 +89,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
     public function testTestModelExportHandlers()
     {
         $model = new TestModelService(['exportHandlers' => array(
-            new taoQtiTest_models_classes_export_TestExport()
+            new \taoQtiTest_models_classes_export_TestExport()
         )]);
         $handlers = $model->getExportHandlers();
         $this->assertCount(1, $handlers);

@@ -33,12 +33,12 @@ return array(
     'label' => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '5.13.1',
+    'version' => '5.17.0',
     'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=3.4.0',
-        'taoQtiItem' => '>=5.0.0',
-        'tao'        => '>=7.6.0'
+        'taoQtiItem' => '>=5.2.0',
+        'tao'        => '>=7.10.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -51,8 +51,9 @@ return array(
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
-                    dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
-                    'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins'
+            dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
+            'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins',
+            'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
@@ -91,5 +92,8 @@ return array(
 
 		#BASE WWW the web resources path
 		'BASE_WWW'				=> ROOT_URL	.'taoQtiTest/views/',
-	)
+	),
+    'extra' => array(
+        'structures' => dirname(__FILE__).DIRECTORY_SEPARATOR.'actions'.DIRECTORY_SEPARATOR.'structures.xml',
+    )
 );

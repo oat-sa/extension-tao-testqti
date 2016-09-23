@@ -47,10 +47,11 @@ define([
      * Build a fake test runner
      * @param {Object} map
      * @param {Object} context
-     * @param {Object} itemState
+     * @param {Object} responses
+     * @param {Object} declarations
      * @returns {Object}
      */
-    function runnerMock(map, context, itemState) {
+    function runnerMock(map, context, responses, declarations) {
         return {
             getTestContext: function () {
                 return context;
@@ -59,8 +60,11 @@ define([
                 return map;
             },
             itemRunner: {
-                getState: function () {
-                    return itemState;
+                _item: {
+                    responses: declarations
+                },
+                getResponses: function () {
+                    return responses;
                 }
             }
         };
@@ -106,8 +110,19 @@ define([
                 total: 3
             }
         };
-        var itemState = {RESPONSE: {response: {base: null}}};
-        var runner = runnerMock(map, context, itemState);
+        var declarations = {
+            "responsedeclaration": {
+                "identifier": "RESPONSE",
+                "serial": "responsedeclaration",
+                "qtiClass": "responseDeclaration",
+                "attributes": {
+                    "identifier": "RESPONSE", "cardinality": "single", "baseType": "string"
+                },
+                "defaultValue": []
+            }
+        };
+        var responses = {RESPONSE: {base: null}};
+        var runner = runnerMock(map, context, responses, declarations);
         var message = 'This is a test.';
 
         // all answered, no flagged
@@ -144,7 +159,7 @@ define([
         map.stats.answered = 0;
         map.parts.part1.stats.answered = 1;
         map.parts.part1.sections.section1.stats.answered = 2;
-        itemState.RESPONSE.response.base = {};
+        responses.RESPONSE.base = {string: 'test'};
         assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 2 unanswered question(s) and have 3 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
         assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and have 2 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
         assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You have 1 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');

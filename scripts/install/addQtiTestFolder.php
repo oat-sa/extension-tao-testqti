@@ -30,7 +30,7 @@ if (file_exists($dataPath)) {
 
 $serviceManager = oat\oatbox\service\ServiceManager::getServiceManager();
 $fsService = $serviceManager->get(oat\oatbox\filesystem\FileSystemService::SERVICE_ID); 
-$fsService->createFileSystem('http://taoQtiTest#fs', 'taoQtiTest');
+$fsService->createFileSystem('taoQtiTest');
 $serviceManager->register(oat\oatbox\filesystem\FileSystemService::SERVICE_ID, $fsService);
 
-taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem(new core_kernel_fileSystem_FileSystem('http://taoQtiTest#fs'));
+taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem('taoQtiTest');
