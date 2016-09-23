@@ -1052,31 +1052,4 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
-
-    /**
-     * Get test content directory from test resource.
-     *
-     * @param core_kernel_classes_Resource $test
-     * @return null|Directory
-     * @throws core_kernel_persistence_Exception
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
-     */
-    public function unserializeTestDirectory(core_kernel_classes_Resource $test)
-    {
-        $testModel = $test->getOnePropertyValue($this->getProperty(PROPERTY_TEST_TESTMODEL));
-        if (is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
-            throw new taoQtiTest_models_classes_QtiTestServiceException(
-                'The selected test is not a QTI test',
-                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
-            );
-        }
-
-        $serial = $test->getOnePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP));
-
-        if (!is_null($serial)) {
-            return $this->getFileReferenceSerializer()->unserializeDirectory($serial);
-        }
-
-        return null;
-    }
 }

@@ -107,7 +107,7 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     public function cloneContent(\core_kernel_classes_Resource $source, \core_kernel_classes_Resource $destination)
     {
         $service = \taoQtiTest_models_classes_QtiTestService::singleton();
-        $existingDir = $service->unserializeTestDirectory($source);
+        $existingDir = $service->getQtiTestDir($source);
         $destinationDir = $service->getQtiTestDir($destination, false);
 
         if ($existingDir->exists()) {
