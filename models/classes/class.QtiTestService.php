@@ -30,9 +30,8 @@ use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
 use oat\oatbox\filesystem\FileSystemService;
-use League\Flysystem\FileExistsException;
-use League\Flysystem\File;
-use League\Flysystem\Directory;
+use oat\oatbox\filesystem\File;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * the QTI TestModel service.
@@ -640,11 +639,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      *
      * @param core_kernel_classes_Resource $testResource A Test Resource the new content must be bind to.
      * @param XmlDocument $testDefinition An XmlAssessmentTestDocument object.
-     * @param oat\taoQtiItem\model\qti\Resource $qtiResource The manifest resource describing the test to be imported.
+     * @param Resource $qtiResource The manifest resource describing the test to be imported.
      * @param array $itemMapping An associative array that represents the mapping between assessmentItemRef elements and the imported items.
      * @param string $extractionFolder The absolute path to the temporary folder containing the content of the imported IMS QTI Package Archive.
      * @param common_report_Report $report A Report object to be filled during the import.
-     * @return core_kernel_file_File The newly created test content.
+     * @return Directory The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an unexpected runtime error occurs.
      */
     protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
@@ -658,11 +657,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $oldFile->delete();
         
         $ds = DIRECTORY_SEPARATOR;
-        $path = dirname($oldFile->getPath()).$ds.dirname($qtiResource->getFile()).$ds.TAOQTITEST_FILENAME;
-        $newFile = new File($oldFile->getFilesystem(), $path);
-        $saved = $newFile->write($testDefinition->saveToString());
+        $path = dirname($qtiResource->getFile()).$ds.TAOQTITEST_FILENAME;
+        $dir = $this->getQtiTestDir($testResource);
+        $newFile = $dir->getFile($path);
+        $newFile->write($testDefinition->saveToString());
         
-        return $this->getTestFile($testResource);
+        return $this->getQtiTestDir($testResource);
     }
 
     /**
@@ -671,12 +671,12 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      *
      * If some file cannot be copied, warnings will be committed.
      *
-     * @param core_kernel_file_File $testContent The pointer to the TAO Test Content directory where auxilliary files will be stored.
-     * @param oat\taoQtiItem\model\qti\Resource $qtiResource The manifest resource describing the test to be imported.
+     * @param Directory $testContent The pointer to the TAO Test Content directory where auxilliary files will be stored.
+     * @param Resource $qtiResource The manifest resource describing the test to be imported.
      * @param string $extractionFolder The absolute path to the temporary folder containing the content of the imported IMS QTI Package Archive.
      * @param common_report_Report A report about how the importation behaved.
      */
-    protected function importTestAuxiliaryFiles(core_kernel_file_File $testContent,Resource $qtiResource, $extractionFolder, common_report_Report $report) {
+    protected function importTestAuxiliaryFiles(Directory $testContent, Resource $qtiResource, $extractionFolder, common_report_Report $report) {
 
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {
@@ -693,29 +693,24 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * of the test content (a directory!) on the file system.
      *
      * @param core_kernel_classes_Resource $test
-     * @return null|core_kernel_file_File
+     * @return core_kernel_file_File
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getTestFile(core_kernel_classes_Resource $test){
-
-        if(is_null($test)){
-            throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    'The selected test is null',
-                    taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
-               );
-        }
-
+    public function getTestFile(core_kernel_classes_Resource $test)
+    {
         $testModel = $test->getOnePropertyValue(new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL));
-        if(is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
+        if (is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    'The selected test is not a QTI test',
-                    taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
-               );
+                'The selected test is not a QTI test',
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+            );
         }
         $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
-        if(!is_null($file)){
-            return new core_kernel_file_File($file);
+
+        if (!is_null($file)) {
+            return $this->getFileReferenceSerializer()->unserializeFile($file->getUri());
         }
+
         return null;
     }
 
@@ -743,34 +738,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function getDocPath(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getTestFile($test);
-        if (is_null($dir)) {
-            $dir = $this->createContent($test);
-        }
-        $testPath = $dir->getAbsolutePath();
-        $files = tao_helpers_File::scandir($testPath, array(
-            'recursive' => true,
-            'absolute' => true,
-            'only' => tao_helpers_File::$FILE
-        ));
-        $dirContent = array();
-
-        foreach ($files as $f) {
-            $pathinfo = pathinfo($f);
-            if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
-                $dirContent[] = $f;
-            }
-        }
-
-        if (count($dirContent) === 0) {
-            throw new Exception('No QTI-XML test file found.');
-        }
-        else if (count($dirContent) > 1) {
-            throw new Exception('Multiple QTI-XML test file found.');
-        }
-
-        $filePath = current($dirContent);
-        return $filePath;
+        $file = $this->getQtiTestFile($test);
+        return $file->getBasename();
     }
 
     /**
@@ -861,25 +830,32 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
         $section->setSectionParts($itemRefs);
 
-
-
         return count($itemRefs);
     }
 
     /**
-     * 
+     * Get root qti test directory or crate if not exists
+     *
      * @param core_kernel_classes_Resource $test
-     * @return \League\Flysystem\Directory
+     * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
+     * @return Directory
      */
-    public function getQtiTestDir(core_kernel_classes_Resource $test)
+    public function getQtiTestDir(core_kernel_classes_Resource $test, $createTestFile = true)
     {
-        $dir = $this->getTestFile($test);
-        if (is_null($dir)) {
-            $dir = $this->createContent($test);
+        $testModel = taoTests_models_classes_TestsService::singleton()->getTestModel($test);
+        if (is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                'The selected test is not a QTI test',
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+            );
         }
-        $fss = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
-        $fs = $fss->getFilesystem($dir->getFileSystem()->getUri());
-        return new Directory($fs, $dir->getRelativePath());
+        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        
+        if (!is_null($dir)) {
+            return $this->getFileReferenceSerializer()->unserialize($dir);
+        } else {
+            return $this->createContent($test, $createTestFile);
+        }
     }
     
     /**
@@ -888,17 +864,29 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      *
      * @param core_kernel_classes_Resource $test
      * @throws \Exception If file is not found.
-     * @return \League\Flysystem\File
+     * @return File
      */
     public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
-        foreach ($dir->listContents(true) as $object) {
-            if ($object['basename'] === TAOQTITEST_FILENAME) {
-                return new File($dir->getFilesystem(), $object['path']);
+        $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+        $files = [];
+
+        foreach ($iterator as $file) {
+            if ($file->getBasename() === TAOQTITEST_FILENAME) {
+                $files[] = $file;
             }
         }
-        throw new Exception('No QTI-XML test file found.');
+
+        if (count($files) === 0) {
+            throw new Exception('No QTI-XML test file found.');
+        } else if (count($files) > 1) {
+            throw new Exception('Multiple QTI-XML test file found.');
+        }
+
+        $file = current($files);
+
+        return $file;
     }
     
     /**
@@ -909,14 +897,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
-        $dir = $this->getQtiTestDir($test);
-        foreach ($dir->listContents(true) as $object) {
-            if ($object['basename'] === TAOQTITEST_FILENAME) {
-                $relPath = str_replace($dir->getPath(), '', $object['path']);
-                return $relPath;
-            }
-        }
-        throw new Exception('No QTI-XML test file found.'); 
+        $testRootDir = $this->getQtiTestDir($test);
+        return $testRootDir->getRelPath($this->getQtiTestFile($test));
     }
 
     /**
@@ -932,23 +914,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     }
 
     /**
-     * Create the defautl content directory of a QTI test.
+     * Create the default content directory of a QTI test.
      *
      * @param core_kernel_classes_Resource $test
      * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
-     * @return core_kernel_file_File the content file
+     * @return Directory the content directory
      * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
      */
-    public function createContent( core_kernel_classes_Resource $test, $createTestFile = true) {
+    public function createContent(core_kernel_classes_Resource $test, $createTestFile = true) {
 
-        $repository = self::getQtiTestFileSystem();
-        $path = md5($test->getUri());
+        $dir = $this->getDefaultDir()->getDirectory(md5($test->getUri()));
+        if ($dir->exists()) {
+            throw new common_exception_InconsistentData('Data dir fir test '.$test->getUri().' already exists');
+        }
 
-        // $directory is the directory where test related resources will be stored.
-        $directory = $repository->createFile('', $path );
-        $fs = $this->getServiceManager()->get(FileSystemService::SERVICE_ID)->getFileSystem($repository->getUri());
-        $file = new File($fs, $path.DIRECTORY_SEPARATOR.TAOQTITEST_FILENAME);
-        
+        $file = $dir->getFile(TAOQTITEST_FILENAME);
+
         if ($createTestFile === true) {
             $emptyTestXml = $this->getQtiTestTemplateFileAsString();
 
@@ -973,7 +954,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
 
-            common_Logger::i("Created QTI Test content for file '" . $directory->getUri() . "'.");
+            common_Logger::i("Created QTI Test content for test '" . $test->getUri() . "'.");
         } else if ($file->exists()) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($file->read());
@@ -987,8 +968,9 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             }
         }
 
-        $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
-        return $directory;
+        $directory = $this->getFileReferenceSerializer()->serialize($dir);
+        $test->editPropertyValues($this->getProperty(TEST_TESTCONTENT_PROP), $directory);
+        return $dir;
     }
 
     /**
@@ -998,55 +980,39 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      */
     public function deleteContent(core_kernel_classes_Resource $test)
     {
-        $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        $content = $test->getOnePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP));
 
         if (!is_null($content)) {
-            $file = new core_kernel_file_File($content);
-
-            try {
-                $path = $file->getAbsolutePath();
-
-                if (is_dir($path)) {
-                    if (!tao_helpers_File::delTree($path)) {
-                        throw new common_exception_Error("Unable to remove test content directory located at '" . $file->getAbsolutePath() . "'.");
-                    }
-                }
-            }
-            catch (common_Exception $e) {
-                // Empty file...
-            }
-
-            $file->delete();
-            $test->removePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
+            $dir = $this->getFileReferenceSerializer()->unserialize($content);
+            $dir->deleteSelf();
+            $this->getFileReferenceSerializer()->cleanUp($content);
+            $test->removePropertyValue($this->getProperty(TEST_TESTCONTENT_PROP), $content);
         }
     }
 
     /**
      * Set the directory where the tests' contents are stored.
-     * @param core_kernel_versioning_Repository $folder
+     * @param string $fsId
      */
-    public function setQtiTestFileSystem(core_kernel_versioning_Repository $folder)
+    public function setQtiTestFileSystem($fsId)
     {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $ext->setConfig(self::CONFIG_QTITEST_FILESYSTEM, $folder->getUri());
+        $ext->setConfig(self::CONFIG_QTITEST_FILESYSTEM, $fsId);
     }
 
     /**
-     * Get the directory where the tests' contents are stored.
-     *
-     * @return core_kernel_versioning_Repository
-     * @throws common_Exception
+     * Get the default directory where the tests' contents are stored.
+     * replaces getQtiTestFileSystem
+     * 
+     * @return Directory
      */
-    public function getQtiTestFileSystem()
+    public function getDefaultDir()
     {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $uri = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
-        if (empty($uri)) {
-            throw new common_Exception('No default file system defined for QTI test files storage.');
-        }
-        return new core_kernel_versioning_Repository($uri);
+        $fsId = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
+        return $this->getServiceLocator()->get(FileSystemService::SERVICE_ID)->getDirectory($fsId);
     }
-
+    
     /**
      * Set the acceptable latency time (applied on qti:timeLimits->minTime, qti:timeLimits:maxTime).
      *
@@ -1087,4 +1053,3 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
 }
-?>
