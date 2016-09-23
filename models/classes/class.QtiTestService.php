@@ -21,6 +21,7 @@
 
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
@@ -331,6 +332,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $itemImportService = ImportService::singleton();
         $itemService = taoItems_models_classes_ItemsService::singleton();
         $testClass = $targetClass;
+        $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
 
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
@@ -375,8 +377,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             \common_Logger::i("Metadata Class Lookup '{$classLookup}' registered.");
         }
         
+        $extractors = array();
         foreach ($metadataMapping['extractors'] as $extractor) {
             $metadataExtractor = new $extractor();
+            $extractors[] = $metadataExtractor;
             \common_Logger::i("Metatada Extractor '${extractor}' registered.");
             $metadataValues = array_merge($metadataValues, $metadataExtractor->extract($domManifest));
         }
@@ -390,6 +394,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $reportCtx->rdfsResource = $testResource;
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = array();
+        $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
@@ -411,12 +416,16 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-
+                
                 // -- Load all items related to test.
                 $itemError = false;
 
                 // discover test's base path.
                 $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
+                
+                // Build a DOM version of the fully resolved AssessmentTest for later usage.
+                $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
+                $transitionalDoc->loadXML($testDefinition->saveToString());
                 
                 if (count($dependencies['items']) > 0) {
 
@@ -426,7 +435,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                         if ($qtiDependency !== false) {
 
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
-                                
+
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
                                 
                                 // Check if the item is already stored in the bank.
@@ -460,6 +469,21 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
+
+                                // If metadata should be aware of the test context...
+                                foreach ($extractors as $extractor) {
+                                    if ($extractor instanceof MetadataTestContextAware) {
+                                        $metadataValues = array_merge(
+                                            $metadataValues, 
+                                            $extractor->contextualizeWithTest(
+                                                $qtiTestResource->getIdentifier(),
+                                                $transitionalDoc,
+                                                $resourceIdentifier,
+                                                $metadataValues
+                                            )
+                                        );
+                                    }
+                                }
 
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
@@ -506,7 +530,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
                     // If items did not produce errors, we import the test definition.
                     if ($itemError === false) {
-                        $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
                         common_Logger::i("Importing test with manifest identifier '${qtiTestResourceIdentifier}'...");
 
                         // Second step is to take care of the test definition and the related media (auxiliary files).

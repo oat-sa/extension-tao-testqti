@@ -176,9 +176,14 @@ define([
             var tFeedbacks, i;
             if (!isDestroyed) {
                 isDestroyed = true;
-                tFeedbacks = renderedFeedbacks.slice(0);
-                for (i in tFeedbacks) {
-                    destroyFeedback(tFeedbacks[i]);
+
+                if (!renderedFeedbacks) {
+                    nextStep();
+                } else {
+                    tFeedbacks = renderedFeedbacks.slice(0);
+                    for (i in tFeedbacks) {
+                        destroyFeedback(tFeedbacks[i]);
+                    }
                 }
             }
         }
