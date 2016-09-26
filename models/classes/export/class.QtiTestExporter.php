@@ -250,8 +250,9 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
-
-        $testHref = $newTestDir . dirname($testRootDir->getRelPath($file)) . '/test.xml';
+        $relTestDir = dirname($testRootDir->getRelPath($file));
+        $relTestDir = rtrim(str_replace('\\', '/', $relTestDir), '/');
+        $testHref = $newTestDir . $relTestDir . '/test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
