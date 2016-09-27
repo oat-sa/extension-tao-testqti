@@ -67,5 +67,6 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         
         $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'math'));
         $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'english'));
+        $this->assertEquals(0, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'X'));
     }
 }
