@@ -48,4 +48,15 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
             TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent())
         );
     }
+    
+    public function testExtractCategoriesNoCategoriesFound()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'no-categories.xml');
+        
+        $this->assertEquals(
+            array(),
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent())
+        );
+    }
 }
