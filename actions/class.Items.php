@@ -61,4 +61,16 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
         $this->returnJson($items);
     }
+
+    public function getCategories(){
+        if($this->hasRequestParameter('uris')){
+            throw new common_exception_MissingParameter('uris');
+        }
+
+        $uris = $this->getRequestParameter('uris');
+
+        $itemCategories = $this->getServiceManager()->get(\oat\taoQtiItem\model\ItemCategoriesService::SERVICE_ID);
+        $this->returnJson($itemCategories->getCategories($uris));
+
+    }
 }
