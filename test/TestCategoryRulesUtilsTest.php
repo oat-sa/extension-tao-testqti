@@ -21,15 +21,10 @@ namespace oat\taoQtiTest\test;
 
 use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\TestCategoryRulesUtils;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
 use qtism\data\storage\xml\XmlDocument;
 
-/**
- * This test case focuses on testing the TestCompilerUtils helper.
- *
- * @author Jérôme Bogaerts <jerome@taotesting.com>
- * @package taoQtiTest
- * 
- */
 class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner 
 {
     
@@ -68,5 +63,102 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'math'));
         $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'english'));
         $this->assertEquals(0, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'X'));
+    }
+    
+    public function testAppendOutcomeDeclarationToTest()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'no-categories.xml');
+        
+        TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
+        
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
+        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertCount(1, $doc->getDocumentComponent()->getComponentsByClassName('outcomeDeclaration'));
+        $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
+        $this->assertEquals(BaseType::FLOAT, $outcome->getBaseType());
+        $this->assertEquals('TEST', $outcome->getIdentifier());
+        
+        $defaultValue = $outcome->getDefaultValue();
+        $this->assertInstanceOf('qtism\\data\state\\DefaultValue', $defaultValue);
+        $values = $defaultValue->getValues();
+        $this->assertCount(1, $values);
+        $this->assertEquals(0., $values[0]->getValue());
+        
+        // Check that there is no duplicate if we add the same variable twice...
+        TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
+        
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
+        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertEquals(1, count($doc->getDocumentComponent()->getComponentsByClassName('outcomeDeclaration')));
+    }
+    
+    public function testAppendNumberOfItemsVariable()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            'MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX,
+            TestCategoryRulesUtils::appendNumberOfItemsVariable($doc->getDocumentComponent(), 'math')
+        );
+        
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX);
+        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
+        $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
+        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX, $outcome->getIdentifier());
+        
+        $defaultValue = $outcome->getDefaultValue();
+        $this->assertInstanceOf('qtism\\data\state\\DefaultValue', $defaultValue);
+        $values = $defaultValue->getValues();
+        $this->assertCount(1, $values);
+        $this->assertTrue(is_int($values[0]->getValue()));
+        $this->assertEquals(2, $values[0]->getValue());
+    }
+    
+    public function testAppendNumberCorrectVariable()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX,
+            TestCategoryRulesUtils::appendNumberCorrectVariable($doc->getDocumentComponent(), 'math')
+        );
+        
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
+        $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
+        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $outcome->getIdentifier());
+        
+        $defaultValue = $outcome->getDefaultValue();
+        $this->assertNull($defaultValue);
+    }
+    
+    public function testAppendNumberCorrectOutcomeProcessing()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($doc->getDocumentComponent(), 'math', 'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        
+        $this->assertInstanceOf('qtism\\data\\processing\\OutcomeProcessing', $doc->getDocumentComponent()->getOutcomeProcessing());
+        $outcomeRules = $doc->getDocumentComponent()->getOutcomeProcessing()->getOutcomeRules();
+        $this->assertCount(1, $outcomeRules);
+        
+        $this->assertInstanceOf('qtism\\data\\rules\\setOutcomeValue', $outcomeRules[0]);
+        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $outcomeRules[0]->getIdentifier());
+        
+        $this->assertInstanceOF('qtism\\data\\expressions\\NumberCorrect', $outcomeRules[0]->getExpression());
+        $this->assertEquals(array('math'), $outcomeRules[0]->getExpression()->getIncludeCategories()->getArrayCopy());
+        
+        // If a second call to TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing occurs for a variable wich
+        // is already targeted by a setOutcomeValue rule, no new outcome rule should appear to avoid duplicates.
+        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($doc->getDocumentComponent(), 'math', 'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        
+        $outcomeRules = $doc->getDocumentComponent()->getOutcomeProcessing()->getOutcomeRules();
+        $this->assertCount(1, $outcomeRules);
     }
 }

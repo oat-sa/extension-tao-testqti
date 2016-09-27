@@ -82,6 +82,8 @@ class TestCategoryRulesUtils
     {
         $varName = strtoupper($category) . self::NUMBER_ITEMS_SUFFIX;
         self::appendOutcomeDeclarationToTest($test, $varName, BaseType::INTEGER, self::countNumberOfItemsWithCategory($test, $category));
+        
+        return $varName;
     }
     
     /**
@@ -98,6 +100,8 @@ class TestCategoryRulesUtils
     {
         $varName = strtoupper($category) . self::NUMBER_CORRECT_SUFFIX;
         self::appendOutcomeDeclarationToTest($test, $varName, BaseType::INTEGER);
+        
+        return $varName;
     }
     
     /**
@@ -163,11 +167,13 @@ class TestCategoryRulesUtils
         
         if ($defaultValue !== null) {
             $outcome->setDefaultValue(
-                new ValueCollection(
-                    array(
-                        new Value(
-                            $defaultValue, 
-                            $baseType
+                new DefaultValue(
+                    new ValueCollection(
+                        array(
+                            new Value(
+                                $defaultValue, 
+                                $baseType
+                            )
                         )
                     )
                 )

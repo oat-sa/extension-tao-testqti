@@ -19,7 +19,8 @@
  */
 namespace oat\taoQtiTest\models;
 
-use qitsm\data\AssessmentTest;
+use qtism\data\AssessmentTest;
+use oat\taoQtiTest\models\TestCategoryRulesUtils;
 
 class TestCategoryRulesGenerator
 {
