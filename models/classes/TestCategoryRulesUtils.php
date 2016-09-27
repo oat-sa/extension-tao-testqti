@@ -22,7 +22,7 @@ namespace oat\taoQtiTest\models;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\common\collections\IdentifierCollection;
-use qitsm\data\AssessmentTest;
+use qtism\data\AssessmentTest;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\state\DefaultValue;
 use qtism\data\state\ValueCollection;
@@ -59,13 +59,13 @@ class TestCategoryRulesUtils
         
         $assessmentItemRefs = $test->getComponentsByClassName('assessmentItemRef');
         foreach ($assessmentItemRefs as $assessmentItemRef) {
-            $foundCategories = array_merge(
+            $categories = array_merge(
                 $categories, 
                 $assessmentItemRef->getCategories()->getArrayCopy()
             );
         }
         
-        return $categories;
+        return array_unique($categories);
     }
     
     /**
@@ -156,7 +156,7 @@ class TestCategoryRulesUtils
      * @param integer $baseType A QTI-SDK Base Type.
      * @param mixed (optional) A default value for the variable.
      */
-    static private function appendOutcomeDeclarationToTest(AssessmentTest $test, $varName, $baseType, $defaultValue = null)
+    static public function appendOutcomeDeclarationToTest(AssessmentTest $test, $varName, $baseType, $defaultValue = null)
     {
         $outcomeDeclarations = $test->getOutcomeDeclarations();
         $outcome = new OutcomeDeclaration($varName, $baseType, Cardinality::SINGLE);
@@ -186,7 +186,7 @@ class TestCategoryRulesUtils
      * @param string $category a QTI category identifier.
      * @return integer The number of items that belong to $category.
      */
-    static private function countNumberOfItemsWithCategory(AssessmentTest $test, $category)
+    static public function countNumberOfItemsWithCategory(AssessmentTest $test, $category)
     {
         $count = 0;
         
@@ -211,7 +211,7 @@ class TestCategoryRulesUtils
      * @param string $varName A QTI variable identifier.
      * @return boolean
      */
-    static private function isVariableSetOutcomeValueTarget(AssessmentTest $test, $varName)
+    static public function isVariableSetOutcomeValueTarget(AssessmentTest $test, $varName)
     {
         $setOutcomeValues = $test->getComponentsByClassName('setOutcomeValue');
         foreach ($setOutcomeValues as $setOutcomeValue) {
