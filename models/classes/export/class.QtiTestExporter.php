@@ -251,8 +251,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
 
-        $testHref = $newTestDir . dirname($testRootDir->getRelPath($file)) . '/test.xml';
-
+        $testHref = $newTestDir . dirname($testRootDir->getRelPath($file)) . 'test.xml';
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
         $this->referenceTest($testHref, $itemIdentifiers);
@@ -356,6 +355,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     
     protected function postProcessing($testXmlDocument)
     {
-        return;
+        return $testXmlDocument;
     }
 }
