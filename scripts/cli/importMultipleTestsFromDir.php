@@ -6,33 +6,33 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\FileSystemService;
-use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-class importMultipleTestsFromDir implements Action
+class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
 {
     use OntologyAwareTrait;
+    use ServiceLocatorAwareTrait;
+
+    /**
+     * Location of directory inside upload filesystem
+     */
+    const TEST_FOLDER_IMPORT = 'testImport';
 
     /** @var  Directory */
     protected $directory;
 
-    protected function init()
-    {
-        $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
+    /** @var  Directory */
+    protected $uploadDirectoryPath;
 
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-
-        $uriDirectory = \common_ext_ExtensionsManager::singleton()
-            ->getExtensionById('tao')
-            ->getConfig('defaultUploadFileSource');
-
-        $this->directory = ServiceManager::getServiceManager()
-            ->get(FileSystemService::SERVICE_ID)
-            ->getDirectory($uriDirectory)
-            ->getDirectory('import');
-    }
-
+    /**
+     * Entry point, init & import test from $this->directory
+     *
+     * @param array $params
+     * @return \common_report_Report
+     */
     public function __invoke($params = [])
     {
         try {
@@ -59,6 +59,39 @@ class importMultipleTestsFromDir implements Action
         }
     }
 
+    /**
+     * Load self::TEST_FOLDER_IMPORT directory
+     *
+     * @throws \Exception
+     * @throws \common_ext_ExtensionException
+     */
+    protected function init()
+    {
+        $this->directory = $this->getServiceLocator()
+            ->get(FileSystemService::SERVICE_ID)
+            ->getDirectory(
+                \common_ext_ExtensionsManager::singleton()
+                    ->getExtensionById('tao')
+                    ->getConfig('defaultUploadFileSource')
+            )
+            ->getDirectory(self::TEST_FOLDER_IMPORT);
+
+        if (!$this->directory->exists()) {
+            throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
+        }
+
+        $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
+
+        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    }
+
+    /**
+     * Call service to import package
+     *
+     * @param $package
+     * @return bool
+     * @throws \Exception
+     */
     protected function importTest($package)
     {
         // Call service to import package
@@ -72,18 +105,35 @@ class importMultipleTestsFromDir implements Action
         return true;
     }
 
+    /**
+     * Return error \common_report_Report
+     *
+     * @param $msg
+     * @return \common_report_Report
+     */
     protected function returnFailure($msg)
     {
         return new \common_report_Report(\common_report_Report::TYPE_ERROR, $msg);
     }
 
+    /**
+     * Return success \common_report_Report
+     *
+     * @param $testsCount
+     * @return \common_report_Report
+     */
     protected function returnSuccess($testsCount)
     {
         return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, $testsCount . ' tests imported');
     }
 
+    /**
+     * Return the test class to import
+     *
+     * @return \core_kernel_classes_Class
+     */
     protected function getDestinationClass()
     {
-        return new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        return $this->getClass(TAO_TEST_CLASS);
     }
 }
