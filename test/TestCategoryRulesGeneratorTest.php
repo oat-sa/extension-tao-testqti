@@ -59,6 +59,8 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[1]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[2]->getIdentifier());
         $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[2]->getExpression());
@@ -67,6 +69,8 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[3]->getIdentifier());
         $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[3]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals('', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals('SCORE', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getVariableIdentifier());
     }
     
     public function testApplyCountOnly()
@@ -127,10 +131,65 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[0]->getIdentifier());
         $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[0]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals('', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals('SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[1]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+    }
+    
+    /**
+     * @depends testApplyScoreOnly
+     */
+    public function testApplyScoreOnlyWithCustomScoreVariableIdentifier()
+    {
+        $generator = new TestCategoryRulesGenerator();
+        $generator->setScoreVariableIdentifier('MY_SCORE');
+        
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $generator->apply($doc->getDocumentComponent(), TestCategoryRulesGenerator::SCORE);
+        
+        $outcomes = $doc->getDocumentComponent()->getOutcomeDeclarations();
+        $this->assertCount(2, $outcomes);
+        $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX]));
+        $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX]));
+        
+        $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
+        $this->assertCount(2, $setOutcomeValues);
+        $this->assertEquals('MY_SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals('MY_SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+    }
+    
+    /**
+     * @depends testApplyScoreOnlyWithCustomScoreVariableIdentifier
+     */
+    public function testApplyScoreOnlyWithCustomScoreVariableIdentifierAndCustomWeightIdentifier()
+    {
+        $generator = new TestCategoryRulesGenerator();
+        $generator->setScoreVariableIdentifier('MY_SCORE');
+        $generator->setWeightIdentifier('MY_WEIGHT');
+        
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $generator->apply($doc->getDocumentComponent(), TestCategoryRulesGenerator::SCORE);
+        
+        $outcomes = $doc->getDocumentComponent()->getOutcomeDeclarations();
+        $this->assertCount(2, $outcomes);
+        $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX]));
+        $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX]));
+        
+        $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
+        $this->assertCount(2, $setOutcomeValues);
+        $this->assertEquals('MY_SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals('MY_WEIGHT', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals('MY_SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals('MY_WEIGHT', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
     }
 }
 

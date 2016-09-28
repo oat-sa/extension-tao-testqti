@@ -27,6 +27,29 @@ class TestCategoryRulesGenerator
     const COUNT = 1;
     const CORRECT = 2;
     const SCORE = 4;
+ 
+    private $scoreVariableIdentifier = 'SCORE';
+    private $weightIdentifier = '';
+    
+    public function setScoreVariableIdentifier($identifier)
+    {
+        $this->scoreVariableIdentifier = $identifier;
+    }
+    
+    public function getScoreVariableIdentifier()
+    {
+        return $this->scoreVariableIdentifier;
+    }
+    
+    public function setWeightIdentifier($identifier = '')
+    {
+        $this->weightIdentifier = $identifier;
+    }
+    
+    public function getWeightIdentifier()
+    {
+        return $this->weightIdentifier;
+    }
     
     public function apply(AssessmentTest $test, $flags = 0)
     {
@@ -47,7 +70,13 @@ class TestCategoryRulesGenerator
             
             if ($flags & self::SCORE) {
                 $totalScoreVarName = TestCategoryRulesUtils::appendTotalScoreVariable($test, $category);
-                TestCategoryRulesUtils::appendTotalScoreOutcomeProcessing($test, $category, $totalScoreVarName);
+                TestCategoryRulesUtils::appendTotalScoreOutcomeProcessing(
+                    $test, 
+                    $category, 
+                    $totalScoreVarName, 
+                    $this->getScoreVariableIdentifier(), 
+                    $this->getWeightIdentifier()
+                );
             }
         }
     }

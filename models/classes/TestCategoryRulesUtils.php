@@ -165,22 +165,28 @@ class TestCategoryRulesUtils
      * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to store 
      * the total score of items related to a given QTI $category.
      * 
+     * In case of the $weightIdentifier argument is given, the score will consider weights defined at the assessmentItemRef
+     * level identified by $weightIdentifier. Otherwise, no weights are taken into account while computing total scores.
+     * 
      * In case of an outcome processing rule targetting a variable name $varName already exists in the test, the outcome
      * processing rule is not appended to the test.
      * 
      * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
      * @param string $category A QTI category identifier.
      * @param string $varName The QTI identifier of the variable to be populated by the outcome processing rule.
+     * @param string $scoreIdentifier (optional) An optional QTI identifier to be used as items' score variable (defaults to "SCORE").
+     * @param string $weightIdentifier (optional) An optional QTI identifier to be used as items' weight to be considered for total score. (defaults to empty string).
      */
-    static public function appendTotalScoreOutcomeProcessing(AssessmentTest $test, $category, $varName)
+    static public function appendTotalScoreOutcomeProcessing(AssessmentTest $test, $category, $varName, $scoreVariableIdentifier = 'SCORE', $weightIdentifier = '')
     {
         if (self::isVariableSetOutcomeValueTarget($test, $varName) === false) {
-            $testVariablesExpression = new TestVariables('SCORE', BaseType::FLOAT);
+            $testVariablesExpression = new TestVariables($scoreVariableIdentifier, BaseType::FLOAT);
+            $testVariablesExpression->setWeightIdentifier($weightIdentifier);
             $testVariablesExpression->setIncludeCategories(
                 new IdentifierCollection(
                     array($category)
                 )
-            );
+            );    
             
             $setOutcomeValue = new SetOutcomeValue(
                 $varName,
