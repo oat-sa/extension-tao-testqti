@@ -24,18 +24,25 @@ use oat\taoQtiTest\models\TestCategoryRulesUtils;
 
 class TestCategoryRulesGenerator
 {
-    public function apply(AssessmentTest $test)
+    const COUNT = 1;
+    const CORRECT = 2;
+    
+    public function apply(AssessmentTest $test, $flags = 0)
     {
+        if ($flags == 0) {
+            $flags = (self::COUNT | self::CORRECT);
+        }
+        
         $categories = TestCategoryRulesUtils::extractCategories($test);
         foreach ($categories as $category) {
-            // Create associated variables for
-            // - The number of items related to the category.
-            // - The number of correctly responded items related to the category.
-            $numberItemsVarName = TestCategoryRulesUtils::appendNumberOfItemsVariable($test, $category);
-            $numberCorrectVarName = TestCategoryRulesUtils::appendNumberCorrectVariable($test, $category);
+            if ($flags & self::COUNT) {
+                TestCategoryRulesUtils::appendNumberOfItemsVariable($test, $category);
+            }
             
-            // Create associated outcome processing rules for the number correct variable.
-            TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($test, $category, $numberCorrectVarName);
+            if ($flags & self::CORRECT ) {
+                $numberCorrectVarName = TestCategoryRulesUtils::appendNumberCorrectVariable($test, $category);
+                TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($test, $category, $numberCorrectVarName);
+            }
         }
     }
 }

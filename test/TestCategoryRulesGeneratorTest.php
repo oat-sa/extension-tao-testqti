@@ -32,7 +32,7 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         return dirname(__FILE__) . '/samples/xml/category_rules/';
     }
     
-    public function testApply()
+    public function testApplyAll()
     {
         $generator = new TestCategoryRulesGenerator();
         $doc = new XmlDocument();
@@ -45,6 +45,46 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX]));
         $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX]));
         $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX]));
+        $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX]));
+        
+        $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
+        $this->assertCount(2, $setOutcomeValues);
+        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
+        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[0]->getExpression());
+        $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
+        
+        $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[1]->getIdentifier());
+        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[1]->getExpression());
+        $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getIncludeCategories()->getArrayCopy());
+    }
+    
+    public function testApplyCountOnly()
+    {
+        $generator = new TestCategoryRulesGenerator();
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $generator->apply($doc->getDocumentComponent(), TestCategoryRulesGenerator::COUNT);
+        
+        $this->assertNull($doc->getDocumentComponent()->getOutcomeProcessing());
+        
+        $outcomes = $doc->getDocumentComponent()->getOutcomeDeclarations();
+        $this->assertCount(2, $outcomes);
+        $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX]));
+        $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX]));
+    }
+    
+    public function testApplyCorrectOnly()
+    {
+        $generator = new TestCategoryRulesGenerator();
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $generator->apply($doc->getDocumentComponent(), TestCategoryRulesGenerator::CORRECT);
+        
+        $outcomes = $doc->getDocumentComponent()->getOutcomeDeclarations();
+        $this->assertCount(2, $outcomes);
+        $this->assertTrue(isset($outcomes['MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX]));
         $this->assertTrue(isset($outcomes['ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX]));
         
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
