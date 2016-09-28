@@ -29,8 +29,12 @@ use qtism\data\state\ValueCollection;
 use qtism\data\state\Value;
 use qtism\data\rules\SetOutcomeValue;
 use qtism\data\rules\OutcomeRuleCollection;
+use qtism\data\rules\OutcomeRule;
 use qtism\data\processing\OutcomeProcessing;
+use qtism\data\expressions\ExpressionCollection;
 use qtism\data\expressions\NumberCorrect;
+use qtism\data\expressions\TestVariables;
+use qtism\data\expressions\operators\Sum;
 
 /**
  * Utility class for Test Category Rules Generation.
@@ -41,6 +45,7 @@ class TestCategoryRulesUtils
 {
     const NUMBER_ITEMS_SUFFIX = '_CATEGORY_NUMBER_ITEMS';
     const NUMBER_CORRECT_SUFFIX = '_CATEGORY_NUMBER_CORRECT';
+    const TOTAL_SCORE_SUFFIX = '_CATEGORY_TOTAL_SCORE';
     
     /**
      * Extract all categories from a given QTI-SDK AssessmentTest object.
@@ -105,7 +110,25 @@ class TestCategoryRulesUtils
     }
     
     /**
-     * Append the outcome processing rules to populate an outcome variable with the number of items correctly responded items related to a given category.
+     * Append a variable dedicated to store the total score items related to a given category.
+     * 
+     * This method will append a QTI outcome variable dedicated to store the total score of items
+     * related to a given QTI $category, to a given QTI $test.
+     * 
+     * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
+     * @param string $category A QTI category identifier.
+     * @return string the identifier of the created QTI outcome variable.
+     */
+     static public function appendTotalScoreVariable(AssessmentTest $test, $category)
+     {
+        $varName = strtoupper($category) . self::TOTAL_SCORE_SUFFIX;
+        self::appendOutcomeDeclarationToTest($test, $varName, BaseType::FLOAT);
+
+        return $varName;
+     }
+    
+    /**
+     * Append the outcome processing rules to populate an outcome variable with the number of items correctly responded related to a given category.
      * 
      * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to count the number
      * of correctly responded items related to a given QTI $category.
@@ -132,20 +155,45 @@ class TestCategoryRulesUtils
                 $numberCorrectExpression
             );
             
-            $outcomeProcessing = $test->getOutcomeProcessing();
-            if ($outcomeProcessing === null) {
-                $test->setOutcomeProcessing(
-                    new OutcomeProcessing(
-                        new OutcomeRuleCollection(
-                            array(
-                                $setOutcomeValue
-                            )
+            self::appendOutcomeRule($test, $setOutcomeValue);
+        }
+    }
+    
+    /**
+     * Append the outcome processing rules to populate an outcome variable with total score of items related to a given category.
+     * 
+     * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to store 
+     * the total score of items related to a given QTI $category.
+     * 
+     * In case of an outcome processing rule targetting a variable name $varName already exists in the test, the outcome
+     * processing rule is not appended to the test.
+     * 
+     * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
+     * @param string $category A QTI category identifier.
+     * @param string $varName The QTI identifier of the variable to be populated by the outcome processing rule.
+     */
+    static public function appendTotalScoreOutcomeProcessing(AssessmentTest $test, $category, $varName)
+    {
+        if (self::isVariableSetOutcomeValueTarget($test, $varName) === false) {
+            $testVariablesExpression = new TestVariables('SCORE', BaseType::FLOAT);
+            $testVariablesExpression->setIncludeCategories(
+                new IdentifierCollection(
+                    array($category)
+                )
+            );
+            
+            $setOutcomeValue = new SetOutcomeValue(
+                $varName,
+                new Sum(
+                    new ExpressionCollection(
+                        array(
+                            $testVariablesExpression
                         )
                     )
-                );
-            } else {
-                $outcomeProcessing->getOutcomeRules()[] = $setOutcomeValue;
-            }
+                )
+            );
+            
+            self::appendOutcomeRule($test, $setOutcomeValue);
         }
     }
     
@@ -227,5 +275,34 @@ class TestCategoryRulesUtils
         }
         
         return false;
+    }
+    
+    /**
+     * Append a QTI-SDK OutcomeRule object in an AssessmentTest's OutcomeProcessing.
+     * 
+     * In case of no OutcomeProcessing is set yet for the AssessmentTest $test object,
+     * it will be automatically created, with the OutcomeRule $rule as its first
+     * rule. Otherwise, the OutcomeRule $rule is simply appended to the existing
+     * OutcomeProcessing object.
+     * 
+     * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
+     * @param qtism\data\rules\OutcomeRule A QTI-SDK OutcomeRule object.
+     */
+    static private function appendOutcomeRule(AssessmentTest $test, OutcomeRule $rule)
+    {
+        $outcomeProcessing = $test->getOutcomeProcessing();
+        if ($outcomeProcessing === null) {
+            $test->setOutcomeProcessing(
+                new OutcomeProcessing(
+                    new OutcomeRuleCollection(
+                        array(
+                            $rule
+                        )
+                    )
+                )
+            );
+        } else {
+            $outcomeProcessing->getOutcomeRules()[] = $rule;
+        }
     }
 }

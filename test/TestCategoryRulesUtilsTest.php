@@ -137,6 +137,26 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         $this->assertNull($defaultValue);
     }
     
+    public function testAppendTotalScoreVariable()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            'MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX,
+            TestCategoryRulesUtils::appendTotalScoreVariable($doc->getDocumentComponent(), 'math')
+        );
+        
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX);
+        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
+        $this->assertEquals(BaseType::FLOAT, $outcome->getBaseType());
+        $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $outcome->getIdentifier());
+        
+        $defaultValue = $outcome->getDefaultValue();
+        $this->assertNull($defaultValue);
+    }
+    
     public function testAppendNumberCorrectOutcomeProcessing()
     {
         $doc = new XmlDocument();

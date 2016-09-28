@@ -26,11 +26,12 @@ class TestCategoryRulesGenerator
 {
     const COUNT = 1;
     const CORRECT = 2;
+    const SCORE = 4;
     
     public function apply(AssessmentTest $test, $flags = 0)
     {
         if ($flags == 0) {
-            $flags = (self::COUNT | self::CORRECT);
+            $flags = (self::COUNT | self::CORRECT | self::SCORE);
         }
         
         $categories = TestCategoryRulesUtils::extractCategories($test);
@@ -42,6 +43,11 @@ class TestCategoryRulesGenerator
             if ($flags & self::CORRECT ) {
                 $numberCorrectVarName = TestCategoryRulesUtils::appendNumberCorrectVariable($test, $category);
                 TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($test, $category, $numberCorrectVarName);
+            }
+            
+            if ($flags & self::SCORE) {
+                $totalScoreVarName = TestCategoryRulesUtils::appendTotalScoreVariable($test, $category);
+                TestCategoryRulesUtils::appendTotalScoreOutcomeProcessing($test, $category, $totalScoreVarName);
             }
         }
     }
