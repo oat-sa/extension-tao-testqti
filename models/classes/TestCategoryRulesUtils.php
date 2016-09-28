@@ -53,21 +53,35 @@ class TestCategoryRulesUtils
      * This method will extract all category identifiers found as assessmentItemRef
      * category identifiers from a given $test object.
      * 
+     * An optional $exclusion array can be given as a second parameter. Each of the Pearl
+     * Compatible Regular Expression will be applied on the categories to be extracted. If 
+     * one of them matches a category, it will be excluded from the extraction process.
+     * 
      * Identifiers returned will be unique.
      * 
      * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
+     * @param array $exclusion (optional) An optional array of Pearl Compatible Regular Expressions.
      * @return array An array of QTI category identifiers.
      */
-    static public function extractCategories(AssessmentTest $test)
+    static public function extractCategories(AssessmentTest $test, array $exclusion = array())
     {
         $categories = array();
         
         $assessmentItemRefs = $test->getComponentsByClassName('assessmentItemRef');
         foreach ($assessmentItemRefs as $assessmentItemRef) {
-            $categories = array_merge(
-                $categories, 
-                $assessmentItemRef->getCategories()->getArrayCopy()
-            );
+            $assessmentItemRefCategories = $assessmentItemRef->getCategories()->getArrayCopy();
+            
+            $count = count($assessmentItemRefCategories);
+            for ($i = 0; $i < $count; $i++) {
+                foreach ($exclusion as $excl) {
+                    if (@preg_match($excl, $assessmentItemRefCategories[$i]) === 1) {
+                        unset($assessmentItemRefCategories[$i]);
+                        break;
+                    }
+                }
+            }
+            
+            $categories = array_merge($categories, $assessmentItemRefCategories);
         }
         
         return array_unique($categories);

@@ -30,6 +30,7 @@ class TestCategoryRulesGenerator
  
     private $scoreVariableIdentifier = 'SCORE';
     private $weightIdentifier = '';
+    private $categoryExclusions = array();
     
     public function setScoreVariableIdentifier($identifier)
     {
@@ -51,13 +52,23 @@ class TestCategoryRulesGenerator
         return $this->weightIdentifier;
     }
     
+    public function setCategoryExclusions(array $exclusions)
+    {
+        $this->categoryExclusions = $exclusions;
+    }
+    
+    public function getCategoryExclusions()
+    {
+        return $this->categoryExclusions;
+    }
+    
     public function apply(AssessmentTest $test, $flags = 0)
     {
         if ($flags == 0) {
             $flags = (self::COUNT | self::CORRECT | self::SCORE);
         }
         
-        $categories = TestCategoryRulesUtils::extractCategories($test);
+        $categories = TestCategoryRulesUtils::extractCategories($test, $this->getCategoryExclusions());
         foreach ($categories as $category) {
             if ($flags & self::COUNT) {
                 TestCategoryRulesUtils::appendNumberOfItemsVariable($test, $category);

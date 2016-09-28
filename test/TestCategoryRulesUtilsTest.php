@@ -55,6 +55,50 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         );
     }
     
+    public function testExtractCategoriesWithExclusionsOne()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            array(),
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/math/', '/engl/'))
+        );
+    }
+    
+    public function testExtractCategoriesWithExclusionsTwo()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            array('english'),
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/math/', '/math/'))
+        );
+    }
+    
+    public function testExtractCategoriesWithExclusionsThree()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories.xml');
+        
+        $this->assertEquals(
+            array('english'),
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/MATH/i'))
+        );
+    }
+    
+    public function testExtractCategoriesWithExclusionsFour()
+    {
+        $doc = new XmlDocument();
+        $doc->load(self::samplesDir() . 'categories-x-tao.xml');
+        
+        $this->assertEquals(
+            array('math', 'english'),
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/^X-TAO-/i'))
+        );
+    }
+    
     public function testCountNumberOfItemsWithCategory()
     {
         $doc = new XmlDocument();
