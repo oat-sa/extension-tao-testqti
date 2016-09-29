@@ -200,21 +200,53 @@ function (
              */
             moveForward: function () {
                 var self = this,
-                    action = 'moveForward';
+                    action = 'moveForward',
+                    doExitSection;
 
                 this.disableGui();
 
                 if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
+                    // determine the exit section action
                     if( this.isTimedSection() && !this.testContext.isTimeout){
-                        this.exitTimedSection(action);
+                        doExitSection = function() {
+                            self.exitTimedSection(action);
+                        }
                     } else {
-                        this.exitSection(action);
+                        doExitSection = function() {
+                            self.exitSection(action);
+                        }
                     }
+                    // display end test warning
+                    if (this.shouldDisplayEndTestWarning()) {
+                        this.displayEndTestWarning(doExitSection);
+                        this.enableGui();
+                    } else {
+                        doExitSection();
+                    }
+
                 } else {
                     this.killItemSession(function () {
                         self.actionCall(action);
                     });
                 }
+            },
+
+            shouldDisplayEndTestWarning: function(){
+                return (this.testContext.isLast === true && this.hasOption(optionEndTestWarning));
+            },
+
+            displayEndTestWarning: function(nextAction){
+                var options = {
+                    confirmLabel: __('OK'),
+                    cancelLabel: __('Cancel'),
+                    showItemCount: false
+                };
+
+                this.displayExitMessage(
+                    __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                    nextAction,
+                    options
+                );
             },
 
             /**
@@ -269,31 +301,14 @@ function (
              * @param {Number} [exitCode]
              */
             exitSection: function(action, params, exitCode){
-                var self = this,
-                    doExitSection = function() {
-                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
-                        self.killItemSession(function () {
-                            self.actionCall(action, params);
-                        });
-                    };
+                var self = this;
 
-                if (this.shouldDisplayEndTestWarning()) {
-                    this.displayEndTestWarning(doExitSection);
-                } else {
-                    doExitSection();
-                }
+                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                self.killItemSession(function () {
+                    self.actionCall(action, params);
+                });
+
                 this.enableGui();
-            },
-
-            shouldDisplayEndTestWarning: function(){
-                return (this.testContext.isLast === true && this.hasOption(optionEndTestWarning));
-            },
-
-            displayEndTestWarning: function(nextAction){
-                this.displayExitMessage(
-                    __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                    nextAction
-                );
             },
 
             /**
@@ -311,15 +326,15 @@ function (
                         self.exitSection(action, params);
                     };
 
-                // prevent duplicate warning
-                if (! this.shouldDisplayEndTestWarning()) {
+                // prevent duplicate warning in case of ending the test while exiting the timed section
+                if (action === 'moveForward' && this.shouldDisplayEndTestWarning()) {
+                    doExitTimedSection();
+                } else {
                     this.displayExitMessage(
                         __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
                         doExitTimedSection,
-                        'testSection'
+                        { scope: 'testSection' }
                     );
-                } else {
-                    doExitTimedSection();
                 }
 
                 this.enableGui();
@@ -343,7 +358,7 @@ function (
                     this.displayExitMessage(
                         __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
                         doNextSection,
-                        'testSection'
+                        { scope: 'testSection' }
                     );
                 } else {
                     doNextSection();
@@ -377,36 +392,50 @@ function (
              * Displays an exit message for a particular scope
              * @param {String} message
              * @param {Function} [action]
-             * @param {String} [scope]
+             * @param {Object} [options]
+             * @param {String} [options.scope]
+             * @param {String} [options.confirmLabel] - label of confirm button
+             * @param {String} [options.cancelLabel] - label of cancel button
+             * @param {Boolean} [options.showItemCount] - display the number of unanswered / flagged items in modal
              * @returns {jQuery} Returns the message box
              */
-            displayExitMessage: function(message, action, scope) {
-                var self = this;
+            displayExitMessage: function(message, action, options) {
+                var self = this,
+                    options = options || {},
+                    scope = options.scope,
+                    confirmLabel = options.confirmLabel || __('Yes'),
+                    cancelLabel = options.cancelLabel || __('No'),
+                    showItemCount = typeof options.showItemCount !== 'undefined' ? options.showItemCount : true;
+
                 var $confirmBox = $('.exit-modal-feedback');
                 var progression = this.getProgression(scope);
                 var unansweredCount = (progression.total - progression.answered);
                 var flaggedCount = progression.flagged;
 
-                if (unansweredCount && this.isCurrentItemAnswered()) {
-                    unansweredCount--;
-                }
-
-                if (flaggedCount && unansweredCount) {
-                    message = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                        unansweredCount.toString(),
-                        flaggedCount.toString()
-                    ) + ' ' + message;
-                } else {
-                    if (flaggedCount) {
-                        message = __('You have %s item(s) marked for review.', flaggedCount.toString()) + ' ' + message;
+                if (showItemCount) {
+                    if (unansweredCount && this.isCurrentItemAnswered()) {
+                        unansweredCount--;
                     }
 
-                    if (unansweredCount) {
-                        message = __('You have %s unanswered question(s).', unansweredCount.toString()) + ' ' + message;
+                    if (flaggedCount && unansweredCount) {
+                        message = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                                unansweredCount.toString(),
+                                flaggedCount.toString()
+                            ) + ' ' + message;
+                    } else {
+                        if (flaggedCount) {
+                            message = __('You have %s item(s) marked for review.', flaggedCount.toString()) + ' ' + message;
+                        }
+
+                        if (unansweredCount) {
+                            message = __('You have %s unanswered question(s).', unansweredCount.toString()) + ' ' + message;
+                        }
                     }
                 }
 
                 $confirmBox.find('.message').html(message);
+                $confirmBox.find('.js-exit-confirm').html(confirmLabel);
+                $confirmBox.find('.js-exit-cancel').html(cancelLabel);
                 $confirmBox.modal({ width: 500 });
 
                 $confirmBox.find('.js-exit-cancel, .modal-close').off('click').on('click', function () {
@@ -1151,7 +1180,7 @@ function (
                         testMetaData.clearData();
                     });
                     },
-                    this.testReview ? this.testContext.reviewScope : null
+                    { scope: this.testReview ? this.testContext.reviewScope : null }
                 );
             },
 
