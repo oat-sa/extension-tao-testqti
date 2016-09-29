@@ -21,5 +21,7 @@
  * Default test compilation configuration file
  */
 return array(
+    // Whether or not to enable category-based automatic QTI rules generation when compiling a QTI test.
+    // See \oat\taoQtiTest\models\TestCategoryRulesService for a more in-depth documentation.
     'enable-category-rules-generation' => false
 );
