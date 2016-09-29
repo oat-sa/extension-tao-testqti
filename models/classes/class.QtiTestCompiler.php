@@ -448,7 +448,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $assessmentTest
      */
     protected function updateTestDefinition(AssessmentTest $assessmentTest) {
-        return;
+        // Call TestCategoryRulesService to upgrade 
     }
     
     /**
