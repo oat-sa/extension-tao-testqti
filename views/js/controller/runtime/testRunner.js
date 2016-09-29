@@ -73,6 +73,7 @@ function (
         optionNextSection = 'x-tao-option-nextSection',
         optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
         optionReviewScreen = 'x-tao-option-reviewScreen',
+        optionEndTestWarning = 'x-tao-option-endTestWarning',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -268,11 +269,32 @@ function (
              * @param {Number} [exitCode]
              */
             exitSection: function(action, params, exitCode){
-                var self = this;
-                testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
-                self.killItemSession(function () {
-                    self.actionCall(action, params);
-                });
+                var self = this,
+                    doExitSection = function() {
+                        testMetaData.addData({"SECTION" : {"SECTION_EXIT_CODE" : exitCode || testMetaData.SECTION_EXIT_CODE.COMPLETED_NORMALLY}});
+                        self.killItemSession(function () {
+                            self.actionCall(action, params);
+                        });
+                    };
+
+                if (this.shouldDisplayEndTestWarning()) {
+                    this.displayEndTestWarning(doExitSection);
+                } else {
+                    doExitSection();
+                }
+                this.enableGui();
+            },
+
+            shouldDisplayEndTestWarning: function(){
+                return (this.testContext.isLast === true && this.hasOption(optionEndTestWarning));
+            },
+
+            // todo: move into exitSection ?
+            displayEndTestWarning: function(nextAction){
+                this.displayExitMessage(
+                    __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                    nextAction
+                );
             },
 
             /**
@@ -281,20 +303,25 @@ function (
              * @param {Object} params
              */
             exitTimedSection: function(action, params){
-                var self = this;
-                var qtiRunner = this.getQtiRunner();
-
-                if (qtiRunner) {
-                    qtiRunner.updateItemApi();
-                }
-
-                this.displayExitMessage(
-                    __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
-                    function() {
+                var self = this,
+                    qtiRunner = this.getQtiRunner(),
+                    doExitTimedSection = function() {
+                        if (qtiRunner) {
+                            qtiRunner.updateItemApi();
+                        }
                         self.exitSection(action, params);
-                    },
-                    'testSection'
-                );
+                    };
+
+                // prevent duplicate warning
+                if (! this.shouldDisplayEndTestWarning()) {
+                    this.displayExitMessage(
+                        __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                        doExitTimedSection,
+                        'testSection'
+                    );
+                } else {
+                    doExitTimedSection();
+                }
 
                 this.enableGui();
             },
@@ -514,6 +541,7 @@ function (
              */
             skip: function () {
                 this.disableGui();
+                // todo: add warning here also ?
                 this.actionCall('skip');
             },
 
