@@ -11,6 +11,7 @@ return new \oat\taoQtiTest\models\TestCategoryRulesService(
         'weight-identifier' => 'WEIGHT',
         'category-exclusions' => array(
             '/x-tao-/'
-        )
+        ),
+        'flags' => \oat\taoQtiTest\models\TestCategoryRulesGenerator::COUNT | \oat\taoQtiTest\models\TestCategoryRulesGenerator::CORRECT | \oat\taoQtiTest\models\TestCategoryRulesGenerator::SCORE
     )
 );

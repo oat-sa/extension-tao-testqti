@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -634,7 +635,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                     'weight-identifier' => 'WEIGHT',
                     'category-exclusions' => array(
                         '/x-tao-/'
-                    )
+                    ),
+                    'flags' => TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT | TestCategoryRulesGenerator::SCORE
                 )
             );
             $categoryRulesService->setServiceManager($this->getServiceManager());

@@ -33,6 +33,8 @@ use qtism\common\utils\Url;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
 use oat\oatbox\filesystem\Directory;
+use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\TestCategoryRulesService;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -448,7 +450,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $assessmentTest
      */
     protected function updateTestDefinition(AssessmentTest $assessmentTest) {
-        // Call TestCategoryRulesService to upgrade 
+        // Call TestCategoryRulesService to generate additional rules if enabled.
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+        if (isset($config['enable-category-rules-generation']) && $config['enable-category-rules-generation'] === true) {
+            common_Logger::i('Automatic Category Rules Generation will occur...');
+            $serviceManager = ServiceManager::getServiceManager();
+            $testCategoryRulesService = $serviceManager->get(TestCategoryRulesService::SERVICE_ID);
+            $testCategoryRulesService->apply($assessmentTest);
+        }
     }
     
     /**

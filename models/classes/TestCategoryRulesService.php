@@ -34,9 +34,9 @@ class TestCategoryRulesService extends ConfigurableService
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         
         $generator = new TestCategoryRulesGenerator();
-        $generator->setScoreVariableIdentifier($options['score-variable-identifier']);
-        $generator->setWeightIdentifier('weight-identifier');
-        $generator->setCategoryExclusions('category-exclusions');
+        $generator->setScoreVariableIdentifier(empty($options['score-variable-identifier']) ? 'SCORE' : (string) $options['score-variable-identifier']);
+        $generator->setWeightIdentifier(array_key_exists($options['weight-identifier']) ? (string) $options['weight-identifier'] : '');
+        $generator->setCategoryExclusions(empty($options['category-exclusions']) ? array() : $options['category-exclusions']);
         $this->setGenerator($generator);
     }
     
@@ -45,13 +45,13 @@ class TestCategoryRulesService extends ConfigurableService
         $this->generator = $generator;
     }
     
-    protected funtion getGenerator()
+    protected function getGenerator()
     {
         return $this->generator;
     }
     
     public function apply(AssessmentTest $test)
     {
-        $this->getGenerator()->apply($test, $this->getOption('flags'));
+        $this->getGenerator()->apply($test, (int) $this->getOption('flags'));
     }
 }
