@@ -307,8 +307,6 @@ function (
                 self.killItemSession(function () {
                     self.actionCall(action, params);
                 });
-
-                this.enableGui();
             },
 
             /**
