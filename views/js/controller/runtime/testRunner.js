@@ -289,7 +289,6 @@ function (
                 return (this.testContext.isLast === true && this.hasOption(optionEndTestWarning));
             },
 
-            // todo: move into exitSection ?
             displayEndTestWarning: function(nextAction){
                 this.displayExitMessage(
                     __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
@@ -540,9 +539,17 @@ function (
              * Skips the current item
              */
             skip: function () {
-                this.disableGui();
-                // todo: add warning here also ?
-                this.actionCall('skip');
+                var self = this,
+                    doSkip = function() {
+                        this.disableGui();
+                        self.actionCall('skip');
+                    };
+
+                if (this.shouldDisplayEndTestWarning()) {
+                    this.displayEndTestWarning(doSkip);
+                } else {
+                    doSkip();
+                }
             },
 
             /**
