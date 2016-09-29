@@ -35,7 +35,7 @@ use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
- * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
 
@@ -619,6 +619,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.17.0');
         }
 
-        $this->skip('5.17.0', '5.17.3');
+        $this->skip('5.17.0', '5.18.0');
     }
 }
