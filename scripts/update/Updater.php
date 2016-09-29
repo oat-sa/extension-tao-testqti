@@ -621,9 +621,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.17.0');
         }
         
-        $this->skip('5.17.0', '5.17.2');
+        $this->skip('5.17.0', '5.17.3');
         
-        if ($this->isVersion('5.17.2')) {
+        if ($this->isVersion('5.17.3')) {
             
             \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', array(
                 'enable-category-rules-generation' => false
