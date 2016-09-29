@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p2  http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd"
+    identifier="categories-weights" title="Categories and Weights">
+    <testPart navigationMode="linear" submissionMode="individual" identifier="TP01">
+        <itemSessionControl maxAttempts="0" allowSkipping="true"/>
+        <assessmentSection identifier="S01" title="Section 01" visible="true" required="true">
+            <assessmentItemRef identifier="Q01" href="./Q01/qti.xml" category="geek x-tao-custom1">
+                <!-- Implicit weight of 1.0, as per QTI specification. -->
+            </assessmentItemRef>
+            <assessmentItemRef identifier="Q02" href="./Q02/qti.xml" category="french geek x-tao-custom2">
+                <weight identifier="WEIGHT" value="2.5"/>
+            </assessmentItemRef>
+            <assessmentItemRef identifier="Q03" href="./Q03/qti.xml" category="geek">
+                <weight identifier="WEIGHT" value="1.5"/>
+            </assessmentItemRef>
+        </assessmentSection>
+    </testPart>
+</assessmentTest>

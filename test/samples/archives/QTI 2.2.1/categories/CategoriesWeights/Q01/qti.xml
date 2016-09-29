@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p2  http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd"
+	identifier="Q01" title="What is between Episodes III and IV?" adaptive="false" timeDependent="false">
+	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+		<correctResponse>
+			<value>rogue_one</value>
+		</correctResponse>
+	</responseDeclaration>
+	<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
+		<defaultValue>
+			<value>0</value>
+		</defaultValue>
+	</outcomeDeclaration>
+	<itemBody>
+		<choiceInteraction id="interaction" responseIdentifier="RESPONSE" shuffle="true" maxChoices="1">
+			<prompt>Which Disney® movie takes place between Episodes III and IV?</prompt>
+			<simpleChoice identifier="rebel">Rebel</simpleChoice>
+			<simpleChoice identifier="rogue_one">Rogue One</simpleChoice>
+			<simpleChoice identifier="toy_story">Toy Story</simpleChoice>
+		</choiceInteraction>
+	</itemBody>
+	<responseProcessing template="http://www.imsglobal.org/question/qti_v2p2/rptemplates/match_correct"/>
+</assessmentItem>

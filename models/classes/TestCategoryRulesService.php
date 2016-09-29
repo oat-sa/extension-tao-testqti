@@ -55,7 +55,7 @@ class TestCategoryRulesService extends ConfigurableService
         
         $generator = new TestCategoryRulesGenerator();
         $generator->setScoreVariableIdentifier(empty($options['score-variable-identifier']) ? 'SCORE' : (string) $options['score-variable-identifier']);
-        $generator->setWeightIdentifier(array_key_exists($options['weight-identifier']) ? (string) $options['weight-identifier'] : '');
+        $generator->setWeightIdentifier(array_key_exists('weight-identifier', $options) ? (string) $options['weight-identifier'] : '');
         $generator->setCategoryExclusions(empty($options['category-exclusions']) ? array() : $options['category-exclusions']);
         $this->setGenerator($generator);
     }
