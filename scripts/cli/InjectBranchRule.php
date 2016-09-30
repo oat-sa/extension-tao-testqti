@@ -51,32 +51,32 @@ class InjectBranchRule implements Action
                 \common_report_Report::TYPE_ERROR, 
                 'Test URI not provided as parameter 1.'
             );
-        } else {
-            $testResource = new \core_kernel_classes_Resource($params[0]);
-            if ($testResource->exists() === false) {
-                return new \common_report_Report(
-                    \common_report_Report::TYPE_ERROR, 
-                    'No RDFS Resource found for URI ' . $params[0] . '.'
-                );
-            }
-            
-            $qtiService = \taoQtiTest_models_classes_QtiTestService::singleton();
-            $testDoc = $qtiService->getDoc($testResource);
-            $test = $testDoc->getDocumentComponent();
-            
-            $assessmentItemRef = $test->getComponentByIdentifier($params[1]);
-            if (!$assessmentItemRef) {
-                return new \common_report_Report(
-                    \common_report_Report::TYPE_ERROR, 
-                    'No QTI assessmentItemRef with identifier ' . $params[1] . ' found in the QTI Test definition.'
-                );
-            }
         }
         
         if (empty($params[1]) === true) {
             return new \common_report_Report(
                 \common_report_Report::TYPE_ERROR, 
                 'AssessmentItemRefIdentifier not provided as parameter 2.'
+            );
+        }
+        
+        $testResource = new \core_kernel_classes_Resource($params[0]);
+        if ($testResource->exists() === false) {
+            return new \common_report_Report(
+                \common_report_Report::TYPE_ERROR, 
+                'No RDFS Resource found for URI ' . $params[0] . '.'
+            );
+        }
+        
+        $qtiService = \taoQtiTest_models_classes_QtiTestService::singleton();
+        $testDoc = $qtiService->getDoc($testResource);
+        $test = $testDoc->getDocumentComponent();
+        
+        $assessmentItemRef = $test->getComponentByIdentifier($params[1]);
+        if (!$assessmentItemRef) {
+            return new \common_report_Report(
+                \common_report_Report::TYPE_ERROR, 
+                'No QTI assessmentItemRef with identifier ' . $params[1] . ' found in the QTI Test definition.'
             );
         }
         
