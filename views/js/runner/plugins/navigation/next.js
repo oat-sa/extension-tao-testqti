@@ -26,8 +26,9 @@ define([
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, buttonTpl){
+], function ($, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 
     /**
@@ -118,7 +119,9 @@ define([
                     if(context.options.endTestWarning && context.isLast){
                         testRunner.trigger(
                             'confirm.endTest',
-                            __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test'),
+                            messages.getExitMessage(
+                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test'),
+                                'test', testRunner),
                             _.partial(doNext, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
