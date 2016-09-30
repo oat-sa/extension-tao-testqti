@@ -24,7 +24,7 @@ use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestCategoryRulesUtils;
 use qtism\data\storage\xml\XmlDocument;
 
-class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner 
+class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner 
 {
     
     static public function samplesDir() 
