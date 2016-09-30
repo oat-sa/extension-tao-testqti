@@ -98,15 +98,30 @@ define([
                 return false;
             };
 
+            function doSkip() {
+                testRunner.skip();
+            }
+
             this.$element = createElement(testRunner.getTestContext());
 
             this.$element.on('click', function(e){
+                var enable = _.bind(self.enable, self);
+                var context = testRunner.getTestContext();
+
                 e.preventDefault();
 
                 if(self.getState('enabled') !== false){
                     self.disable();
-
-                    testRunner.skip();
+                    if(context.options.endTestWarning && context.isLast){
+                        testRunner.trigger(
+                            'confirm.endTest',
+                            __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test'),
+                            doSkip, // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+                    } else {
+                        doSkip();
+                    }
                 }
             });
 
