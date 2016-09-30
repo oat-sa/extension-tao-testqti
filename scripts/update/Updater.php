@@ -24,6 +24,8 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -619,6 +621,31 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.17.0');
         }
 
-        $this->skip('5.17.0', '5.18.0');
+        $this->skip('5.17.0', '5.17.3');
+
+        if ($this->isVersion('5.17.3')) {
+
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', array(
+                'enable-category-rules-generation' => false
+            ));
+
+            $categoryRulesService = new TestCategoryRulesService(
+                array(
+                    'score-variable-identifier' => 'SCORE',
+                    'weight-identifier' => 'WEIGHT',
+                    'category-exclusions' => array(
+                        '/x-tao-/'
+                    ),
+                    'flags' => TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT | TestCategoryRulesGenerator::SCORE
+                )
+            );
+            $categoryRulesService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestCategoryRulesService::SERVICE_ID, $categoryRulesService);
+
+            $this->setVersion('5.18.0');
+        }
+
+        $this->skip('5.18.0', '5.19.0');
     }
 }
