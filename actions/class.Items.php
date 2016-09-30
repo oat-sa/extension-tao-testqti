@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -62,10 +62,18 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $this->returnJson($items);
     }
 
+    /**
+     * Get all categories related to a list of items.
+     *
+     * The response is encoded in JSON and contains the list of items and its categories.
+     * parameter uris is required in order to get categories for one or more items
+     * @throws common_exception_MissingParameter
+     */
     public function getCategories()
     {
         if (!$this->hasRequestParameter('uris')) {
-            throw new common_exception_MissingParameter('uris');
+            $this->returnJson(__("At least one mandatory parameter was required but found missing in your request"), 412);
+            return;
         }
 
         $uris = $this->getRequestParameter('uris');
@@ -78,7 +86,12 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
     }
 
-    private function getItems($itemUris)
+    /**
+     * Get the qti items from a list of uris
+     * @param array $itemUris list of item uris to get
+     * @return core_kernel_classes_Resource[] $items
+     */
+    private function getItems(array $itemUris)
     {
         $items = array();
 
