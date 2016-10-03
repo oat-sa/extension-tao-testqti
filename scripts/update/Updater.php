@@ -643,8 +643,9 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->getServiceManager()->register(TestCategoryRulesService::SERVICE_ID, $categoryRulesService);
             
-            $this->setVersion('5.18.0');
+            $this->setVersion('5.19.0');
         }
-        $this->skip('5.17.0', '5.19.0');
+
+        $this->skip('5.19.0', '5.20.0');
     }
 }
