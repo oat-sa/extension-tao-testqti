@@ -37,7 +37,7 @@ use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
- * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
 
@@ -620,15 +620,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
             $this->setVersion('5.17.0');
         }
-        
+
         $this->skip('5.17.0', '5.17.3');
-        
+
         if ($this->isVersion('5.17.3')) {
-            
+
             \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', array(
                 'enable-category-rules-generation' => false
             ));
-            
+
             $categoryRulesService = new TestCategoryRulesService(
                 array(
                     'score-variable-identifier' => 'SCORE',
@@ -642,10 +642,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             $categoryRulesService->setServiceManager($this->getServiceManager());
 
             $this->getServiceManager()->register(TestCategoryRulesService::SERVICE_ID, $categoryRulesService);
-            
-            $this->setVersion('5.19.0');
+
+            $this->setVersion('5.18.0');
         }
 
-        $this->skip('5.19.0', '5.20.0');
+        $this->skip('5.18.0', '5.21.0');
     }
 }
