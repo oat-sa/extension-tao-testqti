@@ -21,15 +21,25 @@
  */
 define([
 'jquery',
-'lodash', 
+'lodash',
 'i18n',
 'taoQtiTest/controller/creator/views/actions',
 'taoQtiTest/controller/creator/helpers/sectionCategory'],
 function($, _, __, actions, sectionCategory){
     'use strict';
 
+    /**
+     * We need to resize the itemref in case of long labels
+     */
+    var resize = _.throttle(function resize(){
+        var $refs = $('.itemrefs').first();
+        var $actions = $('.itemref .actions').first();
+        var width = $refs.innerWidth() - $actions.outerWidth();
+        $('.itemref > .title').width(width);
+    }, 100);
+
    /**
-    * Set up an item ref: init action beahviors. Called for each one.
+    * Set up an item ref: init action behaviors. Called for each one.
     *
     * @param {jQueryElement} $itemRef - the itemRef element to set up
     * @param {Object} model - the data model to bind to the ref
@@ -37,7 +47,7 @@ function($, _, __, actions, sectionCategory){
    var setUp =  function setUp ($itemRef, model){
 
         var $actionContainer = $('.actions', $itemRef);
-        
+
         actions.properties($actionContainer, 'itemref', model, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
@@ -51,12 +61,12 @@ function($, _, __, actions, sectionCategory){
         function propHandler (propView) {
 
             categoriesProperty(propView.getView());
-            
+
             $itemRef.parents('.testpart').on('delete', removePropHandler);
             $itemRef.parents('.section').on('delete', removePropHandler);
             $itemRef.on('delete', removePropHandler);
-            
-            function removePropHandler(e){
+
+            function removePropHandler(){
                 if(propView !== null){
                     propView.destroy();
                 }
@@ -80,12 +90,12 @@ function($, _, __, actions, sectionCategory){
                 },
                 maximumInputLength : 32
             });
-            
+
             initCategories();
             $view.on('propopen.propview', function(){
                 initCategories();
             });
-            
+
             /**
              * save the categories into the model
              * @private
@@ -101,12 +111,10 @@ function($, _, __, actions, sectionCategory){
     */
    var listenActionState =  function listenActionState (){
 
-        var $actionContainer;
-        
         $('.itemrefs').each(function(){
             actions.movable($('.itemref', $(this)), 'itemref', '.actions');
         });
-       
+
         $(document)
         .on('delete', function(e){
             var $parent;
@@ -128,18 +136,8 @@ function($, _, __, actions, sectionCategory){
    };
 
     /**
-     * We need to resize the itemref in case of long labels
-     */
-    var resize = _.throttle(function resize(){
-        var $refs = $('.itemrefs').first();
-        var $actions = $('.itemref .actions').first();
-        var width = $refs.innerWidth() - $actions.outerWidth();
-        $('.itemref > .title').width(width); 
-    }, 100);
-    
-    /**
      * The itemrefView setup itemref related components and beahvior
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/itemref
      */
     return {
@@ -147,5 +145,5 @@ function($, _, __, actions, sectionCategory){
         listenActionState: listenActionState,
         resize : resize
    };
- 
+
 });
