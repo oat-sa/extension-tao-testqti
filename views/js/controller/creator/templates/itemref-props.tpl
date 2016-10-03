@@ -90,14 +90,15 @@
 
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 
-    <div class="itemref-weights toggled">
+    <!-- <div class="itemref-weights toggled"> -->
+    <div class="itemref-weights">
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
         <div class="grid-row ">
             <div class="col-9">
-                <strong>Identifier</strong>
+                <strong>{{__ 'Identifier'}}</strong>
             </div>
             <div class="col-2">
-                <strong>Value</strong>
+                <strong>{{__ 'Value'}}</strong>
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -106,34 +107,10 @@
                 </div>
             </div>
         </div>
-        <div class="grid-row">
-            <div class="col-9">
-                <input name="itemref-weight-identifier-x" type="text" value="WEIGHT" />
-            </div>
-            <div class="col-2">
-                <input name="itemref-weight-value-x" type="text" data-increment="1" data-min="0" value="5" />
-            </div>
-            <div class="col-1">
-                <span class="icon-bin" data-tooltip="~ .tooltip-bin" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">Remove weight</div>
-            </div>
-        </div>
-        <div class="grid-row">
-            <div class="col-9">
-                <input name="itemref-weight-identifier-x" type="text" value="WEIGHT_2" />
-            </div>
-            <div class="col-2">
-                <input name="itemref-weight-value-x" type="text" data-increment="1" data-min="0" value="3" />
-            </div>
-            <div class="col-1">
-                <span class="icon-bin" data-tooltip="~ .tooltip-bin" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">Remove weight</div>
-            </div>
-        </div>
+        <div class="itemref-weights-entries"></div>
         <div class="grid-row">
             <div class="col-12">
-                <span class="icon-add"></span>
-                add a new weight
+                <a class="itemref-weights-add"><span class="icon-add"></span> add a new weight</a>
             </div>
         </div>
     </div>
