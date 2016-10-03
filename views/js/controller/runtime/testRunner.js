@@ -200,23 +200,19 @@ function (
              */
             moveForward: function () {
                 var self = this,
-                    action = 'moveForward',
-                    doExitSection;
+                    action = 'moveForward';
+
+                function doExitSection() {
+                    if( self.isTimedSection() && !self.testContext.isTimeout){
+                        self.exitTimedSection(action);
+                    } else {
+                        self.exitSection(action);
+                    }
+                }
 
                 this.disableGui();
 
                 if( (( this.testContext.numberItemsSection - this.testContext.itemPositionSection - 1) == 0) && this.isCurrentItemActive()){
-                    // determine the exit section action
-                    if( this.isTimedSection() && !this.testContext.isTimeout){
-                        doExitSection = function() {
-                            self.exitTimedSection(action);
-                        }
-                    } else {
-                        doExitSection = function() {
-                            self.exitSection(action);
-                        }
-                    }
-                    // display end test warning
                     if (this.shouldDisplayEndTestWarning()) {
                         this.displayEndTestWarning(doExitSection);
                         this.enableGui();
@@ -231,10 +227,16 @@ function (
                 }
             },
 
+            /**
+             * Check if necessary to display an end test warning
+             */
             shouldDisplayEndTestWarning: function(){
                 return (this.testContext.isLast === true && this.hasOption(optionEndTestWarning));
             },
 
+            /**
+             * Warns upon exiting test
+             */
             displayEndTestWarning: function(nextAction){
                 var options = {
                     confirmLabel: __('OK'),
