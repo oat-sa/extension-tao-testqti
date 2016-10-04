@@ -117,6 +117,22 @@ define(['lodash', 'i18n'], function(_, __){
         },
 
         /**
+         * Checks that a weight value is valid
+         * @returns {Object} the validator
+         */
+        weightValueValidator : function idAvailableValidator(){
+            return {
+                name : 'weightValueValidator',
+                message : __('must be &ge; 1 '),
+                validate : function(value, callback){
+                    if(typeof callback === 'function'){
+                        callback(parseFloat(value.replace(',', '.')) >= 1);
+                    }
+                }
+            };
+        },
+
+        /**
          * Does the value contains the type type
          * @param {Object} value
          * @param {string} type

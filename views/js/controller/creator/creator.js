@@ -161,10 +161,10 @@ define([
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
                     //register validators
-                    /// todo: add custom validator for weight value
                     validators.register('idFormat', qtiTestHelper.idFormatValidator());
                     validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
+                    validators.register('weightValueValidator', qtiTestHelper.weightValueValidator());
 
                     //once model is loaded, we set up the test view
                     testView(model, {
