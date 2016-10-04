@@ -121,24 +121,19 @@ function(
          */
         function weightsProperty(propView) {
             var $view = propView.getView(),
-                $weightList = $view.find('[data-bind-each="weights"]'); // todo: rename
+                $weightList = $view.find('[data-bind-each="weights"]');
 
-            // todo: harmonize selectors names 's'
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
-                    value: 1
+                    value: 1,
+                    identifier: (model.weights.length === 0) ? 'WEIGHT' : null
                 };
-                if (model.weights.length === 0) {
-                    defaultData.identifier = 'WEIGHT'; // we set this as default in case no weight has been defined yet
-                }
                 e.preventDefault();
 
                 $weightList.append(weightTpl(defaultData));
                 $weightList.trigger('add.internalbinder'); // trigger model update
-                propView.propValidation();
+                $view.groupValidator();
             });
-
-
         }
     };
 

@@ -149,8 +149,7 @@ function($, ui, DataBinder, templates){
             onOpen : onOpen,
             onClose : onClose,
             destroy : destroy,
-            toggle : toggle,
-            propValidation : propValidation
+            toggle : toggle
         };
     };
 
