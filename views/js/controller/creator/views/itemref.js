@@ -25,6 +25,7 @@ define([
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
+    'taoQtiTest/controller/creator/helpers/qtiTest',
     'tpl!taoQtiTest/controller/creator/templates/itemref-props-weights'
 ],
 function(
@@ -33,6 +34,7 @@ function(
     __,
     actions,
     sectionCategory,
+    qtiTestHelper,
     weightTpl
 ){
     'use strict';
@@ -126,12 +128,16 @@ function(
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
                     value: 1,
-                    identifier: (model.weights.length === 0) ? 'WEIGHT' : null
+                    identifier: (model.weights.length === 0)
+                        ? 'WEIGHT'
+                        // todo: check with Jerome the scope of the WEIGHT identifiers
+                        : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(model))
                 };
                 e.preventDefault();
 
                 $weightList.append(weightTpl(defaultData));
                 $weightList.trigger('add.internalbinder'); // trigger model update
+
                 $view.groupValidator();
             });
         }
