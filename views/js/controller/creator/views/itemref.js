@@ -153,14 +153,12 @@ function(
                 $weights.each(function () {
                     $entry = $(this);
                     identifier = $entry.find('[data-identifier=itemref-weight-identifier]').val().trim();
-                    value = $entry.find('[data-identifier=itemref-weight-value]').val()
-                        .replace(',', '.')
-                        .trim();
+                    value = parseFloat($entry.find('[data-identifier=itemref-weight-value]').val().replace(',', '.').trim());
 
                     if (identifier && value) {
                         newModel.push({
                             identifier: identifier,
-                            value: parseFloat(value)
+                            value: value
                         });
                     }
                 });
