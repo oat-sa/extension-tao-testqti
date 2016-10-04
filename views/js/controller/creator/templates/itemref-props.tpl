@@ -90,9 +90,7 @@
 
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 
-    <!-- <div class="itemref-weights toggled"> -->
-    <div class="itemref-weights">
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
+    <div class="itemref-weights toggled">
         <div class="grid-row ">
             <div class="col-9">
                 <strong>{{__ 'Identifier'}}</strong>
@@ -107,10 +105,12 @@
                 </div>
             </div>
         </div>
-        <div class="itemref-weights-entries"></div>
+<!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
+        <div data-bind-each="weights" data-bind-tmpl="itemrefweights"></div>
+        </div>
         <div class="grid-row">
             <div class="col-12">
-                <a class="itemref-weights-add"><span class="icon-add"></span> add a new weight</a>
+                <a class="itemref-weight-add"><span class="icon-add"></span> add a new weight</a>
             </div>
         </div>
     </div>

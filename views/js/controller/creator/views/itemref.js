@@ -25,8 +25,7 @@ define([
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
-    'taoQtiTest/controller/creator/helpers/arrayProperty',
-    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weigths'
+    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weights'
 ],
 function(
     $,
@@ -34,7 +33,6 @@ function(
     __,
     actions,
     sectionCategory,
-    arrayProperty,
     weightTpl
 ){
     'use strict';
@@ -72,7 +70,7 @@ function(
         function propHandler (propView) {
 
             categoriesProperty(propView.getView());
-            weightsProperty(propView.getView());
+            weightsProperty(propView);
 
             $itemRef.parents('.testpart').on('delete', removePropHandler);
             $itemRef.parents('.section').on('delete', removePropHandler);
@@ -121,52 +119,12 @@ function(
         /**
          * Setup the weights properties
          */
-        function weightsProperty($view) {
-            var $renderTo = $view.find('.itemref-weights-entries');
-
-            model.weights.forEach(function(weight) {
-                $renderTo.append(weightTpl(weight));
-            });
-            initEvents();
-
-            function initEvents() {
-                $view.find('.itemref-weight-remove').off('click');
-                $view.find('.itemref-weight-remove').on('click', function(e) {
-                    e.preventDefault();
-                    $(e.target).closest('.itemref-weight').remove();
-                    updateModel();
-                });
-
-                $view.find('.itemref-weight input[type=text]').off('keyup');
-                $view.find('.itemref-weight input[type=text]').on('keyup', _.debounce(function() {
-                    updateModel();
-                }, 300));
-            }
-
-            function updateModel() {
-                var $weights = $view.find('.itemref-weight'),
-                    $entry,
-                    identifier,
-                    value,
-                    newModel = [];
-
-                $weights.each(function () {
-                    $entry = $(this);
-                    identifier = $entry.find('[data-identifier=itemref-weight-identifier]').val().trim();
-                    value = parseFloat($entry.find('[data-identifier=itemref-weight-value]').val().replace(',', '.').trim());
-
-                    if (identifier && value) {
-                        newModel.push({
-                            identifier: identifier,
-                            value: value
-                        });
-                    }
-                });
-                model.weights = newModel;
-            }
+        function weightsProperty(propView) {
+            var $view = propView.getView(),
+                $weightList = $view.find('[data-bind-each="weights"]'); // todo: rename
 
             // todo: harmonize selectors names 's'
-            $view.find('.itemref-weights-add').on('click', function(e) {
+            $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
                     value: 1
                 };
@@ -175,9 +133,9 @@ function(
                 }
                 e.preventDefault();
 
-                $renderTo.append(weightTpl(defaultData));
-                updateModel();
-                initEvents();
+                $weightList.append(weightTpl(defaultData));
+                $weightList.trigger('add.internalbinder'); // trigger model update
+                propView.propValidation();
             });
 
 
