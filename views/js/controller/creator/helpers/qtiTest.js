@@ -117,22 +117,6 @@ define(['lodash', 'i18n'], function(_, __){
         },
 
         /**
-         * Checks that a value is a float
-         * @returns {Object} the validator
-         */
-        floatValueValidator : function idAvailableValidator(){
-            return {
-                name : 'weightValueValidator',
-                message : __('must be a float '),
-                validate : function(value, callback){
-                    if(typeof callback === 'function'){
-                        callback(_.isFinite(parseFloat(value.replace(',', '.'))));
-                    }
-                }
-            };
-        },
-
-        /**
          * Does the value contains the type type
          * @param {Object} value
          * @param {string} type
