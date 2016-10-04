@@ -117,16 +117,16 @@ define(['lodash', 'i18n'], function(_, __){
         },
 
         /**
-         * Checks that a weight value is valid
+         * Checks that a value is a float
          * @returns {Object} the validator
          */
-        weightValueValidator : function idAvailableValidator(){
+        floatValueValidator : function idAvailableValidator(){
             return {
                 name : 'weightValueValidator',
-                message : __('must be &ge; 1 '),
+                message : __('must be a float '),
                 validate : function(value, callback){
                     if(typeof callback === 'function'){
-                        callback(parseFloat(value.replace(',', '.')) >= 1);
+                        callback(_.isFinite(parseFloat(value.replace(',', '.'))));
                     }
                 }
             };
