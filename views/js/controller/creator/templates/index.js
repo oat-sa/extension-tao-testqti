@@ -8,7 +8,7 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/testpart-props',
     'tpl!taoQtiTest/controller/creator/templates/section-props',
     'tpl!taoQtiTest/controller/creator/templates/itemref-props',
-    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weights',
+    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock-props'
 ],
 function(
@@ -21,7 +21,7 @@ function(
     testPartProps,
     sectionProps,
     itemRefProps,
-    itemRefPropsWeights,
+    itemRefPropsWeight,
     rubricBlockProps
 ){
     'use strict';
@@ -41,7 +41,7 @@ function(
             'testpart'  : testPartProps,
             'section'   : sectionProps,
             'itemref'   : itemRefProps,
-            'itemrefweights': itemRefPropsWeights,
+            'itemrefweight': itemRefPropsWeight,
             'rubricblock'   : rubricBlockProps
         }
     };

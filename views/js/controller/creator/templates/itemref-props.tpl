@@ -106,7 +106,7 @@
             </div>
         </div>
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
-        <div data-bind-each="weights" data-bind-tmpl="itemrefweights"></div>
+        <div data-bind-each="weights" data-bind-tmpl="itemrefweight"></div>
         <div class="grid-row">
             <div class="col-12">
                 <a class="itemref-weight-add"><span class="icon-add"></span> add a new weight</a>

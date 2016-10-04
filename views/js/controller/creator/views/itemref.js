@@ -26,7 +26,7 @@ define([
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weights'
+    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight'
 ],
 function(
     $,
@@ -130,7 +130,6 @@ function(
                     value: 1,
                     identifier: (model.weights.length === 0)
                         ? 'WEIGHT'
-                        // todo: check with Jerome the scope of the WEIGHT identifiers
                         : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(model))
                 };
                 e.preventDefault();
