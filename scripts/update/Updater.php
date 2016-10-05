@@ -647,5 +647,18 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.18.0', '5.21.1');
+        
+        if ($this->isVersion('5.21.1')) {
+            
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-unanswered-items-message'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+            
+            $this->setVersion('5.22.0');
+        }
     }
 }
