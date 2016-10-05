@@ -247,11 +247,12 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     {
         $testXmlDocument = $this->postProcessing($this->getTestDocument()->saveToString());
 
-        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
+        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()).'/';
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
-
-        $testHref = $newTestDir . dirname($testRootDir->getRelPath($file)) . '/test.xml';
+        // revert backslashes introduced by dirname on windows
+        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
+        $testHref = $newTestDir . (empty($relPath) ? '' : $relPath.'/') . 'test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
@@ -262,7 +263,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             // Only add dependency files...
             if ($f->getBasename() !== TAOQTITEST_FILENAME) {
                 // Add the file to the archive.
-                $fileHref = $newTestDir . $testRootDir->getRelPath($f);
+                $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFromString($fileHref, $f->read());
                 $this->referenceAuxiliaryFile($fileHref);
@@ -356,6 +357,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     
     protected function postProcessing($testXmlDocument)
     {
-        return;
+        return $testXmlDocument;
     }
 }
