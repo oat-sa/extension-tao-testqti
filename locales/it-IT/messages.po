@@ -146,7 +146,7 @@ msgid "displays the review screen / navigator"
 msgstr ""
 
 msgid "Do not mark the current item for later review"
-msgstr ""
+msgstr "Non contrassegnare l'item corrente per una revisione successiva"
 
 msgid "enable calculator"
 msgstr ""
@@ -214,10 +214,10 @@ msgid "Flagged"
 msgstr "Contrassegnato"
 
 msgid "Hide review"
-msgstr "Nascondi la schermata recensione"
+msgstr "Nascondi revisione"
 
 msgid "Hide the review screen"
-msgstr "Mostra la schermata recensione"
+msgstr "Nascondi pannello revisioni"
 
 msgid "Identifier"
 msgstr "Identificatore"
@@ -323,7 +323,7 @@ msgid "Mark for review"
 msgstr "Segna per la revisione"
 
 msgid "Mark the current item for later review"
-msgstr ""
+msgstr "Contrassegna l'item corrente per una revisione successiva"
 
 msgid "Max Attempts"
 msgstr "Numero massimo di tentativi"
@@ -527,13 +527,13 @@ msgid "Show Feedback"
 msgstr "Mostra commenti"
 
 msgid "Show review"
-msgstr ""
+msgstr "Mostra revisione"
 
 msgid "Show Solution"
 msgstr "Mostra soluzione"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "Mostra pannello revisioni"
 
 msgid "Show the solution once the answer is submitted."
 msgstr "Mostra la soluzione una volta che la risposta è stata inserita."
@@ -708,7 +708,7 @@ msgid "Unknown error."
 msgstr "Errore sconosciuto."
 
 msgid "Unmark for review"
-msgstr ""
+msgstr "Deseleziona per la revisione"
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Aggiornamento a QTI 2.1 Test Package File"
