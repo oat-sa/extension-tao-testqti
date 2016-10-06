@@ -20,111 +20,115 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 
-'ui', 
-'core/databinder', 
-'taoQtiTest/controller/creator/templates/index'], 
+    'jquery',
+    'ui',
+    'core/databinder',
+    'taoQtiTest/controller/creator/templates/index'
+],
 function($, ui, DataBinder, templates){
     'use strict';
 
     /**
      * @callback PropertyViewCallback
-     * @param {propertyView} propertyView - the view object 
+     * @param {propertyView} propertyView - the view object
      */
-   
+
     /**
      * The PropertyView setup the property panel component
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/property
      */
-   var propView = function propView(tmplName, model){
-       var $container = $('.test-creator-props');
-       var template = templates.properties[tmplName];
-       var $view;       
+    var propView = function propView(tmplName, model){
+        var $container = $('.test-creator-props');
+        var template = templates.properties[tmplName];
+        var $view;
 
-       /**
-        * Opens the view for the 1st time
-        */ 
-       var open = function propOpen(){
-            var databinder;
+        /**
+         * Opens the view for the 1st time
+         */
+        var open = function propOpen(){
+            var databinder,
+                binderOptions = {
+                    templates: templates.properties
+                };
             $container.children('.props').hide().trigger('propclose.propview');
-            $view = $(template(model)).appendTo($container).filter('.props'); 
-            
+            $view = $(template(model)).appendTo($container).filter('.props');
+
             //start listening for DOM compoenents inside the view
             ui.startDomComponent($view);
 
             //start the data binding
-            databinder = new DataBinder($view, model);
+            databinder = new DataBinder($view, model, binderOptions);
             databinder.bind();
-    
-            propValidation(); 
+
+            propValidation();
 
             $view.trigger('propopen.propview');
-       };
+        };
 
        /**
         * Get the view container element
         * @returns {jQueryElement}
-        */  
-       var getView = function propGetView(){
+        */
+        var getView = function propGetView(){
             return $view;
-       };
-           
+        };
+
        /**
         * Check wheter the view is displayed
         * @returns {boolean} true id opened
-        */  
-       var isOpen = function propIsOpen(){
+        */
+        var isOpen = function propIsOpen(){
             return $view.css('display') !== 'none';
-       };
+        };
 
        /**
         * Bind a callback on view open
         * @param {PropertyViewCallback} cb
-        */  
-       var onOpen = function propOnOpen(cb){
+        */
+        var onOpen = function propOnOpen(cb){
             $view.on('propopen.propview', function(e){
                 e.stopPropagation();
-                cb(); 
+                cb();
             });
-       };
+        };
 
-       
-       /**
-        * Bind a callback on view close
-        * @param {PropertyViewCallback} cb
-        */  
-       var onClose = function propOnClose(cb){
+
+        /**
+         * Bind a callback on view close
+         * @param {PropertyViewCallback} cb
+         */
+        var onClose = function propOnClose(cb){
             $view.on('propclose.propview', function(e){
                 e.stopPropagation();
-                cb(); 
+                cb();
             });
-       };
+        };
 
-       /**
-        * Removes the property view
-        */  
-       var destroy = function propDestroy(){
+        /**
+         * Removes the property view
+         */
+        var destroy = function propDestroy(){
             $view.remove();
-       };
-       
-       /**
-        * Toggles the property view display
-        */  
-       var toggle = function propToggle(){
+        };
+
+        /**
+         * Toggles the property view display
+         */
+        var toggle = function propToggle(){
             $container.children('.props').not($view).hide().trigger('propclose.propview');
             if(isOpen()){
                 $view.hide().trigger('propclose.propview');
             } else {
                 $view.show().trigger('propopen.propview');
             }
-       };
-      
+        };
+
        /**
         * Set up the validation on the property view
         * @private
-        */  
-       function propValidation() {
+        */
+        function propValidation() {
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
                     var $togglers = $('#test-creator .property-toggler, #saver');
@@ -136,18 +140,18 @@ function($, ui, DataBinder, templates){
                 }
             });
             $view.groupValidator();
-        }
+         }
 
-      return {
-        open : open,
-        getView : getView,
-        isOpen : isOpen,
-        onOpen : onOpen,
-        onClose : onClose,
-        destroy : destroy,
-        toggle : toggle
-      }; 
-   };
+        return {
+            open : open,
+            getView : getView,
+            isOpen : isOpen,
+            onOpen : onOpen,
+            onClose : onClose,
+            destroy : destroy,
+            toggle : toggle
+        };
+    };
 
    return propView;
 });
