@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint15\n"
-"PO-Revision-Date: 2016-02-19T14:23:37\n"
+"Project-Id-Version: TAO 3.1.0-sprint36\n"
+"PO-Revision-Date: 2016-10-05T14:21:37\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -13,8 +13,8 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%1$s - item %2$s/%3$s"
-msgstr "%1$s - item %2$s/%3$s"
+msgid "%s - item %p/%c"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un item QTI presente nel test QTI '% s' non può essere compilato."
@@ -28,11 +28,14 @@ msgstr "Un pacchetto di test QTI"
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Una risorsa remota in riferimento al test QTI  '% s' non può essere recuperata."
 
+msgid "A response to this item is required."
+msgstr ""
+
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sezione visibile è quella che è identificabile dal candidato."
 
-msgid "Add a zip file containing QTI tests and items"
-msgstr "Aggiungi un file zip che contiene test e item QTI "
+msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr ""
 
 msgid "Add selected item(s) here."
 msgstr "Aggiungi qui item selezionato/i"
@@ -57,6 +60,9 @@ msgstr "Consenti Skipping"
 
 msgid "Allow the candidate to review his answers."
 msgstr "Consenti al candidato di rivedere le sue risposte."
+
+msgid "An error occurred!"
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
 msgstr "Si è verificato un errore, prego contatta il tuo amministratore"
@@ -88,6 +94,9 @@ msgstr "Autore"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "File ausiliario non trovato nella posizione \"% s\""
 
+msgid "Calculator"
+msgstr ""
+
 msgid "Cancel"
 msgstr "Cancella"
 
@@ -96,6 +105,9 @@ msgstr "Candidato"
 
 msgid "Categories"
 msgstr "Categorie"
+
+msgid "Change the current color preset"
+msgstr ""
 
 msgid "Collapse the review panel"
 msgstr "Comprimi il pannello recensione"
@@ -106,14 +118,44 @@ msgstr "Commenta"
 msgid "Completed items"
 msgstr "Item completati"
 
+msgid "Contrast"
+msgstr ""
+
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "Controlla il numero massimo di tentativi consentiti. 0 significa illimitato."
+
+msgid "describe the item as informational"
+msgstr ""
 
 msgid "Disable validation"
 msgstr "Disabilita convalida"
 
+msgid "displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option"
+msgstr ""
+
+msgid "displays a next section button"
+msgstr ""
+
+msgid "displays a next section button that warns the user that they will not be able to return to the section"
+msgstr ""
+
+msgid "displays an exit button"
+msgstr ""
+
+msgid "displays the review screen / navigator"
+msgstr ""
+
+msgid "Do not mark the current item for later review"
+msgstr "Non contrassegnare l'item corrente per una revisione successiva"
+
+msgid "enable calculator"
+msgstr ""
+
 msgid "Enable selection"
 msgstr "Abilita selezione"
+
+msgid "End test"
+msgstr "Fine test"
 
 msgid "End Test"
 msgstr "Fine test"
@@ -140,11 +182,21 @@ msgstr "Esporta"
 msgid "Export error in test : %s"
 msgstr "Errore di esportazione nel test:%"
 
+#, tao-public
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "Esporta QTI Package 2.1 Test"
 
 msgid "File name"
 msgstr "Nome del file"
+
+msgid "File not found"
+msgstr ""
+
+msgid "File not found!"
+msgstr ""
 
 msgid "Filter"
 msgstr "Filtro"
@@ -160,6 +212,12 @@ msgstr "Posizione fissa in una selezione casuale"
 
 msgid "Flagged"
 msgstr "Contrassegnato"
+
+msgid "Hide review"
+msgstr "Nascondi revisione"
+
+msgid "Hide the review screen"
+msgstr "Nascondi pannello revisioni"
 
 msgid "Identifier"
 msgstr "Identificatore"
@@ -179,8 +237,8 @@ msgstr "Se il candidato può ignorare l'item, senza presentare una risposta."
 msgid "Import"
 msgstr "Importa"
 
-msgid "Import a QTI 2.1 Test Package"
-msgstr "Importa un QTI 2.1 Pacchetto Test"
+msgid "Import a QTI/APIP Content Package"
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "Item IMS QTI riferito a \"% s\" non può essere importato nel file IMS Manifest"
@@ -212,6 +270,9 @@ msgstr "non è un identificatore valido (alfanumerico, sottolineatura, trattino 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "non è un indicatore valido (tutto tranne gli spazi)"
 
+msgid "Item \"%s\" is completed."
+msgstr ""
+
 msgid "Item %d of %d"
 msgstr "Item %d of %d"
 
@@ -239,6 +300,9 @@ msgstr "Mantieni assieme"
 msgid "Late submission allowed"
 msgstr "Presentazione tardiva concessa"
 
+msgid "Leave a comment"
+msgstr ""
+
 msgid "Linear"
 msgstr "Lineare"
 
@@ -251,8 +315,15 @@ msgstr "Gestisci proprietà del test"
 msgid "Manage Tests"
 msgstr "Gestisci Test"
 
+#, tao-public
+msgid "Manage tests"
+msgstr ""
+
 msgid "Mark for review"
 msgstr "Segna per la revisione"
+
+msgid "Mark the current item for later review"
+msgstr "Contrassegna l'item corrente per una revisione successiva"
 
 msgid "Max Attempts"
 msgstr "Numero massimo di tentativi"
@@ -286,6 +357,9 @@ msgstr "Durata minima per questa sezione."
 
 msgid "Minimum duration for this test part."
 msgstr "Durata minima per questa parte di test."
+
+msgid "Missing required option %s"
+msgstr ""
 
 msgid "Move Down"
 msgstr "Muovi giù"
@@ -329,8 +403,14 @@ msgstr "Non tutti i test potevano essere esportati"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Non mescolate, la posizione rimane fissa."
 
+msgid "OK"
+msgstr ""
+
 msgid "Ok"
 msgstr "Ok"
+
+msgid "OK & End test"
+msgstr "OK & Fine test"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Uno o più item dipendenti IMS QTI non potevano essere importati"
@@ -341,6 +421,9 @@ msgstr "Visualizza solo gli item contrassegnati per la revisione"
 msgid "Only display the unanswered items"
 msgstr "Visualizzare solo gli item senza risposta"
 
+msgid "Open Calculator"
+msgstr ""
+
 msgid "Ordering"
 msgstr "Ordinamento"
 
@@ -349,6 +432,9 @@ msgstr "Il pacchetto è valido, ma non sono stati trovati test. Assicurati che c
 
 msgid "Part %d"
 msgstr "Parte% d"
+
+msgid "Plugin dependency error!"
+msgstr ""
 
 msgid "Previous"
 msgstr "Precedente"
@@ -371,11 +457,14 @@ msgstr "Pubblicazione QTI Test \"%s\" non riuscita."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI Test \"%s\" pubblicato con successo"
 
-msgid "QTI Test Package"
-msgstr "Pacchetto test QTI"
-
 msgid "QTI Test Package 2.1"
 msgstr "Pacchetto test QTI 2.1"
+
+msgid "QTI Test Package 2.2"
+msgstr ""
+
+msgid "QTI/APIP Test Content Package"
+msgstr ""
 
 msgid "Reference"
 msgstr "Riferimento"
@@ -437,8 +526,14 @@ msgstr "Invia"
 msgid "Show Feedback"
 msgstr "Mostra commenti"
 
+msgid "Show review"
+msgstr "Mostra revisione"
+
 msgid "Show Solution"
 msgstr "Mostra soluzione"
+
+msgid "Show the review screen"
+msgstr "Mostra pannello revisioni"
 
 msgid "Show the solution once the answer is submitted."
 msgstr "Mostra la soluzione una volta che la risposta è stata inserita."
@@ -455,8 +550,17 @@ msgstr "Simultaneo"
 msgid "Skip"
 msgstr "Salta"
 
+msgid "Skip  and go to the next item"
+msgstr "Salta e vai al prossimo item"
+
 msgid "Skip &amp; End Test"
-msgstr "Salta &amp; Fine test"
+msgstr "Salta & Fine test"
+
+msgid "Skip and end test"
+msgstr "Salta & fine test"
+
+msgid "Skip and go to the end of the test"
+msgstr "Salta e vai alla fine del test"
 
 msgid "Skip to the end of the test"
 msgstr "Salta alla fine del test"
@@ -493,6 +597,10 @@ msgstr "Test salvato"
 
 msgid "Test status"
 msgstr "Stato della prova"
+
+#, tao-public
+msgid "Tests"
+msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "Il file 'imsmanifest.xml' trovato nell'archivio non è valido."
@@ -554,6 +662,9 @@ msgstr "Il titolo della sezione"
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "La modalità di presentazione definisce quando le risposte del candidato sono presentate per l'elaborazione di risposta. Una parte di test in modalità individuale richiede che il candidato presenti le risposte su base item per item. In modo simultaneo le risposte del candidato sono tutte presentate insieme alla fine della parte di test."
 
+msgid "The test has been closed/suspended!"
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "L'identificatore parte di test."
 
@@ -596,6 +707,9 @@ msgstr "Item senza risposta"
 msgid "Unknown error."
 msgstr "Errore sconosciuto."
 
+msgid "Unmark for review"
+msgstr "Deseleziona per la revisione"
+
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Aggiornamento a QTI 2.1 Test Package File"
 
@@ -619,6 +733,15 @@ msgstr "Visibile"
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Attenzione - Ti rimane % per completare il test."
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this test part."
+msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Quando si selezionano i sottoelementi, ogni elemento è normalmente ammesso alla selezione solo una volta"
@@ -651,11 +774,17 @@ msgid "You have %s item(s) marked for review."
 msgstr "Hai %s item segnalati per la revisione"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "Non hai risposto a %s domande e hai %s item contrassegnati per la revisione."
+msgstr "Non hai risposto a %s domanda/e e hai %s item contrassegnati per la revisione."
 
 msgid "You have %s unanswered question(s)."
-msgstr "Non hai risposto a %s domande."
+msgstr "Non hai risposto a %s domanda/e."
 
 msgid "Your comment…"
 msgstr "Il tuo commento :"
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Zoom out"
+msgstr ""
 
