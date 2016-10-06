@@ -109,7 +109,7 @@
         <div data-bind-each="weights" data-bind-tmpl="itemrefweight"></div>
         <div class="grid-row">
             <div class="col-12">
-                <a class="itemref-weight-add"><span class="icon-add"></span> add a new weight</a>
+                <a class="itemref-weight-add"><span class="icon-add"></span> {{__ 'add a new weight'}}</a>
             </div>
         </div>
     </div>
