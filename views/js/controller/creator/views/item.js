@@ -19,30 +19,42 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, templates){
+define([
+    'jquery',
+    'lodash',
+    'taoQtiTest/controller/creator/templates/index'
+], function($, _, templates){
     'use strict';
-  
+
     var itemTemplate = templates.item;
- 
+
+
+
    /**
      * The ItemView setup items related components
      * @exports taoQtiTest/controller/creator/views/item
      * @param {Function} loadItems - the function used to get items from the server
+     * @param {Function} getCategories - the function used to get items' categories
      */
-   var itemView =  function(loadItems){
-            
-        var $panel     = $('.test-creator-items .item-selection'); 
+    var itemView =  function(loadItems, getCategories){
+
+        var $panel     = $('.test-creator-items .item-selection');
         var $search    = $('#item-filter');
         var $itemBox   = $('.item-box', $panel);
-        
-        if(typeof loadItems === 'function'){
-            //search pattern is empty the 1st time, give it undefined
-            loadItems(undefined, function(items){
-                update(items);
-                setUpLiveSearch();
+
+        var getItems = function getItems(pattern){
+            return loadItems(pattern).then(function(items){
+                return getCategories(_.pluck(items, 'uri')).then(function(categories){
+                    update(_.map(items, function(item){
+                        item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
+                        return item;
+                    }));
+                });
             });
-        }
-        
+        };
+
+        getItems().then(setUpLiveSearch);
+
         /**
          * Set up the search behavior: once 3 chars are enters into the field,
          * we load the items that matches the given search pattern.
@@ -50,35 +62,35 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, 
          */
         function setUpLiveSearch (){
             var timeout;
-            
+
             var liveSearch = function(){
                 var pattern = $search.val();
                 if(pattern.length > 1 || pattern.length === 0){
                     clearTimeout(timeout);
                     timeout = setTimeout(function(){
-                        loadItems(pattern, function(items){
-                            update(items);
-                        });
+                        getItems(pattern);
                     }, 300);
                 }
             };
-            
+
             //trigger the search on keyp and on the magnifer button click
             $search.keyup(liveSearch)
                      .siblings('.ctrl').click(liveSearch);
         }
-        
+
         /**
          * Update the items list
          * @private
          * @param {Array} items - the new items
          */
         function update (items){
+
+            console.log(items);
             disableSelection();
             $itemBox.empty().append(itemTemplate(items));
             enableSelection();
         }
-    
+
         /**
          * Disable the selectable component
          * @private
@@ -89,14 +101,14 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, 
                 $panel.selectable('disable');
             }
         }
-    
+
         /**
          * Enable to select items to be added to sections
          * using the jquery-ui selectable.
          * @private
          */
         function enableSelection (){
-            
+
             if($panel.data('selectable')){
                 $panel.selectable('enable');
             } else {
@@ -109,12 +121,12 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function($, 
                         $(ui.unselected).removeClass('selected');
                     },
                     stop: function(){
-                        $(this).trigger('itemselect.creator', $('.selected')); 
+                        $(this).trigger('itemselect.creator', $('.selected'));
                     }
                 });
             }
         }
-   };
-    
+    };
+
     return itemView;
 });
