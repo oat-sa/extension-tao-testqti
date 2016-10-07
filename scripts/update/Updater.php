@@ -645,10 +645,11 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.18.0');
         }
-
-        $this->skip('5.18.0', '5.21.1');
         
-        if ($this->isVersion('5.21.1')) {
+        $this->skip('5.18.0', '5.22.1');
+
+        
+        if ($this->isVersion('5.22.1')) {
             
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
@@ -658,7 +659,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
 
             
-            $this->setVersion('5.22.0');
+            $this->setVersion('5.23.0');
         }
     }
 }

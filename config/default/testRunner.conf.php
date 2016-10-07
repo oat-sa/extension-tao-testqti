@@ -68,7 +68,7 @@ return array(
      * Enables the test taker review screen
      * @type boolean
      */
-    'test-taker-review' => false,
+    'test-taker-review' => true,
 
     /**
      * Position of the test taker review screen. Can be:
@@ -318,5 +318,5 @@ return array(
      * the informational items are not taken into account in the answered/flagged counters
      * @type boolean
      */
-    'check-informational' => false,
+    'check-informational' => true,
 );

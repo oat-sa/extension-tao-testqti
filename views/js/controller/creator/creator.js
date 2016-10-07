@@ -69,13 +69,13 @@ define([
      * @param {string} search - a posix pattern to filter items
      * @param {DataCallback} cb - with items
      */
-    function loadItems(url, search, cb){
+    var loadItems = function loadItems(url, search, cb){
         $.getJSON(url, {pattern : search, notempty : 'true'}, function(data){
             if(data && typeof cb === 'function'){
                 cb(data);
             }
         });
-    }
+    };
 
 
     /**
@@ -85,9 +85,9 @@ define([
      */
     var Controller = {
 
-         routes : {},
+        routes : {},
 
-         identifiers: [],
+        identifiers: [],
 
          /**
           * Start the controller, main entry method.
@@ -96,10 +96,11 @@ define([
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
           */
-         start : function(options){
+        start : function(options){
             var self = this;
             var $container = $('#test-creator');
             var $saver = $('#saver');
+            var binder, binderOptions;
 
             self.identifiers = [];
 
@@ -128,7 +129,7 @@ define([
             //});
 
             //Data Binding options
-            var binderOptions = _.merge(options.routes, {
+            binderOptions = _.merge(options.routes, {
                 filters : {
                     'isItemRef' : function(value){
                         return qtiTestHelper.filterQtiType(value, 'assessmentItemRef');
@@ -138,7 +139,7 @@ define([
                     }
                 },
                 encoders : {
-                  'dom2qti' : Dom2QtiEncoder
+                    'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
                 beforeSave : function(model){
@@ -152,7 +153,7 @@ define([
             });
 
             //set up the databinder
-            var binder = DataBindController
+            binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
 
@@ -180,8 +181,8 @@ define([
                     $(window)
                       .off('resize.qti-test-creator')
                       .on('resize.qti-test-creator', function(){
-                            itemrefView.resize();
-                    });
+                          itemrefView.resize();
+                      });
                 });
 
             //the save button triggers binder's save action.
