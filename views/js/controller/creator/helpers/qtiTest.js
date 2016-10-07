@@ -123,7 +123,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @returns {boolean}
          */
         filterQtiType : function filterQtiType (value, type){
-             return value['qti-type'] && value['qti-type'] === type;
+            return value['qti-type'] && value['qti-type'] === type;
         },
 
         /**
@@ -132,8 +132,8 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {string} parentType
          */
         addMissingQtiType : function addMissingQtiType(collection, parentType) {
-              var self = this;
-              _.forEach(collection, function(value, key) {
+            var self = this;
+            _.forEach(collection, function(value, key) {
                 if (_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')) {
                     if (_.isNumber(key)) {
                         if (parentType) {
@@ -146,7 +146,7 @@ define(['lodash', 'i18n'], function(_, __){
                 if (_.isArray(value)) {
                     self.addMissingQtiType(value, key.replace(/s$/, ''));
                 } else if (_.isObject(value)) {
-                   self.addMissingQtiType(value);
+                    self.addMissingQtiType(value);
                 }
             });
         },
@@ -158,11 +158,11 @@ define(['lodash', 'i18n'], function(_, __){
          */
         consolidateModel : function consolidateModel(model){
             if(model && model.testParts && _.isArray(model.testParts)){
-                
+
                 _.forEach(model.testParts, function(testPart) {
 
                     if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
-                        
+
                         _.forEach(testPart.assessmentSections, function(assessmentSection) {
 
                             //remove ordering is shuffle is false
@@ -200,7 +200,7 @@ define(['lodash', 'i18n'], function(_, __){
                                 }
                             }
                         });
-                    } 
+                    }
                 });
             }
             return model;

@@ -35,7 +35,8 @@ define([
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'core/validator/validators'
+    'core/validator/validators',
+    'core/promise'
 ], function(
     module,
     $,
@@ -52,31 +53,45 @@ define([
     Dom2QtiEncoder,
     templates,
     qtiTestHelper,
-    validators
+    validators,
+    Promise
     ){
 
     'use strict';
 
     /**
-     * Generic callback used when retrieving data from the server
-     * @callback DataCallback
-     * @param {Object} data - the received data
-     */
-
-    /**
      * Call the server to get the list of items
      * @param {string} url
      * @param {string} search - a posix pattern to filter items
-     * @param {DataCallback} cb - with items
+     * @returns {Promise}
      */
-    function loadItems(url, search, cb){
-        $.getJSON(url, {pattern : search, notempty : 'true'}, function(data){
-            if(data && typeof cb === 'function'){
-                cb(data);
+    var loadItems = function loadItems(url, search){
+        return new Promise( function(resolve, reject){
+            $.getJSON(url, {pattern : search, notempty : 'true'})
+                .done(resolve)
+                .fail(function(xhr){
+                    return reject(new Error(xhr.status + ' : ' + xhr.statusText));
+                });
+        });
+    };
+
+    /**
+     * Call the server to get the items categories
+     * @param {String} url - the endpoint
+     * @param {String[]} items - the list of items URIs
+     * @returns {Promise}
+     */
+    var getCategories = function getCategories(url, items){
+        return new Promise( function(resolve, reject){
+            if(items && items.length){
+                $.getJSON(url, { uris : items })
+                    .done(resolve)
+                    .fail(function(xhr){
+                        return reject(new Error(xhr.status + ' : ' + xhr.statusText));
+                    });
             }
         });
-    }
-
+    };
 
     /**
      * The test creator controller is the main entry point
@@ -85,9 +100,9 @@ define([
      */
     var Controller = {
 
-         routes : {},
+        routes : {},
 
-         identifiers: [],
+        identifiers: [],
 
          /**
           * Start the controller, main entry method.
@@ -96,10 +111,11 @@ define([
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
           */
-         start : function(options){
+        start : function(options){
             var self = this;
             var $container = $('#test-creator');
             var $saver = $('#saver');
+            var binder, binderOptions;
 
             self.identifiers = [];
 
@@ -118,7 +134,10 @@ define([
             });
 
             //set up the ItemView, give it a configured loadItems ref
-            itemView( _.partial(loadItems, options.routes.items) );
+            itemView(
+                _.partial(loadItems, options.routes.items),
+                _.partial(getCategories, options.routes.categories)
+            );
 
             //Print data binder chandes for DEBUGGING ONLY
             //$container.on('change.binder', function(e, model){
@@ -128,7 +147,7 @@ define([
             //});
 
             //Data Binding options
-            var binderOptions = _.merge(options.routes, {
+            binderOptions = _.merge(options.routes, {
                 filters : {
                     'isItemRef' : function(value){
                         return qtiTestHelper.filterQtiType(value, 'assessmentItemRef');
@@ -138,7 +157,7 @@ define([
                     }
                 },
                 encoders : {
-                  'dom2qti' : Dom2QtiEncoder
+                    'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
                 beforeSave : function(model){
@@ -152,7 +171,7 @@ define([
             });
 
             //set up the databinder
-            var binder = DataBindController
+            binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
 
@@ -180,8 +199,8 @@ define([
                     $(window)
                       .off('resize.qti-test-creator')
                       .on('resize.qti-test-creator', function(){
-                            itemrefView.resize();
-                    });
+                          itemrefView.resize();
+                      });
                 });
 
             //the save button triggers binder's save action.

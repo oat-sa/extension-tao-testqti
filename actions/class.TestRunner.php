@@ -868,6 +868,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
 	            $this->onTimeout($e);
 	        break;
+            
+            default:
+                $msg = "Non managed QTI Test exception caught:\n";
+
+                do {
+                    $msg .= "[" . get_class($e) . "] " . $e->getMessage() . "\n";
+                } while ($e = $e->getPrevious());
+                
+                common_Logger::e($msg);
+                break;
 	    }
 	}
 }
