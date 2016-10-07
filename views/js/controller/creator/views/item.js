@@ -44,6 +44,9 @@ define([
 
         var getItems = function getItems(pattern){
             return loadItems(pattern).then(function(items){
+                if(!items || !items.length){
+                    return update();
+                }
                 return getCategories(_.pluck(items, 'uri')).then(function(categories){
                     update(_.map(items, function(item){
                         item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
