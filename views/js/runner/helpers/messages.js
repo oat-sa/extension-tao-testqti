@@ -146,7 +146,10 @@ define([
         }
         
         // Unanswered items message.
-        if (runner.getTestData().config.enableUnansweredItemsWarning) {
+        var testData = runner.getTestData();
+        var testConfig = testData && testData.config;
+        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
+        if (messageEnabled) {
             if (flaggedCount && unansweredCount) {
                 itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
                     unansweredCount.toString(),
