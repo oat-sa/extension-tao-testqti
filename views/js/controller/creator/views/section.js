@@ -34,15 +34,15 @@ define([
 function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory){
     'use strict';
 
-   /**
-    * Set up a section: init action beahviors. Called for each section.
-    *
-    * @param {jQueryElement} $sectuin - the section to set up
-    * @param {Object} model - the data model to bind to the test part
-    * @param {Object} [data] - additionnal data used by the setup
-    * @param {Array} [data.identifiers] - the locked identifiers
-    */
-   var setUp = function setUp ($section, model, data){
+    /**
+     * Set up a section: init action beahviors. Called for each section.
+     *
+     * @param {jQueryElement} $sectuin - the section to set up
+     * @param {Object} model - the data model to bind to the test part
+     * @param {Object} [data] - additionnal data used by the setup
+     * @param {Array} [data.identifiers] - the locked identifiers
+     */
+    var setUp = function setUp ($section, model, data){
 
         var $actionContainer = $('h2', $section);
 
@@ -62,36 +62,37 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          */
         function propHandler (propView) {
 
+            var $title;
             var $view = propView.getView();
-            
+
             //enable/disable selection
             var $selectionSwitcher = $('[name=section-enable-selection]', $view);
             var $selectionSelect = $('[name=section-select]', $view);
             var $selectionWithRep = $('[name=section-with-replacement]', $view);
 
             var switchSelection = function switchSelection(){
-                 if($selectionSwitcher.prop('checked') === true){
+                if($selectionSwitcher.prop('checked') === true){
                     $selectionSelect.incrementer('enable');
                     $selectionWithRep.removeClass('disabled');
-                 } else {
+                } else {
                     $selectionSelect.incrementer('disable');
                     $selectionWithRep.addClass('disabled');
-                 }
+                }
             };
             $selectionSwitcher.on('change', switchSelection);
             $selectionSwitcher.on('change', function updateModel(){
-                 if(!$selectionSwitcher.prop('checked')){
-                     $selectionSelect.val(0);
-                     $selectionWithRep.prop('checked', false);
-                     delete model.selection;
-                 }
+                if(!$selectionSwitcher.prop('checked')){
+                    $selectionSelect.val(0);
+                    $selectionWithRep.prop('checked', false);
+                    delete model.selection;
+                }
             });
 
             $selectionSwitcher.prop('checked', !!model.selection).trigger('change');
 
             //listen for databinder change to update the test part title
-            var $title =  $('[data-bind=title]', $section);
-            $view.on('change.binder', function(e, model){
+            $title =  $('[data-bind=title]', $section);
+            $view.on('change.binder', function(e){
                 if(e.namespace === 'binder' && model['qti-type'] === 'assessmentSection'){
                     $title.text(model.title);
                 }
@@ -99,17 +100,17 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             $section.parents('.testpart').on('deleted.deleter', removePropHandler);
             $section.on('deleted.deleter', removePropHandler);
-            
+
             //section level category configuration
             categoriesProperty($view);
-            
+
             function removePropHandler(){
                 if(propView !== null){
                     propView.destroy();
                 }
             }
         }
-        
+
         /**
          * Set up the item refs that already belongs to the section
          * @private
@@ -141,37 +142,42 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             var $selected;
             var $items     = $('.test-creator-items');
 
-             //the item selector trigger a select event
-             $items.on('itemselect.creator', function(e){
+            //the item selector trigger a select event
+            $items.on('itemselect.creator', function(){
                 var selection = Array.prototype.slice.call(arguments, 1);
                 var $placeholder = $('.itemref-placeholder', $section);
                 var $placeholders = $('.itemref-placeholder');
-                
+
                 if(selection.length > 0){
-                    $placeholder.show().off('click').on('click', function(e){
-                        
-                        //prepare the item data 
-                        var categories, 
+                    $placeholder.show().off('click').on('click', function(){
+
+                        //prepare the item data
+                        var categories,
                             defaultItemData = {};
-                            
+
                         if(model.itemSessionControl && !_.isUndefined(model.itemSessionControl.maxAttempts)){
-                            
+
                             //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
                             defaultItemData.itemSessionControl = _.clone(model.itemSessionControl);
                         }
-                        
+
                         //the itemRef should also "inherit" the categories set at the item level
                         categories = sectionCategory.getCategories(model);
-                        defaultItemData.categories = categories.propagated;
-                            
+                        defaultItemData.categories = _.clone(categories.propagated);
+
                         _.forEach(selection, function(item){
                             var $item = $(item);
-
-                            addItemRef($('.itemrefs', $section), undefined, _.defaults({
+                            var itemCategories = $item.data('categories');
+                            var itemData = _.defaults({
                                 href        : uri.decode($item.data('uri')),
                                 label       : $.trim($item.clone().children().remove().end().text()),
                                 'qti-type'  : 'assessmentItemRef'
-                            }, defaultItemData));
+                            }, defaultItemData);
+                            if(!_.isEmpty(itemCategories)){
+                                itemData.categories = _.merge( itemData.categories, itemCategories.trim().split(',') );
+                            }
+
+                            addItemRef($('.itemrefs', $section), undefined, itemData);
                         });
 
                         //reset the current selection
@@ -181,20 +187,21 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 } else {
                     $placeholders.hide().off('click');
                 }
-             });
+            });
 
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
               .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
               .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
-                if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
-                    var index = $itemRef.data('bind-index');
+                  var index;
+                  if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
+                      index = $itemRef.data('bind-index');
 
-                    //initialize the new item ref
-                    itemRefView.setUp($itemRef, model.sectionParts[index]);
-                }
-            });
+                      //initialize the new item ref
+                      itemRefView.setUp($itemRef, model.sectionParts[index]);
+                  }
+              });
 
             //on set up, if there is a selection ongoing, we trigger the event
             $selected = $('.selected', $items);
@@ -211,18 +218,18 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          * @param {Object} [itemData] - the data to bind to the new item ref
          */
         function addItemRef($refList, index, itemData){
-           var $itemRef;
-           var $items = $refList.children('li');
-           index = index || $items.length;
-           itemData.identifier = qtiTestHelper.getIdentifier('item', data.identifiers);
-           itemData.index = index + 1;
-           $itemRef = $(templates.itemref(itemData));
-           if(index > 0){
-               $itemRef.insertAfter($items.eq(index - 1));
-           } else {
-               $itemRef.appendTo($refList);
-           }
-           $refList.trigger('add', [$itemRef, itemData]);
+            var $itemRef;
+            var $items = $refList.children('li');
+            index = index || $items.length;
+            itemData.identifier = qtiTestHelper.getIdentifier('item', data.identifiers);
+            itemData.index = index + 1;
+            $itemRef = $(templates.itemref(itemData));
+            if(index > 0){
+                $itemRef.insertAfter($items.eq(index - 1));
+            } else {
+                $itemRef.appendTo($refList);
+            }
+            $refList.trigger('add', [$itemRef, itemData]);
         }
 
 
@@ -271,14 +278,15 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
+                var index;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
-                    var index = $rubricBlock.data('bind-index');
+                    index = $rubricBlock.data('bind-index');
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp($rubricBlock, model.rubricBlocks[index], data);
                 }
             });
         }
-        
+
         /**
          * Set up the category property
          * @private
@@ -298,33 +306,33 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             }).on('change', function(e){
                 setCategories(e.val);
             });
-            
+
             initCategories();
             $view.on('propopen.propview', function(){
                 initCategories();
             });
-            
+
             /**
              * Start the categories editing
              * @private
              */
             function initCategories(){
-                
+
                 var categories = sectionCategory.getCategories(model);
-                
+
                 //set categories found in the model in the select2 input
                 $select.select2('val', categories.all);
-                
+
                 //color partial categories
                 $select.siblings('.select2-container').find('.select2-search-choice').each(function(){
-                   var $li = $(this);
-                   var content = $li.find('div').text();
-                   if(_.indexOf(categories.partial, content) >= 0){
-                       $li.addClass('partial');
-                   }
+                    var $li = $(this);
+                    var content = $li.find('div').text();
+                    if(_.indexOf(categories.partial, content) >= 0){
+                        $li.addClass('partial');
+                    }
                 });
             }
-            
+
             /**
              * save the categories into the model
              * @private
@@ -332,17 +340,16 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             function setCategories(categories){
                 sectionCategory.setCategories(model, categories);
             }
-            
+
         }
-   };
+    };
 
    /**
     * Listen for state changes to enable/disable . Called globally.
     */
-   var listenActionState =  function listenActionState (){
+    var listenActionState =  function listenActionState (){
 
         var $sections;
-        var $actionContainer;
 
         $('.sections').each(function(){
             $sections = $('.section', $(this));
@@ -358,7 +365,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             if($target.hasClass('section')){
                 $parent = $target.parents('.sections');
                 actions.disable($parent.find('.section'), 'h2');
-           }
+            }
         })
         .on('add change undo.deleter deleted.deleter', function(e){
             var $target = $(e.target);
@@ -370,15 +377,15 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         })
         .on('open.toggler', '.rub-toggler', function(e){
             if(e.namespace === 'toggler'){
-               $(this).parents('h2').addClass('active');
+                $(this).parents('h2').addClass('active');
             }
         })
         .on('close.toggler', '.rub-toggler', function(e){
             if(e.namespace === 'toggler'){
-               $(this).parents('h2').removeClass('active');
+                $(this).parents('h2').removeClass('active');
             }
         });
-   };
+    };
 
 
    /**
@@ -389,5 +396,5 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
     return {
         setUp : setUp,
         listenActionState: listenActionState
-   };
+    };
 });

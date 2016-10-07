@@ -76,6 +76,7 @@ requirejs.config({
                 get  : '<?=get_data('loadUrl')?>',
                 save  : '<?=get_data('saveUrl')?>',
                 items : '<?=get_data('itemsUrl')?>',
+                categories : '<?=get_data('categoriesUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
             labels : <?=get_data('labels')?>

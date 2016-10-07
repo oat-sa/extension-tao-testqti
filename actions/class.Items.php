@@ -79,7 +79,6 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $uris = $this->getRequestParameter('uris');
         $uris = (!is_array($uris)) ? array($uris) : $uris;
 
-
         $items = $this->getItems($uris);
         $itemCategories = $this->getServiceManager()->get(\oat\taoQtiItem\model\ItemCategoriesService::SERVICE_ID);
         $this->returnJson($itemCategories->getCategories($items));
