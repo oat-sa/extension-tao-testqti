@@ -84,8 +84,6 @@ define([
          * @param {Array} items - the new items
          */
         function update (items){
-
-            console.log(items);
             disableSelection();
             $itemBox.empty().append(itemTemplate(items));
             enableSelection();
