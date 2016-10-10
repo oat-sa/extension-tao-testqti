@@ -35,7 +35,7 @@ use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
- * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
 
@@ -456,7 +456,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $dir = new \core_kernel_file_File($uri);
 
             $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
 
             $this->setVersion('4.0.0');
         }
@@ -620,5 +620,18 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('5.17.0', '5.17.1');
+
+        if ($this->isVersion('5.17.1')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
+            if (!is_string($uri)) {
+                if (is_object($uri) && $uri instanceof \core_kernel_classes_Resource) {
+                    \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($uri->getUri());
+                } else {
+                    throw new \common_exception_InconsistentData('Invalid qti test storage directory configuration');
+                }
+            }
+            $this->setVersion('5.17.2');
+        }
     }
 }
