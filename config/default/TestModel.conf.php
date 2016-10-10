@@ -8,7 +8,6 @@
 return new \oat\taoQtiTest\models\TestModelService(array(
     'exportHandlers' => array(
         new taoQtiTest_models_classes_export_TestExport(),
-        new taoQtiTest_models_classes_export_TestExport22()
     ),
     'importHandlers' => array(
         new taoQtiTest_models_classes_import_TestImport()

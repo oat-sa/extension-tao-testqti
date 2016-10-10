@@ -211,14 +211,14 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
-            $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+            $itemExporter = $this->createItemExporter($item);
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
                 $identifiers[] = $itemExporter->buildIdentifier();
                 $subReport = $itemExporter->export();
             }
 
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = $extraReversePath . $this->getXmlPath($itemExporter);
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
@@ -253,7 +253,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
             $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
 
-        $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
+        $testHref = $testBasePath . 'assessment.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
@@ -345,5 +345,15 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $fileElt->setAttribute('href', ltrim($href, '/'));
 
         $firstDependencyElt->parentNode->insertBefore($fileElt, $firstDependencyElt);
+    }
+
+    protected function createItemExporter(core_kernel_classes_Resource $item)
+    {
+        return new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+    }
+
+    protected function getXmlPath(\oat\taoQtiItem\model\Export\AbstractQTIItemExporter $itemExporter)
+    {
+        return '../../items/' . $itemExporter->buildBasePath() . '/qti.xml';
     }
 }
