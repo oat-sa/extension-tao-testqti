@@ -128,7 +128,7 @@ define([
         var map = runner.getTestMap();
         var context = runner.getTestContext();
         var stats = mapHelper.getScopeStats(map, context.itemPosition, scope);
-        var unansweredCount = stats && (stats.total - stats.answered);
+        var unansweredCount = stats && (stats.questions - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
         var isItemCurrentlyAnswered;
