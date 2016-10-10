@@ -88,6 +88,7 @@ define([
                                 item3: {}
                             },
                             stats: {
+                                questions: 3,
                                 answered: 3,
                                 flagged: 0,
                                 viewed: 0,
@@ -96,6 +97,7 @@ define([
                         }
                     },
                     stats: {
+                        questions: 3,
                         answered: 3,
                         flagged: 0,
                         viewed: 0,
@@ -104,6 +106,7 @@ define([
                 }
             },
             stats: {
+                questions: 3,
                 answered: 3,
                 flagged: 0,
                 viewed: 0,
