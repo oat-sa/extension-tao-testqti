@@ -345,7 +345,7 @@ define([
                                 if (context.isLast && context.options.endTestWarning) {
                                     resolve();
                                 // display a message if we exit a timed section
-                                } else if(leaveTimedSection(type, scope, position)) {
+                                } else if(leaveTimedSection(type, scope, position) && !context.options.noExitTimedSectionWarning) {
                                     testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
                                 } else {
                                     resolve();
