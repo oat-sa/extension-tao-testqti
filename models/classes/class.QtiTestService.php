@@ -454,19 +454,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         }
                                     }
                                 }
-                                
-                                // Determine target class from metadata, if possible.
-                                // This is applied to items, not for test definitions.
-                                // The test definitions' target class will not be affected
-                                // by class lookups.
-                                $lookupTargetClass = false;
-                                foreach ($metadataClassLookups as $classLookup) {
-                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
-                                        if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
-                                            break;
-                                        }
-                                    }
-                                }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
@@ -491,7 +478,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                     $itemReport = $itemImportService->importQtiItem(
                                         $folder, 
                                         $qtiDependency, 
-                                        (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), 
+                                        $targetClass, 
                                         $dependencies['dependencies'],
                                         $metadataValues,
                                         $metadataInjectors,
