@@ -496,7 +496,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $createdClasses
                                     );
                                     
-                                    $reportCtx->createdClasses = $createdClasses;
+                                    $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
                                     
                                     $rdfItem = $itemReport->getData();
 
