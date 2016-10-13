@@ -481,7 +481,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
-                                    $createdClass = false;
+                                    $createdClasses = array();
 
                                     $itemReport = $itemImportService->importQtiItem(
                                         $folder, 
@@ -493,12 +493,10 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $metadataGuardians,
                                         $metadataClassLookups,
                                         $sharedFiles,
-                                        $createdClass
+                                        $createdClasses
                                     );
                                     
-                                    if ($createdClass instanceof \core_kernel_classes_Class) {
-                                        $reportCtx->createdClasses[] = $createdClass;
-                                    }
+                                    $reportCtx->createdClasses = $createdClasses;
                                     
                                     $rdfItem = $itemReport->getData();
 
