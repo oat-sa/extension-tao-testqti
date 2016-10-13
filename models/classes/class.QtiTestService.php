@@ -299,6 +299,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
                     @$itemService->deleteItem($item);
                 }
+                
+                // Delete all created classes (by registered class lookups).
+                foreach ($data->createdClasses as $createdClass) {
+                    @$createdClass->delete();
+                }
 
                 // Delete the target Item RDFS class.
                 common_Logger::i("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
@@ -395,6 +400,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = array();
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
+        $reportCtx->createdClasses = array();
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
@@ -475,6 +481,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
+                                    $createdClass = false;
+
                                     $itemReport = $itemImportService->importQtiItem(
                                         $folder, 
                                         $qtiDependency, 
@@ -484,8 +492,13 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         $metadataInjectors,
                                         $metadataGuardians,
                                         $metadataClassLookups,
-                                        $sharedFiles
+                                        $sharedFiles,
+                                        $createdClass
                                     );
+                                    
+                                    if ($createdClass instanceof \core_kernel_classes_Class) {
+                                        $reportCtx->createdClasses[] = $createdClass;
+                                    }
                                     
                                     $rdfItem = $itemReport->getData();
 
