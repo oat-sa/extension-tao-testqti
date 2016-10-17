@@ -132,6 +132,9 @@ define([
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
         var isItemCurrentlyAnswered;
+        var testData = runner.getTestData();
+        var testConfig = testData && testData.config;
+        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
         if (unansweredCount){
             isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
@@ -146,9 +149,6 @@ define([
         }
         
         // Unanswered items message.
-        var testData = runner.getTestData();
-        var testConfig = testData && testData.config;
-        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
         if (messageEnabled) {
             if (flaggedCount && unansweredCount) {
                 itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
