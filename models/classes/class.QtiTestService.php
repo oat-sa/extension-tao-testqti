@@ -299,6 +299,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                     common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
                     @$itemService->deleteItem($item);
                 }
+                
+                // Delete all created classes (by registered class lookups).
+                foreach ($data->createdClasses as $createdClass) {
+                    @$createdClass->delete();
+                }
 
                 // Delete the target Item RDFS class.
                 common_Logger::i("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
@@ -395,6 +400,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = array();
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
+        $reportCtx->createdClasses = array();
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
@@ -454,19 +460,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                         }
                                     }
                                 }
-                                
-                                // Determine target class from metadata, if possible.
-                                // This is applied to items, not for test definitions.
-                                // The test definitions' target class will not be affected
-                                // by class lookups.
-                                $lookupTargetClass = false;
-                                foreach ($metadataClassLookups as $classLookup) {
-                                    if (isset($metadataValues[$resourceIdentifier]) === true) {
-                                        if (($lookupTargetClass = $classLookup->lookup($metadataValues[$resourceIdentifier])) !== false) {
-                                            break;
-                                        }
-                                    }
-                                }
 
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
@@ -488,17 +481,22 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                 if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
+                                    $createdClasses = array();
+
                                     $itemReport = $itemImportService->importQtiItem(
                                         $folder, 
                                         $qtiDependency, 
-                                        (($lookupTargetClass !== false) ? $lookupTargetClass : $targetClass), 
+                                        $targetClass, 
                                         $dependencies['dependencies'],
                                         $metadataValues,
                                         $metadataInjectors,
                                         $metadataGuardians,
                                         $metadataClassLookups,
-                                        $sharedFiles
+                                        $sharedFiles,
+                                        $createdClasses
                                     );
+                                    
+                                    $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
                                     
                                     $rdfItem = $itemReport->getData();
 

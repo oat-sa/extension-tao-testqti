@@ -153,6 +153,10 @@ define([
                 description : __('displays a next section button')
             },
             {
+                name : 'x-tao-option-noExitTimedSectionWarning',
+                description : __('disable the warning automatically displayed upon exiting a timed section')
+            },
+            {
                 name : 'x-tao-option-exit',
                 description : __('displays an exit button')
             },

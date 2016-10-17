@@ -46,6 +46,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
             $this->setData('itemsUrl', _url('get', 'Items'));
+            $this->setData('categoriesUrl', _url('getCategories', 'Items'));
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
             
             $this->setView('creator.tpl');
