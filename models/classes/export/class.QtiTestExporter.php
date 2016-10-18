@@ -193,9 +193,9 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $report = common_report_Report::createSuccess();
         $subReport = common_report_Report::createSuccess();
         $identifiers = array();
+
         $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+        $extraPath = $this->getTestExtraPath($testPath);
         $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
 
         $extraReversePath = '';
@@ -212,6 +212,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = $this->createItemExporter($item);
+
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
                 $identifiers[] = $itemExporter->buildIdentifier();
                 $subReport = $itemExporter->export();
@@ -246,14 +247,14 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // it to the archive.
         $tmpPath = tempnam('/tmp', 'tao');
         $this->getTestDocument()->save($tmpPath);
+
         $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
 
         // Add the test definition in the archive.
-        $testBasePath = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
+        $testBasePath = $this->getTestBasePath();
 
         $testHref = $testBasePath . 'assessment.xml';
+
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
@@ -263,7 +264,10 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true));
         foreach ($files as $f) {
             // Only add dependency files...
-            if (is_dir($f) === false && strpos($f, TAOQTITEST_FILENAME) === false) {
+            if (is_dir($f) === false
+                && strpos($f, $this->getTestDefinitionFileName()) === false
+                && strpos($f, TAOQTITEST_FILENAME) === false
+            ) {
                 // Add the file to the archive.
                 $fileHref = $testBasePath . ltrim(str_replace($testPath, '', $f), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
@@ -291,7 +295,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // Create the IMS Manifest <resource> element.
         $resourceElt = $manifest->createElement('resource');
         $resourceElt->setAttribute('identifier', $identifier);
-        $resourceElt->setAttribute('type', 'imsqti_test_xmlv2p1');
+        $resourceElt->setAttribute('type', $this->getTestResourceType());
         $resourceElt->setAttribute('href', $href);
         $targetElt->appendChild($resourceElt);
 
@@ -355,5 +359,34 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function getXmlPath(\oat\taoQtiItem\model\Export\AbstractQTIItemExporter $itemExporter)
     {
         return '../../items/' . $itemExporter->buildBasePath() . '/qti.xml';
+    }
+
+    protected function getTestResourceType()
+    {
+        return 'imsqti_test_xmlv2p1';
+    }
+
+    protected function getTestDefinitionFileName()
+    {
+        return TAOQTITEST_FILENAME;
+    }
+
+    protected function getTestExtraPath($testPath)
+    {
+        $extraPath = trim(
+            str_replace(
+                array($testPath, TAOQTITEST_FILENAME, $this->getTestDefinitionFileName()),
+                '',
+                $this->getTestService()->getDocPath($this->getItem())
+            ),
+            DIRECTORY_SEPARATOR
+        );
+
+        return $extraPath;
+    }
+
+    protected function getTestBasePath()
+    {
+        return 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
     }
 }

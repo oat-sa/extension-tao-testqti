@@ -151,6 +151,7 @@ class taoQtiTest_helpers_Utils {
             
         $manifest = new DOMDocument('1.0', TAO_DEFAULT_ENCODING);
         $manifest->loadXML($templateRenderer->render());
+        common_Logger::i(print_r($manifest, true));
         return $manifest;
     }
     

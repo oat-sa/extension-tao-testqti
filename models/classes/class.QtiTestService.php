@@ -739,7 +739,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
         foreach ($files as $f) {
             $pathinfo = pathinfo($f);
-            if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
+            $filename = $pathinfo['filename'] . '.' . $pathinfo['extension'];
+            if (in_array($filename, array(TAOQTITEST_FILENAME, 'assessment.xml'))) {
                 $dirContent[] = $f;
             }
         }
@@ -1050,4 +1051,3 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
 }
-?>
