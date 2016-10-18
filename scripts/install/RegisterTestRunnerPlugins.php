@@ -220,6 +220,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ 'core' ]
+            ], [
+                'id' => 'documentViewer',
+                'name' => 'Document Viewer',
+                'module' => 'taoQtiTest/runner/plugins/tools/documentViewer/documentViewer',
+                'description' => 'Display a document as requested by an event',
+                'category' => 'tools',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'security' => [
