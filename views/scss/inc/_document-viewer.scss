@@ -39,14 +39,14 @@ $panelMarginVer: 10px;
         z-index: 1;
 
         .viewer-title {
-            font-size: 1.5rem;
+            @include font-size(15);
             padding: 0;
             margin: 0 0 0 1.6rem;
         }
 
         .icon {
             float: right;
-            font-size: 20px;
+            @include font-size(20);
             color: whiten($info, .1);
             margin: 1px 6px;
             top: 3px;
