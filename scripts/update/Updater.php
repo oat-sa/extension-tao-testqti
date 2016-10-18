@@ -660,5 +660,19 @@ class Updater extends \common_ext_ExtensionUpdater {
             
             $this->setVersion('5.26.0');
         }
+
+        if ($this->isVersion('5.26.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'documentViewer',
+                'name' => 'Document Viewer',
+                'module' => 'taoQtiTest/runner/plugins/tools/documentViewer/documentViewer',
+                'description' => 'Display a document as requested by an event',
+                'category' => 'tools',
+                'active' => false,
+                'tags' => []
+            ]));
+            $this->setVersion('5.27.0');
+        }
     }
 }
