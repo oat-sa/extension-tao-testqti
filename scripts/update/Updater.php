@@ -647,8 +647,21 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.18.0', '5.25.1');
-
+        
         if ($this->isVersion('5.25.1')) {
+            
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-unanswered-items-message'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+            
+            $this->setVersion('5.26.0');
+        }
+
+        if ($this->isVersion('5.26.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'documentViewer',
@@ -659,7 +672,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active' => false,
                 'tags' => []
             ]));
-            $this->setVersion('5.26.0');
+            $this->setVersion('5.27.0');
         }
     }
 }

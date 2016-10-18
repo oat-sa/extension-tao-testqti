@@ -132,6 +132,9 @@ define([
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
         var isItemCurrentlyAnswered;
+        var testData = runner.getTestData();
+        var testConfig = testData && testData.config;
+        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
         if (unansweredCount){
             isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
@@ -144,20 +147,22 @@ define([
                 unansweredCount--;
             }
         }
+        
+        // Unanswered items message.
+        if (messageEnabled) {
+            if (flaggedCount && unansweredCount) {
+                itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                    unansweredCount.toString(),
+                    flaggedCount.toString()
+                );
+            } else {
+                if (flaggedCount) {
+                    itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
+                }
 
-
-        if (flaggedCount && unansweredCount) {
-            itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                unansweredCount.toString(),
-                flaggedCount.toString()
-            );
-        } else {
-            if (flaggedCount) {
-                itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
-            }
-
-            if (unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+                if (unansweredCount) {
+                    itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+                }
             }
         }
 

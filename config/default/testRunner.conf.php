@@ -112,6 +112,12 @@ return array(
      * @type boolean
      */
     'test-taker-review-can-collapse' => false,
+    
+    /**
+     * Enable/Disable warning message about unanswered items at the end of the test.
+     * @type boolean
+     */
+    'test-taker-unanswered-items-message' => true,
 
     /**
      * Replace logout to exit button...
