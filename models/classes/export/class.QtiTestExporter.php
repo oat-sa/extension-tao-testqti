@@ -252,14 +252,19 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         // Add the test definition in the archive.
         $testBasePath = $this->getTestBasePath();
+        $testHref = $testBasePath . $this->getTestDefinitionFileName();
 
-        $testHref = $testBasePath . 'assessment.xml';
-
+        // Replace asset name
+        $i = 1;
+        $pathinfo = pathinfo($this->getTestDefinitionFileName());
+        while (($this->getZip()->locateName($testHref)) !== false) {
+            $testHref = $testBasePath . $pathinfo['filename'] . '_' . $i . '.' . $pathinfo['extension'];
+            $i++;
+        }
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->addFile($tmpPath, $testHref);
         $this->referenceTest($testHref, $itemIdentifiers);
-
 
         $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true));
         foreach ($files as $f) {
