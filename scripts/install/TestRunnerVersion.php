@@ -159,15 +159,14 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
 
         $message = implode("\n", $messages) . "\n";
 
-        if ($newRunner) {
+        if (!$correct) {
+            $message .= "\nWARNING!\nThe Test Runner seems to be misconfigured!";
+        } else if ($newRunner) {
             $message .= "\nThe New Test Runner is activated";
         } else {
             $message .= "\nThe Old Test Runner is activated";
         }
 
-        if (!$correct) {
-            $message .= "\n\nWARNING!\nThe Test Runner seems to be misconfigured!";
-        }
 
 
         return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, $message . "\n");
