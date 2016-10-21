@@ -74,6 +74,7 @@ function (
         optionNextSectionWarning = 'x-tao-option-nextSectionWarning',
         optionReviewScreen = 'x-tao-option-reviewScreen',
         optionEndTestWarning = 'x-tao-option-endTestWarning',
+        optionNoExitTimedSectionWarning = 'x-tao-option-noExitTimedSectionWarning',
         TestRunner = {
             // Constants
             'TEST_STATE_INITIAL': 0,
@@ -326,8 +327,10 @@ function (
                         self.exitSection(action, params);
                     };
 
-                // prevent duplicate warning in case of ending the test while exiting the timed section
-                if (action === 'moveForward' && this.shouldDisplayEndTestWarning()) {
+                if ((action === 'moveForward' && this.shouldDisplayEndTestWarning())    // prevent duplicate warning
+                    || this.hasOption(optionNoExitTimedSectionWarning)                  // check if warning is disabled
+                    || this.testContext.keepTimerUpToTimeout                            // no need to display the message as we may be able to go back
+                ) {
                     doExitTimedSection();
                 } else {
                     this.displayExitMessage(

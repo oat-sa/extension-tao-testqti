@@ -154,6 +154,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
         $serviceContext->setServiceManager($this->getServiceManager());
+        $serviceContext->setTestConfig($this->getTestConfig());
 
         $testSession = $serviceContext->getTestSession();
         if ($testSession instanceof TestSession) {
