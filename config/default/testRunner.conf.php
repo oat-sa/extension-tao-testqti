@@ -319,4 +319,10 @@ return array(
      * @type boolean
      */
     'check-informational' => true,
+    
+    /**
+     * Keep the timer when the test taker leaves a section, in order to restore it when he/she goes back 
+     * @type boolean
+     */
+    'keep-timer-up-to-timeout' => false,
 );
