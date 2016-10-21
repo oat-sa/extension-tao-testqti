@@ -17,6 +17,8 @@
  * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
+use oat\taoItems\model\CategoryService;
+
 /**
  * Actions about Items in a Test context.
  *
@@ -76,12 +78,17 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             return;
         }
 
+        $categories = [];
         $uris = $this->getRequestParameter('uris');
         $uris = (!is_array($uris)) ? array($uris) : $uris;
 
         $items = $this->getItems($uris);
-        $itemCategories = $this->getServiceManager()->get(\oat\taoQtiItem\model\ItemCategoriesService::SERVICE_ID);
-        $this->returnJson($itemCategories->getCategories($items));
+
+        if (count($items) > 0) {
+            $service = $this->getServiceManager()->get(CategoryService::SERVICE_ID);
+            $categories = $service->getItemsCategories($items);
+        }
+        $this->returnJson($categories);
 
     }
 
