@@ -71,6 +71,7 @@ class QtiRunnerConfig implements RunnerConfig
                 'timer' => [
                     'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
                     'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
+                    'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
                 'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,

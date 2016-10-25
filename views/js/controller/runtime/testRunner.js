@@ -329,6 +329,7 @@ function (
 
                 if ((action === 'moveForward' && this.shouldDisplayEndTestWarning())    // prevent duplicate warning
                     || this.hasOption(optionNoExitTimedSectionWarning)                  // check if warning is disabled
+                    || this.testContext.keepTimerUpToTimeout                            // no need to display the message as we may be able to go back
                 ) {
                     doExitTimedSection();
                 } else {
