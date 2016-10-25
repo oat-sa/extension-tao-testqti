@@ -151,16 +151,27 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
         $messages = [];
         $newRunner = true;
         $correct = true;
+        $someOld = false;
+        $someNew = false;
         foreach ($checks as $check) {
             $messages[] = $check['message'];
             $newRunner = $newRunner && $check['new'];
             $correct = $correct && $check['correct'];
+            if ($check['new']) {
+                $someNew = true;
+            } else {
+                $someOld = true;
+            }
         }
 
         $message = implode("\n", $messages) . "\n";
+        $correct = $correct && ($someNew xor $someOld);
 
         if (!$correct) {
-            $message .= "\nWARNING!\nThe Test Runner seems to be misconfigured!";
+            $message .= "\nWARNING!\nThe Test Runner does not seem to be well configured!";
+            if ($someNew && $someOld) {
+                $message .= "\n\nThere is a mix of different versions!";
+            }
         } else if ($newRunner) {
             $message .= "\nThe New Test Runner is activated";
         } else {
