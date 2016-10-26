@@ -194,6 +194,8 @@ define([
                     currentTimers[type]
                         .init()
                         .render(self.$element);
+
+                    self.trigger('addtimer', type, currentTimers[type]);
                 }
             };
 
