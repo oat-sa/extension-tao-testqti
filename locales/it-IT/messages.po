@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.2.0-sprint37\n"
-"PO-Revision-Date: 2016-10-26T12:59:52\n"
+"PO-Revision-Date: 2016-10-26T13:08:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -327,12 +327,12 @@ msgstr "Gestisci Blocchi Rubrica"
 msgid "Manage test properties"
 msgstr "Gestisci proprietà del test"
 
+msgid "Manage Tests"
+msgstr "Gestisci Test"
+
 #, tao-public
 msgid "Manage tests"
 msgstr ""
-
-msgid "Manage Tests"
-msgstr "Gestisci Test"
 
 msgid "Mark for review"
 msgstr "Segna per la revisione"
@@ -418,11 +418,11 @@ msgstr "Non tutti i test potevano essere esportati"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Non mescolate, la posizione rimane fissa."
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "Ok"
+
+msgid "OK"
+msgstr "OK"
 
 msgid "OK & End test"
 msgstr "OK & Fine test"
@@ -790,9 +790,6 @@ msgstr "Errore XML alla riga%1$d colonna %2$d \"%3$s\"."
 
 msgid "Yes"
 msgstr "Sì"
-
-msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test"
-msgstr "Stai per uscire dal test! Una volta uscito non potrai piu' rientrare! Clicca Ok per uscire dal test!"
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Stai per uscire dal test! Una volta uscito non potrai piu' rientrare! Clicca Ok per uscire dal test!"
