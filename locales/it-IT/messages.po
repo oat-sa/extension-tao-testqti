@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint36\n"
-"PO-Revision-Date: 2016-10-05T14:21:37\n"
+"Project-Id-Version: TAO 3.2.0-sprint37\n"
+"PO-Revision-Date: 2016-10-26T13:08:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -33,6 +33,9 @@ msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sezione visibile è quella che è identificabile dal candidato."
+
+msgid "add a new weight"
+msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr ""
@@ -88,6 +91,9 @@ msgstr "Risposto"
 msgid "Are you sure you want to end the test?"
 msgstr "Sei sicuro di voler terminare il test?"
 
+msgid "At least one mandatory parameter was required but found missing in your request"
+msgstr ""
+
 msgid "Author"
 msgstr "Autore"
 
@@ -121,10 +127,16 @@ msgstr "Item completati"
 msgid "Contrast"
 msgstr ""
 
+msgid "Controls the contribution of an individual item score to the overall test score."
+msgstr ""
+
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "Controlla il numero massimo di tentativi consentiti. 0 significa illimitato."
 
 msgid "describe the item as informational"
+msgstr ""
+
+msgid "disable the warning automatically displayed upon exiting a timed section"
 msgstr ""
 
 msgid "Disable validation"
@@ -137,6 +149,9 @@ msgid "displays a next section button"
 msgstr ""
 
 msgid "displays a next section button that warns the user that they will not be able to return to the section"
+msgstr ""
+
+msgid "displays a warning before the user finishes the test"
 msgstr ""
 
 msgid "displays an exit button"
@@ -154,10 +169,10 @@ msgstr ""
 msgid "Enable selection"
 msgstr "Abilita selezione"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Fine test"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Fine test"
 
 msgid "Enter a category"
@@ -403,11 +418,11 @@ msgstr "Non tutti i test potevano essere esportati"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Non mescolate, la posizione rimane fissa."
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "Ok"
+
+msgid "OK"
+msgstr "OK"
 
 msgid "OK & End test"
 msgstr "OK & Fine test"
@@ -719,6 +734,9 @@ msgstr "Utilizza il tasto Ctrl + click  per la selezione multipla"
 msgid "Validate Responses"
 msgstr "Convalida Risposte"
 
+msgid "Value"
+msgstr ""
+
 msgid "Viewed"
 msgstr "Visualizzato"
 
@@ -741,6 +759,9 @@ msgid "Warning – You have %s remaining to complete this section."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test part."
+msgstr ""
+
+msgid "Weights"
 msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
@@ -769,6 +790,9 @@ msgstr "Errore XML alla riga%1$d colonna %2$d \"%3$s\"."
 
 msgid "Yes"
 msgstr "Sì"
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr "Stai per uscire dal test! Una volta uscito non potrai piu' rientrare! Clicca Ok per uscire dal test!"
 
 msgid "You have %s item(s) marked for review."
 msgstr "Hai %s item segnalati per la revisione"
