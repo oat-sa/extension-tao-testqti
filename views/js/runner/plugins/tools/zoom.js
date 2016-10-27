@@ -24,9 +24,10 @@ define([
     'i18n',
     'ui/hider',
     'ui/transformer',
+    'util/shortcut',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, transformer, pluginFactory, buttonTpl){
+], function ($, __, hider, transformer, shortcut, pluginFactory, buttonTpl){
     'use strict';
 
     /**
@@ -95,6 +96,8 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
 
             function zoomAction(dir) {
 
@@ -136,6 +139,18 @@ define([
                 }
             }
 
+            function zoomIn() {
+                if (self.getState('enabled') !== false) {
+                    zoomAction(-1);
+                }
+            }
+
+            function zoomOut() {
+                if (self.getState('enabled') !== false) {
+                    zoomAction(1);
+                }
+            }
+
             //build element (detached)
             this.$buttonZoomOut = $(buttonTpl({
                 control : 'zoomOut',
@@ -151,16 +166,43 @@ define([
 
             //attach behavior
             this.$buttonZoomOut.on('click', function (e){
-
                 e.preventDefault();
-                zoomAction(-1);
+                testRunner.trigger('tool-zoomin');
             });
 
             //attach behavior
             this.$buttonZoomIn.on('click', function (e){
                 e.preventDefault();
-                zoomAction(1);
+                testRunner.trigger('tool-zoomout');
             });
+
+            if (testConfig.allowShortcuts) {
+                shortcut.add('I.zoom', function (e) {
+                    var $target = $(e.target);
+
+                    // prevent action if the click is made inside the form which is a sub part of the button
+                    // or if the focus is on a text input
+                    if (self.getState('enabled') === false || $target.closest(':input').length) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    testRunner.trigger('tool-zoomin');
+                });
+
+                shortcut.add('O.zoom', function (e) {
+                    var $target = $(e.target);
+
+                    // prevent action if the click is made inside the form which is a sub part of the button
+                    // or if the focus is on a text input
+                    if (self.getState('enabled') === false || $target.closest(':input').length) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    testRunner.trigger('tool-zoomout');
+                });
+            }
 
             //start disabled
             this.show();
@@ -185,7 +227,9 @@ define([
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
-                });
+                })
+                .on('tool-zoomin', zoomIn)
+                .on('tool-zoomout', zoomOut);
         },
         /**
          * Called during the runner's render phase
@@ -199,6 +243,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
+            shortcut.remove('.zoom');
             this.$buttonZoomIn.remove();
             this.$buttonZoomOut.remove();
         },
