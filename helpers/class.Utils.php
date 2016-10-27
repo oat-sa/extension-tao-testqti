@@ -23,6 +23,8 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\php\PhpDocument;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\filesystem\File;
+use oat\oatbox\filesystem\Directory;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -37,8 +39,8 @@ class taoQtiTest_helpers_Utils {
      * by $qtiResource contains sub-directories, they will be created before copying the file (even
      * if $copy = false).
      * 
-     * @param core_kernel_file_File $testContent The pointer to the TAO Test Content folder.
-     * @param oat\taoQtiItem\model\qti\Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the IMS QTI Package) path to the resource file.
+     * @param Directory $testContent The pointer to the TAO Test Content folder.
+     * @param oat\taoQtiItem\model\qti\Resource|string $qtiResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the IMS QTI Package) path to the resource file.
      * @param string $origin The path to the directory (root folder of extracted IMS QTI package) containing the QTI resource to be copied.
      * @param boolean $copy If set to false, the file will not be actually copied.
      * @param string $rename A new filename  e.g. 'file.css' to be used at storage time.
@@ -46,15 +48,11 @@ class taoQtiTest_helpers_Utils {
      * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @throws common_Exception If the copy fails.
      */
-    static public function storeQtiResource(core_kernel_file_File $testContent, $qtiResource, $origin, $copy = true, $rename = '') {
-        if ($testContent instanceof core_kernel_file_File) {
-            $fss = ServiceManager::getServiceManager()->get(FileSystemService::SERVICE_ID);
-            $fs = $fss->getFileSystem($testContent->getFileSystem()->getUri());
-            $contentPath = $testContent->getRelativePath();
-        } else {
-            throw new InvalidArgumentException("The 'testContent' argument must be a core_kernel_file_File.");
-        }
-        
+    static public function storeQtiResource(Directory $testContent, $qtiResource, $origin, $copy = true, $rename = '') {
+        $fss = ServiceManager::getServiceManager()->get(FileSystemService::SERVICE_ID);
+        $fs = $fss->getFileSystem($testContent->getFileSystem()->getId());
+        $contentPath = $testContent->getPrefix();
+
         $ds = DIRECTORY_SEPARATOR;
         $contentPath = rtrim($contentPath, $ds);
         

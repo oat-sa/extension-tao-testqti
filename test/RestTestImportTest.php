@@ -32,9 +32,10 @@ class RestTestImportTest extends RestTestRunner
     public function testImport()
     {
         $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests/import';
-        $post_data = array(
-            'qtiPackage' => new \CURLFile(__DIR__.'/samples/archives/basic/Basic.zip')
-        );
+        $file = __DIR__.'/samples/archives/QTI 2.1/basic/Basic.zip';
+        $this->assertFileExists($file);
+        
+        $post_data = array('qtiPackage' => new \CURLFile($file));
         
         $options = array(
             CURLOPT_POSTFIELDS => $post_data 
@@ -73,9 +74,10 @@ class RestTestImportTest extends RestTestRunner
     public function testError()
     {
         $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests';
-        $post_data = array(
-            'qtiPackage' => new \CURLFile(__DIR__.'/samples/archives/invalid/MissingItemDependency.zip')
-        );
+        $file = __DIR__.'/samples/archives/QTI 2.1/invalid/MissingItemDependency.zip';
+        $this->assertFileExists($file);
+        
+        $post_data = array('qtiPackage' => new \CURLFile($file));
     
         $options = array(
             CURLOPT_POSTFIELDS => $post_data

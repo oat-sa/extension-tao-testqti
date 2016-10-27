@@ -141,12 +141,20 @@ define([
     function getTaoOptionCategories(){
         return [
             {
+                name : 'x-tao-option-endTestWarning',
+                description : __('displays a warning before the user finishes the test')
+            },
+            {
                 name : 'x-tao-option-nextSectionWarning',
                 description : __('displays a next section button that warns the user that they will not be able to return to the section')
             },
             {
                 name : 'x-tao-option-nextSection',
                 description : __('displays a next section button')
+            },
+            {
+                name : 'x-tao-option-noExitTimedSectionWarning',
+                description : __('disable the warning automatically displayed upon exiting a timed section')
             },
             {
                 name : 'x-tao-option-exit',

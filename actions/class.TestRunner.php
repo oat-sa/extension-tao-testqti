@@ -35,6 +35,7 @@ use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
+
 /**
  * Runs a QTI Test.
  *
@@ -488,31 +489,35 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
     protected function endTimedSection($nextPosition)
     {
-        $isJumpOutOfSection = false;
-        $session = $this->getTestSession();
-        $section = $session->getCurrentAssessmentSection();
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
 
-        $route = $session->getRoute();
+        if (empty($config['keep-timer-up-to-timeout'])) {
+            $isJumpOutOfSection = false;
+            $session = $this->getTestSession();
+            $section = $session->getCurrentAssessmentSection();
 
-        if( ($nextPosition >= 0) && ($nextPosition < $route->count()) ){
-            $nextSection = $route->getRouteItemAt($nextPosition);
+            $route = $session->getRoute();
 
-            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
-        }
+            if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+                $nextSection = $route->getRouteItemAt($nextPosition);
 
-        $limits = $section->getTimeLimits();
+                $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+            }
 
-        //ensure that jumping out and section is timed
-        if( $isJumpOutOfSection && $limits != null && $limits->hasMaxTime() ) {
-            $components = $section->getComponents();
+            $limits = $section->getTimeLimits();
 
-            foreach( $components as $object ){
-                if( $object instanceof \qtism\data\ExtendedAssessmentItemRef ){
-                    $items = $session->getAssessmentItemSessions( $object->getIdentifier() );
+            //ensure that jumping out and section is timed
+            if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
+                $components = $section->getComponents();
 
-                    foreach ($items as $item) {
-                        if( $item instanceof \qtism\runtime\tests\AssessmentItemSession ){
-                            $item->endItemSession();
+                foreach ($components as $object) {
+                    if ($object instanceof \qtism\data\ExtendedAssessmentItemRef) {
+                        $items = $session->getAssessmentItemSessions($object->getIdentifier());
+
+                        foreach ($items as $item) {
+                            if ($item instanceof \qtism\runtime\tests\AssessmentItemSession) {
+                                $item->endItemSession();
+                            }
                         }
                     }
                 }
@@ -868,6 +873,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	        case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
 	            $this->onTimeout($e);
 	        break;
+            
+            default:
+                $msg = "Non managed QTI Test exception caught:\n";
+
+                do {
+                    $msg .= "[" . get_class($e) . "] " . $e->getMessage() . "\n";
+                } while ($e = $e->getPrevious());
+                
+                common_Logger::e($msg);
+                break;
 	    }
 	}
 }

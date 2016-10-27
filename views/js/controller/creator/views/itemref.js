@@ -20,24 +20,45 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery',
-'lodash', 
-'i18n',
-'taoQtiTest/controller/creator/views/actions',
-'taoQtiTest/controller/creator/helpers/sectionCategory'],
-function($, _, __, actions, sectionCategory){
+    'jquery',
+    'lodash',
+    'i18n',
+    'taoQtiTest/controller/creator/views/actions',
+    'taoQtiTest/controller/creator/helpers/sectionCategory',
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight'
+],
+function(
+    $,
+    _,
+    __,
+    actions,
+    sectionCategory,
+    qtiTestHelper,
+    weightTpl
+){
     'use strict';
 
-   /**
-    * Set up an item ref: init action beahviors. Called for each one.
-    *
-    * @param {jQueryElement} $itemRef - the itemRef element to set up
-    * @param {Object} model - the data model to bind to the ref
-    */
-   var setUp =  function setUp ($itemRef, model){
+    /**
+     * We need to resize the itemref in case of long labels
+     */
+    var resize = _.throttle(function resize(){
+        var $refs = $('.itemrefs').first();
+        var $actions = $('.itemref .actions').first();
+        var width = $refs.innerWidth() - $actions.outerWidth();
+        $('.itemref > .title').width(width);
+    }, 100);
+
+    /**
+     * Set up an item ref: init action behaviors. Called for each one.
+     *
+     * @param {jQueryElement} $itemRef - the itemRef element to set up
+     * @param {Object} model - the data model to bind to the ref
+     */
+    var setUp =  function setUp ($itemRef, model){
 
         var $actionContainer = $('.actions', $itemRef);
-        
+
         actions.properties($actionContainer, 'itemref', model, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
@@ -51,12 +72,13 @@ function($, _, __, actions, sectionCategory){
         function propHandler (propView) {
 
             categoriesProperty(propView.getView());
-            
+            weightsProperty(propView);
+
             $itemRef.parents('.testpart').on('delete', removePropHandler);
             $itemRef.parents('.section').on('delete', removePropHandler);
             $itemRef.on('delete', removePropHandler);
-            
-            function removePropHandler(e){
+
+            function removePropHandler(){
                 if(propView !== null){
                     propView.destroy();
                 }
@@ -80,12 +102,12 @@ function($, _, __, actions, sectionCategory){
                 },
                 maximumInputLength : 32
             });
-            
+
             initCategories();
             $view.on('propopen.propview', function(){
                 initCategories();
             });
-            
+
             /**
              * save the categories into the model
              * @private
@@ -94,19 +116,41 @@ function($, _, __, actions, sectionCategory){
                 $select.select2('val', model.categories);
             }
         }
-   };
 
-   /**
-    * Listen for state changes to enable/disable . Called globally.
-    */
-   var listenActionState =  function listenActionState (){
 
-        var $actionContainer;
-        
+        /**
+         * Setup the weights properties
+         */
+        function weightsProperty(propView) {
+            var $view = propView.getView(),
+                $weightList = $view.find('[data-bind-each="weights"]');
+
+            $view.find('.itemref-weight-add').on('click', function(e) {
+                var defaultData = {
+                    value: 1,
+                    identifier: (model.weights.length === 0)
+                        ? 'WEIGHT'
+                        : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(model))
+                };
+                e.preventDefault();
+
+                $weightList.append(weightTpl(defaultData));
+                $weightList.trigger('add.internalbinder'); // trigger model update
+
+                $view.groupValidator();
+            });
+        }
+    };
+
+    /**
+     * Listen for state changes to enable/disable . Called globally.
+     */
+    var listenActionState =  function listenActionState (){
+
         $('.itemrefs').each(function(){
             actions.movable($('.itemref', $(this)), 'itemref', '.actions');
         });
-       
+
         $(document)
         .on('delete', function(e){
             var $parent;
@@ -114,7 +158,7 @@ function($, _, __, actions, sectionCategory){
             if($target.hasClass('itemref')){
                 $parent = $target.parents('.itemrefs');
                 actions.disable($parent.find('.itemref'), '.actions');
-           }
+            }
         })
         .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
             var $parent;
@@ -125,27 +169,17 @@ function($, _, __, actions, sectionCategory){
                 actions.movable($parent, 'itemref', '.actions');
             }
         });
-   };
+    };
 
     /**
-     * We need to resize the itemref in case of long labels
-     */
-    var resize = _.throttle(function resize(){
-        var $refs = $('.itemrefs').first();
-        var $actions = $('.itemref .actions').first();
-        var width = $refs.innerWidth() - $actions.outerWidth();
-        $('.itemref > .title').width(width); 
-    }, 100);
-    
-    /**
      * The itemrefView setup itemref related components and beahvior
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/itemref
      */
     return {
         setUp : setUp,
         listenActionState: listenActionState,
         resize : resize
-   };
- 
+    };
+
 });

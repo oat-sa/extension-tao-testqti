@@ -27,21 +27,14 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
-use qtism\data\content\RubricBlockRef;
 use qtism\data\content\RubricBlock;
-use qtism\data\content\Stylesheet;
 use qtism\data\content\StylesheetCollection;
-use qtism\data\state\OutcomeDeclaration;
-use qtism\data\state\DefaultValue;
-use qtism\data\state\Value;
-use qtism\data\state\ValueCollection;
-use qtism\common\enums\BaseType;
-use qtism\common\enums\Cardinality;
 use qtism\common\utils\Url;
-use GuzzleHttp\Psr7\Stream;
 use oat\taoQtiItem\model\qti\Service;
 use League\Flysystem\FileExistsException;
-use League\Flysystem\File;
+use oat\oatbox\filesystem\Directory;
+use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\TestCategoryRulesService;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -378,7 +371,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compactTest() {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $test = $this->getResource();
-        $testContent = $testService->getTestContent($test);
         
         common_Logger::t('Compacting QTI test ' . $test->getLabel() . '...');
         
@@ -458,7 +450,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $assessmentTest
      */
     protected function updateTestDefinition(AssessmentTest $assessmentTest) {
-        return;
+        // Call TestCategoryRulesService to generate additional rules if enabled.
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+        if (isset($config['enable-category-rules-generation']) && $config['enable-category-rules-generation'] === true) {
+            common_Logger::i('Automatic Category Rules Generation will occur...');
+            $serviceManager = ServiceManager::getServiceManager();
+            $testCategoryRulesService = $serviceManager->get(TestCategoryRulesService::SERVICE_ID);
+            $testCategoryRulesService->apply($assessmentTest);
+        }
     }
     
     /**
@@ -469,11 +468,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
 
         $privateDir = $this->getPrivateDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $relPath = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                $privateDir->write($relPath, $testDefinitionDir->getFileSystem()->read($object['path']));
-            }
+        $iterator = $testDefinitionDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+        foreach ($iterator as $object) {
+            $relPath = $testDefinitionDir->getRelPath($object);
+            $privateDir->getFile($relPath)->write($object->readStream());
         }
     }
     
@@ -565,7 +563,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $relPath = trim($this->getExtraPath(), '/');
                 $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
                     . $rubricStylesheet->getHref();
-                $sourceFile = new File($sourceDir->getFilesystem(), $sourceDir->getPath().DIRECTORY_SEPARATOR.$relPath);
+                $sourceFile = $sourceDir->getFile($relPath);
                 
                 if (!$publicCompiledDocDir->has($relPath)) {
                     try {
@@ -611,22 +609,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $testDefinitionDir = $testService->getQtiTestDir($this->getResource());
-        $filesystem = $testDefinitionDir->getFileSystem();
-        
+
         $publicCompiledDocDir = $this->getPublicDirectory();
-        foreach ($testDefinitionDir->listContents(true) as $object) {
-            if ($object['type'] === 'file') {
-                $mime = $filesystem->getMimetype($object['path']);
-                $pathinfo = pathinfo($object['path']);
-                
-                if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
-                    $publicPathFile = str_replace($testDefinitionDir->getPath(), '', $object['path']);
-                    try {
-                        common_Logger::d('Public '.$object['path'].'('.$mime.') to '.$publicPathFile);
-                        $publicCompiledDocDir->write($publicPathFile, $testDefinitionDir->getFileSystem()->read($object['path']));
-                    } catch (FileExistsException $e) {
-                        common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
-                    }
+        $iterator = $testDefinitionDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+        foreach ($iterator as $file) {
+            /** @var \oat\oatbox\filesystem\File $file */
+            $mime = $file->getMimeType();
+            $pathinfo = pathinfo($file->getBasename());
+
+            if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
+                $publicPathFile = $testDefinitionDir->getRelPath($file);
+                try {
+                    common_Logger::d('Public '.$file->getPrefix().'('.$mime.') to '.$publicPathFile);
+                    $publicCompiledDocDir->getFile($publicPathFile)->write($file->readStream());
+                } catch (FileExistsException $e) {
+                    common_Logger::w('File '.$publicPathFile.' copied twice to public test folder during compilation');
                 }
             }
         }

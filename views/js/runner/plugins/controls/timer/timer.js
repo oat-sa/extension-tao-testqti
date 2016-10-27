@@ -338,9 +338,18 @@ define([
                         .on('disableitem disconnect', doDisable)
                         .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position){
+                            var context = testRunner.getTestContext();
+                            var testData = testRunner.getTestData();
+                            var config = testData && testData.config;
+                            var timerConfig = config && config.timer || {};
+                            var options = context && context.options || {};
+
                             var movePromise = new Promise(function(resolve, reject) {
-                                //display a message if we exit a timed section
-                                if(leaveTimedSection(type, scope, position)){
+                                // endTestWarning has already been displayed, so we don't repeat the warning
+                                if (context.isLast && options.endTestWarning) {
+                                    resolve();
+                                // display a message if we exit a timed section
+                                } else if(leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
                                     testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
                                 } else {
                                     resolve();

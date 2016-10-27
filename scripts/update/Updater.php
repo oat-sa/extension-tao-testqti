@@ -20,8 +20,12 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\taoQtiTest\models\export\metadata\TestExporter;
+use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -33,7 +37,7 @@ use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  *
- * @author Jean-S�bastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class Updater extends \common_ext_ExtensionUpdater {
 
@@ -454,7 +458,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $dir = new \core_kernel_file_File($uri);
 
             $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs);
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
 
             $this->setVersion('4.0.0');
         }
@@ -608,6 +612,96 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.12.0');
         }
 
-        $this->skip('5.12.0', '5.15.0');
+        $this->skip('5.12.0', '5.16.2');
+
+        if ($this->isVersion('5.16.2')) {
+            $service = new TestExporter();
+            $service->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
+            $this->setVersion('5.17.0');
+        }
+
+        $this->skip('5.17.0', '5.17.3');
+
+        if ($this->isVersion('5.17.3')) {
+
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', array(
+                'enable-category-rules-generation' => false
+            ));
+
+            $categoryRulesService = new TestCategoryRulesService(
+                array(
+                    'score-variable-identifier' => 'SCORE',
+                    'weight-identifier' => 'WEIGHT',
+                    'category-exclusions' => array(
+                        '/x-tao-/'
+                    ),
+                    'flags' => TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT | TestCategoryRulesGenerator::SCORE
+                )
+            );
+            $categoryRulesService->setServiceManager($this->getServiceManager());
+
+            $this->getServiceManager()->register(TestCategoryRulesService::SERVICE_ID, $categoryRulesService);
+
+            $this->setVersion('5.18.0');
+        }
+
+        $this->skip('5.18.0', '5.23.0');
+
+        if ($this->isVersion('5.23.0')) {
+            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
+            if (!is_string($uri)) {
+                if (is_object($uri) && $uri instanceof \core_kernel_classes_Resource) {
+                    \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($uri->getUri());
+                } else {
+                    throw new \common_exception_InconsistentData('Invalid qti test storage directory configuration');
+                }
+            }
+            $this->setVersion('5.23.1');
+        }
+
+        $this->skip('5.23.1', '5.25.1');
+
+        if ($this->isVersion('5.25.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-unanswered-items-message'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+
+            $this->setVersion('5.26.0');
+        }
+
+        if ($this->isVersion('5.26.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'documentViewer',
+                'name' => 'Document Viewer',
+                'module' => 'taoQtiTest/runner/plugins/tools/documentViewer/documentViewer',
+                'description' => 'Display a document as requested by an event',
+                'category' => 'tools',
+                'active' => false,
+                'tags' => []
+            ]));
+            $this->setVersion('5.27.0');
+        }
+
+        if ($this->isVersion('5.27.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['keep-timer-up-to-timeout'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.28.0');
+        }
+
+        $this->skip('5.28.0', '5.31.0');
     }
 }

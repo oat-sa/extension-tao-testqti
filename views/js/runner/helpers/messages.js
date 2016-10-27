@@ -63,9 +63,13 @@ define([
         var mappedCardinality = responseCardinalities[cardinality];
         var response = {};
 
+        value = _.map(value || [], function(v){
+            return (baseType === 'boolean') ? (v === true || v === 'true') : v;
+        });
+
         if (mappedCardinality) {
             if (mappedCardinality === 'base') {
-                if (!value || value.length === 0) {
+                if (value.length === 0) {
                     //return empty response:
                     response.base = null;
                 } else {
@@ -124,10 +128,13 @@ define([
         var map = runner.getTestMap();
         var context = runner.getTestContext();
         var stats = mapHelper.getScopeStats(map, context.itemPosition, scope);
-        var unansweredCount = stats && (stats.total - stats.answered);
+        var unansweredCount = stats && (stats.questions - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
         var isItemCurrentlyAnswered;
+        var testData = runner.getTestData();
+        var testConfig = testData && testData.config;
+        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
         if (unansweredCount){
             isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
@@ -140,20 +147,22 @@ define([
                 unansweredCount--;
             }
         }
+        
+        // Unanswered items message.
+        if (messageEnabled) {
+            if (flaggedCount && unansweredCount) {
+                itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                    unansweredCount.toString(),
+                    flaggedCount.toString()
+                );
+            } else {
+                if (flaggedCount) {
+                    itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
+                }
 
-
-        if (flaggedCount && unansweredCount) {
-            itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                unansweredCount.toString(),
-                flaggedCount.toString()
-            );
-        } else {
-            if (flaggedCount) {
-                itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
-            }
-
-            if (unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+                if (unansweredCount) {
+                    itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+                }
             }
         }
 
