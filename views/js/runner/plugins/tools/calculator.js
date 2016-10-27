@@ -116,14 +116,28 @@ define([
             //attach behavior
             this.$button.on('click', function (e){
                 //prevent action if the click is made inside the form which is a sub part of the button
-                if($(e.target).closest('.widget-container').length){
+                if($(e.target).closest('.widget-calculator').length){
                     return;
                 }
 
                 e.preventDefault();
-
-                toggleCalculator();
+                testRunner.trigger('tool-calculator');
             });
+
+            if (testConfig.allowShortcuts) {
+                shortcut.add('C.calculator', function (e) {
+                    var $target = $(e.target);
+
+                    // prevent action if the click is made inside the form which is a sub part of the button
+                    // or if the focus is on a text input
+                    if (self.getState('enabled') === false || ($target.closest(':input').length && !$target.closest('.widget-calculator').length)) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    testRunner.trigger('tool-calculator');
+                });
+            }
 
             //start disabled
             togglePlugin();
@@ -142,22 +156,8 @@ define([
                         self.calculator.destroy();
                         self.calculator = null;
                     }
-                });
-
-            if (testConfig.allowShortcuts) {
-                shortcut.add('C.calculator', function (e) {
-                    var $target = $(e.target);
-
-                    // prevent action if the click is made inside the form which is a sub part of the button
-                    // or if the focus is on a text input
-                    if (self.getState('enabled') === false || ($target.closest(':input').length && !$target.closest('.widget-calculator').length)) {
-                        return;
-                    }
-
-                    e.preventDefault();
-                    toggleCalculator();
-                });
-            }
+                })
+                .on('tool-calculator', toggleCalculator);
         },
         /**
          * Called during the runner's render phase
