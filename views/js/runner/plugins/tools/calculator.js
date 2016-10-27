@@ -26,9 +26,10 @@ define([
     'i18n',
     'ui/hider',
     'ui/calculator',
+    'util/shortcut',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, calculatorFactory, pluginFactory, buttonTpl){
+], function ($, __, hider, calculatorFactory, shortcut, pluginFactory, buttonTpl){
     'use strict';
 
     var _default = {
@@ -48,6 +49,8 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var areaBroker = this.getAreaBroker();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
 
             /**
              * Is calculator activated ? if not, then we hide the plugin
@@ -59,6 +62,42 @@ define([
                     self.show();
                 }else{
                     self.hide();
+                }
+            }
+
+            /**
+             * Show/hide the calculator
+             */
+            function toggleCalculator() {
+                if (self.getState('enabled') !== false) {
+                    if (self.calculator) {
+                        //just show/hide the calculator widget
+                        if (self.calculator.is('hidden')) {
+                            self.calculator.show();
+                        } else {
+                            self.calculator.hide();
+                        }
+                    } else {
+                        //build calculator widget
+                        self.calculator = calculatorFactory({
+                            renderTo: self.$calculatorContainer,
+                            replace: true,
+                            draggableContainer: areaBroker.getContainer().find('.test-runner-sections')[0],
+                            width: _default.width,
+                            height: _default.height
+                        }).on('show', function () {
+                            self.trigger('open');
+                        }).on('hide', function () {
+                            self.trigger('close');
+                        });
+
+                        //set initial position on init
+                        self.calculator.show().getElement().css({
+                            left: self.$button.offset().left,
+                            top: 'auto',
+                            bottom: 45
+                        });
+                    }
                 }
             }
 
@@ -76,10 +115,6 @@ define([
 
             //attach behavior
             this.$button.on('click', function (e){
-
-                //get the offset of the button to position the calculator widget close to it
-                var offset = $(this).offset();
-
                 //prevent action if the click is made inside the form which is a sub part of the button
                 if($(e.target).closest('.widget-container').length){
                     return;
@@ -87,36 +122,7 @@ define([
 
                 e.preventDefault();
 
-                if(self.getState('enabled') !== false){
-                    if(self.calculator){
-                        //just show/hide the calculator widget
-                        if(self.calculator.is('hidden')){
-                            self.calculator.show();
-                        }else{
-                            self.calculator.hide();
-                        }
-                    }else{
-                        //build calculator widget
-                        self.calculator = calculatorFactory({
-                            renderTo : self.$calculatorContainer,
-                            replace : true,
-                            draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
-                            width : _default.width,
-                            height : _default.height
-                        }).on('show', function(){
-                            self.trigger('open');
-                        }).on('hide', function(){
-                            self.trigger('close');
-                        });
-
-                        //set initial position on init
-                        self.calculator.show().getElement().css({
-                            left : offset.left,
-                            top : 'auto',
-                            bottom : 45
-                        });
-                    }
-                }
+                toggleCalculator();
             });
 
             //start disabled
@@ -137,6 +143,21 @@ define([
                         self.calculator = null;
                     }
                 });
+
+            if (testConfig.allowShortcuts) {
+                shortcut.add('C.calculator', function (e) {
+                    var $target = $(e.target);
+
+                    // prevent action if the click is made inside the form which is a sub part of the button
+                    // or if the focus is on a text input
+                    if (self.getState('enabled') === false || ($target.closest(':input').length && !$target.closest('.widget-calculator').length)) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    toggleCalculator();
+                });
+            }
         },
         /**
          * Called during the runner's render phase
@@ -150,6 +171,8 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
+            shortcut.remove('.calculator');
+
             this.$button.remove();
             this.$calculatorContainer.remove();
             if(this.calculator){
