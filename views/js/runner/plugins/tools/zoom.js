@@ -178,29 +178,21 @@ define([
 
             if (testConfig.allowShortcuts) {
                 shortcut.add('I.zoom', function (e) {
-                    var $target = $(e.target);
-
-                    // prevent action if the click is made inside the form which is a sub part of the button
-                    // or if the focus is on a text input
-                    if (self.getState('enabled') === false || $target.closest(':input').length) {
-                        return;
+                    if (self.getState('enabled')) {
+                        e.preventDefault();
+                        testRunner.trigger('tool-zoomin');
                     }
-
-                    e.preventDefault();
-                    testRunner.trigger('tool-zoomin');
+                }, {
+                    avoidInput: true
                 });
 
                 shortcut.add('O.zoom', function (e) {
-                    var $target = $(e.target);
-
-                    // prevent action if the click is made inside the form which is a sub part of the button
-                    // or if the focus is on a text input
-                    if (self.getState('enabled') === false || $target.closest(':input').length) {
-                        return;
+                    if (self.getState('enabled')) {
+                        e.preventDefault();
+                        testRunner.trigger('tool-zoomout');
                     }
-
-                    e.preventDefault();
-                    testRunner.trigger('tool-zoomout');
+                }, {
+                    avoidInput: true
                 });
             }
 

@@ -126,16 +126,13 @@ define([
 
             if (testConfig.allowShortcuts) {
                 shortcut.add('C.calculator', function (e) {
-                    var $target = $(e.target);
-
-                    // prevent action if the click is made inside the form which is a sub part of the button
-                    // or if the focus is on a text input
-                    if (self.getState('enabled') === false || ($target.closest(':input').length && !$target.closest('.widget-calculator').length)) {
-                        return;
+                    if (self.getState('enabled')) {
+                        e.preventDefault();
+                        testRunner.trigger('tool-calculator');
                     }
-
-                    e.preventDefault();
-                    testRunner.trigger('tool-calculator');
+                }, {
+                    avoidInput: true,
+                    allowIn: '.widget-calculator'
                 });
             }
 
