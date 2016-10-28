@@ -177,20 +177,14 @@ define([
             });
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('I.zoom', function (e) {
-                    if (self.getState('enabled')) {
-                        e.preventDefault();
-                        testRunner.trigger('tool-zoomin');
-                    }
+                shortcut.add('I.zoom', function () {
+                    testRunner.trigger('tool-zoomin');
                 }, {
                     avoidInput: true
                 });
 
-                shortcut.add('O.zoom', function (e) {
-                    if (self.getState('enabled')) {
-                        e.preventDefault();
-                        testRunner.trigger('tool-zoomout');
-                    }
+                shortcut.add('O.zoom', function () {
+                    testRunner.trigger('tool-zoomout');
                 }, {
                     avoidInput: true
                 });

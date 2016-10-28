@@ -58,6 +58,20 @@ define([
                 }
             }
 
+            /**
+             * Show/hide the comment panel
+             */
+            function toggleComment() {
+                if (self.getState('enabled') !== false) {
+                    //just show/hide the form
+                    hider.toggle(self.$form);
+                    if (!hider.isHidden(self.$form)) {
+                        //reset the form on each display
+                        self.$input.val('').focus();
+                    }
+                }
+            }
+
             //build element (detached)
             this.$button = $(buttonTpl({
                 control: 'comment',
@@ -80,15 +94,7 @@ define([
                 }
 
                 e.preventDefault();
-
-                if (self.getState('enabled') !== false) {
-                    //just show/hide the form
-                    hider.toggle(self.$form);
-                    if (!hider.isHidden(self.$form)) {
-                        //reset the form on each display
-                        self.$input.val('').focus();
-                    }
-                }
+                testRunner.trigger('tool-comment');
             });
 
             //hide the form without submit
@@ -130,7 +136,8 @@ define([
                 })
                 .on('unloaditem', function () {
                     self.disable();
-                });
+                })
+                .on('tool-comment', toggleComment);
         },
 
         /**

@@ -125,11 +125,8 @@ define([
             });
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('C.calculator', function (e) {
-                    if (self.getState('enabled')) {
-                        e.preventDefault();
-                        testRunner.trigger('tool-calculator');
-                    }
+                shortcut.add('C.calculator', function () {
+                    testRunner.trigger('tool-calculator');
                 }, {
                     avoidInput: true,
                     allowIn: '.widget-calculator'
