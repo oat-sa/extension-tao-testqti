@@ -195,6 +195,11 @@ define([
                         .init()
                         .render(self.$element);
 
+                    /**
+                     * @event timerPlugin#addtimer
+                     * @param {String} type of timer (such as 'assessmentSection', 'testPart' etc.)
+                     * @param {Object} timer instance ('core/timer' timer factory).
+                     */
                     self.trigger('addtimer', type, currentTimers[type]);
                 }
             };
