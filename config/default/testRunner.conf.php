@@ -325,4 +325,10 @@ return array(
      * @type boolean
      */
     'keep-timer-up-to-timeout' => false,
+
+    /**
+     * Allows to use keyboard shortcuts to interact with the test runner
+     * @type boolean
+     */
+    'allow-shortcuts' => true,
 );

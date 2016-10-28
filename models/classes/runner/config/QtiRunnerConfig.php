@@ -76,6 +76,7 @@ class QtiRunnerConfig implements RunnerConfig
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
                 'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
                 'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
+                'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
             ];
         }
         return $this->config;
