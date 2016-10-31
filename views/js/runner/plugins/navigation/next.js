@@ -27,8 +27,9 @@ define([
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/messages',
+    'util/shortcut',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, messages, buttonTpl){
+], function ($, __, hider, pluginFactory, messages, shortcuts, buttonTpl){
     'use strict';
 
     /**
@@ -96,40 +97,78 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
-
-            function doNext(context) {
-                if(context.isLast){
-                    self.trigger('end');
-                }
-                testRunner.next();
-            }
+            var testData = testRunner.getTestData();
+            var testConfig = testData && testData.config;
 
             //create the button (detached)
             this.$element = createElement(testRunner.getTestContext());
 
             //plugin behavior
-            this.$element.on('click', function(e){
+            function doNext(nextItemWarning) {
                 var enable = _.bind(self.enable, self);
                 var context = testRunner.getTestContext();
 
-                e.preventDefault();
+                nextItemWarning = nextItemWarning || false;
 
                 if(self.getState('enabled') !== false){
                     self.disable();
+
                     if(context.options.endTestWarning && context.isLast){
                         testRunner.trigger(
                             'confirm.endTest',
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 'test', testRunner),
-                            _.partial(doNext, context), // if the test taker accept
+                            _.partial(triggerNext, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
+
+                    } else if (nextItemWarning && context.isLinear === true) {
+                        testRunner.trigger(
+                            'confirm.next',
+                            __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.'),
+                            _.partial(triggerNext, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else if (nextItemWarning && context.isLinear === false && context.remainingAttempts !== -1) {
+                        var message = __('You are about to go to the next item. You only have a limited number of attempts to answer the current item (%s remaining). Click OK to continue and go to the next item.', context.remainingAttempts);
+                        if (context.remainingAttempts === 0) {
+                            message = __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.');
+                        }
+                        testRunner.trigger(
+                            'confirm.next',
+                            message,
+                            _.partial(triggerNext, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
                     } else {
-                        doNext(context);
+                        triggerNext(context);
                     }
                 }
+            }
+
+            function triggerNext(context) {
+                if(context.isLast){
+                    self.trigger('end');
+                }
+                testRunner.next();
+            }
+
+            this.$element.on('click', function(e){
+                e.preventDefault();
+                doNext();
             });
+
+            if(testConfig && testConfig.allowShortcuts){
+                shortcuts.add('J.next', function(e) {
+                    if (self.getState('enabled') === true) {
+                        e.preventDefault();
+                        doNext(true);
+                    }
+                }, { avoidInput: true });
+            }
 
             //disabled by default
             this.disable();

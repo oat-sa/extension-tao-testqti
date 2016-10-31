@@ -26,8 +26,9 @@ define([
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
+    'util/shortcut',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, buttonTpl){
+], function ($, __, hider, pluginFactory, shortcuts, buttonTpl){
     'use strict';
 
     /**
@@ -44,13 +45,14 @@ define([
             var self = this;
 
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData();
+            var testConfig = testData && testData.config;
 
             /**
              * Can we move backward ? if not, then we hide the plugin
              */
             var toggle = function toggle(){
-                var context = testRunner.getTestContext();
-                if(context.navigationMode === 1 && context.canMoveBackward){
+                if(self.canDoPrevious()){
                     self.show();
                 } else {
                     self.hide();
@@ -66,14 +68,47 @@ define([
             }));
 
             //attach behavior
-            this.$element.on('click', function(e){
-                e.preventDefault();
+            function doPrevious(previousItemWarning) {
+                var enable = _.bind(self.enable, self);
+                var context = testRunner.getTestContext();
+
+                previousItemWarning = previousItemWarning || false;
+
                 if(self.getState('enabled') !== false){
                     self.disable();
 
-                    testRunner.previous();
+                    if (previousItemWarning && context.remainingAttempts !== -1) {
+                        var message = __('You are about to go to the next item. You only have a limited number of attempts to answer the current item (%s remaining). Click OK to continue and go to the next item.', context.remainingAttempts);
+                        if (context.remainingAttempts === 0) {
+                            message = __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.');
+                        }
+
+                        testRunner.trigger(
+                            'confirm.previous',
+                            message,
+                            testRunner.previous, // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else {
+                        testRunner.previous();
+                    }
                 }
+            }
+
+            this.$element.on('click', function(e){
+                e.preventDefault();
+                doPrevious();
             });
+
+            if(this.canDoPrevious() && testConfig && testConfig.allowShortcuts){
+                shortcuts.add('K.previous', function(e) {
+                    if (self.getState('enabled') === true) {
+                        e.preventDefault();
+                        doPrevious(true);
+                    }
+                }, { avoidInput: true });
+            }
 
             //start disabled
             toggle();
@@ -88,6 +123,15 @@ define([
                 .on('disablenav', function(){
                     self.disable();
                 });
+        },
+
+        /**
+         * Check if the "Previous" functionality should be available or not
+         */
+        canDoPrevious : function canDoPrevious() {
+            var testRunner = this.getTestRunner();
+            var context = testRunner.getTestContext();
+            return !context.isLinear && context.canMoveBackward;
         },
 
         /**
