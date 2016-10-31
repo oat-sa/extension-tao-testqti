@@ -49,10 +49,19 @@ define([
             var testConfig = testData && testData.config;
 
             /**
-             * Can we move backward ? if not, then we hide the plugin
+             * Check if the "Previous" functionality should be available or not
+             */
+            function canDoPrevious() {
+                var testRunner = self.getTestRunner();
+                var context = testRunner.getTestContext();
+                return !context.isLinear && context.canMoveBackward;
+            }
+
+            /**
+             * Hide the plugin if the Previous functionality shouldn't be available
              */
             var toggle = function toggle(){
-                if(self.canDoPrevious()){
+                if(canDoPrevious()){
                     self.show();
                 } else {
                     self.hide();
@@ -101,7 +110,7 @@ define([
                 doPrevious();
             });
 
-            if(this.canDoPrevious() && testConfig && testConfig.allowShortcuts){
+            if(canDoPrevious() && testConfig && testConfig.allowShortcuts){
                 shortcuts.add('K.previous', function(e) {
                     if (self.getState('enabled') === true) {
                         e.preventDefault();
@@ -125,14 +134,6 @@ define([
                 });
         },
 
-        /**
-         * Check if the "Previous" functionality should be available or not
-         */
-        canDoPrevious : function canDoPrevious() {
-            var testRunner = this.getTestRunner();
-            var context = testRunner.getTestContext();
-            return !context.isLinear && context.canMoveBackward;
-        },
 
         /**
          * Called during the runner's render phase
