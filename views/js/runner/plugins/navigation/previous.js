@@ -23,12 +23,13 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
     'util/shortcut',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, shortcuts, buttonTpl){
+], function ($, _, __, hider, pluginFactory, shortcuts, buttonTpl){
     'use strict';
 
     /**
@@ -51,11 +52,10 @@ define([
             /**
              * Check if the "Previous" functionality should be available or not
              */
-            function canDoPrevious() {
-                var testRunner = self.getTestRunner();
+            var canDoPrevious = function canDoPrevious() {
                 var context = testRunner.getTestContext();
-                return !context.isLinear && context.canMoveBackward;
-            }
+                return context.isLinear === false && context.canMoveBackward === true;
+            };
 
             /**
              * Hide the plugin if the Previous functionality shouldn't be available
@@ -87,14 +87,9 @@ define([
                     self.disable();
 
                     if (previousItemWarning && context.remainingAttempts !== -1) {
-                        var message = __('You are about to go to the next item. You only have a limited number of attempts to answer the current item (%s remaining). Click OK to continue and go to the next item.', context.remainingAttempts);
-                        if (context.remainingAttempts === 0) {
-                            message = __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.');
-                        }
-
                         testRunner.trigger(
                             'confirm.previous',
-                            message,
+                            __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
                             testRunner.previous, // if the test taker accept
                             enable  // if the test taker refuse
                         );
@@ -110,9 +105,9 @@ define([
                 doPrevious();
             });
 
-            if(canDoPrevious() && testConfig && testConfig.allowShortcuts){
+            if(testConfig && testConfig.allowShortcuts){
                 shortcuts.add('K.previous', function(e) {
-                    if (self.getState('enabled') === true) {
+                    if (canDoPrevious() && self.getState('enabled') === true) {
                         e.preventDefault();
                         doPrevious(true);
                     }
