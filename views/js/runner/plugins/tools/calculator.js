@@ -23,13 +23,15 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'ui/calculator',
     'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, calculatorFactory, shortcut, pluginFactory, buttonTpl){
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 
     var _default = {
@@ -51,16 +53,25 @@ define([
             var areaBroker = this.getAreaBroker();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-calculator
+                return !!context.options.calculator;
+            }
 
             /**
              * Is calculator activated ? if not, then we hide the plugin
              */
-            function togglePlugin(){
-                var context = testRunner.getTestContext();
-                //to be activated with the special category x-tao-option-calculator
-                if(context.options.calculator){//allow calculator
+            function togglePlugin() {
+                if (isEnabled()) {//allow calculator
                     self.show();
-                }else{
+                } else {
                     self.hide();
                 }
             }
@@ -125,12 +136,14 @@ define([
             });
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('C.calculator', function () {
-                    testRunner.trigger('tool-calculator');
-                }, {
-                    avoidInput: true,
-                    allowIn: '.widget-calculator'
-                });
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-calculator');
+                    }, {
+                        avoidInput: true,
+                        allowIn: '.widget-calculator'
+                    });
+                }
             }
 
             //start disabled
@@ -151,7 +164,11 @@ define([
                         self.calculator = null;
                     }
                 })
-                .on('tool-calculator', toggleCalculator);
+                .on('tool-calculator', function () {
+                    if (isEnabled()) {
+                        toggleCalculator();
+                    }
+                });
         },
         /**
          * Called during the runner's render phase
@@ -165,7 +182,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
-            shortcut.remove('.calculator');
+            shortcut.remove('.' + this.getName());
 
             this.$button.remove();
             this.$calculatorContainer.remove();

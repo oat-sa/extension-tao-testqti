@@ -27,11 +27,12 @@ define([
     'i18n',
     'ui/hider',
     'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, hider, shortcut, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
     'use strict';
 
     /**
@@ -138,6 +139,7 @@ define([
             var testContext = testRunner.getTestContext();
             var testMap = testRunner.getTestMap();
             var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var navigatorConfig = testConfig.review || {};
 
             /**
@@ -237,17 +239,21 @@ define([
             });
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('M.review', function () {
-                    testRunner.trigger('tool-flagitem');
-                }, {
-                    avoidInput: true
-                });
+                if (pluginShortcuts.flag) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.flag, this.getName(), true), function () {
+                        testRunner.trigger('tool-flagitem');
+                    }, {
+                        avoidInput: true
+                    });
+                }
 
-                shortcut.add('R.review', function () {
-                    testRunner.trigger('tool-reviewpanel');
-                }, {
-                    avoidInput: true
-                });
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-reviewpanel');
+                    }, {
+                        avoidInput: true
+                    });
+                }
             }
 
             //disabled by default
@@ -294,8 +300,16 @@ define([
                         self.disable();
                     }
                 })
-                .on('tool-flagitem', flagCurrentItem)
-                .on('tool-reviewpanel', togglePanel);
+                .on('tool-flagitem', function () {
+                    if (isEnabled()) {
+                        flagCurrentItem();
+                    }
+                })
+                .on('tool-reviewpanel', function () {
+                    if (isEnabled()) {
+                        togglePanel();
+                    }
+                });
         },
 
         /**
@@ -315,7 +329,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
-            shortcut.remove('.review');
+            shortcut.remove('.' + this.getName());
             this.$flagItemButton.remove();
             this.$toggleButton.remove();
             this.navigator.destroy();

@@ -26,9 +26,11 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
+    'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, hider, buttonTpl, commentTpl) {
+], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, buttonTpl, commentTpl) {
     'use strict';
 
     /**
@@ -45,13 +47,24 @@ define([
             var self = this;
 
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                return !!context.options.allowComment;
+            }
 
             /**
              * Can we comment ? if not, then we hide the plugin
              */
             function togglePlugin() {
-                var context = testRunner.getTestContext();
-                if (context.options.allowComment) {
+                if (isEnabled()) {
                     self.show();
                 } else {
                     self.hide();
@@ -124,6 +137,16 @@ define([
                 }
             });
 
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-comment');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+            }
+
             //start disabled
             togglePlugin();
             this.disable();
@@ -137,7 +160,11 @@ define([
                 .on('unloaditem', function () {
                     self.disable();
                 })
-                .on('tool-comment', toggleComment);
+                .on('tool-comment', function () {
+                    if (isEnabled()) {
+                        toggleComment();
+                    }
+                });
         },
 
         /**
@@ -152,6 +179,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
+            shortcut.remove('.' + this.getName());
             this.$button.remove();
         },
 

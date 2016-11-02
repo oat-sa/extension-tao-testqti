@@ -29,9 +29,10 @@ define([
     'ui/hider',
     'ui/themes',
     'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
-], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, buttonTpl, itemThemeSwitcherTpl) {
+], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper, buttonTpl, itemThemeSwitcherTpl) {
     'use strict';
 
     /**
@@ -49,6 +50,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var themesConfig = themeHandler.get('items') || {};
             var state = {
                 availableThemes: [],
@@ -117,11 +119,13 @@ define([
             });
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('T.themeswitcher', function () {
-                    testRunner.trigger('tool-themeswitcher');
-                }, {
-                    avoidInput: true
-                });
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher');
+                    }, {
+                        avoidInput: true
+                    });
+                }
             }
 
             //start disabled
@@ -165,7 +169,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
-            shortcut.remove('.themeswitcher');
+            shortcut.remove('.' + this.getName());
             this.$button.remove();
         },
 
