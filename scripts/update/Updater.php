@@ -715,5 +715,21 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.31.0');
         }
+        
+        if ($this->isVersion('5.31.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'responsesAccess',
+                'name' => 'Shortcuts to access the item responses',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/responsesAccess',
+                'description' => 'Provide a way to navigate between item responses using the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));            
+
+            $this->setVersion('5.32.0');
+        }
     }
 }
