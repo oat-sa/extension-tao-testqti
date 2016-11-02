@@ -17,8 +17,8 @@
  */
 
 /**
- * This is a helper for the Next plugin, which decides if a warning should be displayed
- * before actually doing the next() action
+ * This is a helper for navigation plugins. It decides if a warning should be displayed
+ * before actually doing moving to the next/previous item
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -27,25 +27,39 @@ define([], function () {
 
     /**
      * @param {Object} options
+     * @param {Boolean} options.endTestWarning - enables the end test warning, when applicable
+     * @param {Boolean} options.isLast - if the item is the last of the test
+     * @param {Boolean} options.isLinear - if the current part is linear
+     * @param {Boolean} options.nextItemWarning - enables the next item warning, when applicable
+     * @param {Object} options.nextPart - description of the next part of the test
+     * @param {Number} options.remainingAttempts - remaining attempts for the current item
+     * @param {String} options.testPartId - current test part identifier
      * @returns {Object}
      */
     var nextWarningHelper = function nextWarningHelper(options) {
-        var endTestWarning      = getOption('endTestWarning'),
-            isLast              = getOption('isLast'),
-            isLinear            = getOption('isLinear'),
-            nextItemWarning     = getOption('nextItemWarning'),
-            nextPart            = getOption('nextPart'),
-            remainingAttempts   = getOption('remainingAttempts'),
-            testPartId          = getOption('testPartId'),
+        var endTestWarning      = toBoolean(options.endTestWarning, false),
+            isLast              = toBoolean(options.isLast, false),
+            isLinear            = toBoolean(options.isLinear, false),
+            nextItemWarning     = toBoolean(options.nextItemWarning, false),
+            nextPart            = options.nextPart || {},
+            remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
+            testPartId          = options.testPartId || '',
 
             warnBeforeNext = shouldWarnBeforeNext(),
             warnBeforeEnd = shouldWarnBeforeEnd();
 
-        function getOption(key) {
-            if (typeof options[key] === 'undefined') {
-                throw new Error('option should have a ' + key + ' property');
+        /**
+         * Convert a value to a boolean
+         * @param {*} value
+         * @param {Boolean} defaultValue
+         * @returns {Boolean}
+         */
+        function toBoolean(value, defaultValue) {
+            if (typeof(value) === "undefined") {
+                return defaultValue;
+            } else {
+                return (value === true || value === "true");
             }
-            return options[key];
         }
 
         /**

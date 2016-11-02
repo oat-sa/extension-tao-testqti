@@ -23,13 +23,16 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/plugins/navigation/nextWarningHelper',
     'taoQtiTest/runner/helpers/messages',
+    'taoQtiTest/runner/helpers/map',
     'util/shortcut',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, messages, shortcuts, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcuts, buttonTpl){
     'use strict';
 
     /**
@@ -56,7 +59,7 @@ define([
      * @returns {jQueryElement} the button
      */
     var createElement = function createElement(context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         return $(buttonTpl(buttonData[dataType]));
     };
 
@@ -66,7 +69,7 @@ define([
      * @param {Object} context - the test context
      */
     var updateElement = function updateElement($element, context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         if($element.data('control') !== buttonData[dataType].control){
 
             $element.data('control', buttonData[dataType].control)
@@ -104,16 +107,30 @@ define([
             this.$element = createElement(testRunner.getTestContext());
 
             //plugin behavior
+            /**
+             * @param {Boolean} nextItemWarning - enable the display of a warning when going to the next item.
+             * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
+             */
             function doNext(nextItemWarning) {
                 var enable = _.bind(self.enable, self);
                 var context = testRunner.getTestContext();
+                var map = testRunner.getTestMap();
+                var nextItemPosition = context.itemPosition + 1;
 
-                nextItemWarning = nextItemWarning || false;
+                var warningHelper = nextWarningHelper({
+                    endTestWarning:     context.options.endTestWarning,
+                    isLast:             context.isLast,
+                    isLinear:           context.isLinear,
+                    nextItemWarning:    nextItemWarning,
+                    nextPart:           mapHelper.getItemPart(map, nextItemPosition),
+                    remainingAttempts:  context.remainingAttempts,
+                    testPartId:         context.testPartId
+                });
 
-                if(self.getState('enabled') !== false){
+                if(self.getState('enabled') !== false) {
                     self.disable();
 
-                    if(context.options.endTestWarning && context.isLast){
+                    if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(
                             'confirm.endTest',
                             messages.getExitMessage(
@@ -123,22 +140,10 @@ define([
                             enable  // if the test taker refuse
                         );
 
-                    } else if (nextItemWarning && context.isLinear === true) {
+                    } else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(
                             'confirm.next',
-                            __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.'),
-                            _.partial(triggerNext, context), // if the test taker accept
-                            enable  // if the test taker refuse
-                        );
-
-                    } else if (nextItemWarning && context.isLinear === false && context.remainingAttempts !== -1) {
-                        var message = __('You are about to go to the next item. You only have a limited number of attempts to answer the current item (%s remaining). Click OK to continue and go to the next item.', context.remainingAttempts);
-                        if (context.remainingAttempts === 0) {
-                            message = __('You are about to go to the next item. You will not be able to come back to this item later. Click OK to continue and go to the next item.');
-                        }
-                        testRunner.trigger(
-                            'confirm.next',
-                            message,
+                            __('You are about to go to the next item. Click OK to continue and go to the next item.'),
                             _.partial(triggerNext, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
