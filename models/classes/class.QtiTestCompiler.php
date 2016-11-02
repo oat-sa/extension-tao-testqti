@@ -696,7 +696,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileTest(AssessmentTest $test) {
         // Compiling a test may require extra processing time.
-        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
+        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::MEDIUM);
 
         $phpCompiledDoc = new PhpDocument('2.1', $test);
         $data = $phpCompiledDoc->saveToString();
