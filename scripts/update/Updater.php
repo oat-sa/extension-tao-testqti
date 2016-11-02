@@ -715,5 +715,20 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.31.0');
         }
+
+
+	    if ($this->isVersion('5.26.0')) {
+		    $registry = PluginRegistry::getRegistry();
+		    $registry->register(TestPlugin::fromArray([
+			    'id' => 'magnifier',
+			    'name' => 'Magnification tool',
+			    'module' =>'taoQtiTest/runner/plugins/tools/magnifier',
+			    'description' => 'Gives the student access to a magnifier',
+			    'category' => 'tools',
+			    'active' => true,
+			    'tags' => [ 'core' ]
+		    ]));
+		    $this->setVersion('5.32.0');
+	    }
     }
 }

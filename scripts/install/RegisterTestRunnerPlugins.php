@@ -198,7 +198,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'tags' => [ 'core', 'qti' ]
             ], [
                 'id' => 'calculator',
-                'name' => 'Caculator tool',
+                'name' => 'Calculator tool',
                 'module' =>'taoQtiTest/runner/plugins/tools/calculator',
                 'description' => 'Gives the student access to a basic calculator',
                 'category' => 'tools',
@@ -228,7 +228,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ ]
-            ]
+            ], [
+		        'id' => 'magnifier',
+		        'name' => 'Magnification tool',
+		        'module' =>'taoQtiTest/runner/plugins/tools/magnifier',
+		        'description' => 'Gives the student access to a magnifier',
+		        'category' => 'tools',
+		        'active' => true,
+		        'tags' => [ 'core' ]
+	        ]
         ],
         'security' => [
             [
