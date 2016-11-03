@@ -58,7 +58,7 @@ define([
                 var isFocused = false;
                 var $input;
 
-                if ($.contains($content.get(0), document.activeElement)) {
+                if (document.activeElement && $.contains($content.get(0), document.activeElement)) {
                     // try to find the focused element within the known list of response elements
                     _.forEach(responses, function(response, index) {
                         if (document.activeElement === response) {
@@ -72,13 +72,15 @@ define([
                 if (!isFocused) {
                     // from the current cursor retrieve the related interaction, then find the selected response
                     $input = $(':input:eq(' + cursor +')', $content).closest('.qti-interaction').find(':checked');
-                    _.forEach(responses, function(response, index) {
-                        if ($input.is(response)) {
-                            cursor = index;
-                            isFocused = true;
-                            return false;
-                        }
-                    });
+                    if ($input.length) {
+                        _.forEach(responses, function(response, index) {
+                            if ($input.is(response)) {
+                                cursor = index;
+                                isFocused = true;
+                                return false;
+                            }
+                        });
+                    }
                 }
 
                 return cursor;
