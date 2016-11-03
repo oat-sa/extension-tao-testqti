@@ -18,7 +18,7 @@
 
 /**
  * This is a helper for navigation plugins. It decides if a warning should be displayed
- * before actually doing moving to the next item
+ * before actually moving to the next item
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -68,9 +68,9 @@ define([], function () {
          * before the test taker actually gets a chance to answer an item
          */
         function shouldWarnBeforeNext() {
-            return nextItemWarning && !itemCanBeTriedAtWill();
-            // add handling of exitTimedSectionWarning
-            // add handling of informational items ?
+            return nextItemWarning
+                && !itemCanBeTriedAtWill();
+                //&& !exitTimedSectionWarning(); //todo: this should be implemented to prevent a double warning!
         }
 
         /**
