@@ -114,7 +114,6 @@ define([
              * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
              */
             function doNext(nextItemWarning) {
-                var enable = _.bind(self.enable, self);
                 var context = testRunner.getTestContext();
                 var map = testRunner.getTestMap();
                 var nextItemPosition = context.itemPosition + 1;
@@ -129,8 +128,12 @@ define([
                     testPartId:         context.testPartId
                 });
 
+                function enable() {
+                    testRunner.trigger('enablenav enabletools');
+                }
+
                 if(self.getState('enabled') !== false) {
-                    self.disable();
+                    testRunner.trigger('disablenav disabletools');
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(

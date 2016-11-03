@@ -80,13 +80,16 @@ define([
 
             //attach behavior
             function doPrevious(previousItemWarning) {
-                var enable = _.bind(self.enable, self);
                 var context = testRunner.getTestContext();
 
                 previousItemWarning = previousItemWarning || false;
 
+                function enable() {
+                    testRunner.trigger('enablenav enabletools');
+                }
+
                 if(self.getState('enabled') !== false){
-                    self.disable();
+                    testRunner.trigger('disablenav disabletools');
 
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
