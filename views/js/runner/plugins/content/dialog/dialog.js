@@ -93,6 +93,9 @@ define([
                 })
                 .before('closedialog.*', function(e, accept) {
                     closeDialogs(e.namespace, accept);
+                })
+                .on('destroy', function() {
+                    closeDialogs('.@');
                 });
         }
     });
