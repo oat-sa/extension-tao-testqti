@@ -112,7 +112,7 @@ return array(
      * @type boolean
      */
     'test-taker-review-can-collapse' => false,
-    
+
     /**
      * Enable/Disable warning message about unanswered items at the end of the test.
      * @type boolean
@@ -288,25 +288,25 @@ return array(
      * @type boolean
      */
     'enable-allow-skipping' => false,
-    
+
     /*
      * Force branch rules to be executed even if the current navigation mode is non-linear.
      * @type boolean
      */
     'force-branchrules' => false,
-    
+
     /*
      * Force preconditions to be executed even if the current navigation mode is non-linear.
      * @type boolean
      */
     'force-preconditions' => false,
-    
+
     /**
      * Enable path tracking (consider taken route items, rather than default route item flow for navigation).
      * @type boolean
      */
     'path-tracking' => false,
-    
+
     /**
      * Always allow jumps, even if the current navigation mode is linear.
      * @type boolean
@@ -314,14 +314,14 @@ return array(
     'always-allow-jumps' => false,
 
     /**
-     * Checks if items are informational. This will change the behavior of the review panel: 
+     * Checks if items are informational. This will change the behavior of the review panel:
      * the informational items are not taken into account in the answered/flagged counters
      * @type boolean
      */
     'check-informational' => true,
-    
+
     /**
-     * Keep the timer when the test taker leaves a section, in order to restore it when he/she goes back 
+     * Keep the timer when the test taker leaves a section, in order to restore it when he/she goes back
      * @type boolean
      */
     'keep-timer-up-to-timeout' => false,
@@ -353,6 +353,12 @@ return array(
         'review' => [
             'toggle' => 'R',
             'flag' => 'M'
+        ],
+        'next' => [
+            'toggle' => 'J'
+        ],
+        'previous' => [
+            'toggle' => 'K'
         ]
     ],
 );

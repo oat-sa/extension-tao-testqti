@@ -31,8 +31,9 @@ define([
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
     'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcuts, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -101,7 +102,8 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData();
-            var testConfig = testData && testData.config;
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             //create the button (detached)
             this.$element = createElement(testRunner.getTestContext());
@@ -136,7 +138,7 @@ define([
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 'test', testRunner),
-                            _.partial(triggerNext, context), // if the test taker accept
+                            _.partial(triggerNextAction, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
 
@@ -144,17 +146,17 @@ define([
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
-                            _.partial(triggerNext, context), // if the test taker accept
+                            _.partial(triggerNextAction, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
 
                     } else {
-                        triggerNext(context);
+                        triggerNextAction(context);
                     }
                 }
             }
 
-            function triggerNext(context) {
+            function triggerNextAction(context) {
                 if(context.isLast){
                     self.trigger('end');
                 }
@@ -163,14 +165,14 @@ define([
 
             this.$element.on('click', function(e){
                 e.preventDefault();
-                doNext();
+                testRunner.trigger('nav-next');
             });
 
-            if(testConfig && testConfig.allowShortcuts){
-                shortcuts.add('J.next', function(e) {
+            if(testConfig.allowShortcuts && pluginShortcuts.toggle){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function(e) {
                     if (self.getState('enabled') === true) {
                         e.preventDefault();
-                        doNext(true);
+                        testRunner.trigger('nav-next', [true]);
                     }
                 }, { avoidInput: true });
             }
@@ -188,6 +190,10 @@ define([
                 })
                 .on('disablenav', function(){
                     self.disable();
+                })
+                .on('nav-next', function(data) {
+                    var nextItemWarning = data && typeof(data[0]) !== 'undefined' ? data[0] : false;
+                    doNext(nextItemWarning);
                 });
         },
 
@@ -205,6 +211,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
+            shortcut.remove('.' + this.getName());
             this.$element.remove();
         },
 

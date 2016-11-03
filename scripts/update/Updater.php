@@ -747,5 +747,24 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.32.0');
         }
+
+        if ($this->isVersion('5.32.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts'] = [
+                'next' => [
+                    'toggle' => 'J'
+                ],
+                'previous' => [
+                    'toggle' => 'K'
+                ]
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.33.0');
+        }
     }
 }
