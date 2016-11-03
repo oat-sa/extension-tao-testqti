@@ -24,9 +24,11 @@ define([
     'i18n',
     'ui/hider',
     'ui/transformer',
+    'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, transformer, pluginFactory, buttonTpl){
+], function ($, __, hider, transformer, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 
     /**
@@ -95,6 +97,9 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             function zoomAction(dir) {
 
@@ -136,6 +141,18 @@ define([
                 }
             }
 
+            function zoomIn() {
+                if (self.getState('enabled') !== false) {
+                    zoomAction(1);
+                }
+            }
+
+            function zoomOut() {
+                if (self.getState('enabled') !== false) {
+                    zoomAction(-1);
+                }
+            }
+
             //build element (detached)
             this.$buttonZoomOut = $(buttonTpl({
                 control : 'zoomOut',
@@ -150,17 +167,34 @@ define([
             }));
 
             //attach behavior
-            this.$buttonZoomOut.on('click', function (e){
-
+            this.$buttonZoomIn.on('click', function (e){
                 e.preventDefault();
-                zoomAction(-1);
+                testRunner.trigger('tool-zoomin');
             });
 
             //attach behavior
-            this.$buttonZoomIn.on('click', function (e){
+            this.$buttonZoomOut.on('click', function (e){
                 e.preventDefault();
-                zoomAction(1);
+                testRunner.trigger('tool-zoomout');
             });
+
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.in) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.in, this.getName(), true), function () {
+                        testRunner.trigger('tool-zoomin');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+
+                if (pluginShortcuts.out) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.out, this.getName(), true), function () {
+                        testRunner.trigger('tool-zoomout');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+            }
 
             //start disabled
             this.show();
@@ -185,7 +219,9 @@ define([
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
-                });
+                })
+                .on('tool-zoomin', zoomIn)
+                .on('tool-zoomout', zoomOut);
         },
         /**
          * Called during the runner's render phase
@@ -199,6 +235,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
+            shortcut.remove('.' + this.getName());
             this.$buttonZoomIn.remove();
             this.$buttonZoomOut.remove();
         },

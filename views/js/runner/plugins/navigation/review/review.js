@@ -26,11 +26,13 @@ define([
     'lodash',
     'i18n',
     'ui/hider',
+    'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, hider, pluginFactory, mapHelper, navigator, buttonTpl) {
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
     'use strict';
 
     /**
@@ -134,9 +136,11 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData();
-            var context = testRunner.getTestContext();
-            var map = testRunner.getTestMap();
-            var navigatorConfig = testData.config.review || {};
+            var testContext = testRunner.getTestContext();
+            var testMap = testRunner.getTestMap();
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var navigatorConfig = testConfig.review || {};
 
             /**
              * Tells if the component is enabled
@@ -183,7 +187,34 @@ define([
                     });
             }
 
-            this.navigator = navigator(navigatorConfig, map, context)
+            /**
+             * Mark the current item for review
+             */
+            function flagCurrentItem() {
+                var context = testRunner.getTestContext();
+                if (self.getState('enabled') !== false) {
+                    flagItem(context.itemPosition, !context.itemFlagged);
+                }
+            }
+
+            /**
+             * Shows/hides the review panel
+             */
+            function togglePanel() {
+                if (self.getState('enabled') !== false) {
+                    if (self.navigator.is('hidden')) {
+                        self.explicitlyHidden = false;
+                        self.navigator.show();
+                    } else {
+                        self.explicitlyHidden = true;
+                        self.navigator.hide();
+                    }
+
+                    updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                }
+            }
+
+            this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
                 .on('jump', function (position) {
                     if (self.getState('enabled') !== false) {
                         self.disable();
@@ -196,30 +227,34 @@ define([
                     }
                 });
 
-            this.$flagItemButton = createButton(getFlagItemButtonData(context), function (e) {
-                var context;
+            this.$flagItemButton = createButton(getFlagItemButtonData(testContext), function (e) {
                 e.preventDefault();
-                if (self.getState('enabled') !== false) {
-                    context = testRunner.getTestContext();
-                    flagItem(context.itemPosition, !context.itemFlagged);
-                }
+                testRunner.trigger('tool-flagitem');
             });
 
             this.explicitlyHidden = false;
             this.$toggleButton = createButton(getToggleButtonData(this.navigator), function (e) {
                 e.preventDefault();
-                if (self.getState('enabled') !== false) {
-                    if (self.navigator.is('hidden')) {
-                        self.explicitlyHidden = false;
-                        self.navigator.show();
-                    } else {
-                        self.explicitlyHidden = true;
-                        self.navigator.hide();
-                    }
-
-                    updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
-                }
+                testRunner.trigger('tool-reviewpanel');
             });
+
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.flag) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.flag, this.getName(), true), function () {
+                        testRunner.trigger('tool-flagitem');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-reviewpanel');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+            }
 
             //disabled by default
             this.disable();
@@ -264,6 +299,16 @@ define([
                     if (isEnabled()) {
                         self.disable();
                     }
+                })
+                .on('tool-flagitem', function () {
+                    if (isEnabled() && canFlag(testRunner)) {
+                        flagCurrentItem();
+                    }
+                })
+                .on('tool-reviewpanel', function () {
+                    if (isEnabled()) {
+                        togglePanel();
+                    }
                 });
         },
 
@@ -284,6 +329,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
+            shortcut.remove('.' + this.getName());
             this.$flagItemButton.remove();
             this.$toggleButton.remove();
             this.navigator.destroy();
