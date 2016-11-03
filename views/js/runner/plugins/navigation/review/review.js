@@ -301,7 +301,7 @@ define([
                     }
                 })
                 .on('tool-flagitem', function () {
-                    if (isEnabled()) {
+                    if (isEnabled() && canFlag(testRunner)) {
                         flagCurrentItem();
                     }
                 })
