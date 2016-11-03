@@ -28,8 +28,9 @@ define([
     'ui/hider',
     'taoTests/runner/plugin',
     'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, _, __, hider, pluginFactory, shortcuts, buttonTpl){
+], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -47,7 +48,8 @@ define([
 
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData();
-            var testConfig = testData && testData.config;
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
              * Check if the "Previous" functionality should be available or not
@@ -102,14 +104,14 @@ define([
 
             this.$element.on('click', function(e){
                 e.preventDefault();
-                doPrevious();
+                testRunner.trigger('nav-previous');
             });
 
             if(testConfig && testConfig.allowShortcuts){
-                shortcuts.add('K.previous', function(e) {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function(e) {
                     if (canDoPrevious() && self.getState('enabled') === true) {
                         e.preventDefault();
-                        doPrevious(true);
+                        testRunner.trigger('nav-previous', [true]);
                     }
                 }, { avoidInput: true });
             }
@@ -126,6 +128,10 @@ define([
                 })
                 .on('disablenav', function(){
                     self.disable();
+                })
+                .on('nav-previous', function(data){
+                    var previousItemWarning = data && typeof(data[0]) !== 'undefined' ? data[0] : false;
+                    doPrevious(previousItemWarning);
                 });
         },
 
@@ -142,6 +148,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
+            shortcut.remove('.' + this.getName());
             this.$element.remove();
         },
 
