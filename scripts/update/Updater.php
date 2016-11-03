@@ -761,6 +761,16 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags' => [ 'core', 'qti' ]
             ]));
 
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['responsesAccess'] = [
+                'previous' => 'Shift+Tab',
+                'next' => 'Tab'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
             $this->setVersion('5.33.0');
         }
     }

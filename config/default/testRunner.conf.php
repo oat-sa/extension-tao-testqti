@@ -353,6 +353,10 @@ return array(
         'review' => [
             'toggle' => 'R',
             'flag' => 'M'
+        ],
+        'responsesAccess' => [
+            'previous' => 'Shift+Tab',
+            'next' => 'Tab'
         ]
     ],
 );

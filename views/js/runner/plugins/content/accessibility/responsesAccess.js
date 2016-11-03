@@ -24,21 +24,17 @@ define([
     'jquery',
     'lodash',
     'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin'
-], function ($, _, shortcut, pluginFactory) {
+], function ($, _, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
-
-    /**
-     * @type {String}
-     */
-    var pluginName = 'responsesAccess';
 
     /**
      * Returns the configured plugin
      */
     return pluginFactory({
 
-        name: pluginName,
+        name: 'responsesAccess',
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -48,6 +44,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var responses = [];
             var count = 1;
             var cursor = 0;
@@ -108,13 +105,13 @@ define([
             }
 
             if (testConfig.allowShortcuts) {
-                shortcut.add('Shift+Tab.' + pluginName, function () {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.previous, this.getName(), true), function () {
                     testRunner.trigger('previous-response');
                 }, {
                     prevent: true
                 });
 
-                shortcut.add('Tab.' + pluginName, function () {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.next, this.getName(), true), function () {
                     testRunner.trigger('next-response');
                 }, {
                     prevent: true
@@ -140,8 +137,16 @@ define([
                 .on('unloaditem', function () {
                     self.disable();
                 })
-                .on('previous-response', previousResponse)
-                .on('next-response', nextResponse);
+                .on('previous-response', function() {
+                    if (self.getState('enabled')) {
+                        previousResponse();
+                    }
+                })
+                .on('next-response', function() {
+                    if (self.getState('enabled')) {
+                        nextResponse();
+                    }
+                });
         },
 
         /**
@@ -156,7 +161,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
-            shortcut.remove('.' + pluginName);
+            shortcut.remove('.' + this.getName());
         }
     });
 });
