@@ -703,5 +703,95 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.28.0', '5.30.1');
+
+        if ($this->isVersion('5.30.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['allow-shortcuts'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.31.0');
+        }
+
+        $this->skip('5.31.0', '5.31.1');
+
+        if ($this->isVersion('5.31.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts'] = [
+                'calculator' => [
+                    'toggle' => 'C',
+                ],
+                'zoom' => [
+                    'in' => 'I',
+                    'out' => 'O'
+                ],
+                'comment' => [
+                    'toggle' => 'A',
+                ],
+                'itemThemeSwitcher' => [
+                    'toggle' => 'T',
+                ],
+                'review' => [
+                    'toggle' => 'R',
+                    'flag' => 'M'
+                ]
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.32.0');
+        }
+
+        $this->skip('5.32.0', '5.32.1');
+
+        if ($this->isVersion('5.32.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+            ];
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.33.0');
+        }
+
+        if ($this->isVersion('5.33.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'responsesAccess',
+                'name' => 'Shortcuts to access the item responses',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/responsesAccess',
+                'description' => 'Provide a way to navigate between item responses using the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['responsesAccess'] = [
+                'previous' => 'Shift+Tab',
+                'next' => 'Tab'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.34.0');
+        }
     }
 }
