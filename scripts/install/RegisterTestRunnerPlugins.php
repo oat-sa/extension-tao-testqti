@@ -99,6 +99,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core', 'qti', 'required' ]
+            ], [
+                'id' => 'responsesAccess',
+                'name' => 'Shortcuts to access the item responses',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/responsesAccess',
+                'description' => 'Provide a way to navigate between item responses using the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
             ]
         ],
         'controls' => [

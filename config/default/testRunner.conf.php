@@ -354,6 +354,10 @@ return array(
             'toggle' => 'R',
             'flag' => 'M'
         ],
+        'responsesAccess' => [
+            'previous' => 'Shift+Tab',
+            'next' => 'Tab'
+        ],
         'next' => [
             'trigger' => 'J'
         ],
