@@ -82,8 +82,6 @@ define([
             function doPrevious(previousItemWarning) {
                 var context = testRunner.getTestContext();
 
-                previousItemWarning = previousItemWarning || false;
-
                 function enable() {
                     testRunner.trigger('enablenav enabletools');
                 }
@@ -110,13 +108,15 @@ define([
                 testRunner.trigger('nav-previous');
             });
 
-            if(testConfig && testConfig.allowShortcuts){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function(e) {
+            if(testConfig.allowShortcuts && pluginShortcuts.trigger){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
                     if (canDoPrevious() && self.getState('enabled') === true) {
-                        e.preventDefault();
                         testRunner.trigger('nav-previous', [true]);
                     }
-                }, { avoidInput: true });
+                }, {
+                    avoidInput: true,
+                    prevent: true
+                });
             }
 
             //start disabled
@@ -132,8 +132,7 @@ define([
                 .on('disablenav', function(){
                     self.disable();
                 })
-                .on('nav-previous', function(data){
-                    var previousItemWarning = data && typeof(data[0]) !== 'undefined' ? data[0] : false;
+                .on('nav-previous', function(previousItemWarning){
                     doPrevious(previousItemWarning);
                 });
         },

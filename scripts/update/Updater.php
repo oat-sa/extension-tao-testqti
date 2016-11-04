@@ -753,15 +753,12 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
-            if (!isset($config['shortcuts'])) {
-                $config['shortcuts'] = [];
-            }
 
             $config['shortcuts']['next'] = [
-                'toggle' => 'J',
+                'trigger' => 'J',
             ];
             $config['shortcuts']['previous'] = [
-                'toggle' => 'K',
+                'trigger' => 'K',
             ];
 
             $extension->setConfig('testRunner', $config);

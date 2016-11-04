@@ -1,6 +1,6 @@
 define([
     'lodash',
-    'taoQtiTest/runner/plugins/navigation/nextWarningHelper'
+    'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper'
 ], function(_, warningHelper){
     'use strict';
 

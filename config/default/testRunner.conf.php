@@ -355,10 +355,10 @@ return array(
             'flag' => 'M'
         ],
         'next' => [
-            'toggle' => 'J'
+            'trigger' => 'J'
         ],
         'previous' => [
-            'toggle' => 'K'
+            'trigger' => 'K'
         ]
     ],
 );

@@ -27,7 +27,7 @@ define([
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/plugins/navigation/nextWarningHelper',
+    'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
     'util/shortcut',
@@ -105,9 +105,6 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            //create the button (detached)
-            this.$element = createElement(testRunner.getTestContext());
-
             //plugin behavior
             /**
              * @param {Boolean} nextItemWarning - enable the display of a warning when going to the next item.
@@ -166,18 +163,24 @@ define([
                 testRunner.next();
             }
 
+            //create the button (detached)
+            this.$element = createElement(testRunner.getTestContext());
+
+            //attach behavior
             this.$element.on('click', function(e){
                 e.preventDefault();
                 testRunner.trigger('nav-next');
             });
 
-            if(testConfig.allowShortcuts && pluginShortcuts.toggle){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function(e) {
+            if(testConfig.allowShortcuts && pluginShortcuts.trigger){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
                     if (self.getState('enabled') === true) {
-                        e.preventDefault();
-                        testRunner.trigger('nav-next', [true]);
+                        testRunner.trigger('nav-next', true);
                     }
-                }, { avoidInput: true });
+                }, {
+                    avoidInput: true,
+                    prevent: true
+                });
             }
 
             //disabled by default
@@ -194,8 +197,7 @@ define([
                 .on('disablenav', function(){
                     self.disable();
                 })
-                .on('nav-next', function(data) {
-                    var nextItemWarning = data && typeof(data[0]) !== 'undefined' ? data[0] : false;
+                .on('nav-next', function(nextItemWarning) {
                     doNext(nextItemWarning);
                 });
         },

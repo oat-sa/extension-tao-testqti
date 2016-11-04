@@ -26,6 +26,20 @@ define([], function () {
     'use strict';
 
     /**
+     * Convert a value to a boolean
+     * @param {*} value
+     * @param {Boolean} defaultValue
+     * @returns {Boolean}
+     */
+    var toBoolean = function toBoolean(value, defaultValue) {
+        if (typeof(value) === "undefined") {
+            return defaultValue;
+        } else {
+            return (value === true || value === "true");
+        }
+    };
+
+    /**
      * @param {Object} options
      * @param {Boolean} options.endTestWarning - enables the end test warning, when applicable
      * @param {Boolean} options.isLast - if the item is the last of the test
@@ -47,20 +61,6 @@ define([], function () {
 
             warnBeforeNext = shouldWarnBeforeNext(),
             warnBeforeEnd = shouldWarnBeforeEnd();
-
-        /**
-         * Convert a value to a boolean
-         * @param {*} value
-         * @param {Boolean} defaultValue
-         * @returns {Boolean}
-         */
-        function toBoolean(value, defaultValue) {
-            if (typeof(value) === "undefined") {
-                return defaultValue;
-            } else {
-                return (value === true || value === "true");
-            }
-        }
 
         /**
          * Decide if we should display a warning before moving to the next item.
