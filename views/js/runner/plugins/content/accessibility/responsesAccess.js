@@ -87,7 +87,7 @@ define([
             }
 
             /**
-             * Select the next item response
+             * Select the previous item response
              */
             function previousResponse() {
                 cursor = (getCurrentIndex() + count - 1) % count;
@@ -97,7 +97,7 @@ define([
             }
 
             /**
-             * Select the previous item response
+             * Select the next item response
              */
             function nextResponse() {
                 cursor = (getCurrentIndex() + 1) % count;
