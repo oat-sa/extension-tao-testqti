@@ -130,7 +130,9 @@ define([
 
                     responses = $(':input', $content).toArray();
                     responses.sort(function (a, b) {
-                        return parseInt(a.tabIndex, 10) - parseInt(b.tabIndex, 10);
+                        var aIndex = a.tabIndex || 1;
+                        var bIndex = b.tabIndex || 1;
+                        return parseInt(aIndex, 10) - parseInt(bIndex, 10);
                     });
                     count = responses.length || 1;
                     cursor = 0;
