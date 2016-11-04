@@ -354,17 +354,15 @@ return array(
             'toggle' => 'R',
             'flag' => 'M'
         ],
-<<<<<<< HEAD
         'responsesAccess' => [
             'previous' => 'Shift+Tab',
             'next' => 'Tab'
-=======
+        ],
         'next' => [
             'trigger' => 'J'
         ],
         'previous' => [
             'trigger' => 'K'
->>>>>>> develop
         ]
     ],
 );
