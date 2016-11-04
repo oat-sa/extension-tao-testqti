@@ -331,4 +331,28 @@ return array(
      * @type boolean
      */
     'allow-shortcuts' => true,
+
+    /**
+     * Shortcuts scheme applied to the test runner
+     * @type array
+     */
+    'shortcuts' => [
+        'calculator' => [
+            'toggle' => 'C',
+        ],
+        'zoom' => [
+            'in' => 'I',
+            'out' => 'O'
+        ],
+        'comment' => [
+            'toggle' => 'A',
+        ],
+        'itemThemeSwitcher' => [
+            'toggle' => 'T',
+        ],
+        'review' => [
+            'toggle' => 'R',
+            'flag' => 'M'
+        ]
+    ],
 );

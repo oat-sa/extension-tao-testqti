@@ -23,12 +23,15 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'ui/calculator',
+    'util/shortcut',
+    'util/namespace',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, calculatorFactory, pluginFactory, buttonTpl){
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 
     var _default = {
@@ -48,17 +51,64 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var areaBroker = this.getAreaBroker();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-calculator
+                return !!context.options.calculator;
+            }
 
             /**
              * Is calculator activated ? if not, then we hide the plugin
              */
-            function togglePlugin(){
-                var context = testRunner.getTestContext();
-                //to be activated with the special category x-tao-option-calculator
-                if(context.options.calculator){//allow calculator
+            function togglePlugin() {
+                if (isEnabled()) {//allow calculator
                     self.show();
-                }else{
+                } else {
                     self.hide();
+                }
+            }
+
+            /**
+             * Show/hide the calculator
+             */
+            function toggleCalculator() {
+                if (self.getState('enabled') !== false) {
+                    if (self.calculator) {
+                        //just show/hide the calculator widget
+                        if (self.calculator.is('hidden')) {
+                            self.calculator.show();
+                        } else {
+                            self.calculator.hide();
+                        }
+                    } else {
+                        //build calculator widget
+                        self.calculator = calculatorFactory({
+                            renderTo: self.$calculatorContainer,
+                            replace: true,
+                            draggableContainer: areaBroker.getContainer().find('.test-runner-sections')[0],
+                            width: _default.width,
+                            height: _default.height
+                        }).on('show', function () {
+                            self.trigger('open');
+                        }).on('hide', function () {
+                            self.trigger('close');
+                        });
+
+                        //set initial position on init
+                        self.calculator.show().getElement().css({
+                            left: self.$button.offset().left,
+                            top: 'auto',
+                            bottom: 45
+                        });
+                    }
                 }
             }
 
@@ -76,48 +126,25 @@ define([
 
             //attach behavior
             this.$button.on('click', function (e){
-
-                //get the offset of the button to position the calculator widget close to it
-                var offset = $(this).offset();
-
                 //prevent action if the click is made inside the form which is a sub part of the button
-                if($(e.target).closest('.widget-container').length){
+                if($(e.target).closest('.widget-calculator').length){
                     return;
                 }
 
                 e.preventDefault();
-
-                if(self.getState('enabled') !== false){
-                    if(self.calculator){
-                        //just show/hide the calculator widget
-                        if(self.calculator.is('hidden')){
-                            self.calculator.show();
-                        }else{
-                            self.calculator.hide();
-                        }
-                    }else{
-                        //build calculator widget
-                        self.calculator = calculatorFactory({
-                            renderTo : self.$calculatorContainer,
-                            replace : true,
-                            draggableContainer : areaBroker.getContainer().find('.test-runner-sections')[0],
-                            width : _default.width,
-                            height : _default.height
-                        }).on('show', function(){
-                            self.trigger('open');
-                        }).on('hide', function(){
-                            self.trigger('close');
-                        });
-
-                        //set initial position on init
-                        self.calculator.show().getElement().css({
-                            left : offset.left,
-                            top : 'auto',
-                            bottom : 45
-                        });
-                    }
-                }
+                testRunner.trigger('tool-calculator');
             });
+
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-calculator');
+                    }, {
+                        avoidInput: true,
+                        allowIn: '.widget-calculator'
+                    });
+                }
+            }
 
             //start disabled
             togglePlugin();
@@ -136,6 +163,11 @@ define([
                         self.calculator.destroy();
                         self.calculator = null;
                     }
+                })
+                .on('tool-calculator', function () {
+                    if (isEnabled()) {
+                        toggleCalculator();
+                    }
                 });
         },
         /**
@@ -150,6 +182,8 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
+            shortcut.remove('.' + this.getName());
+
             this.$button.remove();
             this.$calculatorContainer.remove();
             if(this.calculator){

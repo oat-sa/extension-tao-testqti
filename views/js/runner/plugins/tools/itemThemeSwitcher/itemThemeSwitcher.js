@@ -28,9 +28,11 @@ define([
     'taoTests/runner/plugin',
     'ui/hider',
     'ui/themes',
+    'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
-], function ($, _, __, pluginFactory, hider, themeHandler, buttonTpl, itemThemeSwitcherTpl) {
+], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper, buttonTpl, itemThemeSwitcherTpl) {
     'use strict';
 
     /**
@@ -46,6 +48,9 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var themesConfig = themeHandler.get('items') || {};
             var state = {
                 availableThemes: [],
@@ -104,9 +109,7 @@ define([
             //attach behavior
             this.$button.on('click', function (e) {
                 e.preventDefault();
-                if (self.getState('enabled') !== false) {
-                    hider.toggle(self.$menu);
-                }
+                testRunner.trigger('tool-themeswitcher');
             });
 
             this.$ul.find('li').on('click', function (e) {
@@ -114,6 +117,16 @@ define([
                 e.preventDefault();
                 changeTheme(themeId);
             });
+
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+            }
 
             //start disabled
             this.disable();
@@ -132,6 +145,14 @@ define([
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
+                })
+                .on('tool-themeswitcher', function () {
+                    if (self.getState('enabled') !== false) {
+                        hider.toggle(self.$menu);
+                        if (!hider.isHidden(self.$menu)) {
+                            self.$menu.focus();
+                        }
+                    }
                 });
         },
 
@@ -148,6 +169,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
+            shortcut.remove('.' + this.getName());
             this.$button.remove();
         },
 
