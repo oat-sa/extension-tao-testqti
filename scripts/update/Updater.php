@@ -748,7 +748,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.32.0');
         }
 
-        if ($this->isVersion('5.32.0')) {
+        $this->skip('5.32.0', '5.32.1');
+
+        if ($this->isVersion('5.32.1')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
