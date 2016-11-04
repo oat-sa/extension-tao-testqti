@@ -23,12 +23,17 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
     'taoQtiTest/runner/helpers/messages',
+    'taoQtiTest/runner/helpers/map',
+    'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, messages, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -55,7 +60,7 @@ define([
      * @returns {jQueryElement} the button
      */
     var createElement = function createElement(context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         return $(buttonTpl(buttonData[dataType]));
     };
 
@@ -65,7 +70,7 @@ define([
      * @param {Object} context - the test context
      */
     var updateElement = function updateElement($element, context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         if($element.data('control') !== buttonData[dataType].control){
 
             $element.data('control', buttonData[dataType].control)
@@ -96,8 +101,62 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData();
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            function doNext(context) {
+            //plugin behavior
+            /**
+             * @param {Boolean} nextItemWarning - enable the display of a warning when going to the next item.
+             * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
+             */
+            function doNext(nextItemWarning) {
+                var context = testRunner.getTestContext();
+                var map = testRunner.getTestMap();
+                var nextItemPosition = context.itemPosition + 1;
+
+                var warningHelper = nextWarningHelper({
+                    endTestWarning:     context.options.endTestWarning,
+                    isLast:             context.isLast,
+                    isLinear:           context.isLinear,
+                    nextItemWarning:    nextItemWarning,
+                    nextPart:           mapHelper.getItemPart(map, nextItemPosition),
+                    remainingAttempts:  context.remainingAttempts,
+                    testPartId:         context.testPartId
+                });
+
+                function enable() {
+                    testRunner.trigger('enablenav enabletools');
+                }
+
+                if(self.getState('enabled') !== false) {
+                    testRunner.trigger('disablenav disabletools');
+
+                    if (warningHelper.shouldWarnBeforeEnd()) {
+                        testRunner.trigger(
+                            'confirm.endTest',
+                            messages.getExitMessage(
+                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                                'test', testRunner),
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else if (warningHelper.shouldWarnBeforeNext()) {
+                        testRunner.trigger(
+                            'confirm.next',
+                            __('You are about to go to the next item. Click OK to continue and go to the next item.'),
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else {
+                        triggerNextAction(context);
+                    }
+                }
+            }
+
+            function triggerNextAction(context) {
                 if(context.isLast){
                     self.trigger('end');
                 }
@@ -107,29 +166,22 @@ define([
             //create the button (detached)
             this.$element = createElement(testRunner.getTestContext());
 
-            //plugin behavior
+            //attach behavior
             this.$element.on('click', function(e){
-                var enable = _.bind(self.enable, self);
-                var context = testRunner.getTestContext();
-
                 e.preventDefault();
-
-                if(self.getState('enabled') !== false){
-                    self.disable();
-                    if(context.options.endTestWarning && context.isLast){
-                        testRunner.trigger(
-                            'confirm.endTest',
-                            messages.getExitMessage(
-                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                                'test', testRunner),
-                            _.partial(doNext, context), // if the test taker accept
-                            enable  // if the test taker refuse
-                        );
-                    } else {
-                        doNext(context);
-                    }
-                }
+                testRunner.trigger('nav-next');
             });
+
+            if(testConfig.allowShortcuts && pluginShortcuts.trigger){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                    if (self.getState('enabled') === true) {
+                        testRunner.trigger('nav-next', true);
+                    }
+                }, {
+                    avoidInput: true,
+                    prevent: true
+                });
+            }
 
             //disabled by default
             this.disable();
@@ -144,6 +196,9 @@ define([
                 })
                 .on('disablenav', function(){
                     self.disable();
+                })
+                .on('nav-next', function(nextItemWarning) {
+                    doNext(nextItemWarning);
                 });
         },
 
@@ -161,6 +216,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
+            shortcut.remove('.' + this.getName());
             this.$element.remove();
         },
 

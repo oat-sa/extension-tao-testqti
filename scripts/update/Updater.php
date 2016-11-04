@@ -748,7 +748,27 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.32.0');
         }
 
-        if ($this->isVersion('5.32.0')) {
+        $this->skip('5.32.0', '5.32.1');
+
+        if ($this->isVersion('5.32.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+            ];
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.33.0');
+        }
+
+        if ($this->isVersion('5.33.0')) {
 
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
@@ -771,7 +791,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.33.0');
+            $this->setVersion('5.34.0');
         }
     }
 }
