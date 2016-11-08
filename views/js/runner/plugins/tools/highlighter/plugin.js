@@ -28,8 +28,9 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
+    'taoQtiTest/runner/plugins/tools/highlighter/highlighter',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, buttonTpl) {
+], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonTpl) {
     'use strict';
 
     /**
@@ -49,6 +50,8 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+
+            var highlighter = highlighterFactory();
 
             /**
              * Checks if the plugin is currently available
@@ -93,9 +96,9 @@ define([
                 .on('unloaditem', function () {
                     self.disable();
                 })
-                .on('tool-comment', function () {
+                .on('tool-highlight', function () {
                     if (isEnabled()) {
-                        console.log('launching highlighter !');
+                        highlighter.trigger();
                     }
                 });
         },
