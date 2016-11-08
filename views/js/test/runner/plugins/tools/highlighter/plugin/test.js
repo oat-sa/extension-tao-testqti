@@ -238,4 +238,66 @@ define([
             });
     });
 
+    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(3);
+
+        plugin.init()
+            .then(function() {
+                plugin.render()
+                    .then(function() {
+                        var $container = getButtonContainer(runner);
+                        var $button = $container.find(plugin.$button);
+
+                        runner.trigger('loaditem');
+
+                        assert.notEqual($button.css('display'), 'none', 'The plugin button is visible');
+
+                        runner.trigger('unloaditem');
+
+                        assert.notEqual($button.css('display'), 'none', 'The plugin button is still visible');
+                        assert.equal($button.hasClass('disabled'), true, 'The button is disabled');
+
+                        QUnit.start();
+                    })
+                    .catch(function(err) {
+                        assert.ok(false, 'error in render method: ' + err);
+                        QUnit.start();
+                    });
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in init method: ' + err);
+                QUnit.start();
+            });
+    });
+
+    QUnit.asyncTest('runner events: renderitem', function(assert) {
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(2);
+
+        plugin.init()
+            .then(function() {
+                return plugin.render()
+                    .then(function() {
+                        var $container = getButtonContainer(runner);
+                        var $button = $container.find(plugin.$button);
+
+                        runner.trigger('renderitem');
+
+                        assert.notEqual($button.css('display'), 'none', 'The plugin button is visible');
+                        assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
+
+                        QUnit.start();
+                    });
+            })
+            .catch(function(err) {
+                assert.ok(false, 'An error has occurred: ' + err);
+                QUnit.start();
+            });
+    });
+
 });
