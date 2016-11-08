@@ -793,5 +793,19 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.34.0');
         }
+
+        if ($this->isVersion('5.34.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => []
+            ]));
+            $this->setVersion('5.35.0');
+        }
     }
 }

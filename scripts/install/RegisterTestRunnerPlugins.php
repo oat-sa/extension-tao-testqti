@@ -236,6 +236,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
             ]
         ],
         'security' => [
