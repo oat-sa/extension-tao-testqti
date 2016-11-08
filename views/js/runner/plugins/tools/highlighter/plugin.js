@@ -144,7 +144,6 @@ define([
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$form);
             hider.hide(this.$button);
         }
     });
