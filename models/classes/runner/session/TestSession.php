@@ -171,14 +171,10 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function initItemTimer()
     {
-        try {
-            // try to close existing time range if any, in order to be sure the test will start or restart a new range.
-            $tags = $this->getItemTags($this->getCurrentRouteItem());
-            $this->getTimer()->end($tags, microtime(true))->save();
-            \common_Logger::i('Existing timer initialized.');
-        } catch(InconsistentRangeException $e) {
-            \common_Logger::i('New timer initialized.');
-        }
+        // try to close existing time range if any, in order to be sure the test will start or restart a new range.
+        // if the range is already closed, a message will be added to the log
+        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $this->getTimer()->end($tags, microtime(true))->save();
     }
 
     /**
@@ -395,19 +391,15 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function endTestSession()
     {
         // try to close existing time range if any, in order to be sure the test will be closed with a consistent timer.
+        // if the range is already closed, a message will be added to the log
         if ($this->isRunning() === true) {
             $route = $this->getRoute();
             if ($route->valid()) {
                 $routeItem = $this->getCurrentRouteItem();
             }
             if (isset($routeItem)) {
-                try {
-                    $tags = $this->getItemTags($this->getCurrentRouteItem());
-                    $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
-                    \common_Logger::i('Timer correctly closed.');
-                } catch (InconsistentRangeException $e) {
-                    \common_Logger::i('Timer already closed.');
-                }
+                $tags = $this->getItemTags($this->getCurrentRouteItem());
+                $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
             }
         }
 

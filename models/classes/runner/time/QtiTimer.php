@@ -76,8 +76,7 @@ class QtiTimer implements Timer
         $range = $this->getRange($tags);
 
         // validate the data consistence
-        $nb = count($range);
-        if ($nb && ($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_START) {
+        if ($this->isRangeOpen($range)) {
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
             \common_Logger::i('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
@@ -112,15 +111,16 @@ class QtiTimer implements Timer
         $range = $this->getRange($tags);
 
         // validate the data consistence
-        $nb = count($range);
-        if (!$nb || (!($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_END)) {
-            throw new InconsistentRangeException('The time range does not seem to be consistent, the range seems to be already complete!');
-        }
-        $this->checkTimestampCoherence($range, $timestamp);
+        if ($this->isRangeOpen($range)) {
+            $this->checkTimestampCoherence($range, $timestamp);
 
-        // append the new END TimePoint
-        $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
-        $this->timeLine->add($point);
+            // append the new END TimePoint
+            $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $this->timeLine->add($point);    
+        } else {
+            // already closed range found, just log the info
+            \common_Logger::i('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
+        }
 
         return $this;
     }
@@ -355,6 +355,17 @@ class QtiTimer implements Timer
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }
         }
+    }
+
+    /**
+     * Check if the provided range is open (START TimePoint and no related END)
+     * @param array $range
+     * @return bool
+     */
+    protected function isRangeOpen($range)
+    {
+        $nb = count($range);
+        return $nb && ($nb % 2) && ($range[$nb - 1]->getType() == TimePoint::TYPE_START);
     }
 
     /**

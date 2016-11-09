@@ -150,13 +150,16 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
-
+    
     /**
-     * @expectedException \oat\taoTests\models\runner\time\InconsistentRangeException
+     * Test the QtiTimer::end()
      */
     public function testEndInconsistentRangeException()
     {
         $timer = new QtiTimer();
+        $timeLine = $this->getTimeLine($timer);
+        $timePoints = $timeLine->getPoints();
+        $this->assertTrue(empty($timePoints));
         $tags = [
             'test_fake_id',
             'test_part_fake_id',
@@ -169,6 +172,13 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335010.0000);
         $timer->end($tags, 1459335011.0000);
+        
+        $timePoints = $timeLine->getPoints();
+
+        $this->assertEquals(2, count($timePoints));
+        $this->assertEquals(1459335010.0000, $timePoints[1]->getTimestamp());
+        $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
+        $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
 
     /**
