@@ -19,12 +19,13 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+    'jquery',
     'lodash',
     'helpers',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
-], function(_, helpers, runnerFactory, providerMock, highlighterFactory) {
+], function($, _, helpers, runnerFactory, providerMock, highlighterFactory) {
     'use strict';
 
     QUnit.module('highlighterFactory');
@@ -33,6 +34,26 @@ define([
         assert.ok(typeof highlighterFactory === 'function', 'the module expose a function');
     });
 
+    QUnit.module('highlighter');
+
+    QUnit.test('can highlight text', function(assert) {
+        var range = document.createRange();
+        var toSelect = document.getElementById('outside-container2');
+        var insider = document.getElementById('insider');
+        var highlightContainer = document.createElement('span');
+
+        highlightContainer.setAttribute('class', 'highlighted');
+
+        // range.setStartBefore(toSelect);
+        // range.setEndAfter(toSelect);
+        range.setStart(toSelect.firstChild, 5);
+        range.setEnd(insider.firstChild, 5);
+
+        // range.surroundContents(highlightContainer);
+        highlightContainer.appendChild(range.extractContents());
+        range.insertNode(highlightContainer);
+        QUnit.expect(0);
+    });
 
 
 

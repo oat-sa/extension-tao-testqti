@@ -16,19 +16,32 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
 /**
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ *
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
-    'jquery'
+    'jquery',
+    'ui/highlighter',
+    'ui/selector'
 ], function (
-    $
+    $,
+    highlighterFactory,
+    selector
 ) {
     'use strict';
 
     return function() {
+        var highlighter = highlighterFactory({
+            selector: selector
+        });
+
         return {
             trigger: function trigger() {
-                console.log('Highlighing !');
+                highlighter.highlightRanges();
             }
         };
     };
