@@ -791,7 +791,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.34.0');
+            $this->setVersion('5.35.0');
         }
     }
 }
