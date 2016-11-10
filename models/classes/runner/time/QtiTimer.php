@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoTests\models\runner\time\ExtraTime;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -36,8 +37,23 @@ use oat\taoTests\models\runner\time\Timer;
  * Class QtiTimer
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimer implements Timer
+class QtiTimer implements Timer, ExtraTime
 {
+    /**
+     * The name of the storage key for the TimeLine
+     */
+    const STORAGE_KEY_TIME_LINE = 'timeLine';
+
+    /**
+     * The name of the storage key for the extra time
+     */
+    const STORAGE_KEY_EXTRA_TIME = 'extraTime';
+
+    /**
+     * The name of the storage key for the consumed extra time
+     */
+    const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
+    
     /**
      * The TimeLine used to compute the duration
      * @var TimeLine
@@ -49,6 +65,18 @@ class QtiTimer implements Timer
      * @var TimeStorage
      */
     protected $storage;
+
+    /**
+     * The total added extra time
+     * @var float
+     */
+    protected $extraTime = 0.0;
+
+    /**
+     * The already consumed extra time
+     * @var float
+     */
+    protected $consumedExtraTime = 0.0;
 
     /**
      * QtiTimer constructor.
@@ -311,7 +339,11 @@ class QtiTimer implements Timer
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(serialize($this->timeLine));
+        $this->storage->store(serialize([
+            self::STORAGE_KEY_TIME_LINE => $this->timeLine,
+            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+        ]));
         
         return $this;
     }
@@ -332,7 +364,24 @@ class QtiTimer implements Timer
         $data = $this->storage->load();
         
         if (isset($data)) {
-            $this->timeLine = unserialize($data);
+            $refined = unserialize($data);
+
+            $this->extraTime = 0;
+            $this->consumedExtraTime = 0;
+
+            if (is_array($refined)) {
+                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
+                    $this->timeLine = $refined[self::STORAGE_KEY_TIME_LINE];
+                }
+                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
+                    $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
+                }
+                if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                    $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+                }
+            } else {
+                $this->timeLine = $refined;
+            }
 
             if (!$this->timeLine instanceof TimeLine) {
                 throw new InvalidDataException('The storage did not provide acceptable data when loading!');
@@ -342,6 +391,77 @@ class QtiTimer implements Timer
         return $this;
     }
 
+    /**
+     * Gets the added extra time
+     * @return float
+     */
+    public function getExtraTime()
+    {
+        return $this->extraTime;
+    }
+
+    /**
+     * Sets the added extra time
+     * @param float $time
+     * @return ExtraTime
+     */
+    public function setExtraTime($time)
+    {
+        $this->extraTime = floatval($time);
+        return $this;
+    }
+
+    /**
+     * Appends extra time
+     * @param float $time
+     * @return ExtraTime
+     */
+    public function addExtraTime($time)
+    {
+        $this->extraTime = max(0, $this->extraTime + floatval($time));
+        return $this;
+    }
+
+    /**
+     * Removes extra time
+     * @param float $time
+     * @return ExtraTime
+     */
+    public function subExtraTime($time)
+    {
+        $this->extraTime = max(0, $this->extraTime - floatval($time));
+        return $this;
+    }
+
+    /**
+     * Gets the amount of already consumed extra time
+     * @return float
+     */
+    public function getConsumedExtraTime()
+    {
+        return $this->consumedExtraTime;
+    }
+
+    /**
+     * Gets the amount of remaining extra time
+     * @return float
+     */
+    public function getRemainingExtraTime()
+    {
+        return max(0, $this->extraTime - $this->consumedExtraTime);
+    }
+
+    /**
+     * Consumes an amount of extra time
+     * @param float $time
+     * @return ExtraTime
+     */
+    public function consumeExtraTime($time)
+    {
+        $this->consumedExtraTime += floatval($time);
+        return $this;
+    }
+    
     /**
      * Checks if a timestamp is consistent with existing TimePoint within a range
      * @param array $points

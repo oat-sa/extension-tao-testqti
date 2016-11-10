@@ -510,6 +510,12 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         ];
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335020.0000);
+
+        $extraTime = 20;
+        $consumedTime = 4;
+        $timer->setExtraTime($extraTime);
+        $timer->consumeExtraTime($consumedTime);
+        
         $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer->setStorage($storage);
         $timer->save();
@@ -518,12 +524,16 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $newStorage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timeLine = $this->getTimeLine($newTimer);
         $this->assertEquals([], $timeLine->getPoints());
+        $this->assertEquals(0, $newTimer->getExtraTime());
+        $this->assertEquals(0, $newTimer->getConsumedExtraTime());
 
         $newTimer->setStorage($newStorage);
         $newTimer = $newTimer->load();
         $timeLine = $this->getTimeLine($newTimer);
 
         $timePoints = $timeLine->getPoints();
+        $this->assertEquals($extraTime, $newTimer->getExtraTime());
+        $this->assertEquals($consumedTime, $newTimer->getConsumedExtraTime());
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals(1459335000.0000, $timePoints[0]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[0]->getTarget());
@@ -553,6 +563,64 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $this->setTimeLine($timer, new \stdClass());
         $timer->save();
         $timer->load();
+    }
+
+    /**
+     * Test the QtiTimer::setExtraTime()
+     */
+    public function testSetExtraTime()
+    {
+        $timer = new QtiTimer();
+        $this->assertEquals(0, $timer->getExtraTime());
+        
+        $extraTime1 = 17;
+        $timer->setExtraTime($extraTime1);
+        $this->assertEquals($extraTime1, $timer->getExtraTime());
+
+        $extraTime2 = 11;
+        $timer->setExtraTime($extraTime2);
+        $this->assertEquals($extraTime2, $timer->getExtraTime());
+        
+        $diff = 3;
+        $timer->addExtraTime($diff);
+        $this->assertEquals($extraTime2 + $diff, $timer->getExtraTime());
+        
+        $timer->subExtraTime($diff);
+        $this->assertEquals($extraTime2, $timer->getExtraTime());
+        
+        $timer->subExtraTime($extraTime2 * 2);
+        $this->assertEquals(0, $timer->getExtraTime());
+    }
+    
+    /**
+     * Test the QtiTimer::consumeExtraTime()
+     */
+    public function testConsumeExtraTime()
+    {
+        $timer = new QtiTimer();
+        $this->assertEquals(0, $timer->getExtraTime());
+        
+        $extraTime = 17;
+        $timer->setExtraTime($extraTime);
+        $this->assertEquals($extraTime, $timer->getExtraTime());
+
+        $consume = 6;
+        $consumedTime = $consume;
+        $timer->consumeExtraTime($consume);
+        $this->assertEquals($extraTime, $timer->getExtraTime());
+        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
+        
+        $remainingTime = $extraTime - $consumedTime;
+        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
+
+        $consume = 5;
+        $consumedTime += $consume;
+        $timer->consumeExtraTime($consume);
+        $this->assertEquals($extraTime, $timer->getExtraTime());
+        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
+
+        $remainingTime = $extraTime - $consumedTime;
+        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
     }
 
 
