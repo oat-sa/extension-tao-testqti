@@ -188,29 +188,26 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     }
 
     /**
-     * Ends the timer for the current item in the TestSession
+     * Ends the timer for the current item in the TestSession.
+     * Sets the client duration for the current item in the TestSession.
+     * @param float $duration The client duration, or null to force server duration to be used as client duration
      * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function endItemTimer()
+    public function endItemTimer($duration = null)
     {
+        $timer = $this->getTimer();
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->end($tags, microtime(true))->save();
-    }
+        $timer->end($tags, microtime(true));
 
-    /**
-     * Adjusts the timer for the current item in the TestSession
-     * @param float $duration
-     * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
-     */
-    public function adjustItemTimer($duration)
-    {
-        if (!is_null($duration)) {
-            $duration = floatval($duration);
+        if (is_numeric($duration) || is_null($duration)) {
+            if (!is_null($duration)) {
+                $duration = floatval($duration);
+            }
+            $timer->adjust($tags, $duration);
         }
-        $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->adjust($tags, $duration)->save();
+
+        $timer->save();
     }
 
     /**
@@ -398,8 +395,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
                 $routeItem = $this->getCurrentRouteItem();
             }
             if (isset($routeItem)) {
-                $tags = $this->getItemTags($this->getCurrentRouteItem());
-                $this->getTimer()->end($tags, microtime(true))->adjust($tags, null)->save();
+                $this->endItemTimer();
             }
         }
 

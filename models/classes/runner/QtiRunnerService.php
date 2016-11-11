@@ -1282,11 +1282,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            $session->endItemTimer();
-
-            if (is_numeric($duration) || is_null($duration)) {
-                $session->adjustItemTimer($duration);
-            }
+            $session->endItemTimer($duration);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
