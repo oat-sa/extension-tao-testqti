@@ -1,0 +1,35 @@
+.mask {
+    background-color: #333;
+    border: solid 1px #000;
+    @include border-radius(3);
+    width: 250px;
+    height: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateZ(0);
+
+    &.moving {
+        opacity: .55;
+    }
+    &.sizing {
+        opacity: .45;
+        border: dashed 1px #fff;
+    }
+    &.previewing {
+        opacity: .15;
+        border: dashed 1px #fff;
+        @include transition(opacity, 1s, ease);
+    }
+    .controls {
+        position: relative;
+        text-align: right;
+        a {
+            text-decoration: none;
+            @include font-size(16);
+            margin-right: 5px;
+            color: white;
+        }
+    }
+}
