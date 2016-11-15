@@ -175,6 +175,7 @@ define([
                         restrict  : {
                             restriction : container,
                             elementRect: { left: 0, right: 1, top: 0, bottom: 1 },
+                            endOnly: true
                         },
                         edges: { left: true, right: true, bottom: true, top: true }
                     })

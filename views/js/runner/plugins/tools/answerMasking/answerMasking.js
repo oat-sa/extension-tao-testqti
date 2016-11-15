@@ -46,6 +46,10 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var $container = testRunner.getAreaBroker().getContentArea().parent();
+
+
+            this.masks = [];
 
             //build element (detached)
             this.$button = $(buttonTpl({
@@ -56,13 +60,15 @@ define([
 
             //attach behavior
             this.$button.on('click', function (e){
+                var mask;
+
                 e.preventDefault();
 
-                maskComponent()
+                mask = maskComponent()
                     .init()
-                    .render(
-                        testRunner.getAreaBroker().getItemContentArea()
-                    );
+                    .render($container);
+
+                self.masks.push(mask);
             });
 
             //start disabled
@@ -70,8 +76,9 @@ define([
 
             //update plugin state based on changes
             testRunner
-                .on('loaditem', function (){
-
+                .on('unloaditem', function (){
+                    _.invoke(self.masks, 'destroy');
+                    self.masks = [];
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
