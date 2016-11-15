@@ -384,6 +384,11 @@ define([
             var $tree = this.controls.$tree;
             var selected = position && position.jquery ? position : $tree.find('[data-position=' + position + ']');
             var hierarchy = selected.parentsUntil($tree);
+            var previousPosition = 0;
+            var $previous = $tree.find(_selectors.activeItem);
+            if ( $previous.length ) {
+                previousPosition = $previous.data('position');
+            }
 
             // collapse the full tree and open only the hierarchy of the selected item
             if (open) {
@@ -393,6 +398,18 @@ define([
             // select the item
             $tree.find(_selectors.actives).removeClass(_cssCls.active);
             hierarchy.add(selected).addClass(_cssCls.active);
+
+            position = selected.data('position');
+
+            /**
+             * An item is selected
+             *
+             * @param {Number} position - The item position on which select
+             * @param {Number} previousPosition - The item position from which select
+             * @event navigator#selected
+             */
+            this.trigger('selected', position, previousPosition);
+
             return selected;
         },
 
