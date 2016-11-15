@@ -26,15 +26,36 @@ define([
     'lodash',
     'interact',
     'ui/component',
+    'ui/transformer',
     'tpl!taoQtiTest/runner/plugins/tools/answerMasking/mask'
-], function ($, _, interact, component, answerMaskingTpl) {
+], function ($, _, interact, component, transformer, answerMaskingTpl) {
     'use strict';
 
+    var defaultConfig = {
+        x : 0,
+        y : 0,
+        width: 250,
+        height: 100,
+        minWidth: 75,
+        minHeight: 25,
+        previewDelay: 3000
+    };
 
-
+    /**
+     * Creates a new masking component
+     * @returns {maskComponent} the component (uninitialized)
+     */
     var maskingComponentFactory = function maskingComponentFactory () {
 
+        /**
+         * @typedef {Object} maskComponent
+         */
         var maskComponent = component({
+
+            /**
+             * Place the container against the container (at the center/middle)
+             * @returns {maskComponent} chains
+             */
             place : function place(){
                 var $container = this.getContainer();
                 var $element = this.getElement();
@@ -48,33 +69,79 @@ define([
                 }
                 return this;
             },
+
+            /**
+             * Moves the mask to the given position
+             * @param {Number} x - the new x position
+             * @param {Number} y - the new y position
+             * @returns {maskComponent} chains
+             *
+             * @fires maskComponent#move
+             */
             moveTo : function moveTo(x, y){
-                var element = this.getElement()[0];
-                if( this.is('rendered') && !this.is('disabled') && element) {
+                var $element = this.getElement();
+                if( this.is('rendered') && !this.is('disabled')) {
                     this.config.x = this.config.x + x,
                     this.config.y = this.config.y + y;
 
-                    // translate the element
-                    element.style.transform = 'translate(' + this.config.x + 'px, ' + this.config.y + 'px)';
+                    transformer.translate($element, this.config.x, this.config.y);
+
+                    /**
+                     * @event maskComponent#move the component has moved
+                     * @param {Number} x - the new x position
+                     * @param {Number} y - the new y position
+                     */
+                    this.trigger('move', this.config.x, this.config.y);
                 }
+                return this;
             },
 
+            /**
+             * Resize the mask (minimum constraints applies)
+             * @param {Number} width - the new width
+             * @param {Number} height - the new height
+             * @returns {maskComponent} chains
+             *
+             * @fires maskComponent#resize
+             */
+            resize : function resize(width, height) {
+                if( this.is('rendered') && !this.is('disabled')) {
+                    this.setSize(
+                        width  > this.config.minWidth  ? width  : this.config.minWidth,
+                        height > this.config.minHeight ? height : this.config.minHeight
+                    );
+
+                    /**
+                     * @event maskComponent#move the component has been resized
+                     * @param {Number} width - the new width
+                     * @param {Number} height - the new height
+                     */
+                    this.trigger('resize', this.config.width, this.config.height);
+                }
+                return this;
+            },
+
+            /**
+             * Preview the content under the masked area
+             * @returns {maskComponent} chains
+             *
+             * @fires maskComponent#preview
+             */
             preview : function preview(){
                 var self   = this;
-                var delay  = this.config.previewDelay || 2000;
+                var delay  = this.config.previewDelay || 1000;
                 if( this.is('rendered') && !this.is('disabled') && !this.is('previewing') ){
-                    this.setState('previewing', true);
+                    this.setState('previewing', true)
+                        .trigger('preview');
                     _.delay(function(){
                         self.setState('previewing', false);
                     }, delay);
                 }
-            }
-        }, {
-            x : 0,
-            y : 0,
-            width: 250,
-            height: 100
-        });
+                return this;
+            },
+
+
+        }, defaultConfig);
 
 
         maskComponent
@@ -88,6 +155,9 @@ define([
 
                 this.setSize(this.config.width, this.config.height)
                     .place();
+                if(this.config.x !== 0 || this.config.y !== 0){
+                    this.moveTo(0, 0);
+                }
 
                 interact(element)
                     .draggable({
@@ -109,35 +179,34 @@ define([
                         edges: { left: true, right: true, bottom: true, top: true }
                     })
                     .on('resizemove', function (event) {
-                        self.setSize(event.rect.width, event.rect.height);
+                        self.resize(event.rect.width, event.rect.height);
                         self.moveTo(event.deltaRect.left, event.deltaRect.top);
                     })
                     .on('dragstart', function(){
-                        $element.addClass('moving');
+                        self.setState('moving', true);
                     })
                     .on('dragend', function(){
-                        $element.removeClass('moving');
+                        self.setState('moving', false);
                     })
                     .on('resizestart', function(){
-                        $element.addClass('sizing');
+                        self.setState('sizing', true);
                     })
                     .on('resizeend', function(){
-                        $element.removeClass('sizing');
+                        self.setState('sizing', false);
                     });
 
-                $element.on('click', '.view', function(e){
-                    e.preventDefault();
-                    self.preview();
-                });
-                $element.on('click', '.close', function(e){
-                    e.preventDefault();
-                    self.destroy();
-                });
+                $element
+                    .on('click', '.view', function(e){
+                        e.preventDefault();
+                        self.preview();
+                    })
+                    .on('click', '.close', function(e){
+                        e.preventDefault();
+                        self.destroy();
+                    });
             });
 
-
         return maskComponent;
-
     };
 
     return maskingComponentFactory;
