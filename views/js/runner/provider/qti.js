@@ -241,7 +241,6 @@ define([
                 var context = self.getTestContext();
                 var states = self.getTestData().itemStates;
                 var itemRunner = self.itemRunner;
-                var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
                 var params = {
                     emptyAllowed: context.isTimeout || !!force
                 };
@@ -287,23 +286,6 @@ define([
 
                 if(context.itemSessionState >= states.closed) {
                     return Promise.resolve(false);
-                }
-
-                //if the duration plugin is installed,
-                //we load the duration using an event
-                if(self.getPlugin('duration')){
-                    return new Promise(function(resolve, reject){
-                        //trigger the get event to retrieve the duration for that attempt
-                        self.getPlugin('duration').trigger('get', itemAttemptId, function receiver(p){
-                            p.then(function(duration){
-                                params.itemDuration = 0;
-                                if(_.isNumber(duration) && duration > 0){
-                                    params.itemDuration = duration;
-                                }
-                                return resolve(performSubmit());
-                            }).catch(reject);
-                        });
-                    });
                 }
 
                 return performSubmit();
