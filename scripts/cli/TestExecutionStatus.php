@@ -73,15 +73,29 @@ class TestExecutionStatus implements Action
         
         $session = $storage->retrieve($testDefinition, $deliveryExecutionId);
         
+        // Real work begins here !!!
         switch (strtolower($params[1])) {
             case 'restart':
                 // Do something.
                 $session->setState(AssessmentTestSessionState::INTERACTING);
                 
                 if (empty($params[2]) === false) {
-                    // reset duration.
+                    
+                    // The duration store contains durations (time spent) on test, testPart(s) and assessmentSection(s).
                     $durationStore = $session->getDurationStore();
-                    $durationStore[$testDefinition->getIdentifier()] = new QtiDuration('PT0S');
+                    
+                    $offsetDuration = new QtiDuration(strval($params[2]));
+                    $currentDuration = $durationStore[$testDefinition->getIdentifier()];
+                    
+                    $offsetSeconds = $offsetDuration->getSeconds(true);
+                    $currentSeconds = $currentDuration->getSeconds(true);
+                    $newSeconds = $currentSeconds - $offsetSeconds;
+                    if ($newSeconds < 0) {
+                        $newSeconds = 0;
+                    }
+                    
+                    // Replace test duration with new duration.
+                    $durationStore[$testDefinition->getIdentifier()] = new QtiDuration("PT${newSeconds}S");
                 }
                 
                 break;
