@@ -20,8 +20,8 @@ define([
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/tools/answerMasking/answerMasking'
-], function($, runnerFactory, providerMock, answerMaskingFactory) {
+    'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking'
+], function($, runnerFactory, providerMock, areaMaskingFactory) {
     'use strict';
 
     var providerName = 'mock';
@@ -34,9 +34,9 @@ define([
 
         QUnit.expect(3);
 
-        assert.equal(typeof answerMaskingFactory, 'function', 'The module exposes a function');
-        assert.equal(typeof answerMaskingFactory(runner), 'object', 'The factory creates an object');
-        assert.notStrictEqual(answerMaskingFactory(runner), answerMaskingFactory(runner), 'The factory creates a new object');
+        assert.equal(typeof areaMaskingFactory, 'function', 'The module exposes a function');
+        assert.equal(typeof areaMaskingFactory(runner), 'object', 'The factory creates an object');
+        assert.notStrictEqual(areaMaskingFactory(runner), areaMaskingFactory(runner), 'The factory creates a new object');
     });
 
 
@@ -60,10 +60,10 @@ define([
         ])
         .test('plugin ', function(data, assert) {
             var runner = runnerFactory(providerName);
-            var answerMasking = answerMaskingFactory(runner);
+            var areaMasking = areaMaskingFactory(runner);
             QUnit.expect(1);
 
-            assert.equal(typeof answerMasking[data.name], 'function', 'The plugin exposes a ' + data.name + ' method');
+            assert.equal(typeof areaMasking[data.name], 'function', 'The plugin exposes a ' + data.name + ' method');
         });
 
 
@@ -71,17 +71,17 @@ define([
 
     QUnit.asyncTest('init', function(assert) {
         var runner = runnerFactory(providerName);
-        var answerMasking = answerMaskingFactory(runner, runner.getAreaBroker());
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(4);
 
-        answerMasking.init()
+        areaMasking.init()
             .then(function() {
 
-                assert.equal(answerMasking.$button.length, 1, 'The answerMasking has created a button');
-                assert.ok(answerMasking.getState('init'), 'The answerMasking is initialised');
-                assert.ok(answerMasking.getState('disabled'), 'The answerMasking starts disabled');
-                assert.ok(answerMasking.$button.hasClass('disabled'), 'The button starts disabled');
+                assert.equal(areaMasking.$button.length, 1, 'The areaMasking has created a button');
+                assert.ok(areaMasking.getState('init'), 'The areaMasking is initialised');
+                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                assert.ok(areaMasking.$button.hasClass('disabled'), 'The button starts disabled');
 
                 QUnit.start();
             })
@@ -94,20 +94,20 @@ define([
     QUnit.asyncTest('render', function(assert) {
         var $container    = $('#qunit-fixture');
         var runner        = runnerFactory(providerName);
-        var answerMasking = answerMaskingFactory(runner, runner.getAreaBroker());
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(4);
 
-        answerMasking.init()
+        areaMasking.init()
             .then(function() {
 
-                assert.ok(answerMasking.getState('init'), 'The answerMasking is initialised');
+                assert.ok(areaMasking.getState('init'), 'The areaMasking is initialised');
 
-                return answerMasking.render().then(function() {
+                return areaMasking.render().then(function() {
 
-                    assert.ok(answerMasking.getState('disabled'), 'The answerMasking starts disabled');
-                    assert.equal($('.toolbox [data-control="answer-masking"]', $container).length, 1, 'The plugin button has been appended');
-                    assert.ok($('.toolbox [data-control="answer-masking"]', $container).hasClass('disabled'), 'The plugin button starts disabled');
+                    assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                    assert.equal($('.toolbox [data-control="area-masking"]', $container).length, 1, 'The plugin button has been appended');
+                    assert.ok($('.toolbox [data-control="area-masking"]', $container).hasClass('disabled'), 'The plugin button starts disabled');
                     QUnit.start();
                 });
             })
@@ -120,20 +120,20 @@ define([
     QUnit.asyncTest('destroy', function(assert) {
         var $container    = $('#qunit-fixture');
         var runner        = runnerFactory(providerName);
-        var answerMasking = answerMaskingFactory(runner, runner.getAreaBroker());
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(3);
 
-        answerMasking.init()
+        areaMasking.init()
             .then(function() {
-                assert.ok(answerMasking.getState('init'), 'The answerMasking is initialised');
+                assert.ok(areaMasking.getState('init'), 'The areaMasking is initialised');
 
-                return answerMasking.render().then(function() {
+                return areaMasking.render().then(function() {
 
-                    assert.equal($('.toolbox [data-control="answer-masking"]', $container).length, 1, 'The plugin button has been appended');
+                    assert.equal($('.toolbox [data-control="area-masking"]', $container).length, 1, 'The plugin button has been appended');
 
-                    return answerMasking.destroy().then(function(){
-                        assert.equal($('.toolbox [data-control="answer-masking"]', $container).length, 0, 'The plugin button has been removed');
+                    return areaMasking.destroy().then(function(){
+                        assert.equal($('.toolbox [data-control="area-masking"]', $container).length, 0, 'The plugin button has been removed');
                         QUnit.start();
                     });
                 });
@@ -149,33 +149,33 @@ define([
     QUnit.asyncTest('create', function(assert) {
         var $container    = $('#qunit-fixture');
         var runner        = runnerFactory(providerName);
-        var answerMasking = answerMaskingFactory(runner, runner.getAreaBroker());
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(8);
 
-        runner.on('plugin-maskadd.answerMasking', function(){
+        runner.on('plugin-maskadd.areaMasking', function(){
 
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
-            assert.equal(answerMasking.masks.length, 1, 'The mask is bound');
+            assert.equal(areaMasking.masks.length, 1, 'The mask is bound');
 
             QUnit.start();
         });
 
-        answerMasking.init()
+        areaMasking.init()
             .then(function() {
 
-                assert.ok(answerMasking.getState('disabled'), 'The answerMasking starts disabled');
+                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
 
-                answerMasking.enable();
-                return answerMasking.render().then(function() {
-                    var $button = $('.toolbox [data-control="answer-masking"]', $container);
+                areaMasking.enable();
+                return areaMasking.render().then(function() {
+                    var $button = $('.toolbox [data-control="area-masking"]', $container);
 
-                    assert.ok( ! answerMasking.getState('disabled'), 'The answerMasking is not disbaled anymore');
+                    assert.ok( ! areaMasking.getState('disabled'), 'The areaMasking is not disbaled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
 
                     assert.equal($('.mask', $container).length, 0, 'No mask exists yet');
-                    assert.equal(answerMasking.masks.length, 0, 'No mask is bound');
+                    assert.equal(areaMasking.masks.length, 0, 'No mask is bound');
 
 
                     $button.trigger('click');
@@ -190,40 +190,40 @@ define([
     QUnit.asyncTest('remove', function(assert) {
         var $container    = $('#qunit-fixture');
         var runner        = runnerFactory(providerName);
-        var answerMasking = answerMaskingFactory(runner, runner.getAreaBroker());
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(10);
 
-        runner.on('plugin-maskadd.answerMasking', function(){
+        runner.on('plugin-maskadd.areaMasking', function(){
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
-            assert.equal(answerMasking.masks.length, 1, 'The mask is bound');
+            assert.equal(areaMasking.masks.length, 1, 'The mask is bound');
 
             $('.mask .close', $container).click();
 
-        }).on('plugin-maskclose.answerMasking', function(){
+        }).on('plugin-maskclose.areaMasking', function(){
             setTimeout(function(){
                 assert.equal($('.mask', $container).length, 0, 'A mask has been removed');
-                assert.equal(answerMasking.masks.length, 0, 'The mask is unbound');
+                assert.equal(areaMasking.masks.length, 0, 'The mask is unbound');
 
                 QUnit.start();
             }, 100);
         });
 
-        answerMasking.init()
+        areaMasking.init()
             .then(function() {
 
-                assert.ok(answerMasking.getState('disabled'), 'The answerMasking starts disabled');
+                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
 
-                answerMasking.enable();
-                return answerMasking.render().then(function() {
-                    var $button = $('.toolbox [data-control="answer-masking"]', $container);
+                areaMasking.enable();
+                return areaMasking.render().then(function() {
+                    var $button = $('.toolbox [data-control="area-masking"]', $container);
 
-                    assert.ok( ! answerMasking.getState('disabled'), 'The answerMasking is not disbaled anymore');
+                    assert.ok( ! areaMasking.getState('disabled'), 'The areaMasking is not disbaled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
 
                     assert.equal($('.mask', $container).length, 0, 'No mask exists yet');
-                    assert.equal(answerMasking.masks.length, 0, 'No mask is bound');
+                    assert.equal(areaMasking.masks.length, 0, 'No mask is bound');
 
                     $button.trigger('click');
                 });

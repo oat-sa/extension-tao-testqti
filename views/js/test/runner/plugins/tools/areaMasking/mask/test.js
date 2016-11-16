@@ -18,7 +18,7 @@
 
 define([
     'jquery',
-    'taoQtiTest/runner/plugins/tools/answerMasking/mask'
+    'taoQtiTest/runner/plugins/tools/areaMasking/mask'
 ], function($, maskComponentFactory) {
     'use strict';
 

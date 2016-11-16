@@ -27,8 +27,8 @@ define([
     'interact',
     'ui/component',
     'ui/transformer',
-    'tpl!taoQtiTest/runner/plugins/tools/answerMasking/mask'
-], function ($, _, interact, component, transformer, answerMaskingTpl) {
+    'tpl!taoQtiTest/runner/plugins/tools/areaMasking/mask'
+], function ($, _, interact, component, transformer, areaMaskingTpl) {
     'use strict';
 
     var defaultConfig = {
@@ -145,7 +145,7 @@ define([
 
 
         maskComponent
-            .setTemplate(answerMaskingTpl)
+            .setTemplate(areaMaskingTpl)
             .on('render', function(){
                 var self       = this;
                 var $element   = this.getElement();

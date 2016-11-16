@@ -18,7 +18,7 @@
  */
 
 /**
- *
+ * Area Masking Plugin
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -28,7 +28,7 @@ define([
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/plugins/tools/answerMasking/mask',
+    'taoQtiTest/runner/plugins/tools/areaMasking/mask',
     'tpl!taoQtiTest/runner/plugins/navigation/button'
 ], function ($, _, __, hider, pluginFactory, maskComponent, buttonTpl){
     'use strict';
@@ -38,7 +38,7 @@ define([
      */
     return pluginFactory({
 
-        name : 'answerMasking',
+        name : 'area-masking',
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -54,7 +54,7 @@ define([
 
             //build the control button
             this.$button = $(buttonTpl({
-                control : 'answer-masking',
+                control : 'area-masking',
                 title : __('Covers parts of the item'),
                 icon : 'eye-slash'
             }));
@@ -69,7 +69,7 @@ define([
                         self.masks.push(this);
 
                         /**
-                         * @event answerMaksing#maskadd
+                         * @event areaMaksing#maskadd
                          */
                         self.trigger('maskadd');
                     })
@@ -78,8 +78,8 @@ define([
                         self.masks = _.without(self.masks, this);
 
                         /**
-                            * @event answerMaksing#maskclose
-                            */
+                         * @event areaMaksing#maskclose
+                         */
                         self.trigger('maskclose');
                     })
                     .init({
