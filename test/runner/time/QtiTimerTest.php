@@ -580,16 +580,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $extraTime2 = 11;
         $timer->setExtraTime($extraTime2);
         $this->assertEquals($extraTime2, $timer->getExtraTime());
-        
-        $diff = 3;
-        $timer->addExtraTime($diff);
-        $this->assertEquals($extraTime2 + $diff, $timer->getExtraTime());
-        
-        $timer->subExtraTime($diff);
-        $this->assertEquals($extraTime2, $timer->getExtraTime());
-        
-        $timer->subExtraTime($extraTime2 * 2);
-        $this->assertEquals(0, $timer->getExtraTime());
     }
     
     /**
@@ -600,7 +590,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timer = new QtiTimer();
         $this->assertEquals(0, $timer->getExtraTime());
         
-        $extraTime = 17;
+        $extraTime = 77;
         $timer->setExtraTime($extraTime);
         $this->assertEquals($extraTime, $timer->getExtraTime());
 
@@ -618,6 +608,20 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timer->consumeExtraTime($consume);
         $this->assertEquals($extraTime, $timer->getExtraTime());
         $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
+
+        $remainingTime = $extraTime - $consumedTime;
+        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
+
+        $tags = ['test', 'part1'];
+        $consume = 2;
+        $consumedTime += $consume;
+        $timer->consumeExtraTime($consume, $tags);
+        $this->assertEquals($extraTime, $timer->getExtraTime());
+        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
+        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags));
+        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags[0]));
+        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags[1]));
+        $this->assertEquals(0, $timer->getConsumedExtraTime('unknown'));
 
         $remainingTime = $extraTime - $consumedTime;
         $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
