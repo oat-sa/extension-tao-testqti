@@ -153,7 +153,7 @@ define([
 
         QUnit.expect(8);
 
-        runner.on('plugin-maskadd.areaMasking', function(){
+        runner.on('plugin-maskadd.area-masking', function(){
 
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
             assert.equal(areaMasking.masks.length, 1, 'The mask is bound');
@@ -194,13 +194,13 @@ define([
 
         QUnit.expect(10);
 
-        runner.on('plugin-maskadd.areaMasking', function(){
+        runner.on('plugin-maskadd.area-masking', function(){
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
             assert.equal(areaMasking.masks.length, 1, 'The mask is bound');
 
             $('.mask .close', $container).click();
 
-        }).on('plugin-maskclose.areaMasking', function(){
+        }).on('plugin-maskclose.area-masking', function(){
             setTimeout(function(){
                 assert.equal($('.mask', $container).length, 0, 'A mask has been removed');
                 assert.equal(areaMasking.masks.length, 0, 'The mask is unbound');
