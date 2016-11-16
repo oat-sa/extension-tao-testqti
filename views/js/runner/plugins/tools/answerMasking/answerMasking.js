@@ -45,30 +45,48 @@ define([
          */
         init : function init(){
             var self = this;
+
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
 
-
+            //keep a ref to all masks
             this.masks = [];
 
-            //build element (detached)
+            //build the control button
             this.$button = $(buttonTpl({
                 control : 'answer-masking',
-                title : __('Mask areas of the screen'),
+                title : __('Covers parts of the item'),
                 icon : 'eye-slash'
             }));
 
-            //attach behavior
+            //add a new mask each time the button is
             this.$button.on('click', function (e){
-                var mask;
-
                 e.preventDefault();
 
-                mask = maskComponent()
-                    .init()
-                    .render($container);
+                maskComponent()
+                    .on('render', function(){
 
-                self.masks.push(mask);
+                        self.masks.push(this);
+
+                        /**
+                         * @event answerMaksing#maskadd
+                         */
+                        self.trigger('maskadd');
+                    })
+                    .on('destroy', function(){
+
+                        self.masks = _.without(self.masks, this);
+
+                        /**
+                            * @event answerMaksing#maskclose
+                            */
+                        self.trigger('maskclose');
+                    })
+                    .init({
+                        x : self.masks.length * 10,
+                        y : self.masks.length * 10
+                    })
+                    .render($container);
             });
 
             //start disabled
@@ -77,8 +95,8 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('unloaditem', function (){
+                    //remove all masks
                     _.invoke(self.masks, 'destroy');
-                    self.masks = [];
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
@@ -106,6 +124,7 @@ define([
          * Enable the button
          */
         enable : function enable(){
+            this.setState('disabled', false);
             this.$button
                 .removeProp('disabled')
                 .removeClass('disabled');
@@ -115,6 +134,7 @@ define([
          * Disable the button
          */
         disable : function disable(){
+            this.setState('disabled', true);
             this.$button
                 .prop('disabled', true)
                 .addClass('disabled');
