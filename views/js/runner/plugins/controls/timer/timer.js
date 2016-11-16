@@ -332,6 +332,7 @@ define([
                         autoStart : false
                     });
 
+                    //try to find timer values in the storage
                     _.forEach(timerTypes, function(type){
                         var timerId;
                         var context = testRunner.getTestContext();
