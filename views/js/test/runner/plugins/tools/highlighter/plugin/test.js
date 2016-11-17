@@ -109,18 +109,18 @@ define([
                 plugin.render()
                     .then(function() {
                         var $container = getButtonContainer(runner);
-                        var $button = $container.find(plugin.$button);
+                        var $buttonGroup = $container.find(plugin.$buttonGroup);
 
                         assert.equal(plugin.getState('ready'), true, 'The plugin is ready');
-                        assert.equal($button.length, 1, 'The plugin button has been inserted');
-                        assert.equal($button.hasClass('disabled'), true, 'The button has been rendered disabled');
+                        assert.equal($buttonGroup.length, 1, 'The plugin button has been inserted');
+                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button has been rendered disabled');
 
                         plugin.destroy()
                             .then(function() {
-                                $button = $container.find(plugin.$button);
+                                $buttonGroup = $container.find(plugin.$button);
 
                                 assert.equal(plugin.getState('init'), false, 'The plugin is destroyed');
-                                assert.equal($button.length, 0, 'The button has been removed');
+                                assert.equal($buttonGroup.length, 0, 'The button has been removed');
                                 QUnit.start();
                             })
                             .catch(function(err) {
@@ -153,15 +153,15 @@ define([
                         plugin.enable()
                             .then(function() {
                                 var $container = getButtonContainer(runner);
-                                var $button = $container.find(plugin.$button);
+                                var $buttonGroup = $container.find(plugin.$buttonGroup);
 
                                 assert.equal(plugin.getState('enabled'), true, 'The plugin is enabled');
-                                assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
+                                assert.equal($buttonGroup.hasClass('disabled'), false, 'The button is not disabled');
 
                                 plugin.disable()
                                     .then(function() {
                                         assert.equal(plugin.getState('enabled'), false, 'The plugin is disabled');
-                                        assert.equal($button.hasClass('disabled'), true, 'The button is disabled');
+                                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button is disabled');
 
                                         QUnit.start();
                                     })
@@ -198,7 +198,7 @@ define([
                 plugin.render()
                     .then(function() {
                         var $container = getButtonContainer(runner);
-                        var $button = $container.find(plugin.$button);
+                        var $buttonGroup = $container.find(plugin.$buttonGroup);
 
                         plugin.setState('visible', true);
 
@@ -208,12 +208,12 @@ define([
                         plugin.hide()
                             .then(function() {
                                 assert.equal(plugin.getState('visible'), false, 'The plugin is not visible');
-                                assert.equal($button.css('display'), 'none', 'The plugin element is hidden');
+                                assert.equal($buttonGroup.css('display'), 'none', 'The plugin element is hidden');
 
                                 plugin.show()
                                     .then(function() {
                                         assert.equal(plugin.getState('visible'), true, 'The plugin is visible');
-                                        assert.notEqual($button.css('display'), 'none', 'The plugin element is visible');
+                                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin element is visible');
 
                                         QUnit.start();
                                     })
@@ -249,16 +249,16 @@ define([
                 plugin.render()
                     .then(function() {
                         var $container = getButtonContainer(runner);
-                        var $button = $container.find(plugin.$button);
+                        var $buttonGroup = $container.find(plugin.$buttonGroup);
 
                         runner.trigger('loaditem');
 
-                        assert.notEqual($button.css('display'), 'none', 'The plugin button is visible');
+                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is visible');
 
                         runner.trigger('unloaditem');
 
-                        assert.notEqual($button.css('display'), 'none', 'The plugin button is still visible');
-                        assert.equal($button.hasClass('disabled'), true, 'The button is disabled');
+                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is still visible');
+                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button is disabled');
 
                         QUnit.start();
                     })
@@ -284,12 +284,12 @@ define([
                 return plugin.render()
                     .then(function() {
                         var $container = getButtonContainer(runner);
-                        var $button = $container.find(plugin.$button);
+                        var $buttonGroup = $container.find(plugin.$buttonGroup);
 
                         runner.trigger('renderitem');
 
-                        assert.notEqual($button.css('display'), 'none', 'The plugin button is visible');
-                        assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
+                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is visible');
+                        assert.equal($buttonGroup.hasClass('disabled'), false, 'The button is not disabled');
 
                         QUnit.start();
                     });
