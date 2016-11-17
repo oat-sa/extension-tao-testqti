@@ -23,14 +23,16 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonTpl) {
+    'tpl!taoQtiTest/runner/plugins/navigation/button',
+    'tpl!taoAct/runner/plugins/templates/button-group'
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonTpl, buttonGroupTpl) {
     'use strict';
 
     /**
@@ -51,7 +53,9 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            var highlighter = highlighterFactory();
+            var highlighter = highlighterFactory({
+                testRunner: testRunner
+            });
 
             /**
              * Checks if the plugin is currently available
@@ -62,14 +66,26 @@ define([
             }
 
            //build element (detached)
-            this.$button = $(buttonTpl({
-                control: 'highlighter',
-                title: __('Highlight text'),
-                icon: 'text-marker'
+            this.$buttonGroup = $(buttonGroupTpl({
+                control : 'highlighter',
+                buttons: {
+                    main: {
+                        title: __('Highlight text'),
+                        icon: 'text-marker'
+                    },
+                    remove: {
+                        title: __('Remove highlights'),
+                        icon: 'result-nok'
+                    }
+                }
             }));
 
+            this.$buttonMain = this.$buttonGroup.find('[data-key="main"]');
+            this.$buttonRemove = this.$buttonGroup.find('[data-key="remove"]');
+
             //attach user events
-            this.$button.on('click', function (e) {
+            // mousedown is used on purpose instead of click to avoid losing current selection
+            this.$buttonMain.on('mousedown', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-highlight');
             });
@@ -82,6 +98,11 @@ define([
                 }
             }
 
+            this.$buttonRemove.on('click', function (e) {
+                e.preventDefault();
+                testRunner.trigger('tool-highlight-remove');
+            });
+
             //start disabled
             this.disable();
 
@@ -91,16 +112,65 @@ define([
                     self.show();
                 })
                 .on('renderitem', function () {
+                    var testContext = testRunner.getTestContext();
                     self.enable();
+                    highlighter.restoreHighlight(testContext.itemIdentifier);
+                    addClosingButton();
+                })
+                .on('beforeunloaditem', function() {
+                    var testContext = testRunner.getTestContext();
+                    highlighter.saveHighlight(testContext.itemIdentifier);
                 })
                 .on('unloaditem', function () {
+                    highlighter.toggleHighlighting(false);
                     self.disable();
                 })
                 .on('tool-highlight', function () {
                     if (isEnabled()) {
                         highlighter.trigger();
+                        addClosingButton();
                     }
+                })
+                .on('tool-highlight-remove', function () {
+                    highlighter.clearHighlights();
+                })
+                .on('tool-highlightOn', function() {
+                    self.$buttonMain.addClass('active');
+                })
+                .on('tool-highlightOff', function() {
+                    self.$buttonMain.removeClass('active');
                 });
+
+
+            function addClosingButton() {
+                // var container = document.getElementsByClassName('qti-itemBody')[0];
+                // container.addEventListener('mouseover', function(event) {
+                //     var hovered = document.elementFromPoint(event.pageX, event.pageY);
+                //     console.dir(hovered);
+                // });
+                var $closer = $('<span>', {
+                    'data-control': 'hl-delete'
+                }).append($('<span>', {
+                    'class': 'icon icon-result-nok'
+                }));
+
+                var currentHighlightedGroup
+
+                //
+                var $container = $('.qti-itemBody');
+                $container.find('.txt-user-highlight').off('.highlighter');
+                $container.find('.txt-user-highlight').on('mouseover.highlighter', function() {
+                    var groupId = $(this).attr('data-hl-group');
+                    var $closerContainer = $container.find('[data-hl-group=' + groupId + ']').last();
+                    currentHighlightedGroup = groupId;
+                    $closerContainer.append($closer);
+                });
+                $container.find('.txt-user-highlight').on('mouseout.highlighter', _.debounce(function() {
+
+                    $closer.remove();
+                }, 150));
+            }
+
         },
 
         /**
@@ -108,7 +178,7 @@ define([
          */
         render: function render() {
             var $container = this.getAreaBroker().getToolboxArea();
-            $container.append(this.$button);
+            $container.append(this.$buttonGroup);
         },
 
         /**
@@ -116,14 +186,14 @@ define([
          */
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
-            this.$button.remove();
+            this.$buttonRemove.remove();
         },
 
         /**
          * Enable the button
          */
         enable: function enable() {
-            this.$button.removeProp('disabled')
+            this.$buttonGroup.removeProp('disabled')
                 .removeClass('disabled');
         },
 
@@ -132,7 +202,7 @@ define([
          */
         disable: function disable() {
             hider.hide(this.$form);
-            this.$button.prop('disabled', true)
+            this.$buttonGroup.prop('disabled', true)
                 .addClass('disabled');
         },
 
@@ -140,14 +210,14 @@ define([
          * Show the button
          */
         show: function show() {
-            hider.show(this.$button);
+            hider.show(this.$buttonGroup);
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$button);
+            hider.hide(this.$buttonGroup);
         }
     });
 });
