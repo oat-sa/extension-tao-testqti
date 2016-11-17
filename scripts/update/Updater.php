@@ -794,9 +794,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.34.0');
         }
 
-        $this->skip('5.34.0', '5.35.0');
+        $this->skip('5.34.0', '5.35.1');
 
-        if ($this->isVersion('5.35.0')) {
+        if ($this->isVersion('5.35.1')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'highlighter',
