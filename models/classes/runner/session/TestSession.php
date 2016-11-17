@@ -20,10 +20,11 @@
 
 namespace oat\taoQtiTest\models\runner\session;
 
+use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
-use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\TimePoint;
+use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
@@ -70,7 +71,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      *
      * @return string
      */
-    public function getUserUri() {
+    public function getUserUri()
+    {
         if (is_null($this->userUri)) {
             return \common_session_SessionManager::getSession()->getUserUri();
         }
@@ -82,7 +84,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      *
      * @param string $userUri
      */
-    public function setUserUri($userUri) {
+    public function setUserUri($userUri)
+    {
         $this->userUri = $userUri;
     }
 
@@ -191,10 +194,11 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Ends the timer for the current item in the TestSession.
      * Sets the client duration for the current item in the TestSession.
      * @param float $duration The client duration, or null to force server duration to be used as client duration
+     * @param float $consumedExtraTime The extra time consumed by the client
      * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function endItemTimer($duration = null)
+    public function endItemTimer($duration = null, $consumedExtraTime = null)
     {
         $timer = $this->getTimer();
         $tags = $this->getItemTags($this->getCurrentRouteItem());
@@ -205,6 +209,10 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
                 $duration = floatval($duration);
             }
             $timer->adjust($tags, $duration);
+        }
+        
+        if (is_numeric($consumedExtraTime) && !is_null($consumedExtraTime)) {
+            $timer->consumeExtraTime($consumedExtraTime, $tags);            
         }
 
         $timer->save();
@@ -294,7 +302,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Update the durations involved in the AssessmentTestSession to mirror the durations at the current time.
      * This method can be useful for stateless systems that make use of QtiSm.
      */
-    public function updateDuration() {
+    public function updateDuration()
+    {
         // not needed anymore
         \common_Logger::t('Call to disabled updateDuration()');
     }
@@ -304,24 +313,28 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * @param $source
      * @param $navigationMode
      * @param $considerMinTime
+     * @param $applyExtraTime
      * @return TimeConstraint
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    protected function getTimeConstraint($source, $navigationMode, $considerMinTime)
+    protected function getTimeConstraint($source, $navigationMode, $considerMinTime, $applyExtraTime)
     {
-        return new TimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime);
+        $constraint = new QtiTimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime, $applyExtraTime);
+        $constraint->setTimer($this->getTimer());
+        return $constraint;
     }
 
     /**
-     * Get the time constraints running for the current testPart or/and current assessmentSection
-     * or/and assessmentItem.
+     * Builds the time constraints running for the current testPart or/and current assessmentSection
+     * or/and assessmentItem. Takes care of the extra time if needed.
      *
      * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param boolean $applyExtraTime Allow to take care of extra time
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
      */
-    public function getTimeConstraints($places = null) {
-
+    protected function buildTimeConstraints($places = null, $applyExtraTime = true)
+    {
         if ($places === null) {
             // Get the constraints from all places in the Assessment Test.
             $places = (AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM);
@@ -333,22 +346,70 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         $considerMinTime = $this->mustConsiderMinTime();
 
         if ($places & AssessmentTestPlace::ASSESSMENT_TEST) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
         if ($places & AssessmentTestPlace::TEST_PART) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentTestPart(), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($this->getCurrentTestPart(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
         if ($places & AssessmentTestPlace::ASSESSMENT_SECTION) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentAssessmentSection(), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($this->getCurrentAssessmentSection(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
         if ($places & AssessmentTestPlace::ASSESSMENT_ITEM) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime);
+            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
         return $constraints;
+    }
+
+    /**
+     * Get the time constraints running for the current testPart or/and current assessmentSection
+     * or/and assessmentItem. The extra time is taken into account.
+     *
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @return TimeConstraintCollection A collection of TimeConstraint objects.
+     * @qtism-test-duration-update
+     */
+    public function getTimeConstraints($places = null)
+    {
+        return $this->buildTimeConstraints($places, true);
+    }
+    
+    /**
+     * Get the regular time constraints running for the current testPart or/and current assessmentSection
+     * or/and assessmentItem, without taking care of the extra time.
+     *
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @return TimeConstraintCollection A collection of TimeConstraint objects.
+     * @qtism-test-duration-update
+     */
+    public function getRegularTimeConstraints($places = null)
+    {
+        return $this->buildTimeConstraints($places, false);
+    }
+
+    /**
+     * Whether or not the current Assessment Item to be presented to the candidate is timed-out. By timed-out
+     * we mean:
+     *
+     * * current Assessment Test level time limits are not respected OR,
+     * * current Test Part level time limits are not respected OR,
+     * * current Assessment Section level time limits are not respected OR,
+     * * current Assessment Item level time limits are not respected.
+     *
+     * @return boolean
+     */
+    public function isTimeout()
+    {
+        try {
+            $this->checkTimeLimits(false, true, false);
+        } catch (AssessmentTestSessionException $e) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
