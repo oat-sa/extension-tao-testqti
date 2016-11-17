@@ -101,7 +101,7 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr "File ausiliario non trovato nella posizione \"% s\""
 
 msgid "Calculator"
-msgstr ""
+msgstr "Calcolatrice"
 
 msgid "Cancel"
 msgstr "Cancella"
@@ -437,7 +437,7 @@ msgid "Only display the unanswered items"
 msgstr "Visualizzare solo gli item senza risposta"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Calcolatrice"
 
 msgid "Ordering"
 msgstr "Ordinamento"
