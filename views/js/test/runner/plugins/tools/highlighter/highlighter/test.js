@@ -37,53 +37,6 @@ define([
         assert.ok(typeof highlighterFactory === 'function', 'the module expose a function');
     });
 
-    QUnit.module('one shot highlight');
-
-    QUnit.test('Highlight current selection, if any', function(assert) {
-        var highlighter = highlighterFactory(runnerFactory(providerName));
-        var selection = window.getSelection();
-        var range = document.createRange();
-        var container = document.getElementsByClassName('qti-itemBody')[0];
-        var sampleText = container.textContent.trim();
-        var highlightedElement;
-
-        selection.removeAllRanges();
-
-        range.selectNodeContents(container);
-        selection.addRange(range);
-
-        assert.equal(selection.toString().trim(), sampleText, 'selection is correct');
-
-        highlighter.trigger();
-
-        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
-
-        assert.ok(highlightedElement, 'highlight has been found');
-        assert.equal(sampleText, highlightedElement.textContent.trim(), 'text has been highlighted');
-    });
-
-    QUnit.test('Do not perform highlight if selection is collapsed', function(assert) {
-        var highlighter = highlighterFactory(runnerFactory(providerName));
-        var selection = window.getSelection();
-        var range = document.createRange();
-        var container = document.getElementsByClassName('qti-itemBody')[0];
-        var highlightedElement;
-
-        selection.removeAllRanges();
-
-        range.selectNodeContents(container);
-        range.collapse();
-        selection.addRange(range);
-
-        assert.equal(selection.toString().trim(), '', 'selection is correct');
-
-        highlighter.trigger();
-
-        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
-
-        assert.ok(typeof highlightedElement === 'undefined', 'no highlight has been found');
-    });
-
     QUnit.module('highlight mode');
 
     QUnit.test('Toggle highlight mode on/off', function(assert) {
@@ -142,6 +95,53 @@ define([
         // check that no new highlight has been made
         highlightedElement = document.getElementsByClassName('txt-user-highlight')[2];
         assert.ok(typeof highlightedElement === 'undefined', 'no new highlight has been found');
+    });
+
+    QUnit.module('one shot highlight');
+
+    QUnit.test('Highlight current selection, if any', function(assert) {
+        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var selection = window.getSelection();
+        var range = document.createRange();
+        var container = document.getElementsByClassName('qti-itemBody')[0];
+        var sampleText = container.textContent.trim();
+        var highlightedElement;
+
+        selection.removeAllRanges();
+
+        range.selectNodeContents(container);
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), sampleText, 'selection is correct');
+
+        highlighter.trigger();
+
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
+
+        assert.ok(highlightedElement, 'highlight has been found');
+        assert.equal(sampleText, highlightedElement.textContent.trim(), 'text has been highlighted');
+    });
+
+    QUnit.test('Do not perform highlight if selection is collapsed', function(assert) {
+        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var selection = window.getSelection();
+        var range = document.createRange();
+        var container = document.getElementsByClassName('qti-itemBody')[0];
+        var highlightedElement;
+
+        selection.removeAllRanges();
+
+        range.selectNodeContents(container);
+        range.collapse();
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), '', 'selection is correct');
+
+        highlighter.trigger();
+
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
+
+        assert.ok(typeof highlightedElement === 'undefined', 'no highlight has been found');
     });
 
 });
