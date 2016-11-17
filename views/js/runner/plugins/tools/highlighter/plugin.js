@@ -30,9 +30,8 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter',
-    'tpl!taoQtiTest/runner/plugins/navigation/button',
     'tpl!taoAct/runner/plugins/templates/button-group'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonTpl, buttonGroupTpl) {
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonGroupTpl) {
     'use strict';
 
     /**
@@ -53,9 +52,7 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            var highlighter = highlighterFactory({
-                testRunner: testRunner
-            });
+            var highlighter = highlighterFactory(testRunner);
 
             /**
              * Checks if the plugin is currently available
@@ -84,10 +81,15 @@ define([
             this.$buttonRemove = this.$buttonGroup.find('[data-key="remove"]');
 
             //attach user events
-            // mousedown is used on purpose instead of click to avoid losing current selection
+            // using 'mousedown' instead of 'click' to avoid losing current selection
             this.$buttonMain.on('mousedown', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-highlight');
+            });
+
+            this.$buttonRemove.on('click', function (e) {
+                e.preventDefault();
+                testRunner.trigger('tool-highlight-remove');
             });
 
             if (testConfig.allowShortcuts) {
@@ -98,11 +100,6 @@ define([
                 }
             }
 
-            this.$buttonRemove.on('click', function (e) {
-                e.preventDefault();
-                testRunner.trigger('tool-highlight-remove');
-            });
-
             //start disabled
             this.disable();
 
@@ -111,7 +108,7 @@ define([
                 .on('loaditem', function () {
                     self.show();
                 })
-                .on('renderitem', function () {
+                .on('enabletools renderitem', function () {
                     var testContext = testRunner.getTestContext();
                     self.enable();
                     highlighter.restoreHighlight(testContext.itemIdentifier);
@@ -120,9 +117,9 @@ define([
                     var testContext = testRunner.getTestContext();
                     highlighter.saveHighlight(testContext.itemIdentifier);
                 })
-                .on('unloaditem', function () {
-                    highlighter.toggleHighlighting(false);
+                .on('disabletools unloaditem', function () {
                     self.disable();
+                    highlighter.toggleHighlighting(false);
                 })
                 .on('tool-highlight', function () {
                     if (isEnabled()) {
@@ -132,10 +129,10 @@ define([
                 .on('tool-highlight-remove', function () {
                     highlighter.clearHighlights();
                 })
-                .on('tool-highlightOn', function() {
+                .on('plugin-start.highlighter', function() {
                     self.$buttonMain.addClass('active');
                 })
-                .on('tool-highlightOff', function() {
+                .on('plugin-end.highlighter', function() {
                     self.$buttonMain.removeClass('active');
                 });
         },
@@ -153,6 +150,7 @@ define([
          */
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
+            $(document).off('.highlighter');
             this.$buttonRemove.remove();
         },
 
@@ -168,7 +166,6 @@ define([
          * Disable the button
          */
         disable: function disable() {
-            hider.hide(this.$form);
             this.$buttonGroup.prop('disabled', true)
                 .addClass('disabled');
         },

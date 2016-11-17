@@ -16,10 +16,8 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
 /**
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * This plugin allows the test taker to select text inside an item.
+ * Highlight is preserved when navigating between items
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -40,9 +38,11 @@ define([
     selection = window.getSelection();
 
     /**
-     * If browser supports multiple ranges
-     * xxxxxxxxxxxxxxxxxxxxxxx
-     * @returns {Array}
+     * Returns an array of active ranges.
+     * If browser doesn't support multiple Ranges, returns only the first range
+     * see note on https://w3c.github.io/selection-api/#methods
+     *
+     * @returns {Range[]}
      */
     function getAllRanges() {
         var i, allRanges = [];
@@ -56,41 +56,61 @@ define([
     /**
      * The highlighter Factory
      */
-    return function(options) {
+    return function(testRunner) {
 
-        var testRunner = options.testRunner;
-
-        var itemsHighlights = {};
+        /**
+         * Are we in highlight mode, meaning that each new selection is automatically highlighted
+         * without having to press any button
+         * @type {boolean}
+         */
         var isHighlighting = false;
 
+        /**
+         * Store, for each item, an array containing the its highlight index
+         * @type {Object}
+         */
+        var itemsHighlights = {};
+
+        /**
+         * The helper that does the highlight magic
+         */
         var highlightHelper = highlighterFactory({
             className: 'txt-user-highlight',
             containerSelector: '.qti-itemBody'
         });
 
-        // todo: destroy this
-        document.addEventListener("mouseup", function() {
+        // add event to automatically highlight the recently made selection if needed
+        $(document).on('mouseup.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
                 selection.removeAllRanges();
             }
-        }, false);
+        });
 
         /**
          * The highlighter instance
          */
         return {
+            isHighlighting: function getIsHighlighting() {
+                return isHighlighting;
+            },
+
+            /**
+             * toggle highlighting mode on and off
+             * @param {Boolean} bool - wanted state
+             */
             toggleHighlighting: function toggleHighlighting(bool) {
                 isHighlighting = bool;
                 if (isHighlighting) {
-                    testRunner.trigger('tool-highlightOn');
                     testRunner.trigger('plugin-start.highlighter');
                 } else {
-                    testRunner.trigger('tool-highlightOff');
                     testRunner.trigger('plugin-end.highlighter');
                 }
             },
 
+            /**
+             * Either highlight the current or selection, or toggle highlighting mode
+             */
             trigger: function trigger() {
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
@@ -104,6 +124,10 @@ define([
                 }
             },
 
+            /**
+             * save the highlight index for the current item
+             * @param itemId
+             */
             saveHighlight: function saveHighlight(itemId) {
                 var index = highlightHelper.getHighlightIndex();
                 if (index && index.length > 0) {
@@ -111,6 +135,11 @@ define([
                 }
             },
 
+
+            /**
+             * restore the highlight index on the current item
+             * @param itemId
+             */
             restoreHighlight: function restoreHighlight(itemId) {
                 var index = itemsHighlights[itemId];
                 if (index && index.length > 0) {
@@ -118,6 +147,9 @@ define([
                 }
             },
 
+            /**
+             * remove all highlights
+             */
             clearHighlights: function clearHighlights() {
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
