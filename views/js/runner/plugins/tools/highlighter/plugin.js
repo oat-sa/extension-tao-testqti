@@ -115,7 +115,6 @@ define([
                     var testContext = testRunner.getTestContext();
                     self.enable();
                     highlighter.restoreHighlight(testContext.itemIdentifier);
-                    addClosingButton();
                 })
                 .on('beforeunloaditem', function() {
                     var testContext = testRunner.getTestContext();
@@ -128,7 +127,6 @@ define([
                 .on('tool-highlight', function () {
                     if (isEnabled()) {
                         highlighter.trigger();
-                        addClosingButton();
                     }
                 })
                 .on('tool-highlight-remove', function () {
@@ -140,37 +138,6 @@ define([
                 .on('tool-highlightOff', function() {
                     self.$buttonMain.removeClass('active');
                 });
-
-
-            function addClosingButton() {
-                // var container = document.getElementsByClassName('qti-itemBody')[0];
-                // container.addEventListener('mouseover', function(event) {
-                //     var hovered = document.elementFromPoint(event.pageX, event.pageY);
-                //     console.dir(hovered);
-                // });
-                var $closer = $('<span>', {
-                    'data-control': 'hl-delete'
-                }).append($('<span>', {
-                    'class': 'icon icon-result-nok'
-                }));
-
-                var currentHighlightedGroup
-
-                //
-                var $container = $('.qti-itemBody');
-                $container.find('.txt-user-highlight').off('.highlighter');
-                $container.find('.txt-user-highlight').on('mouseover.highlighter', function() {
-                    var groupId = $(this).attr('data-hl-group');
-                    var $closerContainer = $container.find('[data-hl-group=' + groupId + ']').last();
-                    currentHighlightedGroup = groupId;
-                    $closerContainer.append($closer);
-                });
-                $container.find('.txt-user-highlight').on('mouseout.highlighter', _.debounce(function() {
-
-                    $closer.remove();
-                }, 150));
-            }
-
         },
 
         /**
