@@ -91,10 +91,6 @@ define([
          * The highlighter instance
          */
         return {
-            isHighlighting: function getIsHighlighting() {
-                return isHighlighting;
-            },
-
             /**
              * toggle highlighting mode on and off
              * @param {Boolean} bool - wanted state

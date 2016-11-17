@@ -109,8 +109,10 @@ define([
                     self.show();
                 })
                 .on('enabletools renderitem', function () {
-                    var testContext = testRunner.getTestContext();
                     self.enable();
+                })
+                .on('renderitem', function() {
+                    var testContext = testRunner.getTestContext();
                     highlighter.restoreHighlight(testContext.itemIdentifier);
                 })
                 .on('beforeunloaditem', function() {

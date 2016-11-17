@@ -28,33 +28,120 @@ define([
 ], function($, _, helpers, runnerFactory, providerMock, highlighterFactory) {
     'use strict';
 
+    var providerName = 'mock';
+    runnerFactory.registerProvider(providerName, providerMock());
+
     QUnit.module('highlighterFactory');
 
     QUnit.test('module', function(assert) {
         assert.ok(typeof highlighterFactory === 'function', 'the module expose a function');
     });
 
-    QUnit.module('highlighter');
+    QUnit.module('one shot highlight');
 
-    QUnit.test('can highlight text', function(assert) {
+    QUnit.test('Highlight current selection, if any', function(assert) {
+        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var selection = window.getSelection();
         var range = document.createRange();
-        var toSelect = document.getElementById('outside-container2');
-        var insider = document.getElementById('insider');
-        var highlightContainer = document.createElement('span');
+        var container = document.getElementsByClassName('qti-itemBody')[0];
+        var sampleText = container.textContent.trim();
+        var highlightedElement;
 
-        highlightContainer.setAttribute('class', 'highlighted');
+        selection.removeAllRanges();
 
-        // range.setStartBefore(toSelect);
-        // range.setEndAfter(toSelect);
-        range.setStart(toSelect.firstChild, 5);
-        range.setEnd(insider.firstChild, 5);
+        range.selectNodeContents(container);
+        selection.addRange(range);
 
-        // range.surroundContents(highlightContainer);
-        highlightContainer.appendChild(range.extractContents());
-        range.insertNode(highlightContainer);
-        QUnit.expect(0);
+        assert.equal(selection.toString().trim(), sampleText, 'selection is correct');
+
+        highlighter.trigger();
+
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
+
+        assert.ok(highlightedElement, 'highlight has been found');
+        assert.equal(sampleText, highlightedElement.textContent.trim(), 'text has been highlighted');
     });
 
+    QUnit.test('Do not perform highlight if selection is collapsed', function(assert) {
+        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var selection = window.getSelection();
+        var range = document.createRange();
+        var container = document.getElementsByClassName('qti-itemBody')[0];
+        var highlightedElement;
 
+        selection.removeAllRanges();
+
+        range.selectNodeContents(container);
+        range.collapse();
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), '', 'selection is correct');
+
+        highlighter.trigger();
+
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
+
+        assert.ok(typeof highlightedElement === 'undefined', 'no highlight has been found');
+    });
+
+    QUnit.module('highlight mode');
+
+    QUnit.test('Toggle highlight mode on/off', function(assert) {
+        var runner = runnerFactory(providerName);
+        var highlighter = highlighterFactory(runner);
+        var selection = window.getSelection();
+        var range = document.createRange();
+        var container = document.getElementsByClassName('qti-itemBody')[0];
+        var highlightedElement;
+
+        selection.removeAllRanges();
+
+        // switch on highlight mode
+        highlighter.trigger();
+
+        // create first selection
+        range.setStart(container.firstChild, 0);
+        range.setEnd(container.firstChild, 'This text is available for your highlighting needs'.length);
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), 'This text is available for your highlighting needs', 'correct selection has been made');
+
+        $(document).trigger('mouseup');
+
+        // check that highlight has been made
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
+        assert.ok(highlightedElement, 'highlight has been found');
+        assert.equal(highlightedElement.textContent.trim(), 'This text is available for your highlighting needs', 'correct content has been highlighted');
+
+        // create second selection
+        range.setStart(container.childNodes[1], '. Please feel free to '.length);
+        range.setEnd(container.childNodes[1], '. Please feel free to highlight'.length);
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), 'highlight', 'correct selection has been made');
+
+        $(document).trigger('mouseup');
+
+        // check that highlight has been made
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[1];
+        assert.ok(highlightedElement, 'highlight has been found');
+        assert.equal(highlightedElement.textContent.trim(), 'highlight', 'correct content has been highlighted');
+
+        // switch off highlight mode
+        highlighter.trigger();
+
+        // create third selection
+        range.setStart(container.childNodes[3], ' as much as you '.length);
+        range.setEnd(container.childNodes[3], container.childNodes[3].length);
+        selection.addRange(range);
+
+        assert.equal(selection.toString().trim(), 'want.', 'correct selection has been made');
+
+        $(document).trigger('mouseup');
+
+        // check that no new highlight has been made
+        highlightedElement = document.getElementsByClassName('txt-user-highlight')[2];
+        assert.ok(typeof highlightedElement === 'undefined', 'no new highlight has been found');
+    });
 
 });

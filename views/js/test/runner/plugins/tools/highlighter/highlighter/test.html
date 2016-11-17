@@ -8,7 +8,7 @@
     <script type="text/javascript" src="/tao/views/js/lib/require.js"></script>
     <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit.js"></script>
     <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit-parameterize.js"></script>
-    <script type="text/javascript" src="/tao/views/js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/plugins/tools/highlighter/plugin.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/plugins/tools/highlighter/highlighter.js"></script>
 
     <script  type="text/javascript">
 
@@ -26,16 +26,11 @@
             });
         });
     </script>
-    <style>
-        .highlighted {
-            background: yellow !important;
-        }
-    </style>
 </head>
 <body>
 <div id="qunit"></div>
-<div id="qunit-fixture"></div>
-<div id="outside-container">Please, feel free to highlight me</div>
-<div id="outside-container2">This is going to be <b id="insider">problematic</b>, I'm afraid</div>
+<div id="qunit-fixture">
+    <div class="qti-itemBody">This text is available for your highlighting needs. Please feel free to highlight as much as you want.</div>
+</div>
 </body>
 </html>
