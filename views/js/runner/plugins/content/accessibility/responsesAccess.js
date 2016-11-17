@@ -47,13 +47,12 @@ define([
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var responses = [];
             var count = 1;
-            var cursor = 0;
+            var cursor = null;
 
             /**
              * Gets the tabindex of the currently selected response
-             * @returns {Number}
              */
-            function getCurrentIndex() {
+            function findCurrentIndex() {
                 var $content = testRunner.getAreaBroker().getContentArea();
                 var isFocused = false;
                 var $input;
@@ -71,7 +70,7 @@ define([
 
                 if (!isFocused) {
                     // from the current cursor retrieve the related interaction, then find the selected response
-                    $input = $(':input:eq(' + cursor +')', $content).closest('.qti-interaction').find(':checked');
+                    $input = $(':input:eq(' + (cursor || 0) +')', $content).closest('.qti-interaction').find(':checked');
                     if ($input.length) {
                         _.forEach(responses, function(response, index) {
                             if ($input.is(response)) {
@@ -83,14 +82,21 @@ define([
                     }
                 }
 
-                return cursor;
+                if (!isFocused) {
+                    cursor = null;
+                }
             }
 
             /**
              * Select the previous item response
              */
             function previousResponse() {
-                cursor = (getCurrentIndex() + count - 1) % count;
+                findCurrentIndex();
+                if (_.isNumber(cursor)) {
+                    cursor = (cursor + count - 1) % count;
+                } else {
+                    cursor = count - 1;
+                }
                 if (responses[cursor]) {
                     responses[cursor].focus();
                 }
@@ -100,7 +106,12 @@ define([
              * Select the next item response
              */
             function nextResponse() {
-                cursor = (getCurrentIndex() + 1) % count;
+                findCurrentIndex();
+                if (_.isNumber(cursor)) {
+                    cursor = (cursor + 1) % count;
+                } else {
+                    cursor = 0;
+                }
                 if (responses[cursor]) {
                     responses[cursor].focus();
                 }
@@ -135,7 +146,7 @@ define([
                         return parseInt(aIndex, 10) - parseInt(bIndex, 10);
                     });
                     count = responses.length || 1;
-                    cursor = 0;
+                    cursor = null;
                     self.enable();
                 })
                 .on('unloaditem', function () {
