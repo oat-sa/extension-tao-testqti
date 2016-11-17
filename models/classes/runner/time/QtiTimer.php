@@ -354,6 +354,7 @@ class QtiTimer implements Timer, ExtraTime
         $this->storage->store(serialize([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
             self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
         ]));
         
@@ -468,7 +469,7 @@ class QtiTimer implements Timer, ExtraTime
         $this->consumedExtraTime += $time;
         
         // assign the consumed time to the provided tags
-        if (!is_null($tags)) {
+        if ($time && !is_null($tags)) {
             $end = microtime(true);
             $start = $end - $time;
             $this->extraTimeLine->add(new TimePoint($tags, $start, TimePoint::TYPE_START, TimePoint::TARGET_SERVER));

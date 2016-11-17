@@ -514,7 +514,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $extraTime = 20;
         $consumedTime = 4;
         $timer->setExtraTime($extraTime);
-        $timer->consumeExtraTime($consumedTime);
+        $timer->consumeExtraTime($consumedTime, $tags);
         
         $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timer->setStorage($storage);
@@ -534,6 +534,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timePoints = $timeLine->getPoints();
         $this->assertEquals($extraTime, $newTimer->getExtraTime());
         $this->assertEquals($consumedTime, $newTimer->getConsumedExtraTime());
+        $this->assertEquals($consumedTime, $newTimer->getConsumedExtraTime($tags));
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals(1459335000.0000, $timePoints[0]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[0]->getTarget());
