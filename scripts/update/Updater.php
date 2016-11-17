@@ -807,5 +807,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('5.35.0');
         }
+
+        $this->skip('5.35.0', '5.36.0');
     }
 }
