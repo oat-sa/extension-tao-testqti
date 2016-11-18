@@ -433,10 +433,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $itemRef = $this->getRequestParameter('itemDefinition');
         $itemDuration = $this->getRequestParameter('itemDuration');
+        $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
 
         $data = \taoQtiCommon_helpers_Utils::readJsonPayload();
         if (isset($data['itemDuration'])) {
             $itemDuration = $data['itemDuration'];
+        }
+        if (isset($data['consumedExtraTime'])) {
+            $consumedExtraTime = $data['consumedExtraTime'];
         }
 
         $state = isset($data['itemState']) ? $data['itemState'] : new stdClass();
@@ -449,7 +453,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
-                $this->runnerService->endTimer($serviceContext, $itemDuration);
+                $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
                 $successState = $this->runnerService->setItemState($serviceContext, $this->getStateId(), $state);
             } else {
                 $successState = false;
@@ -552,10 +556,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $ref = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
         $itemDuration = $this->getRequestParameter('itemDuration');
+        $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
 
         try {
             $serviceContext = $this->getServiceContext();
-            $this->runnerService->endTimer($serviceContext, $itemDuration);
+            $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
 
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 
