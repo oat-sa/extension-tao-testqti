@@ -317,7 +317,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * @return TimeConstraint
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
-    protected function getTimeConstraint($source, $navigationMode, $considerMinTime, $applyExtraTime)
+    protected function getTimeConstraint($source, $navigationMode, $considerMinTime, $applyExtraTime = true)
     {
         $constraint = new QtiTimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime, $applyExtraTime);
         $constraint->setTimer($this->getTimer());
