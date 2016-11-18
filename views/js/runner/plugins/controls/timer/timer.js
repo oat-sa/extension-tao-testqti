@@ -34,7 +34,7 @@ define([
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function ($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
     'use strict';
 
     /**
@@ -56,10 +56,10 @@ define([
 
 
     var timerTypes = {
-        test:     'assessmentTest',
+        test: 'assessmentTest',
         testPart: 'testPart',
-        section:  'assessmentSection',
-        item:     'assessmentItemRef'
+        section: 'assessmentSection',
+        item: 'assessmentItemRef'
     };
 
     /**
@@ -67,9 +67,9 @@ define([
      * @param {Object} context - the current test context
      * @returns {Boolean}
      */
-    var isTimedSection = function isTimedSection(context){
+    var isTimedSection = function isTimedSection(context) {
         var timeConstraints = context.timeConstraints || [];
-        return _.some(timeConstraints, function(constraint){
+        return _.some(timeConstraints, function(constraint) {
             return constraint.qtiClassName === 'assessmentSection';
         });
     };
@@ -85,7 +85,7 @@ define([
         /**
          * Installation of the plugin (called before init)
          */
-        install : function install() {
+        install: function install() {
             var self = this;
             //the storechange event is fired early (before runner's init is done)
             //so we attach the handler early
@@ -100,17 +100,17 @@ define([
          */
         init: function init() {
 
-            var self = this;
+            var self         = this;
             var testRunner   = this.getTestRunner();
             var testData     = testRunner.getTestData() || {};
             var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
 
             var displayedTimers = {};
-            var timers          = {};
+            var timers = {};
 
-            var extraTime             = 0;
-            var consumedExtraTime     = 0;
+            var extraTime = 0;
+            var consumedExtraTime = 0;
             var lastConsumedExtraTime = 0;
 
             /**
@@ -150,17 +150,19 @@ define([
 
                 // get the config of each timer
                 if (!context.isTimeout && context.itemSessionState === itemStates.interacting) {
-                    timeConstraint = _.findLast(context.timeConstraints, { qtiClassName : type });
-                    if(timeConstraint){
+                    timeConstraint = _.findLast(context.timeConstraints, {
+                        qtiClassName: type
+                    });
+                    if (timeConstraint) {
                         timer = setRemainingTime({
-                            label:     timeConstraint.label,
-                            type:      timeConstraint.qtiClassName,
-                            id:        timeConstraint.source,
-                            running:   true,
-                            warnings:  {}
+                            label: timeConstraint.label,
+                            type: timeConstraint.qtiClassName,
+                            id: timeConstraint.source,
+                            running: true,
+                            warnings: {}
                         }, timeConstraint.seconds * precision);
 
-                        _(timerWarning[timeConstraint.qtiClassName]).forEach(function (value, key) {
+                        _(timerWarning[timeConstraint.qtiClassName]).forEach(function(value, key) {
                             if (_.contains(['info', 'warning', 'danger'], value)) {
                                 timer.warnings[key] = {
                                     type: value,
@@ -170,7 +172,9 @@ define([
                             }
                         });
 
-                        closestPreviousWarning = _.find(timer.warnings, { showed: true });
+                        closestPreviousWarning = _.find(timer.warnings, {
+                            showed: true
+                        });
                         if (!_.isEmpty(closestPreviousWarning) && closestPreviousWarning.point && timer.warnings[closestPreviousWarning.point / precision]) {
                             timer.warnings[closestPreviousWarning.point / precision].showed = false;
                         }
@@ -180,19 +184,21 @@ define([
             };
 
             //TODO this kind of function is generic enough to be moved to a util/helper
-            var leaveTimedSection = function leaveTimedSection(type, scope, position){
+            var leaveTimedSection = function leaveTimedSection(type, scope, position) {
                 var context = testRunner.getTestContext();
-                var map     = testRunner.getTestMap();
+                var map = testRunner.getTestMap();
 
                 var section = map.parts[context.testPartId].sections[context.sectionId];
                 var nbItems = _.size(section.items);
-                var item    = _.find(section.items, { position : context.itemPosition });
+                var item = _.find(section.items, {
+                    position: context.itemPosition
+                });
 
-                if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item ){
+                if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item) {
 
-                    return !!( (type === 'next' && (scope === 'assessmentSection' || ((item.positionInSection + 1) === nbItems) )) ||
-                               (type === 'previous' && item.positionInSection === 0) ||
-                               (type === 'jump' && position > 0 &&  (position < section.position || position >= section.position + nbItems)) );
+                    return !!((type === 'next' && (scope === 'assessmentSection' || ((item.positionInSection + 1) === nbItems))) ||
+                        (type === 'previous' && item.positionInSection === 0) ||
+                        (type === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems)));
 
                 }
                 return false;
@@ -202,8 +208,8 @@ define([
              * Remove a timer from the current ones
              * @param {String} type - the timer type to remove
              */
-            var removeTimer = function removeTimer(type){
-                if(displayedTimers[type]){
+            var removeTimer = function removeTimer(type) {
+                if (displayedTimers[type]) {
                     self.storage.removeItem(displayedTimers[type].id());
 
                     displayedTimers[type].destroy();
@@ -217,8 +223,8 @@ define([
              * @param {Object} config - the timer config
              * @param {String} type - the timer type to remove
              */
-            var addTimer = function addTimer(type, config){
-                if(config){
+            var addTimer = function addTimer(type, config) {
+                if (config) {
                     // track the regular remaining timer, without the extra time
                     timers[type] = config.regular;
 
@@ -241,51 +247,50 @@ define([
              * Update the timers.
              * It will remove, let, add or update the current timers based on the current context.
              */
-            var updateTimers = function updateTimers(checkStorage){
+            var updateTimers = function updateTimers(checkStorage) {
                 var timerUpdatePromises = [];
 
-                _.forEach(timerTypes, function(type){
+                _.forEach(timerTypes, function(type) {
                     timerUpdatePromises.push(
-                        new Promise(function (resolve) {
-                    var timerConfig = getTimerConfig(type);
+                        new Promise(function(resolve) {
+                            var timerConfig = getTimerConfig(type);
 
-                    if(displayedTimers[type]){
-                        if(!timerConfig){
-                            removeTimer(type);
-                        } else if(displayedTimers[type].id() !== timerConfig.id){
-                            removeTimer(type);
-                            addTimer(type, timerConfig);
-                        } else {
-                            setRemainingTime(timerConfig, timers[type]);
-                            displayedTimers[type].val(timerConfig.remaining);
-                        }
-                                return resolve();
-                    } else if(timerConfig){
-
-                        if(checkStorage){
-
-                            //check for the last value in the storage
-                            self.storage.getItem(timerConfig.id).then(function(savedTime){
-                                if(_.isNumber(savedTime) && savedTime >= 0){
-                                    setRemainingTime(timerConfig, savedTime);
+                            if (displayedTimers[type]) {
+                                if (!timerConfig) {
+                                    removeTimer(type);
+                                } else if (displayedTimers[type].id() !== timerConfig.id) {
+                                    removeTimer(type);
+                                    addTimer(type, timerConfig);
+                                } else {
+                                    setRemainingTime(timerConfig, timers[type]);
+                                    displayedTimers[type].val(timerConfig.remaining);
                                 }
-                                addTimer(type, timerConfig);
-                                        return resolve();
-                            }).catch(function(){
-                                //add the timer even if the storage doesn't work
-                                addTimer(type, timerConfig);
-                                        return resolve();
-                            });
+                                return resolve();
+                            } else if (timerConfig) {
 
-                        } else {
-                            addTimer(type, timerConfig);
+                                if (checkStorage) {
+                                    //check for the last value in the storage
+                                    self.storage.getItem(timerConfig.id).then(function(savedTime) {
+                                        if (_.isNumber(savedTime) && savedTime >= 0) {
+                                            setRemainingTime(timerConfig, savedTime);
+                                        }
+                                        addTimer(type, timerConfig);
+                                        return resolve();
+                                    }).catch(function() {
+                                        //add the timer even if the storage doesn't work
+                                        addTimer(type, timerConfig);
+                                        return resolve();
+                                    });
+                                } else {
+                                    addTimer(type, timerConfig);
                                     return resolve();
-                        }
+                                }
                             } else {
                                 return resolve();
-                    }
+                            }
+                        })
+                    );
                 });
-
                 return Promise.all(timerUpdatePromises);
             };
 
@@ -308,14 +313,14 @@ define([
             }
 
             return store('timer-' + testRunner.getConfig().serviceCallId)
-                .then(function(timeStore){
-                    if(self.shouldClearStorage){
-                        return timeStore.clear().then(function(){
+                .then(function(timeStore) {
+                    if (self.shouldClearStorage) {
+                        return timeStore.clear().then(function() {
                             return timeStore;
                         });
                     }
                     return Promise.resolve(timeStore);
-                }).then(function(timeStore){
+                }).then(function(timeStore) {
 
                     //the timer's storage
                     self.storage = timeStore;
@@ -325,17 +330,17 @@ define([
 
                     //one stopwatch to count the time
                     self.stopwatch = timerFactory({
-                        autoStart : false
+                        autoStart: false
                     });
 
                     //update the timers at regular intervals
                     self.polling = pollingFactory({
 
                         /**
-                        * The polling action consists in updating each timers,
-                        * checking timeout and warnings
-                        */
-                        action : function updateTime() {
+                         * The polling action consists in updating each timers,
+                         * checking timeout and warnings
+                         */
+                        action: function updateTime() {
 
                             //how many time elapsed from the last tick ?
                             var elapsed = self.stopwatch.tick();
@@ -347,7 +352,7 @@ define([
                                 var regularVal,
                                     displayedVal,
                                     warning;
-                                var runTimeout = function runTimeout(){
+                                var runTimeout = function runTimeout() {
                                     testRunner.timeout(timeoutScope, timeoutRef);
                                 };
 
@@ -391,8 +396,8 @@ define([
                                 self.disable();
                             }
                         },
-                        interval : timerRefresh,
-                        autoStart : false
+                        interval: timerRefresh,
+                        autoStart: false
                     });
 
                     //change plugin state
@@ -403,7 +408,7 @@ define([
                         .on('enableitem', doEnable)
                         .on('disableitem disconnect', doDisable)
                         .after('renderitem', doEnable)
-                        .before('move', function(e, type, scope, position){
+                        .before('move', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
                             var testData = testRunner.getTestData();
                             var config = testData && testData.config;
@@ -414,8 +419,8 @@ define([
                                 // endTestWarning has already been displayed, so we don't repeat the warning
                                 if (context.isLast && options.endTestWarning) {
                                     resolve();
-                                // display a message if we exit a timed section
-                                } else if(leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
+                                    // display a message if we exit a timed section
+                                } else if (leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
                                     testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
                                 } else {
                                     resolve();
@@ -423,7 +428,7 @@ define([
                             });
 
                             movePromise
-                                .then(function doMove(){
+                                .then(function doMove() {
                                     //pause the timers when moving
                                     doDisable();
                                     removeTimer(timerTypes.item);
@@ -434,13 +439,13 @@ define([
 
                             return movePromise;
                         })
-                        .before('move skip exit timeout', function(){
+                        .before('move skip exit timeout', function() {
                             testRunner.getProxy().addCallActionParams({
                                 consumedExtraTime: lastConsumedExtraTime / precision
                             });
                             lastConsumedExtraTime = 0;
                         })
-                        .before('finish', function(){
+                        .before('finish', function() {
                             return new Promise(function(resolve) {
                                 self.storage.removeStore()
                                     .then(resolve)
@@ -461,7 +466,7 @@ define([
         /**
          * Called during the runner's destroy phase
          */
-        destroy : function destroy (){
+        destroy: function destroy() {
             this.polling.stop();
             this.stopwatch.stop();
             this.$element.remove();
@@ -470,7 +475,7 @@ define([
         /**
          * Enables the timers
          */
-        enable : function enable (){
+        enable: function enable() {
             this.polling.start();
             this.stopwatch.resume();
         },
@@ -478,7 +483,7 @@ define([
         /**
          * Disables the timers
          */
-        disable : function disable (){
+        disable: function disable() {
             this.polling.stop();
             this.stopwatch.pause();
         },
@@ -486,14 +491,14 @@ define([
         /**
          * Shows the timers
          */
-        show: function show(){
+        show: function show() {
             hider.show(this.$element);
         },
 
         /**
          * Hides the timers
          */
-        hide: function hide(){
+        hide: function hide() {
             hider.hide(this.$element);
         }
     });
