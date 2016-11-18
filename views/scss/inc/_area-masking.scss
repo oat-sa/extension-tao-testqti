@@ -1,0 +1,45 @@
+.mask {
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    min-width: 50px;
+    min-height: 25px;
+    top: 0;
+    left: 0;
+    border: solid 1px $uiClickableHoverBg;
+    @include border-radius(2);
+    background: transparent;
+    opacity: 1;
+    @include vendor-prefix(property, transform, translateZ(0));
+
+    .inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: $uiGeneralContentBg;
+        opacity: 1;
+    }
+    &.moving .inner {
+        opacity: .55;
+    }
+    &.sizing {
+        border-style: dashed;
+        .inner{
+            opacity: .45;
+        }
+    }
+    &.previewing .inner {
+        opacity: .15;
+        @include transition(opacity, 600ms, ease);
+    }
+    .controls {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        a {
+            text-decoration: none;
+            @include font-size(16);
+            margin-right: 5px;
+        }
+    }
+}
