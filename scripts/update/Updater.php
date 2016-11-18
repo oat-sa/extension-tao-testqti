@@ -794,9 +794,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.34.0');
         }
 
-        $this->skip('5.34.0', '5.35.1');
+        $this->skip('5.34.0', '5.35.2');
 
-        if ($this->isVersion('5.35.1')) {
+        if ($this->isVersion('5.35.2')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
@@ -807,13 +807,10 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'loop' => 'Y',
                 'select' => 'U'
             ];
-            $config['shortcuts']['previous'] = [
-                'trigger' => 'K',
-            ];
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.36.0');
+            $this->setVersion('5.35.3');
         }
     }
 }
