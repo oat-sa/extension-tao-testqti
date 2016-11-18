@@ -372,8 +372,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // Duration of the current item attempt
                 $response['attemptDuration'] = $session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER)->getSeconds(true);
 
-                // Whether or not the current step is time out.
-                $response['isTimeout'] = TestRunnerUtils::isTimeout($session);
+                // Whether or not the current step is timed out.
+                $response['isTimeout'] = $session->isTimeout();
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
@@ -402,7 +402,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
-                $response['timeConstraints'] = TestRunnerUtils::buildTimeConstraints($session);
+                $response['timeConstraints'] = $this->buildTimeConstraints($context);
+                $response['extraTime'] = $this->buildExtraTime($context);
 
                 // Test Part title.
                 $response['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
@@ -1200,6 +1201,58 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Build an array where each cell represent a time constraint (a.k.a. time limits)
+     * in force. Each cell is actually an array with two keys:
+     *
+     * * 'source': The identifier of the QTI component emitting the constraint (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
+     * * 'seconds': The number of remaining seconds until it times out.
+     *
+     * @param RunnerServiceContext $context
+     * @return array
+     */
+    protected function buildTimeConstraints(RunnerServiceContext $context) {
+        $constraints = array();
+        
+        /* @var TestSession $session */
+        $session = $context->getTestSession();
+
+        foreach ($session->getRegularTimeConstraints() as $tc) {
+            $timeRemaining = $tc->getMaximumRemainingTime();
+            if ($timeRemaining !== false) {
+                
+                $source = $tc->getSource();
+                $identifier = $source->getIdentifier();
+                $constraints[] = array(
+                    'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
+                    'source' => $identifier,
+                    'seconds' => $timeRemaining->getSeconds(true),
+                    'allowLateSubmission' => $tc->allowLateSubmission(),
+                    'qtiClassName' => $source->getQtiClassName()
+                );
+            }
+        }
+
+        return $constraints;
+    }
+
+    /**
+     * Builds a descriptor that contains the extra time
+     * @param RunnerServiceContext $context
+     * @return array
+     */
+    protected function buildExtraTime(RunnerServiceContext $context) {
+        /* @var TestSession $session */
+        $session = $context->getTestSession();
+        $timer = $session->getTimer();
+        
+        return [
+            'total' => $timer->getExtraTime(),
+            'consumed' => $timer->getConsumedExtraTime(),
+            'remaining' => $timer->getRemainingExtraTime(),
+        ];
+    }
+
+    /**
      * Stores trace variable related to an item, a test or a section
      * @param RunnerServiceContext $context
      * @param $itemUri
@@ -1224,9 +1277,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             if (!is_null($itemUri)) {
                 $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
-                $currentOccurence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+                $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
-                $transmissionId = "${sessionId}.${$currentItem}.${$currentOccurence}";
+                $transmissionId = "${sessionId}.${$currentItem}.${$currentOccurrence}";
                 $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
             } else {
                 $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
@@ -1273,20 +1326,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Ends the timer for the current item in the TestSession
      * @param RunnerServiceContext $context
      * @param float $duration The client side duration to adjust the timer
+     * @param float $consumedExtraTime The extra time consumed by the client
      * @return bool
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      * @throws \common_exception_InvalidArgumentType
      */
-    public function endTimer(RunnerServiceContext $context, $duration = null)
+    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            $session->endItemTimer();
-
-            if (is_numeric($duration) || is_null($duration)) {
-                $session->adjustItemTimer($duration);
-            }
+            $session->endItemTimer($duration, $consumedExtraTime);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',

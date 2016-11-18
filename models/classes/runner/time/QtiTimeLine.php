@@ -192,11 +192,17 @@ class QtiTimeLine implements TimeLine
      * Computes the total duration represented by the filtered TimePoints
      * @param string|array $tag A tag or a list of tags to filter
      * @param int $target The type of target TimePoint to filter
+     * @param int $lastTimestamp An optional timestamp that will be utilized to close the last open range, if any
      * @return float Returns the total computed duration
      * @throws TimeException
      */
-    public function compute($tag = null, $target = TimePoint::TARGET_ALL)
+    public function compute($tag = null, $target = TimePoint::TARGET_ALL, $lastTimestamp = 0)
     {
+        // default value for the last timestamp
+        if (!$lastTimestamp) {
+            $lastTimestamp = microtime(true);
+        }
+        
         // either get all points or only a subset according to the provided criteria
         if (!$tag && $target == TimePoint::TARGET_ALL) {
             $points = $this->getPoints();
@@ -217,6 +223,14 @@ class QtiTimeLine implements TimeLine
         // this loop can throw exceptions 
         $duration = 0;
         foreach ($ranges as $range) {
+
+            // the last range could be still open, so auto close it
+            $nb = count($range);
+            $last = $nb && $nb % 2 ?$range[$nb - 1] : null;
+            if ($last && $last->getType() == TimePoint::TYPE_START) {
+                $range[] = new TimePoint($last->getTags(), $lastTimestamp, TimePoint::TYPE_END, $last->getTarget());
+            }
+            
             $duration += $this->computeRange($range);
         }
         

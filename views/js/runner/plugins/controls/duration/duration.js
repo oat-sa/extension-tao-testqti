@@ -58,6 +58,19 @@ define([
             //where the duration of attempts are stored
             return store('duration-' + testRunner.getConfig().serviceCallId).then(function(durationStore){
 
+                /**
+                 * Gets the duration of a particular item from the store
+                 * @param {String} attemptId - the attempt id to get the duration for
+                 * @returns {Promise}
+                 */
+                function getItemDuration(attemptId){
+                    if(!/^(.*)+#+\d+$/.test(attemptId)){
+                        return Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"'));
+                    }
+
+                    return durationStore.getItem(attemptId);
+                }
+
                 //one stopwatch to count the time
                 self.stopwatch = timerFactory({
                     autoStart : false
@@ -112,6 +125,23 @@ define([
                                 }
                             })
 
+                            .before('move skip exit timeout', function(){
+                                var context = testRunner.getTestContext();
+                                var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
+                                return getItemDuration(itemAttemptId).then(function(duration) {
+                                    var params = {
+                                        itemDuration: 0
+                                    };
+                                    if(_.isNumber(duration) && duration > 0){
+                                        params.itemDuration = duration;
+                                    }
+
+                                    // the duration will be sent to the server with the next request,
+                                    // usually submitItem() or callItemAction()
+                                    testRunner.getProxy().addCallActionParams(params);
+                                });
+                            })
+
                             /**
                              * @event duration.get
                              * @param {String} attemptId - the attempt id to get the duration for
@@ -119,15 +149,7 @@ define([
                              */
                             .on('plugin-get.duration', function(e, attemptId, getDuration){
                                 if(_.isFunction(getDuration)){
-                                    if(!/^(.*)+#+\d+$/.test(attemptId)){
-                                        return getDuration(Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"')));
-                                    }
-
-                                    /**
-                                     * @callback getDuration
-                                     * @param {Promise} p - that resolve with the duration value
-                                     */
-                                    getDuration(durationStore.getItem(attemptId));
+                                    getDuration(getItemDuration(attemptId));
                                 }
                             })
 

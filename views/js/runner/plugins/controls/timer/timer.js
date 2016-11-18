@@ -106,7 +106,36 @@ define([
             var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
 
-            var currentTimers = {};
+            var displayedTimers = {};
+            var timers          = {};
+
+            var extraTime             = 0;
+            var consumedExtraTime     = 0;
+            var lastConsumedExtraTime = 0;
+
+            /**
+             * Gets the remaining extra time, if any
+             * @returns {Number} the remaining extra time in milliseconds
+             */
+            var getRemainingExtraTime = function getRemainingExtraTime() {
+                return Math.max(0, extraTime - consumedExtraTime) * precision;
+            };
+
+            /**
+             * Sets correctly the remaining time on a timer config set
+             * @param {Object} timerConfig
+             * @param {Number} remaining
+             * @returns {Object}
+             */
+            var setRemainingTime = function setRemainingTime(timerConfig, remaining) {
+                // will display the timer with extra time, if any
+                timerConfig.remaining = remaining + getRemainingExtraTime();
+
+                // keep track of the regular timer, without extra time
+                timerConfig.regular = remaining;
+
+                return timerConfig;
+            };
 
             /**
              * Load the configuration of a timer from the current context
@@ -123,14 +152,13 @@ define([
                 if (!context.isTimeout && context.itemSessionState === itemStates.interacting) {
                     timeConstraint = _.findLast(context.timeConstraints, { qtiClassName : type });
                     if(timeConstraint){
-                        timer = {
+                        timer = setRemainingTime({
                             label:     timeConstraint.label,
                             type:      timeConstraint.qtiClassName,
-                            remaining: timeConstraint.seconds * precision,
                             id:        timeConstraint.source,
                             running:   true,
                             warnings:  {}
-                        };
+                        }, timeConstraint.seconds * precision);
 
                         _(timerWarning[timeConstraint.qtiClassName]).forEach(function (value, key) {
                             if (_.contains(['info', 'warning', 'danger'], value)) {
@@ -175,11 +203,12 @@ define([
              * @param {String} type - the timer type to remove
              */
             var removeTimer = function removeTimer(type){
-                if(currentTimers[type]){
-                    self.storage.removeItem(currentTimers[type].id());
+                if(displayedTimers[type]){
+                    self.storage.removeItem(displayedTimers[type].id());
 
-                    currentTimers[type].destroy();
-                    currentTimers = _.omit(currentTimers, type);
+                    displayedTimers[type].destroy();
+                    displayedTimers = _.omit(displayedTimers, type);
+                    timers = _.omit(timers, type);
                 }
             };
 
@@ -190,8 +219,12 @@ define([
              */
             var addTimer = function addTimer(type, config){
                 if(config){
-                    currentTimers[type] = timerComponentFactory(config);
-                    currentTimers[type]
+                    // track the regular remaining timer, without the extra time
+                    timers[type] = config.regular;
+
+                    // creates the component that will display the final timer
+                    displayedTimers[type] = timerComponentFactory(config);
+                    displayedTimers[type]
                         .init()
                         .render(self.$element);
 
@@ -200,7 +233,7 @@ define([
                      * @param {String} type of timer (such as 'assessmentSection', 'testPart' etc.)
                      * @param {Object} timer instance ('core/timer' timer factory).
                      */
-                    self.trigger('addtimer', type, currentTimers[type]);
+                    self.trigger('addtimer', type, displayedTimers[type]);
                 }
             };
 
@@ -209,16 +242,24 @@ define([
              * It will remove, let, add or update the current timers based on the current context.
              */
             var updateTimers = function updateTimers(checkStorage){
+                var context = testRunner.getTestContext();
+                if (context.extraTime) {
+                    extraTime = context.extraTime.total;
+                    consumedExtraTime = Math.max(consumedExtraTime, context.extraTime.consumed);
+                }
 
                 _.forEach(timerTypes, function(type){
                     var timerConfig = getTimerConfig(type);
 
-                    if(currentTimers[type]){
+                    if(displayedTimers[type]){
                         if(!timerConfig){
                             removeTimer(type);
-                        } else if(currentTimers[type].id() !== timerConfig.id){
+                        } else if(displayedTimers[type].id() !== timerConfig.id){
                             removeTimer(type);
                             addTimer(type, timerConfig);
+                        } else {
+                            setRemainingTime(timerConfig, timers[type]);
+                            displayedTimers[type].val(timerConfig.remaining);
                         }
                     } else if(timerConfig){
 
@@ -227,7 +268,7 @@ define([
                             //check for the last value in the storage
                             self.storage.getItem(timerConfig.id).then(function(savedTime){
                                 if(_.isNumber(savedTime) && savedTime >= 0){
-                                    timerConfig.remaining = savedTime;
+                                    setRemainingTime(timerConfig, savedTime);
                                 }
                                 addTimer(type, timerConfig);
                             }).catch(function(){
@@ -292,23 +333,32 @@ define([
 
                             //how many time elapsed from the last tick ?
                             var elapsed = self.stopwatch.tick();
+                            var elapsedExtraTime = 0;
                             var timeout = false;
                             var timeoutScope, timeoutRef;
 
-                            _.forEach(currentTimers, function(timer, type) {
-                                var currentVal,
+                            _.forEach(displayedTimers, function(timer, type) {
+                                var regularVal,
+                                    displayedVal,
                                     warning;
                                 var runTimeout = function runTimeout(){
                                     testRunner.timeout(timeoutScope, timeoutRef);
                                 };
 
                                 if (timer.running()) {
-                                    currentVal = Math.max(timer.val() - elapsed, 0);
+                                    regularVal = timers[type] - elapsed;
+                                    displayedVal = timer.val() - elapsed;
+                                    timers[type] = Math.max(regularVal, 0);
                                     timer
-                                        .val(currentVal)
+                                        .val(Math.max(displayedVal, 0))
                                         .refresh();
 
-                                    if (currentVal <= 0) {
+                                    if (regularVal <= 0) {
+                                        // compute the actual consumed extra time for this period
+                                        elapsedExtraTime = Math.max(elapsedExtraTime, Math.abs(regularVal));
+                                    }
+
+                                    if (displayedVal <= 0) {
                                         timer.running(false);
                                         timeout = true;
                                         timeoutRef = timer.id();
@@ -319,7 +369,7 @@ define([
                                             .catch(runTimeout);
 
                                     } else {
-                                        self.storage.setItem(timer.id(), currentVal);
+                                        self.storage.setItem(timer.id(), timers[type]);
                                         warning = timer.warn();
                                         if (!_.isEmpty(warning)) {
                                             testRunner.trigger(warning.type, warning.text);
@@ -327,6 +377,10 @@ define([
                                     }
                                 }
                             });
+                            if (elapsedExtraTime) {
+                                consumedExtraTime += elapsedExtraTime / precision;
+                                lastConsumedExtraTime += elapsedExtraTime;
+                            }
                             if (timeout) {
                                 self.disable();
                             }
@@ -374,6 +428,12 @@ define([
                                 });
 
                             return movePromise;
+                        })
+                        .before('move skip exit timeout', function(){
+                            testRunner.getProxy().addCallActionParams({
+                                consumedExtraTime: lastConsumedExtraTime / precision
+                            });
+                            lastConsumedExtraTime = 0;
                         })
                         .before('finish', function(){
                             return new Promise(function(resolve) {
