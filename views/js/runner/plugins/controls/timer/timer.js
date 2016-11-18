@@ -209,42 +209,49 @@ define([
              * It will remove, let, add or update the current timers based on the current context.
              */
             var updateTimers = function updateTimers(checkStorage) {
-                return new Promise(function (resolve) {
-                    _.forEach(timerTypes, function(type){
-                        var timerConfig = getTimerConfig(type);
+                var timerUpdatePromises = [];
 
-                        if(currentTimers[type]){
-                            if(!timerConfig){
-                                removeTimer(type);
-                            } else if(currentTimers[type].id() !== timerConfig.id){
-                                removeTimer(type);
-                                addTimer(type, timerConfig);
-                                resolve();
-                            }
-                        } else if(timerConfig){
-
-                            if(checkStorage){
-
-                                //check for the last value in the storage
-                                self.storage.getItem(timerConfig.id).then(function(savedTime){
-                                    if(_.isNumber(savedTime) && savedTime >= 0){
-                                        timerConfig.remaining = savedTime;
-                                    }
+                _.forEach(timerTypes, function(type){
+                    timerUpdatePromises.push(
+                        new Promise(function (resolve) {
+                            var timerConfig = getTimerConfig(type);
+                            if (currentTimers[type]) {
+                                if (!timerConfig) {
+                                    removeTimer(type);
+                                } else if(currentTimers[type].id() !== timerConfig.id){
+                                    removeTimer(type);
                                     addTimer(type, timerConfig);
-                                    resolve();
-                                }).catch(function(){
-                                    //add the timer even if the storage doesn't work
-                                    addTimer(type, timerConfig);
-                                    resolve();
-                                });
+                                }
+                                return resolve();
+                            } else if (timerConfig) {
 
+                                if(checkStorage){
+
+                                    //check for the last value in the storage
+                                    self.storage.getItem(timerConfig.id).then(function(savedTime){
+                                        if(_.isNumber(savedTime) && savedTime >= 0){
+                                            timerConfig.remaining = savedTime;
+                                        }
+                                        addTimer(type, timerConfig);
+                                        return resolve();
+                                    }).catch(function(){
+                                        //add the timer even if the storage doesn't work
+                                        addTimer(type, timerConfig);
+                                        return resolve();
+                                    });
+
+                                } else {
+                                    addTimer(type, timerConfig);
+                                    return resolve();
+                                }
                             } else {
-                                addTimer(type, timerConfig);
-                                resolve();
+                                return resolve();
                             }
-                        }
-                    });
+                        })
+                    );
                 });
+
+                return Promise.all(timerUpdatePromises);
             };
 
             /**
@@ -343,11 +350,7 @@ define([
                     //change plugin state
                     testRunner
                         .before('renderitem resumeitem', function() {
-                            return new Promise(function(resolve) {
-                                updateTimers(true).then(function () {
-                                    resolve();
-                                });
-                            });
+                            return updateTimers(true);
                         })
                         .on('enableitem', doEnable)
                         .on('disableitem disconnect', doDisable)
