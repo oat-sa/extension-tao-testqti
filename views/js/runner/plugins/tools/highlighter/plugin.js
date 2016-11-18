@@ -30,7 +30,7 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter',
-    'tpl!taoAct/runner/plugins/templates/button-group'
+    'tpl!taoQtiTest/runner/plugins/templates/button-group'
 ], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonGroupTpl) {
     'use strict';
 
