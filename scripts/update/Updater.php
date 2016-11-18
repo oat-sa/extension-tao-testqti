@@ -802,7 +802,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $config = $extension->getConfig('testRunner');
 
-            $config['shortcuts']['theme-switcher'] = [
+            $config['shortcuts']['itemThemeSwitcher'] = [
                 'toggle' => 'T',
                 'loop' => 'Y',
                 'select' => 'U'
