@@ -248,6 +248,7 @@
                                 color: $textHighlight;
                             }
                         }
+                        &.hover,
                         &:hover {
                             background-color: $info;
                             color: $textHighlight;
