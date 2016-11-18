@@ -105,7 +105,7 @@ define([
 
                 return areaMasking.render().then(function() {
 
-                    assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                    assert.ok(!areaMasking.getState('enabled'), 'The areaMasking starts disabled');
                     assert.equal($('.toolbox [data-control="area-masking"]', $container).length, 1, 'The plugin button has been appended');
                     assert.ok($('.toolbox [data-control="area-masking"]', $container).hasClass('disabled'), 'The plugin button starts disabled');
                     QUnit.start();
@@ -164,13 +164,13 @@ define([
         areaMasking.init()
             .then(function() {
 
-                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                assert.ok(!areaMasking.getState('enabled'), 'The areaMasking starts disabled');
 
                 areaMasking.enable();
                 return areaMasking.render().then(function() {
                     var $button = $('.toolbox [data-control="area-masking"]', $container);
 
-                    assert.ok( ! areaMasking.getState('disabled'), 'The areaMasking is not disbaled anymore');
+                    assert.ok( areaMasking.getState('enabled'), 'The areaMasking is not disbaled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
 
@@ -212,13 +212,13 @@ define([
         areaMasking.init()
             .then(function() {
 
-                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                assert.ok(!areaMasking.getState('enabled'), 'The areaMasking starts disabled');
 
                 areaMasking.enable();
                 return areaMasking.render().then(function() {
                     var $button = $('.toolbox [data-control="area-masking"]', $container);
 
-                    assert.ok( ! areaMasking.getState('disabled'), 'The areaMasking is not disbaled anymore');
+                    assert.ok(areaMasking.getState('enabled'), 'The areaMasking is not disbaled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
 

@@ -53,7 +53,7 @@ define([
         var maskComponent = component({
 
             /**
-             * Place the container against the container (at the center/middle)
+             * Place the container against the parent container (at the center/middle)
              * @returns {maskComponent} chains
              */
             place : function place(){
@@ -112,7 +112,7 @@ define([
                     );
 
                     /**
-                     * @event maskComponent#move the component has been resized
+                     * @event maskComponent#resize the component has been resized
                      * @param {Number} width - the new width
                      * @param {Number} height - the new height
                      */

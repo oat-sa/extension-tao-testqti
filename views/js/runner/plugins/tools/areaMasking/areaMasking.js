@@ -59,7 +59,7 @@ define([
                 icon : 'eye-slash'
             }));
 
-            //add a new mask each time the button is
+            //add a new mask each time the button is pressed
             this.$button.on('click', function (e){
                 e.preventDefault();
 
@@ -124,7 +124,6 @@ define([
          * Enable the button
          */
         enable : function enable(){
-            this.setState('disabled', false);
             this.$button
                 .removeProp('disabled')
                 .removeClass('disabled');
@@ -134,7 +133,6 @@ define([
          * Disable the button
          */
         disable : function disable(){
-            this.setState('disabled', true);
             this.$button
                 .prop('disabled', true)
                 .addClass('disabled');
