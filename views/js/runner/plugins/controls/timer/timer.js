@@ -62,8 +62,6 @@ define([
         item:     'assessmentItemRef'
     };
 
-    var timerValuesFromStorage = {};
-
     /**
      * Are we in a timed section
      * @param {Object} context - the current test context
@@ -210,32 +208,42 @@ define([
              * Update the timers.
              * It will remove, let, add or update the current timers based on the current context.
              */
-            var updateTimers = function updateTimers(checkStorage){
+            var updateTimers = function updateTimers(checkStorage) {
+                return new Promise(function (resolve) {
+                    _.forEach(timerTypes, function(type){
+                        var timerConfig = getTimerConfig(type);
 
-                _.forEach(timerTypes, function(type){
-                    var timerConfig = getTimerConfig(type);
-
-                    if(currentTimers[type]){
-                        if(!timerConfig){
-                            removeTimer(type);
-                        } else if(currentTimers[type].id() !== timerConfig.id){
-                            removeTimer(type);
-                            addTimer(type, timerConfig);
-                        }
-                    } else if(timerConfig){
-                        addTimer(type, timerConfig);
-                        if (checkStorage) {
-                            if (timerValuesFromStorage[type]) {
-                                timerConfig.remaining = timerValuesFromStorage[type];
+                        if(currentTimers[type]){
+                            if(!timerConfig){
+                                removeTimer(type);
+                            } else if(currentTimers[type].id() !== timerConfig.id){
+                                removeTimer(type);
+                                addTimer(type, timerConfig);
+                                resolve();
                             }
-                            //check for the last value in the storage
-                            self.storage.getItem(timerConfig.id).then(function(savedTime){
-                                if(_.isNumber(savedTime) && savedTime >= 0){
-                                    timerConfig.remaining = savedTime;
-                                }
-                            })
+                        } else if(timerConfig){
+
+                            if(checkStorage){
+
+                                //check for the last value in the storage
+                                self.storage.getItem(timerConfig.id).then(function(savedTime){
+                                    if(_.isNumber(savedTime) && savedTime >= 0){
+                                        timerConfig.remaining = savedTime;
+                                    }
+                                    addTimer(type, timerConfig);
+                                    resolve();
+                                }).catch(function(){
+                                    //add the timer even if the storage doesn't work
+                                    addTimer(type, timerConfig);
+                                    resolve();
+                                });
+
+                            } else {
+                                addTimer(type, timerConfig);
+                                resolve();
+                            }
                         }
-                    }
+                    });
                 });
             };
 
@@ -332,29 +340,14 @@ define([
                         autoStart : false
                     });
 
-                    //try to find timer values in the storage
-                    _.forEach(timerTypes, function(type){
-                        var timerId;
-                        var context = testRunner.getTestContext();
-                        var timeConstraint;
-                        if (!context.isTimeout && context.itemSessionState === itemStates.interacting) {
-                            timeConstraint = _.findLast(context.timeConstraints, { qtiClassName : type });
-                            if (timeConstraint) {
-                                timerId = timeConstraint.source;
-                                self.storage.getItem(timerId).then(function(savedTime){
-                                    if (_.isNumber(savedTime) && savedTime >= 0) {
-                                        timerValuesFromStorage[type] = savedTime;
-                                    }
-                                });
-                            }
-                        }
-                    });
-
                     //change plugin state
                     testRunner
-                        .on('loaditem resumeitem', function(){
-                            //check for new timers
-                            updateTimers(true);
+                        .before('renderitem resumeitem', function() {
+                            return new Promise(function(resolve) {
+                                updateTimers(true).then(function () {
+                                    resolve();
+                                });
+                            });
                         })
                         .on('enableitem', doEnable)
                         .on('disableitem disconnect', doDisable)
