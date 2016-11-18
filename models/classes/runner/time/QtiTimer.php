@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoTests\models\runner\time\ExtraTime;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -36,13 +37,39 @@ use oat\taoTests\models\runner\time\Timer;
  * Class QtiTimer
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimer implements Timer
+class QtiTimer implements Timer, ExtraTime
 {
+    /**
+     * The name of the storage key for the TimeLine
+     */
+    const STORAGE_KEY_TIME_LINE = 'timeLine';
+
+    /**
+     * The name of the storage key for the extra time
+     */
+    const STORAGE_KEY_EXTRA_TIME = 'extraTime';
+
+    /**
+     * The name of the storage key for the consumed extra time
+     */
+    const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
+    
+    /**
+     * The name of the storage key for the time line related to the consumed extra time
+     */
+    const STORAGE_KEY_EXTRA_TIME_LINE = 'extraTimeLine';
+    
     /**
      * The TimeLine used to compute the duration
      * @var TimeLine
      */
     protected $timeLine;
+    
+    /**
+     * The TimeLine used to compute the consumed extra time
+     * @var TimeLine
+     */
+    protected $extraTimeLine;
 
     /**
      * The storage used to maintain the data
@@ -51,11 +78,24 @@ class QtiTimer implements Timer
     protected $storage;
 
     /**
+     * The total added extra time
+     * @var float
+     */
+    protected $extraTime = 0.0;
+
+    /**
+     * The already consumed extra time
+     * @var float
+     */
+    protected $consumedExtraTime = 0.0;
+
+    /**
      * QtiTimer constructor.
      */
     public function __construct()
     {
         $this->timeLine = new QtiTimeLine();
+        $this->extraTimeLine = new QtiTimeLine();
     }
 
     /**
@@ -76,8 +116,7 @@ class QtiTimer implements Timer
         $range = $this->getRange($tags);
 
         // validate the data consistence
-        $nb = count($range);
-        if ($nb && ($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_START) {
+        if ($this->isRangeOpen($range)) {
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
             \common_Logger::i('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
@@ -112,15 +151,16 @@ class QtiTimer implements Timer
         $range = $this->getRange($tags);
 
         // validate the data consistence
-        $nb = count($range);
-        if (!$nb || (!($nb % 2) && $range[$nb - 1]->getType() == TimePoint::TYPE_END)) {
-            throw new InconsistentRangeException('The time range does not seem to be consistent, the range seems to be already complete!');
-        }
-        $this->checkTimestampCoherence($range, $timestamp);
+        if ($this->isRangeOpen($range)) {
+            $this->checkTimestampCoherence($range, $timestamp);
 
-        // append the new END TimePoint
-        $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
-        $this->timeLine->add($point);
+            // append the new END TimePoint
+            $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $this->timeLine->add($point);    
+        } else {
+            // already closed range found, just log the info
+            \common_Logger::i('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
+        }
 
         return $this;
     }
@@ -311,7 +351,12 @@ class QtiTimer implements Timer
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(serialize($this->timeLine));
+        $this->storage->store(serialize([
+            self::STORAGE_KEY_TIME_LINE => $this->timeLine,
+            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
+            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+        ]));
         
         return $this;
     }
@@ -332,9 +377,36 @@ class QtiTimer implements Timer
         $data = $this->storage->load();
         
         if (isset($data)) {
-            $this->timeLine = unserialize($data);
+            $refined = unserialize($data);
 
-            if (!$this->timeLine instanceof TimeLine) {
+            $this->extraTime = 0;
+            $this->consumedExtraTime = 0;
+
+            if (is_array($refined)) {
+                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
+                    $this->timeLine = $refined[self::STORAGE_KEY_TIME_LINE];
+                } else {
+                    $this->timeLine = new QtiTimeLine();
+                }
+                
+                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
+                    $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
+                }
+                
+                if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                    $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+                }
+                
+                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
+                    $this->extraTimeLine = $refined[self::STORAGE_KEY_EXTRA_TIME_LINE];
+                } else {
+                    $this->extraTimeLine = new QtiTimeLine();
+                }
+            } else {
+                $this->timeLine = $refined;
+            }
+
+            if (!$this->timeLine instanceof TimeLine || !$this->extraTimeLine instanceof TimeLine) {
                 throw new InvalidDataException('The storage did not provide acceptable data when loading!');
             }
         }
@@ -342,6 +414,71 @@ class QtiTimer implements Timer
         return $this;
     }
 
+    /**
+     * Gets the added extra time
+     * @return float
+     */
+    public function getExtraTime()
+    {
+        return $this->extraTime;
+    }
+
+    /**
+     * Sets the added extra time
+     * @param float $time
+     * @return ExtraTime
+     */
+    public function setExtraTime($time)
+    {
+        $this->extraTime = max(0, floatval($time));
+        return $this;
+    }
+
+    /**
+     * Gets the amount of already consumed extra time. If tags are provided, only take care of the related time.
+     * @param string|array $tags A tag or a list of tags to filter
+     * @return float
+     */
+    public function getConsumedExtraTime($tags = null)
+    {
+        if (!is_null($tags)) {
+            return $this->extraTimeLine->compute($tags);
+        }
+        return $this->consumedExtraTime;
+    }
+
+    /**
+     * Gets the amount of remaining extra time
+     * @return float
+     */
+    public function getRemainingExtraTime()
+    {
+        return max(0, $this->extraTime - $this->consumedExtraTime);
+    }
+
+    /**
+     * Consumes an amount of extra time.
+     * If tags are provided, assign them to the consumed time.
+     * @param float $time
+     * @param string|array $tags A tag or a list of tags to assign
+     * @return ExtraTime
+     */
+    public function consumeExtraTime($time, $tags = null)
+    {
+        $time = max(0, floatval($time));
+        $this->consumedExtraTime += $time;
+        
+        // assign the consumed time to the provided tags
+        if ($time && !is_null($tags)) {
+            $end = microtime(true);
+            $start = $end - $time;
+            $this->extraTimeLine->add(new TimePoint($tags, $start, TimePoint::TYPE_START, TimePoint::TARGET_SERVER));
+            $this->extraTimeLine->add(new TimePoint($tags, $end, TimePoint::TYPE_END, TimePoint::TARGET_SERVER));
+        }
+        
+        return $this;
+    }
+    
     /**
      * Checks if a timestamp is consistent with existing TimePoint within a range
      * @param array $points
@@ -355,6 +492,17 @@ class QtiTimer implements Timer
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }
         }
+    }
+
+    /**
+     * Check if the provided range is open (START TimePoint and no related END)
+     * @param array $range
+     * @return bool
+     */
+    protected function isRangeOpen($range)
+    {
+        $nb = count($range);
+        return $nb && ($nb % 2) && ($range[$nb - 1]->getType() == TimePoint::TYPE_START);
     }
 
     /**

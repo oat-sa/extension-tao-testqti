@@ -55,8 +55,64 @@ define([
             var state = {
                 availableThemes: [],
                 defaultTheme: '',
-                selectedTheme: ''
+                selectedTheme: '',
+                hoveredIndex: 0
             };
+
+            //handle state change
+            /**
+             * Load the selected theme
+             * @param themeId
+             */
+            function changeTheme(themeId) {
+                var $qtiItem = $('.qti-item');
+                if (state.selectedTheme) {
+                    self.$ul.find('[data-control="' + state.selectedTheme + '"]').removeClass('selected');
+                }
+                state.selectedTheme = themeId;
+
+                self.$ul.find('[data-control="' + state.selectedTheme + '"]').addClass('selected');
+
+                if ($qtiItem) {
+                    _.defer(function(){
+                        $qtiItem.trigger('themechange', [state.selectedTheme]);
+                    });
+                }
+            }
+
+            /**
+             * Move the hovered index to the next available index
+             */
+            function loopThroughMenuEntries() {
+                state.hoveredIndex++;
+                if (state.hoveredIndex === state.availableThemes.length) {
+                    state.hoveredIndex = 0;
+                }
+                highlightMenuEntry();
+            }
+
+            /**
+             * highlight the currently hovered menu entry
+             */
+            function highlightMenuEntry() {
+                self.$menuItems.removeClass('hover');
+                self.$menuItems.eq(state.hoveredIndex).addClass('hover');
+            }
+
+            /**
+             * get the theme index from an Id
+             * @param {String} themeId
+             * @returns {boolean|number}
+             */
+            function getThemeIndex(themeId) {
+                var indexFound = false;
+                state.availableThemes.forEach(function(theme, index) {
+                    if (theme.id === themeId) {
+                        indexFound = index;
+                    }
+                });
+                return indexFound;
+            }
 
             //build element (detached)
             this.$button = $(buttonTpl({
@@ -88,40 +144,45 @@ define([
             }));
             this.$menu.appendTo(this.$button);
             this.$ul = this.$button.find('[data-control="item-theme-switcher-list"]');
-
-            //handle state change
-            function changeTheme(id) {
-                var $qtiItem = $('.qti-item');
-                if (state.selectedTheme) {
-                    self.$ul.find('[data-control="' + state.selectedTheme + '"]').removeClass('selected');
-                }
-                state.selectedTheme = id;
-
-                self.$ul.find('[data-control="' + state.selectedTheme + '"]').addClass('selected');
-
-                if ($qtiItem) {
-                    _.defer(function(){
-                        $qtiItem.trigger('themechange', [state.selectedTheme]);
-                    });
-                }
-            }
+            this.$menuItems = this.$menu.find('.menu-item');
 
             //attach behavior
             this.$button.on('click', function (e) {
                 e.preventDefault();
-                testRunner.trigger('tool-themeswitcher');
+                testRunner.trigger('tool-themeswitcher-toggle');
             });
 
-            this.$ul.find('li').on('click', function (e) {
+            this.$menuItems.on('click', function (e) {
                 var themeId = e.currentTarget.getAttribute('data-control');
                 e.preventDefault();
                 changeTheme(themeId);
             });
 
+            this.$menuItems.on('mouseenter', function (e) {
+                var themeId = e.currentTarget.getAttribute('data-control');
+                state.hoveredIndex = getThemeIndex(themeId);
+                highlightMenuEntry();
+            });
+
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher');
+                        testRunner.trigger('tool-themeswitcher-toggle');
+                        highlightMenuEntry();
+                    }, {
+                        avoidInput: true
+                    });
+                }
+                if (pluginShortcuts.loop) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.loop, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher-loop');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+                if (pluginShortcuts.select) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.select, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher-select');
                     }, {
                         avoidInput: true
                     });
@@ -146,12 +207,23 @@ define([
                 .on('disabletools unloaditem', function () {
                     self.disable();
                 })
-                .on('tool-themeswitcher', function () {
+                .on('tool-themeswitcher-toggle', function () {
                     if (self.getState('enabled') !== false) {
                         hider.toggle(self.$menu);
                         if (!hider.isHidden(self.$menu)) {
                             self.$menu.focus();
                         }
+                    }
+                })
+                .on('tool-themeswitcher-loop', function () {
+                    if (!hider.isHidden(self.$menu)) {
+                        loopThroughMenuEntries();
+                    }
+                })
+                .on('tool-themeswitcher-select', function() {
+                    if (!hider.isHidden(self.$menu)) {
+                        changeTheme(state.availableThemes[state.hoveredIndex].id);
+                        hider.toggle(self.$menu);
                     }
                 });
         },

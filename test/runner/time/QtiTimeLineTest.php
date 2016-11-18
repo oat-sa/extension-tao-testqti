@@ -283,7 +283,6 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
 
     /**
      * Test the QtiTimeLine::compute()
-     * @expectedException \oat\taoTests\models\runner\time\IncompleteRangeException
      */
     public function testComputeIncompleteRangeException()
     {
@@ -292,7 +291,17 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
             new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
             new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
         ]);
-        $timeLine->compute(['test-a', 'item-a']);
+        $expectedDuration = 19;
+        $duration = $timeLine->compute(['test-a', 'item-a'], TimePoint::TARGET_ALL, 1459519511.2422);
+        $this->assertEquals($duration, $expectedDuration);
+
+        $expectedDuration = 11;
+        $duration = $timeLine->compute(['test-a', 'item-a'], TimePoint::TARGET_SERVER, 1459519511.2422);
+        $this->assertEquals($duration, $expectedDuration);
+        
+        $expectedDuration = 8;
+        $duration = $timeLine->compute(['test-a', 'item-a'], TimePoint::TARGET_CLIENT, 1459519511.2422);
+        $this->assertEquals($duration, $expectedDuration);
     }
 
     /**
