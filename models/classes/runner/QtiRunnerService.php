@@ -1218,8 +1218,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         foreach ($session->getRegularTimeConstraints() as $tc) {
             $timeRemaining = $tc->getMaximumRemainingTime();
-            
-            // Only consider time constraints in force.
             if ($timeRemaining !== false) {
                 
                 $source = $tc->getSource();
