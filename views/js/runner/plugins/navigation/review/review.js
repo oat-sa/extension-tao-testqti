@@ -141,6 +141,7 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var navigatorConfig = testConfig.review || {};
+            var previousItemPosition;
 
             /**
              * Tells if the component is enabled
@@ -215,6 +216,9 @@ define([
             }
 
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
+                .on('selected', function(position, previousPosition){
+                    previousItemPosition = previousPosition;
+                })
                 .on('jump', function (position) {
                     if (self.getState('enabled') !== false) {
                         self.disable();
@@ -226,6 +230,11 @@ define([
                         flagItem(position, flag);
                     }
                 });
+
+            // restore current item in the navigator if movement not allowed
+            testRunner.on('alert.notallowed', function() {
+                self.navigator.select(previousItemPosition);
+            });
 
             this.$flagItemButton = createButton(getFlagItemButtonData(testContext), function (e) {
                 e.preventDefault();
