@@ -638,7 +638,7 @@ define([
         unloadItem : function unloadItem(){
             var self = this;
 
-            self.trigger('disablenav disabletools');
+            self.trigger('beforeunloaditem disablenav disabletools');
 
             return new Promise(function(resolve){
                 if(self.itemRunner){
