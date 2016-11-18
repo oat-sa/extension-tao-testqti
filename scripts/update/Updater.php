@@ -794,6 +794,38 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.34.0');
         }
 
-        $this->skip('5.34.0', '5.35.3');
+        $this->skip('5.34.0', '5.36.0');
+
+        if ($this->isVersion('5.36.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => []
+            ]));
+            $this->setVersion('5.37.0');
+        }
+
+        if ($this->isVersion('5.37.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['itemThemeSwitcher'] = [
+                'toggle' => 'T',
+                'loop' => 'Y',
+                'select' => 'U'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.37.1');
+        }
+        $this->skip('5.37.1', '5.37.2');
     }
 }
