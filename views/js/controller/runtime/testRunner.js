@@ -573,7 +573,7 @@ function (
             skip: function () {
                 var self = this,
                     doSkip = function() {
-                        this.disableGui();
+                        self.disableGui();
                         self.actionCall('skip');
                     };
 
