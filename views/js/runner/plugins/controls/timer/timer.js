@@ -249,6 +249,11 @@ define([
              */
             var updateTimers = function updateTimers(checkStorage) {
                 var timerUpdatePromises = [];
+                var context = testRunner.getTestContext();
+                if (context.extraTime) {
+                    extraTime = context.extraTime.total;
+                    consumedExtraTime = Math.max(consumedExtraTime, context.extraTime.consumed);
+                }
 
                 _.forEach(timerTypes, function(type) {
                     timerUpdatePromises.push(
