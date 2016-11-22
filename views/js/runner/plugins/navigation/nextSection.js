@@ -28,7 +28,7 @@ define([
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/messages',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, _, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 

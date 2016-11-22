@@ -28,7 +28,7 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'tpl!taoQtiTest/runner/plugins/navigation/button',
+    'tpl!taoQtiTest/runner/plugins/templates/button',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
 ], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, buttonTpl, commentTpl) {
     'use strict';
