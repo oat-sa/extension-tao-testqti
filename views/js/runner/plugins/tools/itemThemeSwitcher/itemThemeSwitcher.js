@@ -30,7 +30,7 @@ define([
     'ui/themes',
     'util/shortcut',
     'util/namespace',
-    'tpl!taoQtiTest/runner/plugins/navigation/button',
+    'tpl!taoQtiTest/runner/plugins/templates/button',
     'tpl!taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
 ], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper, buttonTpl, itemThemeSwitcherTpl) {
     'use strict';
