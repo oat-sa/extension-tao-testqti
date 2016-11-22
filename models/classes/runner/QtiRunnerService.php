@@ -223,7 +223,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
             $session->initItemTimer();
-            if (TestRunnerUtils::isTimeout($session) === false) {
+            if ($session->isTimeout() === false) {
                 TestRunnerUtils::beginCandidateInteraction($session);
             }
         } else {
@@ -1133,7 +1133,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        if ($session->isRunning() === true && TestRunnerUtils::isTimeout($session) === false) {
+        if ($session->isRunning() === true && $session->isTimeout() === false) {
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
         }
