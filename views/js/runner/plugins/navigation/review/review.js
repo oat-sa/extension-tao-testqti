@@ -31,7 +31,7 @@ define([
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
     'use strict';
 

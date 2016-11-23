@@ -27,7 +27,7 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, __, hider, transformer, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 

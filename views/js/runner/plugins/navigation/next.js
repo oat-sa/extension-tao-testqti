@@ -32,7 +32,7 @@ define([
     'taoQtiTest/runner/helpers/map',
     'util/shortcut',
     'util/namespace',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
