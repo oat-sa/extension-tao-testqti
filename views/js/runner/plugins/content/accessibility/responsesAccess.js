@@ -16,7 +16,7 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
 /**
- * Test Runner Content Plugin : Navigate through the item responses using the keyboard
+ * Test Runner Content Plugin : Navigate through the item focusable elements using the keyboard
  *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -45,12 +45,12 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
-            var responses = [];
+            var focusables = [];
             var count = 1;
             var cursor = null;
 
             /**
-             * Gets the tabindex of the currently selected response
+             * Gets the tabindex of the currently selected focusable element
              */
             function findCurrentIndex() {
                 var $content = testRunner.getAreaBroker().getContentArea();
@@ -58,9 +58,9 @@ define([
                 var $input;
 
                 if (document.activeElement && $.contains($content.get(0), document.activeElement)) {
-                    // try to find the focused element within the known list of response elements
-                    _.forEach(responses, function(response, index) {
-                        if (document.activeElement === response) {
+                    // try to find the focused element within the known list of focusable elements
+                    _.forEach(focusables, function(focusable, index) {
+                        if (document.activeElement === focusable) {
                             cursor = index;
                             isFocused = true;
                             return false;
@@ -69,11 +69,11 @@ define([
                 }
 
                 if (!isFocused) {
-                    // from the current cursor retrieve the related interaction, then find the selected response
+                    // from the current cursor retrieve the related interaction, then find the selected focusable element
                     $input = $(':input:eq(' + (cursor || 0) +')', $content).closest('.qti-interaction').find(':checked');
                     if ($input.length) {
-                        _.forEach(responses, function(response, index) {
-                            if ($input.is(response)) {
+                        _.forEach(focusables, function(focusable, index) {
+                            if ($input.is(focusable)) {
                                 cursor = index;
                                 isFocused = true;
                                 return false;
@@ -88,37 +88,37 @@ define([
             }
 
             /**
-             * Select the previous item response
+             * Select the previous item focusable element
              */
-            function previousResponse() {
+            function previousFocusable() {
                 findCurrentIndex();
                 if (_.isNumber(cursor)) {
                     cursor = (cursor + count - 1) % count;
                 } else {
                     cursor = count - 1;
                 }
-                if (responses[cursor]) {
-                    responses[cursor].focus();
+                if (focusables[cursor]) {
+                    focusables[cursor].focus();
                 }
             }
 
             /**
-             * Select the next item response
+             * Select the next item focusable element
              */
-            function nextResponse() {
+            function nextFocusable() {
                 findCurrentIndex();
                 if (_.isNumber(cursor)) {
                     cursor = (cursor + 1) % count;
-                    if (responses[cursor]) {
-                        responses[cursor].focus();
+                    if (focusables[cursor]) {
+                        focusables[cursor].focus();
                     }
                 } else {
                     cursor = 0;
                     //find the first input
-                    _.forEach(responses, function(response, index){
-                        if(response.nodeName !== 'IMG'){
+                    _.forEach(focusables, function(focusable, index){
+                        if(focusable.nodeName !== 'IMG'){
                             cursor = index;
-                            response.focus();
+                            focusable.focus();
                             return false;
                         }
                     });
@@ -128,13 +128,13 @@ define([
 
             if (testConfig.allowShortcuts) {
                 shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.previous, this.getName(), true), function () {
-                    testRunner.trigger('previous-response');
+                    testRunner.trigger('previous-focusable');
                 }, {
                     prevent: true
                 });
 
                 shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.next, this.getName(), true), function () {
-                    testRunner.trigger('next-response');
+                    testRunner.trigger('next-focusable');
                 }, {
                     prevent: true
                 });
@@ -148,32 +148,30 @@ define([
                 .on('renderitem', function () {
 
                     var $content = testRunner.getAreaBroker().getContentArea();
+                    var index = 1;
 
-                    responses = $(':input,img', $content).addClass('focusable').each(function(){
+                    focusables = $(':input,img', $content).addClass('focusable').each(function(){
                         var $this = $(this);
-                        $this.attr('tabindex', 1);
+                        $this.attr('tabindex', index);
+                        index++;
                     }).toArray();
-                    //responses.sort(function (a, b) {
-                    //    var aIndex = a.tabIndex || 1;
-                    //    var bIndex = b.tabIndex || 1;
-                    //    return parseInt(aIndex, 10) - parseInt(bIndex, 10);
-                    //});
 
-                    count = responses.length || 1;
+                    count = focusables.length || 1;
                     cursor = null;
                     self.enable();
                 })
                 .on('unloaditem', function () {
                     self.disable();
                 })
-                .on('previous-response', function() {
+                .on('previous-focusable', function() {
+                    console.log('aaa');
                     if (self.getState('enabled')) {
-                        previousResponse();
+                        previousFocusable();
                     }
                 })
-                .on('next-response', function() {
+                .on('next-focusable', function() {
                     if (self.getState('enabled')) {
-                        nextResponse();
+                        nextFocusable();
                     }
                 });
         },
@@ -181,10 +179,7 @@ define([
         /**
          * Called during the runner's render phase
          */
-        render: function render() {
-            var $container = this.getAreaBroker().getToolboxArea();
-            $container.append(this.$button);
-        },
+        render: _.noop,
 
         /**
          * Called during the runner's destroy phase
