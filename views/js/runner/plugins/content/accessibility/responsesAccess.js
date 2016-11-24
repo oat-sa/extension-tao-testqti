@@ -34,7 +34,7 @@ define([
      */
     return pluginFactory({
 
-        name: 'responsesAccess',
+        name: 'responsesAccess',//keyNavigation
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -109,12 +109,21 @@ define([
                 findCurrentIndex();
                 if (_.isNumber(cursor)) {
                     cursor = (cursor + 1) % count;
+                    if (responses[cursor]) {
+                        responses[cursor].focus();
+                    }
                 } else {
                     cursor = 0;
+                    //find the first input
+                    _.forEach(responses, function(response, index){
+                        if(response.nodeName !== 'IMG'){
+                            cursor = index;
+                            response.focus();
+                            return false;
+                        }
+                    });
                 }
-                if (responses[cursor]) {
-                    responses[cursor].focus();
-                }
+
             }
 
             if (testConfig.allowShortcuts) {
@@ -137,14 +146,19 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('renderitem', function () {
+
                     var $content = testRunner.getAreaBroker().getContentArea();
 
-                    responses = $(':input', $content).toArray();
-                    responses.sort(function (a, b) {
-                        var aIndex = a.tabIndex || 1;
-                        var bIndex = b.tabIndex || 1;
-                        return parseInt(aIndex, 10) - parseInt(bIndex, 10);
-                    });
+                    responses = $(':input,img', $content).addClass('focusable').each(function(){
+                        var $this = $(this);
+                        $this.attr('tabindex', 1);
+                    }).toArray();
+                    //responses.sort(function (a, b) {
+                    //    var aIndex = a.tabIndex || 1;
+                    //    var bIndex = b.tabIndex || 1;
+                    //    return parseInt(aIndex, 10) - parseInt(bIndex, 10);
+                    //});
+
                     count = responses.length || 1;
                     cursor = null;
                     self.enable();
