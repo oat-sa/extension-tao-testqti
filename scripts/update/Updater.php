@@ -844,5 +844,34 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.38.2', '5.39.1');
+
+        if ($this->isVersion('5.39.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Using key to navigate item content',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'description' => 'Provide a way to navigate within item with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            unset($config['shortcuts']['responsesAccess']);
+            $config['shortcuts']['keyNavigation'] = [
+                'previous' => 'Shift+Tab',
+                'next' => 'Tab'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.40.0');
+        }
+
     }
 }

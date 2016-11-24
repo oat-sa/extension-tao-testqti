@@ -35,7 +35,7 @@ define([
      */
     return pluginFactory({
 
-        name: 'responsesAccess',//keyNavigation
+        name: 'keyNavigation',
 
         /**
          * Initialize the plugin (called during runner's init)
