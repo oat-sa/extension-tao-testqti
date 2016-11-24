@@ -198,7 +198,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        $extraPath = dirname($rootDir->getRelPath($file));
+        $extraPath = str_replace('\\', '/', dirname($rootDir->getRelPath($file)));
         $extraPath = trim($extraPath, '/');
 
         $extraReversePath = '';
