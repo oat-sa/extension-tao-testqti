@@ -97,6 +97,7 @@ define([
                 .on('unloaditem', function (){
                     //remove all masks
                     _.invoke(self.masks, 'destroy');
+                    self.masks = [];
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
