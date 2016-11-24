@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEA,uBAAwB,CACpB,MAAM,CAAE,qBAAqB,CAC7B,6BAAQ,CACJ,YAAY,CCHb,OAAgB,CDIf,OAAO,CAAE,IAAI",
+"sources": ["../../scss/plugins/key-navigation.scss","../../../../tao/views/scss/inc/_colors.scss"],
+"names": [],
+"file": "key-navigation.css"
+}

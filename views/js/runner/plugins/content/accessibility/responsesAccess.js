@@ -25,7 +25,8 @@ define([
     'lodash',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin'
+    'taoTests/runner/plugin',
+    'css!taoQtiTestCss/plugins/key-navigation'
 ], function ($, _, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
@@ -152,6 +153,7 @@ define([
 
                     focusables = $(':input,img', $content).addClass('focusable').each(function(){
                         var $this = $(this);
+                        //redistribute focus order
                         $this.attr('tabindex', index);
                         index++;
                     }).toArray();

@@ -1,0 +1,9 @@
+@import "inc/bootstrap";
+
+.qti-item img.focusable {
+    border: 2px solid transparent;
+    &:focus {
+        border-color: $info;
+        outline: none;
+    }
+}
