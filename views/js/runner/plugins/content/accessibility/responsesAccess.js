@@ -151,7 +151,7 @@ define([
                     var $content = testRunner.getAreaBroker().getContentArea();
                     var index = 1;
 
-                    focusables = $(':input,img', $content).addClass('focusable').each(function(){
+                    focusables = $(':input,img', $content).addClass('key-navigation-focusable').each(function(){
                         var $this = $(this);
                         //redistribute focus order
                         $this.attr('tabindex', index);

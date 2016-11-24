@@ -1,6 +1,6 @@
 @import "inc/bootstrap";
 
-.qti-item img.focusable {
+.qti-item img.key-navigation-focusable {
     border: 2px solid transparent;
     &:focus {
         border-color: $info;
