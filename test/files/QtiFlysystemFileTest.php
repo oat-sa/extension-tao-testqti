@@ -36,6 +36,16 @@ class QtiFlysystemFileTest extends TaoPhpUnitTestRunner
         $this->serviceLocator = ServiceManager::getServiceManager();
         $this->filesystem = $this->serviceLocator->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
         
+        $this->cleanUp();
+    }
+    
+    public function tearDown()
+    {
+        $this->cleanUp();
+    }
+    
+    private function cleanUp()
+    {
         if ($this->filesystem->has('unittest')) {
             $this->filesystem->delete('unittest');
         }
