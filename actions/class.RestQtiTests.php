@@ -17,12 +17,14 @@
  */
 
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
+use oat\tao\controller\api\TaskQueue as TaskQueueController;
+use oat\oatbox\task\Task;
 
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
+class taoQtiTest_actions_RestQtiTests extends TaskQueueController
 {
     private static $accepted_types = array(
         'application/zip',
@@ -72,4 +74,49 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
         }
     }
 
+    public function getStatus()
+    {
+        try {
+            if (!$this->hasRequestParameter(self::TASK_ID_PARAM)) {
+                throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
+            }
+            $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
+            var_dump($data); exit();
+            $this->returnSuccess($data);
+        } catch (\Exception $e) {
+            $this->returnFailure($e);
+        }
+    }
+
+    protected function getTaskStatus(Task $task)
+    {
+        $report = $task->getReport();
+        if (in_array(
+            $task->getStatus(),
+            [Task::STATUS_CREATED, Task::STATUS_RUNNING, Task::STATUS_STARTED])
+        ) {
+            $result = 'In Progress';
+        } else if ($report) {
+            $report = \common_report_Report::jsonUnserialize($report);
+            $plainReport = $this->getPlainReport($report);
+            $success = true;
+            foreach ($plainReport as $r) {
+                $success = $success && $r->getType() != \common_report_Report::TYPE_ERROR;
+            }
+            $result = $success ? 'Success' : ' Failed';
+        }
+        return $result;
+    }
+
+    private function getPlainReport($report)
+    {
+        $result = [];
+        $result[] = $report;
+        if ($report->hasChildren()) {
+            foreach ($report as $r) {
+                $result = array_merge($result, $this->getPlainReport($r));
+            }
+        }
+        return $result;
+    }
 }

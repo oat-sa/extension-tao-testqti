@@ -42,6 +42,7 @@ class ImportQtiTest implements Action, \JsonSerializable
     /**
      * @param $params
      * @throws \common_exception_MissingParameter
+     * @return \common_report_Report
      */
     public function __invoke($params)
     {
@@ -66,7 +67,7 @@ class ImportQtiTest implements Action, \JsonSerializable
     }
 
     /**
-     * ImportQtiTest constructor.
+     * Create task in queue
      * @param array $packageFile uploaded file
      * @return Task created task id
      */
