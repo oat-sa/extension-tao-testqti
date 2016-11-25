@@ -75,6 +75,7 @@ class ImportQtiTest implements Action, \JsonSerializable
         $serviceManager = ServiceManager::getServiceManager();
         $action = new self();
 
+        //put test package file to the flysystem
         $filename = $action->getUniqueFilename($packageFile['name']);
 
         /** @var \oat\oatbox\filesystem\Directory $dir */
@@ -91,6 +92,8 @@ class ImportQtiTest implements Action, \JsonSerializable
         $fileUri = $action->getFileReferenceSerializer()->serialize($file);
 
         $queue = ServiceManager::getServiceManager()->get(Queue::CONFIG_ID);
+
+        //put task in queue with reference to the uploaded file
         $task = $queue->createTask($action, ['file' => $fileUri]);
         return $task;
     }
