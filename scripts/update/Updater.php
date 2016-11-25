@@ -844,14 +844,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.38.2');
         }
 
-        $this->skip('5.38.2', '5.39.1');
+        $this->skip('5.38.2', '5.40.0');
         
-        if ($this->isVersion('5.39.1')) {
+        if ($this->isVersion('5.40.0')) {
             $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID); 
             $fsService->createFileSystem('taoQtiTestSessionFilesystem');
             $this->getServiceManager()->register(FileSystemService::SERVICE_ID, $fsService);
             
-            $this->setVersion('5.40.0');
+            $this->setVersion('5.41.0');
         }
     }
 }
