@@ -53,9 +53,19 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
                 $this->returnFailure(new common_exception_BadRequest());
             } else {
                 $task = ImportQtiTest::createTask($file);
-                return $this->returnSuccess([
+                $result = [
                     'reference_id' => $task->getId()
-                ]);
+                ];
+                $report = $task->getReport();
+                if (!empty($report)) {
+                    if ($report instanceof \common_report_Report) {
+                        //serialize report to array
+                        $report = json_encode($report);
+                        $report = json_decode($report);
+                    }
+                    $result['report'] = $report;
+                }
+                return $this->returnSuccess($result);
             }
         } else {
             return $this->returnFailure(new common_exception_BadRequest());
