@@ -54,6 +54,7 @@ return array(
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins',
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
+            'oat\\taoQtiTest\\scripts\\install\\CreateTestSessionFilesystem'
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
