@@ -103,12 +103,18 @@ define([
             .on('render', function() {
                 var $element = this.getElement();
                 var tr1 = window.getComputedStyle($element[0]).getPropertyValue('transform');
+                if (! tr1 ) {
+                    tr1 = window.getComputedStyle($element[0]).getPropertyValue('-webkit-transform');
+                }
 
                 assert.equal(tr1, 'matrix(1, 0, 0, 1, 5, 5)', 'The element has been translated to 5,5');
 
                 this
                     .on('move', function() {
                         var tr2 = window.getComputedStyle($element[0]).getPropertyValue('transform');
+                        if (! tr2 ) {
+                            tr2 = window.getComputedStyle($element[0]).getPropertyValue('-webkit-transform');
+                        }
 
                         assert.equal(tr2, 'matrix(1, 0, 0, 1, 15, 15)', 'The element has been translated to 15,15');
 

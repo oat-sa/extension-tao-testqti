@@ -80,7 +80,7 @@ define([
 
                 assert.equal(areaMasking.$button.length, 1, 'The areaMasking has created a button');
                 assert.ok(areaMasking.getState('init'), 'The areaMasking is initialised');
-                assert.ok(areaMasking.getState('disabled'), 'The areaMasking starts disabled');
+                assert.ok(!areaMasking.getState('enabled'), 'The areaMasking starts disabled');
                 assert.ok(areaMasking.$button.hasClass('disabled'), 'The button starts disabled');
 
                 QUnit.start();
