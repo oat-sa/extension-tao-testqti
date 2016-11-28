@@ -165,7 +165,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    protected function createBinaryStreamAccess(IStream $stream) {
        return new QtiBinaryStreamAccess(
           $stream,
-          ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID);
+          ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
        );
    }
 }
