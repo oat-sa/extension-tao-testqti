@@ -28,6 +28,7 @@ use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\storage\binary\QtiBinaryStreamAccess;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
