@@ -843,7 +843,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.38.2');
         }
 
-        $this->skip('5.38.2', '5.40.0');
+        $this->skip('5.38.2', '5.40.1');
 
         if ($this->isVersion('5.40.0')) {
 
