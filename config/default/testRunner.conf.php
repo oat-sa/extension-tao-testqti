@@ -356,7 +356,7 @@ return array(
             'toggle' => 'R',
             'flag' => 'M'
         ],
-        'responsesAccess' => [
+        'keyNavigation' => [
             'previous' => 'Shift+Tab',
             'next' => 'Tab'
         ],
