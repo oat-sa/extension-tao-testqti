@@ -24,7 +24,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
 
-class QtiFlysystemFileTest extends TaoPhpUnitTestRunner
+class QtiFlysystemFileManagerTest extends TaoPhpUnitTestRunner
 {
     protected $serviceLocator;
     protected $fileManager;
