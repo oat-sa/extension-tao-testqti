@@ -166,7 +166,6 @@ define([
                     self.disable();
                 })
                 .on('previous-focusable', function() {
-                    console.log('aaa');
                     if (self.getState('enabled')) {
                         previousFocusable();
                     }
@@ -177,11 +176,6 @@ define([
                     }
                 });
         },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render: _.noop,
 
         /**
          * Called during the runner's destroy phase
