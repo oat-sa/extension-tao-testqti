@@ -34,6 +34,8 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
+use oat\oatbox\filesystem\FileSystemService;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 
 /**
  *
@@ -843,7 +845,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.38.2');
         }
 
-        $this->skip('5.38.2', '5.40.1');
+        $this->skip('5.38.2', '5.40.0');
 
         if ($this->isVersion('5.40.0')) {
 
@@ -872,6 +874,19 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.41.0');
         }
+        
+        if ($this->isVersion('5.41.0')) {
+            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID); 
+            $fsService->createFileSystem('taoQtiTestSessionFilesystem');
+            $this->getServiceManager()->register(FileSystemService::SERVICE_ID, $fsService);
+            
+            $service = new QtiFlysystemFileManager();
+            $service->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(QtiFlysystemFileManager::SERVICE_ID, $service);
+            
+            $this->setVersion('5.42.0');
+        }
 
+        $this->skip('5.42.0', '5.42.1');
     }
 }
