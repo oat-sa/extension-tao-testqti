@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -26,7 +26,8 @@ use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\common\StorageException;
 use qtism\data\AssessmentTest;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\storage\binary\QtiBinaryStreamAccessFsFile;
+use qtism\runtime\storage\binary\QtiBinaryStreamAccess;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
@@ -161,6 +162,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    }
    
    protected function createBinaryStreamAccess(IStream $stream) {
-       return new QtiBinaryStreamAccessFsFile($stream);
+       return new QtiBinaryStreamAccess(
+          $stream,
+          ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID);
+       );
    }
 }
