@@ -1,0 +1,11 @@
+@import "inc/bootstrap";
+
+.qti-item img.key-navigation-focusable {
+    border: 2px solid transparent;
+    &:focus {
+        //overwrite only the style and the color of the border and leave the inherited border identical
+        border-style: solid !important;
+        border-color: $info !important;
+        outline: none;
+    }
+}
