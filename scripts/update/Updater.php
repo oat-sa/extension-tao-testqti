@@ -34,6 +34,8 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
+use oat\oatbox\filesystem\FileSystemService;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 
 /**
  *
@@ -844,5 +846,47 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.38.2', '5.40.0');
+
+        if ($this->isVersion('5.40.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Using key to navigate item content',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'description' => 'Provide a way to navigate within item with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+            unset($config['shortcuts']['responsesAccess']);
+            $config['shortcuts']['keyNavigation'] = [
+                'previous' => 'Shift+Tab',
+                'next' => 'Tab'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.41.0');
+        }
+
+        if ($this->isVersion('5.41.0')) {
+            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
+            $fsService->createFileSystem('taoQtiTestSessionFilesystem');
+            $this->getServiceManager()->register(FileSystemService::SERVICE_ID, $fsService);
+
+            $service = new QtiFlysystemFileManager();
+            $service->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(QtiFlysystemFileManager::SERVICE_ID, $service);
+
+            $this->setVersion('5.42.0');
+        }
+
+        $this->skip('5.42.0', '5.43.0');
     }
 }
