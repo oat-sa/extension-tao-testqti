@@ -81,7 +81,6 @@ class taoQtiTest_actions_RestQtiTests extends TaskQueueController
                 throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
             }
             $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
-            var_dump($data); exit();
             $this->returnSuccess($data);
         } catch (\Exception $e) {
             $this->returnFailure($e);
