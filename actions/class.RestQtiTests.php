@@ -74,6 +74,9 @@ class taoQtiTest_actions_RestQtiTests extends TaskQueueController
         }
     }
 
+    /**
+     * Action to retrieve test import status from queue
+     */
     public function getStatus()
     {
         try {
@@ -81,13 +84,30 @@ class taoQtiTest_actions_RestQtiTests extends TaskQueueController
                 throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
             }
             $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
-            var_dump($data); exit();
             $this->returnSuccess($data);
         } catch (\Exception $e) {
             $this->returnFailure($e);
         }
     }
 
+    /**
+     * @param Task $taskId
+     * @return Task
+     * @throws common_exception_BadRequest
+     */
+    protected function getTask($taskId)
+    {
+        $task =  parent::getTask($taskId);
+        if ($task->getInvocable() !== 'oat\taoQtiTest\models\tasks\ImportQtiTest') {
+            throw new \common_exception_BadRequest("Wrong task type");
+        }
+        return $task;
+    }
+
+    /**
+     * @param Task $task
+     * @return string
+     */
     protected function getTaskStatus(Task $task)
     {
         $report = $task->getReport();
@@ -103,11 +123,33 @@ class taoQtiTest_actions_RestQtiTests extends TaskQueueController
             foreach ($plainReport as $r) {
                 $success = $success && $r->getType() != \common_report_Report::TYPE_ERROR;
             }
-            $result = $success ? 'Success' : ' Failed';
+            $result = $success ? 'Success' : 'Failed';
         }
         return $result;
     }
 
+    /**
+     * @param Task $task
+     * @return array
+     */
+    protected function getTaskReport(Task $task)
+    {
+        $report = \common_report_Report::jsonUnserialize($task->getReport());
+        $plainReport = $this->getPlainReport($report);
+        $result = [];
+        foreach ($plainReport as $r) {
+            $result[] = [
+                'type' => $r->getType(),
+                'message' => $r->getMessage(),
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * @param $report
+     * @return array
+     */
     private function getPlainReport($report)
     {
         $result = [];
