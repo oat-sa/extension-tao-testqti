@@ -21,23 +21,30 @@
 define([
     'jquery',
     'lodash',
+    'core/mutation-observer',
     'ui/movableComponent',
     'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
     'css!taoQtiTestCss/plugins/magnifier'
-], function ($, _, movableComponent, magnifierPanelTpl) {
+], function ($, _, MutationObserver, movableComponent, magnifierPanelTpl) {
     'use strict';
-
-    /**
-     * The default base size
-     * @type {Number}
-     */
-    var defaultBaseSize = 100;
 
     /**
      * The screen pixel ratio
      * @type {Number}
      */
     var screenRatio = window.screen.width / window.screen.height;
+
+    /**
+     * Standard debounce delay for heavy process
+     * @type {Number}
+     */
+    var debounceDelay = 50;
+
+    /**
+     * The default base size
+     * @type {Number}
+     */
+    var defaultBaseSize = 100;
 
     /**
      * The minimum zoom level
@@ -95,6 +102,8 @@ define([
         var baseSize = parseInt(initConfig.baseSize, 10);
         var zoomSize = baseSize * zoomLevel;
         var controls = null;
+        var observer = null;
+        var dx, dy;
 
         /**
          * @typedef {Object} magnifierPanel
@@ -109,7 +118,7 @@ define([
             },
 
             /**
-             * Gets the content target to zoom
+             * Gets the targeted content the magnifier will zoom
              * @returns {jQuery}
              */
             getTarget: function getTarget() {
@@ -117,7 +126,7 @@ define([
             },
 
             /**
-             * Sets the content target to zoom
+             * Sets the targeted content the magnifier will zoom
              * @param {jQuery} $newTarget
              * @returns {magnifierPanel}
              * @fires targetchange
@@ -151,8 +160,9 @@ define([
                 }
 
                 applyZoomLevel();
-                adjustMaxSize();
                 showZoomLevel();
+                updateMaxSize();
+                updateZoom();
 
                 /**
                  * @event magnifierPanel#zoom
@@ -195,23 +205,60 @@ define([
             },
 
             /**
-             *
+             * Places the magnifier sight at a particular position on the target content
+             * @param {Number} x
+             * @param {Number} y
+             * @returns {magnifierPanel}
+             */
+            zoomAt: function zoomAt(x, y) {
+                if (controls) {
+                    controls.$inner.css(this.translate(-x, -y));
+                    applySize();
+                }
+            },
+
+            /**
+             * Translates screen coordinates to zoom coordinates
+             * @param {Object} x
+             * @param {Object} y
+             * @returns {Object}
+             */
+            translate: function translate(x, y) {
+                return {
+                    left: x * zoomLevel,
+                    top: y * zoomLevel
+                };
+            },
+
+            /**
+             * Updates the magnifier with the target content
              * @returns {magnifierPanel}
              * @fires update
              */
             update: function update() {
-                if (this.is('rendered')) {
-                    applyZoomLevel();
-                }
+                if (controls && controls.$target) {
+                    controls.$clone = controls.$target.clone().removeAttr('id');
+                    controls.$inner.empty().append(controls.$clone);
 
-                /**
-                 * @event magnifierPanel#update
-                 */
-                this.trigger('update');
+                    applySize();
+                    applyZoomLevel();
+                    updateZoom();
+
+                    /**
+                     * @event magnifierPanel#update
+                     */
+                    this.trigger('update');
+                }
 
                 return this;
             }
         }, defaultConfig);
+
+        /**
+         * Will update the magnifier content with the actual content
+         * @type {Function}
+         */
+        var updateMagnifier = _.debounce(_.bind(magnifierPanel.update, magnifierPanel), debounceDelay);
 
         /**
          * Adjusts a provided zoom level to fit the constraints
@@ -223,11 +270,11 @@ define([
         }
 
         /**
-         * Applies the zoom level on the content
+         * Applies the zoom level to the content
          */
         function applyZoomLevel() {
             if (controls) {
-                controls.$large.css({
+                controls.$inner.css({
                     transform: 'scale(' + zoomLevel + ')'
                 });
             }
@@ -248,10 +295,65 @@ define([
         /**
          * Updates the max size according to the window's size
          */
-        function adjustMaxSize() {
+        function updateMaxSize() {
             var $window = $(window);
             magnifierPanel.config.maxWidth = $window.width() * maxRatio;
             magnifierPanel.config.maxHeight = $window.height() * maxRatio;
+        }
+
+        /**
+         * Forwards the size of the target to the cloned content
+         */
+        function applySize() {
+            if (controls && controls.$clone) {
+                controls.$clone
+                    .width(controls.$target.width())
+                    .height(controls.$target.height());
+            }
+        }
+
+
+        /**
+         * Place the zoom sight at the right place inside the magnifier
+         */
+        function updateZoom() {
+            var position;
+            if (controls && controls.$target) {
+                position = magnifierPanel.getPosition();
+
+                position.left += dx + controls.$target.scrollLeft();
+                position.top += dy + controls.$target.scrollTop();
+
+                magnifierPanel.zoomAt(position.left, position.top);
+            }
+        }
+
+        /**
+         * Creates the observer that will react to DOM changes to update the magnifier
+         */
+        function createObserver() {
+            observer = new MutationObserver(updateMagnifier);
+        }
+
+        /**
+         * Starts to observe the DOM of the magnifier target
+         */
+        function startObserver() {
+            if (controls && controls.$target) {
+                observer.observe(controls.$target.get(0), {
+                    childList: true,        // Set to true if additions and removals of the target node's child elements (including text nodes) are to be observed.
+                    attributes: true,       // Set to true if mutations to target's attributes are to be observed.
+                    characterData: true,    // Set to true if mutations to target's data are to be observed.
+                    subtree: true           // Set to true if mutations to target and target's descendants are to be observed.
+                });
+            }
+        }
+
+        /**
+         * Stops to observe the DOM of the magnifier target
+         */
+        function stopObserver() {
+            observer.disconnect();
         }
 
         initConfig.width = zoomSize;
@@ -261,16 +363,19 @@ define([
 
         magnifierPanel
             .setTemplate(magnifierPanelTpl)
-            .on('init', function () {
-                zoomLevel = this.config.level;
-            })
             .on('render', function () {
                 var self = this;
+                var $component = this.getElement();
+
+                this.setState('hidden', true);
+
+                // compute the padding of the magnifier content
+                dx = ($component.outerWidth() - $component.width()) / 2;
+                dy = ($component.outerHeight() - $component.height()) / 2;
 
                 controls = {
-                    $target: $(),
-                    $large: $('.inner', this.getElement()),
-                    $zoomLevel: $('.level', this.getElement())
+                    $inner: $('.inner', $component),
+                    $zoomLevel: $('.level', $component)
                 };
 
                 this.getElement().on('click', '.control', function (event) {
@@ -283,14 +388,28 @@ define([
                     }
                 });
 
-                adjustMaxSize();
+                createObserver();
+                updateMaxSize();
                 applyZoomLevel();
             })
-            .on('resize', function() {
-                adjustMaxSize();
+            .on('move resize', function () {
+                updateZoom();
+            })
+            .on('show', function () {
+                updateMagnifier();
+                startObserver();
+            })
+            .on('hide', function () {
+                stopObserver();
+            })
+            .on('resize', function () {
+                applySize();
+                updateMaxSize();
             })
             .on('destroy', function () {
+                stopObserver();
                 controls = null;
+                observer = null;
             })
             .init(initConfig);
 

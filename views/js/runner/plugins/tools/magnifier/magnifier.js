@@ -219,7 +219,7 @@ define([
                     if (magnifierPanel) {
                         magnifierPanel
                             .update()
-                            .zoom(pluginConfig.zoomMin);
+                            .zoomTo(pluginConfig.zoomMin);
                     }
                 })
                 .on('enabletools renderitem', function () {
