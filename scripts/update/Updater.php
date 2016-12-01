@@ -897,7 +897,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
                 'description' => 'Gives student access to a magnification tool',
                 'category' => 'tools',
-                'active' => true,
+                'active' => false,
                 'tags' => [  ]
             ]));
 
