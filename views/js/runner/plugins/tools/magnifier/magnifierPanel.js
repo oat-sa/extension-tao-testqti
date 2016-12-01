@@ -103,7 +103,7 @@ define([
         var zoomSize = baseSize * zoomLevel;
         var controls = null;
         var observer = null;
-        var dx, dy;
+        var targetWidth, targetHeight, dx, dy;
 
         /**
          * @typedef {Object} magnifierPanel
@@ -213,7 +213,6 @@ define([
             zoomAt: function zoomAt(x, y) {
                 if (controls) {
                     controls.$inner.css(this.translate(-x, -y));
-                    applySize();
                 }
             },
 
@@ -243,6 +242,7 @@ define([
                     applySize();
                     applyZoomLevel();
                     updateZoom();
+                    updateMaxSize();
 
                     /**
                      * @event magnifierPanel#update
@@ -306,12 +306,14 @@ define([
          */
         function applySize() {
             if (controls && controls.$clone) {
+                targetWidth = controls.$target.width();
+                targetHeight = controls.$target.height();
+
                 controls.$clone
-                    .width(controls.$target.width())
-                    .height(controls.$target.height());
+                    .width(targetWidth)
+                    .height(targetHeight);
             }
         }
-
 
         /**
          * Place the zoom sight at the right place inside the magnifier
@@ -403,7 +405,6 @@ define([
                 stopObserver();
             })
             .on('resize', function () {
-                applySize();
                 updateMaxSize();
             })
             .on('destroy', function () {

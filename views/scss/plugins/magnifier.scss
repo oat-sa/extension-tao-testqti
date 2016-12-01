@@ -10,7 +10,7 @@
     min-height: 25px;
     overflow: hidden;
     z-index: 10000;
-    background: transparent;
+    background-color: $uiGeneralContentBg;
     opacity: 1;
     border: solid 1px $uiClickableHoverBg;
     @include border-radius(5);
