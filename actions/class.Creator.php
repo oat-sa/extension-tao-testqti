@@ -47,6 +47,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
             $this->setData('itemsUrl', _url('get', 'Items'));
             $this->setData('categoriesUrl', _url('getCategories', 'Items'));
+            $this->setData('blueprintUrl', _url('getBlueprints', 'Blueprints', 'taoBlueprint'));
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
             
             $this->setView('creator.tpl');
@@ -74,7 +75,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                 if($this->hasRequestParameter('model')){
 
                     $parameters = $this->getRequest()->getRawParameters();
-
+common_Logger::w(print_r($parameters,true));
+common_Logger::w(print_r(json_decode($parameters['model']),true));
                     $test = $this->getCurrentTest();
                     $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 

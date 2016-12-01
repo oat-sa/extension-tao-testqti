@@ -29,9 +29,10 @@ define([
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'taoQtiTest/controller/creator/helpers/sectionCategory'
+    'taoQtiTest/controller/creator/helpers/sectionCategory',
+    'taoQtiTest/controller/creator/helpers/sectionBlueprints'
 ],
-function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory){
+function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory, sectionBlueprint){
     'use strict';
 
     /**
@@ -103,6 +104,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //section level category configuration
             categoriesProperty($view);
+            blueprintProperty($view);
 
             function removePropHandler(){
                 if(propView !== null){
@@ -163,6 +165,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
                         //the itemRef should also "inherit" the categories set at the item level
                         categories = sectionCategory.getCategories(model);
+                        //blueprints = sectionBlueprint.getBlueprints(model);
                         defaultItemData.categories = _.clone(categories.propagated);
 
                         _.forEach(selection, function(item){
@@ -339,6 +342,70 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
              */
             function setCategories(categories){
                 sectionCategory.setCategories(model, categories);
+            }
+
+        }
+
+        /**
+         * Set up the Blueprint property
+         * @private
+         * @param {jQueryElement} $view - the $view object containing the $select
+         */
+        function blueprintProperty($view){
+            var $select = $('[name=section-blueprint]', $view);
+            $select.select2({
+                ajax:{
+                    url: 'http://tao.dev/taoBlueprints/Blueprints/getBlueprintsByIdentifier',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            identifier: params // search term
+                        };
+                    },
+                    processResults: function (data) {
+                        console.dir(data);
+                        return {
+                            results: data.results
+                        };
+                    }
+                },
+                minimumInputLength: 3,
+                width: '100%',
+                multiple : false,
+                formatNoMatches : function(){
+                    return __('Enter a blueprint');
+                },
+                maximumInputLength : 32
+            }).on('change', function(e){
+                setBlueprint(e.val);
+            });
+
+            initBlueprint();
+            $view.on('propopen.propview', function(){
+                initBlueprint();
+            });
+
+            /**
+             * Start the blueprint editing
+             * @private
+             */
+            function initBlueprint(){
+
+                var blueprint = sectionBlueprint.getBlueprint(model);
+
+                //set blueprint found in the model in the select2 input
+                var name = blueprint.name || '';
+                $select.select2('val', name);
+
+            }
+
+            /**
+             * save the categories into the model
+             * @private
+             */
+            function setBlueprint(blueprint){
+                sectionBlueprint.setBlueprint(model, blueprint);
             }
 
         }
