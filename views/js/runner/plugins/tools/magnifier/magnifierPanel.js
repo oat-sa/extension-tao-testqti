@@ -211,8 +211,13 @@ define([
              * @returns {magnifierPanel}
              */
             zoomAt: function zoomAt(x, y) {
+                var position;
                 if (controls) {
-                    controls.$inner.css(this.translate(-x, -y));
+                    position = this.translate(x, y);
+                    controls.$inner.css({
+                        top: -position.top,
+                        left: -position.left
+                    });
                 }
             },
 
@@ -223,9 +228,26 @@ define([
              * @returns {Object}
              */
             translate: function translate(x, y) {
+                var zoomDeltaX = 0;
+                var zoomDeltaY = 0;
+                var ratioX = zoomLevel;
+                var ratioY = zoomLevel;
+                var magnifierWidth = this.config.width;
+                var magnifierHeight = this.config.height;
+
+                if (targetWidth) {
+                    zoomDeltaX = ((targetWidth * (zoomLevel - 1)) / 2);
+                    ratioX = (targetWidth * zoomLevel - magnifierWidth) / (targetWidth - magnifierWidth);
+                }
+
+                if (targetHeight) {
+                    zoomDeltaY = ((targetHeight * (zoomLevel - 1)) / 2);
+                    ratioY = (targetHeight * zoomLevel - magnifierHeight) / (targetHeight - magnifierHeight);
+                }
+
                 return {
-                    left: x * zoomLevel,
-                    top: y * zoomLevel
+                    top: y * ratioY - zoomDeltaY,
+                    left: x * ratioX - zoomDeltaX
                 };
             },
 
