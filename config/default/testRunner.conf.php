@@ -181,6 +181,29 @@ return array(
              * @type bool
              */
             'hover' => false
+        ],
+
+        /**
+         * A student tool that provides a magnifier glass
+         */
+        'magnifier' => [
+            /**
+             * Smallest magnification factor
+             * @type int
+             */
+            'zoomMin' => 2,
+
+            /**
+             * Biggest magnification factor
+             * @type int
+             */
+            'zoomMax' => 8,
+
+            /**
+             * Increment between min an max
+             * @type int
+             */
+            'zoomStep' => .5
         ]
     ],
 

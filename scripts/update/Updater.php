@@ -888,5 +888,39 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.42.0', '5.42.1');
+        
+        if ($this->isVersion('5.42.1')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['magnifier'] = [
+                'toggle' => 'L',
+                'in' => 'Shift+I',
+                'out' => 'Shift+O',
+                'close' => 'esc'
+            ];
+            
+            $config['plugins']['magnifier'] = [
+                'zoomMin' => 2,
+                'zoomMax' => 8,
+                'zoomStep' => .5
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.43.0');
+        }
     }
 }

@@ -244,6 +244,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
             ]
         ],
         'security' => [
