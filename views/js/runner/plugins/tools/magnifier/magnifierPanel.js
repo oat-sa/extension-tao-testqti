@@ -259,6 +259,7 @@ define([
             update: function update() {
                 if (controls && controls.$target) {
                     controls.$clone = controls.$target.clone().removeAttr('id');
+                    controls.$clone.find('iframe').remove();
                     controls.$inner.empty().append(controls.$clone);
 
                     applySize();
