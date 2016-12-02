@@ -107,7 +107,10 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //section level category configuration
             categoriesProperty($view);
-            blueprintProperty($view);
+            
+            if(model.hasBlueprint !== undefined){
+                blueprintProperty($view);
+            }
 
             function removePropHandler(){
                 if(propView !== null){
