@@ -47,6 +47,9 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
         var $actionContainer = $('h2', $section);
 
+        if(!_.isEmpty(data.routes.blueprintsById)){
+            model.hasBlueprint = true;
+        }
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();
@@ -165,7 +168,6 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
                         //the itemRef should also "inherit" the categories set at the item level
                         categories = sectionCategory.getCategories(model);
-                        //blueprints = sectionBlueprint.getBlueprints(model);
                         defaultItemData.categories = _.clone(categories.propagated);
 
                         _.forEach(selection, function(item){

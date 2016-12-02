@@ -114,6 +114,7 @@
         </div>
     </div>
 
+    {{#if hasBlueprint}}
     <div class="grid-row pseudo-label-box">
         <div class="col-5">
             <label for="section-blueprint">{{__ 'Associate Blueprint'}}</label>
@@ -129,6 +130,7 @@
             </div>
         </div>
     </div>
+    {{/if}}
 
     <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
     <div class="grid-row">
