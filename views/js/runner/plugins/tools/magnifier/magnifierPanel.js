@@ -233,31 +233,14 @@ define([
 
             /**
              * Translates screen coordinates to zoom coordinates
-             * @param {Object} x
-             * @param {Object} y
+             * @param {Number} x
+             * @param {Number} y
              * @returns {Object}
              */
             translate: function translate(x, y) {
-                var zoomDeltaX = 0;
-                var zoomDeltaY = 0;
-                var ratioX = zoomLevel;
-                var ratioY = zoomLevel;
-                var magnifierWidth = this.config.width;
-                var magnifierHeight = this.config.height;
-
-                if (targetWidth) {
-                    zoomDeltaX = ((targetWidth * (zoomLevel - 1)) / 2);
-                    ratioX = (targetWidth * zoomLevel - magnifierWidth) / (targetWidth - magnifierWidth);
-                }
-
-                if (targetHeight) {
-                    zoomDeltaY = ((targetHeight * (zoomLevel - 1)) / 2);
-                    ratioY = (targetHeight * zoomLevel - magnifierHeight) / (targetHeight - magnifierHeight);
-                }
-
                 return {
-                    top: y * ratioY - zoomDeltaY,
-                    left: x * ratioX - zoomDeltaX
+                    top: translateMagnifier(y, targetHeight, this.config.height),
+                    left: translateMagnifier(x, targetWidth, this.config.width)
                 };
             },
 
@@ -474,6 +457,25 @@ define([
         function stopObserver() {
             observer.disconnect();
             removeScrollingListener();
+        }
+
+        /**
+         * Translates a screen coordinate into the magnifier
+         * @param {Number} coordinate
+         * @param {Number} actualSize
+         * @param {Number} magnifierSize
+         * @returns {Number}
+         */
+        function translateMagnifier(coordinate, actualSize, magnifierSize) {
+            var delta = 0;
+            var ratio = zoomLevel;
+
+            if (actualSize) {
+                delta = ((actualSize * (zoomLevel - 1)) / 2);
+                ratio = (actualSize * zoomLevel - magnifierSize) / (actualSize - magnifierSize);
+            }
+
+            return coordinate * ratio - delta;
         }
 
         /**
