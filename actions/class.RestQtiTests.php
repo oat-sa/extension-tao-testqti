@@ -134,13 +134,15 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
     protected function getTaskReport(Task $task)
     {
         $report = \common_report_Report::jsonUnserialize($task->getReport());
-        $plainReport = $this->getPlainReport($report);
         $result = [];
-        foreach ($plainReport as $r) {
-            $result[] = [
-                'type' => $r->getType(),
-                'message' => $r->getMessage(),
-            ];
+        if ($report) {
+            $plainReport = $this->getPlainReport($report);
+            foreach ($plainReport as $r) {
+                $result[] = [
+                    'type' => $r->getType(),
+                    'message' => $r->getMessage(),
+                ];
+            }
         }
         return $result;
     }
