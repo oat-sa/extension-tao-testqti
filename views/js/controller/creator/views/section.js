@@ -29,9 +29,10 @@ define([
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'taoQtiTest/controller/creator/helpers/sectionCategory'
+    'taoQtiTest/controller/creator/helpers/sectionCategory',
+    'taoQtiTest/controller/creator/helpers/sectionBlueprints'
 ],
-function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory){
+function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory, sectionBlueprint){
     'use strict';
 
     /**
@@ -46,6 +47,9 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
         var $actionContainer = $('h2', $section);
 
+        if(!_.isEmpty(data.routes.blueprintsById)){
+            model.hasBlueprint = true;
+        }
         actions.properties($actionContainer, 'section', model, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();
@@ -103,6 +107,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //section level category configuration
             categoriesProperty($view);
+            blueprintProperty($view);
 
             function removePropHandler(){
                 if(propView !== null){
@@ -339,6 +344,75 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
              */
             function setCategories(categories){
                 sectionCategory.setCategories(model, categories);
+            }
+
+        }
+
+        /**
+         * Set up the Blueprint property
+         * @private
+         * @param {jQueryElement} $view - the $view object containing the $select
+         */
+        function blueprintProperty($view){
+            var $select = $('[name=section-blueprint]', $view);
+            $select.select2({
+                ajax:{
+                    url: data.routes.blueprintsById,
+                    dataType: 'json',
+                    delay: 350,
+                    method: 'POST',
+                    data: function (params) {
+                        return {
+                            identifier: params // search term
+                        };
+                    },
+                    results: function (data) {
+                        return data;
+                    }
+                },
+                minimumInputLength: 3,
+                width: '100%',
+                multiple : false,
+                formatNoMatches : function(){
+                    return __('Enter a blueprint');
+                },
+                maximumInputLength : 32
+            }).on('change', function(e){
+                setBlueprint(e.val);
+            });
+
+            initBlueprint();
+            $view.on('propopen.propview', function(){
+                initBlueprint();
+            });
+
+            /**
+             * Start the blueprint editing
+             * @private
+             */
+            function initBlueprint(){
+
+                if(model.blueprint === undefined){
+                    sectionBlueprint
+                        .getBlueprint(data.routes.blueprintByTestSection, model)
+                        .success(function(data){
+                            if(!_.isEmpty(data)){
+                                if(model.blueprint !== ""){
+                                    model.blueprint = data.uri;
+                                    $select.select2('data', {id: data.uri, text: data.text});
+                                    $select.trigger('change');
+                                }
+                            }
+                        });
+                }
+            }
+
+            /**
+             * save the categories into the model
+             * @private
+             */
+            function setBlueprint(blueprint){
+                sectionBlueprint.setBlueprint(model, blueprint);
             }
 
         }
