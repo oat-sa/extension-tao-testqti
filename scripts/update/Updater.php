@@ -874,19 +874,19 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.41.0');
         }
-        
+
         if ($this->isVersion('5.41.0')) {
-            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID); 
+            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
             $fsService->createFileSystem('taoQtiTestSessionFilesystem');
             $this->getServiceManager()->register(FileSystemService::SERVICE_ID, $fsService);
-            
+
             $service = new QtiFlysystemFileManager();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(QtiFlysystemFileManager::SERVICE_ID, $service);
-            
+
             $this->setVersion('5.42.0');
         }
 
-        $this->skip('5.42.0', '5.42.1');
+        $this->skip('5.42.0', '5.42.2');
     }
 }
