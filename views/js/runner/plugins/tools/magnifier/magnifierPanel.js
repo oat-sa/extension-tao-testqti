@@ -298,14 +298,14 @@ define([
          * Will update the magnifier content with the scrolling position
          * @type {Function}
          */
-        var scrollingLIstenerCallback = _.throttle(function(e){
+        var scrollingListenerCallback = _.throttle(function(event){
 
-            var $target = $(e.target);
-            var scrollingTop = e.target.scrollTop;
-            var scrollLeft = e.target.scrollLeft;
+            var $target = $(event.target);
+            var scrollingTop = event.target.scrollTop;
+            var scrollLeft = event.target.scrollLeft;
             var scrollId, scrollData, $clonedTarget;
 
-            //check if the element is qlready known as a scrollable element
+            //check if the element is already known as a scrollable element
             if(controls && controls.$clone && $target.data('magnifier-scroll')){
 
                 scrollId = $target.data('magnifier-scroll');
@@ -335,24 +335,24 @@ define([
         }, scrollingDelay);
 
         /**
-         * Init the listener for scrolling event and transfer the scrolling
+         * Initializes the listener for scrolling event and transfer the scrolling
          */
         function setScrollingListener(){
-            window.addEventListener('scroll', scrollingLIstenerCallback, true);
+            window.addEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
-         * Init the listener for scrolling event and transfer the scrolling
+         * Stops the listener for scrolling event
          */
         function removeScrollingListener(){
-            window.removeEventListener('scroll', scrollingLIstenerCallback, true);
+            window.removeEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
-         * Apply scrolling programmatically from the recorded list of elements to be scrolled
+         * Applies scrolling programmatically from the recorded list of elements to be scrolled
          */
         function applyScrolling(){
-            _.each(scrolling, function(scrollData){
+            _.forEach(scrolling, function(scrollData){
                 var $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollData.id+']');
                 if($clonedTarget.length){
                     $clonedTarget[0].scrollTop = scrollData.scrollTop;
@@ -566,7 +566,7 @@ define([
                             getElementFromPoint(event.pageX, event.pageY),
                             controls.$inner,
                             controls.$target
-                        ).click();
+                        ).click().focus();
                     } else {
                         // was a 'dragend' click, just ignore
                         self.setState('noclick', false);
