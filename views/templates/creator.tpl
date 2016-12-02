@@ -77,7 +77,8 @@ requirejs.config({
                 save  : '<?=get_data('saveUrl')?>',
                 items : '<?=get_data('itemsUrl')?>',
                 categories : '<?=get_data('categoriesUrl')?>',
-                blueprints : '<?=get_data('blueprintsUrl')?>',
+                blueprintsById : '<?=get_data('blueprintsByIdUrl')?>',
+                blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
             labels : <?=get_data('labels')?>

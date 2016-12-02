@@ -47,7 +47,11 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
             $this->setData('itemsUrl', _url('get', 'Items'));
             $this->setData('categoriesUrl', _url('getCategories', 'Items'));
-            $this->setData('blueprintUrl', _url('getBlueprints', 'Blueprints', 'taoBlueprint'));
+
+            if(common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')){
+                $this->setData('blueprintsByIdUrl', _url('getBlueprintsByIdentifier', 'Blueprints', 'taoBlueprints'));
+                $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints'));
+            }
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
             
             $this->setView('creator.tpl');
@@ -75,12 +79,33 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                 if($this->hasRequestParameter('model')){
 
                     $parameters = $this->getRequest()->getRawParameters();
-common_Logger::w(print_r($parameters,true));
-common_Logger::w(print_r(json_decode($parameters['model']),true));
+
                     $test = $this->getCurrentTest();
                     $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
                     $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
+
+                    //save the blueprint if the extension is installed
+                    if(common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')){
+                        $testSectionLinkService = $this->getServiceManager()->get(\oat\taoBlueprints\model\TestSectionLinkService::SERVICE_ID);
+                        $model = json_decode($parameters['model'],true);
+                        if(isset($model['testParts'])){
+                            foreach($model['testParts'] as $testPart){
+                                if(isset($testPart['assessmentSections'])){
+                                    foreach($testPart['assessmentSections'] as $section){
+                                        if(isset($section['blueprint'])){
+                                            if(!empty($section['blueprint'])){
+                                                $testSectionLinkService->setBlueprintForTestSection($test, $section['identifier'], $section['blueprint']);
+                                            } else {
+                                                $testSectionLinkService->removeBlueprintForTestSection($test, $section['identifier']);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
                 }
             }
             $this->setContentHeader('application/json', 'UTF-8');

@@ -355,19 +355,17 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             var $select = $('[name=section-blueprint]', $view);
             $select.select2({
                 ajax:{
-                    url: 'http://tao.dev/taoBlueprints/Blueprints/getBlueprintsByIdentifier',
+                    url: data.routes.blueprintsById,
                     dataType: 'json',
-                    delay: 250,
+                    delay: 350,
+                    method: 'POST',
                     data: function (params) {
                         return {
                             identifier: params // search term
                         };
                     },
-                    processResults: function (data) {
-                        console.dir(data);
-                        return {
-                            results: data.results
-                        };
+                    results: function (data) {
+                        return data;
                     }
                 },
                 minimumInputLength: 3,
@@ -392,12 +390,19 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
              */
             function initBlueprint(){
 
-                var blueprint = sectionBlueprint.getBlueprint(model);
+                if(model.blueprint === undefined){
+                    var promise = sectionBlueprint.getBlueprint(data.routes.blueprintByTestSection, model);
 
-                //set blueprint found in the model in the select2 input
-                var name = blueprint.name || '';
-                $select.select2('val', name);
-
+                    promise.success(function(data){
+                        if(!_.isEmpty(data)){
+                            if(model.blueprint !== ""){
+                                model.blueprint = data.uri;
+                                $select.select2('data', {id: data.uri, text: data.text});
+                                $select.trigger('change');
+                            }
+                        }
+                    });
+                }
             }
 
             /**

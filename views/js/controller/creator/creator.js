@@ -187,7 +187,8 @@ define([
                     testView(model, {
                         uri : options.uri,
                         identifiers : self.identifiers,
-                        labels : options.labels
+                        labels : options.labels,
+                        routes : options.routes
                     });
 
                     //listen for changes to update available actions

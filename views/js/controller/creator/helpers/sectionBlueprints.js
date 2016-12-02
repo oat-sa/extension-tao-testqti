@@ -23,17 +23,8 @@ define([
 
     'use strict';
 
-    var _ns = '.sectionCategory';
+    var _ns = '.sectionBlueprint';
 
-    /**
-     * Check if the given object is a valid assessmentSection model object
-     *
-     * @param {object} model
-     * @returns {boolean}
-     */
-    function isValidSectionModel(model){
-        return (_.isObject(model) && model['qti-type'] === 'assessmentSection' && _.isArray(model.sectionParts));
-    }
 
     /**
      * Set an array of categories to the section model (affect the childen itemRef)
@@ -43,9 +34,7 @@ define([
      * @returns {undefined}
      */
     function setBlueprint(model, blueprint){
-
         model.blueprint = blueprint;
-
     }
 
     /**
@@ -54,23 +43,25 @@ define([
      * @param {object} model
      * @returns {object}
      */
-    function getBlueprint(model){
+    function getBlueprint(getUrl, model){
 
-        if(isValidSectionModel(model)){
-            var categories = _.map(model.sectionParts, function (itemRef){
-                if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
-                }
-            });
+        return $.ajax({
+            url: getUrl,
+            type: 'POST',
+            data: {
+                section: model.identifier,
+                test: 'http://tao.local/mytao.rdf#i148058656329575'
+            },
+            dataType: 'json'
 
-            return {
-            };
-        }else{
+        })
+        .fail(function () {
             errorHandler.throw(_ns, 'invalid tool config format');
-        }
+        });
+
     }
 
     return {
-        isValidSectionModel : isValidSectionModel,
         setBlueprint : setBlueprint,
         getBlueprint : getBlueprint
     };
