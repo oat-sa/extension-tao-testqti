@@ -298,32 +298,32 @@ define([
          * Will update the magnifier content with the scrolling position
          * @type {Function}
          */
-        var scrollingListenerCallback = _.throttle(function(event){
+        var scrollingListenerCallback = _.throttle(function (event) {
 
             var $target = $(event.target);
             var scrollingTop = event.target.scrollTop;
             var scrollLeft = event.target.scrollLeft;
-            var scrollId, scrollData, $clonedTarget;
+            var scrollId, scrollData;
 
             //check if the element is already known as a scrollable element
-            if(controls && controls.$clone && $target.data('magnifier-scroll')){
+            if (controls && controls.$clone && $target.data('magnifier-scroll')) {
 
                 scrollId = $target.data('magnifier-scroll');
-                scrollData = _.find(scrolling, {id : scrollId});
+                scrollData = _.find(scrolling, {id: scrollId});
                 scrollData.scrollTop = scrollingTop;
                 scrollData.scrollLeft = scrollLeft;
 
                 //if in clone, scroll it
                 scrollInClone(scrollData);
 
-            }else{
+            } else {
                 //if the element is not yet identified as a scrollable element, tag it and register its id
                 scrollId = _.uniqueId('scrolling_');
                 $target.attr('data-magnifier-scroll', scrollId);
                 scrolling.push({
                     id: scrollId,
-                    scrollTop : scrollingTop,
-                    scrollLeft : scrollLeft
+                    scrollTop: scrollingTop,
+                    scrollLeft: scrollLeft
                 });
 
                 //update all
@@ -340,15 +340,15 @@ define([
          * @param {Number} [scrollData.scrollTop]
          * @param {Number} [scrollData.scrollLeft]
          */
-        function scrollInClone(scrollData){
+        function scrollInClone(scrollData) {
             var $clonedTarget;
-            if(controls && controls.$clone && scrollData && scrollData.id){
-                $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollData.id+']');
-                if($clonedTarget.length){
-                    if( _.isNumber(scrollData.scrollTop)){
+            if (controls && controls.$clone && scrollData && scrollData.id) {
+                $clonedTarget = controls.$clone.find('[data-magnifier-scroll=' + scrollData.id + ']');
+                if ($clonedTarget.length) {
+                    if (_.isNumber(scrollData.scrollTop)) {
                         $clonedTarget[0].scrollTop = scrollData.scrollTop;
                     }
-                    if( _.isNumber(scrollData.scrollLeft)){
+                    if (_.isNumber(scrollData.scrollLeft)) {
                         $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
                     }
                 }
@@ -358,21 +358,21 @@ define([
         /**
          * Initializes the listener for scrolling event and transfer the scrolling
          */
-        function setScrollingListener(){
+        function setScrollingListener() {
             window.addEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
          * Stops the listener for scrolling event
          */
-        function removeScrollingListener(){
+        function removeScrollingListener() {
             window.removeEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
          * Applies scrolling programmatically from the recorded list of elements to be scrolled
          */
-        function applyScrolling(){
+        function applyScrolling() {
             _.forEach(scrolling, scrollInClone);
         }
 
@@ -512,7 +512,7 @@ define([
             var indexes = [$node.index()];
 
             // compute map of node's parents indexes
-            $node.parents().each(function() {
+            $node.parents().each(function () {
                 var $this = $(this);
                 if (!$this.is($root)) {
                     indexes.push($this.index());
@@ -527,7 +527,7 @@ define([
             // now try to find the same node using the path provided by the indexes map
             if (indexes.length) {
                 $node = $target;
-                _.forEachRight(indexes, function(index) {
+                _.forEachRight(indexes, function (index) {
                     $node = $node.children().eq(index);
                     if (!$node.length) {
                         return false;
@@ -575,7 +575,7 @@ define([
                 });
 
                 // interact through the magnifier glass with the zoomed content
-                $component.on('click', '.overlay', function(event) {
+                $component.on('click', '.overlay', function (event) {
                     if (!self.is('noclick')) {
                         findSourceNode(
                             getElementFromPoint(event.pageX, event.pageY),
@@ -592,7 +592,7 @@ define([
                 updateMaxSize();
                 applyZoomLevel();
             })
-            .on('dragstart resizestart', function() {
+            .on('dragstart resizestart', function () {
                 // prevent the 'dragend' click to be understood as an actual click
                 this.setState('noclick', true);
             })
