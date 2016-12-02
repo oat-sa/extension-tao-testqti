@@ -127,6 +127,20 @@ define([
             var testRunner = this.getTestRunner();
             var $panel = $(panelTpl());
 
+            /**
+             * @param {Object} data
+             * @param {String} data.label - document title
+             * @param {String} data.document - document url
+             */
+            function displayViewer(data) {
+                if (self.getState('enabled') !== false) {
+                    showPanel(self);
+                    self.controls.$title.text(data.label);
+                    resizeViewer(self);
+                    self.viewer.load(data.document, 'pdf');
+                }
+            }
+
             this.controls = {
                 $panel: $panel,
                 $overlay: $panel.find('.viewer-overlay'),
@@ -152,12 +166,7 @@ define([
                         .off('.' + self.getName())
                         .on('viewDocument.' + self.getName(), function (event) {
                             var data = event.originalEvent.detail;
-                            if (self.getState('enabled') !== false) {
-                                showPanel(self);
-                                self.controls.$title.text(data.label);
-                                resizeViewer(self);
-                                self.viewer.load(data.document, 'pdf');
-                            }
+                            displayViewer(data);
                         });
                     initPanelEvents(self);
                 })
@@ -169,6 +178,9 @@ define([
                 })
                 .on('unloaditem disabletools', function () {
                     self.disable();
+                })
+                .on('tool-documentViewer', function(data) {
+                    displayViewer(data);
                 });
         },
 
