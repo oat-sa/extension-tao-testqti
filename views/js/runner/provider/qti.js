@@ -258,10 +258,13 @@ define([
                                         context = self.getTestContext();
                                     }
 
-                                    self.trigger('resumeitem');
-
                                     if (result.message) {
-                                        self.trigger('alert.notallowed', result.message);
+                                        self.trigger('alert.notallowed',
+                                            result.message,
+                                            function() {
+                                                self.trigger('resumeitem');
+                                            }
+                                        );
                                     }
 
                                     return reject(true);
@@ -361,7 +364,7 @@ define([
                         ref       : position
                     });
 
-                    this.trigger('disablenav disabletools')
+                    this.trigger('disablenav disabletools');
 
                     // submit the response, but can break if empty
                     submit()
