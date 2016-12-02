@@ -12,6 +12,7 @@ module.exports = function(grunt) {
     sass.taoqtitest.files[root + 'css/test-runner.css'] = root + 'scss/test-runner.scss';
     sass.taoqtitest.files[root + 'css/new-test-runner.css'] = root + 'scss/new-test-runner.scss';
     sass.taoqtitest.files[root + 'css/plugins/key-navigation.css'] = root + 'scss/plugins/key-navigation.scss';
+    sass.taoqtitest.files[root + 'css/plugins/magnifier.css'] = root + 'scss/plugins/magnifier.scss';
 
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],
