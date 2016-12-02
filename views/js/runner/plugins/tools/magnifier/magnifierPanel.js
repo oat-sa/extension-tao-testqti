@@ -41,7 +41,8 @@ define([
     var debounceDelay = 50;
 
     /**
-     * Standard scrolling throttlinng for the scrolling
+     * Standard scrolling throttling for the scrolling
+     * It can be lower than the debounce delay as it is lighter in process and it improves the user experience
      * @type {Number}
      */
     var scrollingDelay = 20;
@@ -271,43 +272,57 @@ define([
         var updateMagnifier = _.debounce(_.bind(magnifierPanel.update, magnifierPanel), debounceDelay);
 
         /**
+         * Will update the magnifier content with the scrolling position
+         * @type {Function}
+         */
+        var scrollingLIstenerCallback = _.throttle(function(e){
+
+            var $target = $(e.target);
+            var scrollingTop = e.target.scrollTop;
+            var scrollLeft = e.target.scrollLeft;
+            var scrollId, scrollData, $clonedTarget;
+
+            //check if the element is qlready known as a scrollable element
+            if(controls && controls.$clone && $target.data('magnifier-scroll')){
+
+                scrollId = $target.data('magnifier-scroll');
+                scrollData = _.find(scrolling, {id : scrollId});
+                scrollData.scrollTop = scrollingTop;
+                scrollData.scrollLeft = scrollLeft;
+
+                //if in clone, scroll it
+                $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollId+']');
+                $clonedTarget[0].scrollTop = scrollData.scrollTop;
+                $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
+
+            }else{
+                //if the element is not yet identified as a scrollable element, tag it and register its id
+                scrollId = _.uniqueId('scrolling_');
+                $target.attr('data-magnifier-scroll', scrollId);
+                scrolling.push({
+                    id: scrollId,
+                    scrollTop : scrollingTop,
+                    scrollLeft : scrollLeft
+                });
+
+                //update all
+                magnifierPanel.update();
+            }
+
+        }, scrollingDelay);
+
+        /**
          * Init the listener for scrolling event and transfer the scrolling
          */
         function setScrollingListener(){
-            window.addEventListener('scroll', _.throttle(function(e){
+            window.addEventListener('scroll', scrollingLIstenerCallback, true);
+        }
 
-                var $target = $(e.target);
-                var scrollingTop = e.target.scrollTop;
-                var scrollLeft = e.target.scrollLeft;
-                var scrollId, scrollData, $clonedTarget;
-
-                if($target.data('magnifier-scroll')){
-
-                    scrollId = $target.data('magnifier-scroll');
-                    scrollData = _.find(scrolling, {id:scrollId});
-                    scrollData.scrollTop = scrollingTop;
-                    scrollData.scrollLeft = scrollLeft;
-
-                    //if in clone, scroll it
-                    $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollId+']');
-                    $clonedTarget[0].scrollTop = scrollData.scrollTop;
-                    $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
-
-                }else{
-                    //if not tag it
-                    scrollId = _.uniqueId('scrolling_');
-                    $target.attr('data-magnifier-scroll', scrollId);
-                    scrolling.push({
-                        id:scrollId,
-                        scrollTop :scrollingTop,
-                        scrollLeft :scrollLeft
-                    });
-
-                    //update all
-                    magnifierPanel.update();
-                }
-
-            }, debounceDelay), true);
+        /**
+         * Init the listener for scrolling event and transfer the scrolling
+         */
+        function removeScrollingListener(){
+            window.removeEventListener('scroll', scrollingLIstenerCallback, true);
         }
 
         /**
@@ -412,6 +427,7 @@ define([
                     subtree: true           // Set to true if mutations to target and target's descendants are to be observed.
                 });
             }
+            setScrollingListener();
         }
 
         /**
@@ -419,6 +435,7 @@ define([
          */
         function stopObserver() {
             observer.disconnect();
+            removeScrollingListener();
         }
 
         initConfig.width = zoomSize;
