@@ -381,6 +381,70 @@ define([
             observer.disconnect();
         }
 
+        /**
+         * Gets the top element from a particular absolute point.
+         * @param {Number} x - the page X-coordinate of the point
+         * @param {Number} y - the page Y-coordinate of the point
+         * @returns {HTMLElement}
+         */
+        function getElementFromPoint(x, y) {
+            var el;
+
+            if (controls) {
+                controls.$overlay.addClass('hidden');
+            }
+
+            el = document.elementFromPoint(x, y);
+
+            if (controls) {
+                controls.$overlay.removeClass('hidden');
+            }
+
+            return el;
+        }
+
+        /**
+         * Find the related node in the target. The both trees must have the same content.
+         * @param {jQuery|HTMLElement} node - the node for which find a relation
+         * @param {jQuery|HTMLElement} root - the root of the tree that contains the actual node
+         * @param {jQuery|HTMLElement} target - the root of the tree that could contains the related node
+         * @returns {jQuery}
+         */
+        function findSourceNode(node, root, target) {
+            var $node = $(node);
+            var $root = $(root);
+            var $target = $(target);
+            var indexes = [$node.index()];
+
+            // compute map of node's parents indexes
+            $node.parents().each(function() {
+                var $this = $(this);
+                if (!$this.is($root)) {
+                    indexes.push($this.index());
+                } else {
+                    return false;
+                }
+            });
+
+            // the last index is related to the root, so ignore it
+            indexes.pop();
+
+            // now try to find the same node using the path provided by the indexes map
+            if (indexes.length) {
+                $node = $target;
+                _.forEachRight(indexes, function(index) {
+                    $node = $node.children().eq(index);
+                    if (!$node.length) {
+                        return false;
+                    }
+                });
+            } else {
+                // nothing to search for...
+                $node = $();
+            }
+            return $node;
+        }
+
         initConfig.width = zoomSize;
         initConfig.height = zoomSize / screenRatio;
         initConfig.minWidth = baseSize * zoomLevelMin;
@@ -400,10 +464,12 @@ define([
 
                 controls = {
                     $inner: $('.inner', $component),
-                    $zoomLevel: $('.level', $component)
+                    $zoomLevel: $('.level', $component),
+                    $overlay: $('.overlay', $component)
                 };
 
-                this.getElement().on('click', '.control', function (event) {
+                // click on zoom-in or zoom-out controls
+                $component.on('click', '.control', function (event) {
                     var $button = $(event.target).closest('.control');
                     var action = $button.data('control');
 
@@ -413,9 +479,27 @@ define([
                     }
                 });
 
+                // interact through the magnifier glass with the zoomed content
+                $component.on('click', '.overlay', function(event) {
+                    if (!self.is('noclick')) {
+                        findSourceNode(
+                            getElementFromPoint(event.pageX, event.pageY),
+                            controls.$inner,
+                            controls.$target
+                        ).click();
+                    } else {
+                        // was a 'dragend' click, just ignore
+                        self.setState('noclick', false);
+                    }
+                });
+
                 createObserver();
                 updateMaxSize();
                 applyZoomLevel();
+            })
+            .on('dragstart resizestart', function() {
+                // prevent the 'dragend' click to be understood as an actual click
+                this.setState('noclick', true);
             })
             .on('move resize', function () {
                 updateZoom();
