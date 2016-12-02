@@ -114,6 +114,24 @@
         </div>
     </div>
 
+    {{#if hasBlueprint}}
+    <div class="grid-row pseudo-label-box">
+        <div class="col-5">
+            <label for="section-blueprint">{{__ 'Associate Blueprint'}}</label>
+        </div>
+
+        <div class="col-6">
+            <input type="text" name="section-blueprint" />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+                {{__ 'Associate a blueprint to a section allow you to validate this section against the specified blueprint.'}}
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
     <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
     <div class="grid-row">
         <div class="col-5">

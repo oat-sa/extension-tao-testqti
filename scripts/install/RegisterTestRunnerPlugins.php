@@ -100,10 +100,10 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'active' => true,
                 'tags' => [ 'core', 'qti', 'required' ]
             ], [
-                'id' => 'responsesAccess',
-                'name' => 'Shortcuts to access the item responses',
-                'module' => 'taoQtiTest/runner/plugins/content/accessibility/responsesAccess',
-                'description' => 'Provide a way to navigate between item responses using the keyboard',
+                'id' => 'keyNavigation',
+                'name' => 'Using key to navigate item content',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'description' => 'Provide a way to navigate within item with the keyboard',
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
@@ -244,6 +244,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => false,
+                'tags' => [  ]
             ]
         ],
         'security' => [
