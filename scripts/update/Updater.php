@@ -874,22 +874,22 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.41.0');
         }
-        
+
         if ($this->isVersion('5.41.0')) {
-            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID); 
+            $fsService = $this->getServiceManager()->get(FileSystemService::SERVICE_ID);
             $fsService->createFileSystem('taoQtiTestSessionFilesystem');
             $this->getServiceManager()->register(FileSystemService::SERVICE_ID, $fsService);
-            
+
             $service = new QtiFlysystemFileManager();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(QtiFlysystemFileManager::SERVICE_ID, $service);
-            
+
             $this->setVersion('5.42.0');
         }
 
-        $this->skip('5.42.0', '5.43.1');
+        $this->skip('5.42.0', '5.44.0');
 
-        if ($this->isVersion('5.43.1')) {
+        if ($this->isVersion('5.44.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'magnifier',
@@ -920,7 +920,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.44.0');
+            $this->setVersion('5.45.0');
         }
     }
 }
