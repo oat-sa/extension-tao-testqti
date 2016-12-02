@@ -393,17 +393,17 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             function initBlueprint(){
 
                 if(model.blueprint === undefined){
-                    var promise = sectionBlueprint.getBlueprint(data.routes.blueprintByTestSection, model);
-
-                    promise.success(function(data){
-                        if(!_.isEmpty(data)){
-                            if(model.blueprint !== ""){
-                                model.blueprint = data.uri;
-                                $select.select2('data', {id: data.uri, text: data.text});
-                                $select.trigger('change');
+                    sectionBlueprint
+                        .getBlueprint(data.routes.blueprintByTestSection, model)
+                        .success(function(data){
+                            if(!_.isEmpty(data)){
+                                if(model.blueprint !== ""){
+                                    model.blueprint = data.uri;
+                                    $select.select2('data', {id: data.uri, text: data.text});
+                                    $select.trigger('change');
+                                }
                             }
-                        }
-                    });
+                        });
                 }
             }
 

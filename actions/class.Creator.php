@@ -50,7 +50,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
 
             if(common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')){
                 $this->setData('blueprintsByIdUrl', _url('getBlueprintsByIdentifier', 'Blueprints', 'taoBlueprints'));
-                $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints'));
+                $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints', array('test' => $testUri)));
             }
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
             

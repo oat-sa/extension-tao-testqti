@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
 define([
     'lodash',
@@ -40,6 +40,7 @@ define([
     /**
      * Get the categories assign to the section model, infered by its interal itemRefs
      *
+     * @param {string} getUrl
      * @param {object} model
      * @returns {object}
      */
@@ -47,10 +48,9 @@ define([
 
         return $.ajax({
             url: getUrl,
-            type: 'POST',
+            type: 'GET',
             data: {
-                section: model.identifier,
-                test: 'http://tao.local/mytao.rdf#i148058656329575'
+                section: model.identifier
             },
             dataType: 'json'
 
