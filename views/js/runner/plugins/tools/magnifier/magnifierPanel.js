@@ -41,6 +41,12 @@ define([
     var debounceDelay = 50;
 
     /**
+     * Standard scrolling throttlinng for the scrolling
+     * @type {Number}
+     */
+    var scrollingDelay = 20;
+
+    /**
      * The default base size
      * @type {Number}
      */
@@ -104,6 +110,7 @@ define([
         var controls = null;
         var observer = null;
         var targetWidth, targetHeight, dx, dy;
+        var scrolling = [];
 
         /**
          * @typedef {Object} magnifierPanel
@@ -135,6 +142,8 @@ define([
             setTarget: function setTarget($newTarget) {
                 if (controls) {
                     controls.$target = $newTarget;
+
+                    setScrollingListener();
 
                     /**
                      * @event magnifierPanel#targetchange
@@ -243,6 +252,7 @@ define([
                     applyZoomLevel();
                     updateZoom();
                     updateMaxSize();
+                    applyScrolling();
 
                     /**
                      * @event magnifierPanel#update
@@ -259,6 +269,59 @@ define([
          * @type {Function}
          */
         var updateMagnifier = _.debounce(_.bind(magnifierPanel.update, magnifierPanel), debounceDelay);
+
+        /**
+         * Init the listener for scrolling event and transfer the scrolling
+         */
+        function setScrollingListener(){
+            window.addEventListener('scroll', _.throttle(function(e){
+
+                var $target = $(e.target);
+                var scrollingTop = e.target.scrollTop;
+                var scrollLeft = e.target.scrollLeft;
+                var scrollId, scrollData, $clonedTarget;
+
+                if($target.data('magnifier-scroll')){
+
+                    scrollId = $target.data('magnifier-scroll');
+                    scrollData = _.find(scrolling, {id:scrollId});
+                    scrollData.scrollTop = scrollingTop;
+                    scrollData.scrollLeft = scrollLeft;
+
+                    //if in clone, scroll it
+                    $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollId+']');
+                    $clonedTarget[0].scrollTop = scrollData.scrollTop;
+                    $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
+
+                }else{
+                    //if not tag it
+                    scrollId = _.uniqueId('scrolling_');
+                    $target.attr('data-magnifier-scroll', scrollId);
+                    scrolling.push({
+                        id:scrollId,
+                        scrollTop :scrollingTop,
+                        scrollLeft :scrollLeft
+                    });
+
+                    //update all
+                    magnifierPanel.update();
+                }
+
+            }, debounceDelay), true);
+        }
+
+        /**
+         * Apply scrolling programmatically from the recorded list of elements to be scrolled
+         */
+        function applyScrolling(){
+            _.each(scrolling, function(scrollData){
+                var $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollData.id+']');
+                if($clonedTarget.length){
+                    $clonedTarget[0].scrollTop = scrollData.scrollTop;
+                    $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
+                }
+            });
+        }
 
         /**
          * Adjusts a provided zoom level to fit the constraints
