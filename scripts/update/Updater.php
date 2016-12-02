@@ -887,9 +887,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.42.0');
         }
 
-        $this->skip('5.42.0', '5.42.1');
-        
-        if ($this->isVersion('5.42.1')) {
+        $this->skip('5.42.0', '5.43.1');
+
+        if ($this->isVersion('5.43.1')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'magnifier',
@@ -920,7 +920,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.43.0');
+            $this->setVersion('5.44.0');
         }
     }
 }
