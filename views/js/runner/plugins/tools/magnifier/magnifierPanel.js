@@ -291,9 +291,7 @@ define([
                 scrollData.scrollLeft = scrollLeft;
 
                 //if in clone, scroll it
-                $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollId+']');
-                $clonedTarget[0].scrollTop = scrollData.scrollTop;
-                $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
+                scrollInClone(scrollData);
 
             }else{
                 //if the element is not yet identified as a scrollable element, tag it and register its id
@@ -310,6 +308,29 @@ define([
             }
 
         }, scrollingDelay);
+
+        /**
+         * Scroll an element in the clone
+         *
+         * @param {Object} scrollData
+         * @param {String} scrollData.id
+         * @param {Number} [scrollData.scrollTop]
+         * @param {Number} [scrollData.scrollLeft]
+         */
+        function scrollInClone(scrollData){
+            var $clonedTarget;
+            if(controls && controls.$clone && scrollData && scrollData.id){
+                $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollData.id+']');
+                if($clonedTarget.length){
+                    if( _.isNumber(scrollData.scrollTop)){
+                        $clonedTarget[0].scrollTop = scrollData.scrollTop;
+                    }
+                    if( _.isNumber(scrollData.scrollLeft)){
+                        $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
+                    }
+                }
+            }
+        }
 
         /**
          * Init the listener for scrolling event and transfer the scrolling
@@ -329,13 +350,7 @@ define([
          * Apply scrolling programmatically from the recorded list of elements to be scrolled
          */
         function applyScrolling(){
-            _.each(scrolling, function(scrollData){
-                var $clonedTarget = controls.$clone.find('[data-magnifier-scroll='+scrollData.id+']');
-                if($clonedTarget.length){
-                    $clonedTarget[0].scrollTop = scrollData.scrollTop;
-                    $clonedTarget[0].scrollLeft = scrollData.scrollLeft;
-                }
-            });
+            _.each(scrolling, scrollInClone);
         }
 
         /**
