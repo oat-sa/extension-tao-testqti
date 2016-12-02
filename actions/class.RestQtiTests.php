@@ -17,14 +17,13 @@
  */
 
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
-use oat\tao\controller\api\TaskQueue as TaskQueueController;
 use oat\oatbox\task\Task;
 
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends TaskQueueController
+class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
 {
     private static $accepted_types = array(
         'application/zip',
