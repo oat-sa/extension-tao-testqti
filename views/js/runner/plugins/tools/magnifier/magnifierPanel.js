@@ -21,11 +21,10 @@
 define([
     'jquery',
     'lodash',
-    'core/mutation-observer',
     'ui/movableComponent',
     'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
     'css!taoQtiTestCss/plugins/magnifier'
-], function ($, _, MutationObserver, movableComponent, magnifierPanelTpl) {
+], function ($, _, movableComponent, magnifierPanelTpl) {
     'use strict';
 
     /**
@@ -433,7 +432,7 @@ define([
          * Creates the observer that will react to DOM changes to update the magnifier
          */
         function createObserver() {
-            observer = new MutationObserver(updateMagnifier);
+            observer = new window.MutationObserver(updateMagnifier);
         }
 
         /**
