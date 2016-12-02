@@ -120,9 +120,7 @@
         </div>
 
         <div class="col-6">
-            <label>
-                <input type="text" name="section-blueprint" />
-            </label>
+            <input type="text" name="section-blueprint" />
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
