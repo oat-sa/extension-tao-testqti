@@ -221,8 +221,13 @@ define([
              * @returns {magnifierPanel}
              */
             zoomAt: function zoomAt(x, y) {
+                var position;
                 if (controls) {
-                    controls.$inner.css(this.translate(-x, -y));
+                    position = this.translate(x, y);
+                    controls.$inner.css({
+                        top: -position.top,
+                        left: -position.left
+                    });
                 }
             },
 
@@ -233,9 +238,26 @@ define([
              * @returns {Object}
              */
             translate: function translate(x, y) {
+                var zoomDeltaX = 0;
+                var zoomDeltaY = 0;
+                var ratioX = zoomLevel;
+                var ratioY = zoomLevel;
+                var magnifierWidth = this.config.width;
+                var magnifierHeight = this.config.height;
+
+                if (targetWidth) {
+                    zoomDeltaX = ((targetWidth * (zoomLevel - 1)) / 2);
+                    ratioX = (targetWidth * zoomLevel - magnifierWidth) / (targetWidth - magnifierWidth);
+                }
+
+                if (targetHeight) {
+                    zoomDeltaY = ((targetHeight * (zoomLevel - 1)) / 2);
+                    ratioY = (targetHeight * zoomLevel - magnifierHeight) / (targetHeight - magnifierHeight);
+                }
+
                 return {
-                    left: x * zoomLevel,
-                    top: y * zoomLevel
+                    top: y * ratioY - zoomDeltaY,
+                    left: x * ratioX - zoomDeltaX
                 };
             },
 
@@ -247,6 +269,7 @@ define([
             update: function update() {
                 if (controls && controls.$target) {
                     controls.$clone = controls.$target.clone().removeAttr('id');
+                    controls.$clone.find('iframe').remove();
                     controls.$inner.empty().append(controls.$clone);
 
                     applySize();
@@ -275,14 +298,14 @@ define([
          * Will update the magnifier content with the scrolling position
          * @type {Function}
          */
-        var scrollingLIstenerCallback = _.throttle(function(e){
+        var scrollingListenerCallback = _.throttle(function(event){
 
-            var $target = $(e.target);
-            var scrollingTop = e.target.scrollTop;
-            var scrollLeft = e.target.scrollLeft;
+            var $target = $(event.target);
+            var scrollingTop = event.target.scrollTop;
+            var scrollLeft = event.target.scrollLeft;
             var scrollId, scrollData, $clonedTarget;
 
-            //check if the element is qlready known as a scrollable element
+            //check if the element is already known as a scrollable element
             if(controls && controls.$clone && $target.data('magnifier-scroll')){
 
                 scrollId = $target.data('magnifier-scroll');
@@ -333,24 +356,24 @@ define([
         }
 
         /**
-         * Init the listener for scrolling event and transfer the scrolling
+         * Initializes the listener for scrolling event and transfer the scrolling
          */
         function setScrollingListener(){
-            window.addEventListener('scroll', scrollingLIstenerCallback, true);
+            window.addEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
-         * Init the listener for scrolling event and transfer the scrolling
+         * Stops the listener for scrolling event
          */
         function removeScrollingListener(){
-            window.removeEventListener('scroll', scrollingLIstenerCallback, true);
+            window.removeEventListener('scroll', scrollingListenerCallback, true);
         }
 
         /**
-         * Apply scrolling programmatically from the recorded list of elements to be scrolled
+         * Applies scrolling programmatically from the recorded list of elements to be scrolled
          */
         function applyScrolling(){
-            _.each(scrolling, scrollInClone);
+            _.forEach(scrolling, scrollInClone);
         }
 
         /**
@@ -453,6 +476,70 @@ define([
             removeScrollingListener();
         }
 
+        /**
+         * Gets the top element from a particular absolute point.
+         * @param {Number} x - the page X-coordinate of the point
+         * @param {Number} y - the page Y-coordinate of the point
+         * @returns {HTMLElement}
+         */
+        function getElementFromPoint(x, y) {
+            var el;
+
+            if (controls) {
+                controls.$overlay.addClass('hidden');
+            }
+
+            el = document.elementFromPoint(x, y);
+
+            if (controls) {
+                controls.$overlay.removeClass('hidden');
+            }
+
+            return el;
+        }
+
+        /**
+         * Find the related node in the target. The both trees must have the same content.
+         * @param {jQuery|HTMLElement} node - the node for which find a relation
+         * @param {jQuery|HTMLElement} root - the root of the tree that contains the actual node
+         * @param {jQuery|HTMLElement} target - the root of the tree that could contains the related node
+         * @returns {jQuery}
+         */
+        function findSourceNode(node, root, target) {
+            var $node = $(node);
+            var $root = $(root);
+            var $target = $(target);
+            var indexes = [$node.index()];
+
+            // compute map of node's parents indexes
+            $node.parents().each(function() {
+                var $this = $(this);
+                if (!$this.is($root)) {
+                    indexes.push($this.index());
+                } else {
+                    return false;
+                }
+            });
+
+            // the last index is related to the root, so ignore it
+            indexes.pop();
+
+            // now try to find the same node using the path provided by the indexes map
+            if (indexes.length) {
+                $node = $target;
+                _.forEachRight(indexes, function(index) {
+                    $node = $node.children().eq(index);
+                    if (!$node.length) {
+                        return false;
+                    }
+                });
+            } else {
+                // nothing to search for...
+                $node = $();
+            }
+            return $node;
+        }
+
         initConfig.width = zoomSize;
         initConfig.height = zoomSize / screenRatio;
         initConfig.minWidth = baseSize * zoomLevelMin;
@@ -472,10 +559,12 @@ define([
 
                 controls = {
                     $inner: $('.inner', $component),
-                    $zoomLevel: $('.level', $component)
+                    $zoomLevel: $('.level', $component),
+                    $overlay: $('.overlay', $component)
                 };
 
-                this.getElement().on('click', '.control', function (event) {
+                // click on zoom-in or zoom-out controls
+                $component.on('click', '.control', function (event) {
                     var $button = $(event.target).closest('.control');
                     var action = $button.data('control');
 
@@ -485,9 +574,27 @@ define([
                     }
                 });
 
+                // interact through the magnifier glass with the zoomed content
+                $component.on('click', '.overlay', function(event) {
+                    if (!self.is('noclick')) {
+                        findSourceNode(
+                            getElementFromPoint(event.pageX, event.pageY),
+                            controls.$inner,
+                            controls.$target
+                        ).click().focus();
+                    } else {
+                        // was a 'dragend' click, just ignore
+                        self.setState('noclick', false);
+                    }
+                });
+
                 createObserver();
                 updateMaxSize();
                 applyZoomLevel();
+            })
+            .on('dragstart resizestart', function() {
+                // prevent the 'dragend' click to be understood as an actual click
+                this.setState('noclick', true);
             })
             .on('move resize', function () {
                 updateZoom();
