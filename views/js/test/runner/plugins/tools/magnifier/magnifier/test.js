@@ -18,9 +18,8 @@
 
 define([
     'jquery',
-    'lodash',
     'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, _, magnifierPanelFactory) {
+], function ($, magnifierPanelFactory) {
     'use strict';
 
     QUnit.module('API');
