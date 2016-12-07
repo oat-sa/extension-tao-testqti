@@ -114,8 +114,23 @@ define([
             .on('render', function () {
                 var $element = this.getElement();
                 var tr1 = window.getComputedStyle($element[0]).getPropertyValue('transform');
+                var transform;
                 if (!tr1) {
                     tr1 = window.getComputedStyle($element[0]).getPropertyValue('-webkit-transform');
+                }
+
+                // WebKit fix
+                if (tr1 === 'none') {
+                    if ($element[0].style && $element[0].style.transform) {
+                        //chrome
+                        transform = $element[0].style.transform.split(/[()]/);
+                    } else if ($element[0].style && $element[0].style['-webkit-transform']) {
+                        //phantomJS
+                        transform = $element[0].style['-webkit-transform'].split(/[()]/);
+                    }
+                    if (transform) {
+                        tr1 = 'matrix(1, 0, 0, 1, ' + parseFloat(transform[1]) + ', ' + parseFloat(transform[3]) + ')';
+                    }
                 }
 
                 assert.equal(tr1, 'matrix(1, 0, 0, 1, 5, 5)', 'The element has been translated to 5,5');
@@ -125,6 +140,20 @@ define([
                         var tr2 = window.getComputedStyle($element[0]).getPropertyValue('transform');
                         if (!tr2) {
                             tr2 = window.getComputedStyle($element[0]).getPropertyValue('-webkit-transform');
+                        }
+
+                        // WebKit fix
+                        if (tr2 === 'none') {
+                            if ($element[0].style && $element[0].style.transform) {
+                                //chrome
+                                transform = $element[0].style.transform.split(/[()]/);
+                            } else if ($element[0].style && $element[0].style['-webkit-transform']) {
+                                //phantomJS
+                                transform = $element[0].style['-webkit-transform'].split(/[()]/);
+                            }
+                            if (transform) {
+                                tr2 = 'matrix(1, 0, 0, 1, ' + parseFloat(transform[1]) + ', ' + parseFloat(transform[3]) + ')';
+                            }
                         }
 
                         assert.equal(tr2, 'matrix(1, 0, 0, 1, 15, 15)', 'The element has been translated to 15,15');
