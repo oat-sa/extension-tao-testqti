@@ -169,6 +169,14 @@ define([
                 description : __('displays the review screen / navigator')
             },
             {
+                name : 'x-tao-option-reviewHideLegend',
+                description : __('hides the legend on the review screen / navigator')
+            },
+            {
+                name : 'x-tao-option-reviewDefaultClosed',
+                description : __('hides the review screen / navigator by default')
+            },
+            {
                 name : 'x-tao-option-calculator',
                 description : __('enable calculator')
             },
