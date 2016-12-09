@@ -20,6 +20,7 @@
 
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\tao\helpers\uploadReferencerTrait;
 /**
  * Imprthandler for QTI packages
  *
@@ -31,6 +32,8 @@ use oat\oatbox\PhpSerializeStateless;
 class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler, PhpSerializable
 {
     use PhpSerializeStateless;
+    use uploadReferencerTrait;
+
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
@@ -58,8 +61,8 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             $fileInfo = $form->getValue('source');
             
             if(isset($fileInfo['uploaded_file'])){
-                	
-                $uploadedFile = $fileInfo['uploaded_file'];
+
+                $uploadedFile = $this->getLocalCopy($fileInfo['uploaded_file']);
                 
                 // The zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
