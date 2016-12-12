@@ -31,7 +31,7 @@ define([
     'util/shortcut/registry',
     'util/shortcut',
     'util/namespace'
-], function ($, _, __, pluginFactory, dialogAlert, dialogConfirm, shortcutRegistry, shortcut, namespaceHelper){
+], function ($, _, __, pluginFactory, dialogAlert, dialogConfirm, shortcutRegistry, globalShortcut, namespaceHelper){
     'use strict';
 
     /**
@@ -114,7 +114,7 @@ define([
 
                 // prevents all registered shortcuts to be triggered
                 // and brings back the dialog shortcuts
-                shortcut.disable();
+                globalShortcut.disable();
                 dialogShortcut.enable();
 
                 stack.push(handle);
@@ -127,7 +127,7 @@ define([
                     // if all dialogs have been closed allows all registered shortcuts to be triggered
                     // also disables the dialog shortcuts
                     if (!opened.length) {
-                        shortcut.enable();
+                        globalShortcut.enable();
                         dialogShortcut.disable();
                     }
                 });
