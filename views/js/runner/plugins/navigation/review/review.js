@@ -201,19 +201,30 @@ define([
             /**
              * Shows/hides the review panel
              *
-             * @param [{Boolean} forceState]
+             * @param [{Boolean} forcedState], true will show the panel
              */
-            function togglePanel(forceState) {
-                var state = !_.isUndefined(forceState) ? forceState : self.getState('enabled');
-                if (state !== false) {
+            function togglePanel(forcedState) {
+
+                if(!_.isUndefined(forcedState)) {
+                    self.explicitlyHidden = !forcedState;
+                    if(forcedState === true) {
+                        self.navigator.show();
+                    }
+                    else {
+                        self.navigator.hide();
+                    }
+                    updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                }
+
+                else if (self.getState('enabled') !== false) {
                     if (self.navigator.is('hidden')) {
                         self.explicitlyHidden = false;
                         self.navigator.show();
-                    } else {
+                    }
+                    else {
                         self.explicitlyHidden = true;
                         self.navigator.hide();
                     }
-
                     updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
                 }
             }
@@ -276,7 +287,7 @@ define([
                 this.hide();
             }
 
-            togglePanel(!testConfig.review.defaultOpen);
+            togglePanel(testConfig.review.defaultOpen);
 
             //change plugin state
             testRunner
