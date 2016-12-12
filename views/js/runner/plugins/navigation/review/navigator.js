@@ -95,6 +95,9 @@ define([
         infoFlagged: '.qti-navigator-flagged .qti-navigator-counter',
         infoPanel: '.qti-navigator-info',
         infoPanelLabels: '.qti-navigator-info > .qti-navigator-label',
+        tabInfoAll: '[data-mode="all"] .qti-navigator-tab .qti-navigator-counter',
+        tabInfoUnanswered: '[data-mode="unanswered"] .qti-navigator-tab .qti-navigator-counter',
+        tabInfoFlagged: '[data-mode="flagged"] .qti-navigator-tab .qti-navigator-counter',
         parts: '.qti-navigator-part',
         partLabels: '.qti-navigator-part > .qti-navigator-label',
         sections: '.qti-navigator-section',
@@ -286,6 +289,8 @@ define([
             this.writeCount(this.controls.$infoUnanswered, totalQuestions - progression.answered, totalQuestions);
             this.writeCount(this.controls.$infoViewed, progression.viewed, this.getProgressionTotal(progression, 'total'));
             this.writeCount(this.controls.$infoFlagged, progression.flagged, totalQuestions);
+            this.writeCount(this.controls.$infoAll, totalQuestions, null);
+
 
             // rebuild the tree
             if (!context.isLinear) {
@@ -366,11 +371,16 @@ define([
          * Updates a counter
          * @param {jQuery} $place
          * @param {Number} count
-         * @param {Number} total
+         * @param {Number|Null} total
          * @private
          */
         writeCount: function writeCount($place, count, total) {
-            $place.text(count + '/' + total);
+            if($place.parent().hasClass('qti-navigator-tab')){
+                $place.text(count);
+            }
+            else {
+                $place.text(count + '/' + total);
+            }
         },
 
         /**
@@ -564,10 +574,16 @@ define([
                 // links the component to the underlying DOM elements
                 this.controls = {
                     // access to info panel displaying counters
+
                     $infoAnswered: $component.find(_selectors.infoAnswered),
                     $infoViewed: $component.find(_selectors.infoViewed),
-                    $infoUnanswered: $component.find(_selectors.infoUnanswered),
-                    $infoFlagged: $component.find(_selectors.infoFlagged),
+                    $infoAll: $component.find(_selectors.tabInfoAll),
+                    $infoUnanswered: this.config.showLegend ?
+                        $component.find(_selectors.infoUnanswered) :
+                        $component.find(_selectors.tabInfoUnanswered),
+                    $infoFlagged: this.config.showLegend ?
+                        $component.find(_selectors.infoFlagged) :
+                        $component.find(_selectors.tabInfoFlagged),
 
                     // access to filter switches
                     $filterBar: $filterBar,
@@ -681,6 +697,7 @@ define([
                         self.filter(mode);
                     }
                 });
+
             });
 
         // set default filter
