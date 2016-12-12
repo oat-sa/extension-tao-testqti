@@ -200,9 +200,12 @@ define([
 
             /**
              * Shows/hides the review panel
+             *
+             * @param [{Boolean} forceState]
              */
-            function togglePanel() {
-                if (self.getState('enabled') !== false) {
+            function togglePanel(forceState) {
+                var state = !_.isUndefined(forceState) ? forceState : self.getState('enabled');
+                if (state !== false) {
                     if (self.navigator.is('hidden')) {
                         self.explicitlyHidden = false;
                         self.navigator.show();
@@ -268,9 +271,12 @@ define([
             //disabled by default
             this.disable();
 
+
             if (!isEnabled()) {
                 this.hide();
             }
+
+            togglePanel(!testConfig.review.defaultOpen);
 
             //change plugin state
             testRunner

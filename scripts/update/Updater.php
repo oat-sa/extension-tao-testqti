@@ -844,21 +844,5 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.38.2', '5.38.4');
-
-
-
-        // add testrunner review screen config
-        if ($currentVersion == '5.38.4') {
-
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-
-            $extension->setConfig('testRunner', array_merge($config, array(
-                'test-taker-review-show-legend' => false,
-                'test-taker-review-default-open' => false,
-            )));
-
-            $this->setVersion('5.39.0');
-        }
     }
 }
