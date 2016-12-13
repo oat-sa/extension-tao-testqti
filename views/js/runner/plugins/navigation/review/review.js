@@ -268,13 +268,12 @@ define([
                 }
             }
 
-            //disabled by default
-            this.disable();
-
-
             if (!isEnabled()) {
                 this.hide();
             }
+
+            //disabled by default
+            this.disable();
 
             togglePanel(!testConfig.review.defaultOpen);
 
