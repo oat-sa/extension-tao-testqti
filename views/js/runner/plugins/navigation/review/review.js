@@ -147,7 +147,7 @@ define([
              * Tells if the component is enabled
              * @returns {Boolean}
              */
-            function isEnabled() {
+            function isPluginAllowed() {
                 var context = testRunner.getTestContext();
                 return navigatorConfig.enabled && context && context.options && context.options.reviewScreen;
             }
@@ -200,18 +200,17 @@ define([
 
             /**
              * Shows/hides the review panel
+             *
+             * @param [{Boolean} forcedState], true will show the panel
              */
-            function togglePanel() {
-                if (self.getState('enabled') !== false) {
-                    if (self.navigator.is('hidden')) {
-                        self.explicitlyHidden = false;
-                        self.navigator.show();
-                    } else {
-                        self.explicitlyHidden = true;
-                        self.navigator.hide();
-                    }
-
-                    updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+            function togglePanel(forcedState) {
+                var isHidden = _.isUndefined(forcedState) ? self.navigator.is('hidden') : forcedState;
+                if (isHidden) {
+                    self.explicitlyHidden = false;
+                    self.navigator.show();
+                } else {
+                    self.explicitlyHidden = true;
+                    self.navigator.hide();
                 }
             }
 
@@ -265,17 +264,19 @@ define([
                 }
             }
 
+            if (!isPluginAllowed()) {
+                this.hide();
+            }
+
             //disabled by default
             this.disable();
 
-            if (!isEnabled()) {
-                this.hide();
-            }
+            togglePanel(testConfig.review.defaultOpen);
 
             //change plugin state
             testRunner
                 .on('render', function () {
-                    if (isEnabled()) {
+                    if (isPluginAllowed()) {
                         self.show();
                         updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
                     } else {
@@ -286,7 +287,7 @@ define([
                     var context = testRunner.getTestContext();
                     var map = testRunner.getTestMap();
 
-                    if (isEnabled()) {
+                    if (isPluginAllowed()) {
                         updateButton(self.$flagItemButton, getFlagItemButtonData(context));
                         self.navigator
                             .update(map, context)
@@ -300,22 +301,22 @@ define([
                     }
                 })
                 .on('enabletools', function () {
-                    if (isEnabled()) {
+                    if (isPluginAllowed()) {
                         self.enable();
                     }
                 })
                 .on('disabletools', function () {
-                    if (isEnabled()) {
+                    if (isPluginAllowed()) {
                         self.disable();
                     }
                 })
                 .on('tool-flagitem', function () {
-                    if (isEnabled() && canFlag(testRunner)) {
+                    if (isPluginAllowed() && canFlag(testRunner)) {
                         flagCurrentItem();
                     }
                 })
                 .on('tool-reviewpanel', function () {
-                    if (isEnabled()) {
+                    if (isPluginAllowed() && self.getState('enabled')) {
                         togglePanel();
                     }
                 });
