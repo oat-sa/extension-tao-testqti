@@ -79,6 +79,20 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
+     * Show legend on review panel
+     *
+     * @type string
+     */
+    'test-taker-review-show-legend' => true,
+
+    /**
+     * Show review panel open on launch
+     *
+     * @type string
+     */
+    'test-taker-review-default-open' => true,
+
+    /**
      * Forces a unique title for all test items.
      * @type string
      */
@@ -388,6 +402,10 @@ return array(
         ],
         'previous' => [
             'trigger' => 'K'
+        ],
+        'dialog' => [
+            'accept' => 'Enter',
+            'reject' => 'Esc'
         ]
     ],
 );

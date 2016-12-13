@@ -20,6 +20,7 @@
  */
 define([
     'lodash',
+    'async',
     'helpers',
     'core/promise',
     'ui/dialog/alert',
@@ -27,7 +28,7 @@ define([
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/content/dialog/dialog'
-], function(_, helpers, Promise, dialogAlert, dialogConfirm, runnerFactory, providerMock, dialogFactory) {
+], function(_, async, helpers, Promise, dialogAlert, dialogConfirm, runnerFactory, providerMock, dialogFactory) {
     'use strict';
 
     var providerName = 'mock';
@@ -812,6 +813,118 @@ define([
                     assert.ok(false, 'The confirm message with namespace should not be accepted');
                 }, function() {
                     assert.ok(false, 'The confirm message with namespace should not be rejected');
+                });
+            })
+            .catch(function(err) {
+                console.log(err);
+                assert.ok(false, 'The init method must not fail');
+                QUnit.start();
+            });
+    });
+
+
+    QUnit.asyncTest('multiple dialogs', function(assert) {
+        var runner = runnerFactory(providerName);
+        var dialog = dialogFactory(runner, runner.getAreaBroker());
+        var expectedMessage = 'MyMessage';
+        var expectedAlertCount = 2;
+        var expectedConfirmCount = 2;
+        var stack = [];
+        var startPromises = [];
+        var endPromises = [];
+        var countAlert = 0;
+        var countConfirm = 0;
+
+        QUnit.expect(2 + expectedAlertCount*6 +expectedConfirmCount*6);
+
+
+        startPromises.push(new Promise(function(resolve) {
+            dialogConfirm.on('create', function(message) {
+                assert.ok(true, 'A confirm dialog has been created');
+                assert.equal(message, expectedMessage, 'The expected message has been displayed');
+
+                stack.push(this);
+                if (++countConfirm === expectedConfirmCount) {
+                    resolve();
+                }
+            });
+        }));
+
+        startPromises.push(new Promise(function(resolve) {
+            dialogAlert.on('create', function(message) {
+                assert.ok(true, 'An alert dialog has been created');
+                assert.equal(message, expectedMessage, 'The expected message has been displayed');
+
+                stack.push(this);
+                if (++countAlert === expectedAlertCount) {
+                    resolve();
+                }
+            });
+        }));
+
+
+        endPromises.push(new Promise(function(resolve) {
+            dialogConfirm.on('close', function() {
+                assert.ok(true, 'The confirm dialog has been closed');
+
+                assert.equal(stack.pop(), this, 'The right dialog has been closed');
+                if (--countConfirm === 0) {
+                    resolve();
+                }
+            });
+        }));
+
+        endPromises.push(new Promise(function(resolve) {
+            dialogAlert.on('close', function() {
+                assert.ok(true, 'The alert dialog has been closed');
+
+                assert.equal(stack.pop(), this, 'The right dialog has been closed');
+                if (--countAlert === 0) {
+                    resolve();
+                }
+            });
+        }));
+
+
+        Promise.all(startPromises).then(function() {
+            var count = stack.length;
+            async.timesSeries(count, function(n, next) {
+                runner.trigger('tool-dialog-accept');
+
+                _.delay(function() {
+                    assert.equal(stack.length, count - (n + 1), 'The remaining dialogs should be still open');
+                    next();
+                }, 250);
+            }, function() {
+                QUnit.start();
+            });
+
+            return Promise.all(endPromises).then(function() {
+                assert.ok(true, 'All dialogs have been closed');
+            });
+        }).catch(function(err) {
+            console.log(err);
+            assert.ok(false, 'The dialog create step should not fail');
+            QUnit.start();
+        });
+
+
+        dialog.init()
+            .then(function() {
+                assert.equal(dialog.getState('init'), true, 'The plugin is initialized');
+
+                _.times(expectedAlertCount, function() {
+                    runner.trigger('alert', expectedMessage, function() {
+                        assert.ok(true, 'The message has been read');
+                    });
+                });
+
+                _.times(expectedConfirmCount, function() {
+                    runner.trigger('confirm', expectedMessage, function() {
+                        assert.ok(true, 'The message has been accepted');
+                    }, function() {
+                        assert.ok(false, 'The message should not be rejected');
+                    });
                 });
             })
             .catch(function(err) {
