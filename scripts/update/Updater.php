@@ -924,5 +924,20 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('5.45.0', '5.46.2');
+
+        if ($this->isVersion('5.46.2')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['dialog'] = [
+                'accept' => 'Enter',
+                'reject' => 'Esc'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.47.0');
+        }
     }
 }

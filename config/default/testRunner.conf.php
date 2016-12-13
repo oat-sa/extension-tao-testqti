@@ -388,6 +388,10 @@ return array(
         ],
         'previous' => [
             'trigger' => 'K'
+        ],
+        'dialog' => [
+            'accept' => 'Enter',
+            'reject' => 'Esc'
         ]
     ],
 );
