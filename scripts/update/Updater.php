@@ -843,6 +843,20 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.38.2');
         }
 
-        $this->skip('5.38.2', '5.39.0');
+        $this->skip('5.38.2', '5.38.4');
+
+
+        if ($this->isVersion('5.38.4')) {
+
+            $qtiTest = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $qtiTest->getConfig('testRunner');
+            $config = array_merge($config, array(
+                'test-taker-review-show-legend' => true,
+                'test-taker-review-default-open' => true,
+            ));
+            $qtiTest->setConfig('testRunner', $config);
+
+            $this->setVersion('5.39.0');
+        }
     }
 }
