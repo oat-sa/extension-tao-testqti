@@ -856,7 +856,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ));
             $qtiTest->setConfig('testRunner', $config);
 
-            $this->setVersion('5.39.0');
+            $this->setVersion('5.38.5');
         }
     }
 }
