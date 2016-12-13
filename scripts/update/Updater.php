@@ -939,5 +939,18 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.47.0');
         }
+
+        if ($this->isVersion('5.47.0')) {
+
+            $qtiTest = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $qtiTest->getConfig('testRunner');
+            $config = array_merge($config, array(
+                'test-taker-review-show-legend' => true,
+                'test-taker-review-default-open' => true,
+            ));
+            $qtiTest->setConfig('testRunner', $config);
+
+            $this->setVersion('5.48.0');
+        }
     }
 }
