@@ -966,10 +966,6 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'select' => 'Enter'
             ];
 
-            if (isset($config['loop'])) {
-                unset($config['loop']);
-            }
-
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('5.48.1');
