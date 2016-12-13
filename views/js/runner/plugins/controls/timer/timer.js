@@ -215,6 +215,12 @@ define([
                     displayedTimers[type].destroy();
                     displayedTimers = _.omit(displayedTimers, type);
                     timers = _.omit(timers, type);
+
+                    /**
+                     * @event timerPlugin#removetimer
+                     * @param {String} type of timer (such as 'assessmentSection', 'testPart' etc.)
+                     */
+                    self.trigger('removetimer', type);
                 }
             };
 

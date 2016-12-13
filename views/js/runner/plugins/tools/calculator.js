@@ -30,13 +30,15 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 
     var _default = {
         height : 360,
-        width : 240
+        width : 240,
+        top : 50,
+        left : 10
     };
 
     /**
@@ -90,24 +92,15 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        self.calculator = calculatorFactory({
+                        self.calculator = calculatorFactory(_.defaults({
                             renderTo: self.$calculatorContainer,
                             replace: true,
-                            draggableContainer: areaBroker.getContainer().find('.test-runner-sections')[0],
-                            width: _default.width,
-                            height: _default.height
-                        }).on('show', function () {
+                            draggableContainer: areaBroker.getContainer()
+                        }, _default)).on('show', function () {
                             self.trigger('open');
                         }).on('hide', function () {
                             self.trigger('close');
-                        });
-
-                        //set initial position on init
-                        self.calculator.show().getElement().css({
-                            left: self.$button.offset().left,
-                            top: 'auto',
-                            bottom: 45
-                        });
+                        }).show();
                     }
                 }
             }

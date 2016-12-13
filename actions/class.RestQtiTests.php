@@ -16,11 +16,14 @@
  *
  */
 
+use oat\taoQtiTest\models\tasks\ImportQtiTest;
+use oat\oatbox\task\Task;
+
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
+class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
 {
     private static $accepted_types = array(
         'application/zip',
@@ -34,13 +37,6 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
         $this->returnFailure(new \common_exception_NotImplemented('This API does not support this call.'));
     }
     
-    public function __construct()
-    {
-        parent::__construct();
-        // The service that implements or inherits get/getAll/getRootClass ... for that particular type of resources
-        $this->service = taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-    }
-
     /**
      * Import file entry point by using $this->service
      * Check POST method & get valid uploaded file
@@ -57,26 +53,113 @@ class taoQtiTest_actions_RestQtiTests extends tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 $this->returnFailure(new common_exception_BadRequest());
             } else {
-                $report = $this->service->importQtiTest($file['tmp_name']);
-                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
-                    $data = array();
-                    foreach ($report as $r) {
-                        $values = $r->getData();
-                        $testid = $values->rdfsResource->getUri();
-                        foreach ($values->items as $item) {
-                            $itemsid[] = $item->getUri();
-                        }
-                        $data[] = array(
-                            'testId' => $testid,
-                            'testItems' => $itemsid);
+                $task = ImportQtiTest::createTask($file);
+                $result = [
+                    'reference_id' => $task->getId()
+                ];
+                $report = $task->getReport();
+                if (!empty($report)) {
+                    if ($report instanceof \common_report_Report) {
+                        //serialize report to array
+                        $report = json_encode($report);
+                        $report = json_decode($report);
                     }
-                    return $this->returnSuccess($data);
-                } else {
-                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
+                    $result['report'] = $report;
                 }
+                return $this->returnSuccess($result);
             }
         } else {
             return $this->returnFailure(new common_exception_BadRequest());
         }
+    }
+
+    /**
+     * Action to retrieve test import status from queue
+     */
+    public function getStatus()
+    {
+        try {
+            if (!$this->hasRequestParameter(self::TASK_ID_PARAM)) {
+                throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
+            }
+            $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
+            $this->returnSuccess($data);
+        } catch (\Exception $e) {
+            $this->returnFailure($e);
+        }
+    }
+
+    /**
+     * @param Task $taskId
+     * @return Task
+     * @throws common_exception_BadRequest
+     */
+    protected function getTask($taskId)
+    {
+        $task =  parent::getTask($taskId);
+        if ($task->getInvocable() !== 'oat\taoQtiTest\models\tasks\ImportQtiTest') {
+            throw new \common_exception_BadRequest("Wrong task type");
+        }
+        return $task;
+    }
+
+    /**
+     * @param Task $task
+     * @return string
+     */
+    protected function getTaskStatus(Task $task)
+    {
+        $report = $task->getReport();
+        if (in_array(
+            $task->getStatus(),
+            [Task::STATUS_CREATED, Task::STATUS_RUNNING, Task::STATUS_STARTED])
+        ) {
+            $result = 'In Progress';
+        } else if ($report) {
+            $report = \common_report_Report::jsonUnserialize($report);
+            $plainReport = $this->getPlainReport($report);
+            $success = true;
+            foreach ($plainReport as $r) {
+                $success = $success && $r->getType() != \common_report_Report::TYPE_ERROR;
+            }
+            $result = $success ? 'Success' : 'Failed';
+        }
+        return $result;
+    }
+
+    /**
+     * @param Task $task
+     * @return array
+     */
+    protected function getTaskReport(Task $task)
+    {
+        $report = \common_report_Report::jsonUnserialize($task->getReport());
+        $result = [];
+        if ($report) {
+            $plainReport = $this->getPlainReport($report);
+            foreach ($plainReport as $r) {
+                $result[] = [
+                    'type' => $r->getType(),
+                    'message' => $r->getMessage(),
+                ];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param $report
+     * @return array
+     */
+    private function getPlainReport($report)
+    {
+        $result = [];
+        $result[] = $report;
+        if ($report->hasChildren()) {
+            foreach ($report as $r) {
+                $result = array_merge($result, $this->getPlainReport($r));
+            }
+        }
+        return $result;
     }
 }
