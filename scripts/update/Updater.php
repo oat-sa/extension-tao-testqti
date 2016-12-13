@@ -932,7 +932,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $config['shortcuts']['dialog'] = [
                 'accept' => 'Enter',
-                'reject' => 'X'
+                'reject' => 'Esc'
             ];
 
             $extension->setConfig('testRunner', $config);

@@ -391,7 +391,7 @@ return array(
         ],
         'dialog' => [
             'accept' => 'Enter',
-            'reject' => 'X'
+            'reject' => 'Esc'
         ]
     ],
 );
