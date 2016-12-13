@@ -32,11 +32,13 @@ use oat\taoItems\model\ItemCompilerIndex;
 class QtiTestCompilerIndex implements ItemCompilerIndex
 {
     /**
+     * The index of compiled items, keys are the items identifiers
      * @var array
      */
     private $index = [];
 
     /**
+     * Stores context info of a compiled Item into the index
      * @param string $id
      * @param string $language
      * @param mixed $data
@@ -49,6 +51,7 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
     }
 
     /**
+     * Gets context info of a compiled Item
      * @param string $id
      * @param string $language
      * @return mixed
@@ -62,6 +65,23 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
     }
 
     /**
+     * Gets a particular value from context info of a compiled Item
+     * @param string $id
+     * @param string $language
+     * @param string $name
+     * @return mixed
+     */
+    public function getItemValue($id, $language, $name)
+    {
+        $attributes = $this->getItem($id, $language);
+        if ($attributes && isset($attributes[$name])) {
+            return $attributes[$name];
+        }
+        return null;
+    }
+
+    /**
+     * Unpacks index from a string
      * @param string $data
      * @param string $language
      * @throws \common_exception_InconsistentData
@@ -86,6 +106,7 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
     }
 
     /**
+     * Packs the index into a string
      * @param string $language
      * @return string
      */

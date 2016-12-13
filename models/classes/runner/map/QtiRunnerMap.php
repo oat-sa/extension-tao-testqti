@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models\runner\map;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -39,9 +40,20 @@ class QtiRunnerMap implements RunnerMap
      * @param RunnerServiceContext $context The test context
      * @param RunnerConfig $config The runner config
      * @return mixed
+     * @throws \common_exception_InvalidArgumentType
      */
     public function getMap(RunnerServiceContext $context, RunnerConfig $config)
     {
+        if (!($context instanceof QtiRunnerServiceContext)) {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerMap',
+                'getMap',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
+        
         $map = [
             'parts' => [],
             'jumps' => []
@@ -51,6 +63,7 @@ class QtiRunnerMap implements RunnerMap
         $reviewConfig = $config->getConfigValue('review');
         $checkInformational = $config->getConfigValue('checkInformational');
         $forceTitles = !empty($reviewConfig['forceTitle']);
+        $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         
         /* @var AssessmentTestSession $session */
@@ -94,7 +107,19 @@ class QtiRunnerMap implements RunnerMap
                 if ($forceTitles) {
                     $label = sprintf($uniqueTitle, $offsetSection + 1);
                 } else {
-                    $label = $item->getLabel();
+                    if ($useTitle) {
+                        $label = $context->getItemIndexValue($itemId, 'title');
+                    } else {
+                        $label = '';
+                    }
+                    
+                    if (!$label) {
+                        $label = $context->getItemIndexValue($itemId, 'label');
+                    }
+                    
+                    if (!$label) {
+                        $label = $item->getLabel();
+                    }
                 }
                 
                 $itemInfos = [

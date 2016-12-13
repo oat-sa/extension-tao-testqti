@@ -37,10 +37,16 @@ class QtiRunnerConfig implements RunnerConfig
     protected $config;
 
     /**
+     * The test runner currently activated options
+     * @var array
+     */
+    protected $options;
+
+    /**
      * Returns the config of the test runner
      * @return mixed
      */
-    protected function mapConfig() {
+    protected function buildConfig() {
         // get the raw server config, using the old notation
         $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
 
@@ -55,6 +61,7 @@ class QtiRunnerConfig implements RunnerConfig
             'review' => [
                 'enabled' => !empty($rawConfig['test-taker-review']),
                 'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
+                'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
                 'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
                 'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
                 'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
@@ -87,7 +94,7 @@ class QtiRunnerConfig implements RunnerConfig
     {
         if (is_null($this->config)) {
             // build the test config using the new notation
-            $this->config = $this->mapConfig();
+            $this->config = $this->buildConfig();
         }
         return $this->config;
     }
@@ -111,7 +118,7 @@ class QtiRunnerConfig implements RunnerConfig
      * @param RunnerServiceContext $context The test context
      * @return mixed
      */
-    public function getOptions(RunnerServiceContext $context)
+    protected function buildOptions(RunnerServiceContext $context)
     {
         $session = $context->getTestSession();
 
@@ -138,5 +145,19 @@ class QtiRunnerConfig implements RunnerConfig
         }
 
         return $options;
+    }
+    
+    /**
+     * Returns the options related to the current test context
+     * @param RunnerServiceContext $context The test context
+     * @return mixed
+     */
+    public function getOptions(RunnerServiceContext $context)
+    {
+        if (is_null($this->options)) {
+            // build the test config using the new notation
+            $this->options = $this->buildOptions($context);
+        }
+        return $this->options;
     }
 }

@@ -79,6 +79,12 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
+     * Use item title instead of item label.
+     * @type string
+     */
+    'test-taker-review-use-title' => true,
+
+    /**
      * Forces a unique title for all test items.
      * @type string
      */
