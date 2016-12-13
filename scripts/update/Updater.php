@@ -911,7 +911,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'out' => 'Shift+O',
                 'close' => 'esc'
             ];
-            
+
             $config['plugins']['magnifier'] = [
                 'zoomMin' => 2,
                 'zoomMax' => 8,
@@ -922,7 +922,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.45.0');
         }
-        
+
         $this->skip('5.45.0', '5.46.2');
 
         if ($this->isVersion('5.46.2')) {
@@ -952,5 +952,29 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.48.0');
         }
+
+        if ($this->isVersion('5.48.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['itemThemeSwitcher'] = [
+                'toggle' => 'T',
+                'up' => 'ArrowUp',
+                'down' => 'ArrowDown',
+                'select' => 'Enter'
+            ];
+
+            if (isset($config['loop'])) {
+                unset($config['loop']);
+            }
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.48.1');
+        }
+
+
     }
 }

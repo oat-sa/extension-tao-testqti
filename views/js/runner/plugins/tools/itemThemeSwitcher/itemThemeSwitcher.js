@@ -83,13 +83,26 @@ define([
             /**
              * Move the hovered index to the next available index
              */
-            function loopThroughMenuEntries() {
+            function moveDown() {
                 state.hoveredIndex++;
                 if (state.hoveredIndex === state.availableThemes.length) {
                     state.hoveredIndex = 0;
                 }
                 highlightMenuEntry();
             }
+
+            /**
+             * Move the hovered index to the next previous available index
+             */
+            function moveUp() {
+                state.hoveredIndex--;
+                if (state.hoveredIndex < 0) {
+                    state.hoveredIndex = state.availableThemes.length - 1;
+                }
+                highlightMenuEntry();
+            }
+
+
 
             /**
              * highlight the currently hovered menu entry
@@ -173,9 +186,16 @@ define([
                         avoidInput: true
                     });
                 }
-                if (pluginShortcuts.loop) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.loop, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-loop');
+                if (pluginShortcuts.up) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.up, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher-up');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+                if (pluginShortcuts.down) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.down, this.getName(), true), function () {
+                        testRunner.trigger('tool-themeswitcher-down');
                     }, {
                         avoidInput: true
                     });
@@ -215,9 +235,14 @@ define([
                         }
                     }
                 })
-                .on('tool-themeswitcher-loop', function () {
+                .on('tool-themeswitcher-up', function () {
                     if (!hider.isHidden(self.$menu)) {
-                        loopThroughMenuEntries();
+                        moveUp();
+                    }
+                })
+                .on('tool-themeswitcher-down', function () {
+                    if (!hider.isHidden(self.$menu)) {
+                        moveDown();
                     }
                 })
                 .on('tool-themeswitcher-select', function() {
