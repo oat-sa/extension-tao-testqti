@@ -102,14 +102,37 @@ define([
                 highlightMenuEntry();
             }
 
-
-
             /**
              * highlight the currently hovered menu entry
              */
             function highlightMenuEntry() {
                 self.$menuItems.removeClass('hover');
                 self.$menuItems.eq(state.hoveredIndex).addClass('hover');
+            }
+
+            /**
+             * register plugin's own shortcuts
+             */
+            function registerInnerShortcuts() {
+                var shortcuts = ['up', 'down', 'select'];
+                if (testConfig.allowShortcuts) {
+                    shortcuts.forEach(function (shortcutId) {
+                        shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts[shortcutId], self.getName(), true), function () {
+                            testRunner.trigger('tool-themeswitcher-' + shortcutId);
+                        }, {
+                            avoidInput: true
+                        });
+                    });
+                }
+            }
+
+            /**
+             * unregister plugin's own shortcuts
+             */
+            function unregisterInnerShortcuts() {
+                shortcut.remove('up.' + self.getName());
+                shortcut.remove('down.' + self.getName());
+                shortcut.remove('select.' + self.getName());
             }
 
             /**
@@ -186,27 +209,6 @@ define([
                         avoidInput: true
                     });
                 }
-                if (pluginShortcuts.up) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.up, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-up');
-                    }, {
-                        avoidInput: true
-                    });
-                }
-                if (pluginShortcuts.down) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.down, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-down');
-                    }, {
-                        avoidInput: true
-                    });
-                }
-                if (pluginShortcuts.select) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.select, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-select');
-                    }, {
-                        avoidInput: true
-                    });
-                }
             }
 
             //start disabled
@@ -231,7 +233,10 @@ define([
                     if (self.getState('enabled') !== false) {
                         hider.toggle(self.$menu);
                         if (!hider.isHidden(self.$menu)) {
+                            registerInnerShortcuts();
                             self.$menu.focus();
+                        } else {
+                            unregisterInnerShortcuts();
                         }
                     }
                 })
@@ -249,6 +254,7 @@ define([
                     if (!hider.isHidden(self.$menu)) {
                         changeTheme(state.availableThemes[state.hoveredIndex].id);
                         hider.toggle(self.$menu);
+                        unregisterInnerShortcuts();
                     }
                 });
         },
