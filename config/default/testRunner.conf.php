@@ -79,6 +79,20 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
+     * Show legend on review panel
+     *
+     * @type string
+     */
+    'test-taker-review-show-legend' => true,
+
+    /**
+     * Show review panel open on launch
+     *
+     * @type string
+     */
+    'test-taker-review-default-open' => true,
+
+    /**
      * Use item title instead of item label.
      * @type string
      */

@@ -63,6 +63,8 @@ class QtiRunnerConfig implements RunnerConfig
                 'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
                 'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
                 'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
+                'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
+                'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
                 'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
                 'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
                 'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
