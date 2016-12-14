@@ -25,7 +25,7 @@
  *
  */
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
- 
+
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
 
