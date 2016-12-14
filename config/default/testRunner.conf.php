@@ -386,8 +386,9 @@ return array(
         ],
         'itemThemeSwitcher' => [
             'toggle' => 'T',
-            'loop' => 'Y',
-            'select' => 'U'
+            'up' => 'ArrowUp',
+            'down' => 'ArrowDown',
+            'select' => 'Enter'
         ],
         'review' => [
             'toggle' => 'R',
