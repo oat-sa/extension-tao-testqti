@@ -922,7 +922,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.45.0');
         }
-        
-        $this->skip('5.45.0', '5.46.2');
+
+        $this->skip('5.45.0', '5.47.0');
     }
 }
