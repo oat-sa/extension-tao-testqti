@@ -35,6 +35,7 @@ use qtism\data\SubmissionMode;
 use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
+use oat\taoQtiTest\models\QtiTestCompilerIndex;
 
 /**
  * Runs a QTI Test.
@@ -95,6 +96,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * @var array
      */
     private $testMeta;
+
+    /**
+     * The index of compiled items.
+     *
+     * @var QtiTestCompilerIndex
+     */
+    private $itemIndex;
     
     /**
      * Testr session metadata manager
@@ -223,6 +231,24 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	}
 
     /**
+     * @return QtiTestCompilerIndex
+     */
+    protected function getItemIndex()
+    {
+        return $this->itemIndex;
+    }
+
+    /**
+     * @param QtiTestCompilerIndex $itemIndex
+     * @return taoQtiTest_actions_TestRunner
+     */
+    protected function setItemIndex($itemIndex)
+    {
+        $this->itemIndex = $itemIndex;
+        return $this;
+    }
+
+    /**
      * Print an error report into the response.
      * After you have called this method, you must prevent other actions to be processed and must close the response.
      * @param string $message
@@ -288,6 +314,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $sessionStateService->resumeSession($session);
 
         $this->retrieveTestMeta();
+        $this->retrieveItemIndex();
         
         // Prevent anything to be cached by the client.
         taoQtiTest_helpers_TestRunnerUtils::noHttpClientCache();
@@ -324,6 +351,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Build assessment test context.
         $ctx = taoQtiTest_helpers_TestRunnerUtils::buildAssessmentTestContext($this->getTestSession(),
                                                                               $this->getTestMeta(),
+                                                                              $this->getItemIndex(),
 	                                                                          $this->getRequestParameter('QtiTestDefinition'),
 	                                                                          $this->getRequestParameter('QtiTestCompilation'),
 	                                                                          $this->getRequestParameter('standalone'),
@@ -848,6 +876,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * into the private compilation directory.
      *
      * @return array
+     * @throws common_exception_InconsistentData
      */
     protected function retrieveTestMeta()
     {
@@ -863,6 +892,25 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $data = str_replace('?>', '', $data);
         $meta = eval($data);
         $this->setTestMeta($meta);
+    }
+
+    /**
+     * Retrieves the index of compiled items.
+     */
+    protected function retrieveItemIndex()
+    {
+        $this->setItemIndex(new QtiTestCompilerIndex());
+        try {
+            $directories = $this->getCompilationDirectory();
+            /** @var tao_models_classes_service_StorageDirectory $privateDirectory */
+            $privateDirectory = $directories['private'];
+            $data = $privateDirectory->read(TAOQTITEST_COMPILED_INDEX);
+            if ($data) {
+                $this->getItemIndex()->unserialize($data);
+            }
+        } catch(\Exception $e) {
+            \common_Logger::i('Ignoring file not found exception for Items Index');
+        }
     }
 
 	protected function handleAssessmentTestSessionException(AssessmentTestSessionException $e) {

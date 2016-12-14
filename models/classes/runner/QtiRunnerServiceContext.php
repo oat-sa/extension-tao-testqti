@@ -191,7 +191,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
      */
-    protected function retrieveTestMeta() {
+    protected function retrieveTestMeta() 
+    {
         $directories = $this->getCompilationDirectory();
         $data = $directories['private']->read(TAOQTITEST_COMPILED_META_FILENAME);
         $data = str_replace('<?php', '', $data);
@@ -202,7 +203,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Retrieves the index of compiled items.
      */
-    protected function retrieveItemIndex() {
+    protected function retrieveItemIndex() 
+    {
         $this->itemIndex = new QtiTestCompilerIndex();
         try {
             $directories = $this->getCompilationDirectory();
@@ -304,7 +306,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @return mixed
      * @throws \common_exception_Error
      */
-    public function getItemIndex($id) {
+    public function getItemIndex($id) 
+    {
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
     }
 
@@ -315,7 +318,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @return mixed
      * @throws \common_exception_Error
      */
-    public function getItemIndexValue($id, $name) {
+    public function getItemIndexValue($id, $name) 
+    {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
 }
