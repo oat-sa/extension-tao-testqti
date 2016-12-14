@@ -939,5 +939,17 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.47.0');
         }
+        
+        if ($this->isVersion('5.47.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['test-taker-review-use-title'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.48.0');
+        }
     }
 }
