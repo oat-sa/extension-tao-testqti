@@ -108,13 +108,13 @@ class QtiRunnerMap implements RunnerMap
                     $label = sprintf($uniqueTitle, $offsetSection + 1);
                 } else {
                     if ($useTitle) {
-                        $label = $context->getItemIndexValue($itemId, 'title');
+                        $label = $context->getItemIndexValue($itemUri, 'title');
                     } else {
                         $label = '';
                     }
                     
                     if (!$label) {
-                        $label = $context->getItemIndexValue($itemId, 'label');
+                        $label = $context->getItemIndexValue($itemUri, 'label');
                     }
                     
                     if (!$label) {
