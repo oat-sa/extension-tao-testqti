@@ -953,7 +953,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.48.0');
         }
 
-        if ($this->isVersion('5.48.0')) {
+        $this->skip('5.48.0', '5.49.0');
+
+        if ($this->isVersion('5.49.0')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
@@ -968,9 +970,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('5.48.1');
+            $this->setVersion('5.49.1');
         }
-
-
     }
 }

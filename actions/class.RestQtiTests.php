@@ -18,13 +18,21 @@
 
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\oatbox\task\Task;
+use oat\tao\model\TaskQueueActionTrait;
 
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
+class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
 {
+    use TaskQueueActionTrait {
+        getTask as parentGetTask;
+        getTaskData as traitGetTaskData;
+    }
+
+    const TASK_ID_PARAM = 'id';
+
     private static $accepted_types = array(
         'application/zip',
         'application/x-zip-compressed',
@@ -90,13 +98,31 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
     }
 
     /**
+     * @param $taskId
+     * @return array
+     */
+    protected function getTaskData($taskId)
+    {
+        $data = $this->traitGetTaskData($taskId);
+        $task = $this->getTask($taskId);
+        $report = \common_report_Report::jsonUnserialize($task->getReport());
+        $plainReport = $this->getPlainReport($report);
+
+        //the third report is report of import test
+        if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
+            $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
+        }
+        return $data;
+    }
+
+    /**
      * @param Task $taskId
      * @return Task
      * @throws common_exception_BadRequest
      */
     protected function getTask($taskId)
     {
-        $task =  parent::getTask($taskId);
+        $task = $this->parentGetTask($taskId);
         if ($task->getInvocable() !== 'oat\taoQtiTest\models\tasks\ImportQtiTest') {
             throw new \common_exception_BadRequest("Wrong task type");
         }
@@ -142,22 +168,6 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_TaskQueue
                     'type' => $r->getType(),
                     'message' => $r->getMessage(),
                 ];
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param $report
-     * @return array
-     */
-    private function getPlainReport($report)
-    {
-        $result = [];
-        $result[] = $report;
-        if ($report->hasChildren()) {
-            foreach ($report as $r) {
-                $result = array_merge($result, $this->getPlainReport($r));
             }
         }
         return $result;
