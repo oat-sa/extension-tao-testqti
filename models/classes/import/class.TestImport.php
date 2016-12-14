@@ -64,7 +64,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
 
                 /** @var  UploadService $uploadService */
                 $uploadService = ServiceManager::getServiceManager()->get(UploadService::SERVICE_ID);
-                $uploadedFile = $uploadService->getLocalCopy($fileInfo['uploaded_file']);
+                $uploadedFile = $uploadService->getUploadedFile($fileInfo['uploaded_file']);
 
                 // The zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
