@@ -765,7 +765,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         foreach ($jumps as $jump) {
             $routeItem = $jump->getTarget();
             $partId = $routeItem->getTestPart()->getIdentifier();
-            $sectionId = key(current($routeItem->getAssessmentSections()));
+            $sections = $routeItem->getAssessmentSections();
+            $sections->rewind();
+            $sectionId = key(current($sections));
             $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
 
             $jumpsMap[$partId][$sectionId][$itemId] = self::getItemInfo($session, $jump);
