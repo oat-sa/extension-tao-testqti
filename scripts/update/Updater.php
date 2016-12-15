@@ -954,7 +954,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.48.0', '5.49.0');
-        
+
         if ($this->isVersion('5.49.0')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -972,7 +972,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.49.1');
         }
-        
+
         if ($this->isVersion('5.49.1')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
@@ -984,5 +984,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.50.0');
         }
+
+        $this->skip('5.50.0', '5.50.1');
     }
 }

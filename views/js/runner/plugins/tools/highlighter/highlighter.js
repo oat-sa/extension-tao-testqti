@@ -31,11 +31,6 @@ define([
     highlighterFactory
 ) {
     'use strict';
-    var selection;
-
-    if (!window.getSelection) throw new Error('Browser does not support getSelection()');
-
-    selection = window.getSelection();
 
     /**
      * Returns an array of active ranges.
@@ -45,7 +40,8 @@ define([
      * @returns {Range[]}
      */
     function getAllRanges() {
-        var i, allRanges = [];
+        var i, allRanges = [],
+            selection = window.getSelection();
 
         for (i = 0; i < selection.rangeCount; i++) {
             allRanges.push(selection.getRangeAt(i));
@@ -81,6 +77,7 @@ define([
 
         // add event to automatically highlight the recently made selection if needed
         $(document).on('mouseup.highlighter', function() {
+            var selection = window.getSelection();
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
                 selection.removeAllRanges();
@@ -108,6 +105,7 @@ define([
              * Either highlight the current or selection, or toggle highlighting mode
              */
             trigger: function trigger() {
+                var selection = window.getSelection();
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
                         highlightHelper.highlightRanges(getAllRanges());
@@ -147,6 +145,7 @@ define([
              * remove all highlights
              */
             clearHighlights: function clearHighlights() {
+                var selection = window.getSelection();
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
             }
