@@ -31,6 +31,7 @@ $todefine = array(
    'TAOQTITEST_FILENAME' => 'tao-qtitest-testdefinition.xml',
    'TAOQTITEST_COMPILED_FILENAME' => 'compact-test.php',
    'TAOQTITEST_COMPILED_META_FILENAME' => 'test-meta.php',
+   'TAOQTITEST_COMPILED_INDEX' => 'test-index.json',
    'TAOQTITEST_REMOTE_FOLDER' => 'tao-qtitest-remote',
    'TAOQTITEST_RENDERING_STATE_NAME' => 'taoQtiTestState',
    'TAOQTITEST_BASE_PATH_NAME' => 'taoQtiBasePath',

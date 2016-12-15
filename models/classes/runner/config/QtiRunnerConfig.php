@@ -37,50 +37,66 @@ class QtiRunnerConfig implements RunnerConfig
     protected $config;
 
     /**
+     * The test runner currently activated options
+     * @var array
+     */
+    protected $options;
+
+    /**
+     * Returns the config of the test runner
+     * @return mixed
+     */
+    protected function buildConfig() {
+        // get the raw server config, using the old notation
+        $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+        // build the test config using the new notation
+        return [
+            'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+            'progressIndicator' => [
+                'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
+                'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
+                'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
+            ],
+            'review' => [
+                'enabled' => !empty($rawConfig['test-taker-review']),
+                'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
+                'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
+                'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
+                'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
+                'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
+                'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
+                'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
+                'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
+            ],
+            'exitButton' => !empty($rawConfig['exitButton']),
+            'nextSection' => !empty($rawConfig['next-section']),
+            'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
+            'security' => [
+                'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
+            ],
+            'timer' => [
+                'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
+                'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
+                'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
+            ],
+            'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
+            'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
+            'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
+            'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
+            'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
+        ];
+    }
+
+    /**
      * Returns the config of the test runner
      * @return mixed
      */
     public function getConfig()
     {
         if (is_null($this->config)) {
-            // get the raw server config, using the old notation
-            $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-
             // build the test config using the new notation
-            $this->config = [
-                'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
-                'progressIndicator' => [
-                    'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
-                    'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
-                    'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
-                ],
-                'review' => [
-                    'enabled' => !empty($rawConfig['test-taker-review']),
-                    'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
-                    'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
-                    'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
-                    'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
-                    'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
-                    'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
-                    'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
-                ],
-                'exitButton' => !empty($rawConfig['exitButton']),
-                'nextSection' => !empty($rawConfig['next-section']),
-                'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
-                'security' => [ 
-                    'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
-                ],
-                'timer' => [
-                    'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
-                    'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
-                    'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
-                ],
-                'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
-                'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
-                'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
-                'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
-                'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
-            ];
+            $this->config = $this->buildConfig();
         }
         return $this->config;
     }
@@ -104,7 +120,7 @@ class QtiRunnerConfig implements RunnerConfig
      * @param RunnerServiceContext $context The test context
      * @return mixed
      */
-    public function getOptions(RunnerServiceContext $context)
+    protected function buildOptions(RunnerServiceContext $context)
     {
         $session = $context->getTestSession();
 
@@ -131,5 +147,19 @@ class QtiRunnerConfig implements RunnerConfig
         }
 
         return $options;
+    }
+    
+    /**
+     * Returns the options related to the current test context
+     * @param RunnerServiceContext $context The test context
+     * @return mixed
+     */
+    public function getOptions(RunnerServiceContext $context)
+    {
+        if (is_null($this->options)) {
+            // build the test config using the new notation
+            $this->options = $this->buildOptions($context);
+        }
+        return $this->options;
     }
 }
