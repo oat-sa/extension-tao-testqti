@@ -108,8 +108,8 @@ define([
                              */
                             self.trigger('magnifier-zoom', level);
                         })
-                        .render($container.parent())
-                        .setTarget($container);
+                        .setTarget($container)
+                        .render($container.parent());
 
                     /**
                      * @event plugin-magnifier-create.magnifier

@@ -107,6 +107,7 @@ define([
         var maxRatio = parseFloat(initConfig.maxRatio);
         var baseSize = parseInt(initConfig.baseSize, 10);
         var zoomSize = baseSize * zoomLevel;
+        var $initTarget = null;
         var controls = null;
         var observer = null;
         var targetWidth, targetHeight, dx, dy;
@@ -142,6 +143,7 @@ define([
             setTarget: function setTarget($newTarget) {
                 if (controls) {
                     controls.$target = $newTarget;
+                    controls.$viewTarget = null;
 
                     setScrollingListener();
 
@@ -152,6 +154,8 @@ define([
                     this.trigger('targetchange', controls.$target);
 
                     this.update();
+                } else {
+                    $initTarget = $newTarget;
                 }
 
                 return this;
@@ -559,10 +563,12 @@ define([
                 dy = ($component.outerHeight() - $component.height()) / 2;
 
                 controls = {
+                    $target: $initTarget,
                     $inner: $('.inner', $component),
                     $zoomLevel: $('.level', $component),
                     $overlay: $('.overlay', $component)
                 };
+                $initTarget = null;
 
                 // click on zoom-in or zoom-out controls
                 $component.on('click', '.control', function (event) {
@@ -612,6 +618,7 @@ define([
             })
             .on('destroy', function () {
                 stopObserver();
+                $initTarget = null;
                 controls = null;
                 observer = null;
             })
