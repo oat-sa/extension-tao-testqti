@@ -44,12 +44,58 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     {
         $this->returnFailure(new \common_exception_NotImplemented('This API does not support this call.'));
     }
-    
+
+    public function __construct()
+    {
+        parent::__construct();
+        // The service that implements or inherits get/getAll/getRootClass ... for that particular type of resources
+        $this->service = taoQtiTest_models_classes_CrudQtiTestsService::singleton();
+    }
+
     /**
      * Import file entry point by using $this->service
      * Check POST method & get valid uploaded file
      */
     public function import()
+    {
+        $fileUploadName = "qtiPackage";
+        if ($this->getRequestMethod() != Request::HTTP_POST) {
+            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+        }
+        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+            $file = tao_helpers_Http::getUploadedFile($fileUploadName);
+            $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
+            if (!in_array($mimeType, self::$accepted_types)) {
+                $this->returnFailure(new common_exception_BadRequest());
+            } else {
+                $report = $this->service->importQtiTest($file['tmp_name']);
+                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
+                    $data = array();
+                    foreach ($report as $r) {
+                        $values = $r->getData();
+                        $testid = $values->rdfsResource->getUri();
+                        foreach ($values->items as $item) {
+                            $itemsid[] = $item->getUri();
+                        }
+                        $data[] = array(
+                            'testId' => $testid,
+                            'testItems' => $itemsid);
+                    }
+                    return $this->returnSuccess($data);
+                } else {
+                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
+                }
+            }
+        } else {
+            return $this->returnFailure(new common_exception_BadRequest());
+        }
+    }
+
+    /**
+     * Import test package through the task queue.
+     * Check POST method & get valid uploaded file
+     */
+    public function importDeferred()
     {
         $fileUploadName = "qtiPackage";
         if ($this->getRequestMethod() != Request::HTTP_POST) {
