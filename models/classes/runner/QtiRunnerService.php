@@ -107,38 +107,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
-     * Get the data folder from a given item definition
-     * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
-     * @return string the path
-     * @throws \common_Exception
-     */
-    private function getItemDataFolder($itemRef)
-    {
-        $directoryIds = explode('|', $itemRef);
-        if (count($directoryIds) < 3) {
-            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
-        }
-
-        $itemUri = $directoryIds[0];
-        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
-
-        $dirPath = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2])->getPath();
-        if (file_exists($dirPath . $userDataLang)) {
-            return $dirPath . $userDataLang . DIRECTORY_SEPARATOR;
-        } elseif (file_exists($dirPath . DEFAULT_LANG)) {
-            \common_Logger::i(
-                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
-            );
-
-            return $dirPath . DEFAULT_LANG . DIRECTORY_SEPARATOR;
-        } else {
-            throw new \common_Exception(
-                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
-            );
-        }
-    }
-
-    /**
      * Gets the test session for a particular delivery execution
      * @param string $testDefinitionUri The URI of the test
      * @param string $testCompilationUri The URI of the compiled delivery

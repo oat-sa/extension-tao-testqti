@@ -79,6 +79,26 @@ return array(
     'test-taker-review-region' => 'left',
 
     /**
+     * Show legend on review panel
+     *
+     * @type string
+     */
+    'test-taker-review-show-legend' => true,
+
+    /**
+     * Show review panel open on launch
+     *
+     * @type string
+     */
+    'test-taker-review-default-open' => true,
+
+    /**
+     * Use item title instead of item label.
+     * @type string
+     */
+    'test-taker-review-use-title' => true,
+
+    /**
      * Forces a unique title for all test items.
      * @type string
      */
@@ -372,8 +392,9 @@ return array(
         ],
         'itemThemeSwitcher' => [
             'toggle' => 'T',
-            'loop' => 'Y',
-            'select' => 'U'
+            'up' => 'ArrowUp',
+            'down' => 'ArrowDown',
+            'select' => 'Enter'
         ],
         'review' => [
             'toggle' => 'R',
@@ -388,6 +409,10 @@ return array(
         ],
         'previous' => [
             'trigger' => 'K'
+        ],
+        'dialog' => [
+            'accept' => 'Enter',
+            'reject' => 'Esc'
         ]
     ],
 );

@@ -25,7 +25,7 @@
  *
  */
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
- 
+
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
 
@@ -34,12 +34,12 @@ return array(
     'label' => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '5.46.1',
+    'version' => '5.51.0',
     'author' => 'Open Assessment Technologies',
     'requires' => array(
         'taoTests' => '>=3.7.0',
-        'taoQtiItem' => '>=5.14.0',
-        'tao'        => '>=7.35.0'
+        'taoQtiItem' => '>=6.8.0',
+        'tao'        => '>=7.42.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'

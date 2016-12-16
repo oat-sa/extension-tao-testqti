@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\AssessmentTest;
@@ -63,6 +64,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var array
      */
     private $testMeta;
+    
+    /**
+     * The index of compiled items.
+     *
+     * @var QtiTestCompilerIndex
+     */
+    private $itemIndex;
 
     /**
      * The URI of the assessment test
@@ -112,9 +120,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
-
-
+        
         $this->retrieveTestMeta();
+        $this->retrieveItemIndex();
     }
 
     /**
@@ -183,12 +191,30 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
      */
-    protected function retrieveTestMeta() {
+    protected function retrieveTestMeta() 
+    {
         $directories = $this->getCompilationDirectory();
         $data = $directories['private']->read(TAOQTITEST_COMPILED_META_FILENAME);
         $data = str_replace('<?php', '', $data);
         $data = str_replace('?>', '', $data);
         $this->testMeta = eval($data);
+    }
+    
+    /**
+     * Retrieves the index of compiled items.
+     */
+    protected function retrieveItemIndex() 
+    {
+        $this->itemIndex = new QtiTestCompilerIndex();
+        try {
+            $directories = $this->getCompilationDirectory();
+            $data = $directories['private']->read(TAOQTITEST_COMPILED_INDEX);
+            if ($data) {
+                $this->itemIndex->unserialize($data);
+            }
+        } catch(\Exception $e) {
+            \common_Logger::i('Ignoring file not found exception for Items Index');
+        }
     }
 
     /**
@@ -272,5 +298,28 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getTestExecutionUri()
     {
         return $this->testExecutionUri;
+    }
+
+    /**
+     * Gets info from item index
+     * @param string $id
+     * @return mixed
+     * @throws \common_exception_Error
+     */
+    public function getItemIndex($id) 
+    {
+        return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
+    }
+
+    /**
+     * Gets a particular value from item index
+     * @param string $id
+     * @param string $name
+     * @return mixed
+     * @throws \common_exception_Error
+     */
+    public function getItemIndexValue($id, $name) 
+    {
+        return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
 }

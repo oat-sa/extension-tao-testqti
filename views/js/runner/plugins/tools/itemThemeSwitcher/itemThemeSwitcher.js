@@ -83,10 +83,21 @@ define([
             /**
              * Move the hovered index to the next available index
              */
-            function loopThroughMenuEntries() {
+            function moveDown() {
                 state.hoveredIndex++;
                 if (state.hoveredIndex === state.availableThemes.length) {
                     state.hoveredIndex = 0;
+                }
+                highlightMenuEntry();
+            }
+
+            /**
+             * Move the hovered index to the next previous available index
+             */
+            function moveUp() {
+                state.hoveredIndex--;
+                if (state.hoveredIndex < 0) {
+                    state.hoveredIndex = state.availableThemes.length - 1;
                 }
                 highlightMenuEntry();
             }
@@ -97,6 +108,31 @@ define([
             function highlightMenuEntry() {
                 self.$menuItems.removeClass('hover');
                 self.$menuItems.eq(state.hoveredIndex).addClass('hover');
+            }
+
+            /**
+             * register plugin's own shortcuts
+             */
+            function registerInnerShortcuts() {
+                var shortcuts = ['up', 'down', 'select'];
+                if (testConfig.allowShortcuts) {
+                    shortcuts.forEach(function (shortcutId) {
+                        shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts[shortcutId], self.getName(), true), function () {
+                            testRunner.trigger('tool-themeswitcher-' + shortcutId);
+                        }, {
+                            avoidInput: true
+                        });
+                    });
+                }
+            }
+
+            /**
+             * unregister plugin's own shortcuts
+             */
+            function unregisterInnerShortcuts() {
+                shortcut.remove('up.' + self.getName());
+                shortcut.remove('down.' + self.getName());
+                shortcut.remove('select.' + self.getName());
             }
 
             /**
@@ -173,20 +209,6 @@ define([
                         avoidInput: true
                     });
                 }
-                if (pluginShortcuts.loop) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.loop, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-loop');
-                    }, {
-                        avoidInput: true
-                    });
-                }
-                if (pluginShortcuts.select) {
-                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.select, this.getName(), true), function () {
-                        testRunner.trigger('tool-themeswitcher-select');
-                    }, {
-                        avoidInput: true
-                    });
-                }
             }
 
             //start disabled
@@ -211,19 +233,28 @@ define([
                     if (self.getState('enabled') !== false) {
                         hider.toggle(self.$menu);
                         if (!hider.isHidden(self.$menu)) {
+                            registerInnerShortcuts();
                             self.$menu.focus();
+                        } else {
+                            unregisterInnerShortcuts();
                         }
                     }
                 })
-                .on('tool-themeswitcher-loop', function () {
+                .on('tool-themeswitcher-up', function () {
                     if (!hider.isHidden(self.$menu)) {
-                        loopThroughMenuEntries();
+                        moveUp();
+                    }
+                })
+                .on('tool-themeswitcher-down', function () {
+                    if (!hider.isHidden(self.$menu)) {
+                        moveDown();
                     }
                 })
                 .on('tool-themeswitcher-select', function() {
                     if (!hider.isHidden(self.$menu)) {
                         changeTheme(state.availableThemes[state.hoveredIndex].id);
                         hider.toggle(self.$menu);
+                        unregisterInnerShortcuts();
                     }
                 });
         },
