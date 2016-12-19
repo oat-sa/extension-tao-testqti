@@ -51,7 +51,12 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
     }
 
     /**
-     * Gets context info of a compiled Item
+     * Gets context info of a compiled Item.
+     * 
+     * In case of no compiled item context is found with $language, the implementation
+     * will try to retrieve a context related to the default installation language. In case of
+     * no context can be retrieved for the default language, the method returns NULL.
+     * 
      * @param string $id
      * @param string $language
      * @return mixed
@@ -60,12 +65,20 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
     {
         if (isset($this->index[$language]) && isset($this->index[$language][$id])) {
             return $this->index[$language][$id];
+        } elseif (isset($this->index[DEFAULT_LANG]) && isset($this->index[DEFAULT_LANG][$id])) {
+            return $this->index[DEFAULT_LANG][$id];
         }
+        
         return null;
     }
 
     /**
-     * Gets a particular value from context info of a compiled Item
+     * Gets a particular value from context info of a compiled Item.
+     * 
+     * In case of no value can be found with $language for the given item $id,
+     * the implementation will try to retrieve a value for the default installation
+     * language. Otherwise, the method returns NULL.
+     * 
      * @param string $id
      * @param string $language
      * @param string $name
@@ -77,6 +90,13 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
         if ($attributes && isset($attributes[$name])) {
             return $attributes[$name];
         }
+        
+        // Try Default Language.
+        $attributes = $this->getItem($id, DEFAULT_LANG);
+        if ($attributes && isset($attributes[$name])) {
+            return $attributes[$name];
+        }
+        
         return null;
     }
 
