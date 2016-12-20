@@ -142,7 +142,7 @@
                             "application/json": {
                                 "success": true,
                                 "data": {
-                                        "reference_id": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                      "reference_id": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
                                 },
                                 "version": "3.1.0"
                             }
@@ -242,7 +242,7 @@
                 },
                 "parameters": [
                     {
-                        "name": "qtiPackage",
+                        "name": "id",
                         "in": "formData",
                         "description": "A QTI 2.1 package",
                         "type": "file",
