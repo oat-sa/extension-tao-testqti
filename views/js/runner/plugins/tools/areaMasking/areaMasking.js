@@ -33,10 +33,9 @@ define([
 ], function ($, _, __, hider, pluginFactory, maskComponent, buttonTpl){
     'use strict';
 
-    /**
-     * The maximum number of available masks
-     */
-    var max = 5;
+    var defaultConfig = {
+        max : 5
+    };
 
     /**
      * Returns the configured plugin
@@ -53,11 +52,8 @@ define([
 
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
-            var testData   = testRunner.getTestData() || {};
-
-            if (_.isNumber(testData.config.max)){
-                max = testData.config.max;
-            }
+            var testConfig = testRunner.getTestData().config || { plugins : {} };
+            var config     = _.defaults(testConfig.plugins[this.getName()] || {}, defaultConfig);
 
             //keep a ref to all masks
             this.masks = [];
@@ -73,12 +69,13 @@ define([
             this.$button.on('click', function (e){
                 e.preventDefault();
 
-                if( self.masks.length < max ) {
+                if( self.masks.length < config.max ) {
+
                     maskComponent()
                         .on('render', function(){
 
                             self.masks.push(this);
-                            if(self.masks.length >= max){
+                            if(self.masks.length >= config.max){
                                 self.disable();
                             }
 
@@ -90,7 +87,7 @@ define([
                         .on('destroy', function(){
 
                             self.masks = _.without(self.masks, this);
-                            if(self.masks.length < max){
+                            if(self.masks.length < config.max){
                                 self.enable();
                             }
 
