@@ -34,7 +34,8 @@ define([
     'use strict';
 
     var defaultConfig = {
-        max : 5
+        max : 5,
+        foo : true
     };
 
     /**
@@ -53,7 +54,8 @@ define([
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || { plugins : {} };
-            var config     = _.defaults(testConfig.plugins[this.getName()] || {}, defaultConfig);
+            var config     = _.clone(testConfig.plugins[this.getName()]);
+            config         = _.defaults(testConfig.plugins[this.getName()] || {}, defaultConfig);
 
             //keep a ref to all masks
             this.masks = [];
