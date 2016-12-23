@@ -54,8 +54,8 @@ define([
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || { plugins : {} };
-            var config     = _.clone(testConfig.plugins[this.getName()]);
-            config         = _.defaults(testConfig.plugins[this.getName()] || {}, defaultConfig);
+            var config     = _.clone(testConfig.plugins[this.getName()]) || {};
+            config         = _.defaults(config, defaultConfig);
 
             //keep a ref to all masks
             this.masks = [];
