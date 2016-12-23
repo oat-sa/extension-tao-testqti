@@ -92,7 +92,7 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr "ロケーション\"%s\"に関連ファイルが見つかりませんでした。"
 
 msgid "Calculator"
-msgstr ""
+msgstr "電卓"
 
 msgid "Cancel"
 msgstr "キャンセル"
@@ -149,7 +149,7 @@ msgid "Enable selection"
 msgstr "選択を可能にする。"
 
 msgid "End test"
-msgstr ""
+msgstr "テスト終了"
 
 msgid "End Test"
 msgstr "テスト終了"
@@ -403,7 +403,7 @@ msgid "Only display the unanswered items"
 msgstr "回答していないアイテムのみを表示"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "電卓"
 
 msgid "Ordering"
 msgstr "順序"
@@ -538,7 +538,7 @@ msgid "Skip &amp; End Test"
 msgstr "スキップ &amp; テスト終了"
 
 msgid "Skip and end test"
-msgstr ""
+msgstr "スキップ &amp; テスト終了"
 
 msgid "Skip and go to the end of the test"
 msgstr ""
@@ -685,7 +685,7 @@ msgid "Unknown error."
 msgstr "不明なエラー"
 
 msgid "Unmark for review"
-msgstr ""
+msgstr "見直しマーク解除"
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "QTI 2.1テストアイテムファイルのアップロード"
