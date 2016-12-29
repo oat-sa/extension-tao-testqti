@@ -85,6 +85,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     private $timeoutCode = null;
 
     /**
+     * Nr of times setState has been called
+     *
+     * @var integer
+     */
+    private $setStateCount = 0;
+
+    /**
      * Create a new TAO QTI Test Session.
      * 
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
@@ -365,6 +372,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     {
         $sessionMemento = $this->getSessionMemento();
         parent::beginTestSession();
+        $this->triggerStateChanged($sessionMemento);
         $this->triggerEventChange($sessionMemento);
     }
 
@@ -646,16 +654,31 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
 
     /**
+     * Override setState to trigger events on state change
+     * Only trigger on thir call or higher:
+     *
+     * Call Nr 1: called in constructor
+     * Call Nr 2: called in initialiser
+     * Call Nr 3+: real state change
+     *
+     * Except during creation of session in beginTestSession
+     * triggerStateChanged is triggered manually
+     *
      * @inheritdoc
      * @param int $state
      */
     public function setState($state)
     {
-        $previousState = $this->getState();
-        $sessionMemento = $this->getSessionMemento();
-        parent::setState($state);
-        if ($previousState !== null && $previousState !== $state) {
-            $this->triggerStateChanged($sessionMemento);
+        $this->setStateCount++;
+        if ($this->setStateCount <= 2) {
+            return parent::setState($state);
+        } else {
+            $previousState = $this->getState();
+            $sessionMemento = $this->getSessionMemento();
+            parent::setState($state);
+            if ($previousState !== null && $previousState !== $state) {
+                $this->triggerStateChanged($sessionMemento);
+            }
         }
     }
 
