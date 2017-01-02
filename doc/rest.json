@@ -99,6 +99,157 @@
                     }
                 ]
             }
+        },
+        "/taoQtiTest/RestQtiTests/importDeferred": {
+            "post": {
+                "description": "Import a QTI test package into the TAO platform using task queue. Available since Tao 3.1.",
+                "tags": [
+                    "test"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, task to import test was created",
+                        "schema": {
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "version",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "reference_id" : {
+                                            "type": "string",
+                                            "description": "Identifier of the task in the task queue"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "examples": {
+                            "application/json": {
+                                "success": true,
+                                "data": {
+                                      "reference_id": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                },
+                                "version": "3.1.0"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing or invalid QTI test package",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "At least one mandatory parameter was required but found missing in your request",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "401": {
+                        "description": "You are not authorized to access this functionality"
+                    },
+                    "500": {
+                        "description": "Internal error (should not occur)"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "qtiPackage",
+                        "in": "formData",
+                        "description": "A QTI 2.1 package",
+                        "type": "file",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        "/taoQtiTest/RestQtiTests/getStatus": {
+            "get": {
+                "description": "Check status of import test package task. Available since Tao 3.1.",
+                "tags": [
+                    "test"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, task found",
+                        "schema": {
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "version",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status" : {
+                                            "type": "string",
+                                            "description": "Task execution status"
+                                        },
+                                        "testId" : {
+                                            "type": "string",
+                                            "description": "Identifier of imported test"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "examples": {
+                            "application/json": {
+                                "success": true,
+                                "data": {
+                                      "status": "Success",
+                                      "testId": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                },
+                                "version": "3.1.0"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Task with given id was not found"
+                    },
+                    "500": {
+                        "description": "Internal error (should not occur)"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "A QTI 2.1 package",
+                        "type": "file",
+                        "required": true
+                    }
+                ]
+            }
         }
     },
     "definitions": {
