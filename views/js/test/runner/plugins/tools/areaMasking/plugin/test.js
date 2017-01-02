@@ -233,4 +233,65 @@ define([
                 QUnit.start();
             });
     });
+
+
+    QUnit.asyncTest('multiple', function(assert) {
+        var $container    = $('#qunit-fixture');
+        var runner        = runnerFactory(providerName);
+        var areaMasking = areaMaskingFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(15);
+
+        areaMasking.init()
+            .then(function() {
+
+                assert.ok(!areaMasking.getState('enabled'), 'The areaMasking starts disabled');
+
+                areaMasking.enable();
+                return areaMasking.render().then(function() {
+                    var $button = $('.toolbox [data-control="area-masking"]', $container);
+
+                    assert.ok( areaMasking.getState('enabled'), 'The areaMasking is not disbaled anymore');
+                    assert.equal($button.length, 1, 'The plugin button has been appended');
+                    assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
+
+                    assert.equal($('.mask', $container).length, 0, 'No mask exists yet');
+                    assert.equal(areaMasking.masks.length, 0, 'No mask is bound');
+
+
+                    $button.trigger('click');
+                    $button.trigger('click');
+                    $button.trigger('click');
+
+                    setTimeout(function(){
+                        assert.equal($('.mask', $container).length, 3, '3 masks have been created');
+                        assert.equal(areaMasking.masks.length, 3, '3 masks are bound');
+                        assert.ok( areaMasking.getState('enabled'), 'The areaMasking is enabled');
+
+                        $button.trigger('click');
+                        $button.trigger('click');
+
+                        setTimeout(function(){
+                            assert.equal($('.mask', $container).length, 5, '5 masks have been created');
+                            assert.equal(areaMasking.masks.length, 5, '5 masks are bound');
+                            assert.ok(!areaMasking.getState('enabled'), 'The areaMasking is disabled because it has reached the limit');
+
+                            $button.trigger('click');
+
+                            setTimeout(function(){
+                                assert.equal($('.mask', $container).length, 5, 'There is still 5 masks');
+                                assert.equal(areaMasking.masks.length, 5, 'There is still 5 masks');
+                                assert.ok(!areaMasking.getState('enabled'), 'The areaMasking is disabled because it has reached the limit');
+
+                                QUnit.start();
+                            }, 10);
+                        }, 10);
+                    }, 10);
+                });
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Unexpected failure : ' + err.message);
+                QUnit.start();
+            });
+    });
 });
