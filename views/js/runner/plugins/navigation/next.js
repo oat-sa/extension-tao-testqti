@@ -111,18 +111,24 @@ define([
              * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
              */
             function doNext(nextItemWarning) {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext(),
+                    testOptions = context.options || {};
+
                 var map = testRunner.getTestMap();
                 var nextItemPosition = context.itemPosition + 1;
 
+                var endTestWarningMsg = __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                    unansweredItemsMsg = '';
+
                 var warningHelper = nextWarningHelper({
-                    endTestWarning:     context.options.endTestWarning,
+                    endTestWarning:     testOptions.endTestWarning,
                     isLast:             context.isLast,
                     isLinear:           context.isLinear,
                     nextItemWarning:    nextItemWarning,
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
-                    testPartId:         context.testPartId
+                    testPartId:         context.testPartId,
+                    unansweredItemsWarning: testOptions.unansweredItemsWarning
                 });
 
                 function enable() {
@@ -133,14 +139,21 @@ define([
                     testRunner.trigger('disablenav disabletools');
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
-                        testRunner.trigger(
-                            'confirm.endTest',
-                            messages.getExitMessage(
-                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                                'test', testRunner),
-                            _.partial(triggerNextAction, context), // if the test taker accept
-                            enable  // if the test taker refuse
-                        );
+                        unansweredItemsMsg = messages.getUnansweredItemsMessage('test', testRunner);
+
+                        // Ugly hack: we still have one case where the warning shouldn't be displayed, depending on how those 2 categories are set:
+                        // - endTestWarning: always display a warning whether there are unanswered items or not
+                        // - unansweredItemsWarning: display a warning *ONLY* if there are unanswered items
+                        if (testOptions.endTestWarning || (testOptions.unansweredItemsWarning && unansweredItemsMsg)) {
+                            testRunner.trigger(
+                                'confirm.endTest',
+                                (unansweredItemsMsg + ' ' + endTestWarningMsg).trim(),
+                                _.partial(triggerNextAction, context),  // if the test taker accept
+                                enable                                  // if the test taker refuse
+                            );
+                        } else {
+                            triggerNextAction(context);
+                        }
 
                     } else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(

@@ -36,6 +36,19 @@ define([
             output: { warnNext: false, warnEnd: true }
         },
         {
+            title: 'Unanswered Items Warning option active, but test is not on the last item',
+            input: { unansweredItemsWarning: true },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'Unanswered Items warning active because test is on last item',
+            input: {
+                unansweredItemsWarning: true,
+                isLast: true
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
             title: 'End test warning active because of the next item warning being active on the last item',
             input: {
                 isLast: true,

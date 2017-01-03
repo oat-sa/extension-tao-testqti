@@ -119,12 +119,12 @@ define([
     }
 
     /**
-     * Completes an exit message
-     * @param {String} message
-     * @param {Object} runner
-     * @returns {String} Returns the message text
+     * Returns a message with the number of unanswered/marked for review items
+     * @param {String} scope - scope to consider for calculating the stats
+     * @param {Object} runner - testRunner instance
+     * @returns {string}
      */
-    function getExitMessage(message, scope, runner) {
+    function getUnansweredItemsMessage(scope, runner) {
         var map = runner.getTestMap();
         var context = runner.getTestContext();
         var stats = mapHelper.getScopeStats(map, context.itemPosition, scope);
@@ -147,7 +147,7 @@ define([
                 unansweredCount--;
             }
         }
-        
+
         // Unanswered items message.
         if (messageEnabled) {
             if (flaggedCount && unansweredCount) {
@@ -165,11 +165,22 @@ define([
                 }
             }
         }
+        return itemsCountMessage;
+    }
 
-        return (itemsCountMessage + ' ' + message).trim();
+    /**
+     * Completes an exit message
+     * @param {String} message - custom message that will be appended to the unanswered stats count
+     * @param {String} scope - scope to consider for calculating the stats
+     * @param {Object} runner - testRunner instance
+     * @returns {String} Returns the message text
+     */
+    function getExitMessage(message, scope, runner) {
+        return (getUnansweredItemsMessage(scope, runner) + ' ' + message).trim();
     }
 
     return {
-        getExitMessage: getExitMessage
+        getExitMessage: getExitMessage,
+        getUnansweredItemsMessage: getUnansweredItemsMessage
     };
 });

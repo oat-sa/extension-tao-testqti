@@ -55,6 +55,7 @@ define([], function () {
             isLast              = toBoolean(options.isLast, false),
             isLinear            = toBoolean(options.isLinear, false),
             nextItemWarning     = toBoolean(options.nextItemWarning, false),
+            unansweredItemsWarning = toBoolean(options.unansweredItemsWarning, false),
             nextPart            = options.nextPart || {},
             remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
             testPartId          = options.testPartId || '',
@@ -100,8 +101,9 @@ define([], function () {
         function shouldWarnBeforeEnd() {
             return isLast
                 && (
-                    endTestWarning      // warning is explicitly required
-                    || warnBeforeNext   // warning implicitly triggered by the next item warning being true
+                    endTestWarning              // warning is explicitly required by endTestWarning category
+                    || unansweredItemsWarning   // warning is explicitly required by unansweredItemsWarning category
+                    || warnBeforeNext           // warning implicitly triggered by the next item warning being true
                 );
         }
 
