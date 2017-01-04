@@ -233,14 +233,31 @@ define([
 
     /**
      * Gets the defined cut score from the outcome rules
-     * @param {Array|Object} outcomeRules
+     * @param {Object} model
      * @returns {Number}
      */
-    function getCutScore(outcomeRules) {
-        var values = _.map(outcomeRules, function(outcome) {
+    function getCutScore(model) {
+        var values = _.map(outcomeHelper.getOutcomeProcessingRules(model), function(outcome) {
             return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
         });
         return Math.max(0, _.max(values));
+    }
+
+    /**
+     * Gets the defined weight identifier from the outcome rules
+     * @param {Object} model
+     * @returns {String}
+     */
+    function getWeightIdentifier(model) {
+        var values = [];
+        outcomeHelper.eachOutcomeProcessingRuleExpressions(model, function(processingRule) {
+            if (processingRule['qti-type'] === 'testVariables' && processingRule.weightIdentifier) {
+                values.push(processingRule.weightIdentifier);
+            }
+        });
+        values = _(values).compact().uniq().value();
+
+        return values.length ? values[0] : '';
     }
 
     /**
@@ -274,8 +291,8 @@ define([
         model.scoring = {
             modes: processingModes,
             scoreIdentifier: 'SCORE',
-            weightIdentifier: '',
-            cutScore: getCutScore(outcomeRules),
+            weightIdentifier: getWeightIdentifier(model),
+            cutScore: getCutScore(model),
             outcomeProcessing: outcomeProcessing
         };
     }
@@ -318,8 +335,6 @@ define([
         read: function read(model) {
             // detect the score processing mode and build the descriptor used to manage the UI
             detectScoring(model);
-
-            console.log('read', model);
         },
 
         /**
@@ -328,11 +343,8 @@ define([
          * @param {Object} model
          */
         write: function write(model) {
-//            model = _.cloneDeep(model);
             // write the score processing mode by generating the outcomes variables
             setScoring(model);
-
-            console.log('write', model);
         }
     };
 });

@@ -134,12 +134,35 @@ define([
         },
 
         /**
-         * Applies a function on each outcome processing rules
+         * Applies a function on each outcome processing rules. Does not take care of sub-expressions.
          * @param {Object} testModel
          * @param {Function} cb
          */
         eachOutcomeProcessingRules: function eachOutcomeProcessingRules(testModel, cb) {
             _.forEach(outcomeHelper.getOutcomeProcessingRules(testModel), cb);
+        },
+
+        /**
+         * Applies a function on each outcome processing rules, take care of each sub expression.
+         * @param {Object} testModel
+         * @param {Function} cb
+         */
+        eachOutcomeProcessingRuleExpressions: function eachOutcomeProcessingRuleExpressions(testModel, cb) {
+            function browseExpressions(processingRule) {
+                if (_.isArray(processingRule)) {
+                    _.forEach(processingRule, browseExpressions);
+                } else if (processingRule) {
+                    cb(processingRule);
+
+                    if (processingRule.expression) {
+                        browseExpressions(processingRule.expression);
+                    } else if (processingRule.expressions) {
+                        browseExpressions(processingRule.expressions);
+                    }
+                }
+            }
+
+            browseExpressions(outcomeHelper.getOutcomeProcessingRules(testModel));
         },
 
         /**

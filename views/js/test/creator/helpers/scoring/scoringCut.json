@@ -301,7 +301,7 @@
               "qti-type": "testVariables",
               "variableIdentifier": "SCORE",
               "baseType": -1,
-              "weightIdentifier": "",
+              "weightIdentifier": "WEIGHT",
               "sectionIdentifier": "",
               "includeCategories": ["history"],
               "excludeCategories": []
@@ -343,7 +343,7 @@
               "qti-type": "testVariables",
               "variableIdentifier": "SCORE",
               "baseType": -1,
-              "weightIdentifier": "",
+              "weightIdentifier": "WEIGHT",
               "sectionIdentifier": "",
               "includeCategories": ["math"],
               "excludeCategories": []

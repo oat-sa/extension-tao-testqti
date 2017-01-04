@@ -135,6 +135,22 @@
                 </div>
             </div>
         </div>
+
+<!-- assessmentTest/scoring/weightIdentifier -->
+        <div class="grid-row test-weight-identifier">
+            <div class="col-5">
+                <label for="test-weight-identifier">{{__ 'Weight'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="test-weight-identifier" value="0" data-bind="scoring.weightIdentifier" data-bind-encoder="string" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ "Set the weight identifier used to process the score"}}
+                </div>
+            </div>
+        </div>
     </div>
 {{/with}}
 </div>

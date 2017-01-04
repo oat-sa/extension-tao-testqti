@@ -70,10 +70,12 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
 
             var $view = propView.getView();
             var $cutScoreLine = $('.test-cut-score', $view);
+            var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
 
             function changeScoring(scoring) {
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
+                hider.toggle($weightIdentifierLine, !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1);
             }
 
             $view.on('change.binder', function (e, model) {

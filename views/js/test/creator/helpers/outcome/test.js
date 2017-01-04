@@ -38,6 +38,7 @@ define([
         {title: 'getOutcomeProcessingRules'},
         {title: 'eachOutcomeDeclarations'},
         {title: 'eachOutcomeProcessingRules'},
+        {title: 'eachOutcomeProcessingRuleExpressions'},
         {title: 'listOutcomes'},
         {title: 'removeOutcomes'},
         {title: 'createOutcome'},
@@ -137,6 +138,26 @@ define([
 
         outcomeHelper.eachOutcomeProcessingRules(testModelSample, function (outcome) {
             assert.equal(outcome.identifier, path[pointer], 'The outcome helper loop over the right rule');
+            pointer++;
+        });
+
+        QUnit.expect(1 + path.length);
+
+        assert.equal(pointer, path.length, 'The outcome helper returns the right rules');
+    });
+
+
+    QUnit.test('helpers/outcome.eachOutcomeProcessingRuleExpressions()', function (assert) {
+        var path = [
+            'setOutcomeValue', 'sum', 'testVariables',
+            'setOutcomeValue', 'sum', 'testVariables',
+            'setOutcomeValue', 'gte', 'divide', 'sum', 'testVariables', 'numberPresented', 'baseValue',
+            'setOutcomeValue', 'gte', 'divide', 'sum', 'testVariables', 'numberPresented', 'baseValue'
+        ];
+        var pointer = 0;
+
+        outcomeHelper.eachOutcomeProcessingRuleExpressions(testModelSample, function (outcome) {
+            assert.equal(outcome['qti-type'], path[pointer], 'The outcome helper loop over the right rule');
             pointer++;
         });
 
