@@ -370,6 +370,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      */
     public function beginTestSession()
     {
+        // fake increase of state count to ensure setState triggers event
+        $this->setStateCount++;
         $sessionMemento = $this->getSessionMemento();
         parent::beginTestSession();
         $this->triggerStateChanged($sessionMemento);
