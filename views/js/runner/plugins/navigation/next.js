@@ -30,10 +30,11 @@ define([
     'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/stats',
     'util/shortcut',
     'util/namespace',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcut, namespaceHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -117,9 +118,6 @@ define([
                 var map = testRunner.getTestMap();
                 var nextItemPosition = context.itemPosition + 1;
 
-                var endTestWarningMsg = __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                    unansweredItemsMsg = '';
-
                 var warningHelper = nextWarningHelper({
                     endTestWarning:     testOptions.endTestWarning,
                     isLast:             context.isLast,
@@ -128,7 +126,8 @@ define([
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
                     testPartId:         context.testPartId,
-                    unansweredItemsWarning: testOptions.unansweredItemsWarning
+                    unansweredItemsWarning: testOptions.unansweredItemsWarning,
+                    stats:              statsHelper.getInstantStats('test', testRunner)
                 });
 
                 function enable() {
@@ -139,21 +138,16 @@ define([
                     testRunner.trigger('disablenav disabletools');
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
-                        unansweredItemsMsg = messages.getUnansweredItemsMessage('test', testRunner);
-
-                        // Ugly hack: we still have one case where the warning shouldn't be displayed, depending on how those 2 categories are set:
-                        // - endTestWarning: always display a warning whether there are unanswered items or not
-                        // - unansweredItemsWarning: display a warning *ONLY* if there are unanswered items
-                        if (testOptions.endTestWarning || (testOptions.unansweredItemsWarning && unansweredItemsMsg)) {
-                            testRunner.trigger(
-                                'confirm.endTest',
-                                (unansweredItemsMsg + ' ' + endTestWarningMsg).trim(),
-                                _.partial(triggerNextAction, context),  // if the test taker accept
-                                enable                                  // if the test taker refuse
-                            );
-                        } else {
-                            triggerNextAction(context);
-                        }
+                        testRunner.trigger(
+                            'confirm.endTest',
+                            messages.getExitMessage(
+                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                                'test',
+                                testRunner
+                            ),
+                            _.partial(triggerNextAction, context),  // if the test taker accept
+                            enable                                  // if the test taker refuse
+                        );
 
                     } else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(

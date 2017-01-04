@@ -36,14 +36,50 @@ define([
             output: { warnNext: false, warnEnd: true }
         },
         {
-            title: 'Unanswered Items Warning option active, but test is not on the last item',
+            title: 'Unanswered Items Warning option active, no other conditions fulfilled',
             input: { unansweredItemsWarning: true },
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'Unanswered Items warning active because test is on last item',
+            title: 'Unanswered Items Warning option active, test is on the last item, but no stats',
             input: {
                 unansweredItemsWarning: true,
+                isLast: true
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'Unanswered Items warning active, last item, but no unanswered items',
+            input: {
+                unansweredItemsWarning: true,
+                stats: { flagged: 0, questions: 10, answered: 10 },
+                isLast: true
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'Unanswered Items warning active, last item, flagged items',
+            input: {
+                unansweredItemsWarning: true,
+                stats: { flagged: 5 },
+                isLast: true
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'Unanswered Items warning active, last item, unanswered items',
+            input: {
+                unansweredItemsWarning: true,
+                stats: { questions: 10, answered: 5 },
+                isLast: true
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'Unanswered Items warning active, last item, unanswered & flagged items',
+            input: {
+                unansweredItemsWarning: true,
+                stats: { flagged: 5, questions: 10, answered: 5 },
                 isLast: true
             },
             output: { warnNext: false, warnEnd: true }
