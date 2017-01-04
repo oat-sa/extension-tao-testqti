@@ -22,135 +22,30 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'taoQtiTest/runner/helpers/map'
-], function ($, _, __, mapHelper) {
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/stats'
+], function ($, _, __, mapHelper, statsHelper) {
     'use strict';
 
     /**
-     * List of QTI model cardinalities
-     * @type {Object}
-     */
-    var responseCardinalities = {
-        single : 'base',
-        multiple : 'list',
-        ordered : 'list',
-        record : 'record'
-    };
-
-    /**
-     * Checks if the provided value can be considered as null
-     * @param {Object} value
-     * @param {String} baseType
-     * @param {String} cardinality
-     * @returns {boolean}
-     */
-    function isQtiValueNull(value, baseType, cardinality) {
-        var mappedCardinality = responseCardinalities[cardinality];
-        if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
-            value = value[mappedCardinality][baseType];
-        }
-        return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
-    }
-
-    /**
-     * Convert a value to a response object
-     * @param {Array} value
-     * @param {String} baseType
-     * @param {String} cardinality
-     * @returns {Object}
-     */
-    function toResponse(value, baseType, cardinality) {
-        var mappedCardinality = responseCardinalities[cardinality];
-        var response = {};
-
-        value = _.map(value || [], function(v){
-            return (baseType === 'boolean') ? (v === true || v === 'true') : v;
-        });
-
-        if (mappedCardinality) {
-            if (mappedCardinality === 'base') {
-                if (value.length === 0) {
-                    //return empty response:
-                    response.base = null;
-                } else {
-                    response.base = {};
-                    response.base[baseType] = value[0];
-                }
-            } else {
-                response[mappedCardinality] = {};
-                response[mappedCardinality][baseType] = value;
-            }
-        }
-
-        return response;
-    }
-
-    /**
-     * Tells is the current item has been answered or not
-     * The item is considered answered when at least one response has been set to not empty {base : null}
-     *
-     * @returns {Boolean}
-     */
-    function isCurrentItemAnswered(runner) {
-        var itemRunner = runner.itemRunner;
-        var responses = itemRunner && itemRunner.getResponses();
-        var count = 0;
-        var empty = 0;
-
-        if (itemRunner) {
-            _.forEach(itemRunner._item && itemRunner._item.responses, function (declaration) {
-                var attributes = declaration.attributes || {};
-                var response = responses[attributes.identifier];
-                var baseType = attributes.baseType;
-                var cardinality = attributes.cardinality;
-
-                count ++;
-                if (isQtiValueNull(response, baseType, cardinality)) {
-                    if (isQtiValueNull(declaration.defaultValue, baseType, cardinality)) {
-                        empty++;
-                    }
-                } else if (_.isEqual(response, toResponse(declaration.defaultValue, baseType, cardinality))) {
-                    empty++;
-                }
-            });
-        }
-
-        return count !== 0 && empty !== count;
-    }
-
-    /**
-     * Returns a message with the number of unanswered/marked for review items
+     * Completes an exit message
+     * @param {String} message - custom message that will be appended to the unanswered stats count
      * @param {String} scope - scope to consider for calculating the stats
      * @param {Object} runner - testRunner instance
-     * @returns {string}
+     * @returns {String} Returns the message text
      */
-    function getUnansweredItemsMessage(scope, runner) {
-        var map = runner.getTestMap();
-        var context = runner.getTestContext();
-        var stats = mapHelper.getScopeStats(map, context.itemPosition, scope);
-        var unansweredCount = stats && (stats.questions - stats.answered);
-        var flaggedCount = stats && stats.flagged;
-        var itemsCountMessage = '';
-        var isItemCurrentlyAnswered;
-        var testData = runner.getTestData();
-        var testConfig = testData && testData.config;
-        var messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
+    function getExitMessage(message, scope, runner) {
+        var stats = statsHelper.getInstantStats(scope, runner),
+            unansweredCount = stats && (stats.questions - stats.answered),
+            flaggedCount = stats && stats.flagged,
+            itemsCountMessage = '';
 
-        if (unansweredCount){
-            isItemCurrentlyAnswered = isCurrentItemAnswered(runner);
+        var testData = runner.getTestData(),
+            testConfig = testData && testData.config,
+            messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
-            if (!isItemCurrentlyAnswered && context.itemAnswered) {
-                unansweredCount++;
-            }
-
-            if (isItemCurrentlyAnswered && !context.itemAnswered) {
-                unansweredCount--;
-            }
-        }
-
-        // Unanswered items message.
         if (messageEnabled) {
-            if (flaggedCount && unansweredCount) {
+            if (stats.flagged && unansweredCount) {
                 itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
                     unansweredCount.toString(),
                     flaggedCount.toString()
@@ -165,22 +60,10 @@ define([
                 }
             }
         }
-        return itemsCountMessage;
-    }
-
-    /**
-     * Completes an exit message
-     * @param {String} message - custom message that will be appended to the unanswered stats count
-     * @param {String} scope - scope to consider for calculating the stats
-     * @param {Object} runner - testRunner instance
-     * @returns {String} Returns the message text
-     */
-    function getExitMessage(message, scope, runner) {
-        return (getUnansweredItemsMessage(scope, runner) + ' ' + message).trim();
+        return (itemsCountMessage + ' ' + message).trim();
     }
 
     return {
-        getExitMessage: getExitMessage,
-        getUnansweredItemsMessage: getUnansweredItemsMessage
+        getExitMessage: getExitMessage
     };
 });
