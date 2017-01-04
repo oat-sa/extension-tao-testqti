@@ -117,7 +117,7 @@ define([
                     cursor = 0;
                     //find the first input
                     _.forEach(focusables, function(focusable, index){
-                        if(focusable.nodeName !== 'IMG'){
+                        if ($(focusable).is(':input')) {
                             cursor = index;
                             focusable.focus();
                             return false;
@@ -151,7 +151,7 @@ define([
                     var $content = testRunner.getAreaBroker().getContentArea();
                     var index = 1;
 
-                    focusables = $(':input,img', $content)
+                    focusables = $(':input,img,.key-navigation-focusable', $content)
                         .filter(function removeImagesInChoices() {
                             var $this = $(this);
                             return !($this.is('img') && $this.closest('.qti-choice', $content).length);
