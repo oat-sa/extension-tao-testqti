@@ -19,25 +19,25 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 'lodash',
-'taoQtiTest/controller/creator/views/actions', 
+'jquery', 'lodash', 'ui/hider',
+'taoQtiTest/controller/creator/views/actions',
 'taoQtiTest/controller/creator/views/testpart',
 'taoQtiTest/controller/creator/templates/index',
 'taoQtiTest/controller/creator/helpers/qtiTest'
-], 
-function($, _, actions, testPartView, templates, qtiTestHelper){
+],
+function($, _, hider, actions, testPartView, templates, qtiTestHelper){
     'use strict';
- 
+
    /**
      * The TestView setup test related components and beahvior
-     * 
+     *
      * @exports taoQtiTest/controller/creator/views/test
      * @param {Object} model - the data model to bind to the test
      * @param {Object} [data] - additionnal data used by the setup
      * @param {Array} [data.identifiers] - the locked identifiers
      */
    var testView = function testView (model, data) {
-       
+
         actions.properties($('.test-creator-test > h1'), 'test', model, propHandler);
         testParts();
         addTestPart();
@@ -49,7 +49,7 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
         function testParts () {
             if(!model.testParts){
                 model.testParts = [];
-            }                   
+            }
             $('.testpart').each(function(){
                 var $testPart = $(this);
                 var index = $testPart.data('bind-index');
@@ -60,23 +60,31 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
                 testPartView.setUp($testPart, model.testParts[index], data);
             });
         }
-        
+
         /**
          * Perform some binding once the property view is created
          * @private
          * @param {propView} propView - the view object
          */
-        function propHandler (propView) {
-            
-           var $view = propView.getView();
+        function propHandler(propView) {
 
-            //listen for databinder change to update the test part title
-           var $title =  $('.test-creator-test > h1 [data-bind=title]');
-           $view.on('change.binder', function(e, model){
-                if(e.namespace === 'binder' && model['qti-type'] === 'assessmentTest'){
+            var $view = propView.getView();
+            var $cutScoreLine = $('.test-cut-score', $view);
+            var $title = $('.test-creator-test > h1 [data-bind=title]');
+
+            function changeScoring(scoring) {
+                hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
+            }
+
+            $view.on('change.binder', function (e, model) {
+                if (e.namespace === 'binder' && model['qti-type'] === 'assessmentTest') {
+                    changeScoring(model.scoring);
+
+                    //update the test part title when the databinder has changed it
                     $title.text(model.title);
                 }
             });
+            changeScoring(model.scoring);
         }
 
         /**
@@ -103,12 +111,12 @@ function($, _, actions, testPartView, templates, qtiTestHelper){
                             identifier : qtiTestHelper.getIdentifier('assessmentSection',  data.identifiers),
                             title : 'Section 1',
                             index : 0,
-                            sectionParts : []             
+                            sectionParts : []
                         }]
                     });
                 }
             });
-            
+
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
               .off('add.binder', '.testparts')
