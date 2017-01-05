@@ -61,7 +61,7 @@ define([
          * @param {String|String[]} path - The path to the property, with QTI types separated by dot, like: "setOutcomeValue.gte.baseValue"
          * @returns {*}
          */
-        getProcessingRuleExpression: function getProcessingRuleProperty(outcomeRule, path) {
+        getProcessingRuleExpression: function getProcessingRuleExpression(outcomeRule, path) {
             var steps = _.isArray(path) ? path : path.split('.');
             var len = steps.length;
             var expression = outcomeRule;

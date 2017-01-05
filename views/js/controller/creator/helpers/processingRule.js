@@ -161,7 +161,7 @@ define([
             processingRule.minOperands = 1;
             processingRule.maxOperands = -1;
             processingRule.acceptedCardinalities = [0, 1, 2];
-            processingRule.acceptedBaseTypes = [2, 3];
+            processingRule.acceptedBaseTypes = [baseType.INTEGER, baseType.FLOAT];
 
             return processingRule;
         },
@@ -259,7 +259,7 @@ define([
         processingRule.minOperands = 2;
         processingRule.maxOperands = 2;
         processingRule.acceptedCardinalities = [0];
-        processingRule.acceptedBaseTypes = [2, 3];
+        processingRule.acceptedBaseTypes = [baseType.INTEGER, baseType.FLOAT];
 
         return processingRule;
     }
