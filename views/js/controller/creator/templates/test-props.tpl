@@ -151,6 +151,18 @@
                 </div>
             </div>
         </div>
+
+<!-- assessmentTest/scoring/description -->
+        <div class="grid-row">
+            <div class="col-12">
+                {{#each modes}}
+                <div class="feedback-info test-outcome-processing-description" data-key="{{key}}">
+                    <span class="icon-info"></span>
+                    {{description}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
     </div>
 {{/with}}
 </div>

@@ -71,25 +71,30 @@ define([
      */
     var processingModes = _([{
         key: PROCESSING_NONE,
-        label: __('None')
+        label: __('None'),
+        description: __('No outcome processing. Erase the existing rules, if any.')
     }, {
         key: PROCESSING_CUSTOM,
-        label: __('Custom')
+        label: __('Custom'),
+        description: __('Custom outcome processing. No changes will be made to the existing rules.')
     }, {
         key: PROCESSING_TOTAL,
         label: __('Total score'),
         outcome: 'SCORE_TOTAL',
-        type: baseType.FLOAT
+        type: baseType.FLOAT,
+        description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
     }, {
         key: PROCESSING_CATEGORY,
         label: __('Category score'),
         prefix: 'SCORE_',
-        type: baseType.FLOAT
+        type: baseType.FLOAT,
+        description: __('The score will be processed per categories. A sum of all SCORE outcomes will be computed for each defined categories, the result will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
     }, {
         key: PROCESSING_CUT,
         label: __('Cut score'),
         prefix: 'PASS_',
-        type: baseType.BOOLEAN
+        type: baseType.BOOLEAN,
+        description: __('The score will be processed per categories. An average of all SCORE outcomes will be computed for each defined categories, the result will be compared to the cut score, then the PASS_xxx outcome will be set accordingly, where xxx is the name of the category.')
     }]).indexBy(function (mode) {
         return mode.key;
     }).value();
