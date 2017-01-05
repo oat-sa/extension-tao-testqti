@@ -117,7 +117,7 @@ define([
                     cursor = 0;
                     //find the first input
                     _.forEach(focusables, function(focusable, index){
-                        if(focusable.nodeName !== 'IMG'){
+                        if ($(focusable).is(':input')) {
                             cursor = index;
                             focusable.focus();
                             return false;
@@ -151,12 +151,19 @@ define([
                     var $content = testRunner.getAreaBroker().getContentArea();
                     var index = 1;
 
-                    focusables = $(':input,img', $content).addClass('key-navigation-focusable').each(function(){
-                        var $this = $(this);
-                        //redistribute focus order
-                        $this.attr('tabindex', index);
-                        index++;
-                    }).toArray();
+                    focusables = $(':input,img,.key-navigation-focusable', $content)
+                        .filter(function removeImagesInChoices() {
+                            var $this = $(this);
+                            return !($this.is('img') && $this.closest('.qti-choice', $content).length);
+                        })
+                        .addClass('key-navigation-focusable')
+                        .each(function(){
+                            var $this = $(this);
+                            //redistribute focus order
+                            $this.attr('tabindex', index);
+                            index++;
+                        })
+                        .toArray();
 
                     count = focusables.length || 1;
                     cursor = null;
