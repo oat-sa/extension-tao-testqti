@@ -190,7 +190,7 @@ define([
          * @param {String|Number} [defaultType]
          * @returns {*}
          */
-        validOrDefault: function validOrDefault(type, defaultType) {
+        getValid: function getValid(type, defaultType) {
             if (_.isFinite(type)) {
                 if (!baseTypeHelper.getNameByConstant(type)) {
                     type = false;
@@ -201,7 +201,7 @@ define([
 
             if (false === type) {
                 if (!_.isUndefined(defaultType) && defaultType !== -1) {
-                    type = baseTypeHelper.validOrDefault(defaultType, -1);
+                    type = baseTypeHelper.getValid(defaultType, -1);
                 } else {
                     type = -1;
                 }

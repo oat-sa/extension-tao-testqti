@@ -21,12 +21,12 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/baseType'
-], function (_, baseType) {
+], function (_, baseTypeHelper) {
     'use strict';
 
     var baseTypeApi = [
         {title: 'asArray'},
-        {title: 'validOrDefault'},
+        {title: 'getValid'},
         {title: 'getConstantByName'},
         {title: 'getNameByConstant'}
     ];
@@ -53,7 +53,7 @@ define([
 
     QUnit.test('module', function (assert) {
         QUnit.expect(1);
-        assert.equal(typeof baseType, 'object', "The baseType helper module exposes an object");
+        assert.equal(typeof baseTypeHelper, 'object', "The baseType helper module exposes an object");
     });
 
 
@@ -61,16 +61,16 @@ define([
         .cases(baseTypeApi)
         .test('helpers/baseType API ', function (data, assert) {
             QUnit.expect(1);
-            assert.equal(typeof baseType[data.title], 'function', 'The baseType helper exposes a "' + data.title + '" function');
+            assert.equal(typeof baseTypeHelper[data.title], 'function', 'The baseType helper exposes a "' + data.title + '" function');
         });
 
 
     QUnit.test('helpers/baseType.asArray()', function (assert) {
         QUnit.expect(3);
 
-        assert.equal(typeof baseType.asArray(), 'object', 'The baseType helper asArray() provides a list');
-        assert.equal(_.size(baseType.asArray()), 13, 'The baseType helper asArray() provides a list of base types');
-        assert.deepEqual(_.values(baseType.asArray()), _.range(0, 13), 'The baseType helper asArray() provides the base types as a list of index');
+        assert.equal(typeof baseTypeHelper.asArray(), 'object', 'The baseType helper asArray() provides a list');
+        assert.equal(_.size(baseTypeHelper.asArray()), 13, 'The baseType helper asArray() provides a list of base types');
+        assert.deepEqual(_.values(baseTypeHelper.asArray()), _.range(0, 13), 'The baseType helper asArray() provides the base types as a list of index');
     });
 
 
@@ -78,19 +78,19 @@ define([
         .cases(baseTypeList)
         .test('helpers/baseType.asArray() ', function (data, assert) {
             QUnit.expect(1);
-            assert.equal(baseType.asArray()[data.key], data.value, 'The type ' + data.title + ' has index ' + data.value);
+            assert.equal(baseTypeHelper.asArray()[data.key], data.value, 'The type ' + data.title + ' has index ' + data.value);
         });
 
-    QUnit.test('helpers/baseType.validOrDefault()', function (assert) {
+    QUnit.test('helpers/baseType.getValid()', function (assert) {
         QUnit.expect(7);
 
-        assert.equal(baseType.validOrDefault(100), -1, 'The baseType helper validOrDefault() provides a default type');
-        assert.equal(baseType.validOrDefault(1), 1, 'The baseType helper validOrDefault() provides the type if valid');
-        assert.equal(baseType.validOrDefault('float'), 3, 'The baseType helper validOrDefault() provides the type if valid');
-        assert.equal(baseType.validOrDefault('foo', 2), 2, 'The baseType helper validOrDefault() provides the default type');
-        assert.equal(baseType.validOrDefault('foo', 'integer'), 2, 'The baseType helper validOrDefault() provides the default type');
-        assert.equal(baseType.validOrDefault('foo', 'bar'), -1, 'The baseType helper validOrDefault() provides a default type');
-        assert.equal(baseType.validOrDefault('foo', 100), -1, 'The baseType helper validOrDefault() provides a default type');
+        assert.equal(baseTypeHelper.getValid(100), -1, 'The baseType helper getValid() provides a default type');
+        assert.equal(baseTypeHelper.getValid(1), 1, 'The baseType helper getValid() provides the type if valid');
+        assert.equal(baseTypeHelper.getValid('float'), 3, 'The baseType helper getValid() provides the type if valid');
+        assert.equal(baseTypeHelper.getValid('foo', 2), 2, 'The baseType helper getValid() provides the default type');
+        assert.equal(baseTypeHelper.getValid('foo', 'integer'), 2, 'The baseType helper getValid() provides the default type');
+        assert.equal(baseTypeHelper.getValid('foo', 'bar'), -1, 'The baseType helper getValid() provides a default type');
+        assert.equal(baseTypeHelper.getValid('foo', 100), -1, 'The baseType helper getValid() provides a default type');
     });
 
 
@@ -98,7 +98,7 @@ define([
         .cases(baseTypeList)
         .test('helpers/baseType.getConstantByName() ', function (data, assert) {
             QUnit.expect(1);
-            assert.equal(baseType.getConstantByName(data.title.toLowerCase()), data.value, 'The type ' + data.title + ' has index ' + data.value);
+            assert.equal(baseTypeHelper.getConstantByName(data.title.toLowerCase()), data.value, 'The type ' + data.title + ' has index ' + data.value);
         });
 
 
@@ -106,18 +106,18 @@ define([
         .cases(baseTypeList)
         .test('helpers/baseType.getNameByConstant() ', function (data, assert) {
             QUnit.expect(1);
-            assert.equal(baseType.getNameByConstant(data.value), data.title, 'The constant ' + data.value + ' refers to type ' + data.title);
+            assert.equal(baseTypeHelper.getNameByConstant(data.value), data.title, 'The constant ' + data.value + ' refers to type ' + data.title);
         });
 
 
     QUnit.test('helpers/baseType.getConstantByName(unknown)', function (assert) {
         QUnit.expect(1);
-        assert.equal(baseType.getConstantByName('foo'), false, 'An unknown type has not index');
+        assert.equal(baseTypeHelper.getConstantByName('foo'), false, 'An unknown type has not index');
     });
 
 
     QUnit.test('helpers/baseType.getNameByConstant(100)', function (assert) {
         QUnit.expect(1);
-        assert.equal(baseType.getNameByConstant(100), false, 'A constant out the type range does not mean anything');
+        assert.equal(baseTypeHelper.getNameByConstant(100), false, 'A constant out the type range does not mean anything');
     });
 });

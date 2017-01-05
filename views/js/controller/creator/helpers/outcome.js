@@ -22,8 +22,9 @@
  */
 define([
     'lodash',
-    'taoQtiTest/controller/creator/helpers/baseType'
-], function (_, baseType) {
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/cardinality'
+], function (_, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var outcomeHelper = {
@@ -233,8 +234,8 @@ define([
                 normalMinimum: false,
                 masteryValue: false,
                 identifier: identifier,
-                cardinality: parseInt(cardinality, 10) || 0,
-                baseType: baseType.validOrDefault(type, baseType.FLOAT)
+                cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
+                baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
             };
         },
 

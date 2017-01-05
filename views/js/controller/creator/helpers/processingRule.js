@@ -22,8 +22,9 @@
  */
 define([
     'lodash',
-    'taoQtiTest/controller/creator/helpers/baseType'
-], function (_, baseType) {
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/cardinality'
+], function (_, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var processingRuleHelper = {
@@ -160,8 +161,8 @@ define([
 
             processingRule.minOperands = 1;
             processingRule.maxOperands = -1;
-            processingRule.acceptedCardinalities = [0, 1, 2];
-            processingRule.acceptedBaseTypes = [baseType.INTEGER, baseType.FLOAT];
+            processingRule.acceptedCardinalities = [cardinalityHelper.SINGLE, cardinalityHelper.MULTIPLE, cardinalityHelper.ORDERED];
+            processingRule.acceptedBaseTypes = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
 
             return processingRule;
         },
@@ -193,7 +194,7 @@ define([
                 processingRule.weightIdentifier = '';
             }
 
-            processingRule.baseType = baseType.validOrDefault(type);
+            processingRule.baseType = baseTypeHelper.getValid(type);
             processingRule.sectionIdentifier = '';
             processingRule.includeCategories = forceArray(includeCategories);
             processingRule.excludeCategories = forceArray(excludeCategories);
@@ -226,7 +227,7 @@ define([
         baseValue: function baseValue(value, type) {
             var processingRule = processingRuleHelper.create('baseValue');
 
-            processingRule.baseType = baseType.validOrDefault(type, baseType.FLOAT);
+            processingRule.baseType = baseTypeHelper.getValid(type, baseTypeHelper.FLOAT);
             processingRule.value = parseFloat(value) || 0;
 
             return processingRule;
@@ -258,8 +259,8 @@ define([
 
         processingRule.minOperands = 2;
         processingRule.maxOperands = 2;
-        processingRule.acceptedCardinalities = [0];
-        processingRule.acceptedBaseTypes = [baseType.INTEGER, baseType.FLOAT];
+        processingRule.acceptedCardinalities = [cardinalityHelper.SINGLE];
+        processingRule.acceptedBaseTypes = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
 
         return processingRule;
     }

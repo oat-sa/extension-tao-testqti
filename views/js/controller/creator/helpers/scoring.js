@@ -27,7 +27,7 @@ define([
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/processingRule',
     'taoQtiTest/controller/creator/helpers/category'
-], function (_, __, baseType, outcomeHelper, processingRuleHelper, categoryHelper) {
+], function (_, __, baseTypeHelper, outcomeHelper, processingRuleHelper, categoryHelper) {
     'use strict';
 
     /**
@@ -56,21 +56,21 @@ define([
             key: 'total',
             label: __('Total score'),
             outcome: 'SCORE_TOTAL',
-            type: baseType.FLOAT,
+            type: baseTypeHelper.FLOAT,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
         },
         category: {
             key: 'category',
             label: __('Category score'),
             prefix: 'SCORE_',
-            type: baseType.FLOAT,
+            type: baseTypeHelper.FLOAT,
             description: __('The score will be processed per categories. A sum of all SCORE outcomes will be computed for each defined categories, the result will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
         },
         cut: {
             key: 'cut',
             label: __('Cut score'),
             prefix: 'PASS_',
-            type: baseType.BOOLEAN,
+            type: baseTypeHelper.BOOLEAN,
             description: __('The score will be processed per categories. An average of all SCORE outcomes will be computed for each defined categories, the result will be compared to the cut score, then the PASS_xxx outcome will be set accordingly, where xxx is the name of the category.')
         }
     };
@@ -173,7 +173,7 @@ define([
                             ),
                             processingRuleHelper.numberPresented(category)
                         ),
-                        processingRuleHelper.baseValue(model.scoring.cutScore, baseType.FLOAT)
+                        processingRuleHelper.baseValue(model.scoring.cutScore, baseTypeHelper.FLOAT)
                     )
                 );
 

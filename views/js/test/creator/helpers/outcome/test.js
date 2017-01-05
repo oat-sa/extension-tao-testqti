@@ -250,7 +250,7 @@ define([
     }, {
         title: 'cardinality',
         identifier: 'FOO_BAR',
-        cardinality: 5,
+        cardinality: 2,
         outcome: {
             'qti-type': 'outcomeDeclaration',
             views: [],
@@ -260,7 +260,7 @@ define([
             normalMinimum: false,
             masteryValue: false,
             identifier: 'FOO_BAR',
-            cardinality: 5,
+            cardinality: 2,
             baseType: 3
         }
     }, {
