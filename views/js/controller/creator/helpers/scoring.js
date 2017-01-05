@@ -31,6 +31,13 @@ define([
     'use strict';
 
     /**
+     * The default cut score
+     * @todo Move this to a config file
+     * @type {Number}
+     */
+    var defaultCutScore = 70;
+
+    /**
      * The identifier of the custom processing mode.
      * Nothing will be do, the existing rules will be kept without changes.
      * @type {String}
@@ -242,9 +249,12 @@ define([
      * @returns {Number}
      */
     function getCutScore(model) {
-        var values = _.map(outcomeHelper.getOutcomeProcessingRules(model), function(outcome) {
+        var values = _(outcomeHelper.getOutcomeProcessingRules(model)).map(function(outcome) {
             return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
-        });
+        }).compact().uniq().value();
+        if (_.isEmpty(values)) {
+            values = [defaultCutScore];
+        }
         return Math.max(0, _.max(values));
     }
 

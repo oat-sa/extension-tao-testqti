@@ -315,7 +315,7 @@
         }, {
           "qti-type": "baseValue",
           "baseType": 3,
-          "value": 70
+          "value": 60
         }]
       }
     }, {
@@ -357,7 +357,7 @@
         }, {
           "qti-type": "baseValue",
           "baseType": 3,
-          "value": 70
+          "value": 60
         }]
       }
     }]

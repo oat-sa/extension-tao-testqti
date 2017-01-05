@@ -43,11 +43,11 @@ define([
     ];
 
     var scoringReadCases = [
-        {title: 'none', model: scoringNoneSample, outcomeProcessing: 'none', cutScore: 0, weightIdentifier: ''},
-        {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', cutScore: 70, weightIdentifier: 'WEIGHT'},
-        {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 0, weightIdentifier: ''},
-        {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: 0, weightIdentifier: ''},
-        {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 70, weightIdentifier: 'WEIGHT'}
+        {title: 'none', model: scoringNoneSample, outcomeProcessing: 'none', cutScore: 70, weightIdentifier: ''},
+        {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', cutScore: 60, weightIdentifier: 'WEIGHT'},
+        {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 70, weightIdentifier: ''},
+        {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: 70, weightIdentifier: ''},
+        {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT'}
     ];
 
     var scoringWriteCases = [
@@ -55,7 +55,7 @@ define([
         {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', expected: scoringCustomSample},
         {title: 'category', model: scoringCustomSample, outcomeProcessing: 'category', expected: scoringCategorySample},
         {title: 'total', model: scoringCustomSample, outcomeProcessing: 'total', expected: scoringTotalSample},
-        {title: 'cut', model: scoringCustomSample, outcomeProcessing: 'cut', cutScore: 70, weightIdentifier: 'WEIGHT', expected: scoringCutSample}
+        {title: 'cut', model: scoringCustomSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCutSample}
     ];
 
 
