@@ -126,7 +126,7 @@
                 <label for="test-cut-score">{{__ 'Cut score'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="number" />
+                <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="number" data-validate="$numeric;" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -142,7 +142,7 @@
                 <label for="test-weight-identifier">{{__ 'Weight'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="test-weight-identifier" value="0" data-bind="scoring.weightIdentifier" data-bind-encoder="string" />
+                <input type="text" name="test-weight-identifier" data-bind="scoring.weightIdentifier" data-validate="$pattern(pattern=^([a-zA-Z_][a-zA-Z0-9_\.-]*)?$);" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
