@@ -75,13 +75,13 @@ define([
     QUnit.test('helpers/cardinality.getValid()', function (assert) {
         QUnit.expect(7);
 
-        assert.equal(cardinalityHelper.getValid(100), -1, 'The cardinality helper getValid() provides a default cardinality');
+        assert.equal(cardinalityHelper.getValid(100), 0, 'The cardinality helper getValid() provides a default cardinality');
         assert.equal(cardinalityHelper.getValid(1), 1, 'The cardinality helper getValid() provides the cardinality if valid');
         assert.equal(cardinalityHelper.getValid('multiple'), 1, 'The cardinality helper getValid() provides the cardinality if valid');
         assert.equal(cardinalityHelper.getValid('foo', 2), 2, 'The cardinality helper getValid() provides the default cardinality');
         assert.equal(cardinalityHelper.getValid('foo', 'ordered'), 2, 'The cardinality helper getValid() provides the default cardinality');
-        assert.equal(cardinalityHelper.getValid('foo', 'bar'), -1, 'The cardinality helper getValid() provides a default cardinality');
-        assert.equal(cardinalityHelper.getValid('foo', 100), -1, 'The cardinality helper getValid() provides a default cardinality');
+        assert.equal(cardinalityHelper.getValid('foo', 'bar'), 0, 'The cardinality helper getValid() provides a default cardinality');
+        assert.equal(cardinalityHelper.getValid('foo', 100), 0, 'The cardinality helper getValid() provides a default cardinality');
     });
 
 

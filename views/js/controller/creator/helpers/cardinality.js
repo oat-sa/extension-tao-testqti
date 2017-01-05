@@ -92,29 +92,29 @@ define([
         },
 
         /**
-         * Gets a valid type or the default
-         * @param {String|Number} type
-         * @param {String|Number} [defaultType]
+         * Gets a valid cardinality or the default
+         * @param {String|Number} cardinality
+         * @param {String|Number} [defaultCardinality]
          * @returns {*}
          */
-        getValid: function getValid(type, defaultType) {
-            if (_.isFinite(type)) {
-                if (!cardinalityHelper.getNameByConstant(type)) {
-                    type = false;
+        getValid: function getValid(cardinality, defaultCardinality) {
+            if (_.isFinite(cardinality)) {
+                if (!cardinalityHelper.getNameByConstant(cardinality)) {
+                    cardinality = false;
                 }
             } else {
-                type = cardinalityHelper.getConstantByName(type);
+                cardinality = cardinalityHelper.getConstantByName(cardinality);
             }
 
-            if (false === type) {
-                if (!_.isUndefined(defaultType) && defaultType !== -1) {
-                    type = cardinalityHelper.getValid(defaultType, -1);
+            if (false === cardinality) {
+                if (!_.isUndefined(defaultCardinality) && defaultCardinality !== cardinalityEnum.SINGLE) {
+                    cardinality = cardinalityHelper.getValid(defaultCardinality, cardinalityEnum.SINGLE);
                 } else {
-                    type = -1;
+                    cardinality = cardinalityEnum.SINGLE;
                 }
             }
 
-            return type;
+            return cardinality;
         },
 
         /**
