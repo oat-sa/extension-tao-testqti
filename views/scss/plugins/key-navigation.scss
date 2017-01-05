@@ -1,5 +1,10 @@
 @import "inc/bootstrap";
 
+.qti-item div.key-navigation-focusable {
+    padding: 5px !important;
+}
+
+.qti-item div.key-navigation-focusable,
 .qti-item img.key-navigation-focusable {
     border: 2px solid transparent;
     &:focus {
