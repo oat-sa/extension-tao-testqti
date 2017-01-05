@@ -38,73 +38,42 @@ define([
     var defaultCutScore = 70;
 
     /**
-     * The identifier of the custom processing mode.
-     * Nothing will be do, the existing rules will be kept without changes.
-     * @type {String}
-     */
-    var PROCESSING_CUSTOM = 'custom';
-
-    /**
-     * The identifier of the no score processing mode.
-     * If applied on existing score processing, will remove all the related rules
-     * @type {String}
-     */
-    var PROCESSING_NONE = 'none';
-
-    /**
-     * The identifier of the total score processing mode.
-     * Set an outcome variable that will contains the overall score.
-     * @type {String}
-     */
-    var PROCESSING_TOTAL = 'total';
-
-    /**
-     * The identifier of the category score processing mode.
-     * Set an outcome variable per category that will contains the score of the category.
-     * @type {String}
-     */
-    var PROCESSING_CATEGORY = 'category';
-
-    /**
-     * The identifier of the cut score processing mode.
-     * Set an outcome variable per category that will tell if the score is above the provided threshold.
-     * @type {String}
-     */
-    var PROCESSING_CUT = 'cut';
-
-    /**
      * The list of supported processing modes, indexed by mode identifier
      * @type {Object}
      */
-    var processingModes = _([{
-        key: PROCESSING_NONE,
-        label: __('None'),
-        description: __('No outcome processing. Erase the existing rules, if any.')
-    }, {
-        key: PROCESSING_CUSTOM,
-        label: __('Custom'),
-        description: __('Custom outcome processing. No changes will be made to the existing rules.')
-    }, {
-        key: PROCESSING_TOTAL,
-        label: __('Total score'),
-        outcome: 'SCORE_TOTAL',
-        type: baseType.FLOAT,
-        description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
-    }, {
-        key: PROCESSING_CATEGORY,
-        label: __('Category score'),
-        prefix: 'SCORE_',
-        type: baseType.FLOAT,
-        description: __('The score will be processed per categories. A sum of all SCORE outcomes will be computed for each defined categories, the result will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
-    }, {
-        key: PROCESSING_CUT,
-        label: __('Cut score'),
-        prefix: 'PASS_',
-        type: baseType.BOOLEAN,
-        description: __('The score will be processed per categories. An average of all SCORE outcomes will be computed for each defined categories, the result will be compared to the cut score, then the PASS_xxx outcome will be set accordingly, where xxx is the name of the category.')
-    }]).indexBy(function (mode) {
-        return mode.key;
-    }).value();
+    var processingModes = {
+        none: {
+            key: 'none',
+            label: __('None'),
+            description: __('No outcome processing. Erase the existing rules, if any.')
+        },
+        custom: {
+            key: 'custom',
+            label: __('Custom'),
+            description: __('Custom outcome processing. No changes will be made to the existing rules.')
+        },
+        total: {
+            key: 'total',
+            label: __('Total score'),
+            outcome: 'SCORE_TOTAL',
+            type: baseType.FLOAT,
+            description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
+        },
+        category: {
+            key: 'category',
+            label: __('Category score'),
+            prefix: 'SCORE_',
+            type: baseType.FLOAT,
+            description: __('The score will be processed per categories. A sum of all SCORE outcomes will be computed for each defined categories, the result will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
+        },
+        cut: {
+            key: 'cut',
+            label: __('Cut score'),
+            prefix: 'PASS_',
+            type: baseType.BOOLEAN,
+            description: __('The score will be processed per categories. An average of all SCORE outcomes will be computed for each defined categories, the result will be compared to the cut score, then the PASS_xxx outcome will be set accordingly, where xxx is the name of the category.')
+        }
+    };
 
     /**
      * List of writers that provides the outcomes for each score processing modes.
@@ -112,21 +81,30 @@ define([
      * and only data must be provided to templates.
      * @type {Object}
      */
-    var processingModeWriters = _([{
-        key: PROCESSING_NONE,
-        writer: function(model) {
+    var processingModeWriters = {
+        /**
+         * Writes the outcomes in the scoring mode "None"
+         * @param {Object} model
+         */
+        none: function processingModeWriterNone(model) {
             // as no rules must be defined, just erase existing ones
             removeScoring(model);
-        }
-    }, {
-        key: PROCESSING_CUSTOM,
-        writer: function() {
+        },
+
+        /**
+         * Writes the outcomes in the scoring mode "Custom"
+         * @param {Object} model
+         */
+        custom: function processingModeWriterCustom() {
             // just does nothing as we only need to keep intact the existing rules, if any
-        }
-    }, {
-        key: PROCESSING_TOTAL,
-        writer: function(model) {
-            var processingMode = processingModes[PROCESSING_TOTAL];
+        },
+
+        /**
+         * Writes the outcomes in the scoring mode "Total score"
+         * @param {Object} model
+         */
+        total: function processingModeWriterTotal(model) {
+            var processingMode = processingModes.total;
             var outcome, processingRule;
 
             // erase the existing rules, they will be replaced by those that are defined here
@@ -141,17 +119,20 @@ define([
             );
 
             outcomeHelper.addOutcome(model, outcome, processingRule);
-        }
-    }, {
-        key: PROCESSING_CATEGORY,
-        writer: function(model) {
-            var processingMode = processingModes[PROCESSING_CATEGORY];
+        },
+
+        /**
+         * Writes the outcomes in the scoring mode "Category score"
+         * @param {Object} model
+         */
+        category: function processingModeWriterCategory(model) {
+            var processingMode = processingModes.category;
 
             // erase the existing rules, they will be replaced by those that are defined here
             removeScoring(model);
 
             // create an outcome per category
-            _.forEach(categoryHelper.listCategories(model), function(category) {
+            _.forEach(categoryHelper.listCategories(model), function (category) {
                 var outcome, processingRule;
                 var identifier = processingMode.prefix + category.toUpperCase();
 
@@ -165,17 +146,20 @@ define([
 
                 outcomeHelper.addOutcome(model, outcome, processingRule);
             });
-        }
-    }, {
-        key: PROCESSING_CUT,
-        writer: function(model) {
-            var processingMode = processingModes[PROCESSING_CUT];
+        },
+
+        /**
+         * Writes the outcomes in the scoring mode "Cut score"
+         * @param {Object} model
+         */
+        cut: function processingModeWriterCut(model) {
+            var processingMode = processingModes.cut;
 
             // erase the existing rules, they will be replaced by those that are defined here
             removeScoring(model);
 
             // create an outcome per category
-            _.forEach(categoryHelper.listCategories(model), function(category) {
+            _.forEach(categoryHelper.listCategories(model), function (category) {
                 var outcome, processingRule;
                 var identifier = processingMode.prefix + category.toUpperCase();
 
@@ -196,9 +180,7 @@ define([
                 outcomeHelper.addOutcome(model, outcome, processingRule);
             });
         }
-    }]).indexBy(function (mode) {
-        return mode.key;
-    }).value();
+    };
 
     /**
      * Checks if an outcome is related to the outcome processing,
@@ -249,7 +231,7 @@ define([
      * @returns {Number}
      */
     function getCutScore(model) {
-        var values = _(outcomeHelper.getOutcomeProcessingRules(model)).map(function(outcome) {
+        var values = _(outcomeHelper.getOutcomeProcessingRules(model)).map(function (outcome) {
             return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
         }).compact().uniq().value();
         if (_.isEmpty(values)) {
@@ -265,7 +247,7 @@ define([
      */
     function getWeightIdentifier(model) {
         var values = [];
-        outcomeHelper.eachOutcomeProcessingRuleExpressions(model, function(processingRule) {
+        outcomeHelper.eachOutcomeProcessingRuleExpressions(model, function (processingRule) {
             if (processingRule['qti-type'] === 'testVariables' && processingRule.weightIdentifier) {
                 values.push(processingRule.weightIdentifier);
             }
@@ -290,13 +272,13 @@ define([
         var count = _.size(declarations);
 
         // default fallback, applied when several modes are detected at the same time
-        var outcomeProcessing = PROCESSING_CUSTOM;
+        var outcomeProcessing = 'custom';
 
         // set the score processing mode with respect to the found outcomes
         if (count === _.size(processing)) {
             if (!count) {
                 // no mode detected, set the mode to none
-                outcomeProcessing = PROCESSING_NONE;
+                outcomeProcessing = 'none';
             } else if (count === 1 && _.isEmpty(diff)) {
                 // single mode detected, keep the last got key
                 outcomeProcessing = processing[0];
@@ -326,16 +308,17 @@ define([
      * @param {Object} model
      */
     function setScoring(model) {
-        var processingMode;
+        var processingModeWriter;
+        var scoring = model.scoring;
 
         // write the outcomes only if the mode has been set
-        if (model.scoring) {
-            processingMode = processingModeWriters[model.scoring.outcomeProcessing];
+        if (scoring) {
+            processingModeWriter = processingModeWriters[scoring.outcomeProcessing];
 
-            if (processingMode) {
-                processingMode.writer(model);
+            if (processingModeWriter) {
+                processingModeWriter(model);
             } else {
-                throw new Error('Unknown score processing mode: ' + model.scoring.outcomeProcessing);
+                throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
             }
         }
     }
