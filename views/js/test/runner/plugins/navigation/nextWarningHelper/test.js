@@ -37,13 +37,13 @@ define([
         },
         {
             title: 'Unanswered Items Warning option active, no other conditions fulfilled',
-            input: { unansweredItemsWarning: true },
+            input: { unansweredWarning: true },
             output: { warnNext: false, warnEnd: false }
         },
         {
             title: 'Unanswered Items Warning option active, test is on the last item, but no stats',
             input: {
-                unansweredItemsWarning: true,
+                unansweredWarning: true,
                 isLast: true
             },
             output: { warnNext: false, warnEnd: false }
@@ -51,7 +51,7 @@ define([
         {
             title: 'Unanswered Items warning active, last item, but no unanswered items',
             input: {
-                unansweredItemsWarning: true,
+                unansweredWarning: true,
                 stats: { flagged: 0, questions: 10, answered: 10 },
                 isLast: true
             },
@@ -60,7 +60,7 @@ define([
         {
             title: 'Unanswered Items warning active, last item, flagged items',
             input: {
-                unansweredItemsWarning: true,
+                unansweredWarning: true,
                 stats: { flagged: 5 },
                 isLast: true
             },
@@ -69,7 +69,7 @@ define([
         {
             title: 'Unanswered Items warning active, last item, unanswered items',
             input: {
-                unansweredItemsWarning: true,
+                unansweredWarning: true,
                 stats: { questions: 10, answered: 5 },
                 isLast: true
             },
@@ -78,7 +78,7 @@ define([
         {
             title: 'Unanswered Items warning active, last item, unanswered & flagged items',
             input: {
-                unansweredItemsWarning: true,
+                unansweredWarning: true,
                 stats: { flagged: 5, questions: 10, answered: 5 },
                 isLast: true
             },

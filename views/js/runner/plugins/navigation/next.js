@@ -126,7 +126,7 @@ define([
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
                     testPartId:         context.testPartId,
-                    unansweredItemsWarning: testOptions.unansweredItemsWarning,
+                    unansweredWarning:  testOptions.unansweredWarning,
                     stats:              statsHelper.getInstantStats('test', testRunner)
                 });
 
