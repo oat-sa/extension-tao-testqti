@@ -94,4 +94,75 @@
         </div>
     </div>
 
+    <h4 class="toggler closed" data-toggle="~ .test-scoring">{{__ "Scoring"}}</h4>
+
+<!-- assessmentTest/scoring -->
+{{#with scoring}}
+    <div class="test-scoring toggled">
+
+<!-- assessmentTest/scoring/outcomeProcessing -->
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="test-outcome-processing">{{__ 'Outcome processing'}}</label>
+            </div>
+            <div class="col-6">
+                <select name="test-outcome-processing" class="select2" data-bind="scoring.outcomeProcessing" data-bind-encoder="string" data-has-search="false">
+                {{#each modes}}
+                    <option value="{{key}}" {{#if selected}}selected="selected"{{/if}}>{{label}}</option>
+                {{/each}}
+                </select>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ "Select the way the responses of your test should be processed"}}
+                </div>
+            </div>
+        </div>
+
+<!-- assessmentTest/scoring/cutScore -->
+        <div class="grid-row test-cut-score">
+            <div class="col-5">
+                <label for="test-cut-score">{{__ 'Cut score'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="float" data-validate="$numeric;" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ "Set the cut score associated to the test"}}
+                </div>
+            </div>
+        </div>
+
+<!-- assessmentTest/scoring/weightIdentifier -->
+        <div class="grid-row test-weight-identifier">
+            <div class="col-5">
+                <label for="test-weight-identifier">{{__ 'Weight'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="test-weight-identifier" data-bind="scoring.weightIdentifier" data-validate="$pattern(pattern=^([a-zA-Z_][a-zA-Z0-9_\.-]*)?$);" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ "Set the weight identifier used to process the score"}}
+                </div>
+            </div>
+        </div>
+
+<!-- assessmentTest/scoring/description -->
+        <div class="grid-row">
+            <div class="col-12">
+                {{#each modes}}
+                <div class="feedback-info test-outcome-processing-description" data-key="{{key}}">
+                    <span class="icon-info"></span>
+                    {{description}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+{{/with}}
 </div>
