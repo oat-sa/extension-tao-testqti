@@ -43,10 +43,10 @@ define([
     ];
 
     var scoringReadCases = [
-        {title: 'none', model: scoringNoneSample, outcomeProcessing: 'none', cutScore: 70, weightIdentifier: ''},
+        {title: 'none', model: scoringNoneSample, outcomeProcessing: 'none', cutScore: 0.5, weightIdentifier: ''},
         {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', cutScore: 60, weightIdentifier: 'WEIGHT'},
-        {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 70, weightIdentifier: ''},
-        {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: 70, weightIdentifier: ''},
+        {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 0.50, weightIdentifier: ''},
+        {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: .50, weightIdentifier: ''},
         {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT'}
     ];
 

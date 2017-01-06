@@ -35,7 +35,7 @@ define([
      * @todo Move this to a config file
      * @type {Number}
      */
-    var defaultCutScore = 70;
+    var defaultCutScore = 0.5;
 
     /**
      * The list of supported processing modes, indexed by mode identifier

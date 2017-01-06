@@ -126,7 +126,7 @@
                 <label for="test-cut-score">{{__ 'Cut score'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="number" data-validate="$numeric;" />
+                <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="float" data-validate="$numeric;" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
