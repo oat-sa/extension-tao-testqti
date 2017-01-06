@@ -30,10 +30,11 @@ define([
     'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/stats',
     'util/shortcut',
     'util/namespace',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, shortcut, namespaceHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -111,18 +112,22 @@ define([
              * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
              */
             function doNext(nextItemWarning) {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext(),
+                    testOptions = context.options || {};
+
                 var map = testRunner.getTestMap();
                 var nextItemPosition = context.itemPosition + 1;
 
                 var warningHelper = nextWarningHelper({
-                    endTestWarning:     context.options.endTestWarning,
+                    endTestWarning:     testOptions.endTestWarning,
                     isLast:             context.isLast,
                     isLinear:           context.isLinear,
                     nextItemWarning:    nextItemWarning,
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
-                    testPartId:         context.testPartId
+                    testPartId:         context.testPartId,
+                    unansweredWarning:  testOptions.unansweredWarning,
+                    stats:              statsHelper.getInstantStats('test', testRunner)
                 });
 
                 function enable() {
