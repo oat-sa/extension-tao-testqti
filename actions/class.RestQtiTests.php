@@ -152,12 +152,14 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
         $data = $this->traitGetTaskData($taskId);
         $task = $this->getTask($taskId);
         $report = \common_report_Report::jsonUnserialize($task->getReport());
-        $plainReport = $this->getPlainReport($report);
-
-        //the third report is report of import test
-        if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
-            $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
+        if ($report) {
+            $plainReport = $this->getPlainReport($report);
+            //the third report is report of import test
+            if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
+                $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
+            }
         }
+
         return $data;
     }
 

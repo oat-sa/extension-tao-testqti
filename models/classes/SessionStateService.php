@@ -113,7 +113,7 @@ class SessionStateService extends ConfigurableService
 
     /**
      * @param AssessmentTestSession $session
-     * @return \taoDelivery_models_classes_execution_DeliveryExecution
+     * @return DeliveryExecution
      */
     private function getDeliveryExecution(AssessmentTestSession $session) {
         return $this->deliveryExecutionService->getDeliveryExecution($session->getSessionId());
@@ -193,8 +193,8 @@ class SessionStateService extends ConfigurableService
                     $partIndex ++;
                 }
 
-                $sections = $routeItem->getAssessmentSections();
-                $sectionId = key(current($sections));
+                $section = $routeItem->getAssessmentSection();
+                $sectionId = $section->getIdentifier();
                 if ($lastSection != $sectionId) {
                     $offsetSection = 0;
                     $lastSection = $sectionId;

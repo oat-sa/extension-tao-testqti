@@ -35,6 +35,7 @@ define([
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/scoring',
     'core/validator/validators',
     'core/promise'
 ], function(
@@ -53,6 +54,7 @@ define([
     Dom2QtiEncoder,
     templates,
     qtiTestHelper,
+    scoringHelper,
     validators,
     Promise
     ){
@@ -161,6 +163,9 @@ define([
                 },
                 templates : templates,
                 beforeSave : function(model){
+                    //generate the outcomes that define the scoring
+                    scoringHelper.write(model);
+
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 
@@ -174,6 +179,8 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
+                    //detect the scoring mode
+                    scoringHelper.read(model);
 
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);

@@ -33,6 +33,11 @@ define([
 ], function ($, _, __, hider, pluginFactory, maskComponent, buttonTpl){
     'use strict';
 
+    var defaultConfig = {
+        max : 5,
+        foo : true
+    };
+
     /**
      * Returns the configured plugin
      */
@@ -48,6 +53,9 @@ define([
 
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
+            var testConfig = testRunner.getTestData().config || { plugins : {} };
+            var config     = _.clone(testConfig.plugins[this.getName()]) || {};
+            config         = _.defaults(config, defaultConfig);
 
             //keep a ref to all masks
             this.masks = [];
@@ -63,30 +71,39 @@ define([
             this.$button.on('click', function (e){
                 e.preventDefault();
 
-                maskComponent()
-                    .on('render', function(){
+                if( self.masks.length < config.max ) {
 
-                        self.masks.push(this);
+                    maskComponent()
+                        .on('render', function(){
 
-                        /**
-                         * @event areaMaksing#maskadd
-                         */
-                        self.trigger('maskadd');
-                    })
-                    .on('destroy', function(){
+                            self.masks.push(this);
+                            if(self.masks.length >= config.max){
+                                self.disable();
+                            }
 
-                        self.masks = _.without(self.masks, this);
+                            /**
+                            * @event areaMaksing#maskadd
+                            */
+                            self.trigger('maskadd');
+                        })
+                        .on('destroy', function(){
 
-                        /**
-                         * @event areaMaksing#maskclose
-                         */
-                        self.trigger('maskclose');
-                    })
-                    .init({
-                        x : self.masks.length * 10,
-                        y : self.masks.length * 10
-                    })
-                    .render($container);
+                            self.masks = _.without(self.masks, this);
+                            if(self.masks.length < config.max){
+                                self.enable();
+                            }
+
+                            /**
+                            * @event areaMaksing#maskclose
+                            */
+                            self.trigger('maskclose');
+                        })
+                        .init({
+                            x : self.masks.length * 10,
+                            y : self.masks.length * 10
+                        })
+                        .render($container);
+                }
             });
 
             //start disabled
