@@ -259,9 +259,13 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $this->referenceTest($testHref, $itemIdentifiers);
 
         $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+        common_Logger::i(print_r(iterator_to_array($iterator) , true));
+        $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
         foreach ($iterator as $f) {
             // Only add dependency files...
-            if ($f->getBasename() !== TAOQTITEST_FILENAME) {
+            common_Logger::i('f = : ' . $f->getBasename());
+            if ($f->getBasename() !== TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
+
                 // Add the file to the archive.
                 $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);

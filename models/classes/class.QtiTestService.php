@@ -48,6 +48,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
     const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
 
+    const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
+
     /**
      * Get the QTI Test document formated in JSON.
      *
@@ -662,8 +664,31 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $dir = $this->getQtiTestDir($testResource);
         $newFile = $dir->getFile($path);
         $newFile->write($testDefinition->saveToString());
-        
+        $this->setQtiIndexFile($dir , $path);
         return $this->getQtiTestDir($testResource);
+    }
+
+    /**
+     *
+     * @param Directory $dir
+     * @param $path
+     * @return bool
+     */
+    protected function setQtiIndexFile(Directory $dir , $path) {
+        $newFile = $dir->getFile(self::QTI_TEST_DEFINITION_INDEX);
+        return $newFile->put($path);
+    }
+
+    /**
+     * @param Directory $dir
+     * @return false|string
+     */
+    protected function getQtiDefinitionPath(Directory $dir) {
+        $index = $dir->getFile(self::QTI_TEST_DEFINITION_INDEX);
+        if($index->exists()) {
+            return $index->read();
+        }
+        return false;
     }
 
     /**
@@ -858,7 +883,31 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             return $this->createContent($test, $createTestFile);
         }
     }
-    
+
+    protected function searchInTestDirectory(Directory $dir) {
+
+            $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+            $file = null;
+            /**
+             * @var File $file
+             */
+            foreach ($iterator as $file) {
+                if ($file->getBasename() === TAOQTITEST_FILENAME) {
+                    $files[] = $file;
+                    break;
+                }
+            }
+
+            if (is_null($file)) {
+                throw new Exception('No QTI-XML test file found.');
+            }
+            $Details = $file->getMetadata();
+            $file = current($files);
+            $fileName = str_replace($dir->getPrefix() . DIRECTORY_SEPARATOR , '' , $Details['path']);
+            $this->setQtiIndexFile($dir , $fileName);
+            return $file;
+    }
+
     /**
      * Return the File containing the test definition
      * If it doesn't exist, it will be created
@@ -867,27 +916,17 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
      * @throws \Exception If file is not found.
      * @return File
      */
-    public function getQtiTestFile(core_kernel_classes_Resource $test)
-    {
+    public function getQtiTestFile(core_kernel_classes_Resource $test) {
+
         $dir = $this->getQtiTestDir($test);
-        $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
-        $files = [];
 
-        foreach ($iterator as $file) {
-            if ($file->getBasename() === TAOQTITEST_FILENAME) {
-                $files[] = $file;
-            }
+        $file = $this->getQtiDefinitionPath($dir);
+
+        if (!empty($file)) {
+            return $dir->getFile($file);
         }
+        return $this->searchInTestDirectory($dir);
 
-        if (count($files) === 0) {
-            throw new Exception('No QTI-XML test file found.');
-        } else if (count($files) > 1) {
-            throw new Exception('Multiple QTI-XML test file found.');
-        }
-
-        $file = current($files);
-
-        return $file;
     }
     
     /**
