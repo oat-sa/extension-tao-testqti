@@ -45,6 +45,8 @@ define([], function () {
      * @param {Boolean} options.isLast - if the item is the last of the test
      * @param {Boolean} options.isLinear - if the current part is linear
      * @param {Boolean} options.nextItemWarning - enables the next item warning, when applicable
+     * @param {Boolean} options.unansweredWarning - enables the unanswered/marked for review items warning, when applicable
+     * @param {Boolean} options.stats - current stats of the test
      * @param {Object} options.nextPart - description of the next part of the test
      * @param {Number} options.remainingAttempts - remaining attempts for the current item
      * @param {String} options.testPartId - current test part identifier
@@ -55,6 +57,8 @@ define([], function () {
             isLast              = toBoolean(options.isLast, false),
             isLinear            = toBoolean(options.isLinear, false),
             nextItemWarning     = toBoolean(options.nextItemWarning, false),
+            unansweredWarning   = toBoolean(options.unansweredWarning, false),
+            stats               = options.stats,
             nextPart            = options.nextPart || {},
             remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
             testPartId          = options.testPartId || '',
@@ -100,9 +104,22 @@ define([], function () {
         function shouldWarnBeforeEnd() {
             return isLast
                 && (
-                    endTestWarning      // warning is explicitly required
-                    || warnBeforeNext   // warning implicitly triggered by the next item warning being true
+                    endTestWarning                      // warning is explicitly required by endTestWarning category
+                    || shouldWarnForUnansweredItems()   // warning is explicitly required by unansweredWarning category
+                    || warnBeforeNext                   // warning implicitly triggered by the next item warning being true
                 );
+        }
+
+        /**
+         * Decide if we should display a warning for unanswered/flagged items
+         * @returns {Boolean}
+         */
+        function shouldWarnForUnansweredItems() {
+            var hasUnanswered = stats && ((stats.questions - stats.answered) !== 0),
+                hasFlagged = stats && stats.flagged !== 0;
+
+            return unansweredWarning
+                && (hasUnanswered || hasFlagged);
         }
 
         return {
