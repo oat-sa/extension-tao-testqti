@@ -903,7 +903,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             }
             $Details = $file->getMetadata();
             $file = current($files);
-            $fileName = str_replace($dir->getPrefix() . DIRECTORY_SEPARATOR , '' , $Details['path']);
+            $fileName = str_replace($dir->getPrefix() . '/', '' , $Details['path']);
             $this->setQtiIndexFile($dir , $fileName);
             return $file;
     }
