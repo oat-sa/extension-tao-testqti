@@ -43,7 +43,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
         addTestPart();
 
         /**
-         * set up the exisiting test part views
+         * set up the existing test part views
          * @private
          */
         function testParts () {
@@ -69,14 +69,17 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
         function propHandler(propView) {
 
             var $view = propView.getView();
+            var $categoryScoreLine = $('.test-category-score', $view);
             var $cutScoreLine = $('.test-cut-score', $view);
             var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $descriptions = $('.test-outcome-processing-description', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
 
             function changeScoring(scoring) {
+                var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
-                hider.toggle($weightIdentifierLine, !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1);
+                hider.toggle($categoryScoreLine, noOptions);
+                hider.toggle($weightIdentifierLine, noOptions);
                 hider.hide($descriptions);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
             }

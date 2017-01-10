@@ -24,18 +24,18 @@ define([
     'json!taoQtiTest/test/creator/helpers/scoring/scoringNone.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCustom.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringTotal.json',
-    'json!taoQtiTest/test/creator/helpers/scoring/scoringCategory.json',
+    'json!taoQtiTest/test/creator/helpers/scoring/scoringTotalCategory.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCut.json',
-    'json!taoQtiTest/test/creator/helpers/scoring/scoringCategoryCut.json',
+    'json!taoQtiTest/test/creator/helpers/scoring/scoringCutCategory.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringNoOutcomes.json'
 ], function (_,
              scoringHelper,
              scoringNoneSample,
              scoringCustomSample,
              scoringTotalSample,
-             scoringCategorySample,
+             scoringTotalCategorySample,
              scoringCutSample,
-             scoringCategoryCutSample,
+             scoringCutCategorySample,
              scoringNoOutcomesSample) {
     'use strict';
 
@@ -45,21 +45,103 @@ define([
     ];
 
     var scoringReadCases = [
-        {title: 'none', model: scoringNoneSample, outcomeProcessing: 'none', cutScore: 0.5, weightIdentifier: ''},
-        {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', cutScore: 60, weightIdentifier: 'WEIGHT'},
-        {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 0.50, weightIdentifier: ''},
-        {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: .50, weightIdentifier: ''},
-        {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT'},
-        {title: 'categorycut', model: scoringCategoryCutSample, outcomeProcessing: 'categorycut', cutScore: 60, weightIdentifier: 'WEIGHT'}
+        {
+            title: 'none',
+            model: scoringNoneSample,
+            outcomeProcessing: 'none',
+            categoryScore: false,
+            cutScore: 0.5,
+            weightIdentifier: ''
+        },
+        {
+            title: 'custom',
+            model: scoringCustomSample,
+            outcomeProcessing: 'custom',
+            categoryScore: true,
+            cutScore: 60,
+            weightIdentifier: 'WEIGHT'
+        },
+        {
+            title: 'total',
+            model: scoringTotalSample,
+            outcomeProcessing: 'total',
+            categoryScore: false,
+            cutScore: .50,
+            weightIdentifier: ''
+        },
+        {
+            title: 'total&category',
+            model: scoringTotalCategorySample,
+            outcomeProcessing: 'total',
+            categoryScore: true,
+            cutScore: 0.50,
+            weightIdentifier: ''
+        },
+        {
+            title: 'cut',
+            model: scoringCutSample,
+            outcomeProcessing: 'cut',
+            categoryScore: false,
+            cutScore: 60,
+            weightIdentifier: 'WEIGHT'
+        },
+        {
+            title: 'cut&category',
+            model: scoringCutCategorySample,
+            outcomeProcessing: 'cut',
+            categoryScore: true,
+            cutScore: 60,
+            weightIdentifier: 'WEIGHT'
+        }
     ];
 
     var scoringWriteCases = [
-        {title: 'none', model: scoringCustomSample, outcomeProcessing: 'none', expected: scoringNoOutcomesSample},
-        {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', expected: scoringCustomSample},
-        {title: 'category', model: scoringCustomSample, outcomeProcessing: 'category', expected: scoringCategorySample},
-        {title: 'total', model: scoringCustomSample, outcomeProcessing: 'total', expected: scoringTotalSample},
-        {title: 'cut', model: scoringCustomSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCutSample},
-        {title: 'categorycut', model: scoringCustomSample, outcomeProcessing: 'categorycut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCategoryCutSample}
+        {
+            title: 'none',
+            model: scoringCustomSample,
+            categoryScore: false,
+            outcomeProcessing: 'none',
+            expected: scoringNoOutcomesSample
+        },
+        {
+            title: 'custom',
+            model: scoringCustomSample,
+            categoryScore: false,
+            outcomeProcessing: 'custom',
+            expected: scoringCustomSample
+        },
+        {
+            title: 'total',
+            model: scoringCustomSample,
+            categoryScore: false,
+            outcomeProcessing: 'total',
+            expected: scoringTotalSample
+        },
+        {
+            title: 'total&category',
+            model: scoringCustomSample,
+            categoryScore: true,
+            outcomeProcessing: 'total',
+            expected: scoringTotalCategorySample
+        },
+        {
+            title: 'cut',
+            model: scoringCustomSample,
+            categoryScore: false,
+            outcomeProcessing: 'cut',
+            cutScore: 60,
+            weightIdentifier: 'WEIGHT',
+            expected: scoringCutSample
+        },
+        {
+            title: 'cut&category',
+            model: scoringCustomSample,
+            categoryScore: true,
+            outcomeProcessing: 'cut',
+            cutScore: 60,
+            weightIdentifier: 'WEIGHT',
+            expected: scoringCutCategorySample
+        }
     ];
 
 
@@ -85,12 +167,13 @@ define([
         .test('helpers/scoring.read() ', function (data, assert) {
             var model = _.cloneDeep(data.model);
 
-            QUnit.expect(4);
+            QUnit.expect(5);
 
             scoringHelper.read(model);
 
             assert.equal(typeof model.scoring, 'object', 'The scoring descriptor has been set');
             assert.equal(model.scoring.outcomeProcessing, data.outcomeProcessing, 'The right scoring processing mode has been detected');
+            assert.equal(model.scoring.categoryScore, data.categoryScore, 'The right categoryScore option has been set');
             assert.equal(model.scoring.cutScore, data.cutScore, 'The right cutScore has been loaded');
             assert.equal(model.scoring.weightIdentifier, data.weightIdentifier, 'The right weightIdentifier has been loaded');
         });
@@ -106,6 +189,7 @@ define([
             scoringHelper.read(model);
 
             model.scoring.outcomeProcessing = data.outcomeProcessing;
+            model.scoring.categoryScore = data.categoryScore;
             model.scoring.cutScore = data.cutScore;
             model.scoring.weightIdentifier = data.weightIdentifier;
 
@@ -126,7 +210,7 @@ define([
 
         QUnit.expect(1);
 
-        assert.throws(function() {
+        assert.throws(function () {
             scoringHelper.write(model);
         }, 'The scoring helper should throw an error if the processing mode is unknown!');
 
