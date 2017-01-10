@@ -81,6 +81,11 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
             }
 
+            $('[name=test-outcome-processing]', $view).select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+
             $view.on('change.binder', function (e, model) {
                 if (e.namespace === 'binder' && model['qti-type'] === 'assessmentTest') {
                     changeScoring(model.scoring);
