@@ -26,6 +26,7 @@ define([
     'json!taoQtiTest/test/creator/helpers/scoring/scoringTotal.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCategory.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCut.json',
+    'json!taoQtiTest/test/creator/helpers/scoring/scoringCategoryCut.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringNoOutcomes.json'
 ], function (_,
              scoringHelper,
@@ -34,6 +35,7 @@ define([
              scoringTotalSample,
              scoringCategorySample,
              scoringCutSample,
+             scoringCategoryCutSample,
              scoringNoOutcomesSample) {
     'use strict';
 
@@ -47,7 +49,8 @@ define([
         {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', cutScore: 60, weightIdentifier: 'WEIGHT'},
         {title: 'category', model: scoringCategorySample, outcomeProcessing: 'category', cutScore: 0.50, weightIdentifier: ''},
         {title: 'total', model: scoringTotalSample, outcomeProcessing: 'total', cutScore: .50, weightIdentifier: ''},
-        {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT'}
+        {title: 'cut', model: scoringCutSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT'},
+        {title: 'categorycut', model: scoringCategoryCutSample, outcomeProcessing: 'categorycut', cutScore: 60, weightIdentifier: 'WEIGHT'}
     ];
 
     var scoringWriteCases = [
@@ -55,7 +58,8 @@ define([
         {title: 'custom', model: scoringCustomSample, outcomeProcessing: 'custom', expected: scoringCustomSample},
         {title: 'category', model: scoringCustomSample, outcomeProcessing: 'category', expected: scoringCategorySample},
         {title: 'total', model: scoringCustomSample, outcomeProcessing: 'total', expected: scoringTotalSample},
-        {title: 'cut', model: scoringCustomSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCutSample}
+        {title: 'cut', model: scoringCustomSample, outcomeProcessing: 'cut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCutSample},
+        {title: 'categorycut', model: scoringCustomSample, outcomeProcessing: 'categorycut', cutScore: 60, weightIdentifier: 'WEIGHT', expected: scoringCategoryCutSample}
     ];
 
 
