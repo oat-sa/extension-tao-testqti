@@ -120,6 +120,25 @@
             </div>
         </div>
 
+<!-- assessmentTest/scoring/categoryScore -->
+        <div class="grid-row test-category-score">
+            <div class="col-5">
+                <label for="test-category-score">{{__ 'Category score'}}</label>
+            </div>
+            <div class="col-6">
+                <label>
+                    <input type="checkbox" name="test-category-score" value="true" data-bind="scoring.categoryScore" data-bind-encoder="boolean" />
+                    <span class="icon-checkbox"></span>
+                </label>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ "Also compute the score per categories"}}
+                </div>
+            </div>
+        </div>
+
 <!-- assessmentTest/scoring/cutScore -->
         <div class="grid-row test-cut-score">
             <div class="col-5">
