@@ -10,6 +10,17 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
+    "identifier": "SCORE_TOTAL",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
     "identifier": "SCORE_HISTORY",
     "cardinality": 0,
     "baseType": 3
@@ -277,6 +288,25 @@
   "outcomeProcessing": {
     "qti-type": "outcomeProcessing",
     "outcomeRules": [{
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
+        }]
+      }
+    }, {
       "qti-type": "setOutcomeValue",
       "identifier": "SCORE_HISTORY",
       "expression": {

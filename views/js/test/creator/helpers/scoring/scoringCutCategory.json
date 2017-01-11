@@ -13,6 +13,28 @@
     "identifier": "PASS_TOTAL",
     "cardinality": 0,
     "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_HISTORY",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_MATH",
+    "cardinality": 0,
+    "baseType": 1
   }],
   "timeLimits": {
     "qti-type": "timeLimits",
@@ -299,6 +321,90 @@
             "qti-type": "numberPresented",
             "sectionIdentifier": "",
             "includeCategories": [],
+            "excludeCategories": []
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_HISTORY",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "sum",
+            "minOperands": 1,
+            "maxOperands": -1,
+            "acceptedCardinalities": [0, 1, 2],
+            "acceptedBaseTypes": [2, 3],
+            "expressions": [{
+              "qti-type": "testVariables",
+              "variableIdentifier": "SCORE",
+              "baseType": -1,
+              "weightIdentifier": "WEIGHT",
+              "sectionIdentifier": "",
+              "includeCategories": ["history"],
+              "excludeCategories": []
+            }]
+          }, {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["history"],
+            "excludeCategories": []
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_MATH",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "sum",
+            "minOperands": 1,
+            "maxOperands": -1,
+            "acceptedCardinalities": [0, 1, 2],
+            "acceptedBaseTypes": [2, 3],
+            "expressions": [{
+              "qti-type": "testVariables",
+              "variableIdentifier": "SCORE",
+              "baseType": -1,
+              "weightIdentifier": "WEIGHT",
+              "sectionIdentifier": "",
+              "includeCategories": ["math"],
+              "excludeCategories": []
+            }]
+          }, {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["math"],
             "excludeCategories": []
           }]
         }, {
