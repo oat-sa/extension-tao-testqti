@@ -88,10 +88,12 @@ define([
             /**
              * Closes the last opened dialog
              * @param {Boolean} accept Whether the dialog should be accepted or not
+             * @param {String} [shortcut] The shortcut that caused the action
              */
-            function closeLast(accept) {
+            function closeLast(accept, shortcut) {
                 var handle = opened.length && opened[opened.length - 1];
                 if (handle) {
+                    handle.shortcut = shortcut;
                     if (accept) {
                         closeAccept(handle.dialog);
                     } else {
@@ -104,13 +106,27 @@ define([
              * Add dialog on top of the provided stack
              * @param {String} namespace - The event namespace that scope the dialog
              * @param {Array} stack - The dialogs stack on which push the new instance
-             * @param {dialog} dialog - The instance of the dialog
+             * @param {Function} dialog - The constructor of the dialog
+             * @param {String} message - The message to display
+             * @param {Function} accept - The callback for accept
+             * @param {Function} reject - The callback for reject
              */
-            function addHandle(namespace, stack, dialog) {
+            function addHandle(namespace, stack, dialog, message, accept, reject) {
                 var handle = {
                     context: namespace,
-                    dialog: dialog
+                    dialog: dialog(message, doAccept, doReject)
                 };
+
+                function doAccept(e, reason) {
+                    if (_.isFunction(accept)) {
+                        accept(handle.shortcut || reason);
+                    }
+                }
+                function doReject(e, reason) {
+                    if (_.isFunction(reject)) {
+                        reject(handle.shortcut || reason);
+                    }
+                }
 
                 // prevents all registered shortcuts to be triggered
                 // and brings back the dialog shortcuts
@@ -120,9 +136,9 @@ define([
                 stack.push(handle);
                 opened.push(handle);
 
-                dialog.on('closed.modal', function() {
-                    removeHandle(stack, dialog);
-                    removeHandle(opened, dialog);
+                handle.dialog.on('closed.modal', function() {
+                    removeHandle(stack, handle.dialog);
+                    removeHandle(opened, handle.dialog);
 
                     // if all dialogs have been closed allows all registered shortcuts to be triggered
                     // also disables the dialog shortcuts
@@ -177,9 +193,9 @@ define([
             // handle the plugin's shortcuts
             if (testConfig.allowShortcuts) {
                 _.forEach(pluginShortcuts, function(command, key) {
-                    dialogShortcut.add(namespaceHelper.namespaceAll(command, pluginName, true), function() {
+                    dialogShortcut.add(namespaceHelper.namespaceAll(command, pluginName, true), function(e, shortcut) {
                         // just fire the action using the event loop
-                        testRunner.trigger(actionPrefix + key);
+                        testRunner.trigger(actionPrefix + key, shortcut);
                     });
                 });
             }
@@ -187,19 +203,19 @@ define([
             //change plugin state
             testRunner
                 .before('alert.*', function(e, msg, accept) {
-                    addHandle(e.namespace, alerts, dialogAlert(msg, accept));
+                    addHandle(e.namespace, alerts, dialogAlert, msg, accept, accept);
                 })
                 .before('confirm.*', function(e, msg, accept, reject) {
-                    addHandle(e.namespace, confirms, dialogConfirm(msg, accept, reject));
+                    addHandle(e.namespace, confirms, dialogConfirm, msg, accept, reject);
                 })
                 .before('closedialog.*', function(e, accept) {
                     closeDialogs(e.namespace, accept);
                 })
-                .on(actionPrefix + 'accept', function() {
-                    closeLast(true);
+                .on(actionPrefix + 'accept', function(shortcut) {
+                    closeLast(true, shortcut);
                 })
-                .on(actionPrefix + 'reject', function() {
-                    closeLast(false);
+                .on(actionPrefix + 'reject', function(shortcut) {
+                    closeLast(false, shortcut);
                 })
                 .on('destroy', function() {
                     closeDialogs('.@');
