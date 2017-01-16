@@ -237,7 +237,9 @@ define([
                             registerInnerShortcuts();
 
                             //focus the switcher
-                            document.activeElement.blur();
+                            if(document.activeElement){
+                                document.activeElement.blur();
+                            }
                             $('.selected a', self.$menu).focus();
                         } else {
                             unregisterInnerShortcuts();
