@@ -110,6 +110,7 @@ define([
                 self.$menuItems.eq(state.hoveredIndex).addClass('hover');
             }
 
+
             /**
              * register plugin's own shortcuts
              */
@@ -234,7 +235,10 @@ define([
                         hider.toggle(self.$menu);
                         if (!hider.isHidden(self.$menu)) {
                             registerInnerShortcuts();
-                            self.$menu.focus();
+
+                            //focus the switcher
+                            document.activeElement.blur();
+                            $('.selected a', self.$menu).focus();
                         } else {
                             unregisterInnerShortcuts();
                         }
