@@ -21,6 +21,17 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
+    "identifier": "PASS_TOTAL_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
     "identifier": "PASS_HISTORY",
     "cardinality": 0,
     "baseType": 1
@@ -32,9 +43,31 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
+    "identifier": "PASS_HISTORY_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
     "identifier": "PASS_MATH",
     "cardinality": 0,
     "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_MATH_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
   }],
   "timeLimits": {
     "qti-type": "timeLimits",
@@ -330,6 +363,49 @@
         }]
       }
     }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_TOTAL",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_TOTAL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_TOTAL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
+        }]
+      }
+    }, {
       "qti-type": "setOutcomeValue",
       "identifier": "PASS_HISTORY",
       "expression": {
@@ -372,6 +448,49 @@
         }]
       }
     }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_HISTORY",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_HISTORY_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_HISTORY_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
+        }]
+      }
+    }, {
       "qti-type": "setOutcomeValue",
       "identifier": "PASS_MATH",
       "expression": {
@@ -411,6 +530,49 @@
           "qti-type": "baseValue",
           "baseType": 3,
           "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_MATH",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_MATH_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_MATH_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
         }]
       }
     }]
