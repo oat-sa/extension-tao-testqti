@@ -22,9 +22,10 @@
  */
 define([
     'lodash',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/cardinality'
-], function (_, baseTypeHelper, cardinalityHelper) {
+], function (_, outcomeValidator, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var outcomeHelper = {
@@ -221,7 +222,7 @@ define([
          */
         createOutcome: function createOutcome(identifier, type, cardinality) {
 
-            if (!validateIdentifier(identifier)) {
+            if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
 
@@ -250,7 +251,7 @@ define([
         addOutcomeProcessing: function createOutcomeProcessing(testModel, processingRule) {
             var outcomeProcessing = testModel.outcomeProcessing;
 
-            if (!processingRule || !processingRule['qti-type'] || !_.isString(processingRule['qti-type'])) {
+            if (!outcomeValidator.validateOutcome(processingRule)) {
                 throw new TypeError('You must provide a valid outcome processing rule!');
             }
 
@@ -279,12 +280,12 @@ define([
         addOutcome: function addOutcome(testModel, outcome, processingRule) {
             var declarations = testModel.outcomeDeclarations;
 
-            if (!outcome || outcome['qti-type'] !== 'outcomeDeclaration' || !validateIdentifier(outcome.identifier)) {
+            if (!outcomeValidator.validateOutcome(outcome, true, 'outcomeDeclaration')) {
                 throw new TypeError('You must provide a valid outcome!');
             }
 
             if (processingRule) {
-                if (!validateIdentifier(processingRule.identifier) || processingRule.identifier !== outcome.identifier) {
+                if (!outcomeValidator.validateOutcome(processingRule) || processingRule.identifier !== outcome.identifier) {
                     throw new TypeError('You must provide a valid outcome processing rule!');
                 }
 
@@ -300,17 +301,6 @@ define([
             return outcome;
         }
     };
-
-    var identifierValidator = /^[a-zA-Z_][a-zA-Z0-9_\.-]*$/;
-
-    /**
-     * Checks the validity of an identifier
-     * @param {String} identifier
-     * @returns {Boolean}
-     */
-    function validateIdentifier(identifier) {
-        return identifier && _.isString(identifier) && identifierValidator.test(identifier);
-    }
 
     return outcomeHelper;
 });

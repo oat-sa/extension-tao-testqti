@@ -27,6 +27,7 @@ define([
     var baseTypeApi = [
         {title: 'asArray'},
         {title: 'getValid'},
+        {title: 'getValue'},
         {title: 'getConstantByName'},
         {title: 'getNameByConstant'}
     ];
@@ -44,7 +45,58 @@ define([
         {title: 'file', key: 'FILE', value: 9},
         {title: 'uri', key: 'URI', value: 10},
         {title: 'intOrIdentifier', key: 'INT_OR_IDENTIFIER', value: 11},
-        {title: 'coords', key: 'COORDS', value: 12}
+        {title: 'coords', key: 'COORDS', value: 12},
+        {title: 'any', key: 'ANY', value: 12, operator: true},
+        {title: 'same', key: 'SAME', value: 13, operator: true}
+    ];
+
+    var baseTypeValues = [
+        {title: 'identifier', type: baseTypeHelper.IDENTIFIER, value: 10, expected: '10'},
+        {title: 'identifier', type: baseTypeHelper.IDENTIFIER, value: 'foo', expected: 'foo'},
+        {title: 'boolean', type: baseTypeHelper.BOOLEAN, value: 10, expected: true},
+        {title: 'boolean', type: baseTypeHelper.BOOLEAN, value: 0, expected: false},
+        {title: 'boolean', type: baseTypeHelper.BOOLEAN, value: "TRUE", expected: true},
+        {title: 'boolean', type: baseTypeHelper.BOOLEAN, value: "False", expected: false},
+        {title: 'boolean', type: baseTypeHelper.BOOLEAN, value: "", expected: false},
+        {title: 'integer', type: baseTypeHelper.INTEGER, value: 2, expected: 2},
+        {title: 'integer', type: baseTypeHelper.INTEGER, value: 3.14, expected: 3},
+        {title: 'integer', type: baseTypeHelper.INTEGER, value: "10", expected: 10},
+        {title: 'integer', type: baseTypeHelper.INTEGER, value: "foo", expected: 0},
+        {title: 'float', type: baseTypeHelper.FLOAT, value: 3, expected: 3},
+        {title: 'float', type: baseTypeHelper.FLOAT, value: 3.14, expected: 3.14},
+        {title: 'float', type: baseTypeHelper.FLOAT, value: "3.14", expected: 3.14},
+        {title: 'float', type: baseTypeHelper.FLOAT, value: "foo", expected: 0.0},
+        {title: 'string', type: baseTypeHelper.STRING, value: 4, expected: "4"},
+        {title: 'string', type: baseTypeHelper.STRING, value: "foo", expected: "foo"},
+        {title: 'uri', type: baseTypeHelper.URI, value: 10, expected: "10"},
+        {title: 'uri', type: baseTypeHelper.URI, value: "http://tao.dev/123", expected: "http://tao.dev/123"},
+        {title: 'intOrIdentifier', type: baseTypeHelper.INT_OR_IDENTIFIER, value: 11, expected: 11},
+        {title: 'intOrIdentifier', type: baseTypeHelper.INT_OR_IDENTIFIER, value: "11", expected: 11},
+        {title: 'intOrIdentifier', type: baseTypeHelper.INT_OR_IDENTIFIER, value: "foo", expected: "foo"},
+
+        {title: 'identifier', type: 'identifier', value: 10, expected: '10'},
+        {title: 'identifier', type: 'identifier', value: 'foo', expected: 'foo'},
+        {title: 'boolean', type: 'boolean', value: 10, expected: true},
+        {title: 'boolean', type: 'boolean', value: 0, expected: false},
+        {title: 'boolean', type: 'boolean', value: "TRUE", expected: true},
+        {title: 'boolean', type: 'boolean', value: "False", expected: false},
+        {title: 'boolean', type: 'boolean', value: "", expected: false},
+        {title: 'integer', type: 'integer', value: 2, expected: 2},
+        {title: 'integer', type: 'integer', value: 3.14, expected: 3},
+        {title: 'integer', type: 'integer', value: "10", expected: 10},
+        {title: 'integer', type: 'integer', value: "foo", expected: 0},
+        {title: 'float', type: 'float', value: 3, expected: 3},
+        {title: 'float', type: 'float', value: 3.14, expected: 3.14},
+        {title: 'float', type: 'float', value: "3.14", expected: 3.14},
+        {title: 'float', type: 'float', value: "foo", expected: 0.0},
+        {title: 'string', type: 'string', value: 4, expected: "4"},
+        {title: 'string', type: 'string', value: "foo", expected: "foo"},
+        {title: 'uri', type: 'uri', value: 10, expected: "10"},
+        {title: 'uri', type: 'uri', value: "http://tao.dev/123", expected: "http://tao.dev/123"},
+        {title: 'intOrIdentifier', type: 'intOrIdentifier', value: 11, expected: 11},
+        {title: 'intOrIdentifier', type: 'intOrIdentifier', value: "11", expected: 11},
+        {title: 'intOrIdentifier', type: 'intOrIdentifier', value: "foo", expected: "foo"},
+        {title: 'coords', type: 'coords', value: [0, 1], expected: [0, 1]}
     ];
 
 
@@ -69,8 +121,8 @@ define([
         QUnit.expect(3);
 
         assert.equal(typeof baseTypeHelper.asArray(), 'object', 'The baseType helper asArray() provides a list');
-        assert.equal(_.size(baseTypeHelper.asArray()), 13, 'The baseType helper asArray() provides a list of base types');
-        assert.deepEqual(_.values(baseTypeHelper.asArray()), _.range(0, 13), 'The baseType helper asArray() provides the base types as a list of index');
+        assert.equal(_.size(baseTypeHelper.asArray()), 15, 'The baseType helper asArray() provides a list of base types');
+        assert.deepEqual(_.values(baseTypeHelper.asArray()), _.range(0, 13).concat([12, 13]), 'The baseType helper asArray() provides the base types as a list of index');
     });
 
 
@@ -95,6 +147,14 @@ define([
 
 
     QUnit
+        .cases(baseTypeValues)
+        .test('helpers/baseType.getValue() ', function (data, assert) {
+            QUnit.expect(1);
+            assert.deepEqual(baseTypeHelper.getValue(data.type, data.value), data.expected, 'The value ' + data.value + ' should be adjusted to ' + data.expected + ' with the type ' + data.type);
+        });
+
+
+    QUnit
         .cases(baseTypeList)
         .test('helpers/baseType.getConstantByName() ', function (data, assert) {
             QUnit.expect(1);
@@ -106,7 +166,7 @@ define([
         .cases(baseTypeList)
         .test('helpers/baseType.getNameByConstant() ', function (data, assert) {
             QUnit.expect(1);
-            assert.equal(baseTypeHelper.getNameByConstant(data.value), data.title, 'The constant ' + data.value + ' refers to type ' + data.title);
+            assert.equal(baseTypeHelper.getNameByConstant(data.value, data.operator), data.title, 'The constant ' + data.value + ' refers to type ' + data.title);
         });
 
 
