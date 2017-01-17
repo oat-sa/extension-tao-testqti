@@ -172,7 +172,23 @@ define([
          *
          * @type {Number}
          */
-        COORDS: 12
+        COORDS: 12,
+
+        /**
+         * Express that the operands can have any BaseType from the BaseType enumeration and
+         * can be different.
+         *
+         * @type {Number}
+         */
+        ANY: 12,
+
+        /**
+         * Express that all the operands must have the same
+         * baseType.
+         *
+         * @type {Number}
+         */
+        SAME: 13
     };
 
     var baseTypeHelper = _({
@@ -208,6 +224,51 @@ define([
             }
 
             return type;
+        },
+
+        /**
+         * Adjusts a value with respect to the type
+         * @param {String|Number} type
+         * @param {*} value
+         * @returns {*}
+         */
+        getValue: function getValue(type, value) {
+            if (_.isString(type)) {
+                type = baseTypeHelper.getConstantByName(type);
+            }
+
+            switch (type) {
+                case baseTypeEnum.URI:
+                case baseTypeEnum.STRING:
+                case baseTypeEnum.IDENTIFIER:
+                    return value + '';
+
+                case baseTypeEnum.BOOLEAN:
+                    if (_.isString(value)) {
+                        switch (value.toLowerCase()) {
+                            case 'true':
+                                return true;
+                            case 'false':
+                                return false;
+                        }
+                    }
+                    return !!value;
+
+                case baseTypeEnum.INTEGER:
+                    return parseInt(value, 10) || 0;
+
+                case baseTypeEnum.FLOAT:
+                    return parseFloat(value) || 0;
+
+                case baseTypeEnum.INT_OR_IDENTIFIER:
+                    if (!_.isNaN(parseInt(value, 10))) {
+                        return parseInt(value, 10) || 0;
+                    } else {
+                        return '' + value;
+                    }
+            }
+
+            return value;
         },
 
         /**
@@ -271,6 +332,12 @@ define([
                 case 'coords':
                     return baseTypeEnum.COORDS;
 
+                case 'any':
+                    return baseTypeEnum.ANY;
+
+                case 'same':
+                    return baseTypeEnum.SAME;
+
                 default:
                     return false;
             }
@@ -280,9 +347,10 @@ define([
          * Get the QTI name of a BaseType.
          *
          * @param {Number} constant A constant value from the BaseType enumeration.
+         * @param {Boolean} [operator] A flag that allow to switch between operator an value types to prevent duplicate name issue
          * @return {String|Boolean} The QTI name or false if not match.
          */
-        getNameByConstant: function getNameByConstant(constant) {
+        getNameByConstant: function getNameByConstant(constant, operator) {
             switch (constant) {
                 case baseTypeEnum.IDENTIFIER:
                     return 'identifier';
@@ -321,7 +389,15 @@ define([
                     return 'intOrIdentifier';
 
                 case baseTypeEnum.COORDS:
-                    return 'coords';
+                case baseTypeEnum.ANY:
+                    if (operator) {
+                        return 'any';
+                    } else {
+                        return 'coords';
+                    }
+
+                case baseTypeEnum.SAME:
+                    return 'same';
 
                 default:
                     return false;
