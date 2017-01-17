@@ -22,9 +22,10 @@
  */
 define([
     'lodash',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/cardinality'
-], function (_, baseTypeHelper, cardinalityHelper) {
+], function (_, outcomeValidator, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var processingRuleHelper = {
@@ -36,18 +37,19 @@ define([
          * @returns {Object}
          * @throws {TypeError} if the type is empty or is not a string
          * @throws {TypeError} if the identifier is not a string
+         * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         create: function create(type, identifier, expression) {
             var processingRule = {
                 'qti-type': type
             };
 
-            if (!type || !_.isString(type)) {
+            if (!outcomeValidator.validateIdentifier(type)) {
                 throw new TypeError('You must provide a valid processing type!');
             }
 
             if (identifier) {
-                if (!validateIdentifier(identifier)) {
+                if (!outcomeValidator.validateIdentifier(identifier)) {
                     throw new TypeError('You must provide a valid identifier!');
                 }
                 processingRule.identifier = identifier;
@@ -64,15 +66,24 @@ define([
          * Sets an expression to a processing rule
          * @param {Object} processingRule
          * @param {Object|Array} expression
+         * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         setExpression: function setExpression(processingRule, expression) {
             if (processingRule) {
                 if (_.isArray(expression)) {
+                    if (!outcomeValidator.validateOutcomes(expression)) {
+                        throw new TypeError('You must provide valid QTI elements as expression!');
+                    }
+
                     if (processingRule.expression) {
                         processingRule.expression = null;
                     }
                     processingRule.expressions = expression;
                 } else {
+                    if (!outcomeValidator.validateOutcome(expression)) {
+                        throw new TypeError('You must provide a valid QTI element as expression!');
+                    }
+
                     if (processingRule.expressions) {
                         processingRule.expressions = null;
                     }
@@ -87,6 +98,7 @@ define([
          * Adds an expression to a processing rule
          * @param {Object} processingRule
          * @param {Object|Array} expression
+         * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         addExpression: function addExpression(processingRule, expression) {
             if (processingRule && expression) {
@@ -96,8 +108,16 @@ define([
                 }
 
                 if (_.isArray(expression)) {
+                    if (!outcomeValidator.validateOutcomes(expression)) {
+                        throw new TypeError('You must provide valid QTI elements as expression!');
+                    }
+
                     processingRule.expressions = forceArray(processingRule.expressions).concat(expression);
                 } else {
+                    if (!outcomeValidator.validateOutcome(expression)) {
+                        throw new TypeError('You must provide a valid QTI element as expression!');
+                    }
+
                     if (processingRule.expressions) {
                         processingRule.expressions.push(expression);
                     } else {
@@ -113,9 +133,10 @@ define([
          * @param {Object|Array} [expression]
          * @returns {Object}
          * @throws {TypeError} if the identifier is empty or is not a string
+         * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         setOutcomeValue: function setOutcomeValue(identifier, expression) {
-            if (!validateIdentifier(identifier)) {
+            if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
             return processingRuleHelper.create('setOutcomeValue', identifier, expression);
@@ -126,6 +147,7 @@ define([
          * @param {Object|Array} left - the left operand
          * @param {Object|Array} right - the right operand
          * @returns {Object}
+         * @throws {TypeError} if the left and right operands are not valid QTI elements
          */
         gte: function gte(left, right) {
             return binaryOperator('gte', left, right);
@@ -136,6 +158,7 @@ define([
          * @param {Object|Array} left - the left operand
          * @param {Object|Array} right - the right operand
          * @returns {Object}
+         * @throws {TypeError} if the left and right operands are not valid QTI elements
          */
         lte: function lte(left, right) {
             return binaryOperator('lte', left, right);
@@ -146,6 +169,7 @@ define([
          * @param {Object|Array} left - the left operand
          * @param {Object|Array} right - the right operand
          * @returns {Object}
+         * @throws {TypeError} if the left and right operands are not valid QTI elements
          */
         divide: function divide(left, right) {
             return binaryOperator('divide', left, right);
@@ -155,6 +179,7 @@ define([
          * Creates a `sum` rule
          * @param {Object|Array} terms
          * @returns {Object}
+         * @throws {TypeError} if the terms are not valid QTI elements
          */
         sum: function sum(terms) {
             var processingRule = processingRuleHelper.create('sum', null, forceArray(terms));
@@ -171,25 +196,25 @@ define([
          * Creates a `testVariables` rule
          * @param {String} identifier
          * @param {String|Number} [type]
-         * @param {String} weight
+         * @param {String} weightIdentifier
          * @param {String|String[]} [includeCategories]
          * @param {String|String[]} [excludeCategories]
          * @returns {Object}
          * @throws {TypeError} if the identifier is empty or is not a string
          */
-        testVariables: function testVariables(identifier, type, weight, includeCategories, excludeCategories) {
+        testVariables: function testVariables(identifier, type, weightIdentifier, includeCategories, excludeCategories) {
             var processingRule = processingRuleHelper.create('testVariables');
 
-            if (!validateIdentifier(identifier)) {
+            if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
             processingRule.variableIdentifier = identifier;
 
-            if (weight) {
-                if (!validateIdentifier(weight)) {
+            if (weightIdentifier) {
+                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
                     throw new TypeError('You must provide a valid weight identifier!');
                 }
-                processingRule.weightIdentifier = weight;
+                processingRule.weightIdentifier = weightIdentifier;
             } else {
                 processingRule.weightIdentifier = '';
             }
@@ -228,39 +253,153 @@ define([
             var processingRule = processingRuleHelper.create('baseValue');
 
             processingRule.baseType = baseTypeHelper.getValid(type, baseTypeHelper.FLOAT);
-            processingRule.value = parseFloat(value) || 0;
+            processingRule.value = baseTypeHelper.getValue(processingRule.baseType, value);
+
+            return processingRule;
+        },
+
+        /**
+         ** Creates a `variable` rule
+         * @param {String} identifier
+         * @param {String} [weightIdentifier]
+         * @returns {Object}
+         * @throws {TypeError} if the identifier is not valid
+         * @throws {TypeError} if the weight identifier is not valid
+         */
+        variable: function variable(identifier, weightIdentifier) {
+            var processingRule = processingRuleHelper.create('variable', identifier);
+
+            if (!outcomeValidator.validateIdentifier(identifier)) {
+                throw new TypeError('You must provide a valid identifier!');
+            }
+
+            if (weightIdentifier) {
+                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
+                    throw new TypeError('You must provide a valid weight identifier!');
+                }
+                processingRule.weightIdentifier = weightIdentifier;
+            } else {
+                processingRule.weightIdentifier = '';
+            }
+
+            return processingRule;
+        },
+
+        /**
+         * Creates a `match` rule
+         * @param {Object|Array} left - the left operand
+         * @param {Object|Array} right - the right operand
+         * @returns {Object}
+         * @throws {TypeError} if the left and right operands are not valid QTI elements
+         */
+        match: function match(left, right) {
+            return binaryOperator('match', left, right, cardinalityHelper.SAME, cardinalityHelper.SAME);
+        },
+
+        /**
+         * Creates a `outcomeCondition` rule
+         * @param {Object} outcomeIf
+         * @param {Object} outcomeElse
+         * @returns {Object}
+         * @throws {TypeError} if the outcomeIf and outcomeElse operands are not valid QTI elements
+         */
+        outcomeCondition: function outcomeCondition(outcomeIf, outcomeElse) {
+            var processingRule = processingRuleHelper.create('outcomeCondition');
+
+            if (!outcomeValidator.validateOutcome(outcomeIf, false, 'outcomeIf')) {
+                throw new TypeError('You must provide a valid outcomeIf element!');
+            }
+
+            if (outcomeElse && !outcomeValidator.validateOutcome(outcomeElse, false, 'outcomeElse')) {
+                throw new TypeError('You must provide a valid outcomeElse element!');
+            }
+
+            processingRule.outcomeIf = outcomeIf;
+            processingRule.outcomeElseIfs = [];
+
+            if (outcomeElse) {
+                processingRule.outcomeElse = outcomeElse;
+            }
+
+            return processingRule;
+        },
+
+        /**
+         * Creates a `outcomeIf` rule
+         * @param {Object} expression
+         * @param {Object|Object[]} instruction
+         * @returns {Object}
+         * @throws {TypeError} if the expression and instruction operands are not valid QTI elements
+         */
+        outcomeIf: function outcomeIf(expression, instruction) {
+            var processingRule = processingRuleHelper.create('outcomeIf');
+
+            if (!outcomeValidator.validateOutcome(expression)) {
+                throw new TypeError('You must provide a valid outcomeIf element!');
+            }
+
+            if (!_.isArray(instruction)) {
+                instruction = [instruction];
+            }
+            if (!outcomeValidator.validateOutcomes(instruction)) {
+                throw new TypeError('You must provide a valid instruction element!');
+            }
+
+            processingRule.expression = expression;
+            processingRule.outcomeRules = instruction;
+
+            return processingRule;
+        },
+
+        /**
+         * Creates a `outcomeElse` rule
+         * @param {Object|Object[]} instruction
+         * @returns {Object}
+         * @throws {TypeError} if the instruction is not a valid QTI element
+         */
+        outcomeElse: function outcomeElse(instruction) {
+            var processingRule = processingRuleHelper.create('outcomeElse');
+
+            if (!_.isArray(instruction)) {
+                instruction = [instruction];
+            }
+            if (!outcomeValidator.validateOutcomes(instruction)) {
+                throw new TypeError('You must provide a valid instruction element!');
+            }
+
+            processingRule.outcomeRules = instruction;
 
             return processingRule;
         }
 
     };
 
-    var identifierValidator = /^[a-zA-Z_][a-zA-Z0-9_\.-]*$/;
-
-    /**
-     * Checks the validity of an identifier
-     * @param {String} identifier
-     * @returns {Boolean}
-     */
-    function validateIdentifier(identifier) {
-        return identifier &&_.isString(identifier) && identifierValidator.test(identifier);
-    }
-
     /**
      * Creates a binary operator rule
      * @param {String} type - The rule type
      * @param {Object|Array} left - The left operand
      * @param {Object|Array} right - The right operand
+     * @param {Number|Array} [baseType] - The accepted base type
+     * @param {Number|Array} [cardinality] - The accepted cardinality
      * @returns {Object}
      * @throws {TypeError} if the type is empty or is not a string
+     * @throws {TypeError} if the left and right operands are not valid QTI elements
      */
-    function binaryOperator(type, left, right) {
+    function binaryOperator(type, left, right, baseType, cardinality) {
         var processingRule = processingRuleHelper.create(type, null, [left, right]);
 
         processingRule.minOperands = 2;
         processingRule.maxOperands = 2;
-        processingRule.acceptedCardinalities = [cardinalityHelper.SINGLE];
-        processingRule.acceptedBaseTypes = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
+
+        if (_.isUndefined(baseType)) {
+            baseType = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
+        }
+        if (_.isUndefined(cardinality)) {
+            cardinality = [cardinalityHelper.SINGLE];
+        }
+
+        processingRule.acceptedCardinalities = forceArray(cardinality);
+        processingRule.acceptedBaseTypes = forceArray(baseType);
 
         return processingRule;
     }
