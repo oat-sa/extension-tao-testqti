@@ -55,9 +55,9 @@ define([
         total: {
             key: 'total',
             label: __('Total score'),
-            outcome: 'SCORE_TOTAL',
             prefix: 'SCORE_',
-            type: baseTypeHelper.FLOAT,
+            outcome: 'SCORE_TOTAL',
+            outcomeType: baseTypeHelper.FLOAT,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
@@ -65,9 +65,15 @@ define([
         cut: {
             key: 'cut',
             label: __('Cut score'),
-            outcome: 'PASS_TOTAL',
             prefix: 'PASS_',
-            type: baseTypeHelper.BOOLEAN,
+            outcome: 'PASS_TOTAL',
+            outcomeType: baseTypeHelper.BOOLEAN,
+            feedback: 'PASS_TOTAL_RENDERING',
+            feedbackSuffix: '_RENDERING',
+            feedbackType: baseTypeHelper.IDENTIFIER,
+            feedbackMatch: true,
+            feedbackOk: "passed",
+            feedbackFailed: "not_passed",
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category.')
@@ -109,12 +115,12 @@ define([
             removeScoring(model);
 
             // create the outcome and the rule that process the overall score
-            addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode), processingMode.type);
+            addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode), processingMode.outcomeType);
 
             // create an outcome per categories
             if (model.scoring.categoryScore) {
                 _.forEach(categoryHelper.listCategories(model), function (category) {
-                    addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode, category), processingMode.type, category);
+                    addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode, category), processingMode.outcomeType, category);
                 });
             }
         },
@@ -125,17 +131,44 @@ define([
          */
         cut: function processingModeWriterCut(model) {
             var processingMode = processingModes.cut;
+            var outcomeIdentifier = getOutcomeIdentifier(processingMode);
 
             // erase the existing rules, they will be replaced by those that are defined here
             removeScoring(model);
 
             // create the outcome and the rule that process the overall score
-            addCutScoreOutcomes(model, getOutcomeIdentifier(processingMode), processingMode.type);
+            addCutScoreOutcomes(model, outcomeIdentifier, processingMode.outcomeType);
+
+            // create the outcome and the rule that process the score feedback
+            if (processingMode.feedback) {
+                addFeedbackScoreOutcomes(
+                    model,
+                    processingMode.feedback,
+                    processingMode.feedbackType,
+                    outcomeIdentifier,
+                    processingMode.outcomeType,
+                    processingMode.feedbackMatch,
+                    processingMode.feedbackOk,
+                    processingMode.feedbackFailed
+                );
+            }
 
             // create an outcome per category
             if (model.scoring.categoryScore) {
                 _.forEach(categoryHelper.listCategories(model), function (category) {
-                    addCutScoreOutcomes(model, getOutcomeIdentifier(processingMode, category), processingMode.type, category);
+                    var categoryOutcomeIdentifier = getOutcomeIdentifier(processingMode, category);
+                    addCutScoreOutcomes(model, categoryOutcomeIdentifier, processingMode.outcomeType, category);
+
+                    addFeedbackScoreOutcomes(
+                        model,
+                        categoryOutcomeIdentifier + processingMode.feedbackSuffix,
+                        processingMode.feedbackType,
+                        categoryOutcomeIdentifier,
+                        processingMode.outcomeType,
+                        processingMode.feedbackMatch,
+                        processingMode.feedbackOk,
+                        processingMode.feedbackFailed
+                    );
                 });
             }
         }
@@ -199,6 +232,41 @@ define([
     }
 
     /**
+     * Creates an outcome and the rule that process the score feedback
+     *
+     * @param {Object} model
+     * @param {String} identifier
+     * @param {String|Number} type
+     * @param {String} variable
+     * @param {String|Number} variableType
+     * @param {*} matchValue
+     * @param {*} passed
+     * @param {*} notPassed
+     */
+    function addFeedbackScoreOutcomes(model, identifier, type, variable, variableType, matchValue, passed, notPassed) {
+        var outcome = outcomeHelper.createOutcome(identifier, type);
+        var processingRule = processingRuleHelper.outcomeCondition(
+            processingRuleHelper.outcomeIf(
+                processingRuleHelper.match(
+                    processingRuleHelper.variable(variable),
+                    processingRuleHelper.baseValue(matchValue, variableType)
+                ),
+                processingRuleHelper.setOutcomeValue(identifier,
+                    processingRuleHelper.baseValue(passed, type)
+                )
+            ),
+            processingRuleHelper.outcomeElse(
+                processingRuleHelper.setOutcomeValue(identifier,
+                    processingRuleHelper.baseValue(notPassed, type)
+                )
+            )
+        );
+
+        outcomeHelper.addOutcome(model, outcome);
+        outcomeHelper.addOutcomeProcessing(model, processingRule);
+    }
+
+    /**
      * Checks if an outcome is related to the outcome processing,
      * then returns the processing mode descriptor.
      * @param {Object|String} outcome
@@ -208,7 +276,9 @@ define([
         var identifier = outcomeHelper.getOutcomeIdentifier(outcome);
         var mode = null;
         _.forEach(processingModes, function (processingMode) {
-            if (processingMode.outcome === identifier || identifier.indexOf(processingMode.prefix) === 0) {
+            if ((processingMode.prefix && identifier.indexOf(processingMode.prefix) === 0) ||
+                (processingMode.outcome && processingMode.outcome === identifier) ||
+                (processingMode.feedback && processingMode.feedback === identifier)) {
                 mode = processingMode;
                 return false;
             }
@@ -251,7 +321,9 @@ define([
         _.forEach(outcomeHelper.getOutcomeDeclarations(model), function (outcomeDeclaration) {
             var identifier = outcomeHelper.getOutcomeIdentifier(outcomeDeclaration);
             _.forEach(processingModes, function (processingMode) {
-                if (processingMode.prefix && processingMode.outcome !== identifier && identifier.indexOf(processingMode.prefix) === 0) {
+                if ((!processingMode.outcome || processingMode.outcome !== identifier) &&
+                    (!processingMode.feedback || processingMode.feedback !== identifier) &&
+                    processingMode.prefix && identifier.indexOf(processingMode.prefix) === 0) {
                     categoryOutcomes = true;
                     return false;
                 }
