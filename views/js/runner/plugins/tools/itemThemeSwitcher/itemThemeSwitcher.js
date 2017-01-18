@@ -137,6 +137,29 @@ define([
             }
 
             /**
+             * Opens the switcher menu
+             */
+            function openMenu(){
+                registerInnerShortcuts();
+
+                hider.show(self.$menu);
+
+                //focus the switcher
+                if(document.activeElement){
+                    document.activeElement.blur();
+                }
+                self.$menu.focus();
+            }
+
+            /**
+             * Closes the switcher menu
+             */
+            function closeMenu(){
+                hider.hide(self.$menu);
+                unregisterInnerShortcuts();
+            }
+
+            /**
              * get the theme index from an Id
              * @param {String} themeId
              * @returns {boolean|number}
@@ -201,6 +224,10 @@ define([
                 highlightMenuEntry();
             });
 
+            this.$menu.on('focusout blur', function(){
+                closeMenu();
+            });
+
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
@@ -232,17 +259,10 @@ define([
                 })
                 .on('tool-themeswitcher-toggle', function () {
                     if (self.getState('enabled') !== false) {
-                        hider.toggle(self.$menu);
-                        if (!hider.isHidden(self.$menu)) {
-                            registerInnerShortcuts();
-
-                            //focus the switcher
-                            if(document.activeElement){
-                                document.activeElement.blur();
-                            }
-                            $('.selected a', self.$menu).focus();
+                        if (hider.isHidden(self.$menu)) {
+                            openMenu();
                         } else {
-                            unregisterInnerShortcuts();
+                            closeMenu();
                         }
                     }
                 })
