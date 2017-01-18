@@ -23,9 +23,10 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/outcomeValidator',
+    'taoQtiTest/controller/creator/helpers/qtiElement',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/cardinality'
-], function (_, outcomeValidator, baseTypeHelper, cardinalityHelper) {
+], function (_, outcomeValidator, qtiElementHelper, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var processingRuleHelper = {
@@ -40,19 +41,10 @@ define([
          * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         create: function create(type, identifier, expression) {
-            var processingRule = {
-                'qti-type': type
-            };
+            var processingRule = qtiElementHelper.create(type, identifier);
 
-            if (!outcomeValidator.validateIdentifier(type)) {
-                throw new TypeError('You must provide a valid processing type!');
-            }
-
-            if (identifier) {
-                if (!outcomeValidator.validateIdentifier(identifier)) {
-                    throw new TypeError('You must provide a valid identifier!');
-                }
-                processingRule.identifier = identifier;
+            if (identifier && !outcomeValidator.validateIdentifier(identifier)) {
+                throw new TypeError('You must provide a valid identifier!');
             }
 
             if (expression) {
