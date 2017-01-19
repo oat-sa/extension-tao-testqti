@@ -177,7 +177,7 @@ define([
                         qtiTestHelper.validateModel(model);
                     } catch(err) {
                         $saver.attr('disabled', false).removeClass('disabled');
-                        feedback().error(err);
+                        feedback().error(__('The test has not been saved.') + ' ' + err);
                         return false;
                     }
                     return true;

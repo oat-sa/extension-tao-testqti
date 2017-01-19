@@ -224,10 +224,7 @@ define([
                     _.forEach(assessmentSection.rubricBlocks, function (rubricBlock) {
                         var feedbackBlock = qtiElementHelper.lookupElement(rubricBlock, 'rubricBlock.div.feedbackBlock', 'content');
                         if (feedbackBlock && !outcomes[feedbackBlock.outcomeIdentifier]) {
-                            throw new Error(
-                                __('The test has not been saved.') + ' ' +
-                                __('The outcome "%s" does not exist, but it is referenced by a feedback block!', feedbackBlock.outcomeIdentifier)
-                            );
+                            throw new Error(__('The outcome "%s" does not exist, but it is referenced by a feedback block!', feedbackBlock.outcomeIdentifier));
                         }
                     });
                 });
