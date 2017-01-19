@@ -171,6 +171,15 @@ define([
 
                     //apply consolidation rules
                     qtiTestHelper.consolidateModel(model);
+
+                    //validate the model
+                    try {
+                        qtiTestHelper.validateModel(model);
+                    } catch(err) {
+                        $saver.attr('disabled', false).removeClass('disabled');
+                        feedback().error(err);
+                        return false;
+                    }
                     return true;
                 }
             });
