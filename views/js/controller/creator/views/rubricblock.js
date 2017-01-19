@@ -22,105 +22,171 @@
 define([
     'jquery',
     'lodash',
+    'ui/hider',
+    'util/namespace',
     'taoQtiTest/controller/creator/views/actions',
     'helpers',
     'ckeditor',
-    'taoQtiTest/controller/creator/helpers/ckConfigurator'
-], function($, _, actions, helpers, ckeditor, ckConfigurator){ // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
+    'taoQtiTest/controller/creator/encoders/dom2qti',
+    'taoQtiTest/controller/creator/helpers/ckConfigurator',
+    'taoQtiTest/controller/creator/helpers/qtiElement'
+], function ($, _, hider, namespaceHelper, actions, helpers, ckeditor, Dom2QtiEncoder, ckConfigurator, qtiElementHelper) { // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
     'use strict';
 
     //compute ckeditor config only once
     var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
 
-    var filterPlugin = function filterPlugin(plugin){
-        return _.contains(['taoqtiimage', 'taoqtimedia','taoqtimaths', 'taoqtiinclude'], plugin);
-    };
+    function filterPlugin(plugin) {
+        return _.contains(['taoqtiimage', 'taoqtimedia', 'taoqtimaths', 'taoqtiinclude'], plugin);
+    }
+
     ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
     ckConfig.extraPlugins = _.reject(ckConfig.extraPlugins.split(','), filterPlugin).join(',');
 
     /**
-     * Set up a rubric block: init action beahviors. Called for each one.
-     *
-     * @param {jQueryElement} $rubricBlock - the rubricblock to set up
-     */
-    var setUp = function setUp($rubricBlock, model, data){
-
-        actions.properties($rubricBlock, 'rubricblock', model, propHandler);
-        setUpEditor();
-
-        /**
-         * Perform some binding once the property view is create
-         * @private
-         * @param {propView} propView - the view object
-         */
-        function propHandler(propView){
-
-            rbViews(propView.getView());
-
-            $rubricBlock.parents('.testpart').on('delete', removePropHandler);
-            $rubricBlock.parents('.section').on('delete', removePropHandler);
-            $rubricBlock.on('delete', removePropHandler);
-
-            function removePropHandler(e){
-                if(propView !== null){
-                    propView.destroy();
-                }
-            }
-        }
-
-        /**
-         * Set up the views select box
-         * @private
-         * @param {jQuerElement} $propContainer - the element container
-         */
-        function rbViews($propContainer){
-            var $select = $('select', $propContainer);
-
-            $select.select2({
-                'width' : '100%'
-            }).on("select2-removed", function(e){
-                if($select.select2('val').length === 0){
-                    $select.select2('val', [1]);
-                }
-            });
-
-            if($select.select2('val').length === 0){
-                $select.select2('val', [1]);
-            }
-        }
-
-        /**
-         * Set up ck editor
-         * @private
-         */
-        function setUpEditor(){
-            var editor;
-
-            //we need to synchronize the ck elt with an hidden elt that has data-binding
-            var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
-            var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var syncRubricBlockContent = _.throttle(function(){
-                 $rubricBlockBinding
-                    .html($rubricBlockContent.html())
-                    .trigger('change');
-            }, 100);
-
-            $rubricBlockContent.empty().html($rubricBlockBinding.html());
-
-            editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
-            editor.on('change', function(e) {
-                syncRubricBlockContent();
-            });
-        }
-    };
-
-    /**
-     * The rubriclockView setup RB related components and beahvior
+     * The rubriclockView setup RB related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/rubricblock
      */
     return {
-        setUp : setUp
-    };
+        /**
+         * Set up a rubric block: init action behaviors. Called for each one.
+         *
+         * @param {jQueryElement} $rubricBlock - the rubric block to set up
+         * @param {Object} model - the rubric block data
+         */
+        setUp: function setUp($rubricBlock, model) {
+            //we need to synchronize the ck elt with an hidden elt that has data-binding
+            var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
+            var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
+            var syncRubricBlockContent = _.throttle(function () {
+                $rubricBlockBinding
+                    .html($rubricBlockContent.html())
+                    .trigger('change');
+            }, 100);
+            var editor;
 
+            /**
+             * Bind a listener only related to this rubric.
+             * @param {jQuery} $el
+             * @param {String} eventName
+             * @param {Function} cb
+             * @returns {jQuery}
+             */
+            function bindEvent($el, eventName, cb) {
+                eventName = namespaceHelper.namespaceAll(eventName, model.uid);
+                return $el.off(eventName).on(eventName, cb);
+            }
+
+            function updateContent() {
+                $rubricBlockContent.html(Dom2QtiEncoder.encode(model.content));
+                syncRubricBlockContent();
+            }
+
+            /**
+             * Perform some binding once the property view is created
+             * @private
+             * @param {propView} propView - the view object
+             */
+            function propHandler(propView) {
+                var $view = propView.getView();
+                var $feedbackOutcomeLine = $('.rubric-feedback-outcome', $view);
+                var $feedbackMatchLine = $('.rubric-feedback-match-value', $view);
+
+                function changeFeedback(feedback) {
+                    var activated = feedback && feedback.activated;
+                    var wrapper = qtiElementHelper.lookupElement(model, 'rubricBlock.div.feedbackBlock', 'content');
+                    hider.toggle($feedbackOutcomeLine, activated);
+                    hider.toggle($feedbackMatchLine, activated);
+
+                    if (activated) {
+                        // wrap the actual content into a feedbackBlock if needed
+                        if (!wrapper) {
+                            model.content = [qtiElementHelper.create('div', {
+                                content: [qtiElementHelper.create('feedbackBlock', {
+                                    outcomeIdentifier: feedback.outcome,
+                                    identifier: feedback.matchValue,
+                                    content: model.content
+                                })]
+                            })];
+                        } else {
+                            wrapper.outcomeIdentifier = feedback.outcome;
+                            wrapper.identifier = feedback.matchValue;
+                        }
+                        updateContent();
+                        // $('[name="feedback-outcome"]', $view).val(feedback.outcome);
+                        // $('[name="feedback-match-value"]', $view).val(feedback.matchValue);
+                    } else {
+                        // remove the feedbackBlock wrapper, just keep the actual content
+                        if (wrapper) {
+                            model.content = wrapper.content;
+                            updateContent();
+                        }
+                    }
+                }
+
+                function removePropHandler() {
+                    model.feedback = {};
+                    if (propView !== null) {
+                        propView.destroy();
+                    }
+                }
+
+                function changeHandler(e, changedModel) {
+                    if (e.namespace === 'binder' && changedModel['qti-type'] === 'rubricBlock') {
+                        changeFeedback(changedModel.feedback);
+                    }
+                }
+
+                $('[name=type]', $view).select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%'
+                });
+
+                $view.on('change.binder', changeHandler);
+                bindEvent($rubricBlock.parents('.testpart'), 'delete', removePropHandler);
+                bindEvent($rubricBlock.parents('.section'), 'delete', removePropHandler);
+                bindEvent($rubricBlock, 'delete', removePropHandler);
+
+                changeFeedback(model.feedback);
+                rbViews($view);
+            }
+
+            /**
+             * Set up the views select box
+             * @private
+             * @param {jQuerElement} $propContainer - the element container
+             */
+            function rbViews($propContainer) {
+                var $select = $('[name=view]', $propContainer);
+
+                bindEvent($select.select2({'width': '100%'}), "select2-removed", function () {
+                    if ($select.select2('val').length === 0) {
+                        $select.select2('val', [1]);
+                    }
+                });
+
+                if ($select.select2('val').length === 0) {
+                    $select.select2('val', [1]);
+                }
+            }
+
+            model.orderIndex = model.index + 1;
+            model.uid = _.uniqueId('rb');
+            model.feedback = {
+                activated: !!qtiElementHelper.lookupElement(model, 'rubricBlock.div.feedbackBlock', 'content'),
+                outcome: qtiElementHelper.lookupProperty(model, 'rubricBlock.div.feedbackBlock.outcomeIdentifier', 'content'),
+                matchValue: qtiElementHelper.lookupProperty(model, 'rubricBlock.div.feedbackBlock.identifier', 'content')
+            };
+
+            actions.properties($rubricBlock, 'rubricblock', model, propHandler);
+
+            $rubricBlockContent.empty().html($rubricBlockBinding.html());
+
+            editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
+            editor.on('change', function () {
+                syncRubricBlockContent();
+            });
+        }
+    };
 });
