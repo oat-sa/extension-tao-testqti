@@ -31,7 +31,6 @@ define([
     var addOutcomeProcessingCases, addOutcomeProcessingErrorCases;
     var addOutcomeCases, addOutcomeErrorCases;
     var outcomeHelperApi = [
-        {title: 'findQtiType'},
         {title: 'getProcessingRuleExpression'},
         {title: 'getProcessingRuleProperty'},
         {title: 'getOutcomeDeclarations'},
@@ -62,24 +61,6 @@ define([
             QUnit.expect(1);
             assert.equal(typeof outcomeHelper[data.title], 'function', 'The outcome helper exposes a "' + data.title + '" function');
         });
-
-
-    QUnit.test('helpers/outcome.findQtiType()', function (assert) {
-        var expression = [{
-            'qti-type': 'foo',
-            identifier: 'FOO'
-        }, {
-            'qti-type': 'bar',
-            identifier: 'BAR'
-        }];
-
-        QUnit.expect(5);
-        assert.equal(outcomeHelper.findQtiType(expression, 'foo'), expression[0], 'The outcome helper has found the right expression');
-        assert.equal(outcomeHelper.findQtiType(expression, 'bar'), expression[1], 'The outcome helper has found the right expression');
-        assert.equal(outcomeHelper.findQtiType(expression, 'baz'), null, 'The outcome helper has not found any expression');
-        assert.equal(outcomeHelper.findQtiType(expression[0], 'foo'), expression[0], 'The outcome helper has found the right expression');
-        assert.equal(outcomeHelper.findQtiType(expression[0], 'baz'), null, 'The outcome helper has not found any expression');
-    });
 
 
     QUnit.test('helpers/outcome.getProcessingRuleExpression()', function (assert) {
@@ -331,7 +312,7 @@ define([
         title: 'Wrong identifier',
         identifier: {foo: 'bar'}
     }, {
-        title: 'Bad  identifier',
+        title: 'Bad identifier',
         identifier: '12 foo bar'
     }];
 
