@@ -110,6 +110,7 @@ define([
                 self.$menuItems.eq(state.hoveredIndex).addClass('hover');
             }
 
+
             /**
              * register plugin's own shortcuts
              */
@@ -133,6 +134,29 @@ define([
                 shortcut.remove('up.' + self.getName());
                 shortcut.remove('down.' + self.getName());
                 shortcut.remove('select.' + self.getName());
+            }
+
+            /**
+             * Opens the switcher menu
+             */
+            function openMenu(){
+                registerInnerShortcuts();
+
+                hider.show(self.$menu);
+
+                //focus the switcher
+                if(document.activeElement){
+                    document.activeElement.blur();
+                }
+                self.$menu.focus();
+            }
+
+            /**
+             * Closes the switcher menu
+             */
+            function closeMenu(){
+                hider.hide(self.$menu);
+                unregisterInnerShortcuts();
             }
 
             /**
@@ -200,6 +224,10 @@ define([
                 highlightMenuEntry();
             });
 
+            this.$menu.on('focusout blur', function(){
+                closeMenu();
+            });
+
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
@@ -231,12 +259,10 @@ define([
                 })
                 .on('tool-themeswitcher-toggle', function () {
                     if (self.getState('enabled') !== false) {
-                        hider.toggle(self.$menu);
-                        if (!hider.isHidden(self.$menu)) {
-                            registerInnerShortcuts();
-                            self.$menu.focus();
+                        if (hider.isHidden(self.$menu)) {
+                            openMenu();
                         } else {
-                            unregisterInnerShortcuts();
+                            closeMenu();
                         }
                     }
                 })
