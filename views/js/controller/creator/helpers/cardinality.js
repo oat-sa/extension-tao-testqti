@@ -79,7 +79,23 @@ define([
          *
          * @type {Number}
          */
-        RECORD: 3
+        RECORD: 3,
+
+        /**
+         * Express that all the expressions involved in an operator have
+         * the same cardinality.
+         *
+         * @type {Number}
+         */
+        SAME: 4,
+
+        /**
+         * Express that all the expressions involved in an operator may
+         * have any cardinality.
+         *
+         * @type {Number}
+         */
+        ANY: 5
     };
 
     var cardinalityHelper = _({
@@ -137,6 +153,12 @@ define([
                 case 'record':
                     return cardinalityEnum.RECORD;
 
+                case 'same':
+                    return cardinalityEnum.SAME;
+
+                case 'any':
+                    return cardinalityEnum.ANY;
+
                 default:
                     return false;
             }
@@ -161,6 +183,12 @@ define([
 
                 case cardinalityEnum.RECORD:
                     return 'record';
+
+                case cardinalityEnum.SAME:
+                    return 'same';
+
+                case cardinalityEnum.ANY:
+                    return 'any';
 
                 default:
                     return false;

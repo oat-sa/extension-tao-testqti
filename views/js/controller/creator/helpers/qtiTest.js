@@ -19,7 +19,12 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['lodash', 'i18n'], function(_, __){
+define([
+    'lodash',
+    'i18n',
+    'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/qtiElement'
+], function(_, __, outcomeHelper, qtiElementHelper){
     'use strict';
 
     /**
@@ -204,6 +209,26 @@ define(['lodash', 'i18n'], function(_, __){
                 });
             }
             return model;
+        },
+
+        /**
+         * Validates the provided model
+         * @param {Object} model
+         * @throws {Error} if the model is not valid
+         */
+        validateModel: function validateModel(model) {
+            var outcomes = _.indexBy(outcomeHelper.listOutcomes(model));
+
+            _.forEach(model.testParts, function (testPart) {
+                _.forEach(testPart.assessmentSections, function (assessmentSection) {
+                    _.forEach(assessmentSection.rubricBlocks, function (rubricBlock) {
+                        var feedbackBlock = qtiElementHelper.lookupElement(rubricBlock, 'rubricBlock.div.feedbackBlock', 'content');
+                        if (feedbackBlock && !outcomes[feedbackBlock.outcomeIdentifier]) {
+                            throw new Error(__('The outcome "%s" does not exist, but it is referenced by a feedback block!', feedbackBlock.outcomeIdentifier));
+                        }
+                    });
+                });
+            });
         }
     };
 

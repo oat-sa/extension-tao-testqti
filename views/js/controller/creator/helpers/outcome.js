@@ -22,39 +22,14 @@
  */
 define([
     'lodash',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
+    'taoQtiTest/controller/creator/helpers/qtiElement',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/cardinality'
-], function (_, baseTypeHelper, cardinalityHelper) {
+], function (_, outcomeValidator, qtiElementHelper, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
     var outcomeHelper = {
-        /**
-         * Finds a QTI element in an expression, by its type.
-         * An expression is either an object or a list of objects.
-         * Does not browse any sub-expressions.
-         * @param {Array|Object} expression
-         * @param {String} type
-         * @returns {Object}
-         */
-        findQtiType: function findQtiType(expression, type) {
-            var found = null;
-
-            function checkType(qti) {
-                if (qti['qti-type'] === type) {
-                    found = qti;
-                    return false;
-                }
-            }
-
-            if (_.isArray(expression)) {
-                _.forEach(expression, checkType);
-            } else if (expression) {
-                checkType(expression);
-            }
-
-            return found;
-        },
-
         /**
          * Gets a property from an outcome rule expression.
          * The path to the property is based on QTI types.
@@ -63,19 +38,7 @@ define([
          * @returns {*}
          */
         getProcessingRuleExpression: function getProcessingRuleExpression(outcomeRule, path) {
-            var steps = _.isArray(path) ? path : path.split('.');
-            var len = steps.length;
-            var expression = outcomeRule;
-            var i = 0;
-
-            while (expression && i < len) {
-                expression = outcomeHelper.findQtiType(expression, steps[i++]);
-                if (expression && i < len) {
-                    expression = expression.expression || expression.expressions;
-                }
-            }
-
-            return expression || null;
+            return qtiElementHelper.lookupElement(outcomeRule, path, ['expression', 'expressions']);
         },
 
         /**
@@ -86,16 +49,7 @@ define([
          * @returns {*}
          */
         getProcessingRuleProperty: function getProcessingRuleProperty(outcomeRule, path) {
-            var result = null;
-            var steps = _.isArray(path) ? path : path.split('.');
-            var property = steps.pop();
-            var expression = outcomeHelper.getProcessingRuleExpression(outcomeRule, steps);
-
-            if (expression && expression[property]) {
-                result = expression[property];
-            }
-
-            return result;
+            return qtiElementHelper.lookupProperty(outcomeRule, path, ['expression', 'expressions']);
         },
 
         /**
@@ -221,22 +175,20 @@ define([
          */
         createOutcome: function createOutcome(identifier, type, cardinality) {
 
-            if (!validateIdentifier(identifier)) {
+            if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
 
-            return {
-                'qti-type': 'outcomeDeclaration',
+            return qtiElementHelper.create('outcomeDeclaration', identifier, {
                 views: [],
                 interpretation: '',
                 longInterpretation: '',
                 normalMaximum: false,
                 normalMinimum: false,
                 masteryValue: false,
-                identifier: identifier,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
                 baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
-            };
+            });
         },
 
         /**
@@ -250,7 +202,7 @@ define([
         addOutcomeProcessing: function createOutcomeProcessing(testModel, processingRule) {
             var outcomeProcessing = testModel.outcomeProcessing;
 
-            if (!processingRule || !processingRule['qti-type'] || !_.isString(processingRule['qti-type'])) {
+            if (!outcomeValidator.validateOutcome(processingRule)) {
                 throw new TypeError('You must provide a valid outcome processing rule!');
             }
 
@@ -279,12 +231,12 @@ define([
         addOutcome: function addOutcome(testModel, outcome, processingRule) {
             var declarations = testModel.outcomeDeclarations;
 
-            if (!outcome || outcome['qti-type'] !== 'outcomeDeclaration' || !validateIdentifier(outcome.identifier)) {
+            if (!outcomeValidator.validateOutcome(outcome, true, 'outcomeDeclaration')) {
                 throw new TypeError('You must provide a valid outcome!');
             }
 
             if (processingRule) {
-                if (!validateIdentifier(processingRule.identifier) || processingRule.identifier !== outcome.identifier) {
+                if (!outcomeValidator.validateOutcome(processingRule) || processingRule.identifier !== outcome.identifier) {
                     throw new TypeError('You must provide a valid outcome processing rule!');
                 }
 
@@ -300,17 +252,6 @@ define([
             return outcome;
         }
     };
-
-    var identifierValidator = /^[a-zA-Z_][a-zA-Z0-9_\.-]*$/;
-
-    /**
-     * Checks the validity of an identifier
-     * @param {String} identifier
-     * @returns {Boolean}
-     */
-    function validateIdentifier(identifier) {
-        return identifier && _.isString(identifier) && identifierValidator.test(identifier);
-    }
 
     return outcomeHelper;
 });

@@ -35,7 +35,9 @@ define([
         {title: 'single', key: 'SINGLE', value: 0},
         {title: 'multiple', key: 'MULTIPLE', value: 1},
         {title: 'ordered', key: 'ORDERED', value: 2},
-        {title: 'record', key: 'RECORD', value: 3}
+        {title: 'record', key: 'RECORD', value: 3},
+        {title: 'same', key: 'SAME', value: 4},
+        {title: 'any', key: 'ANY', value: 5}
     ];
 
 
@@ -60,8 +62,8 @@ define([
         QUnit.expect(3);
 
         assert.equal(typeof cardinalityHelper.asArray(), 'object', 'The cardinality helper asArray() provides a list');
-        assert.equal(_.size(cardinalityHelper.asArray()), 4, 'The cardinality helper asArray() provides a list of base cardinalitys');
-        assert.deepEqual(_.values(cardinalityHelper.asArray()), _.range(0, 4), 'The cardinality helper asArray() provides the base cardinalitys as a list of index');
+        assert.equal(_.size(cardinalityHelper.asArray()), 6, 'The cardinality helper asArray() provides a list of base cardinalitys');
+        assert.deepEqual(_.values(cardinalityHelper.asArray()), _.range(0, 6), 'The cardinality helper asArray() provides the base cardinalitys as a list of index');
     });
 
 

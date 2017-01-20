@@ -93,6 +93,8 @@ define([
 
                     if (data.token) {
                         tokenHandler.setToken(data.token);
+                    } else {
+                        tokenHandler.setToken(token);
                     }
 
                     reject(data);

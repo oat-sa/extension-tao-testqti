@@ -119,7 +119,9 @@ define([
         dialogAlert.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
             assert.equal(message, expectedMessage, 'The expected message has been displayed');
-            dlg.hide();
+            _.defer(function() {
+                dlg.hide();
+            });
         });
 
         dialogAlert.on('close', function() {
@@ -153,7 +155,9 @@ define([
         dialogAlert.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
             assert.equal(message, expectedMessage, 'The expected message has been displayed');
-            dlg.hide();
+            _.defer(function() {
+                dlg.hide();
+            });
         });
 
         dialogAlert.on('close', function() {
@@ -270,7 +274,9 @@ define([
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
             assert.equal(message, expectedMessage, 'The expected message has been displayed');
-            dlg.hide();
+            _.defer(function() {
+                dlg.hide();
+            });
         });
 
         dialogConfirm.on('close', function() {
@@ -306,7 +312,9 @@ define([
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
             assert.equal(message, expectedMessage, 'The expected message has been displayed');
-            dlg.hide();
+            _.defer(function() {
+                dlg.hide();
+            });
         });
 
         dialogConfirm.on('close', function() {
