@@ -247,7 +247,7 @@ define([
 
                 var performSubmit = function performSubmit(){
                     //we submit the responses
-                    return self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
+                    var submitItem = self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
                         .then(function(result){
                             return new Promise(function(resolve, reject){
 
@@ -285,6 +285,17 @@ define([
                                 }
                             });
                         });
+
+                    submitItem.catch(function() {
+                        self.trigger('alert.submitError',
+                            __('An error occurred during results submission. Please retry.'),
+                            function () {
+                                self.trigger('resumeitem');
+                            }
+                        );
+                    });
+
+                    return submitItem;
                 };
 
                 if(context.itemSessionState >= states.closed) {
