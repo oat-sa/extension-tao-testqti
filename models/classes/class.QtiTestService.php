@@ -850,8 +850,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 $itemRefIdentifiers[$itemRefIdentifier] = 0;
             }
             $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
-            \common_Logger::w(print_r($itemRefs,true));
-
         }
         $section->setSectionParts($itemRefs);
 
