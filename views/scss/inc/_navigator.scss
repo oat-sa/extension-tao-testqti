@@ -165,13 +165,13 @@ $borderColor: $textHighlight;
 
         li {
             display: block;
-
-            span {
+            .qti-navigator-tab {
                 @include simple-border();
                 border-left: none;
                 line-height: $lineHeight;
-                width: 5rem;
+                min-width: 5rem;
                 cursor: pointer;
+                white-space: nowrap;
             }
         }
     }
@@ -375,7 +375,7 @@ $borderColor: $textHighlight;
         }
     }
     .qti-navigator-filter {
-        span {
+        .qti-navigator-tab {
             background-color: $uiGeneralContentBg;
 
             &:hover {
@@ -384,7 +384,7 @@ $borderColor: $textHighlight;
             }
         }
         &.active {
-            span {
+            .qti-navigator-tab {
                 background-color: $uiClickableActiveBg;
                 color: $textHighlight;
             }

@@ -202,10 +202,10 @@ msgid "Fixed position in a shuffled the selection."
 msgstr "シャッフルされた選択内での固定位置"
 
 msgid "Flagged"
-msgstr "フラグ付け"
+msgstr "見直し"
 
 msgid "Hide review"
-msgstr ""
+msgstr "一覧を隠す"
 
 msgid "Hide the review screen"
 msgstr ""
@@ -244,7 +244,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr "IMS QTIテストがIMSマニフェストファイル \"%s\"から正常にインポートされました"
 
 msgid "In this part of the test navigation is not allowed."
-msgstr "この部分ではテストナビゲーションは許可されていません"
+msgstr "この部分への移動はできません"
 
 msgid "Inconsistency at line %1d:"
 msgstr "%1d行で矛盾があります:"
@@ -307,7 +307,7 @@ msgid "Manage Tests"
 msgstr "テストの管理"
 
 msgid "Mark for review"
-msgstr "レビュー用マーク"
+msgstr "見直しマーク"
 
 msgid "Mark the current item for later review"
 msgstr ""
@@ -508,7 +508,7 @@ msgid "Show Feedback"
 msgstr "フィードバックを表示"
 
 msgid "Show review"
-msgstr ""
+msgstr "問題一覧"
 
 msgid "Show Solution"
 msgstr "答えを表示"
@@ -553,7 +553,7 @@ msgid "Skip to the next section"
 msgstr "次のセクションにスキップ"
 
 msgid "Start Test-part"
-msgstr "テストパート開始"
+msgstr "移動"
 
 msgid "Submission"
 msgstr "提出"

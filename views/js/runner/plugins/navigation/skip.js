@@ -70,7 +70,7 @@ define([
 
             $element.data('control', buttonData[dataType].control)
                     .attr('title', buttonData[dataType].title)
-                    .find('.text').text(buttonData[dataType].title);
+                    .find('.text').text(buttonData[dataType].text);
         }
     };
 

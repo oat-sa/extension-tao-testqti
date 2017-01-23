@@ -1,0 +1,426 @@
+{
+  "qti-type": "assessmentTest",
+  "identifier": "Test-1",
+  "title": "Test 1",
+  "outcomeDeclarations": [{
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_MATH",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_HISTORY",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_MATH",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_HISTORY",
+    "cardinality": 0,
+    "baseType": 1
+  }],
+  "timeLimits": {
+    "qti-type": "timeLimits",
+    "allowLateSubmission": false
+  },
+  "testParts": [{
+    "qti-type": "testPart",
+    "identifier": "testPart-1",
+    "navigationMode": 0,
+    "submissionMode": 0,
+    "preConditions": [],
+    "branchRules": [],
+    "itemSessionControl": {
+      "qti-type": "itemSessionControl",
+      "maxAttempts": 0,
+      "showFeedback": false,
+      "allowReview": true,
+      "showSolution": false,
+      "allowComment": false,
+      "validateResponses": false,
+      "allowSkipping": false
+    },
+    "timeLimits": {
+      "qti-type": "timeLimits",
+      "allowLateSubmission": false
+    },
+    "assessmentSections": [{
+      "qti-type": "assessmentSection",
+      "title": "Section 1",
+      "visible": true,
+      "keepTogether": true,
+      "rubricBlocks": [],
+      "sectionParts": [{
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i1483090611690885",
+        "categories": ["history"],
+        "variableMappings": {},
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
+        "templateDefaults": {},
+        "identifier": "item-1",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 0
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i1483090613110988",
+        "categories": ["math"],
+        "variableMappings": {},
+        "weights": [],
+        "templateDefaults": {},
+        "identifier": "item-3",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 1
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i1483090616225291",
+        "categories": ["math"],
+        "variableMappings": {},
+        "weights": [],
+        "templateDefaults": {},
+        "identifier": "item-2",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 2
+      }],
+      "identifier": "assessmentSection-1",
+      "required": true,
+      "fixed": false,
+      "preConditions": [],
+      "branchRules": [],
+      "itemSessionControl": {
+        "qti-type": "itemSessionControl",
+        "maxAttempts": 1,
+        "showFeedback": false,
+        "allowReview": true,
+        "showSolution": false,
+        "allowComment": false,
+        "validateResponses": false,
+        "allowSkipping": true
+      },
+      "timeLimits": {
+        "qti-type": "timeLimits",
+        "allowLateSubmission": false
+      },
+      "index": 0
+    }, {
+      "qti-type": "assessmentSection",
+      "title": "Section 2",
+      "visible": true,
+      "keepTogether": true,
+      "rubricBlocks": [],
+      "sectionParts": [{
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i148309061819894",
+        "categories": ["history"],
+        "variableMappings": {},
+        "weights": [],
+        "templateDefaults": {},
+        "identifier": "item-4",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 0
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i1483090620510297",
+        "categories": ["history"],
+        "variableMappings": {},
+        "weights": [],
+        "templateDefaults": {},
+        "identifier": "item-5",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 1
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://tao.dev/tao.rdf#i14830906232870100",
+        "categories": ["math"],
+        "variableMappings": {},
+        "weights": [],
+        "templateDefaults": {},
+        "identifier": "item-6",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 2
+      }],
+      "identifier": "assessmentSection-2",
+      "required": false,
+      "fixed": false,
+      "preConditions": [],
+      "branchRules": [],
+      "itemSessionControl": {
+        "qti-type": "itemSessionControl",
+        "maxAttempts": 1,
+        "showFeedback": false,
+        "allowReview": true,
+        "showSolution": false,
+        "allowComment": false,
+        "validateResponses": false,
+        "allowSkipping": true
+      },
+      "timeLimits": {
+        "qti-type": "timeLimits",
+        "allowLateSubmission": false
+      },
+      "index": 1
+    }],
+    "testFeedbacks": [],
+    "index": 0
+  }],
+  "outcomeProcessing": {
+    "qti-type": "outcomeProcessing",
+    "outcomeRules": [{
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_MATH",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": ["math"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_HISTORY",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": ["history"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_MATH",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "sum",
+            "minOperands": 1,
+            "maxOperands": -1,
+            "acceptedCardinalities": [0, 1, 2],
+            "acceptedBaseTypes": [2, 3],
+            "expressions": [{
+              "qti-type": "testVariables",
+              "variableIdentifier": "SCORE",
+              "baseType": -1,
+              "weightIdentifier": "",
+              "sectionIdentifier": "",
+              "includeCategories": ["math"],
+              "excludeCategories": []
+            }]
+          }, {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["math"],
+            "excludeCategories": []
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 70
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_HISTORY",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "sum",
+            "minOperands": 1,
+            "maxOperands": -1,
+            "acceptedCardinalities": [0, 1, 2],
+            "acceptedBaseTypes": [2, 3],
+            "expressions": [{
+              "qti-type": "testVariables",
+              "variableIdentifier": "SCORE",
+              "baseType": -1,
+              "weightIdentifier": "",
+              "sectionIdentifier": "",
+              "includeCategories": ["history"],
+              "excludeCategories": []
+            }]
+          }, {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["math"],
+            "excludeCategories": []
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 70
+        }]
+      }
+    }]
+  },
+  "testFeedbacks": []
+}
