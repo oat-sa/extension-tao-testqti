@@ -911,7 +911,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'out' => 'Shift+O',
                 'close' => 'esc'
             ];
-            
+
             $config['plugins']['magnifier'] = [
                 'zoomMin' => 2,
                 'zoomMax' => 8,
@@ -923,6 +923,85 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.45.0');
         }
 
-        $this->skip('5.45.0', '5.47.0');
+        $this->skip('5.45.0', '5.46.2');
+
+        if ($this->isVersion('5.46.2')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['dialog'] = [
+                'accept' => 'Enter',
+                'reject' => 'Esc'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.47.0');
+        }
+
+        if ($this->isVersion('5.47.0')) {
+
+            $qtiTest = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $qtiTest->getConfig('testRunner');
+            $config = array_merge($config, array(
+                'test-taker-review-show-legend' => true,
+                'test-taker-review-default-open' => true,
+            ));
+            $qtiTest->setConfig('testRunner', $config);
+
+            $this->setVersion('5.48.0');
+        }
+
+        $this->skip('5.48.0', '5.49.0');
+
+        if ($this->isVersion('5.49.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['itemThemeSwitcher'] = [
+                'toggle' => 'T',
+                'up' => 'ArrowUp',
+                'down' => 'ArrowDown',
+                'select' => 'Enter'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.49.1');
+        }
+
+        if ($this->isVersion('5.49.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['test-taker-review-use-title'] = true;
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('5.50.0');
+        }
+
+        if ($this->isVersion('5.50.0')) {
+            $registry = PluginRegistry::getRegistry();
+            if (!$registry->isRegistered('taoQtiTest/runner/plugins/tools/magnifier/magnifier')) {
+                $registry->register(TestPlugin::fromArray([
+                    'id' => 'magnifier',
+                    'name' => 'Magnifier',
+                    'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                    'description' => 'Gives student access to a magnification tool',
+                    'category' => 'tools',
+                    'active' => false,
+                    'tags' => [  ]
+                ]));
+            }
+
+            $this->setVersion('5.50.1');
+        }
+
+        $this->skip('5.50.1', '5.59.0');
     }
 }

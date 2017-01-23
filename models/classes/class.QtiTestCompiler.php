@@ -35,6 +35,7 @@ use League\Flysystem\FileExistsException;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\QtiTestCompilerIndex;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -261,6 +262,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         // Initialize Post Markup Renderer.
         $this->setMarkupPostRenderer(new MarkupPostRenderer(true, true, true));
+        
+        // Initialize the index that will contains info about items
+        $this->setContext(new QtiTestCompilerIndex());
     }
     
     /**
@@ -323,8 +327,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 9. Compile the test meta data into PHP array source code and put it
             // into the private directory.
             $this->compileMeta($assessmentTest);
+            
+            // 10. Compile the test index in JSON content and put it into the private directory.
+            $this->compileIndex();
 
-            // 10. Build the service call.
+            // 11. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
             common_Logger::t("QTI Test successfully compiled.");
@@ -717,6 +724,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $phpCode = common_Utils::toPHPVariableString($meta);
         $phpCode = '<?php return ' . $phpCode . '; ?>';
         $compiledDocDir->write(TAOQTITEST_COMPILED_META_FILENAME, $phpCode);
+    }
+
+    /**
+     * Compile the test index into JSON file to improve performance of the map build.
+     * The file is stored into PRIVATE_DIRECTORY/test-index.json.
+     */
+    protected function compileIndex()
+    {
+        $compiledDocDir = $this->getPrivateDirectory();
+        
+        /** @var $index QtiTestCompilerIndex */
+        $index = $this->getContext();
+        if ($index) {
+            $compiledDocDir->write(TAOQTITEST_COMPILED_INDEX, $index->serialize());
+        }
     }
     
     /**

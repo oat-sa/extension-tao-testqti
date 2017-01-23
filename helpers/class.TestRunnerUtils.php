@@ -30,6 +30,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use qtism\common\datatypes\QtiString;
 
 /**
@@ -383,13 +384,14 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * 
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
      * @param array $testMeta An associative array containing meta-data about the test definition taken by the candidate.
+     * @param QtiTestCompilerIndex $itemIndex
      * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
      * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
      * @param string $standalone
      * @param string $compilationDirs An array containing respectively the private and public compilation directories.
      * @return array The context of the candidate session.
      */
-    static public function buildAssessmentTestContext(AssessmentTestSession $session, array $testMeta, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs) {
+    static public function buildAssessmentTestContext(AssessmentTestSession $session, array $testMeta, $itemIndex, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs) {
         $context = array();
          
         // The state of the test session.
@@ -483,7 +485,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             // The test review screen setup
             if (!empty($config['test-taker-review']) && $context['considerProgress']) {
                 // The navigation map in order to build the test navigator
-                $navigator = self::getNavigatorMap($session);
+                $navigator = self::getNavigatorMap($session, $itemIndex);
                 if ($navigator !== NavigationMode::LINEAR) {
                     $context['navigatorMap'] = $navigator['map'];
                     $context['itemFlagged'] = self::getItemFlag($session, $context['itemPosition']);
@@ -763,7 +765,9 @@ class taoQtiTest_helpers_TestRunnerUtils {
         foreach ($jumps as $jump) {
             $routeItem = $jump->getTarget();
             $partId = $routeItem->getTestPart()->getIdentifier();
-            $sectionId = key(current($routeItem->getAssessmentSections()));
+            $sections = $routeItem->getAssessmentSections();
+            $sections->rewind();
+            $sectionId = key(current($sections));
             $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
 
             $jumpsMap[$partId][$sectionId][$itemId] = self::getItemInfo($session, $jump);
@@ -782,9 +786,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * Gets the section map for navigation between test parts, sections and items.
      *
      * @param AssessmentTestSession $session
+     * @param QtiTestCompilerIndex $itemIndex
      * @return array A navigator map (parts, sections, items so on)
      */
-    static private function getNavigatorMap(AssessmentTestSession $session) {
+    static private function getNavigatorMap(AssessmentTestSession $session, $itemIndex) {
 
         // get jumps
         $jumps = $session->getPossibleJumps();
@@ -821,6 +826,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $forceTitles = !empty($config['test-taker-review-force-title']);
         $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
+        $useTitle = !empty($config['test-taker-review-use-title']);
+        $language = \common_session_SessionManager::getSession()->getInterfaceLanguage();
 
         $returnValue = array();
         $testParts   = array();
@@ -862,7 +869,8 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
                         if (isset($jumpsMap[$id][$sectionId][$itemId])) {
                             $jumpInfo = $jumpsMap[$id][$sectionId][$itemId];
-                            $resItem  =  new \core_kernel_classes_Resource(strstr($item->getHref(), '|', true));
+                            $itemUri = strstr($item->getHref(), '|', true);
+                            $resItem  =  new \core_kernel_classes_Resource($itemUri);
                             if ($jumpInfo['answered']) {
                                 ++$completed;
                             }
@@ -875,7 +883,19 @@ class taoQtiTest_helpers_TestRunnerUtils {
                             if ($forceTitles) {
                                 $label = sprintf($uniqueTitle, ++$positionInSection);
                             } else {
-                                $label = $resItem->getLabel();
+                                if ($useTitle) {
+                                    $label = $itemIndex->getItemValue($itemUri, $language, 'title');
+                                } else {
+                                    $label = '';
+                                }
+
+                                if (!$label) {
+                                    $label = $itemIndex->getItemValue($itemUri, $language, 'label');
+                                }
+
+                                if (!$label) {
+                                    $label = $resItem->getLabel();
+                                }
                             }
                             $items[]  = array_merge(
                                 array(
