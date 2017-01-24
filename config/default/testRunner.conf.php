@@ -413,6 +413,18 @@ return array(
         'dialog' => [
             'accept' => 'Enter',
             'reject' => 'Esc'
-        ]
+        ],
+        'magnifier' => array(
+            'toggle' => 'L',
+            'in' => 'Shift+I',
+            'out' => 'Shift+O',
+            'close' => 'esc'
+        ),
+        'highlighter' => array(
+            'toggle' => 'Shift+U'
+        ),
+        'area-masking' => array(
+            'toggle' => 'N'
+        )
     ],
 );
