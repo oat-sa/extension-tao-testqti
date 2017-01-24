@@ -155,6 +155,8 @@ define([
                 .on(actionPrefix + 'toggle', function () {
                     if( self.masks.length < config.max ) {
                         addMask();
+                    } else if (config.max === 1) {
+                        _.invoke(self.masks, 'destroy');
                     }
                 });
         },
