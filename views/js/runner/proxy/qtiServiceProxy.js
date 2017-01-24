@@ -93,7 +93,7 @@ define([
 
                     if (data.token) {
                         tokenHandler.setToken(data.token);
-                    } else if (noToken === false) {
+                    } else if (!noToken) {
                         tokenHandler.setToken(token);
                     }
 
