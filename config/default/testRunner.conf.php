@@ -424,7 +424,7 @@ return array(
             'toggle' => 'Shift+U'
         ),
         'area-masking' => array(
-            'toggle' => 'N'
+            'toggle' => 'Y'
         )
     ],
 );

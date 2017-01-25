@@ -1010,7 +1010,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config = $extension->getConfig('testRunner');
 
             $config['shortcuts']['area-masking'] = [
-                'toggle' => 'N'
+                'toggle' => 'Y'
             ];
 
             $extension->setConfig('testRunner', $config);
