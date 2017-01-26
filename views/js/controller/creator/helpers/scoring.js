@@ -410,9 +410,18 @@ define([
          * Checks the test model against outcome processing mode.
          * Initializes the scoring property accordingly.
          *
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
+         * @throws {TypeError} if the modelOverseer is invalid
          */
-        read: function read(model) {
+        read: function read(modelOverseer) {
+            var model;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+
             // detect the score processing mode and build the descriptor used to manage the UI
             model.scoring = {
                 modes: processingModes,
@@ -427,11 +436,18 @@ define([
         /**
          * If the processing mode has been set, generates the outcomes that define the scoring.
          *
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
+         * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
          */
-        write: function write(model) {
-            var processingModeWriter;
-            var scoring = model.scoring;
+        write: function write(modelOverseer) {
+            var model, scoring, processingModeWriter;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+            scoring = model.scoring;
 
             // write the score processing mode by generating the outcomes variables, but only if the mode has been set
             if (scoring) {

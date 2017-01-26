@@ -27,6 +27,7 @@ define([
     'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
+    'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
     'taoQtiTest/controller/creator/views/testpart',
@@ -47,6 +48,7 @@ define([
     history,
     feedback,
     DataBindController,
+    modelOverseerFactory,
     itemView, testView,
     testPartView,
     sectionView,
@@ -117,7 +119,7 @@ define([
             var self = this;
             var $container = $('#test-creator');
             var $saver = $('#saver');
-            var binder, binderOptions;
+            var binder, binderOptions, modelOverseer;
 
             self.identifiers = [];
 
@@ -141,12 +143,12 @@ define([
                 _.partial(getCategories, options.routes.categories)
             );
 
-            //Print data binder chandes for DEBUGGING ONLY
-            //$container.on('change.binder', function(e, model){
-                //if(e.namespace === 'binder'){
-                    //console.log(model);
-                //}
-            //});
+            // forwards model change events to the model overseer
+            $container.on('change.binder', function (e, model) {
+                if (e.namespace === 'binder' && model) {
+                    modelOverseer.trigger('change', model);
+                }
+            });
 
             //Data Binding options
             binderOptions = _.merge(options.routes, {
@@ -163,8 +165,11 @@ define([
                 },
                 templates : templates,
                 beforeSave : function(model){
+                    // model instance should not change, but ensure we still have access to it, in case of
+                    modelOverseer.setModel(model);
+
                     //generate the outcomes that define the scoring
-                    scoringHelper.write(model);
+                    scoringHelper.write(modelOverseer);
 
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
@@ -188,8 +193,16 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
+                    // the model must be wrapped in order to share more (events, internal states, and more)
+                    modelOverseer = modelOverseerFactory(model, {
+                        uri : options.uri,
+                        identifiers : self.identifiers,
+                        labels : options.labels,
+                        routes : options.routes
+                    });
+
                     //detect the scoring mode
-                    scoringHelper.read(model);
+                    scoringHelper.read(modelOverseer);
 
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
@@ -200,12 +213,7 @@ define([
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
-                    testView(model, {
-                        uri : options.uri,
-                        identifiers : self.identifiers,
-                        labels : options.labels,
-                        routes : options.routes
-                    });
+                    testView(modelOverseer);
 
                     //listen for changes to update available actions
                     testPartView.listenActionState();
@@ -214,10 +222,10 @@ define([
                     itemrefView.resize();
 
                     $(window)
-                      .off('resize.qti-test-creator')
-                      .on('resize.qti-test-creator', function(){
-                          itemrefView.resize();
-                      });
+                        .off('resize.qti-test-creator')
+                        .on('resize.qti-test-creator', function(){
+                            itemrefView.resize();
+                        });
                 });
 
             //the save button triggers binder's save action.

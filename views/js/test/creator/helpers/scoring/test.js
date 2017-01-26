@@ -20,6 +20,7 @@
  */
 define([
     'lodash',
+    'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/helpers/scoring',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringNone.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCustom.json',
@@ -29,6 +30,7 @@ define([
     'json!taoQtiTest/test/creator/helpers/scoring/scoringCutCategory.json',
     'json!taoQtiTest/test/creator/helpers/scoring/scoringNoOutcomes.json'
 ], function (_,
+             modelOverseerFactory,
              scoringHelper,
              scoringNoneSample,
              scoringCustomSample,
@@ -166,10 +168,11 @@ define([
         .cases(scoringReadCases)
         .test('helpers/scoring.read() ', function (data, assert) {
             var model = _.cloneDeep(data.model);
+            var modelOverseer = modelOverseerFactory(model);
 
             QUnit.expect(5);
 
-            scoringHelper.read(model);
+            scoringHelper.read(modelOverseer);
 
             assert.equal(typeof model.scoring, 'object', 'The scoring descriptor has been set');
             assert.equal(model.scoring.outcomeProcessing, data.outcomeProcessing, 'The right scoring processing mode has been detected');
@@ -179,21 +182,35 @@ define([
         });
 
 
+    QUnit.test('helpers/scoring.read() #error', function (assert) {
+        QUnit.expect(2);
+
+        assert.throws(function () {
+            scoringHelper.read();
+        }, 'The scoring helper should throw an error if no modelOverseer is provided!');
+
+        assert.throws(function () {
+            scoringHelper.read({});
+        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!');
+    });
+
+
     QUnit
         .cases(scoringWriteCases)
         .test('helpers/scoring.write() ', function (data, assert) {
             var model = _.cloneDeep(data.model);
+            var modelOverseer = modelOverseerFactory(model);
 
             QUnit.expect(1);
 
-            scoringHelper.read(model);
+            scoringHelper.read(modelOverseer);
 
             model.scoring.outcomeProcessing = data.outcomeProcessing;
             model.scoring.categoryScore = data.categoryScore;
             model.scoring.cutScore = data.cutScore;
             model.scoring.weightIdentifier = data.weightIdentifier;
 
-            scoringHelper.write(model);
+            scoringHelper.write(modelOverseer);
 
             model = _.omit(model, 'scoring');
 
@@ -207,12 +224,20 @@ define([
                 outcomeProcessing: 'foo'
             }
         };
+        var modelOverseer = modelOverseerFactory(model);
 
-        QUnit.expect(1);
+        QUnit.expect(3);
+
+        assert.throws(function () {
+            scoringHelper.write();
+        }, 'The scoring helper should throw an error if no modelOverseer is provided!');
 
         assert.throws(function () {
             scoringHelper.write(model);
-        }, 'The scoring helper should throw an error if the processing mode is unknown!');
+        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!');
 
+        assert.throws(function () {
+            scoringHelper.write(modelOverseer);
+        }, 'The scoring helper should throw an error if the processing mode is unknown!');
     });
 });

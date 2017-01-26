@@ -52,10 +52,11 @@ define([
         /**
          * Set up a rubric block: init action behaviors. Called for each one.
          *
+         * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+         * @param {Object} rubricModel - the rubric block data
          * @param {jQueryElement} $rubricBlock - the rubric block to set up
-         * @param {Object} model - the rubric block data
          */
-        setUp: function setUp($rubricBlock, model) {
+        setUp: function setUp(modelOverseer, rubricModel, $rubricBlock) {
             //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
@@ -74,12 +75,12 @@ define([
              * @returns {jQuery}
              */
             function bindEvent($el, eventName, cb) {
-                eventName = namespaceHelper.namespaceAll(eventName, model.uid);
+                eventName = namespaceHelper.namespaceAll(eventName, rubricModel.uid);
                 return $el.off(eventName).on(eventName, cb);
             }
 
             function updateContent() {
-                $rubricBlockContent.html(Dom2QtiEncoder.encode(model.content));
+                $rubricBlockContent.html(Dom2QtiEncoder.encode(rubricModel.content));
                 syncRubricBlockContent();
             }
 
@@ -95,18 +96,18 @@ define([
 
                 function changeFeedback(feedback) {
                     var activated = feedback && feedback.activated;
-                    var wrapper = qtiElementHelper.lookupElement(model, 'rubricBlock.div.feedbackBlock', 'content');
+                    var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
                     hider.toggle($feedbackOutcomeLine, activated);
                     hider.toggle($feedbackMatchLine, activated);
 
                     if (activated) {
                         // wrap the actual content into a feedbackBlock if needed
                         if (!wrapper) {
-                            model.content = [qtiElementHelper.create('div', {
+                            rubricModel.content = [qtiElementHelper.create('div', {
                                 content: [qtiElementHelper.create('feedbackBlock', {
                                     outcomeIdentifier: feedback.outcome,
                                     identifier: feedback.matchValue,
-                                    content: model.content
+                                    content: rubricModel.content
                                 })]
                             })];
                         } else {
@@ -119,14 +120,14 @@ define([
                     } else {
                         // remove the feedbackBlock wrapper, just keep the actual content
                         if (wrapper) {
-                            model.content = wrapper.content;
+                            rubricModel.content = wrapper.content;
                             updateContent();
                         }
                     }
                 }
 
                 function removePropHandler() {
-                    model.feedback = {};
+                    rubricModel.feedback = {};
                     if (propView !== null) {
                         propView.destroy();
                     }
@@ -148,7 +149,7 @@ define([
                 bindEvent($rubricBlock.parents('.section'), 'delete', removePropHandler);
                 bindEvent($rubricBlock, 'delete', removePropHandler);
 
-                changeFeedback(model.feedback);
+                changeFeedback(rubricModel.feedback);
                 rbViews($view);
             }
 
@@ -171,15 +172,15 @@ define([
                 }
             }
 
-            model.orderIndex = model.index + 1;
-            model.uid = _.uniqueId('rb');
-            model.feedback = {
-                activated: !!qtiElementHelper.lookupElement(model, 'rubricBlock.div.feedbackBlock', 'content'),
-                outcome: qtiElementHelper.lookupProperty(model, 'rubricBlock.div.feedbackBlock.outcomeIdentifier', 'content'),
-                matchValue: qtiElementHelper.lookupProperty(model, 'rubricBlock.div.feedbackBlock.identifier', 'content')
+            rubricModel.orderIndex = rubricModel.index + 1;
+            rubricModel.uid = _.uniqueId('rb');
+            rubricModel.feedback = {
+                activated: !!qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content'),
+                outcome: qtiElementHelper.lookupProperty(rubricModel, 'rubricBlock.div.feedbackBlock.outcomeIdentifier', 'content'),
+                matchValue: qtiElementHelper.lookupProperty(rubricModel, 'rubricBlock.div.feedbackBlock.identifier', 'content')
             };
 
-            actions.properties($rubricBlock, 'rubricblock', model, propHandler);
+            actions.properties($rubricBlock, 'rubricblock', rubricModel, propHandler);
 
             $rubricBlockContent.empty().html($rubricBlockBinding.html());
 

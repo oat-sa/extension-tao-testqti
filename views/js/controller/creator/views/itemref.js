@@ -52,14 +52,15 @@ function(
     /**
      * Set up an item ref: init action behaviors. Called for each one.
      *
+     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+     * @param {Object} refModel - the data model to bind to the item ref
      * @param {jQueryElement} $itemRef - the itemRef element to set up
-     * @param {Object} model - the data model to bind to the ref
      */
-    var setUp =  function setUp ($itemRef, model){
+    function setUp (modelOverseer, refModel, $itemRef){
 
         var $actionContainer = $('.actions', $itemRef);
 
-        actions.properties($actionContainer, 'itemref', model, propHandler);
+        actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
         resize();
@@ -113,7 +114,7 @@ function(
              * @private
              */
             function initCategories(){
-                $select.select2('val', model.categories);
+                $select.select2('val', refModel.categories);
             }
         }
 
@@ -128,9 +129,9 @@ function(
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
                     value: 1,
-                    identifier: (model.weights.length === 0)
+                    identifier: (refModel.weights.length === 0)
                         ? 'WEIGHT'
-                        : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(model))
+                        : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(refModel))
                 };
                 e.preventDefault();
 
@@ -140,36 +141,36 @@ function(
                 $view.groupValidator();
             });
         }
-    };
+    }
 
     /**
      * Listen for state changes to enable/disable . Called globally.
      */
-    var listenActionState =  function listenActionState (){
+    function listenActionState (){
 
         $('.itemrefs').each(function(){
             actions.movable($('.itemref', $(this)), 'itemref', '.actions');
         });
 
         $(document)
-        .on('delete', function(e){
-            var $parent;
-            var $target = $(e.target);
-            if($target.hasClass('itemref')){
-                $parent = $target.parents('.itemrefs');
-                actions.disable($parent.find('.itemref'), '.actions');
-            }
-        })
-        .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
-            var $parent;
-            var $target = $(e.target);
-            if($target.hasClass('itemref') || $target.hasClass('itemrefs')){
-                $parent = $('.itemref', $target.hasClass('itemrefs') ? $target : $target.parents('.itemrefs'));
-                actions.enable($parent, '.actions');
-                actions.movable($parent, 'itemref', '.actions');
-            }
-        });
-    };
+            .on('delete', function(e){
+                var $parent;
+                var $target = $(e.target);
+                if($target.hasClass('itemref')){
+                    $parent = $target.parents('.itemrefs');
+                    actions.disable($parent.find('.itemref'), '.actions');
+                }
+            })
+            .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
+                var $parent;
+                var $target = $(e.target);
+                if($target.hasClass('itemref') || $target.hasClass('itemrefs')){
+                    $parent = $('.itemref', $target.hasClass('itemrefs') ? $target : $target.parents('.itemrefs'));
+                    actions.enable($parent, '.actions');
+                    actions.movable($parent, 'itemref', '.actions');
+                }
+            });
+    }
 
     /**
      * The itemrefView setup itemref related components and beahvior

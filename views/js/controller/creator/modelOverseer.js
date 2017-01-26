@@ -28,9 +28,10 @@ define([
     /**
      * Wraps the test model in a manager, provides API to handle events and states
      * @param {Object} model
+     * @param {Object} [config]
      * @returns {Object}
      */
-    function modelOverseerFactory(model) {
+    function modelOverseerFactory(model, config) {
         var modelOverseer = {
             /**
              * Gets the nested model
@@ -49,8 +50,18 @@ define([
             setModel: function setModel(newModel) {
                 model = newModel;
                 return this;
+            },
+
+            /**
+             * Gets the config set
+             * @returns {Object}
+             */
+            getConfig: function getConfig() {
+                return config;
             }
         };
+
+        config = _.isPlainObject(config) ? config : _.assign({}, config);
 
         return statifier(eventifier(modelOverseer));
     }

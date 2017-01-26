@@ -29,6 +29,7 @@ define([
     var modelOverseerApi = [
         {title: 'getModel'},
         {title: 'setModel'},
+        {title: 'getConfig'},
         {title: 'getState'},
         {title: 'setState'},
         {title: 'clearStates'},
@@ -84,5 +85,23 @@ define([
 
         assert.equal(modelOverseer.setModel(model2), modelOverseer, 'The setModel() method should return the instance');
         assert.equal(modelOverseer.getModel(), model2, "The instance should have the model changed");
+    });
+
+
+    QUnit.test("getConfig()", function(assert) {
+        var model = {
+            foo: 'bar',
+            bar: 'foo'
+        };
+        var config = {
+            data: '',
+            ready: true
+        };
+        var modelOverseer = modelOverseerFactory(model, config);
+
+        QUnit.expect(2);
+
+        assert.equal(modelOverseer.getModel(), model, "The instance should contain the right model");
+        assert.equal(modelOverseer.getConfig(), config, "The instance should contain the right config set");
     });
 });
