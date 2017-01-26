@@ -107,7 +107,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             //section level category configuration
             categoriesProperty($view);
 
-            if(sectionModel.hasBlueprint !== undefined){
+            if(typeof sectionModel.hasBlueprint !== 'undefined'){
                 blueprintProperty($view);
             }
 
@@ -184,7 +184,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                                 itemData.categories = _.merge( itemData.categories, itemCategories.trim().split(',') );
                             }
 
-                            addItemRef($('.itemrefs', $section), undefined, itemData);
+                            addItemRef($('.itemrefs', $section), null, itemData);
                         });
 
                         //reset the current selection
@@ -199,23 +199,22 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-              .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
-              .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
-                  var index;
-                  if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
-                      index = $itemRef.data('bind-index');
+                .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
+                .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
+                    var index;
+                    if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
+                        index = $itemRef.data('bind-index');
 
-                      //initialize the new item ref
-                      itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], $itemRef);
-                  }
-              });
+                        //initialize the new item ref
+                        itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], $itemRef);
+                    }
+                });
 
             //on set up, if there is a selection ongoing, we trigger the event
             $selected = $('.selected', $items);
             if($selected.length > 0){
                 $items.trigger('itemselect.creator', $selected);
             }
-
         }
 
         /**
@@ -394,7 +393,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
              */
             function initBlueprint(){
 
-                if(sectionModel.blueprint === undefined){
+                if(typeof sectionModel.blueprint === 'undefined'){
                     sectionBlueprint
                         .getBlueprint(config.routes.blueprintByTestSection, sectionModel)
                         .success(function(data){

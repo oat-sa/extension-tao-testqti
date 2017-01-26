@@ -63,7 +63,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
             });
 
             //destroy it when it's testpart is removed
-            $testPart.on('delete', function(e){
+            $testPart.on('delete', function(){
                 if(propView !== null){
                     propView.destroy();
                 }
@@ -117,8 +117,9 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
             $(document)
                 .off('add.binder', '#' + $testPart.attr('id') + ' .sections')
                 .on ('add.binder', '#' + $testPart.attr('id') + ' .sections', function(e, $section){
+                    var index;
                     if(e.namespace === 'binder' && $section.hasClass('section')){
-                        var index = $section.data('bind-index');
+                        index = $section.data('bind-index');
                         //initialize the new test part
                         sectionView.setUp(modelOverseer, partModel.assessmentSections[index], $section);
                     }
@@ -141,7 +142,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                 var $target = $(e.target);
                 if($target.hasClass('testpart')){
                     actions.disable($('.testpart'), 'h1');
-               }
+                }
             })
             .on('add change undo.deleter deleted.deleter', function(e){
                 var $target = $(e.target);
