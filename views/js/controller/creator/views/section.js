@@ -60,8 +60,8 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         //trigger for the case the section is added an a selection is ongoing
 
         /**
-         *  Perform some binding once the property view is create
-         *  @param {propView} propView - the view object
+         * Perform some binding once the property view is create
+         * @param {propView} propView - the view object
          */
         function propHandler (propView) {
 
@@ -144,6 +144,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         /**
          * Make the section to accept the selected items
          * @private
+         * @fires modelOverseer#item-add
          */
         function acceptItemRefs(){
             var $selected;
@@ -201,12 +202,19 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
             $(document)
                 .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
                 .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
-                    var index;
+                    var index, itemRefModel;
                     if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
                         index = $itemRef.data('bind-index');
+                        itemRefModel = sectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], $itemRef);
+                        itemRefView.setUp(modelOverseer, itemRefModel, $itemRef);
+
+                        /**
+                         * @event modelOverseer#item-add
+                         * @param {Object} itemRefModel
+                         */
+                        modelOverseer.trigger('item-add', itemRefModel);
                     }
                 });
 
@@ -264,8 +272,9 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
         }
 
         /**
-         * Enable to add new rubrick block
+         * Enable to add new rubric block
          * @private
+         * @fires modelOverseer#rubric-add
          */
         function addRubricBlock () {
 
@@ -284,11 +293,19 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
-                var index;
+                var index, rubricModel;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     index = $rubricBlock.data('bind-index');
+                    rubricModel = sectionModel.rubricBlocks[index];
+
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                    rubricBlockView.setUp(modelOverseer, sectionModel.rubricBlocks[index], $rubricBlock);
+                    rubricBlockView.setUp(modelOverseer, rubricModel, $rubricBlock);
+
+                    /**
+                     * @event modelOverseer#rubric-add
+                     * @param {Object} rubricModel
+                     */
+                    modelOverseer.trigger('rubric-add', rubricModel);
                 }
             });
         }
@@ -297,6 +314,7 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          * Set up the category property
          * @private
          * @param {jQueryElement} $view - the $view object containing the $select
+         * @fires modelOverseer#category-change
          */
         function categoriesProperty($view){
             var $select = $('[name=section-category]', $view);
@@ -345,6 +363,12 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
              */
             function setCategories(categories){
                 sectionCategory.setCategories(sectionModel, categories);
+
+                /**
+                 * @event modelOverseer#category-change
+                 * @param {Array} categories
+                 */
+                modelOverseer.trigger('category-change', categories);
             }
 
         }

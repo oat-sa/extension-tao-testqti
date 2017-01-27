@@ -25,9 +25,8 @@ define([
     'i18n',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'taoQtiTest/controller/creator/helpers/processingRule',
-    'taoQtiTest/controller/creator/helpers/category'
-], function (_, __, baseTypeHelper, outcomeHelper, processingRuleHelper, categoryHelper) {
+    'taoQtiTest/controller/creator/helpers/processingRule'
+], function (_, __, baseTypeHelper, outcomeHelper, processingRuleHelper) {
     'use strict';
 
     /**
@@ -89,16 +88,18 @@ define([
     var processingModeWriters = {
         /**
          * Writes the outcomes in the scoring mode "None"
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
          */
-        none: function processingModeWriterNone(model) {
+        none: function processingModeWriterNone(modelOverseer) {
+            var model = modelOverseer.getModel();
+
             // as no rules must be defined, just erase existing ones
             removeScoring(model);
         },
 
         /**
          * Writes the outcomes in the scoring mode "Custom"
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
          */
         custom: function processingModeWriterCustom() {
             // just does nothing as we only need to keep intact the existing rules, if any
@@ -106,9 +107,10 @@ define([
 
         /**
          * Writes the outcomes in the scoring mode "Total score"
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
          */
-        total: function processingModeWriterTotal(model) {
+        total: function processingModeWriterTotal(modelOverseer) {
+            var model = modelOverseer.getModel();
             var processingMode = processingModes.total;
 
             // erase the existing rules, they will be replaced by those that are defined here
@@ -118,8 +120,8 @@ define([
             addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode), processingMode.outcomeType);
 
             // create an outcome per categories
-            if (model.scoring.categoryScore) {
-                _.forEach(categoryHelper.listCategories(model), function (category) {
+            if (handleCategories(modelOverseer)) {
+                _.forEach(modelOverseer.getCategories(), function (category) {
                     addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode, category), processingMode.outcomeType, category);
                 });
             }
@@ -127,9 +129,10 @@ define([
 
         /**
          * Writes the outcomes in the scoring mode "Cut score"
-         * @param {Object} model
+         * @param {modelOverseer} modelOverseer
          */
-        cut: function processingModeWriterCut(model) {
+        cut: function processingModeWriterCut(modelOverseer) {
+            var model = modelOverseer.getModel();
             var processingMode = processingModes.cut;
             var outcomeIdentifier = getOutcomeIdentifier(processingMode);
 
@@ -154,8 +157,8 @@ define([
             }
 
             // create an outcome per category
-            if (model.scoring.categoryScore) {
-                _.forEach(categoryHelper.listCategories(model), function (category) {
+            if (handleCategories(modelOverseer)) {
+                _.forEach(modelOverseer.getCategories(), function (category) {
                     var categoryOutcomeIdentifier = getOutcomeIdentifier(processingMode, category);
                     addCutScoreOutcomes(model, categoryOutcomeIdentifier, processingMode.outcomeType, category);
 
@@ -170,6 +173,83 @@ define([
                         processingMode.feedbackFailed
                     );
                 });
+            }
+        }
+    };
+
+    var scoringHelper = {
+        /**
+         * Checks the test model against outcome processing mode.
+         * Initializes the scoring property accordingly.
+         *
+         * @param {modelOverseer} modelOverseer
+         * @throws {TypeError} if the modelOverseer is invalid
+         * @fires modelOverseer#scoring-read
+         */
+        read: function read(modelOverseer) {
+            var model;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+
+            // detect the score processing mode and build the descriptor used to manage the UI
+            model.scoring = {
+                modes: processingModes,
+                scoreIdentifier: 'SCORE',
+                weightIdentifier: getWeightIdentifier(model),
+                cutScore: getCutScore(model),
+                categoryScore: hasCategoryOutcome(model),
+                outcomeProcessing: getOutcomeProcessing(model)
+            };
+
+            modelOverseer
+                .on('scoring-change category-change delete', function () {
+                    // regenerate the scoring outcomes on any significant change
+                    scoringHelper.write(modelOverseer);
+                })
+
+                /**
+                 * @event modelOverseer#scoring-read
+                 * @param {Object} testModel
+                 */
+                .trigger('scoring-read', model);
+        },
+
+        /**
+         * If the processing mode has been set, generates the outcomes that define the scoring.
+         *
+         * @param {modelOverseer} modelOverseer
+         * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
+         * @fires modelOverseer#scoring-write
+         */
+        write: function write(modelOverseer) {
+            var model, scoring, processingModeWriter;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+            scoring = model.scoring;
+
+            // write the score processing mode by generating the outcomes variables, but only if the mode has been set
+            if (scoring) {
+                processingModeWriter = processingModeWriters[scoring.outcomeProcessing];
+
+                if (processingModeWriter) {
+                    processingModeWriter(modelOverseer);
+
+                    /**
+                     * @event modelOverseer#scoring-write
+                     * @param {Object} testModel
+                     */
+                    modelOverseer.trigger('scoring-write', model);
+                } else {
+                    throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
+                }
             }
         }
     };
@@ -312,6 +392,16 @@ define([
     }
 
     /**
+     * Checks the categories have to be taken into account
+     * @param {modelOverseer} modelOverseer
+     * @returns {Boolean}
+     */
+    function handleCategories(modelOverseer) {
+        var model = modelOverseer.getModel();
+        return !!(model.scoring && model.scoring.categoryScore);
+    }
+
+    /**
      * Checks if the test model contains outcomes for categories
      * @param {Object} model
      * @returns {Boolean}
@@ -405,60 +495,5 @@ define([
         outcomeHelper.removeOutcomes(model, scoringOutcomes);
     }
 
-    return {
-        /**
-         * Checks the test model against outcome processing mode.
-         * Initializes the scoring property accordingly.
-         *
-         * @param {modelOverseer} modelOverseer
-         * @throws {TypeError} if the modelOverseer is invalid
-         */
-        read: function read(modelOverseer) {
-            var model;
-
-            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
-                throw new TypeError("You must provide a valid modelOverseer");
-            }
-
-            model = modelOverseer.getModel();
-
-            // detect the score processing mode and build the descriptor used to manage the UI
-            model.scoring = {
-                modes: processingModes,
-                scoreIdentifier: 'SCORE',
-                weightIdentifier: getWeightIdentifier(model),
-                cutScore: getCutScore(model),
-                categoryScore: hasCategoryOutcome(model),
-                outcomeProcessing: getOutcomeProcessing(model)
-            };
-        },
-
-        /**
-         * If the processing mode has been set, generates the outcomes that define the scoring.
-         *
-         * @param {modelOverseer} modelOverseer
-         * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
-         */
-        write: function write(modelOverseer) {
-            var model, scoring, processingModeWriter;
-
-            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
-                throw new TypeError("You must provide a valid modelOverseer");
-            }
-
-            model = modelOverseer.getModel();
-            scoring = model.scoring;
-
-            // write the score processing mode by generating the outcomes variables, but only if the mode has been set
-            if (scoring) {
-                processingModeWriter = processingModeWriters[scoring.outcomeProcessing];
-
-                if (processingModeWriter) {
-                    processingModeWriter(model);
-                } else {
-                    throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
-                }
-            }
-        }
-    };
+    return scoringHelper;
 });

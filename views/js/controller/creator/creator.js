@@ -143,10 +143,10 @@ define([
                 _.partial(getCategories, options.routes.categories)
             );
 
-            // forwards model change events to the model overseer
-            $container.on('change.binder', function (e, model) {
+            // forwards some binder events to the model overseer
+            $container.on('change.binder delete.binder', function (e, model) {
                 if (e.namespace === 'binder' && model) {
-                    modelOverseer.trigger('change', model);
+                    modelOverseer.trigger(e.type, model);
                 }
             });
 
@@ -165,12 +165,6 @@ define([
                 },
                 templates : templates,
                 beforeSave : function(model){
-                    // model instance should not change, but ensure we still have access to it, in case of
-                    modelOverseer.setModel(model);
-
-                    //generate the outcomes that define the scoring
-                    scoringHelper.write(modelOverseer);
-
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 

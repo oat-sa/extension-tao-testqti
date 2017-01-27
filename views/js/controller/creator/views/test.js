@@ -65,6 +65,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
          * Perform some binding once the property view is created
          * @private
          * @param {propView} propView - the view object
+         * @fires modelOverseer#scoring-change
          */
         function propHandler(propView) {
 
@@ -74,14 +75,26 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $descriptions = $('.test-outcome-processing-description', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
+            var scoringState = JSON.stringify(testModel.scoring);
 
             function changeScoring(scoring) {
                 var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
+                var newScoringState = JSON.stringify(scoring);
+
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
                 hider.toggle($categoryScoreLine, noOptions);
                 hider.toggle($weightIdentifierLine, noOptions);
                 hider.hide($descriptions);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
+
+                if (scoringState !== newScoringState) {
+                    /**
+                     * @event modelOverseer#scoring-change
+                     * @param {Object} testModel
+                     */
+                    modelOverseer.trigger('scoring-change', testModel);
+                }
+                scoringState = newScoringState;
             }
 
             $('[name=test-outcome-processing]', $view).select2({
@@ -103,6 +116,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
         /**
          * Enable to add new test parts
          * @private
+         * @fires modelOverseer#part-add
          */
         function addTestPart () {
 
@@ -134,9 +148,18 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             $(document)
                 .off('add.binder', '.testparts')
                 .on ('add.binder', '.testparts', function(e, $testPart, added){
+                    var partModel;
                     if(e.namespace === 'binder' && $testPart.hasClass('testpart')){
+                        partModel = testModel.testParts[added.index];
+
                         //initialize the new test part
-                        testPartView.setUp(modelOverseer, testModel.testParts[added.index], $testPart);
+                        testPartView.setUp(modelOverseer, partModel, $testPart);
+
+                        /**
+                         * @event modelOverseer#part-add
+                         * @param {Object} partModel
+                         */
+                        modelOverseer.trigger('part-add', partModel);
                     }
                 });
         }

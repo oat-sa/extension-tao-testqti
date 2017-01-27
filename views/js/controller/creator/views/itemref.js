@@ -102,6 +102,12 @@ function(
                     return __('Enter a category');
                 },
                 maximumInputLength : 32
+            }).on('change', function(e){
+                /**
+                 * @event modelOverseer#category-change
+                 * @param {Array} categories
+                 */
+                modelOverseer.trigger('category-change', e.val);
             });
 
             initCategories();

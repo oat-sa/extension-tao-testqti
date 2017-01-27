@@ -92,6 +92,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
         /**
          * Enable to add new sections
          * @private
+         * @fires modelOverseer#section-add
          */
         function addSection(){
             $('.section-adder', $testPart).adder({
@@ -117,11 +118,19 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
             $(document)
                 .off('add.binder', '#' + $testPart.attr('id') + ' .sections')
                 .on ('add.binder', '#' + $testPart.attr('id') + ' .sections', function(e, $section){
-                    var index;
+                    var index, sectionModel;
                     if(e.namespace === 'binder' && $section.hasClass('section')){
                         index = $section.data('bind-index');
+                        sectionModel = partModel.assessmentSections[index];
+
                         //initialize the new test part
-                        sectionView.setUp(modelOverseer, partModel.assessmentSections[index], $section);
+                        sectionView.setUp(modelOverseer, sectionModel, $section);
+
+                        /**
+                         * @event modelOverseer#section-add
+                         * @param {Object} sectionModel
+                         */
+                        modelOverseer.trigger('section-add', sectionModel);
                     }
                 });
         }
