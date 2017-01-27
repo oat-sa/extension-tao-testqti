@@ -57,7 +57,7 @@ define([
             this.$element = createElement();
 
             // register the element in the area broker
-            areaBroker.addControlComponent(this.getName(), this.$element);
+            areaBroker.addControlElement(this.getName(), this.$element);
 
             testRunner
                 .after('renderitem', function(){

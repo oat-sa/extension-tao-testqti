@@ -178,7 +178,7 @@ define([
             this.$element = $(progressTpl());
 
             // register the element in the area broker
-            areaBroker.addControlComponent(this.getName(), this.$element);
+            areaBroker.addControlElement(this.getName(), this.$element);
 
             //store the controls
             $progressLabel = $('[data-control="progress-label"]', this.$element);

@@ -27,6 +27,8 @@ define([
 ], function(_, helpers, runnerFactory, providerMock, timerFactory) {
     'use strict';
 
+    var pluginApi;
+
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
@@ -41,8 +43,7 @@ define([
         assert.notStrictEqual(timerFactory(runner), timerFactory(runner), "The timerFactory factory provides a different instance on each call");
     });
 
-
-    var pluginApi = [
+    pluginApi = [
         { name : 'init', title : 'init' },
         { name : 'render', title : 'render' },
         { name : 'finish', title : 'finish' },
@@ -84,7 +85,7 @@ define([
                 QUnit.start();
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
@@ -93,30 +94,25 @@ define([
 
     QUnit.asyncTest('timer.render', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var timer = timerFactory(runner, areaBroker);
+        var $container;
 
         timer.init()
             .then(function() {
                 assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
                 assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
 
-                timer.render()
-                    .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
+                areaBroker.renderAll();
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+                $container = areaBroker.getControlArea();
 
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
-                        QUnit.start();
-                    });
+                assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+
+                QUnit.start();
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
@@ -125,7 +121,9 @@ define([
 
     QUnit.asyncTest('timer.destroy', function(assert) {
         var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
         var timer = timerFactory(runner, runner.getAreaBroker());
+        var $container;
 
         timer.init()
             .then(function() {
@@ -133,52 +131,45 @@ define([
                 assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
                 assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
 
-                timer.render()
+                areaBroker.renderAll();
+
+                $container = runner.getAreaBroker().getControlArea();
+
+                assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+
+                timer.enable()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
+                        assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
+                        assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
+                        assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
+                        assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
-
-                        timer.enable()
+                        timer.destroy()
                             .then(function() {
-                                assert.equal(timer.getState('enabled'), true, 'The timer is enabled');
-                                assert.equal(timer.polling.is('stopped'), false, 'The timer has started the polling');
-                                assert.equal(timer.stopwatch.is('started'), true, 'The timer has started the countdown');
-                                assert.equal(timer.stopwatch.is('running'), true, 'The timer is running the countdown');
+                                $container = runner.getAreaBroker().getControlArea();
 
-                                timer.destroy()
-                                    .then(function() {
-                                        var $container = runner.getAreaBroker().getControlArea();
+                                assert.equal(timer.getState('init'), false, 'The timer is destroyed');
+                                assert.equal($container.find(timer.$element).length, 0, 'The timer has removed its content from the layout');
 
-                                        assert.equal(timer.getState('init'), false, 'The timer is destroyed');
-                                        assert.equal($container.find(timer.$element).length, 0, 'The timer has removed its content from the layout');
+                                assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
+                                assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
 
-                                        assert.equal(timer.polling.is('stopped'), true, 'The timer has stopped the polling');
-                                        assert.equal(timer.stopwatch.is('started'), false, 'The timer has stopped the countdown');
-
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        console.log(err);
-                                        assert.ok(false, 'The destroy method must not fail');
-                                        QUnit.start();
-                                    });
+                                QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The enable method must not fail');
+                                window.console.log(err);
+                                assert.ok(false, 'The destroy method must not fail');
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
+                        window.console.log(err);
+                        assert.ok(false, 'The enable method must not fail');
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
@@ -210,19 +201,19 @@ define([
                                 QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
+                                window.console.log(err);
                                 assert.ok(false, 'The destroy method must not fail');
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
+                        window.console.log(err);
                         assert.ok(false, 'The enable method must not fail');
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
@@ -255,75 +246,70 @@ define([
                                 QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
+                                window.console.log(err);
                                 assert.ok(false, 'The disable method must not fail');
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
+                        window.console.log(err);
                         assert.ok(false, 'The enable method must not fail');
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
     });
 
-
     QUnit.asyncTest('timer.show/timer.hide', function(assert) {
         var runner = runnerFactory(providerName);
-        var timer = timerFactory(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var timer = timerFactory(runner, areaBroker);
+
+        var $container;
 
         timer.init()
             .then(function() {
                 assert.equal(typeof timer.$element, 'object', 'The timer has pre-rendered the element');
                 assert.equal(timer.$element.length, 1, 'The timer has pre-rendered the container');
 
-                timer.render()
+                areaBroker.renderAll();
+
+                $container = runner.getAreaBroker().getControlArea();
+                timer.setState('visible', true);
+
+                assert.equal(timer.getState('visible'), true, 'The timer is visible');
+                assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
+
+                timer.hide()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getControlArea();
-                        timer.setState('visible', true);
+                        assert.equal(timer.getState('visible'), false, 'The timer is not visible');
+                        assert.equal(timer.$element.css('display'), 'none', 'The timer element is hidden');
 
-                        assert.equal(timer.getState('ready'), true, 'The timer is ready');
-                        assert.equal(timer.getState('visible'), true, 'The timer is visible');
-                        assert.equal($container.find(timer.$element).length, 1, 'The timer has inserted its content into the layout');
-
-                        timer.hide()
+                        timer.show()
                             .then(function() {
-                                assert.equal(timer.getState('visible'), false, 'The timer is not visible');
-                                assert.equal(timer.$element.css('display'), 'none', 'The timer element is hidden');
+                                assert.equal(timer.getState('visible'), true, 'The timer is visible');
+                                assert.notEqual(timer.$element.css('display'), 'none', 'The timer element is visible');
 
-                                timer.show()
-                                    .then(function() {
-                                        assert.equal(timer.getState('visible'), true, 'The timer is visible');
-                                        assert.notEqual(timer.$element.css('display'), 'none', 'The timer element is visible');
-
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        console.log(err);
-                                        assert.ok(false, 'The show method must not fail');
-                                        QUnit.start();
-                                    });
+                                QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The hide method must not fail');
+                                window.console.log(err);
+                                assert.ok(false, 'The show method must not fail');
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
+                        window.console.log(err);
+                        assert.ok(false, 'The hide method must not fail');
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
+                window.console.log(err);
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
