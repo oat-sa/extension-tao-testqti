@@ -97,6 +97,12 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
                 scoringState = newScoringState;
             }
 
+            function updateOutcomes() {
+                var $panel = $('.test-outcome-declarations', $view);
+
+                $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
+            }
+
             $('[name=test-outcome-processing]', $view).select2({
                 minimumResultsForSearch: -1,
                 width: '100%'
@@ -110,7 +116,11 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
                     $title.text(model.title);
                 }
             });
+
+            modelOverseer.on('scoring-write', updateOutcomes);
+
             changeScoring(testModel.scoring);
+            updateOutcomes();
         }
 
         /**

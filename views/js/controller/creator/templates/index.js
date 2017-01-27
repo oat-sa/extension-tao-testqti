@@ -4,6 +4,7 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/rubricblock',
     'tpl!taoQtiTest/controller/creator/templates/itemref',
     'tpl!taoQtiTest/controller/creator/templates/item',
+    'tpl!taoQtiTest/controller/creator/templates/outcomes',
     'tpl!taoQtiTest/controller/creator/templates/test-props',
     'tpl!taoQtiTest/controller/creator/templates/testpart-props',
     'tpl!taoQtiTest/controller/creator/templates/section-props',
@@ -17,6 +18,7 @@ function(
     rubricBlock,
     itemRef,
     item,
+    outcomes,
     testProps,
     testPartProps,
     sectionProps,
@@ -36,6 +38,7 @@ function(
         'itemref'       : itemRef,
         'item'          : item,
         'rubricblock'   : rubricBlock,
+        'outcomes'      : outcomes,
         'properties'    : {
             'test'      : testProps,
             'testpart'  : testPartProps,

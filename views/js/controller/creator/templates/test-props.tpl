@@ -35,6 +35,11 @@
         </div>
     </div>
 
+    <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
+
+<!-- assessmentTest/outcomeDeclarations -->
+    <div class="test-outcome-declarations toggled"></div>
+
     <h4 class="toggler closed" data-toggle="~ .test-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
