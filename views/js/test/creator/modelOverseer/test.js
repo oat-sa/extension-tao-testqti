@@ -21,10 +21,12 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/modelOverseer',
-    'json!taoQtiTest/test/creator/samples/outcomes.json'
+    'json!taoQtiTest/test/creator/samples/outcomes.json',
+    'json!taoQtiTest/test/creator/samples/categories.json'
 ], function (_,
              modelOverseerFactory,
-             testModelSample) {
+             testModelOutcomesSample,
+             testModelCategoriesSample) {
     'use strict';
 
 
@@ -34,6 +36,8 @@ define([
         {title: 'getConfig'},
         {title: 'getOutcomesList'},
         {title: 'getOutcomesNames'},
+        {title: 'getCategories'},
+        {title: 'getOptions'},
         {title: 'getState'},
         {title: 'setState'},
         {title: 'clearStates'},
@@ -67,18 +71,27 @@ define([
         });
 
 
-    QUnit.test("setModel()/getModel()", function(assert) {
+    QUnit.asyncTest("setModel()/getModel()", function(assert) {
         var model1 = {
             foo: 'bar'
         };
         var model2 = {
             bar: 'foo'
         };
-        var modelOverseer = modelOverseerFactory(testModelSample);
+        var modelOverseer = modelOverseerFactory(testModelOutcomesSample);
+        var eventCount = 0;
 
-        QUnit.expect(5);
+        QUnit.expect(7);
 
-        assert.equal(modelOverseer.getModel(), testModelSample, "The instance should contain the right model");
+        modelOverseer.on('setmodel', function() {
+            assert.ok(true, 'The event setmodel has been triggered');
+
+            if (++eventCount >= 2) {
+                QUnit.start();
+            }
+        });
+
+        assert.equal(modelOverseer.getModel(), testModelOutcomesSample, "The instance should contain the right model");
 
         assert.equal(modelOverseer.setModel(model1), modelOverseer, 'The setModel() method should return the instance');
         assert.equal(modelOverseer.getModel(), model1, "The instance should have the model changed");
@@ -93,17 +106,17 @@ define([
             data: '',
             ready: true
         };
-        var modelOverseer = modelOverseerFactory(testModelSample, config);
+        var modelOverseer = modelOverseerFactory(testModelOutcomesSample, config);
 
         QUnit.expect(2);
 
-        assert.equal(modelOverseer.getModel(), testModelSample, "The instance should contain the right model");
+        assert.equal(modelOverseer.getModel(), testModelOutcomesSample, "The instance should contain the right model");
         assert.equal(modelOverseer.getConfig(), config, "The instance should contain the right config set");
     });
 
 
     QUnit.test("getOutcomesList()", function(assert) {
-        var modelOverseer = modelOverseerFactory(testModelSample);
+        var modelOverseer = modelOverseerFactory(testModelOutcomesSample);
         var expectedList = [{
             name: 'SCORE_MATH',
             type: 'float',
@@ -133,7 +146,7 @@ define([
 
 
     QUnit.test("getOutcomesNames()", function(assert) {
-        var modelOverseer = modelOverseerFactory(testModelSample);
+        var modelOverseer = modelOverseerFactory(testModelOutcomesSample);
         var expectedList = ['SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY'];
 
         QUnit.expect(2);
@@ -143,5 +156,33 @@ define([
         modelOverseer.setModel({});
 
         assert.deepEqual(modelOverseer.getOutcomesNames(), [], "As there is no outcomes, should return an empty list");
+    });
+
+
+    QUnit.test("getCategories()", function(assert) {
+        var modelOverseer = modelOverseerFactory(testModelCategoriesSample);
+        var expectedList = ['history', 'math'];
+
+        QUnit.expect(2);
+
+        assert.deepEqual(modelOverseer.getCategories(), expectedList, "Should return the right list of categories");
+
+        modelOverseer.setModel({});
+
+        assert.deepEqual(modelOverseer.getCategories(), [], "As there is no categories, should return an empty list");
+    });
+
+
+    QUnit.test("getOptions()", function(assert) {
+        var modelOverseer = modelOverseerFactory(testModelCategoriesSample);
+        var expectedList = ['x-tao-option-reviewScreen', 'x-tao-option-calculator'];
+
+        QUnit.expect(2);
+
+        assert.deepEqual(modelOverseer.getOptions(), expectedList, "Should return the right list of options");
+
+        modelOverseer.setModel({});
+
+        assert.deepEqual(modelOverseer.getOptions(), [], "As there is no options, should return an empty list");
     });
 });

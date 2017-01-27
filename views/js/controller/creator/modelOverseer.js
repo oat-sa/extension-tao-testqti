@@ -50,9 +50,16 @@ define([
              *
              * @param {Object} newModel
              * @returns {modelOverseer}
+             * @fires setmodel
              */
             setModel: function setModel(newModel) {
                 model = newModel;
+
+                /**
+                 * @event modelOverseer#setmodel
+                 * @param {String} model
+                 */
+                modelOverseer.trigger('setmodel', model);
                 return this;
             },
 
@@ -91,6 +98,22 @@ define([
                 return _.map(outcomeHelper.getOutcomeDeclarations(model), function(declaration) {
                     return declaration.identifier;
                 });
+            },
+
+            /**
+             * Gets the list of defined categories for the nested model
+             * @returns {Array}
+             */
+            getCategories: function getCategories() {
+                return categoryHelper.listCategories(model);
+            },
+
+            /**
+             * Gets the list of defined options for the nested model
+             * @returns {Array}
+             */
+            getOptions: function getOptions() {
+                return categoryHelper.listOptions(model);
             }
         };
 
