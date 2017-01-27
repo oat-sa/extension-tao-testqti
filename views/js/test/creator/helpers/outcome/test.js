@@ -21,7 +21,7 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'json!taoQtiTest/test/creator/helpers/outcome/outcomes.json'
+    'json!taoQtiTest/test/creator/samples/outcomes.json'
 ], function (_,
              outcomeHelper,
              testModelSample) {
