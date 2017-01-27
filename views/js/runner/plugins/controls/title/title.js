@@ -35,6 +35,7 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
+            var areaBroker = this.getAreaBroker();
 
             var createElement = function(){
 
@@ -55,6 +56,8 @@ define([
 
             this.$element = createElement();
 
+            // register the element in the area broker
+            areaBroker.addControlComponent(this.getName(), this.$element);
 
             testRunner
                 .after('renderitem', function(){
@@ -62,11 +65,6 @@ define([
                     self.$element.replaceWith($element);
                     self.$element = $element;
                 });
-
-        },
-        render : function render(){
-            var $container = this.getAreaBroker().getControlArea();
-            $container.append(this.$element);
         }
     });
 });
