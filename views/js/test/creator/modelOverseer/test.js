@@ -20,9 +20,11 @@
  */
 define([
     'lodash',
-    'taoQtiTest/controller/creator/modelOverseer'
+    'taoQtiTest/controller/creator/modelOverseer',
+    'json!taoQtiTest/test/creator/samples/outcomes.json'
 ], function (_,
-             modelOverseerFactory) {
+             modelOverseerFactory,
+             testModelSample) {
     'use strict';
 
 
@@ -30,6 +32,8 @@ define([
         {title: 'getModel'},
         {title: 'setModel'},
         {title: 'getConfig'},
+        {title: 'getOutcomesList'},
+        {title: 'getOutcomesNames'},
         {title: 'getState'},
         {title: 'setState'},
         {title: 'clearStates'},
@@ -64,21 +68,17 @@ define([
 
 
     QUnit.test("setModel()/getModel()", function(assert) {
-        var model0 = {
-            foo: 'bar',
-            bar: 'foo'
-        };
         var model1 = {
             foo: 'bar'
         };
         var model2 = {
             bar: 'foo'
         };
-        var modelOverseer = modelOverseerFactory(model0);
+        var modelOverseer = modelOverseerFactory(testModelSample);
 
         QUnit.expect(5);
 
-        assert.equal(modelOverseer.getModel(), model0, "The instance should contain the right model");
+        assert.equal(modelOverseer.getModel(), testModelSample, "The instance should contain the right model");
 
         assert.equal(modelOverseer.setModel(model1), modelOverseer, 'The setModel() method should return the instance');
         assert.equal(modelOverseer.getModel(), model1, "The instance should have the model changed");
@@ -89,19 +89,59 @@ define([
 
 
     QUnit.test("getConfig()", function(assert) {
-        var model = {
-            foo: 'bar',
-            bar: 'foo'
-        };
         var config = {
             data: '',
             ready: true
         };
-        var modelOverseer = modelOverseerFactory(model, config);
+        var modelOverseer = modelOverseerFactory(testModelSample, config);
 
         QUnit.expect(2);
 
-        assert.equal(modelOverseer.getModel(), model, "The instance should contain the right model");
+        assert.equal(modelOverseer.getModel(), testModelSample, "The instance should contain the right model");
         assert.equal(modelOverseer.getConfig(), config, "The instance should contain the right config set");
+    });
+
+
+    QUnit.test("getOutcomesList()", function(assert) {
+        var modelOverseer = modelOverseerFactory(testModelSample);
+        var expectedList = [{
+            name: 'SCORE_MATH',
+            type: 'float',
+            cardinality: 'single'
+        }, {
+            name: 'SCORE_HISTORY',
+            type: 'float',
+            cardinality: 'single'
+        }, {
+            name: 'PASS_MATH',
+            type: 'boolean',
+            cardinality: 'single'
+        }, {
+            name: 'PASS_HISTORY',
+            type: 'boolean',
+            cardinality: 'single'
+        }];
+
+        QUnit.expect(2);
+
+        assert.deepEqual(modelOverseer.getOutcomesList(), expectedList, "Should return the right list of outcomes");
+
+        modelOverseer.setModel({});
+
+        assert.deepEqual(modelOverseer.getOutcomesList(), [], "As there is no outcomes, should return an empty list");
+    });
+
+
+    QUnit.test("getOutcomesNames()", function(assert) {
+        var modelOverseer = modelOverseerFactory(testModelSample);
+        var expectedList = ['SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY'];
+
+        QUnit.expect(2);
+
+        assert.deepEqual(modelOverseer.getOutcomesNames(), expectedList, "Should return the right list of outcomes");
+
+        modelOverseer.setModel({});
+
+        assert.deepEqual(modelOverseer.getOutcomesNames(), [], "As there is no outcomes, should return an empty list");
     });
 });

@@ -21,8 +21,12 @@
 define([
     'lodash',
     'core/eventifier',
-    'core/statifier'
-], function (_, eventifier, statifier) {
+    'core/statifier',
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/cardinality',
+    'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/category'
+], function (_, eventifier, statifier, baseTypeHelper, cardinalityHelper, outcomeHelper, categoryHelper) {
     'use strict';
 
     /**
@@ -58,6 +62,35 @@ define([
              */
             getConfig: function getConfig() {
                 return config;
+            },
+
+            /**
+             * Gets the list of defined outcomes for the nested model. A descriptor is built for each outcomes:
+             * {
+             *      name: {String},
+             *      type: {String},
+             *      cardinality: {String}
+             * }
+             * @returns {Object[]}
+             */
+            getOutcomesList: function getOutcomesList() {
+                return _.map(outcomeHelper.getOutcomeDeclarations(model), function(declaration) {
+                    return {
+                        name: declaration.identifier,
+                        type: baseTypeHelper.getNameByConstant(declaration.baseType),
+                        cardinality: cardinalityHelper.getNameByConstant(declaration.cardinality)
+                    };
+                });
+            },
+
+            /**
+             * Gets the names of the defined outcomes for the nested model
+             * @returns {Array}
+             */
+            getOutcomesNames: function getOutcomesNames() {
+                return _.map(outcomeHelper.getOutcomeDeclarations(model), function(declaration) {
+                    return declaration.identifier;
+                });
             }
         };
 
