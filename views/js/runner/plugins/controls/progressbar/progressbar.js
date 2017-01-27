@@ -161,6 +161,7 @@ define([
             var config     = testData.config.progressIndicator || {};
             var progressIndicator = config.type || 'percentage';
             var progressScope = config.scope || 'test';
+            var areaBroker = this.getAreaBroker();
 
             /**
              * Updae the progress bar
@@ -176,6 +177,9 @@ define([
             //create the progressbar
             this.$element = $(progressTpl());
 
+            // register the element in the area broker
+            areaBroker.addControlComponent(this.getName(), this.$element);
+
             //store the controls
             $progressLabel = $('[data-control="progress-label"]', this.$element);
             $progressControl = $('[data-control="progress-bar"]', this.$element);
@@ -189,14 +193,6 @@ define([
             testRunner
                 .on('ready', update)
                 .on('loaditem', update);
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-            var $container = this.getAreaBroker().getControlArea();
-            $container.append(this.$element);
         }
     });
 });
