@@ -443,14 +443,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the rubrics related to the current session state.
      * @param RunnerServiceContext $context
+     * @param string $itemRef (optional) otherwise use the current 
      * @return mixed
      * @throws \common_Exception
      */
-    public function getRubrics(RunnerServiceContext $context)
+    public function getRubrics(RunnerServiceContext $context, $itemRef = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $map = new QtiRunnerRubric();
-            return $map->getRubrics($context);
+            $rubricHelper = new QtiRunnerRubric();
+            return $rubricHelper->getRubrics($context, $itemRef);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',

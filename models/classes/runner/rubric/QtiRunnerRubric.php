@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner\rubric;
 
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\View;
+use \OutOfBoundsException;
 
 /**
  * Class QtiRunnerRubric
@@ -35,40 +36,61 @@ class QtiRunnerRubric implements RunnerRubric
      * Gets the rubrics according to the current session state
      * The content is directly rendered into the page
      * @param RunnerServiceContext $context
+     * @param string $itemRef (optional) otherwise use the current 
      * @return mixed
      */
-    public function getRubrics(RunnerServiceContext $context)
+    public function getRubrics(RunnerServiceContext $context, $itemRef = null)
     {
         // TODO: make a better implementation for rubrics loading.
-        
+
+        $rubrics = '';
+
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-        $compilationDirs = $context->getCompilationDirectory();
 
-        // -- variables used in the included rubric block templates.
-        // base path (base URI to be used for resource inclusion).
-        $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
-        $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
-
-        // state name (the variable to access to get the state of the assessmentTestSession).
-        $stateName = TAOQTITEST_RENDERING_STATE_NAME;
-        $$stateName = $session;
-
-        // views name (the variable to be accessed for the visibility of rubric blocks).
-        $viewsName = TAOQTITEST_VIEWS_NAME;
-        $$viewsName = array(View::CANDIDATE);
-
-        ob_start();
-        foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
-            $data = $compilationDirs['private']->read($rubric->getHref());
-            $tmpFile = \tao_helpers_File::createTempDir().basename($rubric->getHref());
-            file_put_contents($tmpFile, $data);
-            include($tmpFile);
-            unlink($tmpFile);
+        if(!is_null($itemRef)){
+            try {
+                $routeItem = $session->getRoute()->getRouteItemsByAssessmentItemRef($itemRef);
+            } catch(OutOfBoundsException $obe){
+                \common_Logger::d("Could not retrieve the route for item '${itemRef}'.");
+            }
+        } else {
+            $routeItem = $session->getRoute()->current();
         }
-        $rubrics = ob_get_contents();
-        ob_end_clean();
 
+        if($routeItem){
+
+            $rubricRefs = $routeItem->getRubricBlockRefs();
+
+            if(count($rubricRefs) > 0 ){
+
+                $compilationDirs = $context->getCompilationDirectory();
+
+                // -- variables used in the included rubric block templates.
+                // base path (base URI to be used for resource inclusion).
+                $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
+                $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
+
+                // state name (the variable to access to get the state of the assessmentTestSession).
+                $stateName = TAOQTITEST_RENDERING_STATE_NAME;
+                $$stateName = $session;
+
+                // views name (the variable to be accessed for the visibility of rubric blocks).
+                $viewsName = TAOQTITEST_VIEWS_NAME;
+                $$viewsName = array(View::CANDIDATE);
+
+                ob_start();
+                foreach ($routeItem->getRubricBlockRefs() as $rubric) {
+                    $data = $compilationDirs['private']->read($rubric->getHref());
+                    $tmpFile = \tao_helpers_File::createTempDir().basename($rubric->getHref());
+                    file_put_contents($tmpFile, $data);
+                    include($tmpFile);
+                    unlink($tmpFile);
+                }
+                $rubrics = ob_get_contents();
+                ob_end_clean();
+            }
+        }
         return $rubrics;
     }
 

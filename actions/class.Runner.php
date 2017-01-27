@@ -372,56 +372,81 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getServiceContext();
+            $route = $serviceContext->getTestSession()->getRoute();
 
-            $stateId = $this->getStateId();
-            $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
-            if (!count($itemState)) {
-                $itemState = new stdClass();
+            //verify the parameter
+            if($route->current()->getAssessmentItemRef()->getHref() != $itemRef){
+                throw new \common_exception_Unauthorized('Attempt to get another item');
             }
 
-            // TODO: make a better implementation
-            // As the rubric blocs are nested at the section level, it could be interesting to send these
-            // rubric blocs only once per section
-            if (count($serviceContext->getTestSession()->getRoute()->current()->getRubricBlockRefs())) {
-                $rubrics = $this->runnerService->getRubrics($serviceContext);
-            } else {
-                $rubrics = null;
-            }
+            //load item data
+            $response = $this->getItemDataResponse($serviceContext, $itemRef, $this->getStateId());
 
-            $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
-            $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
-            if (is_string($itemData)) {
-                $response = '{' .
-                    '"success":true,' .
-                    '"token":"' . $this->getCsrf()->getCsrfToken() . '",' .
-                    '"baseUrl":"'.$baseUrl.'",' .
-                    '"itemData":' . $itemData . ',' .
-                    '"itemState":' . json_encode($itemState) . ',' .
-                    '"rubrics":' . json_encode($rubrics) .
-                '}';
-            } else {
-                $response = [
-                    'success' => true,
-                    'itemData' => $itemData,
-                    'itemState' => $itemState,
-                    'baseUrl' => $baseUrl,
-                    'rubrics' => $rubrics
-                ];
-            }
-
+            //start the timer
             $this->runnerService->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
-        if (is_string($response)) {
-            header(HTTPToolkit::statusCodeHeader($code));
-            Context::getInstance()->getResponse()->setContentHeader('application/json');
-            echo $response;
-        } else {
-            $this->returnJson($response, $code);
+
+        $this->returnJson($response, $code);
+    }
+
+    public function getNextItemData()
+    {
+        $code = 200;
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $session = $serviceContext->getTestSession();
+            $route = $session->getRoute();
+
+            if(!$route->isLast()){
+
+                $routeItem = $route->getNext();
+                $assessmentItemRef = $routeItem->getAssessmentItemRef();
+                $stateId = $serviceContext->getTestExecutionUri() . $assessmentItemRef->getIdentifier();
+
+                $response = $this->getItemDataResponse($serviceContext, $assessmentItemRef->getHref(), $stateId);
+
+            } else {
+
+                $response = 'No next item';
+                $code = 204;
+            }
+
+        } catch (common_Exception $e) {
+            \common_Logger::e($e);
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
         }
+
+        $this->returnJson($response, $code);
+    }
+
+    protected function getItemDataResponse(QtiRunnerServiceContext $context, $itemRef, $stateId)
+    {
+        $itemData = $this->runnerService->getItemData($context, $itemRef);
+        $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
+        $rubrics  = $this->runnerService->getRubrics($context);
+        if(strlen(trim($rubrics))){
+            $rubrics = null;
+        }
+
+        $itemState = $this->runnerService->getItemState($context, $stateId);
+        if (!count($itemState)) {
+            $itemState = new stdClass();
+        }
+
+        return [
+            'success'   => true,
+            'token'     => $this->getCsrf()->getCsrfToken(),
+            'baseUrl'   => $baseUrl,
+            'itemData'  => $itemData,
+            'itemState' => $itemState,
+            'rubrics'   => $rubrics
+        ];
     }
 
     /**
@@ -449,7 +474,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             // get the service context, but do not perform the test state check,
-            // as we need to store the item state whatever the test state is 
+            // as we need to store the item state whatever the test state is
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
@@ -490,16 +515,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 // we need a complete service context in order to build the test context
                 $serviceContext->init();
-                
+
                 $response = [
                     'success' => true,
                     'notAllowed' => true,
                     'message' => __('A response to this item is required.'),
-                    
+
                     // send an updated version of the test context
                     'testContext' => $this->runnerService->getTestContext($serviceContext),
                 ];
-                
+
                 // start the timer only after context build to avoid timing error
                 $this->runnerService->startTimer($serviceContext);
             }
@@ -546,6 +571,42 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
+
+    public function moveAndStart()
+    {
+        $code = 200;
+
+        $ref = $this->getRequestParameter('ref');
+        $direction = $this->getRequestParameter('direction');
+        $scope = $this->getRequestParameter('scope');
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $serviceContext->getTestSession()->initItemTimer();
+            $result = $this->runnerService->move($serviceContext, $direction, $scope, $ref);
+
+            $response = [
+                'success' => $result,
+            ];
+
+            if ($result) {
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+            }
+
+            $this->runnerService->persist($serviceContext);
+            
+            // start the timer only after context build to avoid timing error
+            $this->runnerService->startTimer($serviceContext);
+
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
     /**
      * Skip the current position to the provided scope: item, section, part
      */
@@ -573,6 +634,45 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * Skip the current position to the provided scope: item, section, part
+     */
+    public function skipAndStart()
+    {
+        $code = 200;
+
+        $ref = $this->getRequestParameter('ref');
+        $scope = $this->getRequestParameter('scope');
+        $itemDuration = $this->getRequestParameter('itemDuration');
+        $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
+
+        try {
+            $serviceContext = $this->getServiceContext();
+            $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
+
+            $result = $this->runnerService->skip($serviceContext, $scope, $ref);
+
+            $response = [
+                'success' => $result,
+            ];
+
+            if ($result) {
+                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+            }
+
+            $this->runnerService->persist($serviceContext);
+
+            // start the timer only after context build to avoid timing error
+            $this->runnerService->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
