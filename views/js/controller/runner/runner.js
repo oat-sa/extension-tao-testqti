@@ -32,12 +32,12 @@ define([
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
     'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/qtiServiceProxy',
+    'taoQtiTest/runner/proxy/cache/proxy',
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
+             runner, qtiProvider, proxy, cacheProxy, pluginLoaderFactory, urlUtil) {
     'use strict';
 
     var pluginLoader = pluginLoaderFactory();
@@ -45,9 +45,8 @@ define([
     /*
      *TODO provider registration should be loaded dynamically
      */
-
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProvider('qtiServiceProxy', qtiServiceProxy);
+    proxy.registerProvider('qtiServiceProxy', cacheProxy);
     communicator.registerProvider('poll', pollProvider);
 
     /**
