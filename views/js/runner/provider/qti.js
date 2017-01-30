@@ -43,7 +43,7 @@ define([
     store,
     Promise,
     cachedStore,
-    areaBroker,
+    areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
     mapHelper,
@@ -62,6 +62,8 @@ define([
         assetPortableElement
     ], { baseUrl: '' });
 
+    var areaBroker;
+
     /**
      * A Test runner provider to be registered against the runner
      */
@@ -70,13 +72,9 @@ define([
         //provider name
         name : 'qti',
 
-        /**
-         * Initialize and load the area broker with a correct mapping
-         * @returns {areaBroker}
-         */
-        loadAreaBroker : function loadAreaBroker(){
+        initialiseAreaBroker : function initialiseAreaBroker() {
             var $layout = $(layoutTpl());
-            return areaBroker($layout, {
+            areaBroker = areaBrokerFactory($layout, {
                 content:    $('#qti-content', $layout),
                 toolbox:    $('.tools-box-list', $layout),
                 navigation: $('.navi-box-list', $layout),
@@ -85,6 +83,17 @@ define([
                 panel:      $('.test-sidebar-left', $layout),
                 header:     $('.title-box', $layout)
             });
+        },
+
+        /**
+         * Initialize and load the area broker with a correct mapping
+         * @returns {areaBroker}
+         */
+        loadAreaBroker : function loadAreaBroker(){
+            if (_.isUndefined(areaBroker)) {
+                this.initialiseAreaBroker();
+            }
+            return areaBroker;
         },
 
         /**
@@ -354,6 +363,9 @@ define([
                     (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
 
+            this.initialiseAreaBroker();
+            areaBroker.getToolbox().init();
+
             /*
              * Install behavior on events
              */
@@ -570,6 +582,8 @@ define([
             var broker = this.getAreaBroker();
 
             config.renderTo.append(broker.getContainer());
+
+            areaBroker.getToolbox().render(areaBroker.getToolboxArea()); //fix this weird syntax
         },
 
         /**
@@ -769,6 +783,9 @@ define([
                 this.itemRunner.clear();
             }
             this.itemRunner = null;
+
+            areaBroker.getToolbox().destroy();
+            areaBroker = null;
         }
     };
 
