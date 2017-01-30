@@ -1,14 +1,20 @@
 <div class="outcome-declarations">
     <div class="grid-row">
-        <div class="col-6"><label>{{__ 'Identifier'}}</label></div>
-        <div class="col-3">{{__ 'Type'}}</div>
-        <div class="col-3">{{__ 'Cardinality'}}</div>
+        <div class="col-6 header">{{__ 'Identifier'}}</div>
+        <div class="col-3 header">{{__ 'Type'}}</div>
+        <div class="col-3 header">{{__ 'Cardinality'}}</div>
     </div>
-{{#each this}}
+{{#if this}}
+    {{#each this}}
     <div class="grid-row">
-        <div class="col-6"><label>{{name}}</label></div>
-        <div class="col-3">{{type}}</div>
-        <div class="col-3">{{cardinality}}</div>
+        <div class="col-6 line">{{name}}</div>
+        <div class="col-3 line">{{type}}</div>
+        <div class="col-3 line">{{cardinality}}</div>
     </div>
-{{/each}}
+    {{/each}}
+{{else}}
+    <div class="grid-row">
+        <div class="col-12 line">{{__ 'There is not outcomes!'}}</div>
+    </div>
+{{/if}}
 </div>
