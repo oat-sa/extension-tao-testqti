@@ -399,16 +399,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getServiceContext();
-            $session = $serviceContext->getTestSession();
-            $route = $session->getRoute();
+            $session        = $serviceContext->getTestSession();
+            $route          = $session->getRoute();
 
             if(!$route->isLast()){
 
-                $routeItem = $route->getNext();
-                $assessmentItemRef = $routeItem->getAssessmentItemRef();
+                $assessmentItemRef = $route->getNext()->getAssessmentItemRef();
+                $itemRef = $assessmentItemRef->getHref();
                 $stateId = $serviceContext->getTestExecutionUri() . $assessmentItemRef->getIdentifier();
 
-                $response = $this->getItemDataResponse($serviceContext, $assessmentItemRef->getHref(), $stateId);
+                $response = $this->getItemDataResponse($serviceContext, $itemRef, $stateId);
+                if(is_array($response)){
+                    $response['itemDefinition'] = $itemRef;
+                }
 
             } else {
 
@@ -544,9 +547,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $ref = $this->getRequestParameter('ref');
+        $ref       = $this->getRequestParameter('ref');
         $direction = $this->getRequestParameter('direction');
-        $scope = $this->getRequestParameter('scope');
+        $scope     = $this->getRequestParameter('scope');
+        $start     = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -561,44 +565,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
 
+            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
+
             $this->runnerService->persist($serviceContext);
 
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
+            if($start == true){
 
-        $this->returnJson($response, $code);
-    }
-
-
-    public function moveAndStart()
-    {
-        $code = 200;
-
-        $ref = $this->getRequestParameter('ref');
-        $direction = $this->getRequestParameter('direction');
-        $scope = $this->getRequestParameter('scope');
-
-        try {
-            $serviceContext = $this->getServiceContext();
-            $serviceContext->getTestSession()->initItemTimer();
-            $result = $this->runnerService->move($serviceContext, $direction, $scope, $ref);
-
-            $response = [
-                'success' => $result,
-            ];
-
-            if ($result) {
-                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                // start the timer only when move starts the item session
+                // and after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
             }
 
-            $this->runnerService->persist($serviceContext);
-            
-            // start the timer only after context build to avoid timing error
-            $this->runnerService->startTimer($serviceContext);
-
-
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -606,6 +583,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+
 
     /**
      * Skip the current position to the provided scope: item, section, part
@@ -614,10 +592,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $ref = $this->getRequestParameter('ref');
-        $scope = $this->getRequestParameter('scope');
-        $itemDuration = $this->getRequestParameter('itemDuration');
+        $ref               = $this->getRequestParameter('ref');
+        $scope             = $this->getRequestParameter('scope');
+        $itemDuration      = $this->getRequestParameter('itemDuration');
         $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
+        $start             = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -635,45 +614,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
 
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
+            if($start == true){
 
-        $this->returnJson($response, $code);
-    }
-
-    /**
-     * Skip the current position to the provided scope: item, section, part
-     */
-    public function skipAndStart()
-    {
-        $code = 200;
-
-        $ref = $this->getRequestParameter('ref');
-        $scope = $this->getRequestParameter('scope');
-        $itemDuration = $this->getRequestParameter('itemDuration');
-        $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
-
-        try {
-            $serviceContext = $this->getServiceContext();
-            $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
-
-            $result = $this->runnerService->skip($serviceContext, $scope, $ref);
-
-            $response = [
-                'success' => $result,
-            ];
-
-            if ($result) {
-                $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                // start the timer only when move starts the item session
+                // and after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
             }
-
-            $this->runnerService->persist($serviceContext);
-
-            // start the timer only after context build to avoid timing error
-            $this->runnerService->startTimer($serviceContext);
-
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -681,6 +627,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+
 
     /**
      * Handles a test timeout
