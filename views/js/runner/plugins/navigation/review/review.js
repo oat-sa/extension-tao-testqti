@@ -141,6 +141,8 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var navigatorConfig = testConfig.review || {};
+            var areaBroker = this.getAreaBroker();
+
             var previousItemPosition;
 
             /**
@@ -247,6 +249,10 @@ define([
                 testRunner.trigger('tool-reviewpanel');
             });
 
+            // register the elements in the area broker
+            areaBroker.addToolboxElement(this.getName() + '-toggle', this.$toggleButton);
+            areaBroker.addToolboxElement(this.getName() + '-flagItem', this.$flagItemButton);
+
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.flag) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.flag, this.getName(), true), function () {
@@ -328,11 +334,7 @@ define([
          */
         render: function render() {
             var areaBroker = this.getAreaBroker();
-            var $toolboxContainer = areaBroker.getToolboxArea();
             var $panelContainer = areaBroker.getPanelArea();
-
-            $toolboxContainer.append(this.$toggleButton);
-            $toolboxContainer.append(this.$flagItemButton);
             $panelContainer.append(this.navigator.getElement());
         },
 
@@ -341,8 +343,6 @@ define([
          */
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
-            this.$flagItemButton.remove();
-            this.$toggleButton.remove();
             this.navigator.destroy();
         },
 

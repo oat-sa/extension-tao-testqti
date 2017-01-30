@@ -106,8 +106,6 @@ define([
             var itemStates   = testData.itemStates || {};
             var timerWarning = testData.config && testData.config.timerWarning || {};
 
-            var areaBroker   = this.getAreaBroker();
-
             var displayedTimers = {};
             var timers = {};
 
@@ -325,12 +323,6 @@ define([
                 }
             }
 
-            //the element that'll contain the timers
-            this.$element = $(timerBoxTpl());
-
-            // register the element in the area broker
-            areaBroker.addControlElement(this.getName(), this.$element);
-
             return store('timer-' + testRunner.getConfig().serviceCallId)
                 .then(function(timeStore) {
                     if (self.shouldClearStorage) {
@@ -343,6 +335,9 @@ define([
 
                     //the timer's storage
                     self.storage = timeStore;
+
+                    //the element that'll contain the timers
+                    self.$element = $(timerBoxTpl());
 
                     //one stopwatch to count the time
                     self.stopwatch = timerFactory({
@@ -469,6 +464,14 @@ define([
                             });
                         });
                 });
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        render: function render() {
+            var $container = this.getAreaBroker().getControlArea();
+            $container.append(this.$element);
         },
 
         /**

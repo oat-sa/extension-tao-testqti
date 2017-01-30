@@ -118,6 +118,9 @@ define([
                 icon : 'eye-slash'
             }));
 
+            // register the element in the area broker
+            this.getAreaBroker().addToolboxElement(this.getName(), this.$button);
+
             //add a new mask each time the button is pressed
             this.$button.on('click', function (e){
                 e.preventDefault();
@@ -159,13 +162,6 @@ define([
                         _.invoke(self.masks, 'destroy');
                     }
                 });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-            this.getAreaBroker().getToolboxArea().append(this.$button);
         },
 
         /**
