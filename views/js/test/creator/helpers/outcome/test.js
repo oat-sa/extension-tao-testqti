@@ -30,6 +30,7 @@ define([
     var createOutcomeCases, createOutcomeErrorCases;
     var addOutcomeProcessingCases, addOutcomeProcessingErrorCases;
     var addOutcomeCases, addOutcomeErrorCases;
+    var replaceOutcomesCases, replaceOutcomesErrorCases;
     var outcomeHelperApi = [
         {title: 'getProcessingRuleExpression'},
         {title: 'getProcessingRuleProperty'},
@@ -42,7 +43,8 @@ define([
         {title: 'removeOutcomes'},
         {title: 'createOutcome'},
         {title: 'addOutcomeProcessing'},
-        {title: 'addOutcome'}
+        {title: 'addOutcome'},
+        {title: 'replaceOutcomes'}
     ];
 
 
@@ -616,4 +618,122 @@ define([
             }, 'An error must be thrown when the input is wrong');
         });
 
+
+    replaceOutcomesCases = [{
+        title: 'Create the collections',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        },
+        expected: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }, {
+        title: 'Replace the collections',
+        testModel: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'outcome1'
+            }, {
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'outcome2'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'foo'
+                }, {
+                    'qti-type': 'foo'
+                }]
+            }
+        },
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        },
+        expected: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }];
+
+    QUnit
+        .cases(replaceOutcomesCases)
+        .test('helpers/outcome.replaceOutcomes() ', function (data, assert) {
+            QUnit.expect(1);
+            outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
+            assert.deepEqual(data.testModel, data.expected, 'The outcome helper has replaced the outcome declarations');
+        });
+
+
+    replaceOutcomesErrorCases = [{
+        title: 'Wrong outcome declaration',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'foo',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }, {
+        title: 'Wrong processing rule',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    foo: 'bar'
+                }]
+            }
+        }
+    }];
+
+    QUnit
+        .cases(replaceOutcomesErrorCases)
+        .test('helpers/outcome.replaceOutcomes()#error', function (data, assert) {
+            QUnit.expect(1);
+            assert.throws(function () {
+                outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
+            }, 'An error must be thrown when the input is wrong');
+        });
 });

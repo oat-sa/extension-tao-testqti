@@ -207,10 +207,9 @@ define([
             }
 
             if (!outcomeProcessing) {
-                outcomeProcessing = {
-                    'qti-type': 'outcomeProcessing',
+                outcomeProcessing = qtiElementHelper.create('outcomeProcessing', {
                     outcomeRules: []
-                };
+                });
                 testModel.outcomeProcessing = outcomeProcessing;
             } else if (!outcomeProcessing.outcomeRules) {
                 outcomeProcessing.outcomeRules = [];
@@ -250,6 +249,34 @@ define([
 
             declarations.push(outcome);
             return outcome;
+        },
+
+        /**
+         * Replaces the outcomes in a test model
+         * @param {Object} testModel
+         * @param {Object} outcomes
+         * @throws {TypeError} if one of the outcomes or the processing rules are not valid
+         */
+        replaceOutcomes: function replaceOutcomes(testModel, outcomes) {
+            if (_.isPlainObject(outcomes)) {
+                if (_.isArray(outcomes.outcomeDeclarations)) {
+                    if (!outcomeValidator.validateOutcomes(outcomes.outcomeDeclarations, true, 'outcomeDeclaration')) {
+                        throw new TypeError('You must provide valid outcomes!');
+                    }
+
+                    testModel.outcomeDeclarations = [].concat(outcomes.outcomeDeclarations);
+                }
+                if (outcomes.outcomeProcessing && _.isArray(outcomes.outcomeProcessing.outcomeRules)) {
+                    if (!outcomeValidator.validateOutcomes(outcomes.outcomeProcessing.outcomeRules)) {
+                        throw new TypeError('You must provide valid processing rules!');
+                    }
+
+                    if (!testModel.outcomeProcessing) {
+                        testModel.outcomeProcessing = qtiElementHelper.create('outcomeProcessing');
+                    }
+                    testModel.outcomeProcessing.outcomeRules = [].concat(outcomes.outcomeProcessing.outcomeRules);
+                }
+            }
         }
     };
 
