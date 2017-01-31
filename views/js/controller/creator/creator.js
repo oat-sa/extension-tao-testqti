@@ -196,7 +196,7 @@ define([
                     });
 
                     //detect the scoring mode
-                    scoringHelper.read(modelOverseer);
+                    scoringHelper.init(modelOverseer);
 
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
