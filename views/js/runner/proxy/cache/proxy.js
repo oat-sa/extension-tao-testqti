@@ -13,224 +13,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017 Open Assessment Technologies SA
  */
+
 /**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
     'lodash',
-    'i18n',
     'core/promise',
-    'core/communicator',
-    'helpers',
-    'taoQtiTest/runner/config/qtiServiceConfig',
+    'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore'
-], function($, _, __, Promise, communicatorFactory, helpers, configFactory, itemStoreFactory) {
+], function(_, Promise, qtiServiceProxy, itemStoreFactory) {
     'use strict';
 
-    var startOnMove = false;
-
-    var isLast = false;
-
-    //TODO set the limit
-    var itemStore = itemStoreFactory();
-
-    /**
-     * Proxy request function. Returns a promise
-     * Applied options: asynchronous call, JSON data, no cache
-     * @param {proxy} proxy
-     * @param {String} url
-     * @param {Object} [params]
-     * @param {String} [contentType] - to force the content type
-     * @param {Boolean} [noToken] - to disable the token
-     * @returns {Promise}
-     */
-    function request(proxy, url, params, contentType, noToken) {
-
-        //run the request Promise
-        var requestPromise = function requestPromise(){
-            return new Promise(function(resolve, reject) {
-                var headers = {};
-                var tokenHandler = proxy.getTokenHandler();
-                var token;
-                if (!noToken) {
-                    token = tokenHandler.getToken();
-                    if (token) {
-                        headers['X-Auth-Token'] = token;
-                    }
-                }
-                $.ajax({
-                    url: url,
-                    type: params ? 'POST' : 'GET',
-                    cache: false,
-                    data: params,
-                    headers: headers,
-                    async: true,
-                    dataType: 'json',
-                    contentType : contentType || undefined,
-                    timeout: proxy.configStorage.getTimeout()
-                })
-                .done(function(data) {
-                    if (data && data.token) {
-                        tokenHandler.setToken(data.token);
-                    }
-
-                    if (data && data.success) {
-                        resolve(data);
-                    } else {
-                        reject(data);
-                    }
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    var data;
-                    try {
-                        data = JSON.parse(jqXHR.responseText);
-                    } catch (e) {
-                        data = {
-                            success: false,
-                            source: 'network',
-                            purpose: 'proxy',
-                            context: this,
-                            code: jqXHR.status,
-                            type: textStatus || 'error',
-                            message: errorThrown || __('An error occurred!')
-                        };
-                    }
-
-                    if (data.token) {
-                        tokenHandler.setToken(data.token);
-                    } else if (!noToken) {
-                        tokenHandler.setToken(token);
-                    }
-
-                    reject(data);
-                });
-            });
-        };
-
-        //no token protection, run the request
-        if(noToken === true){
-            return requestPromise();
-        }
-
-        //first promise, keep the ref
-        if(!proxy._runningPromise){
-            proxy._runningPromise = requestPromise();
-            return proxy._runningPromise;
-        }
-
-        //create a wrapping promise
-        return new Promise(function(resolve, reject){
-            //run the current request
-            var runRequest = function(){
-                var p = requestPromise();
-                proxy._runningPromise = p; //and keep the ref
-                p.then(resolve).catch(reject);
-            };
-
-            //wait the previous to resolve or fail and run the current one
-            proxy._runningPromise.then(runRequest).catch(runRequest);
-        });
-    }
+    var cacheSize     = 15;
+    var loadNextDelay = 350;
 
     /**
      * QTI proxy definition
      * Related to remote services calls
      * @type {Object}
      */
-    var qtiServiceProxy = {
+    var cacheProxy = _.defaults({
 
-        /**
-         * Keep a reference of the last running promise to
-         * ensure the tokened protected called are chained
-         * @type {Promise}
-         */
-        _runningPromise : null,
-
-        /**
-         * Initializes the proxy
-         * @param {Object} config - The config provided to the proxy factory
-         * @param {String} config.testDefinition - The URI of the test
-         * @param {String} config.testCompilation - The URI of the compiled delivery
-         * @param {String} config.serviceCallId - The URI of the service call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
-         *                      Any error will be provided if rejected.
-         */
         init: function init(config, params) {
-            var initConfig = config || {};
 
-            // store config in a dedicated configStorage
-            this.configStorage = configFactory(initConfig);
+            this.itemStore   = itemStoreFactory(cacheSize);
+            this.startOnMove = false;
+            this.isLastItem  = false;
 
-            // request for initialization
-            return request(this, this.configStorage.getTestActionUrl('init'), params);
+            return qtiServiceProxy.init.call(this, config, params);
         },
 
-        /**
-         * Uninstalls the proxy
-         * @returns {Promise} - Returns a promise. The proxy will be fully uninstalled on resolve.
-         *                      Any error will be provided if rejected.
-         */
         destroy: function destroy() {
-            // no request, just a resources cleaning
-            this.configStorage = null;
-            this._runningPromise = null;
 
-            // the method must return a promise
-            return Promise.resolve();
+            this.itemStore.clear();
+            this.startOnMove = false;
+            this.isLastItem  = false;
+
+            return qtiServiceProxy.destroy.call(this);
         },
 
-        /**
-         * Gets the test definition data
-         * @returns {Promise} - Returns a promise. The test definition data will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        getTestData: function getTestData() {
-            return request(this, this.configStorage.getTestActionUrl('getTestData'));
-        },
-
-        /**
-         * Gets the test context
-         * @returns {Promise} - Returns a promise. The context object will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        getTestContext: function getTestContext() {
-            return request(this, this.configStorage.getTestActionUrl('getTestContext'));
-        },
-
-        /**
-         * Gets the test map
-         * @returns {Promise} - Returns a promise. The test map object will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        getTestMap: function getTestMap() {
-            return request(this, this.configStorage.getTestActionUrl('getTestMap'));
-        },
-
-        /**
-         * Sends the test variables
-         * @param {Object} variables
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         * @fires sendVariables
-         */
-        sendVariables: function sendVariables(variables) {
-            return request(this, this.configStorage.getTestActionUrl('storeTraceData'), { traceData : JSON.stringify(variables) });
-        },
-
-        /**
-         * Calls an action related to the test
-         * @param {String} action - The name of the action to call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        callTestAction: function callTestAction(action, params) {
-            return request(this, this.configStorage.getTestActionUrl(action), params);
-        },
 
         /**
          * Gets an item definition by its URI, also gets its current state
@@ -242,52 +65,33 @@ define([
             var self = this;
 
             var loadNextItem = function loadNextItem(){
-                if(!isLast){
-                    request(self, self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
-                    .then(function(response){
-                        if(response && response.itemDefinition){
-                            itemStore.set(response.itemDefinition, response);
-                            startOnMove = true;
-                        }
-                    })
-                    .catch(function(err){
-                        //TODO handle errors
-                        console.error(err);
-                    });
+                if(!self.isLastItem){
+                    _.delay(function(){
+                        self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
+                        .then(function(response){
+                            if(response && response.itemDefinition){
+                                self.itemStore.set(response.itemDefinition, response);
+                                self.startOnMove = true;
+                            }
+                        })
+                        .catch(function(err){
+                            console.error(err);
+                        });
+                    }, loadNextDelay);
                 }
             };
 
-            if(itemStore.has(uri)){
-                //todo configure delay
-                _.delay(loadNextItem, 350);
-                console.log('resolve from store');
+            if(this.itemStore.has(uri)){
+                loadNextItem();
 
-                return Promise.resolve(itemStore.get(uri));
-            } else {
-                return request(this, this.configStorage.getItemActionUrl(uri, 'getItem'))
-                        .then(function(data){
-                            console.log('getItem', uri, data);
-                            _.delay(loadNextItem, 350);
-                            return data;
-                        });
+                return Promise.resolve(this.itemStore.get(uri));
             }
-        },
 
-        /**
-         * Submits the state and the response of a particular item
-         * @param {String} uri - The URI of the item to update
-         * @param {Object} state - The state to submit
-         * @param {Object} response - The response object to submit
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        submitItem: function submitItem(uri, state, response, params) {
-            var body = JSON.stringify( _.merge({
-                itemState : state,
-                itemResponse : response
-            }, params || {}));
-
-            return request(this, this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
+            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'))
+                    .then(function(data){
+                        loadNextItem();
+                        return data;
+                    });
         },
 
         /**
@@ -299,41 +103,17 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
-            if(startOnMove){
+            if(this.startOnMove){
                 params.start = true;
             }
-            return request(this, this.configStorage.getItemActionUrl(uri, action), params)
+            return this.request(this.configStorage.getItemActionUrl(uri, action), params)
                     .then(function(response){
-                        isLast = response && response.testContext && response.testContext.isLast;
+                        self.isLast = response && response.testContext && response.testContext.isLast;
                         return response;
                     });
         },
+    }, qtiServiceProxy);
 
-        /**
-         * Sends a telemetry signal
-         * @param {String} uri - The URI of the item for which sends the telemetry signal
-         * @param {String} signal - The name of the signal to send
-         * @param {Object} [params] - Some optional parameters to join to the signal
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         * @fires telemetry
-         */
-        telemetry: function telemetry(uri, signal, params) {
-            return request(this, this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
-        },
 
-        /**
-         * Builds the communication channel
-         * @returns {communicator|null} the communication channel
-         */
-        loadCommunicator: function loadCommunicator() {
-            var config = this.configStorage.getCommunicationConfig();
-            if (config.enabled) {
-                return communicatorFactory(config.type, config.params);
-            }
-            return null;
-        }
-    };
-
-    return qtiServiceProxy;
+    return cacheProxy;
 });
