@@ -22,7 +22,9 @@
 define([
     'jquery',
     'lodash',
+    'i18n',
     'ui/hider',
+    'ui/dialog/alert',
     'util/namespace',
     'taoQtiTest/controller/creator/views/actions',
     'helpers',
@@ -30,7 +32,7 @@ define([
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/helpers/ckConfigurator',
     'taoQtiTest/controller/creator/helpers/qtiElement'
-], function ($, _, hider, namespaceHelper, actions, helpers, ckeditor, Dom2QtiEncoder, ckConfigurator, qtiElementHelper) { // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
+], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, ckeditor, Dom2QtiEncoder, ckConfigurator, qtiElementHelper) { // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
     'use strict';
 
     //compute ckeditor config only once
@@ -79,9 +81,47 @@ define([
                 return $el.off(eventName).on(eventName, cb);
             }
 
+            /**
+             * Update the HTML editor
+             */
             function updateContent() {
-                $rubricBlockContent.html(Dom2QtiEncoder.encode(rubricModel.content));
-                syncRubricBlockContent();
+                var html = Dom2QtiEncoder.encode(rubricModel.content);
+                $rubricBlockContent.html(html);
+            }
+
+            /**
+             * Wrap/unwrap the rubric block in a feedback according to the user selection
+             * @param {Object} feedback
+             * @returns {Boolean}
+             */
+            function updateFeedback(feedback) {
+                var activated = feedback && feedback.activated;
+                var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
+
+                if (activated) {
+                    // wrap the actual content into a feedbackBlock if needed
+                    if (!wrapper) {
+                        rubricModel.content = [qtiElementHelper.create('div', {
+                            content: [qtiElementHelper.create('feedbackBlock', {
+                                outcomeIdentifier: feedback.outcome,
+                                identifier: feedback.matchValue,
+                                content: rubricModel.content
+                            })]
+                        })];
+                    } else {
+                        wrapper.outcomeIdentifier = feedback.outcome;
+                        wrapper.identifier = feedback.matchValue;
+                    }
+                    updateContent();
+                } else {
+                    // remove the feedbackBlock wrapper, just keep the actual content
+                    if (wrapper) {
+                        rubricModel.content = wrapper.content;
+                        updateContent();
+                    }
+                }
+
+                return activated;
             }
 
             /**
@@ -93,39 +133,16 @@ define([
                 var $view = propView.getView();
                 var $feedbackOutcomeLine = $('.rubric-feedback-outcome', $view);
                 var $feedbackMatchLine = $('.rubric-feedback-match-value', $view);
+                var $feedbackOutcome = $('[name=feedback-outcome]', $view);
+                var $feedbackActivated = $('[name=activated]', $view);
 
-                function changeFeedback(feedback) {
-                    var activated = feedback && feedback.activated;
-                    var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
+                // toggle the feedback panel
+                function changeFeedback(activated) {
                     hider.toggle($feedbackOutcomeLine, activated);
                     hider.toggle($feedbackMatchLine, activated);
-
-                    if (activated) {
-                        // wrap the actual content into a feedbackBlock if needed
-                        if (!wrapper) {
-                            rubricModel.content = [qtiElementHelper.create('div', {
-                                content: [qtiElementHelper.create('feedbackBlock', {
-                                    outcomeIdentifier: feedback.outcome,
-                                    identifier: feedback.matchValue,
-                                    content: rubricModel.content
-                                })]
-                            })];
-                        } else {
-                            wrapper.outcomeIdentifier = feedback.outcome;
-                            wrapper.identifier = feedback.matchValue;
-                        }
-                        updateContent();
-                        // $('[name="feedback-outcome"]', $view).val(feedback.outcome);
-                        // $('[name="feedback-match-value"]', $view).val(feedback.matchValue);
-                    } else {
-                        // remove the feedbackBlock wrapper, just keep the actual content
-                        if (wrapper) {
-                            rubricModel.content = wrapper.content;
-                            updateContent();
-                        }
-                    }
                 }
 
+                // should be called when the properties panel is removed
                 function removePropHandler() {
                     rubricModel.feedback = {};
                     if (propView !== null) {
@@ -133,10 +150,36 @@ define([
                     }
                 }
 
+                // take care of changes in the properties view
                 function changeHandler(e, changedModel) {
                     if (e.namespace === 'binder' && changedModel['qti-type'] === 'rubricBlock') {
-                        changeFeedback(changedModel.feedback);
+                        changeFeedback(updateFeedback(changedModel.feedback));
                     }
+                }
+
+                // update the list of outcomes the feedback can target
+                function updateOutcomes() {
+                    var activated = rubricModel.feedback && rubricModel.feedback.activated;
+                    // build the list of outcomes in a way select2 can understand
+                    var outcomes = _.map(modelOverseer.getOutcomesNames(), function(name) {
+                        return {
+                            id: name,
+                            text: name
+                        };
+                    });
+
+                    // create/update the select field
+                    $feedbackOutcome.select2({
+                        minimumResultsForSearch: -1,
+                        width: '100%',
+                        data: outcomes
+                    });
+
+                    // update the UI to reflect the data
+                    if (!activated) {
+                        $feedbackActivated.removeAttr('checked');
+                    }
+                    changeFeedback(activated);
                 }
 
                 $('[name=type]', $view).select2({
@@ -148,15 +191,24 @@ define([
                 bindEvent($rubricBlock.parents('.testpart'), 'delete', removePropHandler);
                 bindEvent($rubricBlock.parents('.section'), 'delete', removePropHandler);
                 bindEvent($rubricBlock, 'delete', removePropHandler);
+                bindEvent($rubricBlock, 'outcome-removed', function() {
+                    $feedbackOutcome.val('');
+                    updateOutcomes();
+                });
+                bindEvent($rubricBlock, 'outcome-updated', function() {
+                    updateFeedback(rubricModel.feedback);
+                    updateOutcomes();
+                });
 
                 changeFeedback(rubricModel.feedback);
+                updateOutcomes();
                 rbViews($view);
             }
 
             /**
              * Set up the views select box
              * @private
-             * @param {jQuerElement} $propContainer - the element container
+             * @param {jQueryElement} $propContainer - the element container
              */
             function rbViews($propContainer) {
                 var $select = $('[name=view]', $propContainer);
@@ -179,6 +231,30 @@ define([
                 outcome: qtiElementHelper.lookupProperty(rubricModel, 'rubricBlock.div.feedbackBlock.outcomeIdentifier', 'content'),
                 matchValue: qtiElementHelper.lookupProperty(rubricModel, 'rubricBlock.div.feedbackBlock.identifier', 'content')
             };
+
+            modelOverseer
+                .before('scoring-write.' + rubricModel.uid, function() {
+                    var feedbackOutcome = rubricModel.feedback && rubricModel.feedback.outcome;
+                    if (feedbackOutcome && _.indexOf(modelOverseer.getOutcomesNames(), feedbackOutcome) < 0) {
+                        // the targeted outcome has been removed, so remove the feedback
+                        modelOverseer.changedRubricBlock = (modelOverseer.changedRubricBlock || 0) + 1;
+                        rubricModel.feedback.activated = false;
+                        rubricModel.feedback.outcome = '';
+                        updateFeedback(rubricModel.feedback);
+                        $rubricBlock.trigger('outcome-removed');
+                    } else {
+                        // the tageted outcome is still here, just notify the properties panel to update the list
+                        $rubricBlock.trigger('outcome-updated');
+                    }
+                })
+                .on('scoring-write.' + rubricModel.uid, function() {
+                    // will notify the user of any removed feedbacks
+                    if (modelOverseer.changedRubricBlock) {
+                        /** @todo: provide a way to cancel changes */
+                        dialogAlert(__('Some rubric blocks have been updated to reflect the changes in the list of outcomes.'));
+                        modelOverseer.changedRubricBlock = 0;
+                    }
+                });
 
             actions.properties($rubricBlock, 'rubricblock', rubricModel, propHandler);
 
