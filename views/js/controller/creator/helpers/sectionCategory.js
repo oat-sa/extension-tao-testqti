@@ -177,6 +177,10 @@ define([
                 description : __('enable calculator')
             },
             {
+                name : 'x-tao-option-areaMasking',
+                description : __('enable area masking tool')
+            },
+            {
                 name : 'x-tao-itemusage-informational',
                 description : __('describe the item as informational')
             }
