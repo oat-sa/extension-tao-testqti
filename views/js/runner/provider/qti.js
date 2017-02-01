@@ -32,9 +32,7 @@ define([
     'taoTests/runner/probeOverseer',
     'taoQtiTest/runner/helpers/map',
     'taoQtiItem/runner/qtiItemRunner',
-    'taoItems/assets/manager',
-    'taoItems/assets/strategies',
-    'taoQtiItem/portableElementRegistry/assetManager/portableAssetStrategy',
+    'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -49,18 +47,11 @@ define([
     mapHelper,
     qtiItemRunner,
     assetManagerFactory,
-    assetStrategies,
-    assetPortableElement,
     layoutTpl) {
     'use strict';
 
     //the asset strategies
-    var assetManager = assetManagerFactory([
-        assetStrategies.external,
-        assetStrategies.base64,
-        assetStrategies.baseUrl,
-        assetPortableElement
-    ], { baseUrl: '' });
+    var assetManager = assetManagerFactory();
 
     /**
      * A Test runner provider to be registered against the runner
