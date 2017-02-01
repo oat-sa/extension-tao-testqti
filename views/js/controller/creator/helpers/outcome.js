@@ -157,7 +157,7 @@ define([
                     return outcome;
                 });
 
-                check = function checkIdenfifier(outcome) {
+                check = function checkIdentifier(outcome) {
                     return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcome)];
                 };
             }

@@ -62,7 +62,6 @@ define([
             label: __('Total score'),
             prefix: 'SCORE_',
             outcome: 'SCORE_TOTAL',
-            outcomeType: baseTypeHelper.FLOAT,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
@@ -72,10 +71,8 @@ define([
             label: __('Cut score'),
             prefix: 'PASS_',
             outcome: 'PASS_TOTAL',
-            outcomeType: baseTypeHelper.BOOLEAN,
             feedback: 'PASS_TOTAL_RENDERING',
             feedbackSuffix: '_RENDERING',
-            feedbackType: baseTypeHelper.IDENTIFIER,
             feedbackMatch: true,
             feedbackOk: "passed",
             feedbackFailed: "not_passed",
@@ -131,12 +128,12 @@ define([
             removeScoring(outcomes);
 
             // create the outcome and the rule that process the overall score
-            addTotalScoreOutcomes(outcomes, getOutcomeIdentifier(processingMode), processingMode.outcomeType, scoreIdentifier, weightIdentifier);
+            addTotalScoreOutcomes(outcomes, getOutcomeIdentifier(processingMode), scoreIdentifier, weightIdentifier);
 
             // create an outcome per categories
             if (handleCategories(modelOverseer)) {
                 _.forEach(modelOverseer.getCategories(), function (category) {
-                    addTotalScoreOutcomes(outcomes, getOutcomeIdentifier(processingMode, category), processingMode.outcomeType, scoreIdentifier, weightIdentifier, category);
+                    addTotalScoreOutcomes(outcomes, getOutcomeIdentifier(processingMode, category), scoreIdentifier, weightIdentifier, category);
                 });
             }
 
@@ -162,16 +159,14 @@ define([
             removeScoring(outcomes);
 
             // create the outcome and the rule that process the overall score
-            addCutScoreOutcomes(outcomes, outcomeIdentifier, processingMode.outcomeType, cutScore, scoreIdentifier, weightIdentifier);
+            addCutScoreOutcomes(outcomes, outcomeIdentifier, cutScore, scoreIdentifier, weightIdentifier);
 
             // create the outcome and the rule that process the score feedback
             if (processingMode.feedback) {
                 addFeedbackScoreOutcomes(
                     outcomes,
                     processingMode.feedback,
-                    processingMode.feedbackType,
                     outcomeIdentifier,
-                    processingMode.outcomeType,
                     processingMode.feedbackMatch,
                     processingMode.feedbackOk,
                     processingMode.feedbackFailed
@@ -182,14 +177,12 @@ define([
             if (handleCategories(modelOverseer)) {
                 _.forEach(modelOverseer.getCategories(), function (category) {
                     var categoryOutcomeIdentifier = getOutcomeIdentifier(processingMode, category);
-                    addCutScoreOutcomes(outcomes, categoryOutcomeIdentifier, processingMode.outcomeType, cutScore, scoreIdentifier, weightIdentifier, category);
+                    addCutScoreOutcomes(outcomes, categoryOutcomeIdentifier, cutScore, scoreIdentifier, weightIdentifier, category);
 
                     addFeedbackScoreOutcomes(
                         outcomes,
                         categoryOutcomeIdentifier + processingMode.feedbackSuffix,
-                        processingMode.feedbackType,
                         categoryOutcomeIdentifier,
-                        processingMode.outcomeType,
                         processingMode.feedbackMatch,
                         processingMode.feedbackOk,
                         processingMode.feedbackFailed
@@ -305,13 +298,12 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
      * @param {String} [scoreIdentifier]
      * @param {String} [weightIdentifier]
      * @param {String} [category]
      */
-    function addTotalScoreOutcomes(model, identifier, type, scoreIdentifier, weightIdentifier, category) {
-        var outcome = outcomeHelper.createOutcome(identifier, type);
+    function addTotalScoreOutcomes(model, identifier, scoreIdentifier, weightIdentifier, category) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var processingRule = processingRuleHelper.setOutcomeValue(identifier,
             processingRuleHelper.sum(
                 processingRuleHelper.testVariables(scoreIdentifier, -1, weightIdentifier, category)
@@ -326,14 +318,13 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
      * @param {String|Number} cutScore
      * @param {String} [scoreIdentifier]
      * @param {String} [weightIdentifier]
      * @param {String} [category]
      */
-    function addCutScoreOutcomes(model, identifier, type, cutScore, scoreIdentifier, weightIdentifier, category) {
-        var outcome = outcomeHelper.createOutcome(identifier, type);
+    function addCutScoreOutcomes(model, identifier, cutScore, scoreIdentifier, weightIdentifier, category) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
         var processingRule = processingRuleHelper.setOutcomeValue(identifier,
             processingRuleHelper.gte(
                 processingRuleHelper.divide(
@@ -354,20 +345,19 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
      * @param {String} variable
-     * @param {String|Number} variableType
      * @param {*} matchValue
      * @param {*} passed
      * @param {*} notPassed
      */
-    function addFeedbackScoreOutcomes(model, identifier, type, variable, variableType, matchValue, passed, notPassed) {
+    function addFeedbackScoreOutcomes(model, identifier, variable, matchValue, passed, notPassed) {
+        var type = baseTypeHelper.IDENTIFIER;
         var outcome = outcomeHelper.createOutcome(identifier, type);
         var processingRule = processingRuleHelper.outcomeCondition(
             processingRuleHelper.outcomeIf(
                 processingRuleHelper.match(
                     processingRuleHelper.variable(variable),
-                    processingRuleHelper.baseValue(matchValue, variableType)
+                    processingRuleHelper.baseValue(matchValue, baseTypeHelper.BOOLEAN)
                 ),
                 processingRuleHelper.setOutcomeValue(identifier,
                     processingRuleHelper.baseValue(passed, type)
@@ -541,12 +531,50 @@ define([
     }
 
     /**
-     * Removes all outcome processing outcome variables
+     * Removes all scoring outcomes
      * @param {Object} model
      */
     function removeScoring(model) {
-        var scoringOutcomes = outcomeHelper.listOutcomes(model, isScoringOutcome);
-        outcomeHelper.removeOutcomes(model, scoringOutcomes);
+        var scoringOutcomes = _.indexBy(outcomeHelper.listOutcomes(model, isScoringOutcome), function (outcome) {
+            return outcome;
+        });
+
+        outcomeHelper.removeOutcomes(model, function(outcome) {
+            var match = false;
+
+            function browseExpressions(processingRule) {
+                if (_.isArray(processingRule)) {
+                    _.forEach(processingRule, browseExpressions);
+                } else if (processingRule) {
+                    if (scoringOutcomes[outcomeHelper.getOutcomeIdentifier(processingRule)]) {
+                        match = true;
+                    }
+
+                    if (!match && processingRule.expression) {
+                        browseExpressions(processingRule.expression);
+                    }
+                    if (!match && processingRule.expressions) {
+                        browseExpressions(processingRule.expressions);
+                    }
+                    if (!match && processingRule.outcomeRules) {
+                        browseExpressions(processingRule.outcomeRules);
+                    }
+                    if (!match && processingRule.outcomeIf) {
+                        browseExpressions(processingRule.outcomeIf);
+                    }
+                    if (!match && processingRule.outcomeElse) {
+                        browseExpressions(processingRule.outcomeElse);
+                    }
+                }
+            }
+
+            if (outcome['qti-type'] === 'outcomeCondition') {
+                browseExpressions(outcome);
+            } else {
+                match = !!scoringOutcomes[outcomeHelper.getOutcomeIdentifier(outcome)];
+            }
+            return match;
+        });
     }
 
     /**

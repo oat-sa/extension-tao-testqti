@@ -114,21 +114,21 @@ define([
         },
         {
             title: 'total',
-            model: scoringCustomSample,
+            model: scoringCutCategorySample,
             categoryScore: false,
             outcomeProcessing: 'total',
             expected: scoringTotalSample
         },
         {
             title: 'total&category',
-            model: scoringCustomSample,
+            model: scoringCutCategorySample,
             categoryScore: true,
             outcomeProcessing: 'total',
             expected: scoringTotalCategorySample
         },
         {
             title: 'cut',
-            model: scoringCustomSample,
+            model: scoringTotalCategorySample,
             categoryScore: false,
             outcomeProcessing: 'cut',
             cutScore: 60,
@@ -137,7 +137,7 @@ define([
         },
         {
             title: 'cut&category',
-            model: scoringCustomSample,
+            model: scoringTotalCategorySample,
             categoryScore: true,
             outcomeProcessing: 'cut',
             cutScore: 60,
