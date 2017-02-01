@@ -19,13 +19,13 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery', 'lodash', 'ui/hider',
+    'jquery', 'lodash', 'i18n', 'ui/hider', 'ui/feedback',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
-function($, _, hider, actions, testPartView, templates, qtiTestHelper){
+function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHelper){
     'use strict';
 
     /**
@@ -74,6 +74,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             var $cutScoreLine = $('.test-cut-score', $view);
             var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $descriptions = $('.test-outcome-processing-description', $view);
+            var $generate = $('[data-action="generate-outcomes"]', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
             var scoringState = JSON.stringify(testModel.scoring);
 
@@ -98,7 +99,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             }
 
             function updateOutcomes() {
-                var $panel = $('.test-outcome-declarations', $view);
+                var $panel = $('.outcome-declarations', $view);
 
                 $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
             }
@@ -106,6 +107,17 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             $('[name=test-outcome-processing]', $view).select2({
                 minimumResultsForSearch: -1,
                 width: '100%'
+            });
+
+            $generate.on('click', function() {
+                modelOverseer.on('scoring-write.regenerate', function() {
+                    modelOverseer.off('scoring-write.regenerate');
+                    feedback().success(__('The outcomes have been regenerated!')).on('destroy', function() {
+                        $generate.removeClass('disabled').removeAttr('disabled');
+                    });
+                });
+                $generate.addClass('disabled').attr('disabled', true);
+                modelOverseer.trigger('scoring-change');
             });
 
             $view.on('change.binder', function (e, model) {

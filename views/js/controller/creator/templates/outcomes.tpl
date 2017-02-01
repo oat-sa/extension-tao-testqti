@@ -1,4 +1,3 @@
-<div class="outcome-declarations">
     <div class="grid-row">
         <div class="col-6 header">{{__ 'Identifier'}}</div>
         <div class="col-3 header">{{__ 'Type'}}</div>
@@ -17,4 +16,3 @@
         <div class="col-12 line">{{__ 'There is not outcomes!'}}</div>
     </div>
 {{/if}}
-</div>
