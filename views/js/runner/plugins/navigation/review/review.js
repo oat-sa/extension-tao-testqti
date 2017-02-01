@@ -212,6 +212,7 @@ define([
                     self.explicitlyHidden = true;
                     self.navigator.hide();
                 }
+                updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
             }
 
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
