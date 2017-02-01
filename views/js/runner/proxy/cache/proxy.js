@@ -22,8 +22,9 @@ define([
     'lodash',
     'core/promise',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
-    'taoQtiTest/runner/proxy/cache/itemStore'
-], function(_, Promise, qtiServiceProxy, itemStoreFactory) {
+    'taoQtiTest/runner/proxy/cache/itemStore',
+    'taoQtiTest/runner/proxy/cache/assetLoader',
+], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
     'use strict';
 
     var cacheSize     = 15;
@@ -72,6 +73,10 @@ define([
                             if(response && response.itemDefinition){
                                 self.itemStore.set(response.itemDefinition, response);
                                 self.startOnMove = true;
+
+                                if(response.baseUrl && response.itemData && response.itemData.assets){
+                                    assetLoader(response.baseUrl, response.itemData.assets);
+                                }
                             }
                         })
                         .catch(function(err){
@@ -103,6 +108,8 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
+            var self = this;
+
             if(this.startOnMove){
                 params.start = true;
             }
