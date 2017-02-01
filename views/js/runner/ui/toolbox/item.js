@@ -57,6 +57,9 @@ define([
             })
             .on('render', function() {
                 var self = this;
+
+                this.disable(); // we always render disabled by default
+
                 this.$component
                     .on('mousedown', function(event) {
                         self.trigger('mousedown', event);

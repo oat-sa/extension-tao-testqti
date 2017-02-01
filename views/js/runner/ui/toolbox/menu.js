@@ -32,10 +32,11 @@ define([
 
     var menuComponentApi = {
 
-        renderEntry: function renderEntry(entry) {
-            this.entries.push(entry); // keep a reference to the entry
-            entry.setTemplate(menuItemTpl);
-            entry.render(this.$menuContent);
+        renderItem: function renderItem(item) {
+            this.items.push(item); // keep a reference to the item
+            item.setTemplate(menuItemTpl);
+            item.render(this.$menuContent);
+            item.enable();
         },
 
         activate: function activate() {
@@ -47,7 +48,7 @@ define([
         },
 
         deactivateAll: function deactivateAll() {
-            _.invoke(this.entries, 'deactivate');
+            _.invoke(this.items, 'deactivate');
         },
 
         toggleMenu: function showMenu() {
@@ -103,7 +104,7 @@ define([
                 }
             })
             .on('init', function init() {
-                this.entries = [];
+                this.items = [];
             })
             .on('render', function render() {
                 var self = this;
@@ -111,7 +112,9 @@ define([
                 this.$menuButton    = this.$component.find('[data-control="' + this.config.control + '-button"]');
                 this.$menuContainer = this.$component.find('[data-control="' + this.config.control + '-menu"]');
                 this.$menuContent   = this.$component.find('[data-control="' + this.config.control + '-list"]');
-                this.$menuStateIcon = this.$menuButton.find('.icon');
+                this.$menuStateIcon = this.$menuButton.find('.icon-up');
+
+                this.disable(); // we always render disabled by default
 
                 /*
                 this.$menuContainer.on('focusout blur', function() {

@@ -32,16 +32,16 @@ define([
     var toolbarComponentApi = {
 
         initToolbar: function initToolbar() {
-            this.entries = []; // we use an array to maintain insertion order
+            this.items = []; // we use an array to maintain insertion order
         },
 
         createMenu: function createMenu(config) {
             var menu = menuFactory()
                 .init(config);
-            this.entries.push({
+            this.items.push({
                 id: config.control,
                 type: 'menu',
-                entry: menu
+                item: menu
             });
             return menu;
         },
@@ -49,10 +49,10 @@ define([
         createItem: function createItem(config, menuId)  {
             var item = itemFactory()
                 .init(config);
-            this.entries.push({
+            this.items.push({
                 id: config.control,
                 type: 'item', //todo: replace with getType()
-                entry: item,
+                item: item,
                 menuId: menuId
             });
             return item;
@@ -77,7 +77,7 @@ define([
 
 
     /**
-     * Default renderer. It simply appends all the registered entries in the toolbar and the menus
+     * Default renderer. It simply appends all the registered items in the toolbar and the menus
      * @param {jQuery} $container - where to render
      */
     function defaultRenderer($container) {
@@ -85,12 +85,12 @@ define([
             menuEntries = [];
 
         // render first level
-        if (this.entries && _.isArray(this.entries)) {
-            this.entries.forEach(function (current) {
+        if (this.items && _.isArray(this.items)) {
+            this.items.forEach(function (current) {
 
                 // do not render directly items belonging to menus
                 if (!current.menuId) {
-                    current.entry.render($container);
+                    current.item.render($container);
 
                 // but save for later
                 } else {
@@ -100,12 +100,12 @@ define([
             });
         }
 
-        // delegates the rendering of menu entries to the menu components
+        // delegates the rendering of menu items to the menu components
         menuEntries.forEach(function (current) {
-            var menu = _.find(self.entries, { id: current.menuId }); //fixme: this needs optimizing!!!
+            var menu = _.find(self.items, { id: current.menuId }); //fixme: this needs optimizing!!!
 
             if (menu) {
-                menu.entry.renderEntry(current.entry);
+                menu.item.renderItem(current.item);
             }
         });
     }
