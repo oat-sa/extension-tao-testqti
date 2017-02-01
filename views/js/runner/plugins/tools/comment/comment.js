@@ -93,9 +93,6 @@ define([
                 text: __('Comment')
             }));
 
-            // register the element in the area broker
-            this.getAreaBroker().addNavigationElement(this.getName(), this.$button);
-
             //get access to controls
             this.$form = $(commentTpl()).appendTo(this.$button);
             this.$input = this.$button.find('[data-control="qti-comment-text"]');
@@ -168,6 +165,14 @@ define([
                         toggleComment();
                     }
                 });
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        render: function render() {
+            var $container = this.getAreaBroker().getToolboxArea();
+            $container.append(this.$button);
         },
 
         /**
