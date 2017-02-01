@@ -66,7 +66,6 @@ define([
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || {};
-           // var config     = _.defaults(_.clone((testConfig.plugins || {})[pluginName]) || {}, defaultConfig);
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
 
             //build the control button
@@ -76,13 +75,20 @@ define([
                 icon : 'strike-through'
             }));
 
+
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                return true;
+            }
+
             //add a new mask each time the button is pressed
             this.$button.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger(actionPrefix + 'toggle');
-
-                self.$choiceInteractions.toggleClass('eliminable');
-                console.log($container, $container.find('.qti-item'))
             });
 
             // handle the plugin's shortcuts
@@ -123,11 +129,9 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
-                    // if( self.masks.length < config.max ) {
-                    //     addMask();
-                    // } else if (config.max === 1) {
-                    //     _.invoke(self.masks, 'destroy');
-                    // }
+                    if (isEnabled()) {
+                        self.$choiceInteractions.toggleClass('eliminable');
+                    }
                 });
         },
 
