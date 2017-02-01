@@ -140,28 +140,34 @@ define([
         },
 
         /**
-         * Removes the spefified outcomes from the provided test model
-         * @param {Object} testModel
-         * @param {String[]} outcomes
+         * Removes the specified outcomes from the provided test model
+         * @param {Object} testModel - The test model to clean up
+         * @param {Function|String[]} outcomes - The list of outcomes identifiers to remove,
+         *                                       or a callback that will match each outcome to remove
          */
         removeOutcomes: function removeOutcomes(testModel, outcomes) {
             var declarations = outcomeHelper.getOutcomeDeclarations(testModel);
             var rules = outcomeHelper.getOutcomeProcessingRules(testModel);
+            var check;
 
-            outcomes = _.indexBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
-                return outcome;
-            });
+            if (_.isFunction(outcomes)) {
+                check = outcomes;
+            } else {
+                outcomes = _.indexBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
+                    return outcome;
+                });
+
+                check = function checkIdenfifier(outcome) {
+                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcome)];
+                };
+            }
 
             if (declarations) {
-                _.remove(declarations, function (outcomeDeclaration) {
-                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcomeDeclaration)];
-                });
+                _.remove(declarations, check);
             }
 
             if (rules) {
-                _.remove(rules, function (outcomeRule) {
-                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcomeRule)];
-                });
+                _.remove(rules, check);
             }
         },
 

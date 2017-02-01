@@ -110,14 +110,15 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             });
 
             $generate.on('click', function() {
-                modelOverseer.on('scoring-write.regenerate', function() {
-                    modelOverseer.off('scoring-write.regenerate');
-                    feedback().success(__('The outcomes have been regenerated!')).on('destroy', function() {
-                        $generate.removeClass('disabled').removeAttr('disabled');
-                    });
-                });
                 $generate.addClass('disabled').attr('disabled', true);
-                modelOverseer.trigger('scoring-change');
+                modelOverseer
+                    .on('scoring-write.regenerate', function() {
+                        modelOverseer.off('scoring-write.regenerate');
+                        feedback().success(__('The outcomes have been regenerated!')).on('destroy', function() {
+                            $generate.removeClass('disabled').removeAttr('disabled');
+                        });
+                    })
+                    .trigger('scoring-change');
             });
 
             $view.on('change.binder', function (e, model) {

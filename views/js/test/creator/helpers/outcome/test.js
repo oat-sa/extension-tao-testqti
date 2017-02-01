@@ -178,7 +178,7 @@ define([
     });
 
 
-    QUnit.test('helpers/outcome.removeOutcomes()', function (assert) {
+    QUnit.test('helpers/outcome.removeOutcomes() #list', function (assert) {
         var testModel = _.cloneDeep(testModelSample);
         var outcomeToRemove = 'SCORE_MATH';
         var countDeclarations = testModel.outcomeDeclarations.length;
@@ -190,6 +190,29 @@ define([
         assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
 
         outcomeHelper.removeOutcomes(testModel, 'SCORE_MATH');
+
+        assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
+        assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
+
+        assert.equal(testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate');
+        assert.equal(testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate');
+    });
+
+
+    QUnit.test('helpers/outcome.removeOutcomes() #callback', function (assert) {
+        var testModel = _.cloneDeep(testModelSample);
+        var outcomeToRemove = 'SCORE_MATH';
+        var countDeclarations = testModel.outcomeDeclarations.length;
+        var countRules = testModel.outcomeProcessing.outcomeRules.length;
+
+        QUnit.expect(6);
+
+        assert.equal(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'There is an outcome declaration');
+        assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
+
+        outcomeHelper.removeOutcomes(testModel, function(outcome) {
+            return outcomeHelper.getOutcomeIdentifier(outcome) === 'SCORE_MATH';
+        });
 
         assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
         assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
