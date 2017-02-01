@@ -31,6 +31,7 @@ define([
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoItems/assets/manager',
     'taoItems/assets/strategies',
@@ -47,6 +48,7 @@ define([
     proxyFactory,
     probeOverseerFactory,
     mapHelper,
+    toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
     assetStrategies,
@@ -62,7 +64,17 @@ define([
         assetPortableElement
     ], { baseUrl: '' });
 
-    var areaBroker;
+    var $layout = $(layoutTpl());
+
+    var areaBroker = areaBrokerFactory($layout, {
+        content:    $('#qti-content', $layout),
+        toolbox:    $('.tools-box', $layout),
+        navigation: $('.navi-box-list', $layout),
+        control:    $('.top-action-bar .control-box', $layout),
+        actionsBar: $('.bottom-action-bar .control-box', $layout),
+        panel:      $('.test-sidebar-left', $layout),
+        header:     $('.title-box', $layout)
+    });
 
     /**
      * A Test runner provider to be registered against the runner
@@ -72,27 +84,11 @@ define([
         //provider name
         name : 'qti',
 
-        initialiseAreaBroker : function initialiseAreaBroker() {
-            var $layout = $(layoutTpl());
-            areaBroker = areaBrokerFactory($layout, {
-                content:    $('#qti-content', $layout),
-                toolbox:    $('.tools-box-list', $layout),
-                navigation: $('.navi-box-list', $layout),
-                control:    $('.top-action-bar .control-box', $layout),
-                actionsBar: $('.bottom-action-bar .control-box', $layout),
-                panel:      $('.test-sidebar-left', $layout),
-                header:     $('.title-box', $layout)
-            });
-        },
-
         /**
          * Initialize and load the area broker with a correct mapping
          * @returns {areaBroker}
          */
         loadAreaBroker : function loadAreaBroker(){
-            if (_.isUndefined(areaBroker)) {
-                this.initialiseAreaBroker();
-            }
             return areaBroker;
         },
 
@@ -363,7 +359,7 @@ define([
                     (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
 
-            this.initialiseAreaBroker();
+            areaBroker.setComponent('toolbox', toolboxFactory());
             areaBroker.getToolbox().init();
 
             /*
@@ -583,7 +579,7 @@ define([
 
             config.renderTo.append(broker.getContainer());
 
-            areaBroker.getToolbox().render(areaBroker.getToolboxArea()); //fix this weird syntax
+            areaBroker.getToolbox().render(areaBroker.getToolboxArea());
         },
 
         /**
