@@ -24,11 +24,12 @@ define([
     'jquery',
     'lodash',
     'core/keyNavigator',
+    'core/groupKeyNavigator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, keyNavigator, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -47,106 +48,17 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
-            var focusables = [];
-            var count = 1;
-            var cursor = null;
-
-            /**
-             * Gets the tabindex of the currently selected focusable element
-             */
-            function findCurrentIndex() {
-                //var $content = testRunner.getAreaBroker().getContentArea();
-                var isFocused = false;
-                var $input;
-
-                if (document.activeElement) {
-                    // try to find the focused element within the known list of focusable elements
-                    _.forEach(focusables, function(focusable, index) {
-                        if (document.activeElement === focusable) {
-                            cursor = index;
-                            isFocused = true;
-                            return false;
-                        }
-                    });
-                }
-
-                if (!isFocused) {
-                    // from the current cursor retrieve the related interaction, then find the selected focusable element
-                    $input = $(':input:eq(' + (cursor || 0) +')').closest('.qti-interaction').find(':checked');
-                    if ($input.length) {
-                        _.forEach(focusables, function(focusable, index) {
-                            if ($input.is(focusable)) {
-                                cursor = index;
-                                isFocused = true;
-                                return false;
-                            }
-                        });
-                    }
-                }
-
-                if (!isFocused) {
-                    cursor = null;
-                }
-            }
-
-            /**
-             * Select the previous item focusable element
-             */
-            function previousFocusable() {
-                findCurrentIndex();
-                if (_.isNumber(cursor)) {
-                    cursor = (cursor + count - 1) % count;
-                } else {
-                    cursor = count - 1;
-                }
-                if (focusables[cursor]) {
-                    focusables[cursor].focus();
-                }
-            }
-
-            /**
-             * Select the next item focusable element
-             */
-            function nextFocusable() {
-                findCurrentIndex();
-
-                if (_.isNumber(cursor) && cursor < count -1) {
-                    cursor = (cursor + 1) % count;
-                    if (focusables[cursor]) {
-                        focusables[cursor].focus();
-                    }
-                } else {
-                    cursor = 0;
-                    focusables[0].focus();
-                    return;
-                    //find the first input
-                    _.forEach(focusables, function(focusable, index){
-                        if ($(focusable).is(':input')) {
-                            cursor = index;
-                            focusable.focus();
-                            return false;
-                        }
-                    });
-                }
-
-            }
 
             function initToolbarKeyNavigation(){
 
-                var $groupContainer = $('.bottom-action-bar').on('focusin', function(){
-                    console.log('Focus');
-                    $groupContainer.attr('style', 'border:solid 2px red !important');
-                }).on('focusout', function(){
-                    console.log('Blurred');
-                    $groupContainer.removeAttr('style');
-                });
-
-
+                var $focusables = $('.bottom-action-bar .action:not(.btn-group):visible, .bottom-action-bar .action.btn-group .li-inner:visible');
 
                 return keyNavigator({
                     id : 'bottom-toolbar',
                     replace : true,
-                    elements : $('.bottom-action-bar .action:not(.btn-group):visible, .bottom-action-bar .action.btn-group .li-inner:visible')
+                    group : $('.bottom-action-bar'),
+                    elements : $focusables,
+                    default : $focusables.length - 1
                 }).on('right down', function(){
                     this.next();
                 }).on('left up', function(){
@@ -156,27 +68,55 @@ define([
                 });
             }
 
-            function initTestrunnerKeyNavigation(testRunner){
-                var $content = testRunner.getAreaBroker().getContentArea();
-                var $itemElements = $content.find('img,.key-navigation-focusable');
-                var $choiceElements = $content.find('.choice-area :input:first');
-                //var $choiceElements = $content.find('.choice-area li:first');
-                var $naviatorElements = $('.qti-navigator-tab:first');
-                var $headerElements = $('[data-control="exit"]:visible');
-                var $toolbarElements = $('.navi-box-list .action:visible:last');
-                var $focusables = $()
-                    .add($itemElements)
-                    .add($choiceElements)
-                    .add($naviatorElements)
-                    .add($headerElements)
-                    .add($toolbarElements);
+            function initTestRunnerNavigation(testRunner){
 
-                
-                return keyNavigator({
-                    id : 'test-runner',
-                    elements : $focusables,
+                var $content = testRunner.getAreaBroker().getContentArea();
+                var $headerElements = $('[data-control="exit"]:visible a');
+
+                keyNavigator({
+                    id : 'header-toolbar',
+                    elements : $headerElements,
+                    group : $headerElements,
                     loop : true,
                     replace : true
+                });
+
+                initToolbarKeyNavigation();
+
+                var $itemElements = $content.find('img,.key-navigation-focusable,.qti-interaction');
+                var itemNavigators = [];
+                $itemElements.each(function(){
+                    var $itemElement = $(this);
+                    var id = 'item_element_navigation_group_'+itemNavigators.length;
+                    if($itemElement.hasClass('qti-interaction')){
+                        keyNavigator({
+                            id : id,
+                            elements : $itemElement.find(':input'),
+                            group : $itemElement,
+                            loop : false,
+                            replace : true
+                        }).on('right down', function(){
+                            this.next();
+                        }).on('left up', function(){
+                            this.previous();
+                        }).on('activate', function(cursor){
+                            cursor.$dom.click();
+                        });
+                    }else{
+                        keyNavigator({
+                            id : id,
+                            elements : $itemElement,
+                            group : $itemElement,
+                            replace : true
+                        });
+                    }
+                    itemNavigators.push(id);
+                });
+
+                return groupKeyNavigator({
+                    id : 'test-runner',
+                    replace : true,
+                    groups : _.union(itemNavigators, ['bottom-toolbar', 'navigator-filters', 'header-toolbar'])
                 });
             }
 
@@ -197,13 +137,12 @@ define([
             //start disabled
             this.disable();
 
-            var navGroupTestRunner;
+            var groupNavigator;
 
             //update plugin state based on changes
             testRunner
                 .on('renderitem', function () {
-                    navGroupTestRunner = initTestrunnerKeyNavigation(testRunner);
-                    initToolbarKeyNavigation();
+                    groupNavigator = initTestRunnerNavigation(testRunner);
                     self.enable();
                 })
                 .on('unloaditem', function () {
@@ -211,12 +150,12 @@ define([
                 })
                 .on('previous-focusable', function() {
                     if (self.getState('enabled')) {
-                        navGroupTestRunner.previous();
+                        groupNavigator.previous();
                     }
                 })
                 .on('next-focusable', function() {
                     if (self.getState('enabled')) {
-                        navGroupTestRunner.next();
+                        groupNavigator.next();
                     }
                 });
         },

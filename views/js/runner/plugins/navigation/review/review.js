@@ -129,7 +129,8 @@ define([
             keepState : true,
             id : 'navigator-filters',
             replace : true,
-            elements : $('.qti-navigator-filters .qti-navigator-filter:visible')
+            elements : $('.qti-navigator-filters .qti-navigator-filter:visible'),
+            group : $('.qti-navigator')
         }).on('right', function(){
             this.next();
         }).on('left', function(){
