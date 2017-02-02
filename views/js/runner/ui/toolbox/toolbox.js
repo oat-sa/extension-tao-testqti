@@ -104,7 +104,7 @@ define([
             var menu = _.find(self.items, { id: current.menuId }); //fixme: this needs optimizing!!!
 
             if (menu) {
-                menu.item.renderItem(current);
+                menu.component.renderItem(current);
             }
         });
     }
