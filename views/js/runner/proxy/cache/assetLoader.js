@@ -8,8 +8,18 @@ define([
 
     var loaders = {
         img : function preloadImage(url){
-            new Image().src = url;
+            if('Image' in window){
+                new Image().src = url;
+            }
         },
+
+        css : function preloadCss(url){
+            var link = document.createElement('link');
+            link.setAttribute('rel', 'prefetch');
+            link.setAttribute('href', url);
+            link.setAttribute('disabled', true);
+            document.querySelector('head').appendChild(link);
+        }
     };
 
     return function load(baseUrl, assets) {
