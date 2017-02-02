@@ -25,10 +25,19 @@ define([
     'lodash',
     'ui/component',
     'ui/hider',
+    'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu-item'
-], function($, _, componentFactory, hider, menuTpl, menuItemTpl) {
+], function($, _, componentFactory, hider, shortcut, namespaceHelper, menuTpl, menuItemTpl) {
     'use strict';
+
+    var keyCodes = {
+        ENTER: 13,
+        SPACE: 32,
+        UP:    38,
+        DOWN:  40
+    };
 
     var menuComponentApi = {
 
@@ -64,12 +73,20 @@ define([
         },
 
         openMenu: function openMenu()  {
+            // show the menu
             hider.show(this.$menuContainer);
+
+            // change the button icon
             this.$menuStateIcon.removeClass('icon-up');
             this.$menuStateIcon.addClass('icon-down');
-            this.activate();
-            this.turnOffItems();
 
+            this.activate();
+            this.enableShortcuts();
+
+            // handle highlighting
+            this.turnOffItems();
+            this.highlightIndex = this.items.length; // we start on the button, not at the max array index
+                                                     // which would be items.length-1
             // focus the menu
             if(document.activeElement){
                 document.activeElement.blur();
@@ -83,8 +100,20 @@ define([
             this.$menuStateIcon.addClass('icon-up');
             this.deactivate();
             this.turnOffItems();
+            this.disableShortcuts();
         },
 
+        mouseOverItem: function mouseOverItem(itemId) {
+            var self = this;
+
+            this.items.forEach(function (item, index) { //todo: optimize this
+                if (item.id === itemId) {
+                    self.highlightIndex = index;
+                }
+            });
+
+            this.highlightItem(itemId);
+        },
 
         /**
          * highlight the currently hovered menu entry
@@ -100,6 +129,75 @@ define([
             this.items.forEach(function(current) {
                 current.component.turnOff();
             });
+        },
+
+        triggerActiveItem: function triggerActiveItem() {
+            var activeItem;
+            if (this.items[this.highlightIndex]) {
+                activeItem = this.items[this.highlightIndex].component;
+                activeItem.getElement().trigger('click');
+                this.closeMenu();
+            }
+        },
+
+        moveUp: function moveUp() {
+            // move to the previous item
+            if (this.highlightIndex > 0) {
+                this.highlightIndex--;
+                this.highlightItem(this.items[this.highlightIndex].id);
+            }
+        },
+
+        moveDown: function moveDown() {
+            // move to the next item
+            if (this.highlightIndex < (this.items.length - 1)) {
+                this.highlightIndex++;
+                this.highlightItem(this.items[this.highlightIndex].id);
+
+            // move to the menu button
+            } else if (this.highlightIndex === (this.items.length - 1)) {
+                this.highlightIndex++;
+                this.turnOffItems();
+                this.$menuButton.focus();
+            }
+        },
+
+        /**
+         * register menu's own shortcuts
+         */
+        enableShortcuts: function enableShortcuts() {
+            var self = this;
+
+            this.$menuContainer.on('keydown.menuNavigation', function (e) {
+                var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
+
+                e.preventDefault();
+
+                switch (currentKeyCode) {
+                    case keyCodes.SPACE:
+                    case keyCodes.ENTER: self.triggerActiveItem(); e.stopPropagation(); break;
+                    case keyCodes.UP:    self.moveUp();  e.stopPropagation(); break;
+                    case keyCodes.DOWN:  self.moveDown();  e.stopPropagation(); break;
+                }
+            });
+
+            this.$menuButton.on('keydown.menuNavigation', function (e) {
+                var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
+
+                if (currentKeyCode === keyCodes.UP) {
+                    self.highlightIndex = self.items.length - 1;
+                    self.$menuContainer.focus();
+                    self.highlightItem(self.items[self.highlightIndex].id);
+                }
+            });
+        },
+
+        /**
+         * unregister menu's own shortcuts
+         */
+        disableShortcuts: function disableShortcuts() {
+            this.$menuContainer.off('.menuNavigation'); //todo: in destroy also
+            this.$menuButton.off('.menuNavigation'); //todo: in destroy also
         }
 
 
@@ -114,17 +212,25 @@ define([
         menuComponent = componentFactory(specs, defaults)
             .setTemplate(menuTpl)
             .on('enable', function enable() {
-                if (this.$component) {
+                if (this.is('rendered')) {
                     this.$component.removeProp('disabled');
                 }
             })
             .on('disable', function disable() {
-                if (this.$component) {
+                if (this.is('rendered')) {
                     this.$component.prop('disabled', true);
+                    this.closeMenu();
+                }
+            })
+            .on('hide', function disable() {
+                if (this.is('rendered')) {
+                    this.closeMenu();
                 }
             })
             .on('init', function init() {
+                //todo  describe this properly
                 this.items = [];
+
             })
             .on('render', function render() {
                 var self = this;
@@ -159,17 +265,17 @@ define([
                 });
 
                 this.$menuContent.on('mouseleave', this.turnOffItems);
-            });
 
-        menuComponent.on('itemsrendered', function() {
-            var self = this;
-            this.$menuItems     = this.$menuContent.find('.menu-item');
+            }).on('itemsrendered', function() {
+                var self = this;
 
-            this.$menuItems.on('mouseenter', function highlightHoveredEntry(e) {
-                var itemId = e.currentTarget.getAttribute('data-control');
-                self.highlightItem(itemId);
+                this.$menuItems = this.$menuContent.find('.menu-item');
+
+                this.$menuItems.on('mouseenter', function highlightHoveredEntry(e) {
+                    var itemId = e.currentTarget.getAttribute('data-control');
+                    self.mouseOverItem(itemId);
+                });
             });
-        });
 
         return menuComponent;
     };

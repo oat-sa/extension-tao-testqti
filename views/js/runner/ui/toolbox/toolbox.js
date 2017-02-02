@@ -71,7 +71,7 @@ define([
                 component: text
             });
             return text;
-        },
+        }
     };
 
 
