@@ -31,13 +31,12 @@ define([
     'ui/feedback',
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
-    'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/cache/proxy',
+    'taoQtiTest/runner/proxy/loader',
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, cacheProxy, pluginLoaderFactory, urlUtil) {
+             runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
     var pluginLoader = pluginLoaderFactory();
@@ -46,7 +45,6 @@ define([
      *TODO provider registration should be loaded dynamically
      */
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProvider('qtiServiceProxy', cacheProxy);
     communicator.registerProvider('poll', pollProvider);
 
     /**
@@ -71,6 +69,7 @@ define([
         var reason = '';
 
         config = _.defaults(config, {
+            proxyProvider : 'cacheProxy',
             renderTo: $('.runner')
         });
 
@@ -135,7 +134,6 @@ define([
             var startOptions = options || {};
             var missingOption = false;
 
-
             // verify required options
             _.forEach(requiredOptions, function(name) {
                 if (!startOptions[name]) {
@@ -157,7 +155,13 @@ define([
                     pluginLoader.add(module, plugin.category);
                 });
 
-                pluginLoader.load()
+                Promise
+                    .all([
+                        proxyLoader().then(function(proxyProviderName){
+                            startOptions.proxyProvider = proxyProviderName;
+                        }),
+                        pluginLoader.load()
+                    ])
                     .then(function () {
                         initRunner(_.omit(startOptions, 'plugins'));
                     })

@@ -39,9 +39,10 @@ define([
 
         init: function init(config, params) {
 
-            this.itemStore   = itemStoreFactory(cacheSize);
-            this.startOnMove = false;
-            this.isLastItem  = false;
+            this.itemStore    = itemStoreFactory(cacheSize);
+            this.nextCalledBy = [];
+            this.startOnMove  = false;
+            this.isLastItem   = false;
 
             return qtiServiceProxy.init.call(this, config, params);
         },
@@ -49,6 +50,7 @@ define([
         destroy: function destroy() {
 
             this.itemStore.clear();
+            this.nextCalledBy = [];
             this.startOnMove = false;
             this.isLastItem  = false;
 
@@ -66,13 +68,14 @@ define([
             var self = this;
 
             var loadNextItem = function loadNextItem(){
-                if(!self.isLastItem){
+                if(!self.isLastItem && !_.contains(self.nextCalledBy, uri)){
                     _.delay(function(){
                         self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
                         .then(function(response){
                             if(response && response.itemDefinition){
                                 self.itemStore.set(response.itemDefinition, response);
                                 self.startOnMove = true;
+                                self.nextCalledBy.push(uri);
 
                                 if(response.baseUrl && response.itemData && response.itemData.assets){
                                     assetLoader(response.baseUrl, response.itemData.assets);

@@ -85,6 +85,7 @@ define([
         loadProxy : function loadProxy(){
             var config = this.getConfig();
 
+            var proxyProvider   = config.proxyProvider || 'qtiServiceProxy';
             var proxyConfig = _.pick(config, [
                 'testDefinition',
                 'testCompilation',
@@ -92,7 +93,7 @@ define([
                 'bootstrap'
             ]);
 
-            return proxyFactory('qtiServiceProxy', proxyConfig);
+            return proxyFactory(proxyProvider, proxyConfig);
         },
 
         /**
