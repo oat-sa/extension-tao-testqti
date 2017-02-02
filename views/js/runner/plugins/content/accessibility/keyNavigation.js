@@ -23,11 +23,12 @@
 define([
     'jquery',
     'lodash',
+    'core/keyNavigator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -54,11 +55,11 @@ define([
              * Gets the tabindex of the currently selected focusable element
              */
             function findCurrentIndex() {
-                var $content = testRunner.getAreaBroker().getContentArea();
+                //var $content = testRunner.getAreaBroker().getContentArea();
                 var isFocused = false;
                 var $input;
 
-                if (document.activeElement && $.contains($content.get(0), document.activeElement)) {
+                if (document.activeElement) {
                     // try to find the focused element within the known list of focusable elements
                     _.forEach(focusables, function(focusable, index) {
                         if (document.activeElement === focusable) {
@@ -71,7 +72,7 @@ define([
 
                 if (!isFocused) {
                     // from the current cursor retrieve the related interaction, then find the selected focusable element
-                    $input = $(':input:eq(' + (cursor || 0) +')', $content).closest('.qti-interaction').find(':checked');
+                    $input = $(':input:eq(' + (cursor || 0) +')').closest('.qti-interaction').find(':checked');
                     if ($input.length) {
                         _.forEach(focusables, function(focusable, index) {
                             if ($input.is(focusable)) {
@@ -108,13 +109,16 @@ define([
              */
             function nextFocusable() {
                 findCurrentIndex();
-                if (_.isNumber(cursor)) {
+
+                if (_.isNumber(cursor) && cursor < count -1) {
                     cursor = (cursor + 1) % count;
                     if (focusables[cursor]) {
                         focusables[cursor].focus();
                     }
                 } else {
                     cursor = 0;
+                    focusables[0].focus();
+                    return;
                     //find the first input
                     _.forEach(focusables, function(focusable, index){
                         if ($(focusable).is(':input')) {
@@ -125,6 +129,55 @@ define([
                     });
                 }
 
+            }
+
+            function initToolbarKeyNavigation(){
+
+                var $groupContainer = $('.bottom-action-bar').on('focusin', function(){
+                    console.log('Focus');
+                    $groupContainer.attr('style', 'border:solid 2px red !important');
+                }).on('focusout', function(){
+                    console.log('Blurred');
+                    $groupContainer.removeAttr('style');
+                });
+
+
+
+                return keyNavigator({
+                    id : 'bottom-toolbar',
+                    replace : true,
+                    elements : $('.bottom-action-bar .action:not(.btn-group):visible, .bottom-action-bar .action.btn-group .li-inner:visible')
+                }).on('right down', function(){
+                    this.next();
+                }).on('left up', function(){
+                    this.previous();
+                }).on('activate', function(cursor){
+                    cursor.$dom.click();
+                });
+            }
+
+            function initTestrunnerKeyNavigation(testRunner){
+                var $content = testRunner.getAreaBroker().getContentArea();
+                var $itemElements = $content.find('img,.key-navigation-focusable');
+                var $choiceElements = $content.find('.choice-area :input:first');
+                //var $choiceElements = $content.find('.choice-area li:first');
+                var $naviatorElements = $('.qti-navigator-tab:first');
+                var $headerElements = $('[data-control="exit"]:visible');
+                var $toolbarElements = $('.navi-box-list .action:visible:last');
+                var $focusables = $()
+                    .add($itemElements)
+                    .add($choiceElements)
+                    .add($naviatorElements)
+                    .add($headerElements)
+                    .add($toolbarElements);
+
+                
+                return keyNavigator({
+                    id : 'test-runner',
+                    elements : $focusables,
+                    loop : true,
+                    replace : true
+                });
             }
 
             if (testConfig.allowShortcuts) {
@@ -144,29 +197,13 @@ define([
             //start disabled
             this.disable();
 
+            var navGroupTestRunner;
+
             //update plugin state based on changes
             testRunner
                 .on('renderitem', function () {
-
-                    var $content = testRunner.getAreaBroker().getContentArea();
-                    var index = 1;
-
-                    focusables = $(':input,img,.key-navigation-focusable', $content)
-                        .filter(function removeImagesInChoices() {
-                            var $this = $(this);
-                            return !($this.is('img') && $this.closest('.qti-choice', $content).length);
-                        })
-                        .addClass('key-navigation-focusable')
-                        .each(function(){
-                            var $this = $(this);
-                            //redistribute focus order
-                            $this.attr('tabindex', index);
-                            index++;
-                        })
-                        .toArray();
-
-                    count = focusables.length || 1;
-                    cursor = null;
+                    navGroupTestRunner = initTestrunnerKeyNavigation(testRunner);
+                    initToolbarKeyNavigation();
                     self.enable();
                 })
                 .on('unloaditem', function () {
@@ -174,12 +211,12 @@ define([
                 })
                 .on('previous-focusable', function() {
                     if (self.getState('enabled')) {
-                        previousFocusable();
+                        navGroupTestRunner.previous();
                     }
                 })
                 .on('next-focusable', function() {
                     if (self.getState('enabled')) {
-                        nextFocusable();
+                        navGroupTestRunner.next();
                     }
                 });
         },

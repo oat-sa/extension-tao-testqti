@@ -25,6 +25,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/keyNavigator',
     'ui/hider',
     'util/shortcut',
     'util/namespace',
@@ -32,7 +33,7 @@ define([
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
+], function ($, _, __, keyNavigator, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
     'use strict';
 
     /**
@@ -121,6 +122,37 @@ define([
         var map = testRunner.getTestMap();
         var item = mapHelper.getItemAt(map, context.itemPosition);
         return !!(!context.isLinear && context.options.markReview && !(item && item.informational));
+    }
+
+    function initKeyNavigation(){
+        keyNavigator({
+            keepState : true,
+            id : 'navigator-filters',
+            replace : true,
+            elements : $('.qti-navigator-filters .qti-navigator-filter:visible')
+        }).on('right', function(){
+            this.next();
+        }).on('left', function(){
+            this.previous();
+        }).on('down', function(){
+            this.goto('navigator-items');
+        }).on('focus', function(cursor){
+            cursor.$dom.click();
+        });
+
+        keyNavigator({
+            id : 'navigator-items',
+            replace : true,
+            elements : $('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label:visible')
+        }).on('down', function(){
+            this.next();
+        }).on('up', function(){
+            this.previous();
+        }).on('activate', function(cursor){
+            cursor.$dom.click();
+        }).on('lowerbound', function(){
+            this.goto('navigator-filters');
+        });
     }
 
     /**
@@ -297,6 +329,7 @@ define([
                             });
                         self.show();
                         updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                        initKeyNavigation();
                     } else {
                         self.hide();
                     }
