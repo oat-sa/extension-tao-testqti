@@ -25,8 +25,9 @@ define([
     'ui/component',
     'taoQtiTest/runner/ui/toolbox/item',
     'taoQtiTest/runner/ui/toolbox/menu',
-    'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox'
-], function(_, componentFactory, itemFactory, menuFactory, toolboxTpl) {
+    'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox',
+    'tpl!taoQtiTest/runner/ui/toolbox/templates/text'
+], function(_, componentFactory, itemFactory, menuFactory, toolboxTpl, textTpl) {
     'use strict';
 
     var toolbarComponentApi = {
@@ -51,11 +52,22 @@ define([
                 .init(config);
             this.items.push({
                 id: config.control,
-                type: 'item', //todo: replace with getType()
+                type: 'item', //todo: replace with getType() ? useful ?
                 item: item,
                 menuId: menuId
             });
             return item;
+        },
+
+        createText: function createText(config) {
+            var text = componentFactory()
+                .setTemplate(textTpl)
+                .init(config);
+            this.items.push({
+                id: config.control,
+                item: text
+            });
+            return text;
         },
 
         /**
