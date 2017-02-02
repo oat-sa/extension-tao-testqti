@@ -25,9 +25,9 @@ define([
     'ui/component',
     'taoQtiTest/runner/ui/toolbox/item',
     'taoQtiTest/runner/ui/toolbox/menu',
-    'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox',
-    'tpl!taoQtiTest/runner/ui/toolbox/templates/text'
-], function(_, componentFactory, itemFactory, menuFactory, toolboxTpl, textTpl) {
+    'taoQtiTest/runner/ui/toolbox/text',
+    'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox'
+], function(_, componentFactory, itemFactory, menuFactory, textFactory, toolboxTpl) {
     'use strict';
 
     var toolbarComponentApi = {
@@ -37,40 +37,29 @@ define([
              * todo: describe this properly
              * @type {Object[]} - the description of a toolbox item
              */
-            this.items = []; // we use an array to maintain insertion order
+            this.allItems = []; // we use an array to maintain insertion order
         },
 
         createMenu: function createMenu(config) {
             var menu = menuFactory().init(config);
-
-            this.items.push({
-                id: config.control,
-                component: menu
-            });
+            this.allItems.push(menu);
             return menu;
         },
 
-        createItem: function createItem(config, menuId)  {
+        createItem: function createItem(config)  {
             var item = itemFactory().init(config);
-
-            this.items.push({
-                id: config.control,
-                component: item,
-                menuId: menuId
-            });
+            this.allItems.push(item);
             return item;
         },
 
         createText: function createText(config) {
-            var text = componentFactory()
-                .setTemplate(textTpl)
-                .init(config);
-
-            this.items.push({
-                id: config.control,
-                component: text
-            });
+            var text = textFactory().init(config);
+            this.allItems.push(text);
             return text;
+        },
+
+        hasMenu: function hasMenu(item) {
+            return item && _.isFunction(item.getMenuId) && item.getMenuId();
         }
     };
 
@@ -81,30 +70,39 @@ define([
      */
     function defaultRenderer($container) {
         var self = this,
+            allMenus = {},
             menuEntries = [];
 
         // render first level
-        if (this.items && _.isArray(this.items)) {
-            this.items.forEach(function (current) {
+        if (_.isArray(this.allItems)) {
+            this.allItems.forEach(function (current) {
 
-                // do not render directly items belonging to menus
-                if (!current.menuId) {
-                    current.component.render($container);
-
-                // but save for later
-                } else {
+                // save items belonging to menus for later processing
+                if (self.hasMenu(current)) {
                     menuEntries.push(current);
+
+                // and render the others
+                } else {
+                    current.render($container);
                 }
 
             });
         }
 
-        // delegates the rendering of menu items to the menu components
-        menuEntries.forEach(function (current) {
-            var menu = _.find(self.items, { id: current.menuId }); //fixme: this needs optimizing!!!
+        // Render the menu entries of each menu
+        menuEntries.forEach(function (menuItem) {
+            var menuId = menuItem.getMenuId();
 
-            if (menu) {
-                menu.component.renderItem(current);
+            // retrieve the menu instance if needed
+            if (menuId && !allMenus[menuId]) {
+                allMenus[menuId] = _.find(self.allItems, function(item) {
+                    return item.getId() === menuId;
+                });
+            }
+
+            // delegates the rendering to the menu instance
+            if (allMenus[menuId]) {
+                allMenus[menuId].renderItem(menuItem);
             }
         });
     }

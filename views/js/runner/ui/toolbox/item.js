@@ -42,6 +42,18 @@ define([
 
         turnOff: function turnOff() {
             this.setState('hover', false);
+        },
+
+        getId: function getId() {
+            return this.id;
+        },
+
+        setMenuId: function setMenuId(menuId) {
+            this.menuId = menuId;
+        },
+
+        getMenuId: function getMenuId() {
+            return this.menuId;
         }
     };
 
@@ -63,6 +75,10 @@ define([
                     this.$component.prop('disabled', true);
                 }
             })
+            .on('init', function () {
+                this.id = this.config.control;
+                this.menu = null;
+            })
             .on('render', function() {
                 var self = this;
 
@@ -77,7 +93,7 @@ define([
                     });
 
             })
-            .init();
+            .init(); // todo: really?
 
         return buttonComponent;
     };

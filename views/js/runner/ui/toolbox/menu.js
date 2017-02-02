@@ -41,11 +41,21 @@ define([
 
     var menuComponentApi = {
 
+        getId: function getId() {
+            return this.id;
+        },
+
         renderItem: function renderItem(item) {
-            this.items.push(item); // keep a reference to the item
-            item.component.setTemplate(menuItemTpl);
-            item.component.render(this.$menuContent);
-            item.component.enable();
+            this.menuItems.push(item); // keep a reference to the item
+            item.setTemplate(menuItemTpl);
+            item.render(this.$menuContent);
+            item.enable();
+        },
+
+        getItemById: function getItemById(itemId) {
+            return _.find(this.menuItems, function(item) {
+                return item.getId() === itemId;
+            });
         },
 
         activate: function activate() {
@@ -57,8 +67,8 @@ define([
         },
 
         deactivateAll: function deactivateAll() {
-            this.items.forEach(function (current) {
-                current.component.deactivate();
+            this.menuItems.forEach(function (current) {
+                current.deactivate();
             });
         },
 
@@ -73,6 +83,8 @@ define([
         },
 
         openMenu: function openMenu()  {
+            var self = this;
+
             // show the menu
             hider.show(this.$menuContainer);
 
@@ -85,13 +97,22 @@ define([
 
             // handle highlighting
             this.turnOffItems();
-            this.highlightIndex = this.items.length; // we start on the button, not at the max array index
+            this.highlightIndex = this.menuItems.length; // we start on the button, not at the max array index
                                                      // which would be items.length-1
             // focus the menu
             if(document.activeElement){
                 document.activeElement.blur();
             }
             this.$menuContainer.focus();
+
+            // close on click outside of the component
+            // $(document).on('click.toolboxMenu', function(e) {
+            //     var $target = $(e.target);
+            //     console.log('click detected');
+            //     if ($target.closest('[data-control="' + self.config.control + '"]').length === 0) {
+            //         self.closeMenu();
+            //     }
+            // });
         },
 
         closeMenu: function closeMenu() {
@@ -101,12 +122,13 @@ define([
             this.deactivate();
             this.turnOffItems();
             this.disableShortcuts();
+            $(document).off('.toolboxMenu');
         },
 
         mouseOverItem: function mouseOverItem(itemId) {
             var self = this;
 
-            this.items.forEach(function (item, index) { //todo: optimize this
+            this.menuItems.forEach(function (item, index) { //todo: optimize this
                 if (item.id === itemId) {
                     self.highlightIndex = index;
                 }
@@ -119,22 +141,22 @@ define([
          * highlight the currently hovered menu entry
          */
         highlightItem: function highlightItem(id) {
-            var itemToHighlight = _.find(this.items, { id: id });
+            var itemToHighlight = this.getItemById(id);
             this.turnOffItems();
 
-            itemToHighlight.component.highlight();
+            itemToHighlight.highlight();
         },
 
         turnOffItems: function turnOffItems() {
-            this.items.forEach(function(current) {
-                current.component.turnOff();
+            this.menuItems.forEach(function(current) {
+                current.turnOff();
             });
         },
 
         triggerActiveItem: function triggerActiveItem() {
             var activeItem;
-            if (this.items[this.highlightIndex]) {
-                activeItem = this.items[this.highlightIndex].component;
+            if (this.menuItems[this.highlightIndex]) {
+                activeItem = this.menuItems[this.highlightIndex];
                 activeItem.getElement().trigger('click');
                 this.closeMenu();
             }
@@ -144,18 +166,18 @@ define([
             // move to the previous item
             if (this.highlightIndex > 0) {
                 this.highlightIndex--;
-                this.highlightItem(this.items[this.highlightIndex].id);
+                this.highlightItem(this.menuItems[this.highlightIndex].id);
             }
         },
 
         moveDown: function moveDown() {
             // move to the next item
-            if (this.highlightIndex < (this.items.length - 1)) {
+            if (this.highlightIndex < (this.menuItems.length - 1)) {
                 this.highlightIndex++;
-                this.highlightItem(this.items[this.highlightIndex].id);
+                this.highlightItem(this.menuItems[this.highlightIndex].id);
 
             // move to the menu button
-            } else if (this.highlightIndex === (this.items.length - 1)) {
+            } else if (this.highlightIndex === (this.menuItems.length - 1)) {
                 this.highlightIndex++;
                 this.turnOffItems();
                 this.$menuButton.focus();
@@ -185,9 +207,9 @@ define([
                 var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
 
                 if (currentKeyCode === keyCodes.UP) {
-                    self.highlightIndex = self.items.length - 1;
+                    self.highlightIndex = self.menuItems.length - 1;
                     self.$menuContainer.focus();
-                    self.highlightItem(self.items[self.highlightIndex].id);
+                    self.highlightItem(self.menuItems[self.highlightIndex].id);
                 }
             });
         },
@@ -228,8 +250,8 @@ define([
                 }
             })
             .on('init', function init() {
-                //todo  describe this properly
-                this.items = [];
+                this.menuItems = [];
+                this.id = this.config.control;
 
             })
             .on('render', function render() {
@@ -242,16 +264,16 @@ define([
 
                 this.disable(); // always render disabled by default
 
-                /*
-                this.$menuContainer.on('focusout blur', function() {
+                /* * /
+                this.$menuContainer.on('focusout', function() {
                     // fixme: do not automatically close the menu if the user clicks on the button
                     console.log('blur');
-                    if(document.activeElement){
-                        console.dir(document.activeElement);
-                    }
+                    // if(document.activeElement){
+                    //     console.dir(document.activeElement);
+                    // }
                     self.closeMenu();
                 });
-                */
+                /* */
 
                 this.$component.on('click', function toggleMenu(e) {
                     e.preventDefault();

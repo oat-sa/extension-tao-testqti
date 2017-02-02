@@ -103,14 +103,16 @@ define([
 
             // register menu entries
             state.availableThemes.forEach(function (theme) {
-                var entry = self.getAreaBroker().getToolbox().createItem({
+                var themeEntry = self.getAreaBroker().getToolbox().createItem({
                     control: theme.id,
                     title: theme.label,
                     icon: 'preview',
                     text: theme.label
-                }, 'color-contrast');
+                });
 
-                entry.on('click', function(e) {
+                themeEntry.setMenuId('color-contrast');
+
+                themeEntry.on('click', function(e) {
                     var themeId = this.config.control;
                     e.preventDefault();
 
@@ -121,7 +123,7 @@ define([
                 });
 
                 if (state.defaultTheme === theme.id) {
-                    entry.on('render', function() {
+                    themeEntry.on('render', function() {
                         this.activate();
                     });
                 }
