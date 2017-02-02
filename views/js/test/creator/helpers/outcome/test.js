@@ -21,7 +21,7 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'json!taoQtiTest/test/creator/helpers/outcome/outcomes.json'
+    'json!taoQtiTest/test/creator/samples/outcomes.json'
 ], function (_,
              outcomeHelper,
              testModelSample) {
@@ -30,6 +30,7 @@ define([
     var createOutcomeCases, createOutcomeErrorCases;
     var addOutcomeProcessingCases, addOutcomeProcessingErrorCases;
     var addOutcomeCases, addOutcomeErrorCases;
+    var replaceOutcomesCases, replaceOutcomesErrorCases;
     var outcomeHelperApi = [
         {title: 'getProcessingRuleExpression'},
         {title: 'getProcessingRuleProperty'},
@@ -42,7 +43,8 @@ define([
         {title: 'removeOutcomes'},
         {title: 'createOutcome'},
         {title: 'addOutcomeProcessing'},
-        {title: 'addOutcome'}
+        {title: 'addOutcome'},
+        {title: 'replaceOutcomes'}
     ];
 
 
@@ -87,14 +89,22 @@ define([
 
 
     QUnit.test('helpers/outcome.getOutcomeDeclarations()', function (assert) {
-        QUnit.expect(1);
-        assert.equal(outcomeHelper.getOutcomeDeclarations(testModelSample), testModelSample.outcomeDeclarations, 'The outcome helper returns the right outcome declarations');
+        var testModel = _.cloneDeep(testModelSample);
+        QUnit.expect(2);
+        assert.equal(outcomeHelper.getOutcomeDeclarations(testModel), testModel.outcomeDeclarations, 'The outcome helper returns the right outcome declarations');
+
+        testModel.outcomeDeclarations = null;
+        assert.deepEqual(outcomeHelper.getOutcomeDeclarations(testModel), [], 'The outcome helper returns the right outcome declarations');
     });
 
 
     QUnit.test('helpers/outcome.getOutcomeProcessingRules()', function (assert) {
-        QUnit.expect(1);
-        assert.equal(outcomeHelper.getOutcomeProcessingRules(testModelSample), testModelSample.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules');
+        var testModel = _.cloneDeep(testModelSample);
+        QUnit.expect(2);
+        assert.equal(outcomeHelper.getOutcomeProcessingRules(testModel), testModel.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules');
+
+        testModel.outcomeProcessing.outcomeRules = null;
+        assert.deepEqual(outcomeHelper.getOutcomeProcessingRules(testModel), [], 'The outcome helper returns the right outcome processing rules');
     });
 
 
@@ -176,7 +186,7 @@ define([
     });
 
 
-    QUnit.test('helpers/outcome.removeOutcomes()', function (assert) {
+    QUnit.test('helpers/outcome.removeOutcomes() #list', function (assert) {
         var testModel = _.cloneDeep(testModelSample);
         var outcomeToRemove = 'SCORE_MATH';
         var countDeclarations = testModel.outcomeDeclarations.length;
@@ -188,6 +198,29 @@ define([
         assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
 
         outcomeHelper.removeOutcomes(testModel, 'SCORE_MATH');
+
+        assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
+        assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
+
+        assert.equal(testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate');
+        assert.equal(testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate');
+    });
+
+
+    QUnit.test('helpers/outcome.removeOutcomes() #callback', function (assert) {
+        var testModel = _.cloneDeep(testModelSample);
+        var outcomeToRemove = 'SCORE_MATH';
+        var countDeclarations = testModel.outcomeDeclarations.length;
+        var countRules = testModel.outcomeProcessing.outcomeRules.length;
+
+        QUnit.expect(6);
+
+        assert.equal(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'There is an outcome declaration');
+        assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
+
+        outcomeHelper.removeOutcomes(testModel, function(outcome) {
+            return outcomeHelper.getOutcomeIdentifier(outcome) === 'SCORE_MATH';
+        });
 
         assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
         assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
@@ -616,4 +649,122 @@ define([
             }, 'An error must be thrown when the input is wrong');
         });
 
+
+    replaceOutcomesCases = [{
+        title: 'Create the collections',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        },
+        expected: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }, {
+        title: 'Replace the collections',
+        testModel: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'outcome1'
+            }, {
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'outcome2'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'foo'
+                }, {
+                    'qti-type': 'foo'
+                }]
+            }
+        },
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        },
+        expected: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                'qti-type': 'outcomeProcessing',
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }];
+
+    QUnit
+        .cases(replaceOutcomesCases)
+        .test('helpers/outcome.replaceOutcomes() ', function (data, assert) {
+            QUnit.expect(1);
+            outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
+            assert.deepEqual(data.testModel, data.expected, 'The outcome helper has replaced the outcome declarations');
+        });
+
+
+    replaceOutcomesErrorCases = [{
+        title: 'Wrong outcome declaration',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'foo',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    'qti-type': 'bar'
+                }]
+            }
+        }
+    }, {
+        title: 'Wrong processing rule',
+        testModel: {},
+        outcomes: {
+            outcomeDeclarations: [{
+                'qti-type': 'outcomeDeclaration',
+                identifier: 'foo'
+            }],
+            outcomeProcessing: {
+                outcomeRules: [{
+                    foo: 'bar'
+                }]
+            }
+        }
+    }];
+
+    QUnit
+        .cases(replaceOutcomesErrorCases)
+        .test('helpers/outcome.replaceOutcomes()#error', function (data, assert) {
+            QUnit.expect(1);
+            assert.throws(function () {
+                outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
+            }, 'An error must be thrown when the input is wrong');
+        });
 });
