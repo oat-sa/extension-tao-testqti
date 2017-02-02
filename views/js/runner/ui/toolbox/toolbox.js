@@ -32,28 +32,30 @@ define([
 
     var toolbarComponentApi = {
 
-        initToolbar: function initToolbar() {
+        initToolbox: function initToolbox() {
+            /**
+             * todo: describe this properly
+             * @type {Object[]} - the description of a toolbox item
+             */
             this.items = []; // we use an array to maintain insertion order
         },
 
         createMenu: function createMenu(config) {
-            var menu = menuFactory()
-                .init(config);
+            var menu = menuFactory().init(config);
+
             this.items.push({
                 id: config.control,
-                type: 'menu',
-                item: menu
+                component: menu
             });
             return menu;
         },
 
         createItem: function createItem(config, menuId)  {
-            var item = itemFactory()
-                .init(config);
+            var item = itemFactory().init(config);
+
             this.items.push({
                 id: config.control,
-                type: 'item', //todo: replace with getType() ? useful ?
-                item: item,
+                component: item,
                 menuId: menuId
             });
             return item;
@@ -63,9 +65,10 @@ define([
             var text = componentFactory()
                 .setTemplate(textTpl)
                 .init(config);
+
             this.items.push({
                 id: config.control,
-                item: text
+                component: text
             });
             return text;
         },
@@ -102,7 +105,7 @@ define([
 
                 // do not render directly items belonging to menus
                 if (!current.menuId) {
-                    current.item.render($container);
+                    current.component.render($container);
 
                 // but save for later
                 } else {
@@ -117,7 +120,7 @@ define([
             var menu = _.find(self.items, { id: current.menuId }); //fixme: this needs optimizing!!!
 
             if (menu) {
-                menu.item.renderItem(current.item);
+                menu.item.renderItem(current);
             }
         });
     }
@@ -129,7 +132,7 @@ define([
 
         toolbarComponent = componentFactory(specs, defaults)
             .on('init', function () {
-                this.initToolbar();
+                this.initToolbox();
             })
             .on('render.defaultRenderer', defaultRenderer)
             .setTemplate(toolboxTpl);

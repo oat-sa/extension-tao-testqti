@@ -34,9 +34,9 @@ define([
 
         renderItem: function renderItem(item) {
             this.items.push(item); // keep a reference to the item
-            item.setTemplate(menuItemTpl);
-            item.render(this.$menuContent);
-            item.enable();
+            item.component.setTemplate(menuItemTpl);
+            item.component.render(this.$menuContent);
+            item.component.enable();
         },
 
         activate: function activate() {
@@ -48,7 +48,9 @@ define([
         },
 
         deactivateAll: function deactivateAll() {
-            _.invoke(this.items, 'deactivate');
+            this.items.forEach(function (current) {
+                current.component.deactivate();
+            });
         },
 
         toggleMenu: function showMenu() {
@@ -66,6 +68,7 @@ define([
             this.$menuStateIcon.removeClass('icon-up');
             this.$menuStateIcon.addClass('icon-down');
             this.activate();
+            this.turnOffItems();
 
             // focus the menu
             if(document.activeElement){
@@ -79,8 +82,25 @@ define([
             this.$menuStateIcon.removeClass('icon-down');
             this.$menuStateIcon.addClass('icon-up');
             this.deactivate();
-        }
+            this.turnOffItems();
+        },
 
+
+        /**
+         * highlight the currently hovered menu entry
+         */
+        highlightItem: function highlightItem(id) {
+            var itemToHighlight = _.find(this.items, { id: id });
+            this.turnOffItems();
+
+            itemToHighlight.component.highlight();
+        },
+
+        turnOffItems: function turnOffItems() {
+            this.items.forEach(function(current) {
+                current.component.turnOff();
+            });
+        }
 
 
     };
@@ -114,7 +134,7 @@ define([
                 this.$menuContent   = this.$component.find('[data-control="' + this.config.control + '-list"]');
                 this.$menuStateIcon = this.$menuButton.find('.icon-up');
 
-                this.disable(); // we always render disabled by default
+                this.disable(); // always render disabled by default
 
                 /*
                 this.$menuContainer.on('focusout blur', function() {
@@ -137,7 +157,20 @@ define([
                     e.stopPropagation(); // so the menu doesn't get toggled again
                     self.closeMenu();
                 });
+
+                this.$menuContent.on('mouseleave', this.turnOffItems);
             });
+
+        menuComponent.on('itemsrendered', function() {
+            var self = this;
+            this.$menuItems     = this.$menuContent.find('.menu-item');
+
+            this.$menuItems.on('mouseenter', function highlightHoveredEntry(e) {
+                var itemId = e.currentTarget.getAttribute('data-control');
+                console.log('entering ' + itemId);
+                self.highlightItem(itemId);
+            });
+        });
 
         return menuComponent;
     };

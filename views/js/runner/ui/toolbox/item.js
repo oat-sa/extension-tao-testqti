@@ -34,6 +34,14 @@ define([
 
         deactivate: function deactivate() {
             this.setState('active', false);
+        },
+
+        highlight: function highlight() {
+            this.setState('hover', true);
+        },
+
+        turnOff: function turnOff() {
+            this.setState('hover', false);
         }
     };
 
