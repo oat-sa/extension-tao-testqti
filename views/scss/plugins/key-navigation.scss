@@ -1,16 +1,50 @@
 @import "inc/bootstrap";
 
-.qti-item div.key-navigation-focusable {
-    padding: 5px !important;
-}
+//.qti-item div.key-navigation-focusable {
+//    padding: 5px !important;
+//}
+//
+//.qti-item div.key-navigation-focusable,
+//.qti-item img.key-navigation-focusable {
+//    border: 2px solid transparent;
+//    &:focus {
+//        //overwrite only the style and the color of the border and leave the inherited border identical
+//        border-style: solid !important;
+//        border-color: $info !important;
+//        outline: none;
+//    }
+//}
 
-.qti-item div.key-navigation-focusable,
-.qti-item img.key-navigation-focusable {
-    border: 2px solid transparent;
+.key-navigation-focusable{
+    border: 3px solid $error !important;
     &:focus {
-        //overwrite only the style and the color of the border and leave the inherited border identical
         border-style: solid !important;
-        border-color: $info !important;
+        border-color: $success !important;
         outline: none;
     }
 }
+.key-navigation-highlight{
+    border-width: 2px !important;
+    border-style: solid;
+    border-color: transparent;//do not mark it as important to allow color overriding
+    &:focus {
+        border-style: solid !important;
+        border-color: $success !important;
+        outline: none;
+    }
+}
+
+.key-navigation-group{
+    border-width: 2px !important;
+    border-style: solid;
+    border-color: transparent;//do not mark it as important to allow color overriding
+    &.focusin{
+        border: solid 2px red !important;
+    }
+}
+
+//.content-wrapper{
+//    .key-navigation-group{
+//        border: solid 2px inherit;
+//    }
+//}
