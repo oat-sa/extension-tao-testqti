@@ -72,22 +72,6 @@ define([
             });
             return text;
         },
-
-        /**
-         * Set the elements that composes the area
-         * @param allElements
-         */
-        setElements: function setElements(allElements) {
-            this.elements = allElements;
-        },
-
-        /**
-         * Returns the elements that compose the area
-         * @returns {*}
-         */
-        getElements: function getElements() {
-            return this.elements;
-        }
     };
 
 
@@ -136,6 +120,8 @@ define([
             })
             .on('render.defaultRenderer', defaultRenderer)
             .setTemplate(toolboxTpl);
+
+        // todo: implement destroy behavior on each component
 
         return toolbarComponent;
     };

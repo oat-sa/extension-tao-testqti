@@ -167,7 +167,6 @@ define([
 
             this.$menuItems.on('mouseenter', function highlightHoveredEntry(e) {
                 var itemId = e.currentTarget.getAttribute('data-control');
-                console.log('entering ' + itemId);
                 self.highlightItem(itemId);
             });
         });
