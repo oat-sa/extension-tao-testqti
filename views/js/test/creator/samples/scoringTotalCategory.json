@@ -21,7 +21,7 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "SCORE_HISTORY",
+    "identifier": "SCORE_CATEGORY_HISTORY",
     "cardinality": 0,
     "baseType": 3
   }, {
@@ -32,7 +32,7 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "SCORE_MATH",
+    "identifier": "SCORE_CATEGORY_MATH",
     "cardinality": 0,
     "baseType": 3
   }],
@@ -308,7 +308,7 @@
       }
     }, {
       "qti-type": "setOutcomeValue",
-      "identifier": "SCORE_HISTORY",
+      "identifier": "SCORE_CATEGORY_HISTORY",
       "expression": {
         "qti-type": "sum",
         "minOperands": 1,
@@ -327,7 +327,7 @@
       }
     }, {
       "qti-type": "setOutcomeValue",
-      "identifier": "SCORE_MATH",
+      "identifier": "SCORE_CATEGORY_MATH",
       "expression": {
         "qti-type": "sum",
         "minOperands": 1,

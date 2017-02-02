@@ -10,9 +10,9 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "PASS_ALL",
+    "identifier": "SCORE_TOTAL",
     "cardinality": 0,
-    "baseType": 1
+    "baseType": 3
   }, {
     "qti-type": "outcomeDeclaration",
     "views": [],
@@ -21,9 +21,9 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "PASS_ALL_RENDERING",
+    "identifier": "SCORE_TOTAL_WEIGHTED",
     "cardinality": 0,
-    "baseType": 0
+    "baseType": 3
   }],
   "timeLimits": {
     "qti-type": "timeLimits",
@@ -92,7 +92,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090613110988",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-3",
         "required": false,
@@ -119,7 +123,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090616225291",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-2",
         "required": false,
@@ -173,7 +181,11 @@
         "href": "http://tao.dev/tao.rdf#i148309061819894",
         "categories": ["history"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-4",
         "required": false,
@@ -200,7 +212,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090620510297",
         "categories": ["history"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-5",
         "required": false,
@@ -227,7 +243,11 @@
         "href": "http://tao.dev/tao.rdf#i14830906232870100",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-6",
         "required": false,
@@ -278,87 +298,40 @@
     "qti-type": "outcomeProcessing",
     "outcomeRules": [{
       "qti-type": "setOutcomeValue",
-      "identifier": "PASS_ALL",
+      "identifier": "SCORE_TOTAL",
       "expression": {
-        "qti-type": "gte",
-        "minOperands": 2,
-        "maxOperands": 2,
-        "acceptedCardinalities": [0],
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
         "acceptedBaseTypes": [2, 3],
         "expressions": [{
-          "qti-type": "divide",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [0],
-          "acceptedBaseTypes": [2, 3],
-          "expressions": [{
-            "qti-type": "sum",
-            "minOperands": 1,
-            "maxOperands": -1,
-            "acceptedCardinalities": [0, 1, 2],
-            "acceptedBaseTypes": [2, 3],
-            "expressions": [{
-              "qti-type": "testVariables",
-              "variableIdentifier": "SCORE",
-              "baseType": -1,
-              "weightIdentifier": "WEIGHT",
-              "sectionIdentifier": "",
-              "includeCategories": [],
-              "excludeCategories": []
-            }]
-          }, {
-            "qti-type": "numberPresented",
-            "sectionIdentifier": "",
-            "includeCategories": [],
-            "excludeCategories": []
-          }]
-        }, {
-          "qti-type": "baseValue",
-          "baseType": 3,
-          "value": 60
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
         }]
       }
     }, {
-      "qti-type": "outcomeCondition",
-      "outcomeIf": {
-        "qti-type": "outcomeIf",
-        "expression": {
-          "qti-type": "match",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [4],
-          "acceptedBaseTypes": [4],
-          "expressions": [{
-            "qti-type": "variable",
-            "identifier": "PASS_ALL",
-            "weightIdentifier": ""
-          }, {
-            "qti-type": "baseValue",
-            "baseType": 1,
-            "value": true
-          }]
-        },
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_ALL_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "passed"
-          }
-        }]
-      },
-      "outcomeElseIfs": [],
-      "outcomeElse": {
-        "qti-type": "outcomeElse",
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_ALL_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "not_passed"
-          }
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL_WEIGHTED",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "WEIGHT",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
         }]
       }
     }]

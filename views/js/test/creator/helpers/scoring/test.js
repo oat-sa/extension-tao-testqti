@@ -22,20 +22,28 @@ define([
     'lodash',
     'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/helpers/scoring',
+    'json!taoQtiTest/test/creator/samples/scoring.json',
+    'json!taoQtiTest/test/creator/samples/scoringWeighted.json',
     'json!taoQtiTest/test/creator/samples/scoringNone.json',
     'json!taoQtiTest/test/creator/samples/scoringCustom.json',
     'json!taoQtiTest/test/creator/samples/scoringTotal.json',
+    'json!taoQtiTest/test/creator/samples/scoringTotalWeighted.json',
     'json!taoQtiTest/test/creator/samples/scoringTotalCategory.json',
+    'json!taoQtiTest/test/creator/samples/scoringTotalCategoryWeighted.json',
     'json!taoQtiTest/test/creator/samples/scoringCut.json',
     'json!taoQtiTest/test/creator/samples/scoringCutCategory.json',
     'json!taoQtiTest/test/creator/samples/scoringNoOutcomes.json'
 ], function (_,
              modelOverseerFactory,
              scoringHelper,
+             scoringSample,
+             scoringWeightedSample,
              scoringNoneSample,
              scoringCustomSample,
              scoringTotalSample,
+             scoringTotalWeightedSample,
              scoringTotalCategorySample,
+             scoringTotalCategoryWeightedSample,
              scoringCutSample,
              scoringCutCategorySample,
              scoringNoOutcomesSample) {
@@ -47,6 +55,14 @@ define([
     ];
 
     var scoringInitCases = [
+        {
+            title: 'none',
+            model: scoringSample,
+            outcomeProcessing: 'none',
+            categoryScore: false,
+            cutScore: 0.5,
+            weightIdentifier: ''
+        },
         {
             title: 'none',
             model: scoringNoneSample,
@@ -72,12 +88,28 @@ define([
             weightIdentifier: ''
         },
         {
+            title: 'total weighted',
+            model: scoringTotalWeightedSample,
+            outcomeProcessing: 'total',
+            categoryScore: false,
+            cutScore: .50,
+            weightIdentifier: 'WEIGHT'
+        },
+        {
             title: 'total&category',
             model: scoringTotalCategorySample,
             outcomeProcessing: 'total',
             categoryScore: true,
             cutScore: 0.50,
             weightIdentifier: ''
+        },
+        {
+            title: 'total weighted&category',
+            model: scoringTotalCategoryWeightedSample,
+            outcomeProcessing: 'total',
+            categoryScore: true,
+            cutScore: 0.50,
+            weightIdentifier: 'WEIGHT'
         },
         {
             title: 'cut',
@@ -120,11 +152,27 @@ define([
             expected: scoringTotalSample
         },
         {
+            title: 'total weighted',
+            model: scoringWeightedSample,
+            categoryScore: false,
+            outcomeProcessing: 'total',
+            weightIdentifier: 'WEIGHT',
+            expected: scoringTotalWeightedSample
+        },
+        {
             title: 'total&category',
             model: scoringCutCategorySample,
             categoryScore: true,
             outcomeProcessing: 'total',
             expected: scoringTotalCategorySample
+        },
+        {
+            title: 'total weighted&category',
+            model: scoringWeightedSample,
+            categoryScore: true,
+            outcomeProcessing: 'total',
+            weightIdentifier: 'WEIGHT',
+            expected: scoringTotalCategoryWeightedSample
         },
         {
             title: 'cut',
