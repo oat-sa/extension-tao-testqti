@@ -32,6 +32,7 @@ use qtism\data\AssessmentItemRef;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\Directory;
+use oat\taoQtiItem\model\qti\Service;
 
 /**
  * the QTI TestModel service.
@@ -826,16 +827,13 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         }
         $section = $sections[$sectionIndex];
 
-        $itemContentProperty = new core_kernel_classes_Property(TAO_ITEM_CONTENT_PROPERTY);
         $itemRefs = new SectionPartCollection();
         $itemRefIdentifiers = array();
         foreach ($items as $itemResource) {
-            $itemContent = new core_kernel_file_File($itemResource->getUniquePropertyValue($itemContentProperty));
-
             $itemDoc = new XmlDocument();
 
             try {
-                $itemDoc->load($itemContent->getAbsolutePath());
+                $itemDoc->loadFromString(Service::singleton()->getXmlByRdfItem($itemResource));
             }
             catch (StorageException $e) {
                 // We consider the item not compliant with QTI, let's try the next one.
@@ -852,7 +850,6 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                 $itemRefIdentifiers[$itemRefIdentifier] = 0;
             }
             $itemRefs[] = new AssessmentItemRef($itemRefIdentifier, $itemResource->getUri());
-
         }
         $section->setSectionParts($itemRefs);
 
