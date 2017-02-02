@@ -415,4 +415,12 @@ return array(
             'reject' => 'Esc'
         ]
     ],
+
+    /**
+     * Allows to browse the next item (before it is displayed).
+     * The is required for caching scenarios
+     * @type boolean
+     */
+    'allow-browse-next-item' => false
+
 );

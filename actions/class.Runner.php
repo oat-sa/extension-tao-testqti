@@ -21,6 +21,7 @@
  */
 
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
@@ -393,11 +394,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
+    /**
+     * Provides the definition data and the state of the 
+     * next item. 
+     */
     public function getNextItemData()
     {
         $code = 200;
 
         try {
+
+            $allowed = $this->runnerService->getTestConfig()->getConfigValue('allowBrowseNextItem');
+            if(!$allowed){
+                \common_Logger::w("Attempt to disclose the next item whitout the configuration");
+                throw new \common_exception_Unauthorized();
+            }
             $serviceContext = $this->getServiceContext();
             $session        = $serviceContext->getTestSession();
             $route          = $session->getRoute();
@@ -428,7 +439,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
-    protected function getItemDataResponse(QtiRunnerServiceContext $context, $itemRef, $stateId)
+    /**
+     * Create the item definition response for a given item
+     * @param RunnerServiceContext $context the current test context
+     * @param string $itemRef the item definition
+     * @param sttring $stateId
+     * @return array the item data
+     */
+    protected function getItemDataResponse(RunnerServiceContext $context, $itemRef, $stateId)
     {
         $itemData = $this->runnerService->getItemData($context, $itemRef);
         $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
