@@ -77,7 +77,7 @@ define([
         cut: {
             key: 'cut',
             label: __('Cut score'),
-            //include: 'total',
+            include: 'total',
             signature: /^PASS_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
             outcomes: [{
                 formula: 'cut',
@@ -197,7 +197,7 @@ define([
             model = modelOverseer.getModel();
 
             // detect the score processing mode and build the descriptor used to manage the UI
-            model.scoring = detectScoring(model);
+            model.scoring = detectScoring(modelOverseer);
 
             modelOverseer
                 .on('scoring-change category-change delete', function () {
@@ -257,13 +257,7 @@ define([
                     }
 
                     // get the recipes that define the formula, include sub-recipes if any
-                    descriptors = [];
-                    do {
-                        if (processingMode.outcomes) {
-                            descriptors = descriptors.concat(processingMode.outcomes);
-                        }
-                        processingMode = processingMode.include && processingModes[processingMode.include];
-                    } while (processingMode);
+                    descriptors = getRecipes(processingMode);
 
                     // only get the categories if requested
                     if (handleCategories(modelOverseer)) {
@@ -385,7 +379,7 @@ define([
      * @param {Boolean} [onlyCategories]
      * @returns {Boolean}
      */
-    function matchScoringMode(identifier, processingMode, onlyCategories) {
+    function belongToScoringMode(identifier, processingMode, onlyCategories) {
         var match = false;
         if (processingMode.signature && processingMode.signature.test(identifier)) {
             match = true;
@@ -404,6 +398,126 @@ define([
     }
 
     /**
+     * Checks if all the outcomes are related to the scoring mode
+     * @param {Object} processingMode
+     * @param {Array} outcomes
+     * @param {Array} categories
+     * @returns {Boolean}
+     */
+    function matchScoringMode(processingMode, outcomes, categories) {
+        var signatures = getSignatures(processingMode);
+        var match = true;
+
+        // check the outcomes definitions against the provided identifier
+        function matchScoringOutcome(mode, identifier) {
+            var outcomeMatch = false;
+
+            // first level, the signature must match
+            if (mode.signature && mode.signature.test(identifier)) {
+                _.forEach(mode.outcomes, function(outcome) {
+                    // second level, the main identifier must match
+                    if (outcome.identifier !== identifier &&
+                        (!outcome.weighted || (outcome.weighted && outcome.weighted !== identifier)) &&
+                        (!outcome.feedback || (outcome.feedback && outcome.feedback !== identifier))) {
+
+                        if (categories) {
+                            // third level, a category must match
+                            _.forEach(categories, function(category) {
+                                if (outcome.categoryIdentifier &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryIdentifier)) {
+                                    outcomeMatch = true;
+                                } else if (outcome.categoryWeighted &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryWeighted)) {
+                                    outcomeMatch = true;
+                                } else if (outcome.categoryFeedback &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryFeedback)) {
+                                    outcomeMatch = true;
+                                }
+                                // found something?
+                                if (outcomeMatch) {
+                                    return false;
+                                }
+                            });
+                        }
+                    } else {
+                        outcomeMatch = true;
+                    }
+
+                    // found something?
+                    if (outcomeMatch) {
+                        return false;
+                    }
+                });
+            }
+
+            if (!outcomeMatch && mode.include) {
+                outcomeMatch = matchScoringOutcome(processingModes[mode.include], identifier);
+            }
+
+            return outcomeMatch;
+        }
+
+        // only check the outcomes that are related to the scoring mode
+        _.forEach(outcomes, function(identifier) {
+            var signatureMatch = false;
+            _.forEach(signatures, function(signature) {
+                if (signature.test(identifier)) {
+                    signatureMatch = true;
+                    return false;
+                }
+            });
+
+            if (signatureMatch) {
+                match = matchScoringOutcome(processingMode, identifier);
+
+                if (!match) {
+                    return false;
+                }
+            }
+        });
+
+        return match;
+    }
+
+    /**
+     * Gets all the outcomes signatures related to a scoring mode
+     * @param {Object} processingMode
+     * @returns {Array}
+     */
+    function getSignatures(processingMode) {
+        var signatures = [];
+
+        // list the signatures for each processing mode, taking care of includes
+        while(processingMode) {
+            if (processingMode.signature) {
+                signatures.push(processingMode.signature);
+            }
+            processingMode = processingMode.include && processingModes[processingMode.include];
+        }
+
+        return signatures;
+    }
+
+    /**
+     * Gets all the outcomes recipes related to a scoring mode
+     * @param {Object} processingMode
+     * @returns {Array}
+     */
+    function getRecipes(processingMode) {
+        var descriptors = [];
+
+        // get the recipes that define the formula, include sub-recipes if any
+        while(processingMode) {
+            if (processingMode.outcomes) {
+                descriptors = descriptors.concat(processingMode.outcomes);
+            }
+            processingMode = processingMode.include && processingModes[processingMode.include];
+        }
+
+        return descriptors;
+    }
+
+    /**
      * Checks if an outcome is related to the outcome processing,
      * then returns the processing mode descriptor.
      * @param {Object|String} outcome
@@ -413,7 +527,7 @@ define([
         var identifier = outcomeHelper.getOutcomeIdentifier(outcome);
         var mode = null;
         _.forEach(processingModes, function (processingMode) {
-            if (matchScoringMode(identifier, processingMode)) {
+            if (belongToScoringMode(identifier, processingMode)) {
                 mode = processingMode;
                 return false;
             }
@@ -466,7 +580,7 @@ define([
         _.forEach(outcomeHelper.getOutcomeDeclarations(model), function (outcomeDeclaration) {
             var identifier = outcomeHelper.getOutcomeIdentifier(outcomeDeclaration);
             _.forEach(processingModes, function (processingMode) {
-                if (matchScoringMode(identifier, processingMode, true)) {
+                if (belongToScoringMode(identifier, processingMode, true)) {
                     categoryOutcomes = true;
                     return false;
                 }
@@ -509,10 +623,11 @@ define([
 
     /**
      * Detects the outcome processing mode for the scoring
-     * @param {Object} model
+     * @param {modelOverseer} modelOverseer
      * @returns {String}
      */
-    function getOutcomeProcessing(model) {
+    function getOutcomeProcessing(modelOverseer) {
+        var model = modelOverseer.getModel();
         var outcomeDeclarations = outcomeHelper.getOutcomeDeclarations(model);
         var outcomeRules = outcomeHelper.getOutcomeProcessingRules(model);
 
@@ -521,6 +636,7 @@ define([
         var processing = listScoringModes(outcomeRules);
         var diff = _.difference(declarations, processing);
         var count = _.size(declarations);
+        var included;
 
         // default fallback, applied when several modes are detected at the same time
         var outcomeProcessing = 'custom';
@@ -530,9 +646,28 @@ define([
             if (!count) {
                 // no mode detected, set the mode to none
                 outcomeProcessing = 'none';
-            } else if (count === 1 && _.isEmpty(diff)) {
-                // single mode detected, keep the last got key
-                outcomeProcessing = processing[0];
+            } else if (_.isEmpty(diff)) {
+                if (count > 1) {
+                    // several modes detected, try to reduce the list by detecting includes
+                    included = [];
+                    _.forEach(declarations, function(mode) {
+                        if (processingModes[mode] && processingModes[mode].include) {
+                            included.push(processingModes[mode].include);
+                        }
+                    });
+                    processing = _.difference(processing, included);
+                    count = _.size(processing);
+                }
+
+                if (count === 1) {
+                    // single mode detected, keep the last got key
+                    outcomeProcessing = processing[0];
+
+                    // check if all outcomes are strictly related to the detected mode
+                    if (!matchScoringMode(processingModes[outcomeProcessing], modelOverseer.getOutcomesNames(), modelOverseer.getCategories())) {
+                        outcomeProcessing = 'custom';
+                    }
+                }
             }
         }
 
@@ -541,17 +676,18 @@ define([
 
     /**
      * Detects the score processing mode and builds the descriptor used to manage the UI.
-     * @param {Object} model
+     * @param {modelOverseer} modelOverseer
      * @returns {Object}
      */
-    function detectScoring(model) {
+    function detectScoring(modelOverseer) {
+        var model = modelOverseer.getModel();
         return {
             modes: processingModes,
             scoreIdentifier: defaultScoreIdentifier,
             weightIdentifier: getWeightIdentifier(model),
             cutScore: getCutScore(model),
             categoryScore: hasCategoryOutcome(model),
-            outcomeProcessing: getOutcomeProcessing(model)
+            outcomeProcessing: getOutcomeProcessing(modelOverseer)
         };
     }
 
