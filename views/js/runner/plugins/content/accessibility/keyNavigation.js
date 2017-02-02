@@ -75,7 +75,7 @@ define([
             if($itemElement.hasClass('qti-interaction')){
                 keyNavigator({
                     id : id,
-                    elements : $itemElement.find(':input'),
+                    elements : $itemElement.is(':input') ? $itemElement : $itemElement.find(':input'),
                     group : $itemElement,
                     loop : false,
                     replace : true
