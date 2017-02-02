@@ -89,14 +89,22 @@ define([
 
 
     QUnit.test('helpers/outcome.getOutcomeDeclarations()', function (assert) {
-        QUnit.expect(1);
-        assert.equal(outcomeHelper.getOutcomeDeclarations(testModelSample), testModelSample.outcomeDeclarations, 'The outcome helper returns the right outcome declarations');
+        var testModel = _.cloneDeep(testModelSample);
+        QUnit.expect(2);
+        assert.equal(outcomeHelper.getOutcomeDeclarations(testModel), testModel.outcomeDeclarations, 'The outcome helper returns the right outcome declarations');
+
+        testModel.outcomeDeclarations = null;
+        assert.deepEqual(outcomeHelper.getOutcomeDeclarations(testModel), [], 'The outcome helper returns the right outcome declarations');
     });
 
 
     QUnit.test('helpers/outcome.getOutcomeProcessingRules()', function (assert) {
-        QUnit.expect(1);
-        assert.equal(outcomeHelper.getOutcomeProcessingRules(testModelSample), testModelSample.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules');
+        var testModel = _.cloneDeep(testModelSample);
+        QUnit.expect(2);
+        assert.equal(outcomeHelper.getOutcomeProcessingRules(testModel), testModel.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules');
+
+        testModel.outcomeProcessing.outcomeRules = null;
+        assert.deepEqual(outcomeHelper.getOutcomeProcessingRules(testModel), [], 'The outcome helper returns the right outcome processing rules');
     });
 
 

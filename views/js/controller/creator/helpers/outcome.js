@@ -67,7 +67,8 @@ define([
          * @returns {Array}
          */
         getOutcomeDeclarations: function getOutcomeDeclarations(testModel) {
-            return testModel && testModel.outcomeDeclarations;
+            var outcomes = testModel && testModel.outcomeDeclarations;
+            return outcomes || [];
         },
 
         /**
@@ -76,7 +77,8 @@ define([
          * @returns {Array}
          */
         getOutcomeProcessingRules: function getOutcomeProcessingRules(testModel) {
-            return testModel && testModel.outcomeProcessing && testModel.outcomeProcessing.outcomeRules;
+            var rules = testModel && testModel.outcomeProcessing && testModel.outcomeProcessing.outcomeRules;
+            return rules || [];
         },
 
         /**
