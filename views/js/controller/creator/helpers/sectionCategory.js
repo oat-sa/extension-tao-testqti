@@ -181,6 +181,14 @@ define([
                 description : __('enable area masking tool')
             },
             {
+                name : 'x-tao-option-highlighter',
+                description : __('enable highlighter tool')
+            },
+            {
+                name : 'x-tao-option-magnifier',
+                description : __('enable magnifier tool')
+            },
+            {
                 name : 'x-tao-itemusage-informational',
                 description : __('describe the item as informational')
             }
