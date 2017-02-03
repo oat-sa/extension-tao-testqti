@@ -67,7 +67,8 @@ define([
          * @returns {Array}
          */
         getOutcomeDeclarations: function getOutcomeDeclarations(testModel) {
-            return testModel && testModel.outcomeDeclarations;
+            var outcomes = testModel && testModel.outcomeDeclarations;
+            return outcomes || [];
         },
 
         /**
@@ -76,7 +77,8 @@ define([
          * @returns {Array}
          */
         getOutcomeProcessingRules: function getOutcomeProcessingRules(testModel) {
-            return testModel && testModel.outcomeProcessing && testModel.outcomeProcessing.outcomeRules;
+            var rules = testModel && testModel.outcomeProcessing && testModel.outcomeProcessing.outcomeRules;
+            return rules || [];
         },
 
         /**
@@ -140,28 +142,34 @@ define([
         },
 
         /**
-         * Removes the spefified outcomes from the provided test model
-         * @param {Object} testModel
-         * @param {String[]} outcomes
+         * Removes the specified outcomes from the provided test model
+         * @param {Object} testModel - The test model to clean up
+         * @param {Function|String[]} outcomes - The list of outcomes identifiers to remove,
+         *                                       or a callback that will match each outcome to remove
          */
         removeOutcomes: function removeOutcomes(testModel, outcomes) {
             var declarations = outcomeHelper.getOutcomeDeclarations(testModel);
             var rules = outcomeHelper.getOutcomeProcessingRules(testModel);
+            var check;
 
-            outcomes = _.indexBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
-                return outcome;
-            });
+            if (_.isFunction(outcomes)) {
+                check = outcomes;
+            } else {
+                outcomes = _.indexBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
+                    return outcome;
+                });
+
+                check = function checkIdentifier(outcome) {
+                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcome)];
+                };
+            }
 
             if (declarations) {
-                _.remove(declarations, function (outcomeDeclaration) {
-                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcomeDeclaration)];
-                });
+                _.remove(declarations, check);
             }
 
             if (rules) {
-                _.remove(rules, function (outcomeRule) {
-                    return !!outcomes[outcomeHelper.getOutcomeIdentifier(outcomeRule)];
-                });
+                _.remove(rules, check);
             }
         },
 
@@ -207,10 +215,9 @@ define([
             }
 
             if (!outcomeProcessing) {
-                outcomeProcessing = {
-                    'qti-type': 'outcomeProcessing',
+                outcomeProcessing = qtiElementHelper.create('outcomeProcessing', {
                     outcomeRules: []
-                };
+                });
                 testModel.outcomeProcessing = outcomeProcessing;
             } else if (!outcomeProcessing.outcomeRules) {
                 outcomeProcessing.outcomeRules = [];
@@ -250,6 +257,34 @@ define([
 
             declarations.push(outcome);
             return outcome;
+        },
+
+        /**
+         * Replaces the outcomes in a test model
+         * @param {Object} testModel
+         * @param {Object} outcomes
+         * @throws {TypeError} if one of the outcomes or the processing rules are not valid
+         */
+        replaceOutcomes: function replaceOutcomes(testModel, outcomes) {
+            if (_.isPlainObject(outcomes)) {
+                if (_.isArray(outcomes.outcomeDeclarations)) {
+                    if (!outcomeValidator.validateOutcomes(outcomes.outcomeDeclarations, true, 'outcomeDeclaration')) {
+                        throw new TypeError('You must provide valid outcomes!');
+                    }
+
+                    testModel.outcomeDeclarations = [].concat(outcomes.outcomeDeclarations);
+                }
+                if (outcomes.outcomeProcessing && _.isArray(outcomes.outcomeProcessing.outcomeRules)) {
+                    if (!outcomeValidator.validateOutcomes(outcomes.outcomeProcessing.outcomeRules)) {
+                        throw new TypeError('You must provide valid processing rules!');
+                    }
+
+                    if (!testModel.outcomeProcessing) {
+                        testModel.outcomeProcessing = qtiElementHelper.create('outcomeProcessing');
+                    }
+                    testModel.outcomeProcessing.outcomeRules = [].concat(outcomes.outcomeProcessing.outcomeRules);
+                }
+            }
         }
     };
 
