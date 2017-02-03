@@ -14,13 +14,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 
 /**
- * Area Masking Plugin
+ * Answer Eliminator Plugin
  *
- * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * While the platform's answer eliminator works on a per-item base, this variation allows
+ * answer elimination on a test level. Essentially it allows to add a class 'eliminable'
+ * to a choice interaction, from there the aforementioned item-based behaviour and styling takes
+ * over.
+ *
+ * Alternative styling will be on a per customer basis and should always be published as a recipe
+ * in the theme-toolkit.
+ *
+ * @author Dieter Raber <dieter@taotesting.com>
  */
 define([
     'jquery',
@@ -30,15 +38,15 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/plugins/tools/areaMasking/mask'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, maskComponent){
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, buttonTpl){
     'use strict';
 
     /**
      * The public name of the plugin
      * @type {String}
      */
-    var pluginName = 'area-masking';
+    var pluginName = 'eliminator';
 
     /**
      * The prefix of actions triggered through the event loop
@@ -46,14 +54,6 @@ define([
      */
     var actionPrefix = 'tool-' + pluginName + '-';
 
-    /**
-     * Some default options for the plugin
-     * @type {Object}
-     */
-    var defaultConfig = {
-        max : 5,
-        foo : true
-    };
 
     /**
      * Returns the configured plugin
@@ -71,54 +71,38 @@ define([
             var testRunner = this.getTestRunner();
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || {};
-            var config     = _.defaults(_.clone((testConfig.plugins || {})[pluginName]) || {}, defaultConfig);
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
 
-            function addMask() {
-                maskComponent()
-                    .on('render', function(){
-                        self.masks.push(this);
-                        self.button.activate();
+            //build the control button
+            this.$button = $(buttonTpl({
+                control : 'eliminator',
+                title : __('Eliminate choices'),
+                icon : 'strike-through'
+            }));
 
-                        /**
-                         * @event areaMasking#maskadd
-                         */
-                        self.trigger('maskadd');
-                    })
-                    .on('destroy', function(){
-                        self.masks = _.without(self.masks, this);
-                        if(self.masks.length < config.max){
-                            self.enable();
-                        }
-                        if (self.masks.length === 0) {
-                            self.button.deactivate();
-                        }
-
-                        /**
-                         * @event areaMasking#maskclose
-                         */
-                        self.trigger('maskclose');
-                    })
-                    .init({
-                        x : self.masks.length * 10,
-                        y : self.masks.length * 10
-                    })
-                    .render($container);
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-eliminator
+                return !!context.options.eliminator;
             }
 
-            //keep a ref to all masks
-            this.masks = [];
-
-            // register the element in the Toolbox
-            this.button = this.getAreaBroker().getToolbox().createItem({
-                control : 'area-masking',
-                text : 'Mask tool',
-                title : __('Covers parts of the item'),
-                icon : 'eye-slash'
-            });
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
 
             //add a new mask each time the button is pressed
-            this.button.on('click', function (e){
+            this.$button.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger(actionPrefix + 'toggle');
             });
@@ -138,32 +122,19 @@ define([
             //start disabled
             this.disable();
 
-            /**
-             * Checks if the plugin is currently available
-             * @returns {Boolean}
-             */
-            function isEnabled() {
-                var context = testRunner.getTestContext();
-                //to be activated with the special category x-tao-option-areaMasking
-                return !!context.options.areaMasking;
-            }
-
-            /**
-             * Is plugin activated ? if not, then we hide the plugin
-             */
-            function togglePlugin() {
-                if (isEnabled()) {
-                    self.show();
-                } else {
-                    self.hide();
-                }
-            }
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('unloaditem', function (){
-                    //remove all masks
-                    _.invoke(self.masks, 'destroy');
+                .on('renderitem', function conditionalInit() {
+                    // show button only when in the presence of choice interactions
+                    self.$choiceInteractions = $container.find('.qti-choiceInteraction');
+                    if(!self.$choiceInteractions.length) {
+                        self.hide();
+                        return;
+                    }
+                    if (isEnabled()) {
+                        self.show();
+                    }
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
@@ -173,14 +144,17 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
-                    if( self.masks.length < config.max ) {
-                        addMask();
-                    } else if (config.max === 1) {
-                        _.invoke(self.masks, 'destroy');
-                        self.button.deactivate();
+                    if (isEnabled()) {
+                        self.$choiceInteractions.toggleClass('eliminable');
                     }
                 });
+        },
 
+        /**
+         * Called during the runner's render phase
+         */
+        render : function render(){
+            this.getAreaBroker().getToolboxArea().append(this.$button);
         },
 
         /**
@@ -188,34 +162,39 @@ define([
          */
         destroy : function destroy(){
             shortcut.remove('.' + pluginName);
+            this.$button.remove();
         },
 
         /**
          * Enable the button
          */
         enable : function enable(){
-            this.button.enable();
+            this.$button
+                .removeProp('disabled')
+                .removeClass('disabled');
         },
 
         /**
          * Disable the button
          */
         disable : function disable(){
-            this.button.disable();
+            this.$button
+                .prop('disabled', true)
+                .addClass('disabled');
         },
 
         /**
          * Show the button
          */
         show : function show(){
-            this.button.show();
+            hider.show(this.$button);
         },
 
         /**
          * Hide the button
          */
         hide : function hide(){
-            this.button.hide();
+            hider.hide(this.$button);
         }
     });
 });

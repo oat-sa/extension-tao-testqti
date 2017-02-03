@@ -33,9 +33,7 @@ define([
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
-    'taoItems/assets/manager',
-    'taoItems/assets/strategies',
-    'taoQtiItem/portableElementRegistry/assetManager/portableAssetStrategy',
+    'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -51,18 +49,11 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
-    assetStrategies,
-    assetPortableElement,
     layoutTpl) {
     'use strict';
 
     //the asset strategies
-    var assetManager = assetManagerFactory([
-        assetStrategies.external,
-        assetStrategies.base64,
-        assetStrategies.baseUrl,
-        assetPortableElement
-    ], { baseUrl: '' });
+    var assetManager = assetManagerFactory();
 
     var $layout = $(layoutTpl());
 
@@ -99,6 +90,7 @@ define([
         loadProxy : function loadProxy(){
             var config = this.getConfig();
 
+            var proxyProvider   = config.proxyProvider || 'qtiServiceProxy';
             var proxyConfig = _.pick(config, [
                 'testDefinition',
                 'testCompilation',
@@ -106,7 +98,7 @@ define([
                 'bootstrap'
             ]);
 
-            return proxyFactory('qtiServiceProxy', proxyConfig);
+            return proxyFactory(proxyProvider, proxyConfig);
         },
 
         /**
