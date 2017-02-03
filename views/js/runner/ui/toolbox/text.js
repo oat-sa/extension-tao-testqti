@@ -43,6 +43,9 @@ define([
             .setTemplate(textTpl)
             .on('init', function() {
                 this.id = this.config.control;
+            })
+            .on('render', function() {
+                this.disable(); // always render disabled first
             });
 
         return buttonComponent;
