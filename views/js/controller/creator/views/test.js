@@ -19,26 +19,26 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-'jquery', 'lodash', 'ui/hider',
-'taoQtiTest/controller/creator/views/actions',
-'taoQtiTest/controller/creator/views/testpart',
-'taoQtiTest/controller/creator/templates/index',
-'taoQtiTest/controller/creator/helpers/qtiTest'
+    'jquery', 'lodash', 'i18n', 'ui/hider', 'ui/feedback',
+    'taoQtiTest/controller/creator/views/actions',
+    'taoQtiTest/controller/creator/views/testpart',
+    'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
-function($, _, hider, actions, testPartView, templates, qtiTestHelper){
+function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHelper){
     'use strict';
 
-   /**
-     * The TestView setup test related components and beahvior
+    /**
+     * The TestView setup test related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/test
-     * @param {Object} model - the data model to bind to the test
-     * @param {Object} [data] - additionnal data used by the setup
-     * @param {Array} [data.identifiers] - the locked identifiers
+     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
      */
-   var testView = function testView (model, data) {
+    function testView (modelOverseer) {
+        var testModel = modelOverseer.getModel();
+        var config = modelOverseer.getConfig();
 
-        actions.properties($('.test-creator-test > h1'), 'test', model, propHandler);
+        actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
         addTestPart();
 
@@ -47,17 +47,17 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
          * @private
          */
         function testParts () {
-            if(!model.testParts){
-                model.testParts = [];
+            if(!testModel.testParts){
+                testModel.testParts = [];
             }
             $('.testpart').each(function(){
                 var $testPart = $(this);
                 var index = $testPart.data('bind-index');
-                if(!model.testParts[index]){
-                    model.testParts[index] = {};
+                if(!testModel.testParts[index]){
+                    testModel.testParts[index] = {};
                 }
 
-                testPartView.setUp($testPart, model.testParts[index], data);
+                testPartView.setUp(modelOverseer, testModel.testParts[index], $testPart);
             });
         }
 
@@ -65,6 +65,7 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
          * Perform some binding once the property view is created
          * @private
          * @param {propView} propView - the view object
+         * @fires modelOverseer#scoring-change
          */
         function propHandler(propView) {
 
@@ -73,20 +74,51 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
             var $cutScoreLine = $('.test-cut-score', $view);
             var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $descriptions = $('.test-outcome-processing-description', $view);
+            var $generate = $('[data-action="generate-outcomes"]', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
+            var scoringState = JSON.stringify(testModel.scoring);
 
             function changeScoring(scoring) {
                 var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
+                var newScoringState = JSON.stringify(scoring);
+
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
                 hider.toggle($categoryScoreLine, noOptions);
                 hider.toggle($weightIdentifierLine, noOptions);
                 hider.hide($descriptions);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
+
+                if (scoringState !== newScoringState) {
+                    /**
+                     * @event modelOverseer#scoring-change
+                     * @param {Object} testModel
+                     */
+                    modelOverseer.trigger('scoring-change', testModel);
+                }
+                scoringState = newScoringState;
+            }
+
+            function updateOutcomes() {
+                var $panel = $('.outcome-declarations', $view);
+
+                $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
             }
 
             $('[name=test-outcome-processing]', $view).select2({
                 minimumResultsForSearch: -1,
                 width: '100%'
+            });
+
+            $generate.on('click', function() {
+                $generate.addClass('disabled').attr('disabled', true);
+                modelOverseer
+                    .on('scoring-write.regenerate', function() {
+                        modelOverseer.off('scoring-write.regenerate');
+                        feedback().success(__('The outcomes have been regenerated!')).on('destroy', function() {
+                            $generate.removeClass('disabled').removeAttr('disabled');
+                        });
+                    })
+                    .trigger('scoring-change');
             });
 
             $view.on('change.binder', function (e, model) {
@@ -97,12 +129,17 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
                     $title.text(model.title);
                 }
             });
-            changeScoring(model.scoring);
+
+            modelOverseer.on('scoring-write', updateOutcomes);
+
+            changeScoring(testModel.scoring);
+            updateOutcomes();
         }
 
         /**
          * Enable to add new test parts
          * @private
+         * @fires modelOverseer#part-add
          */
         function addTestPart () {
 
@@ -115,13 +152,13 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
                     var testPartIndex = $('.testpart').length;
                     cb({
                         'qti-type' : 'testPart',
-                        identifier : qtiTestHelper.getIdentifier('testPart', data.identifiers),
+                        identifier : qtiTestHelper.getIdentifier('testPart', config.identifiers),
                         index  : testPartIndex,
                         navigationMode : 0,
                         submissionMode : 0,
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
-                            identifier : qtiTestHelper.getIdentifier('assessmentSection',  data.identifiers),
+                            identifier : qtiTestHelper.getIdentifier('assessmentSection',  config.identifiers),
                             title : 'Section 1',
                             index : 0,
                             sectionParts : []
@@ -132,15 +169,24 @@ function($, _, hider, actions, testPartView, templates, qtiTestHelper){
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-              .off('add.binder', '.testparts')
-              .on ('add.binder', '.testparts', function(e, $testPart, added){
-                if(e.namespace === 'binder' && $testPart.hasClass('testpart')){
-                    //initialize the new test part
-                    testPartView.setUp($testPart, model.testParts[added.index], data);
-                }
-            });
+                .off('add.binder', '.testparts')
+                .on ('add.binder', '.testparts', function(e, $testPart, added){
+                    var partModel;
+                    if(e.namespace === 'binder' && $testPart.hasClass('testpart')){
+                        partModel = testModel.testParts[added.index];
+
+                        //initialize the new test part
+                        testPartView.setUp(modelOverseer, partModel, $testPart);
+
+                        /**
+                         * @event modelOverseer#part-add
+                         * @param {Object} partModel
+                         */
+                        modelOverseer.trigger('part-add', partModel);
+                    }
+                });
         }
-    };
+    }
 
     return testView;
 });

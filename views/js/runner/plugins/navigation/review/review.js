@@ -25,15 +25,13 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'core/keyNavigator',
     'ui/hider',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/plugins/navigation/review/navigator',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, keyNavigator, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
+    'taoQtiTest/runner/plugins/navigation/review/navigator'
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory) {
     'use strict';
 
     /**
@@ -55,13 +53,13 @@ define([
         showReview: {
             control: 'show-review',
             title: __('Show the review screen'),
-            icon: 'mobile-menu',
+            icon: 'right',
             text: __('Show review')
         },
         hideReview: {
             control: 'hide-review',
             title: __('Hide the review screen'),
-            icon: 'mobile-menu',
+            icon: 'left',
             text: __('Hide review')
         }
     };
@@ -87,28 +85,27 @@ define([
     }
 
     /**
-     * Create a button based on the provided data
-     * @param {Object} data - the button data
-     * @param {Function} action - action called when the button is clicked
-     * @returns {jQuery} the button
-     */
-    function createButton(data, action) {
-        return $(buttonTpl(data)).on('click', action);
-    }
-
-    /**
      * Update the button based on the provided data
-     * @param {jQuery} $button - the element to update
+     * @param {Component} button - the element to update
      * @param {Object} data - the button data
      */
-    function updateButton($button, data) {
-        if ($button.data('control') !== data.control) {
-            $button
-                .data('control', data.control)
-                .attr('title', data.title);
+    function updateButton(button, data) {
+        var $button = button.getElement();
+        if (button.is('rendered')) {
+            if ($button.data('control') !== data.control) {
+                $button
+                    .data('control', data.control)
+                    .attr('title', data.title);
 
-            $button.find('.icon').attr('icon ' + data.icon);
-            $button.find('.text').text(data.text);
+                $button.find('.icon').attr('class', 'icon icon-' + data.icon);
+                $button.find('.text').text(data.text);
+
+                if (button.is('active')) {
+                    button.deactivate();
+                } else {
+                    button.activate();
+                }
+            }
         }
     }
 
@@ -176,7 +173,7 @@ define([
                         }
 
                         // update the display of the flag button
-                        updateButton(self.$flagItemButton, getFlagItemButtonData(context));
+                        updateButton(self.flagItemButton, getFlagItemButtonData(context));
 
                         // update the item state
                         self.navigator.setItemFlag(position, flag);
@@ -213,7 +210,7 @@ define([
                     self.explicitlyHidden = true;
                     self.navigator.hide();
                 }
-                updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                updateButton(self.toggleButton, getToggleButtonData(self.navigator));
             }
 
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
@@ -237,15 +234,19 @@ define([
                 self.navigator.select(previousItemPosition);
             });
 
-            this.$flagItemButton = createButton(getFlagItemButtonData(testContext), function (e) {
-                e.preventDefault();
-                testRunner.trigger('tool-flagitem');
-            });
-
             this.explicitlyHidden = false;
-            this.$toggleButton = createButton(getToggleButtonData(this.navigator), function (e) {
+
+            // register buttons in the toolbox component
+            this.toggleButton = this.getAreaBroker().getToolbox().createItem(getToggleButtonData(this.navigator));
+            this.toggleButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-reviewpanel');
+            });
+
+            this.flagItemButton = this.getAreaBroker().getToolbox().createItem(getFlagItemButtonData(testContext));
+            this.flagItemButton.on('click', function (e) {
+                e.preventDefault();
+                testRunner.trigger('tool-flagitem');
             });
 
             if (testConfig.allowShortcuts) {
@@ -280,7 +281,7 @@ define([
                 .on('render', function () {
                     if (isPluginAllowed()) {
                         self.show();
-                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                        updateButton(self.toggleButton, getToggleButtonData(self.navigator));
                     } else {
                         self.hide();
                     }
@@ -290,14 +291,14 @@ define([
                     var map = testRunner.getTestMap();
 
                     if (isPluginAllowed()) {
-                        updateButton(self.$flagItemButton, getFlagItemButtonData(context));
+                        updateButton(self.flagItemButton, getFlagItemButtonData(context));
                         self.navigator
                             .update(map, context)
                             .updateConfig({
                                 canFlag: !context.isLinear && context.options.markReview
                             });
                         self.show();
-                        updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
+                        updateButton(self.toggleButton, getToggleButtonData(self.navigator));
                     } else {
                         self.hide();
                     }
@@ -329,11 +330,7 @@ define([
          */
         render: function render() {
             var areaBroker = this.getAreaBroker();
-            var $toolboxContainer = areaBroker.getToolboxArea();
             var $panelContainer = areaBroker.getPanelArea();
-
-            $toolboxContainer.append(this.$toggleButton);
-            $toolboxContainer.append(this.$flagItemButton);
             $panelContainer.append(this.navigator.getElement());
         },
 
@@ -342,8 +339,6 @@ define([
          */
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
-            this.$flagItemButton.remove();
-            this.$toggleButton.remove();
             this.navigator.destroy();
         },
 
@@ -351,21 +346,32 @@ define([
          * Enables the button
          */
         enable: function enable() {
-            this.$flagItemButton.removeClass('disabled')
-                .removeProp('disabled');
-            this.$toggleButton.removeClass('disabled')
-                .removeProp('disabled');
+            var testRunner = this.getTestRunner();
+            var testContext = testRunner.getTestContext();
+
+            this.flagItemButton.enable();
+            this.toggleButton.enable();
             this.navigator.enable();
+            if (! this.navigator.is('hidden')) {
+                this.toggleButton.activate();
+            }
+            if (testContext.itemFlagged) {
+                this.flagItemButton.activate();
+            } else {
+                this.flagItemButton.deactivate();
+            }
         },
 
         /**
          * Disables the button
          */
         disable: function disable() {
-            this.$flagItemButton.addClass('disabled')
-                .prop('disabled', true);
-            this.$toggleButton.addClass('disabled')
-                .prop('disabled', true);
+            this.flagItemButton.disable();
+            this.flagItemButton.deactivate();
+
+            this.toggleButton.disable();
+            this.toggleButton.deactivate();
+
             this.navigator.disable();
         },
 
@@ -375,11 +381,11 @@ define([
         show: function show() {
             var testRunner = this.getTestRunner();
             if (canFlag(testRunner)) {
-                hider.show(this.$flagItemButton);
+                this.flagItemButton.show();
             } else {
-                hider.hide(this.$flagItemButton);
+                this.flagItemButton.hide();
             }
-            hider.show(this.$toggleButton);
+            this.toggleButton.show();
             if (!this.explicitlyHidden) {
                 this.navigator.show();
             } else {
@@ -391,8 +397,8 @@ define([
          * Hides the button
          */
         hide: function hide() {
-            hider.hide(this.$flagItemButton);
-            hider.hide(this.$toggleButton);
+            this.flagItemButton.hide();
+            this.toggleButton.hide();
             this.navigator.hide();
         }
     });
