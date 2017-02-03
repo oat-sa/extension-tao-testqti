@@ -132,7 +132,9 @@ define([
                         self.hide();
                         return;
                     }
-                    self.show();
+                    if (isEnabled()) {
+                        self.show();
+                    }
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
