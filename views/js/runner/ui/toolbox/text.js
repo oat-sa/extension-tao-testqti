@@ -34,7 +34,7 @@ define([
 ], function(_, componentFactory, textTpl) {
     'use strict';
 
-    var buttonComponentApi = {
+    var textComponentApi = {
         /**
          * Initialise text
          * @returns {String}
@@ -63,12 +63,12 @@ define([
     /**
      * The text factory
      */
-    return function buttonComponentFactory(specs, defaults) {
-        var buttonComponent;
+    return function textComponentFactory(specs, defaults) {
+        var textComponent;
 
-        specs = _.defaults(specs || {}, buttonComponentApi);
+        specs = _.defaults(specs || {}, textComponentApi);
 
-        buttonComponent = componentFactory(specs, defaults)
+        textComponent = componentFactory(specs, defaults)
             .setTemplate(textTpl)
             .on('init', function() {
                 this.initText();
@@ -77,6 +77,6 @@ define([
                 this.disable(); // always render disabled first
             });
 
-        return buttonComponent;
+        return textComponent;
     };
 });

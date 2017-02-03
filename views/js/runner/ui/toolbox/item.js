@@ -17,7 +17,7 @@
  */
 /**
  * This factory creates a component to be used as a toolbox item
- * This component will then be rendered whether:
+ * This component will then be rendered either:
  * - as a menu entry, if given a menuId that matches an existing menu
  * - as a standalone button otherwise
  *
@@ -35,10 +35,10 @@ define([
     'lodash',
     'ui/component',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/item'
-], function(_, componentFactory, buttonTpl) {
+], function(_, componentFactory, itemTpl) {
     'use strict';
 
-    var buttonComponentApi = {
+    var itemComponentApi = {
         /**
          * Initialise the item
          */
@@ -112,13 +112,13 @@ define([
     /**
      * The item factory
      */
-    return function buttonComponentFactory(specs, defaults) {
-        var buttonComponent;
+    return function itemComponentFactory(specs, defaults) {
+        var itemComponent;
 
-        specs = _.defaults(specs || {}, buttonComponentApi);
+        specs = _.defaults(specs || {}, itemComponentApi);
 
-        buttonComponent = componentFactory(specs, defaults)
-            .setTemplate(buttonTpl)
+        itemComponent = componentFactory(specs, defaults)
+            .setTemplate(itemTpl)
             .on('enable', function() {
                 if (this.is('rendered')) {
                     this.$component.removeProp('disabled');
@@ -147,6 +147,6 @@ define([
                     });
             });
 
-        return buttonComponent;
+        return itemComponent;
     };
 });

@@ -140,10 +140,10 @@ define([
 
         // render first level
         if (_.isArray(this.allItems)) {
-            this.allItems.forEach(function (current) {
+            this.allItems.forEach(function (item) {
                 // items belonging to menus will be processed later
-                if (! self.hasMenu(current)) {
-                    current.render($container);
+                if (! self.hasMenu(item)) {
+                    item.render($container);
                 }
             });
         }
