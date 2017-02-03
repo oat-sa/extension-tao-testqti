@@ -32,15 +32,22 @@ define([
 ], function ($, _, keyNavigator, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
+    /**
+     * Init the navigation in the toolbar
+     *
+     * @param {Object} testRunner
+     * @returns {keyNavigator}
+     */
     function initToolbarNavigation(testRunner){
-        var $panelArea = testRunner.getAreaBroker().getPanelArea();
-        console.log(testRunner.getAreaBroker());
-        var $focusables = $('.bottom-action-bar .action:not(.btn-group):visible, .bottom-action-bar .action.btn-group .li-inner:visible');
+        var $navigationBar = $('.bottom-action-bar');
+        var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
+
         return keyNavigator({
             id : 'bottom-toolbar',
             replace : true,
-            group : $('.bottom-action-bar'),
+            group : $navigationBar,
             elements : $focusables,
+            //start from the last button "goto next"
             default : $focusables.length - 1
         }).on('right down', function(){
             this.next();
@@ -51,9 +58,16 @@ define([
         });
     }
 
-    function initHeaderNavigation(){
-        //need global selector
+    /**
+     * Init the navigation in the header block
+     *
+     * @param {Object} testRunner
+     * @returns {keyNavigator}
+     */
+    function initHeaderNavigation(testRunner){
+        //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
+
         return keyNavigator({
             id : 'header-toolbar',
             elements : $headerElements,
@@ -63,6 +77,61 @@ define([
         });
     }
 
+    /**
+     * Init the navigation in the review panel
+     *
+     * @param {Object} testRunner
+     * @returns {keyNavigator} the keyNavigator of the main navigation group
+     */
+    function initNavigatorNavigation(testRunner){
+
+        var $panel = testRunner.getAreaBroker().getPanelArea();
+        var $navigator = $panel.find('.qti-navigator');
+
+        var filterGroupNavigator = keyNavigator({
+            keepState : true,
+            id : 'navigator-filters',
+            replace : true,
+            elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter:visible'),
+            group : $navigator
+        }).on('right', function(){
+            this.next();
+        }).on('left', function(){
+            this.previous();
+        }).on('down', function(){
+            this.goto('navigator-items');
+        }).on('focus', function(cursor){
+            cursor.$dom.click();
+        });
+
+        keyNavigator({
+            id : 'navigator-items',
+            replace : true,
+            elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label:visible')
+        }).on('down', function(){
+            this.next();
+        }).on('up', function(){
+            this.previous();
+        }).on('activate', function(cursor){
+            cursor.$dom.click();
+        }).on('lowerbound', function(){
+            this.goto('navigator-filters');
+        }).on('focus', function(cursor){
+            cursor.$dom.parent().addClass('key-navigation-highlight');
+        }).on('blur', function(cursor){
+            cursor.$dom.parent().removeClass('key-navigation-highlight');
+        });
+
+        return filterGroupNavigator;
+    }
+
+    /**
+     * Init the navigation in the item content
+     * It returns an array of keyNavigator ids as the content is dynamically determined
+     *
+     * @param {Object} testRunner
+     * @returns {Array} of keyNavigator ids
+     */
     function initContentNavigation(testRunner){
         var $itemElements;
         var itemNavigators = [];
@@ -105,12 +174,19 @@ define([
         return itemNavigators;
     }
 
+    /**
+     * Init the navigation of test rubric blocks
+     * It returns an array of keyNavigator ids as the content is dynamically determined
+     *
+     * @param {Object} testRunner
+     * @returns {Array} of keyNavigator ids
+     */
     function initRubricNavigation(testRunner){
         var $itemElements;
         var rubricNavigators = [];
-        var $content = testRunner.getAreaBroker().getContentArea();
+        var $rubricArea = $('#qti-rubrics');
 
-        $itemElements = $('#qti-rubrics .qti-rubricBlock');
+        $itemElements = $rubricArea.find('.qti-rubricBlock');
         $itemElements.each(function(){
             var $itemElement = $(this);
             var id = 'rubric_element_navigation_group_'+rubricNavigators.length;
@@ -126,7 +202,11 @@ define([
         return rubricNavigators;
     }
 
-
+    /**
+     * Init test runner navigation
+     * @param testRunner
+     * @returns {*}
+     */
     function initTestRunnerNavigation(testRunner){
 
         var itemNavigators = initContentNavigation(testRunner);
@@ -134,6 +214,7 @@ define([
 
         initHeaderNavigation(testRunner);
         initToolbarNavigation(testRunner);
+        initNavigatorNavigation(testRunner);
 
         return groupKeyNavigator({
             id : 'test-runner',

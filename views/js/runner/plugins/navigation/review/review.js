@@ -124,42 +124,6 @@ define([
         return !!(!context.isLinear && context.options.markReview && !(item && item.informational));
     }
 
-    function initKeyNavigation(){
-        keyNavigator({
-            keepState : true,
-            id : 'navigator-filters',
-            replace : true,
-            elements : $('.qti-navigator-filters .qti-navigator-filter:visible'),
-            group : $('.qti-navigator')
-        }).on('right', function(){
-            this.next();
-        }).on('left', function(){
-            this.previous();
-        }).on('down', function(){
-            this.goto('navigator-items');
-        }).on('focus', function(cursor){
-            cursor.$dom.click();
-        });
-
-        keyNavigator({
-            id : 'navigator-items',
-            replace : true,
-            elements : $('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label:visible')
-        }).on('down', function(){
-            this.next();
-        }).on('up', function(){
-            this.previous();
-        }).on('activate', function(cursor){
-            cursor.$dom.click();
-        }).on('lowerbound', function(){
-            this.goto('navigator-filters');
-        }).on('focus', function(cursor){
-            cursor.$dom.parent().addClass('key-navigation-highlight');
-        }).on('blur', function(cursor){
-            cursor.$dom.parent().removeClass('key-navigation-highlight');
-        });
-    }
-
     /**
      * Creates the timer plugin
      */
@@ -334,7 +298,6 @@ define([
                             });
                         self.show();
                         updateButton(self.$toggleButton, getToggleButtonData(self.navigator));
-                        initKeyNavigation();
                     } else {
                         self.hide();
                     }
