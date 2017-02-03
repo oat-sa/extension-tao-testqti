@@ -392,7 +392,7 @@ define([
                 this.disable(); // always render disabled by default
 
                 // add behavior
-                this.$menuButton.on('click', function toggleMenu(e) {
+                this.$component.on('click', function toggleMenu(e) {
                     e.preventDefault();
 
                     if(! self.is('opened')) {
