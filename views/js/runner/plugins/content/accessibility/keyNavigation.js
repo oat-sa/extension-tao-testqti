@@ -73,6 +73,7 @@ define([
             var $itemElement = $(this);
             var id = 'item_element_navigation_group_'+itemNavigators.length;
             if($itemElement.hasClass('qti-interaction')){
+                $itemElement.off('.keyNavigation');
                 keyNavigator({
                     id : id,
                     elements : $itemElement.is(':input') ? $itemElement : $itemElement.find(':input'),
@@ -85,6 +86,10 @@ define([
                     this.previous();
                 }).on('activate', function(cursor){
                     cursor.$dom.click();
+                }).on('focus', function(cursor){
+                    cursor.$dom.closest('.qti-choice').addClass('key-navigation-highlight');
+                }).on('blur', function(cursor){
+                    cursor.$dom.closest('.qti-choice').removeClass('key-navigation-highlight');
                 });
             }else{
                 keyNavigator({
@@ -100,9 +105,32 @@ define([
         return itemNavigators;
     }
 
+    function initRubricNavigation(testRunner){
+        var $itemElements;
+        var rubricNavigators = [];
+        var $content = testRunner.getAreaBroker().getContentArea();
+
+        $itemElements = $('#qti-rubrics .qti-rubricBlock');
+        $itemElements.each(function(){
+            var $itemElement = $(this);
+            var id = 'rubric_element_navigation_group_'+rubricNavigators.length;
+                keyNavigator({
+                    id : id,
+                    elements : $itemElement,
+                    group : $itemElement,
+                    replace : true
+                });
+            rubricNavigators.push(id);
+        });
+
+        return rubricNavigators;
+    }
+
+
     function initTestRunnerNavigation(testRunner){
 
         var itemNavigators = initContentNavigation(testRunner);
+        var rubricNavigators = initRubricNavigation(testRunner);
 
         initHeaderNavigation(testRunner);
         initToolbarNavigation(testRunner);
@@ -110,7 +138,7 @@ define([
         return groupKeyNavigator({
             id : 'test-runner',
             replace : true,
-            groups : _.union(itemNavigators, ['bottom-toolbar', 'navigator-filters', 'header-toolbar'])
+            groups : _.union(rubricNavigators, itemNavigators, ['bottom-toolbar', 'navigator-filters', 'header-toolbar'])
         });
     }
 

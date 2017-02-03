@@ -153,6 +153,10 @@ define([
             cursor.$dom.click();
         }).on('lowerbound', function(){
             this.goto('navigator-filters');
+        }).on('focus', function(cursor){
+            cursor.$dom.parent().addClass('key-navigation-highlight');
+        }).on('blur', function(cursor){
+            cursor.$dom.parent().removeClass('key-navigation-highlight');
         });
     }
 

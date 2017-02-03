@@ -1,50 +1,87 @@
 @import "inc/bootstrap";
 
-//.qti-item div.key-navigation-focusable {
-//    padding: 5px !important;
-//}
-//
-//.qti-item div.key-navigation-focusable,
-//.qti-item img.key-navigation-focusable {
-//    border: 2px solid transparent;
-//    &:focus {
-//        //overwrite only the style and the color of the border and leave the inherited border identical
-//        border-style: solid !important;
-//        border-color: $info !important;
-//        outline: none;
-//    }
-//}
-
-.key-navigation-focusable{
-    border: 3px solid $error !important;
-    &:focus {
-        border-style: solid !important;
-        border-color: $success !important;
-        outline: none;
+.content-wrapper {
+    div.key-navigation-group{
+        padding: 5px !important;
     }
-}
-.key-navigation-highlight{
-    border-width: 2px !important;
-    border-style: solid;
-    border-color: transparent;//do not mark it as important to allow color overriding
-    &:focus {
-        border-style: solid !important;
-        border-color: $success !important;
-        outline: none;
+    .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction){
+        border-width: 1px !important;
+        border-style: solid;
+        border-color: transparent;//do not mark it as important to allow color overriding
+        &.focusin{
+            border-color: $info !important;
+            outline: none;
+        }
+        &.qti-interaction{
+            .qti-choice.key-navigation-highlight{
+                background: whiten($info, .9) !important;
+            }
+        }
     }
 }
 
-.key-navigation-group{
-    border-width: 2px !important;
-    border-style: solid;
-    border-color: transparent;//do not mark it as important to allow color overriding
-    &.focusin{
-        border: solid 2px red !important;
+.test-sidebar {
+    .key-navigation-group{
+        border-width: 1px !important;
+        border-style: solid;//do not mark it as important to allow color overriding
+        border-color: transparent;//do not mark it as important to allow color overriding
+        &.focusin{
+            border-color: $info !important;
+            background: whiten($info, .9);
+        }
+        .qti-navigator-filters{
+            .key-navigation-highlight{
+                .qti-navigator-tab{
+                    border: solid 2px whiten($info, .9) !important;
+                }
+                &:focus {
+                    outline: none;
+                    .qti-navigator-tab{
+                        border-top-color: black !important;
+                        border-left-color: black !important;
+                        border-right-color: black !important;
+                    }
+                }
+
+            }
+        }
+        li.qti-navigator-item.key-navigation-highlight{
+            padding-left:8px;
+            border-left:solid 2px black;
+            .key-navigation-highlight:focus{
+                outline: none;
+            }
+        }
+    }
+
+}
+
+.action-bar{
+    &.key-navigation-group{
+        &.focusin{
+            box-shadow: 0 0 5px 1px whiten($info, .2);
+            z-index: 1;
+        }
+        .key-navigation-highlight{
+            border: solid 2px transparent !important;
+            &:focus {
+                height: 33px;
+                margin-bottom: 0;
+                border-bottom-color: white !important;
+                outline: none;
+            }
+        }
     }
 }
 
-//.content-wrapper{
-//    .key-navigation-group{
-//        border: solid 2px inherit;
-//    }
-//}
+header{
+    .settings-menu{
+        .key-navigation-highlight{
+            &:focus{
+                height:54px;
+                color: white !important;
+                border-bottom: solid 2px white !important;
+            }
+        }
+    }
+}
