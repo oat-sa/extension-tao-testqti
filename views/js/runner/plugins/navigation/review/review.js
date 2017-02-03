@@ -101,6 +101,11 @@ define([
                 $button.find('.icon').attr('class', 'icon icon-' + data.icon);
                 $button.find('.text').text(data.text);
             }
+            if (data.control === 'hide-review' || data.control === 'unset-item-flag') {
+                button.activate();
+            } else {
+                button.deactivate();
+            }
         }
     }
 
@@ -237,12 +242,18 @@ define([
                 e.preventDefault();
                 testRunner.trigger('tool-reviewpanel');
             });
+            if (this.toggleButton.getId() === 'hide-review') {
+                this.toggleButton.activate();
+            }
 
             this.flagItemButton = this.getAreaBroker().getToolbox().createItem(getFlagItemButtonData(testContext));
             this.flagItemButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-flagitem');
             });
+            if (this.flagItemButton.getId() === 'unset-item-flag') {
+                this.flagItemButton.activate();
+            }
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.flag) {
