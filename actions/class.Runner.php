@@ -423,11 +423,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 if(is_array($response)){
                     $response['itemDefinition'] = $itemRef;
                 }
-
             } else {
-
-                $response = 'No next item';
-                $code = 204;
+                $response = [
+                    'success' => true
+                ];
             }
 
         } catch (common_Exception $e) {
@@ -462,7 +461,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         return [
             'success'   => true,
-            'token'     => $this->getCsrf()->getCsrfToken(),
             'baseUrl'   => $baseUrl,
             'itemData'  => $itemData,
             'itemState' => $itemState,
