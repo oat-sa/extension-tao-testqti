@@ -25,9 +25,8 @@ define([
     'i18n',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'taoQtiTest/controller/creator/helpers/processingRule',
-    'taoQtiTest/controller/creator/helpers/category'
-], function (_, __, baseTypeHelper, outcomeHelper, processingRuleHelper, categoryHelper) {
+    'taoQtiTest/controller/creator/helpers/processingRule'
+], function (_, __, baseTypeHelper, outcomeHelper, processingRuleHelper) {
     'use strict';
 
     /**
@@ -38,6 +37,12 @@ define([
     var defaultCutScore = 0.5;
 
     /**
+     * The name of the variable containing the score
+     * @type {String}
+     */
+    var defaultScoreIdentifier = 'SCORE';
+
+    /**
      * The list of supported processing modes, indexed by mode identifier
      * @type {Object}
      */
@@ -45,6 +50,7 @@ define([
         none: {
             key: 'none',
             label: __('None'),
+            clean: true,
             description: __('No outcome processing. Erase the existing rules, if any.')
         },
         custom: {
@@ -55,9 +61,15 @@ define([
         total: {
             key: 'total',
             label: __('Total score'),
-            prefix: 'SCORE_',
-            outcome: 'SCORE_TOTAL',
-            outcomeType: baseTypeHelper.FLOAT,
+            signature: /^SCORE_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
+            outcomes: [{
+                formula: 'total',
+                identifier: 'SCORE_TOTAL',
+                weighted: 'SCORE_TOTAL_WEIGHTED',
+                categoryIdentifier: 'SCORE_CATEGORY_%s',
+                categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_%s'
+            }],
+            clean: true,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
@@ -65,15 +77,18 @@ define([
         cut: {
             key: 'cut',
             label: __('Cut score'),
-            prefix: 'PASS_',
-            outcome: 'PASS_TOTAL',
-            outcomeType: baseTypeHelper.BOOLEAN,
-            feedback: 'PASS_TOTAL_RENDERING',
-            feedbackSuffix: '_RENDERING',
-            feedbackType: baseTypeHelper.IDENTIFIER,
-            feedbackMatch: true,
-            feedbackOk: "passed",
-            feedbackFailed: "not_passed",
+            include: 'total',
+            signature: /^PASS_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
+            outcomes: [{
+                formula: 'cut',
+                identifier: 'PASS_ALL',
+                feedback: 'PASS_ALL_RENDERING',
+                feedbackOk: "passed",
+                feedbackFailed: "not_passed",
+                categoryIdentifier: 'PASS_CATEGORY_%s',
+                categoryFeedback: 'PASS_CATEGORY_%s_RENDERING'
+            }],
+            clean: true,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category.')
@@ -81,125 +96,206 @@ define([
     };
 
     /**
-     * List of writers that provides the outcomes for each score processing modes.
-     * The writers are separated from the list of supported modes, as this list is forwarded to the UI templates,
-     * and only data must be provided to templates.
+     * List of writers that provide the outcomes for each score processing formula.
      * @type {Object}
      */
-    var processingModeWriters = {
+    var formulaWriters = {
         /**
-         * Writes the outcomes in the scoring mode "None"
-         * @param {Object} model
+         * Generates the outcomes that compute the "Total score"
+         * @param {Object} descriptor
+         * @param {Object} scoring
+         * @param {Object} outcomes
+         * @param {Array} [categories]
          */
-        none: function processingModeWriterNone(model) {
-            // as no rules must be defined, just erase existing ones
-            removeScoring(model);
-        },
-
-        /**
-         * Writes the outcomes in the scoring mode "Custom"
-         * @param {Object} model
-         */
-        custom: function processingModeWriterCustom() {
-            // just does nothing as we only need to keep intact the existing rules, if any
-        },
-
-        /**
-         * Writes the outcomes in the scoring mode "Total score"
-         * @param {Object} model
-         */
-        total: function processingModeWriterTotal(model) {
-            var processingMode = processingModes.total;
-
-            // erase the existing rules, they will be replaced by those that are defined here
-            removeScoring(model);
+        total: function formulaTotal(descriptor, scoring, outcomes, categories) {
+            var scoreIdentifier = scoring.scoreIdentifier;
+            var weightIdentifier = scoring.weightIdentifier;
 
             // create the outcome and the rule that process the overall score
-            addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode), processingMode.outcomeType);
+            addTotalScoreOutcomes(outcomes, descriptor.identifier, scoreIdentifier);
+            if (descriptor.weighted && scoring.weightIdentifier) {
+                addTotalScoreOutcomes(outcomes, descriptor.weighted, scoreIdentifier, weightIdentifier);
+            }
 
             // create an outcome per categories
-            if (model.scoring.categoryScore) {
-                _.forEach(categoryHelper.listCategories(model), function (category) {
-                    addTotalScoreOutcomes(model, getOutcomeIdentifier(processingMode, category), processingMode.outcomeType, category);
+            if (descriptor.categoryIdentifier && categories) {
+                _.forEach(categories, function (category) {
+                    addTotalScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryIdentifier), scoreIdentifier, null, category);
+                    if (descriptor.categoryWeighted && scoring.weightIdentifier) {
+                        addTotalScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryWeighted), scoreIdentifier, weightIdentifier, category);
+                    }
                 });
             }
         },
 
         /**
-         * Writes the outcomes in the scoring mode "Cut score"
-         * @param {Object} model
+         * Generates the outcomes that compute the "Cut score"
+         * @param {Object} descriptor
+         * @param {Object} scoring
+         * @param {Object} outcomes
+         * @param {Array} [categories]
          */
-        cut: function processingModeWriterCut(model) {
-            var processingMode = processingModes.cut;
-            var outcomeIdentifier = getOutcomeIdentifier(processingMode);
-
-            // erase the existing rules, they will be replaced by those that are defined here
-            removeScoring(model);
+        cut: function formulaCut(descriptor, scoring, outcomes, categories) {
+            var cutScore = scoring.cutScore;
+            var scoreIdentifier = scoring.scoreIdentifier;
+            var weightIdentifier = scoring.weightIdentifier;
 
             // create the outcome and the rule that process the overall score
-            addCutScoreOutcomes(model, outcomeIdentifier, processingMode.outcomeType);
+            addCutScoreOutcomes(outcomes, descriptor.identifier, cutScore, scoreIdentifier, weightIdentifier);
 
             // create the outcome and the rule that process the score feedback
-            if (processingMode.feedback) {
+            if (descriptor.feedback) {
                 addFeedbackScoreOutcomes(
-                    model,
-                    processingMode.feedback,
-                    processingMode.feedbackType,
-                    outcomeIdentifier,
-                    processingMode.outcomeType,
-                    processingMode.feedbackMatch,
-                    processingMode.feedbackOk,
-                    processingMode.feedbackFailed
+                    outcomes,
+                    descriptor.feedback,
+                    descriptor.identifier,
+                    descriptor.feedbackOk,
+                    descriptor.feedbackFailed
                 );
             }
 
             // create an outcome per category
-            if (model.scoring.categoryScore) {
-                _.forEach(categoryHelper.listCategories(model), function (category) {
-                    var categoryOutcomeIdentifier = getOutcomeIdentifier(processingMode, category);
-                    addCutScoreOutcomes(model, categoryOutcomeIdentifier, processingMode.outcomeType, category);
+            if (descriptor.categoryIdentifier && categories) {
+                _.forEach(categories, function (category) {
+                    var categoryOutcomeIdentifier = formatCategoryOutcome(category, descriptor.categoryIdentifier);
+                    addCutScoreOutcomes(outcomes, categoryOutcomeIdentifier, cutScore, scoreIdentifier, weightIdentifier, category);
 
-                    addFeedbackScoreOutcomes(
-                        model,
-                        categoryOutcomeIdentifier + processingMode.feedbackSuffix,
-                        processingMode.feedbackType,
-                        categoryOutcomeIdentifier,
-                        processingMode.outcomeType,
-                        processingMode.feedbackMatch,
-                        processingMode.feedbackOk,
-                        processingMode.feedbackFailed
-                    );
+                    if (descriptor.categoryFeedback) {
+                        addFeedbackScoreOutcomes(
+                            outcomes,
+                            formatCategoryOutcome(category, descriptor.categoryFeedback),
+                            categoryOutcomeIdentifier,
+                            descriptor.feedbackOk,
+                            descriptor.feedbackFailed
+                        );
+                    }
                 });
             }
+
+            return outcomes;
         }
     };
 
-    /**
-     * Produces the identifier of an outcome
-     * @param {Object} processingMode
-     * @param {String} [category]
-     * @returns {String}
-     */
-    function getOutcomeIdentifier(processingMode, category) {
-        if (processingMode.prefix && category) {
-            return processingMode.prefix + category.toUpperCase();
+    var scoringHelper = {
+        /**
+         * Checks the test model against outcome processing mode.
+         * Initializes the scoring property accordingly.
+         *
+         * @param {modelOverseer} modelOverseer
+         * @throws {TypeError} if the modelOverseer is invalid
+         * @fires modelOverseer#scoring-init
+         * @fires modelOverseer#scoring-generate
+         * @fires modelOverseer#scoring-write
+         */
+        init: function init(modelOverseer) {
+            var model;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+
+            // detect the score processing mode and build the descriptor used to manage the UI
+            model.scoring = detectScoring(modelOverseer);
+
+            modelOverseer
+                .on('scoring-change category-change delete', function () {
+                    /**
+                     * Regenerates the outcomes on any significant changes.
+                     * After the outcomes have been generated a write is needed to actually apply the data.
+                     * Other component can listen to this event and eventually prevent the write to happen.
+                     * @event modelOverseer#scoring-generate
+                     * @param {Object} outcomes
+                     */
+                    modelOverseer.trigger('scoring-generate', scoringHelper.generate(modelOverseer));
+                })
+                .on('scoring-generate', function (outcomes) {
+                    outcomeHelper.replaceOutcomes(model, outcomes);
+
+                    /**
+                     * The generated outcome have just been applied on the model.
+                     * @event modelOverseer#scoring-write
+                     * @param {Object} testModel
+                     */
+                    modelOverseer.trigger('scoring-write', model);
+                })
+
+                /**
+                 * @event modelOverseer#scoring-init
+                 * @param {Object} testModel
+                 */
+                .trigger('scoring-init', model);
+        },
+
+        /**
+         * If the processing mode has been set, generates the outcomes that define the scoring.
+         *
+         * @param {modelOverseer} modelOverseer
+         * @returns {Object}
+         * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
+         */
+        generate: function generate(modelOverseer) {
+            var model, scoring, outcomes, processingMode, descriptors, categories;
+
+            if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
+                throw new TypeError("You must provide a valid modelOverseer");
+            }
+
+            model = modelOverseer.getModel();
+            scoring = model.scoring;
+            outcomes = getOutcomes(model);
+
+            // write the score processing mode by generating the outcomes variables, but only if the mode has been set
+            if (scoring) {
+                processingMode = processingModes[scoring.outcomeProcessing];
+                if (processingMode) {
+
+                    if (processingMode.clean) {
+                        // erase the existing rules, they will be replaced by those that are defined here
+                        removeScoring(outcomes);
+                    }
+
+                    // get the recipes that define the formula, include sub-recipes if any
+                    descriptors = getRecipes(processingMode);
+
+                    // only get the categories if requested
+                    if (handleCategories(modelOverseer)) {
+                        categories = modelOverseer.getCategories();
+                    }
+
+                    // will generate outcomes based of the defined formula
+                    _.forEach(descriptors, function(descriptor) {
+                        var writer = formulaWriters[descriptor.formula];
+                        if (!_.isFunction(writer)) {
+                            throw new Error('Unknown score processing formula: ' + descriptor.formula);
+                        }
+                        writer(descriptor, scoring, outcomes, categories);
+                    });
+
+                } else {
+                    throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
+                }
+            }
+
+            return outcomes;
         }
-        return processingMode.outcome;
-    }
+    };
 
     /**
      * Creates an outcome and the rule that process the total score
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
+     * @param {String} [scoreIdentifier]
+     * @param {String} [weightIdentifier]
      * @param {String} [category]
      */
-    function addTotalScoreOutcomes(model, identifier, type, category) {
-        var outcome = outcomeHelper.createOutcome(identifier, type);
+    function addTotalScoreOutcomes(model, identifier, scoreIdentifier, weightIdentifier, category) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var processingRule = processingRuleHelper.setOutcomeValue(identifier,
             processingRuleHelper.sum(
-                processingRuleHelper.testVariables(model.scoring.scoreIdentifier, -1, model.scoring.weightIdentifier, category)
+                processingRuleHelper.testVariables(scoreIdentifier, -1, weightIdentifier, category)
             )
         );
 
@@ -211,20 +307,22 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
+     * @param {String|Number} cutScore
+     * @param {String} [scoreIdentifier]
+     * @param {String} [weightIdentifier]
      * @param {String} [category]
      */
-    function addCutScoreOutcomes(model, identifier, type, category) {
-        var outcome = outcomeHelper.createOutcome(identifier, type);
+    function addCutScoreOutcomes(model, identifier, cutScore, scoreIdentifier, weightIdentifier, category) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
         var processingRule = processingRuleHelper.setOutcomeValue(identifier,
             processingRuleHelper.gte(
                 processingRuleHelper.divide(
                     processingRuleHelper.sum(
-                        processingRuleHelper.testVariables(model.scoring.scoreIdentifier, -1, model.scoring.weightIdentifier, category)
+                        processingRuleHelper.testVariables(scoreIdentifier, -1, weightIdentifier, category)
                     ),
                     processingRuleHelper.numberPresented(category)
                 ),
-                processingRuleHelper.baseValue(model.scoring.cutScore, baseTypeHelper.FLOAT)
+                processingRuleHelper.baseValue(cutScore, baseTypeHelper.FLOAT)
             )
         );
 
@@ -236,20 +334,18 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String|Number} type
      * @param {String} variable
-     * @param {String|Number} variableType
-     * @param {*} matchValue
-     * @param {*} passed
-     * @param {*} notPassed
+     * @param {String} passed
+     * @param {String} notPassed
      */
-    function addFeedbackScoreOutcomes(model, identifier, type, variable, variableType, matchValue, passed, notPassed) {
+    function addFeedbackScoreOutcomes(model, identifier, variable, passed, notPassed) {
+        var type = baseTypeHelper.IDENTIFIER;
         var outcome = outcomeHelper.createOutcome(identifier, type);
         var processingRule = processingRuleHelper.outcomeCondition(
             processingRuleHelper.outcomeIf(
                 processingRuleHelper.match(
                     processingRuleHelper.variable(variable),
-                    processingRuleHelper.baseValue(matchValue, variableType)
+                    processingRuleHelper.baseValue(true, baseTypeHelper.BOOLEAN)
                 ),
                 processingRuleHelper.setOutcomeValue(identifier,
                     processingRuleHelper.baseValue(passed, type)
@@ -267,6 +363,161 @@ define([
     }
 
     /**
+     * Formats the identifier of a category outcome
+     * @param {String} category
+     * @param {String} template
+     * @returns {String}
+     */
+    function formatCategoryOutcome(category, template) {
+        return template.replace(/%s/g, category.toUpperCase());
+    }
+
+    /**
+     * Checks whether an identifier belongs to a scoring mode
+     * @param {String} identifier
+     * @param {Object} processingMode
+     * @param {Boolean} [onlyCategories]
+     * @returns {Boolean}
+     */
+    function belongToScoringMode(identifier, processingMode, onlyCategories) {
+        var match = false;
+        if (processingMode.signature && processingMode.signature.test(identifier)) {
+            match = true;
+            if (onlyCategories) {
+                _.forEach(processingMode.outcomes, function(outcome) {
+                    if (outcome.identifier === identifier ||
+                        (outcome.weighted && outcome.weighted === identifier) ||
+                        (outcome.feedback && outcome.feedback === identifier)) {
+                        match = false;
+                        return false;
+                    }
+                });
+            }
+        }
+        return match;
+    }
+
+    /**
+     * Checks if all the outcomes are related to the scoring mode
+     * @param {Object} processingMode
+     * @param {Array} outcomes
+     * @param {Array} categories
+     * @returns {Boolean}
+     */
+    function matchScoringMode(processingMode, outcomes, categories) {
+        var signatures = getSignatures(processingMode);
+        var match = true;
+
+        // check the outcomes definitions against the provided identifier
+        function matchScoringOutcome(mode, identifier) {
+            var outcomeMatch = false;
+
+            // first level, the signature must match
+            if (mode.signature && mode.signature.test(identifier)) {
+                _.forEach(mode.outcomes, function(outcome) {
+                    // second level, the main identifier must match
+                    if (outcome.identifier !== identifier &&
+                        (!outcome.weighted || (outcome.weighted && outcome.weighted !== identifier)) &&
+                        (!outcome.feedback || (outcome.feedback && outcome.feedback !== identifier))) {
+
+                        if (categories) {
+                            // third level, a category must match
+                            _.forEach(categories, function(category) {
+                                if (outcome.categoryIdentifier &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryIdentifier)) {
+                                    outcomeMatch = true;
+                                } else if (outcome.categoryWeighted &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryWeighted)) {
+                                    outcomeMatch = true;
+                                } else if (outcome.categoryFeedback &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryFeedback)) {
+                                    outcomeMatch = true;
+                                }
+                                // found something?
+                                if (outcomeMatch) {
+                                    return false;
+                                }
+                            });
+                        }
+                    } else {
+                        outcomeMatch = true;
+                    }
+
+                    // found something?
+                    if (outcomeMatch) {
+                        return false;
+                    }
+                });
+            }
+
+            if (!outcomeMatch && mode.include) {
+                outcomeMatch = matchScoringOutcome(processingModes[mode.include], identifier);
+            }
+
+            return outcomeMatch;
+        }
+
+        // only check the outcomes that are related to the scoring mode
+        _.forEach(outcomes, function(identifier) {
+            var signatureMatch = false;
+            _.forEach(signatures, function(signature) {
+                if (signature.test(identifier)) {
+                    signatureMatch = true;
+                    return false;
+                }
+            });
+
+            if (signatureMatch) {
+                match = matchScoringOutcome(processingMode, identifier);
+
+                if (!match) {
+                    return false;
+                }
+            }
+        });
+
+        return match;
+    }
+
+    /**
+     * Gets all the outcomes signatures related to a scoring mode
+     * @param {Object} processingMode
+     * @returns {Array}
+     */
+    function getSignatures(processingMode) {
+        var signatures = [];
+
+        // list the signatures for each processing mode, taking care of includes
+        while(processingMode) {
+            if (processingMode.signature) {
+                signatures.push(processingMode.signature);
+            }
+            processingMode = processingMode.include && processingModes[processingMode.include];
+        }
+
+        return signatures;
+    }
+
+    /**
+     * Gets all the outcomes recipes related to a scoring mode
+     * @param {Object} processingMode
+     * @returns {Array}
+     */
+    function getRecipes(processingMode) {
+        var descriptors = [];
+
+        // get the recipes that define the formula, include sub-recipes if any
+        while(processingMode) {
+            if (processingMode.outcomes) {
+                descriptors = descriptors.concat(processingMode.outcomes);
+            }
+            processingMode = processingMode.include && processingModes[processingMode.include];
+        }
+
+        return descriptors;
+    }
+
+    /**
      * Checks if an outcome is related to the outcome processing,
      * then returns the processing mode descriptor.
      * @param {Object|String} outcome
@@ -276,9 +527,7 @@ define([
         var identifier = outcomeHelper.getOutcomeIdentifier(outcome);
         var mode = null;
         _.forEach(processingModes, function (processingMode) {
-            if ((processingMode.prefix && identifier.indexOf(processingMode.prefix) === 0) ||
-                (processingMode.outcome && processingMode.outcome === identifier) ||
-                (processingMode.feedback && processingMode.feedback === identifier)) {
+            if (belongToScoringMode(identifier, processingMode)) {
                 mode = processingMode;
                 return false;
             }
@@ -302,13 +551,23 @@ define([
      */
     function listScoringModes(outcomes) {
         var modes = {};
-        _.forEach(outcomes, function (outcomeDeclaration) {
-            var mode = getScoringMode(outcomeDeclaration);
+        _.forEach(outcomes, function (outcome) {
+            var mode = getScoringMode(outcome);
             if (mode) {
                 modes[mode.key] = true;
             }
         });
         return _.keys(modes);
+    }
+
+    /**
+     * Checks whether the categories have to be taken into account
+     * @param {modelOverseer} modelOverseer
+     * @returns {Boolean}
+     */
+    function handleCategories(modelOverseer) {
+        var model = modelOverseer.getModel();
+        return !!(model.scoring && model.scoring.categoryScore);
     }
 
     /**
@@ -321,9 +580,7 @@ define([
         _.forEach(outcomeHelper.getOutcomeDeclarations(model), function (outcomeDeclaration) {
             var identifier = outcomeHelper.getOutcomeIdentifier(outcomeDeclaration);
             _.forEach(processingModes, function (processingMode) {
-                if ((!processingMode.outcome || processingMode.outcome !== identifier) &&
-                    (!processingMode.feedback || processingMode.feedback !== identifier) &&
-                    processingMode.prefix && identifier.indexOf(processingMode.prefix) === 0) {
+                if (belongToScoringMode(identifier, processingMode, true)) {
                     categoryOutcomes = true;
                     return false;
                 }
@@ -366,10 +623,11 @@ define([
 
     /**
      * Detects the outcome processing mode for the scoring
-     * @param {Object} model
+     * @param {modelOverseer} modelOverseer
      * @returns {String}
      */
-    function getOutcomeProcessing(model) {
+    function getOutcomeProcessing(modelOverseer) {
+        var model = modelOverseer.getModel();
         var outcomeDeclarations = outcomeHelper.getOutcomeDeclarations(model);
         var outcomeRules = outcomeHelper.getOutcomeProcessingRules(model);
 
@@ -378,6 +636,7 @@ define([
         var processing = listScoringModes(outcomeRules);
         var diff = _.difference(declarations, processing);
         var count = _.size(declarations);
+        var included;
 
         // default fallback, applied when several modes are detected at the same time
         var outcomeProcessing = 'custom';
@@ -387,9 +646,28 @@ define([
             if (!count) {
                 // no mode detected, set the mode to none
                 outcomeProcessing = 'none';
-            } else if (count === 1 && _.isEmpty(diff)) {
-                // single mode detected, keep the last got key
-                outcomeProcessing = processing[0];
+            } else if (_.isEmpty(diff)) {
+                if (count > 1) {
+                    // several modes detected, try to reduce the list by detecting includes
+                    included = [];
+                    _.forEach(declarations, function(mode) {
+                        if (processingModes[mode] && processingModes[mode].include) {
+                            included.push(processingModes[mode].include);
+                        }
+                    });
+                    processing = _.difference(processing, included);
+                    count = _.size(processing);
+                }
+
+                if (count === 1) {
+                    // single mode detected, keep the last got key
+                    outcomeProcessing = processing[0];
+
+                    // check if all outcomes are strictly related to the detected mode
+                    if (!matchScoringMode(processingModes[outcomeProcessing], modelOverseer.getOutcomesNames(), modelOverseer.getCategories())) {
+                        outcomeProcessing = 'custom';
+                    }
+                }
             }
         }
 
@@ -397,52 +675,82 @@ define([
     }
 
     /**
-     * Removes all outcome processing outcome variables
+     * Detects the score processing mode and builds the descriptor used to manage the UI.
+     * @param {modelOverseer} modelOverseer
+     * @returns {Object}
+     */
+    function detectScoring(modelOverseer) {
+        var model = modelOverseer.getModel();
+        return {
+            modes: processingModes,
+            scoreIdentifier: defaultScoreIdentifier,
+            weightIdentifier: getWeightIdentifier(model),
+            cutScore: getCutScore(model),
+            categoryScore: hasCategoryOutcome(model),
+            outcomeProcessing: getOutcomeProcessing(modelOverseer)
+        };
+    }
+
+    /**
+     * Removes all scoring outcomes
      * @param {Object} model
      */
     function removeScoring(model) {
-        var scoringOutcomes = outcomeHelper.listOutcomes(model, isScoringOutcome);
-        outcomeHelper.removeOutcomes(model, scoringOutcomes);
-    }
+        var scoringOutcomes = _.indexBy(outcomeHelper.listOutcomes(model, isScoringOutcome), function (outcome) {
+            return outcome;
+        });
 
-    return {
-        /**
-         * Checks the test model against outcome processing mode.
-         * Initializes the scoring property accordingly.
-         *
-         * @param {Object} model
-         */
-        read: function read(model) {
-            // detect the score processing mode and build the descriptor used to manage the UI
-            model.scoring = {
-                modes: processingModes,
-                scoreIdentifier: 'SCORE',
-                weightIdentifier: getWeightIdentifier(model),
-                cutScore: getCutScore(model),
-                categoryScore: hasCategoryOutcome(model),
-                outcomeProcessing: getOutcomeProcessing(model)
-            };
-        },
+        outcomeHelper.removeOutcomes(model, function(outcome) {
+            var match = false;
 
-        /**
-         * If the processing mode has been set, generates the outcomes that define the scoring.
-         *
-         * @param {Object} model
-         */
-        write: function write(model) {
-            var processingModeWriter;
-            var scoring = model.scoring;
+            function browseExpressions(processingRule) {
+                if (_.isArray(processingRule)) {
+                    _.forEach(processingRule, browseExpressions);
+                } else if (processingRule) {
+                    if (scoringOutcomes[outcomeHelper.getOutcomeIdentifier(processingRule)]) {
+                        match = true;
+                    }
 
-            // write the score processing mode by generating the outcomes variables, but only if the mode has been set
-            if (scoring) {
-                processingModeWriter = processingModeWriters[scoring.outcomeProcessing];
-
-                if (processingModeWriter) {
-                    processingModeWriter(model);
-                } else {
-                    throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
+                    if (!match && processingRule.expression) {
+                        browseExpressions(processingRule.expression);
+                    }
+                    if (!match && processingRule.expressions) {
+                        browseExpressions(processingRule.expressions);
+                    }
+                    if (!match && processingRule.outcomeRules) {
+                        browseExpressions(processingRule.outcomeRules);
+                    }
+                    if (!match && processingRule.outcomeIf) {
+                        browseExpressions(processingRule.outcomeIf);
+                    }
+                    if (!match && processingRule.outcomeElse) {
+                        browseExpressions(processingRule.outcomeElse);
+                    }
                 }
             }
-        }
-    };
+
+            if (outcome['qti-type'] === 'outcomeCondition') {
+                browseExpressions(outcome);
+            } else {
+                match = !!scoringOutcomes[outcomeHelper.getOutcomeIdentifier(outcome)];
+            }
+            return match;
+        });
+    }
+
+    /**
+     * Gets a copy of the list of outcomes, provides the same structure as the model
+     * @param {Object} model
+     * @returns {Object}
+     */
+    function getOutcomes(model) {
+        return {
+            outcomeDeclarations: [].concat(outcomeHelper.getOutcomeDeclarations(model)),
+            outcomeProcessing: {
+                outcomeRules: [].concat(outcomeHelper.getOutcomeProcessingRules(model))
+            }
+        };
+    }
+
+    return scoringHelper;
 });
