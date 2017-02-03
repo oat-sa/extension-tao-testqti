@@ -105,6 +105,11 @@ define([
                 allMenus[menuId].renderItem(menuItem);
             }
         });
+
+        // we tell the menus that all their items have been rendered
+        _.forOwn(allMenus, function(menu) {
+            menu.trigger('itemsrendered');
+        });
     }
 
     return function toolbarComponentFactory(specs, defaults) {

@@ -66,12 +66,12 @@ define([
         buttonComponent = componentFactory(specs, defaults)
             .setTemplate(buttonTpl)
             .on('enable', function() {
-                if (this.$component) {
+                if (this.is('rendered')) {
                     this.$component.removeProp('disabled');
                 }
             })
             .on('disable', function() {
-                if (this.$component) {
+                if (this.is('rendered')) {
                     this.$component.prop('disabled', true);
                 }
             })
@@ -92,8 +92,7 @@ define([
                         self.trigger('click', event);
                     });
 
-            })
-            .init(); // todo: really?
+            });
 
         return buttonComponent;
     };

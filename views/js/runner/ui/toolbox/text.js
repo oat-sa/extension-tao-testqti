@@ -43,8 +43,7 @@ define([
             .setTemplate(textTpl)
             .on('init', function() {
                 this.id = this.config.control;
-            })
-            .init();
+            });
 
         return buttonComponent;
     };

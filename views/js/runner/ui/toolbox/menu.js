@@ -58,6 +58,12 @@ define([
             });
         },
 
+        hasDisplayedItems: function hasDisplayedItems() {
+            return this.menuItems.some(function (item) {
+                return !item.is('disabled') && !item.is('hidden');
+            });
+        },
+
         activate: function activate() {
             this.setState('active', true);
         },
@@ -83,7 +89,7 @@ define([
         },
 
         openMenu: function openMenu()  {
-            var self = this;
+            // var self = this;
 
             // show the menu
             hider.show(this.$menuContainer);
