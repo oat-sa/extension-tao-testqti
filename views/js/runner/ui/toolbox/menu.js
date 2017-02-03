@@ -275,6 +275,7 @@ define([
                 var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
 
                 if (currentKeyCode === keyCodes.UP) {
+                    e.stopPropagation();
                     self.highlightIndex = self.menuItems.length - 1;
                     self.$menuContainer.focus();
                     self.highlightItem(self.menuItems[self.highlightIndex].id);
