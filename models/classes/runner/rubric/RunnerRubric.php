@@ -33,7 +33,8 @@ interface RunnerRubric
     /**
      * Gets the rubrics according to the current session state
      * @param RunnerServiceContext $context
+     * @param string $itemRef (optional) otherwise use the current 
      * @return mixed
      */
-    public function getRubrics(RunnerServiceContext $context);
+    public function getRubrics(RunnerServiceContext $context, $itemRef = null);
 }
