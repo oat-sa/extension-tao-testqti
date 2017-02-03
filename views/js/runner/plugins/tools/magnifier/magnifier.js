@@ -124,7 +124,9 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                return true;
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-magnifier
+                return !!context.options.magnifier;
             }
 
             /**

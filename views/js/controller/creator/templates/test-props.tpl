@@ -184,4 +184,17 @@
         </div>
     </div>
 {{/with}}
+
+    <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
+
+    <!-- assessmentTest/outcomeDeclarations -->
+    <div class="test-outcome-declarations panel toggled">
+        <div class="grid-row test-outcomes-generate">
+            <div class="col-12 align-right">
+                <button class="btn-info small" data-action="generate-outcomes"><span class="icon icon-reset"></span>{{__ 'Regenerate'}}</button>
+            </div>
+        </div>
+        <div class="outcome-declarations"></div>
+    </div>
+
 </div>

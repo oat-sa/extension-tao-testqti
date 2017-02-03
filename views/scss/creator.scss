@@ -252,6 +252,26 @@
                 max-width: inherit;
                 min-width: inherit;
             }
+
+            .header {
+                background-color: $uiClickableActiveBg;
+                color: $textHighlight;
+                font-size: 1.2rem;
+                padding: 0 6px;
+                margin: 2px 1px;
+            }
+
+            .line {
+                background-color: $uiGeneralContentBg;
+                color: $textColor;
+                font-size: 1rem;
+                padding: 0 6px;
+                margin: 1px;
+            }
+
+            .align-right {
+                text-align: right;
+            }
         }
         .panel {
             clear : both;
