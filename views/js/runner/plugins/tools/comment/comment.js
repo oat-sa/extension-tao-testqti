@@ -197,6 +197,7 @@ define([
                 hider.hide(this.$form);
             }
             this.button.disable();
+            this.button.deactivate();
         },
 
         /**
