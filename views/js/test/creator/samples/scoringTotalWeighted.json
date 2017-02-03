@@ -21,18 +21,7 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "SCORE_HISTORY",
-    "cardinality": 0,
-    "baseType": 3
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "SCORE_MATH",
+    "identifier": "SCORE_TOTAL_WEIGHTED",
     "cardinality": 0,
     "baseType": 3
   }],
@@ -103,7 +92,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090613110988",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-3",
         "required": false,
@@ -130,7 +123,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090616225291",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-2",
         "required": false,
@@ -184,7 +181,11 @@
         "href": "http://tao.dev/tao.rdf#i148309061819894",
         "categories": ["history"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-4",
         "required": false,
@@ -211,7 +212,11 @@
         "href": "http://tao.dev/tao.rdf#i1483090620510297",
         "categories": ["history"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-5",
         "required": false,
@@ -238,7 +243,11 @@
         "href": "http://tao.dev/tao.rdf#i14830906232870100",
         "categories": ["math"],
         "variableMappings": {},
-        "weights": [],
+        "weights": [{
+          "qti-type": "weight",
+          "identifier": "WEIGHT",
+          "value": 1
+        }],
         "templateDefaults": {},
         "identifier": "item-6",
         "required": false,
@@ -308,7 +317,7 @@
       }
     }, {
       "qti-type": "setOutcomeValue",
-      "identifier": "SCORE_HISTORY",
+      "identifier": "SCORE_TOTAL_WEIGHTED",
       "expression": {
         "qti-type": "sum",
         "minOperands": 1,
@@ -319,28 +328,9 @@
           "qti-type": "testVariables",
           "variableIdentifier": "SCORE",
           "baseType": -1,
-          "weightIdentifier": "",
+          "weightIdentifier": "WEIGHT",
           "sectionIdentifier": "",
-          "includeCategories": ["history"],
-          "excludeCategories": []
-        }]
-      }
-    }, {
-      "qti-type": "setOutcomeValue",
-      "identifier": "SCORE_MATH",
-      "expression": {
-        "qti-type": "sum",
-        "minOperands": 1,
-        "maxOperands": -1,
-        "acceptedCardinalities": [0, 1, 2],
-        "acceptedBaseTypes": [2, 3],
-        "expressions": [{
-          "qti-type": "testVariables",
-          "variableIdentifier": "SCORE",
-          "baseType": -1,
-          "weightIdentifier": "",
-          "sectionIdentifier": "",
-          "includeCategories": ["math"],
+          "includeCategories": [],
           "excludeCategories": []
         }]
       }
