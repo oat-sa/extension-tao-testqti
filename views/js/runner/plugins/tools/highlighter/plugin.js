@@ -53,14 +53,6 @@ define([
 
             var highlighter = highlighterFactory(testRunner);
 
-            /**
-             * Checks if the plugin is currently available
-             * @returns {Boolean}
-             */
-            function isEnabled() {
-                return self.getState('enabled') !== false;
-            }
-
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createItem({
                 title: __('Highlight text'),
@@ -96,11 +88,33 @@ define([
                 }
             }
 
+            //start disabled
+            this.disable();
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-highlighter
+                return !!context.options.highlighter;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
+
             //update plugin state based on changes
             testRunner
-                .on('loaditem', function () {
-                    self.show();
-                })
+                .on('loaditem', togglePlugin)
                 .on('enabletools renderitem', function () {
                     self.enable();
                 })

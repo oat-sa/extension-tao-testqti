@@ -30,117 +30,11 @@ define([
     'use strict';
 
     /**
-     * Proxy request function. Returns a promise
-     * Applied options: asynchronous call, JSON data, no cache
-     * @param {proxy} proxy
-     * @param {String} url
-     * @param {Object} [params]
-     * @param {String} [contentType] - to force the content type
-     * @param {Boolean} [noToken] - to disable the token
-     * @returns {Promise}
-     */
-    function request(proxy, url, params, contentType, noToken) {
-
-        //run the request Promise
-        var requestPromise = function requestPromise(){
-            return new Promise(function(resolve, reject) {
-                var headers = {};
-                var tokenHandler = proxy.getTokenHandler();
-                var token;
-                if (!noToken) {
-                    token = tokenHandler.getToken();
-                    if (token) {
-                        headers['X-Auth-Token'] = token;
-                    }
-                }
-                $.ajax({
-                    url: url,
-                    type: params ? 'POST' : 'GET',
-                    cache: false,
-                    data: params,
-                    headers: headers,
-                    async: true,
-                    dataType: 'json',
-                    contentType : contentType || undefined,
-                    timeout: proxy.configStorage.getTimeout()
-                })
-                .done(function(data) {
-                    if (data && data.token) {
-                        tokenHandler.setToken(data.token);
-                    }
-
-                    if (data && data.success) {
-                        resolve(data);
-                    } else {
-                        reject(data);
-                    }
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    var data;
-                    try {
-                        data = JSON.parse(jqXHR.responseText);
-                    } catch (e) {
-                        data = {
-                            success: false,
-                            source: 'network',
-                            purpose: 'proxy',
-                            context: this,
-                            code: jqXHR.status,
-                            type: textStatus || 'error',
-                            message: errorThrown || __('An error occurred!')
-                        };
-                    }
-
-                    if (data.token) {
-                        tokenHandler.setToken(data.token);
-                    } else if (!noToken) {
-                        tokenHandler.setToken(token);
-                    }
-
-                    reject(data);
-                });
-            });
-        };
-
-        //no token protection, run the request
-        if(noToken === true){
-            return requestPromise();
-        }
-
-        //first promise, keep the ref
-        if(!proxy._runningPromise){
-            proxy._runningPromise = requestPromise();
-            return proxy._runningPromise;
-        }
-
-        //create a wrapping promise
-        return new Promise(function(resolve, reject){
-            //run the current request
-            var runRequest = function(){
-                var p = requestPromise();
-                proxy._runningPromise = p; //and keep the ref
-                p.then(resolve).catch(reject);
-            };
-
-            //wait the previous to resolve or fail and run the current one
-            proxy._runningPromise.then(runRequest).catch(runRequest);
-        });
-    }
-
-    /**
      * QTI proxy definition
      * Related to remote services calls
      * @type {Object}
      */
     var qtiServiceProxy = {
-
-        /**
-         * Keep a reference of the last running promise to
-         * ensure the tokened protected called are chained
-         * @type {Promise}
-         */
-        _runningPromise : null,
-
 
         /**
          * Initializes the proxy
@@ -153,13 +47,120 @@ define([
          *                      Any error will be provided if rejected.
          */
         init: function init(config, params) {
+
+            var self = this;
+
             var initConfig = config || {};
 
             // store config in a dedicated configStorage
             this.configStorage = configFactory(initConfig);
 
+            /**
+             * Keep a reference of the last running promise to
+             * ensure the tokened protected called are chained
+             * @type {Promise}
+             */
+            this.runningPromise = null;
+
+            /**
+             * Proxy request function. Returns a promise
+             * Applied options: asynchronous call, JSON data, no cache
+             * @param {String} url
+             * @param {Object} [params]
+             * @param {String} [contentType] - to force the content type
+             * @param {Boolean} [noToken] - to disable the token
+             * @returns {Promise}
+             */
+            this.request = function request(url, reqParams, contentType, noToken) {
+
+                //run the request Promise
+                var requestPromise = function requestPromise() {
+                    return new Promise(function(resolve, reject) {
+                        var headers = {};
+                        var tokenHandler = self.getTokenHandler();
+                        var token;
+                        if (!noToken) {
+                            token = tokenHandler.getToken();
+                            if (token) {
+                                headers['X-Auth-Token'] = token;
+                            }
+                        }
+                        $.ajax({
+                            url: url,
+                            type: reqParams ? 'POST' : 'GET',
+                            cache: false,
+                            data: reqParams,
+                            headers: headers,
+                            async: true,
+                            dataType: 'json',
+                            contentType: contentType || undefined,
+                            timeout: self.configStorage.getTimeout()
+                        })
+                        .done(function(data) {
+                            if (data && data.token) {
+                                tokenHandler.setToken(data.token);
+                            }
+
+                            if (data && data.success) {
+                                resolve(data);
+                            } else {
+                                reject(data);
+                            }
+                        })
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                            var data;
+                            try {
+                                data = JSON.parse(jqXHR.responseText);
+                            } catch (e) {
+                                data = {
+                                    success: false,
+                                    source: 'network',
+                                    purpose: 'proxy',
+                                    context: this,
+                                    code: jqXHR.status,
+                                    type: textStatus || 'error',
+                                    message: errorThrown || __('An error occurred!')
+                                };
+                            }
+
+                            if (data.token) {
+                                tokenHandler.setToken(data.token);
+                            } else if (!noToken) {
+                                tokenHandler.setToken(token);
+                            }
+
+                            reject(data);
+                        });
+                    });
+                };
+
+                //no token protection, run the request
+                if (noToken === true) {
+                    return requestPromise();
+                }
+
+                //first promise, keep the ref
+                if (!self.runningPromise) {
+                    self.runningPromise = requestPromise();
+                    return self.runningPromise;
+                }
+
+                //create a wrapping promise
+                return new Promise(function(resolve, reject) {
+                    //run the current request
+                    var runRequest = function() {
+                        var p = requestPromise();
+                        self.runningPromise = p; //and keep the ref
+                        p.then(resolve).catch(reject);
+                    };
+
+                    //wait the previous to resolve or fail and run the current one
+                    self.runningPromise.then(runRequest).catch(runRequest);
+                });
+            };
+
             // request for initialization
-            return request(this, this.configStorage.getTestActionUrl('init'), params);
+            return this.request(this.configStorage.getTestActionUrl('init'), params);
         },
 
         /**
@@ -170,7 +171,7 @@ define([
         destroy: function destroy() {
             // no request, just a resources cleaning
             this.configStorage = null;
-            this._runningPromise = null;
+            this.runningPromise = null;
 
             // the method must return a promise
             return Promise.resolve();
@@ -182,7 +183,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestData: function getTestData() {
-            return request(this, this.configStorage.getTestActionUrl('getTestData'));
+            return this.request(this.configStorage.getTestActionUrl('getTestData'));
         },
 
         /**
@@ -191,7 +192,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestContext: function getTestContext() {
-            return request(this, this.configStorage.getTestActionUrl('getTestContext'));
+            return this.request(this.configStorage.getTestActionUrl('getTestContext'));
         },
 
         /**
@@ -200,7 +201,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getTestMap: function getTestMap() {
-            return request(this, this.configStorage.getTestActionUrl('getTestMap'));
+            return this.request(this.configStorage.getTestActionUrl('getTestMap'));
         },
 
         /**
@@ -211,7 +212,9 @@ define([
          * @fires sendVariables
          */
         sendVariables: function sendVariables(variables) {
-            return request(this, this.configStorage.getTestActionUrl('storeTraceData'), { traceData : JSON.stringify(variables) });
+            return this.request(this.configStorage.getTestActionUrl('storeTraceData'), {
+                traceData: JSON.stringify(variables)
+            });
         },
 
         /**
@@ -222,7 +225,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            return request(this, this.configStorage.getTestActionUrl(action), params);
+            return this.request(this.configStorage.getTestActionUrl(action), params);
         },
 
         /**
@@ -232,7 +235,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         getItem: function getItem(uri) {
-            return request(this, this.configStorage.getItemActionUrl(uri, 'getItem'));
+            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'));
         },
 
         /**
@@ -244,12 +247,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(uri, state, response, params) {
-            var body = JSON.stringify( _.merge({
-                itemState : state,
-                itemResponse : response
+            var body = JSON.stringify(_.merge({
+                itemState: state,
+                itemResponse: response
             }, params || {}));
 
-            return request(this, this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
+            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
         },
 
         /**
@@ -261,7 +264,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(uri, action, params) {
-            return request(this, this.configStorage.getItemActionUrl(uri, action), params);
+            return this.request(this.configStorage.getItemActionUrl(uri, action), params);
         },
 
         /**
@@ -274,7 +277,7 @@ define([
          * @fires telemetry
          */
         telemetry: function telemetry(uri, signal, params) {
-            return request(this, this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
+            return this.request(this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
         },
 
         /**

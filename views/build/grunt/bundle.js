@@ -21,8 +21,9 @@ module.exports = function(grunt) {
         'qtiInfoControlContext' : root + '/taoQtiItem/views/js/runtime/qtiInfoControlContext',
     };
 
-    var runtimeLibsPattern  = ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'];
-    var runtimeLibs         = ext.getExtensionSources('taoQtiItem', runtimeLibsPattern, true);
+    var itemRuntime = ext.getExtensionSources('taoQtiItem', ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'], true);
+    var testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
+    var testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
 
     /**
      * Remove bundled and bundling files
@@ -55,8 +56,8 @@ module.exports = function(grunt) {
             mainConfigFile : './config/requirejs.build.js',
             findNestedDependencies : true,
             paths : paths,
-            include: ['lib/require', 'loader/bootstrap'].concat(runtimeLibs),
-            excludeShallow : ['mathJax', 'ckeditor'],
+            include: ['lib/require', 'loader/bootstrap'].concat(testRuntime).concat(itemRuntime),
+            excludeShallow : ['mathJax', 'ckeditor'].concat(testPlugins),
             exclude : ['json!i18ntr/messages.json'],
             name: "taoQtiTest/controller/runner/runner",
             out: out + "/qtiTestRunner.min.js"
