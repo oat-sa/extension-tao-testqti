@@ -48,13 +48,11 @@
                         text-shadow: none;
                     }
                     background: whiten($info, .9);
+                    border-color: white(.8);
 
                     &:hover {
-                        background: white;
+                        background: white(1);
                     }
-                }
-                &:active {
-                    border-color: white;
                 }
 
             }
