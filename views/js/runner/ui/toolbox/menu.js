@@ -104,21 +104,17 @@ define([
             // handle highlighting
             this.turnOffItems();
             this.highlightIndex = this.menuItems.length; // we start on the button, not at the max array index
-                                                     // which would be items.length-1
+                                                         // which would be menuItems.length-1
             // focus the menu
             if(document.activeElement){
                 document.activeElement.blur();
             }
             this.$menuContainer.focus();
 
-            // close on click outside of the component
-            // $(document).on('click.toolboxMenu', function(e) {
-            //     var $target = $(e.target);
-            //     console.log('click detected');
-            //     if ($target.closest('[data-control="' + self.config.control + '"]').length === 0) {
-            //         self.closeMenu();
-            //     }
-            // });
+            this.setState('opened', true);
+
+            this.trigger('openmenu', this);
+
         },
 
         closeMenu: function closeMenu() {
@@ -129,6 +125,9 @@ define([
             this.turnOffItems();
             this.disableShortcuts();
             $(document).off('.toolboxMenu');
+            this.setState('opened', false);
+
+            this.trigger('closemenu', this);
         },
 
         mouseOverItem: function mouseOverItem(itemId) {
@@ -270,19 +269,12 @@ define([
 
                 this.disable(); // always render disabled by default
 
-                /* * /
-                this.$menuContainer.on('focusout', function() {
-                    // fixme: do not automatically close the menu if the user clicks on the button
-                    console.log('blur');
-                    // if(document.activeElement){
-                    //     console.dir(document.activeElement);
-                    // }
-                    self.closeMenu();
-                });
-                /* */
-
                 this.$component.on('click', function toggleMenu(e) {
                     e.preventDefault();
+
+                    if(! self.is('opened')) {
+                        e.stopPropagation(); // prevent window handler to auto close the menu on click
+                    }
                     self.toggleMenu();
                 });
 

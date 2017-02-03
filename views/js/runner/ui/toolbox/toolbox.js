@@ -22,27 +22,37 @@
  */
 define([
     'lodash',
+    'jquery',
     'ui/component',
     'taoQtiTest/runner/ui/toolbox/item',
     'taoQtiTest/runner/ui/toolbox/menu',
     'taoQtiTest/runner/ui/toolbox/text',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox'
-], function(_, componentFactory, itemFactory, menuFactory, textFactory, toolboxTpl) {
+], function(_, $, componentFactory, itemFactory, menuFactory, textFactory, toolboxTpl) {
     'use strict';
 
     var toolbarComponentApi = {
 
         initToolbox: function initToolbox() {
-            /**
-             * todo: describe this properly
-             * @type {Object[]} - the description of a toolbox item
-             */
-            this.allItems = []; // we use an array to maintain insertion order
+            this.allItems = [];
+            this.allMenus = [];
         },
 
         createMenu: function createMenu(config) {
-            var menu = menuFactory().init(config);
+            var self = this,
+                menu = menuFactory().init(config);
             this.allItems.push(menu);
+            this.allMenus.push(menu);
+
+            // add an event handler to close all opened menu when opening
+            menu.on('openmenu', function closeAllMenuExcept(openedMenu) {
+                self.allMenus.forEach(function(current) {
+                    if (openedMenu.getId() !== current.getId()) {
+                        current.closeMenu();
+                    }
+                });
+            });
+
             return menu;
         },
 
@@ -93,6 +103,7 @@ define([
         menuEntries.forEach(function (menuItem) {
             var menuId = menuItem.getMenuId();
 
+            //fixme : we have this in this.allMenus now !
             // retrieve the menu instance if needed
             if (menuId && !allMenus[menuId]) {
                 allMenus[menuId] = _.find(self.allItems, function(item) {
@@ -121,7 +132,27 @@ define([
             .on('init', function () {
                 this.initToolbox();
             })
+            // overridable renderer
             .on('render.defaultRenderer', defaultRenderer)
+
+            // non-overridable renderer
+            .on('render', function() {
+                var self = this;
+
+                // fixme: try to bind this behavior on the blur event of each menu
+                $(document).off('.toolboxmenu');
+                $(document).on('click.toolboxmenu', function() {
+                    self.allMenus.forEach(function(menu) {
+                        if (menu.is('opened')) {
+                            menu.closeMenu();
+                        }
+                    });
+                });
+
+            })
+            .on('destroy', function() {
+                $(document).off('.toolboxmenu');
+            })
             .setTemplate(toolboxTpl);
 
         // todo: implement destroy behavior on each component
