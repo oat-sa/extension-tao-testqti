@@ -80,14 +80,25 @@ define([
                 icon : 'strike-through'
             }));
 
-
-
             /**
              * Checks if the plugin is currently available
              * @returns {Boolean}
              */
             function isEnabled() {
-                return true;
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-eliminator
+                return !!context.options.eliminator;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
             }
 
             //add a new mask each time the button is pressed
@@ -113,6 +124,7 @@ define([
 
             //update plugin state based on changes
             testRunner
+                .on('loaditem', togglePlugin)
                 .on('renderitem', function conditionalInit() {
                     // show button only when in the presence of choice interactions
                     self.$choiceInteractions = $container.find('.qti-choiceInteraction');
