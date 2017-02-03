@@ -30,9 +30,8 @@ define([
     'util/namespace',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/plugins/navigation/review/navigator',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
+    'taoQtiTest/runner/plugins/navigation/review/navigator'
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory) {
     'use strict';
 
     /**
@@ -100,11 +99,17 @@ define([
 
                 $button.find('.icon').attr('class', 'icon icon-' + data.icon);
                 $button.find('.text').text(data.text);
-            }
-            if (data.control === 'hide-review' || data.control === 'unset-item-flag') {
-                button.activate();
-            } else {
-                button.deactivate();
+
+                if (button.is('active')) {
+                    button.deactivate();
+                } else {
+                    button.activate();
+                    if (button.getId().indexOf('flag') !== -1) {
+                        console.log('activate flagItem in enable');
+
+                    }
+
+                }
             }
         }
     }
@@ -177,6 +182,7 @@ define([
 
                         // update the item state
                         self.navigator.setItemFlag(position, flag);
+                        console.log('before enable: ' + testContext.itemFlagged);
                         self.enable();
                     })
                     .catch(function () {
@@ -242,18 +248,12 @@ define([
                 e.preventDefault();
                 testRunner.trigger('tool-reviewpanel');
             });
-            if (this.toggleButton.getId() === 'hide-review') {
-                this.toggleButton.activate();
-            }
 
             this.flagItemButton = this.getAreaBroker().getToolbox().createItem(getFlagItemButtonData(testContext));
             this.flagItemButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-flagitem');
             });
-            if (this.flagItemButton.getId() === 'unset-item-flag') {
-                this.flagItemButton.activate();
-            }
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.flag) {
@@ -352,9 +352,21 @@ define([
          * Enables the button
          */
         enable: function enable() {
+            var testRunner = this.getTestRunner();
+            var testContext = testRunner.getTestContext();
+
             this.flagItemButton.enable();
             this.toggleButton.enable();
             this.navigator.enable();
+            if (! this.navigator.is('hidden')) {
+                this.toggleButton.activate();
+            }
+            if (testContext.itemFlagged) {
+                this.flagItemButton.activate();
+                console.log('activate flagItem in enable');
+            } else {
+                this.flagItemButton.deactivate();
+            }
         },
 
         /**
@@ -362,7 +374,11 @@ define([
          */
         disable: function disable() {
             this.flagItemButton.disable();
+            this.flagItemButton.deactivate();
+
             this.toggleButton.disable();
+            this.toggleButton.deactivate();
+
             this.navigator.disable();
         },
 
