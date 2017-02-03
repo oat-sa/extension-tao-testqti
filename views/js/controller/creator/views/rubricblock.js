@@ -60,13 +60,8 @@ define([
          */
         setUp: function setUp(modelOverseer, rubricModel, $rubricBlock) {
             //we need to synchronize the ck elt with an hidden elt that has data-binding
-            var $rubricBlockBinding = $('.rubricblock-binding', $rubricBlock);
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var syncRubricBlockContent = _.throttle(function () {
-                $rubricBlockBinding
-                    .html($rubricBlockContent.html())
-                    .trigger('change');
-            }, 100);
+            var syncRubricBlockContent = _.throttle(editorToModel, 100);
             var editor;
 
             /**
@@ -82,10 +77,41 @@ define([
             }
 
             /**
-             * Update the HTML editor
+             * Ensures an html content is wrapped by a container tag.
+             * @param {String} html
+             * @returns {String}
              */
-            function updateContent() {
-                var html = Dom2QtiEncoder.encode(rubricModel.content);
+            function ensureWrap(html) {
+                html = (html || '').trim();
+                if (html.charAt(0) !== '<' && html.substr(3) !== '<br') {
+                    html = '<div>' + html + '</div>';
+                }
+                return html;
+            }
+
+            /**
+             * Forwards the editor content into the model
+             */
+            function editorToModel() {
+                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
+                var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
+                var content = Dom2QtiEncoder.decode(ensureWrap($rubricBlockContent.html()));
+
+                if (wrapper) {
+                    wrapper.content = content;
+                } else {
+                    rubric.content = content;
+                }
+            }
+
+            /**
+             * Forwards the model content into the editor
+             */
+            function modelToEditor() {
+                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
+                var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
+                var content = wrapper ? wrapper.content : rubric.content;
+                var html = ensureWrap(Dom2QtiEncoder.encode(content));
                 $rubricBlockContent.html(html);
             }
 
@@ -112,12 +138,12 @@ define([
                         wrapper.outcomeIdentifier = feedback.outcome;
                         wrapper.identifier = feedback.matchValue;
                     }
-                    updateContent();
+                    modelToEditor();
                 } else {
                     // remove the feedbackBlock wrapper, just keep the actual content
                     if (wrapper) {
                         rubricModel.content = wrapper.content;
-                        updateContent();
+                        modelToEditor();
                     }
                 }
 
@@ -258,7 +284,7 @@ define([
 
             actions.properties($rubricBlock, 'rubricblock', rubricModel, propHandler);
 
-            $rubricBlockContent.empty().html($rubricBlockBinding.html());
+            modelToEditor();
 
             editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
             editor.on('change', function () {
