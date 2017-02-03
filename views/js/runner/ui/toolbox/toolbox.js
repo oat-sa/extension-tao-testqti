@@ -148,7 +148,6 @@ define([
                         }
                     });
                 });
-
             })
             .on('destroy', function() {
                 $(document).off('.toolboxmenu');

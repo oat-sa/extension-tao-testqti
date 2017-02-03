@@ -54,7 +54,6 @@
                         background: white(1);
                     }
                 }
-
             }
         }
 
@@ -310,6 +309,17 @@
                         padding-right: 0;
                     }
                 }
+                li.no-label {
+                    & > a {
+                        .icon {
+                            padding-right: 0;
+                        }
+                        .text {
+                            display: none;
+                        }
+                    }
+                }
+
             }
         }
     }
