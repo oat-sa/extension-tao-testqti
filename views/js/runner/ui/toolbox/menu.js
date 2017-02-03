@@ -127,11 +127,12 @@ define([
             this.turnOffItems();
             this.highlightIndex = this.menuItems.length; // we start on the button, not at the max array index
                                                          // which would be menuItems.length-1
-            // focus the menu
+
+            // focus the button, for keyboard navigation
             if(document.activeElement){
                 document.activeElement.blur();
             }
-            this.$menuContainer.focus();
+            this.$menuButton.focus();
 
             // component inner state
             this.setState('opened', true);
