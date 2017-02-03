@@ -20,12 +20,10 @@
  */
 define([
     'jquery',
-    'lodash',
-    'helpers',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/answerElimination/eliminator'
-], function($, _, helpers, runnerFactory, providerMock, eliminatorFactory) {
+], function($, runnerFactory, providerMock, eliminatorFactory) {
     'use strict';
 
     var providerName = 'mock';
