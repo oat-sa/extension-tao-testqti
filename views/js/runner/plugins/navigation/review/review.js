@@ -104,11 +104,6 @@ define([
                     button.deactivate();
                 } else {
                     button.activate();
-                    if (button.getId().indexOf('flag') !== -1) {
-                        console.log('activate flagItem in enable');
-
-                    }
-
                 }
             }
         }
@@ -182,7 +177,6 @@ define([
 
                         // update the item state
                         self.navigator.setItemFlag(position, flag);
-                        console.log('before enable: ' + testContext.itemFlagged);
                         self.enable();
                     })
                     .catch(function () {
@@ -363,7 +357,6 @@ define([
             }
             if (testContext.itemFlagged) {
                 this.flagItemButton.activate();
-                console.log('activate flagItem in enable');
             } else {
                 this.flagItemButton.deactivate();
             }
