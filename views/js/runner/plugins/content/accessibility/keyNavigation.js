@@ -92,7 +92,7 @@ define([
             keepState : true,
             id : 'navigator-filters',
             replace : true,
-            elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter:visible'),
+            elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
             group : $navigator
         }).on('right', function(){
             this.next();
@@ -107,7 +107,7 @@ define([
         keyNavigator({
             id : 'navigator-items',
             replace : true,
-            elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label:visible')
+            elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
         }).on('down', function(){
             this.next();
         }).on('up', function(){
