@@ -59,7 +59,7 @@
 .action-bar{
     &.key-navigation-group{
         &.focusin{
-            box-shadow: 0 0 5px 1px whiten($info, .2);
+            @include box-shadow(0, 0, 6px, 2px, whiten($info, .2));
             z-index: 1;
         }
         .key-navigation-highlight{
