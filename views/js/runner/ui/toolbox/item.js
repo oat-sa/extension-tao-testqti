@@ -28,6 +28,18 @@ define([
     'use strict';
 
     var buttonComponentApi = {
+        getId: function getId() {
+            return this.id;
+        },
+
+        setMenuId: function setMenuId(menuId) {
+            this.menuId = menuId;
+        },
+
+        getMenuId: function getMenuId() {
+            return this.menuId;
+        },
+
         activate: function activate() {
             this.setState('active', true);
         },
@@ -42,18 +54,6 @@ define([
 
         turnOff: function turnOff() {
             this.setState('hover', false);
-        },
-
-        getId: function getId() {
-            return this.id;
-        },
-
-        setMenuId: function setMenuId(menuId) {
-            this.menuId = menuId;
-        },
-
-        getMenuId: function getMenuId() {
-            return this.menuId;
         }
     };
 

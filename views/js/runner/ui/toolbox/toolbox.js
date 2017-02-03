@@ -151,10 +151,12 @@ define([
             })
             .on('destroy', function() {
                 $(document).off('.toolboxmenu');
+
+                this.allItems.forEach(function (item) {
+                    item.destroy();
+                });
             })
             .setTemplate(toolboxTpl);
-
-        // todo: implement destroy behavior on each component
 
         return toolbarComponent;
     };

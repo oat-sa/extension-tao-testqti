@@ -89,8 +89,6 @@ define([
         },
 
         openMenu: function openMenu()  {
-            // var self = this;
-
             // show the menu
             hider.show(this.$menuContainer);
 
