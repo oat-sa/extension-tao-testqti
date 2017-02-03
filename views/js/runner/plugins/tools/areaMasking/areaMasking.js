@@ -139,8 +139,29 @@ define([
             //start disabled
             this.disable();
 
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-areaMasking
+                return !!context.options.areaMasking;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
             //update plugin state based on changes
             testRunner
+                .on('loaditem', togglePlugin)
                 .on('unloaditem', function (){
                     //remove all masks
                     _.invoke(self.masks, 'destroy');
@@ -159,6 +180,7 @@ define([
                         _.invoke(self.masks, 'destroy');
                     }
                 });
+
         },
 
         /**
