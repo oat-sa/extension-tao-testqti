@@ -39,6 +39,21 @@ define([
              runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
+    /**
+     * List of options required by the controller
+     * @type {String[]}
+     */
+    var requiredOptions = [
+        'testDefinition',
+        'testCompilation',
+        'serviceCallId',
+        'exitUrl',
+        'plugins'
+    ];
+
+    /**
+     * The Plugin Loader
+     */
     var pluginLoader = pluginLoaderFactory();
 
     /*
@@ -69,7 +84,6 @@ define([
         var reason = '';
 
         config = _.defaults(config, {
-            proxyProvider : 'cacheProxy',
             renderTo: $('.runner')
         });
 
@@ -103,21 +117,9 @@ define([
     }
 
     /**
-     * List of options required by the controller
-     * @type {String[]}
-     */
-    var requiredOptions = [
-        'testDefinition',
-        'testCompilation',
-        'serviceCallId',
-        'exitUrl',
-        'plugins'
-    ];
-
-    /**
      * The runner controller
      */
-    var runnerController = {
+    return {
 
         /**
          * Controller entry point
@@ -155,6 +157,7 @@ define([
                     pluginLoader.add(module, plugin.category);
                 });
 
+                //load the plugins and the proxy provider
                 Promise
                     .all([
                         proxyLoader().then(function(proxyProviderName){
@@ -163,6 +166,8 @@ define([
                         pluginLoader.load()
                     ])
                     .then(function () {
+
+                        //here we initialize the Test Runner
                         initRunner(_.omit(startOptions, 'plugins'));
                     })
                     .catch(function () {
@@ -176,6 +181,4 @@ define([
             }
         }
     };
-
-    return runnerController;
 });

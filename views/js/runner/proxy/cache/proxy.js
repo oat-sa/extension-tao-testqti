@@ -17,6 +17,9 @@
  */
 
 /**
+ * This proxy provider cache the next item
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
     'lodash',
@@ -27,26 +30,57 @@ define([
 ], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
     'use strict';
 
-    var cacheSize     = 15;
-    var loadNextDelay = 350;
+    /**
+     * The number of items to keep in the cache
+     * @type {Number}
+     */
+    var cacheSize     = 20;
 
     /**
-     * QTI proxy definition
-     * Related to remote services calls
-     * @type {Object}
+     * The number of ms to wait after an item is loaded
+     * to start loading the next.
+     * This value is more or less the time needed to render an item.
+     * @type {Number}
+     */
+    var loadNextDelay = 450;
+
+    /**
+     * Overrides the qtiServiceProxy with the precaching behavior
      */
     var cacheProxy = _.defaults({
 
+        /**
+         * Initializes the proxy
+         * @param {Object} config - The config provided to the proxy factory
+         * @param {String} config.testDefinition - The URI of the test
+         * @param {String} config.testCompilation - The URI of the compiled delivery
+         * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
+         *                      Any error will be provided if rejected.
+         */
         init: function init(config, params) {
 
+            //we keep items here
             this.itemStore    = itemStoreFactory(cacheSize);
-            this.nextCalledBy = [];
+
+            //keep track of the calls to prevent doing it again on navigating back and forward
+            this.nextCalledBy = {};
+
+            //we don't peform the getItem call, we as start the session on move
             this.startOnMove  = false;
+
+            //check whether we're on the last item
             this.isLastItem   = false;
 
             return qtiServiceProxy.init.call(this, config, params);
         },
 
+        /**
+         * Uninstalls the proxy
+         * @returns {Promise} - Returns a promise. The proxy will be fully uninstalled on resolve.
+         *                      Any error will be provided if rejected.
+         */
         destroy: function destroy() {
 
             this.itemStore.clear();
@@ -67,15 +101,18 @@ define([
         getItem: function getItem(uri) {
             var self = this;
 
+            /**
+             * try to load the next item
+             */
             var loadNextItem = function loadNextItem(){
-                if(!self.isLastItem && !_.contains(self.nextCalledBy, uri)){
+                if(!self.isLastItem && (!self.nextCalledBy[uri] || !self.itemStore.has(self.nextCalledBy[uri]))){
                     _.delay(function(){
                         self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
                         .then(function(response){
                             if(response && response.itemDefinition){
                                 self.itemStore.set(response.itemDefinition, response);
                                 self.startOnMove = true;
-                                self.nextCalledBy.push(uri);
+                                self.nextCalledBy[uri] = response.itemDefinition;
 
                                 if(response.baseUrl && response.itemData && response.itemData.assets){
                                     assetLoader(response.baseUrl, response.itemData.assets);
@@ -83,12 +120,15 @@ define([
                             }
                         })
                         .catch(function(err){
-                            console.error(err);
+                            //just ignore it
+                            //TODO move to the logger
+                            window.console.error(err);
                         });
                     }, loadNextDelay);
                 }
             };
 
+            //resolve from the store
             if(this.itemStore.has(uri)){
                 loadNextItem();
 
