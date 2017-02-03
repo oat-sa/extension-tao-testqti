@@ -76,7 +76,8 @@ define([
                 if(_.isFunction(loaders[type]) && _.size(assetList) > 0 ){
                     _(assetList)
                         .filter(function(url){
-                            return !urlUtil.isBase64(url);
+                            //filter base64 (also it seems sometimes we just have base64 data, without the protocol...)
+                            return !urlUtil.isBase64(url) && /\.[a-zA-Z]+$/.test(url);
                         })
                         .map(assetManager.resolve, assetManager)
                         .forEach(function(url){
