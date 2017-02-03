@@ -16,8 +16,15 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * Component to be registered in the area broker
- *
+ * This factory creates a component to be used as a toolbox item.
+ * It will be rendered as text with no special behavior, and can be used to create buttons separators, for example.
+
+ * Do not instanciate directly, but use the relevant toolbox method:
+ * toolbox.createText({
+ *      control: 'text-id',
+ *      text: __('Text content')
+ * });
+
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
@@ -28,12 +35,34 @@ define([
     'use strict';
 
     var buttonComponentApi = {
+        /**
+         * Initialise text
+         * @returns {String}
+         */
+        initText: function initText() {
+            this.id = this.config.control;
+        },
+
+        /**
+         * Get the type of the component
+         */
+        getType: function getType() {
+            return 'text';
+        },
+
+        /**
+         * Get the item Id
+         * @returns {String}
+         */
         getId: function getId() {
             return this.id;
         }
     };
 
 
+    /**
+     * The text factory
+     */
     return function buttonComponentFactory(specs, defaults) {
         var buttonComponent;
 
@@ -42,7 +71,7 @@ define([
         buttonComponent = componentFactory(specs, defaults)
             .setTemplate(textTpl)
             .on('init', function() {
-                this.id = this.config.control;
+                this.initText();
             })
             .on('render', function() {
                 this.disable(); // always render disabled first

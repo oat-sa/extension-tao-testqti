@@ -16,7 +16,18 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * Component to be registered in the area broker
+ * This factory creates a component to be used as a toolbox item
+ * This component will then be rendered whether:
+ * - as a menu entry, if given a menuId that matches an existing menu
+ * - as a standalone button otherwise
+ *
+ * Do not instanciate directly, but use the relevant toolbox method:
+ * toolbox.createItem({
+ *      control: 'item-id',
+ *      title: __('Html title'),
+ *      icon: 'icon',
+ *      text: __('Displayed label')
+ * });
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -28,36 +39,79 @@ define([
     'use strict';
 
     var buttonComponentApi = {
+        /**
+         * Initialise the item
+         */
+        initItem: function initItem() {
+            this.id = this.config.control;
+            this.menu = null;
+        },
+
+        /**
+         * Get the type of the component
+         */
+        getType: function getType() {
+            return 'item';
+        },
+
+        /**
+         * Get the item Id
+         * @returns {String}
+         */
         getId: function getId() {
             return this.id;
         },
 
+        /**
+         * Set the menu to whom the item belong
+         * @param {String} menuId
+         * @returns {String}
+         */
         setMenuId: function setMenuId(menuId) {
             this.menuId = menuId;
         },
 
+        /**
+         * Get the id of the menu to whom the item belong
+         * @returns {String}
+         */
         getMenuId: function getMenuId() {
             return this.menuId;
         },
 
+        /**
+         * Set the item as active. For example, if it opens a tool,
+         * the item should be represented as long as the tool remains opened
+         */
         activate: function activate() {
             this.setState('active', true);
         },
 
+        /**
+         * Set the item as inactive
+         */
         deactivate: function deactivate() {
             this.setState('active', false);
         },
 
+        /**
+         * Set the item as hovered, whether by the mouse or by keyboard navigation
+         */
         highlight: function highlight() {
             this.setState('hover', true);
         },
 
+        /**
+         * Turn off the hovered style
+         */
         turnOff: function turnOff() {
             this.setState('hover', false);
         }
     };
 
-
+    /**
+     * The item factory
+     */
     return function buttonComponentFactory(specs, defaults) {
         var buttonComponent;
 
@@ -76,14 +130,14 @@ define([
                 }
             })
             .on('init', function () {
-                this.id = this.config.control;
-                this.menu = null;
+                this.initItem();
             })
             .on('render', function() {
                 var self = this;
 
                 this.disable(); // we always render disabled by default
 
+                // forward DOM events to the component object
                 this.$component
                     .on('mousedown', function(event) {
                         self.trigger('mousedown', event);
@@ -91,7 +145,6 @@ define([
                     .on('click', function(event) {
                         self.trigger('click', event);
                     });
-
             });
 
         return buttonComponent;

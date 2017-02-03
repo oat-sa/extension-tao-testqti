@@ -16,7 +16,30 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * Component to be registered in the area broker
+ * This component handle the rendering of the toolbox area of the test runner.
+ * By default, it simply appends all registered component one after the other in their registration order.
+ * Use the following API to register items:
+ *
+ * var myText = toolbox.createText({...}); // a text entry with no special behavior
+ * var myMenu = toolbox.createMenu({...}); // a menu
+ * var myItem = toolbox.createItem({...}); // either a stand alone button or a menu entry
+ * myItem.setMenuId('menuId');             // if you want to make the item part of a menu
+ *
+ * The rendering method can be overridden to create custom layouts:
+ *
+ * // create the renderer
+ * function myCustomRenderer() {
+ *    var allItems = this.allItems; // this give access to all registered items, whichever type they are: items, menus, text
+ *    var allMenus = this.allMenus; // only menu items
+ *
+ *    // do the rendering...
+ * }
+ *
+ * // override the default renderer
+ * toolbox
+ *    .off('.defaultRenderer') // remove default renderer
+ *    .on('render', myCustomRenderer); // set new renderer
+ *
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -33,11 +56,23 @@ define([
 
     var toolbarComponentApi = {
 
+        /**
+         * Initialize the toolbox
+         */
         initToolbox: function initToolbox() {
             this.allItems = [];
             this.allMenus = [];
         },
 
+        /**
+         * Create a menu component instance
+         * @param {Object} config
+         * @param {String} config.control - will be used as the instance id and in the data-control html attribute
+         * @param {String} config.title - will be used in the title html attribute
+         * @param {String} config.icon - the icon for the button
+         * @param {String} config.text - the button label
+         * @returns {Component} the create instance
+         */
         createMenu: function createMenu(config) {
             var self = this,
                 menu = menuFactory().init(config);
@@ -56,18 +91,39 @@ define([
             return menu;
         },
 
+        /**
+         * Create a item component instance
+         * @param {Object} config
+         * @param {String} config.control - will be used as the instance id and in the data-control html attribute
+         * @param {String} config.title - will be used in the title html attribute
+         * @param {String} config.icon - the icon for the button
+         * @param {String} config.text - the button label
+         * @returns {Component} the create instance
+         */
         createItem: function createItem(config)  {
             var item = itemFactory().init(config);
             this.allItems.push(item);
             return item;
         },
 
+        /**
+         * Create a text component instance
+         * @param {Object} config
+         * @param {String} config.control - will be used as the instance id and in the data-control html attribute
+         * @param {String} config.text - the text content
+         * @returns {Component} the create instance
+         */
         createText: function createText(config) {
             var text = textFactory().init(config);
             this.allItems.push(text);
             return text;
         },
 
+        /**
+         * If the given item belongs to a menu
+         * @param {Object} item
+         * @returns {Boolean}
+         */
         hasMenu: function hasMenu(item) {
             return item && _.isFunction(item.getMenuId) && item.getMenuId();
         }
@@ -75,54 +131,45 @@ define([
 
 
     /**
-     * Default renderer. It simply appends all the registered items in the toolbar and the menus
+     * Default renderer. It simply appends all the registered items in the toolbox, one after the other
      * @param {jQuery} $container - where to render
      */
     function defaultRenderer($container) {
         var self = this,
-            allMenus = {},
             menuEntries = [];
 
         // render first level
         if (_.isArray(this.allItems)) {
             this.allItems.forEach(function (current) {
-
-                // save items belonging to menus for later processing
-                if (self.hasMenu(current)) {
-                    menuEntries.push(current);
-
-                // and render the others
-                } else {
+                // items belonging to menus will be processed later
+                if (! self.hasMenu(current)) {
                     current.render($container);
                 }
-
             });
         }
 
-        // Render the menu entries of each menu
-        menuEntries.forEach(function (menuItem) {
-            var menuId = menuItem.getMenuId();
+        // Render each menu
+        this.allMenus.forEach(function (menu) {
+            var menuId = menu.getId();
 
-            //fixme : we have this in this.allMenus now !
-            // retrieve the menu instance if needed
-            if (menuId && !allMenus[menuId]) {
-                allMenus[menuId] = _.find(self.allItems, function(item) {
-                    return item.getId() === menuId;
-                });
-            }
+            // first, we gather all items relevant to the current menu
+            menuEntries = self.allItems.filter(function (item) {
+                return (item.getType() === 'item' && item.getMenuId() === menuId);
+            });
 
-            // delegates the rendering to the menu instance
-            if (allMenus[menuId]) {
-                allMenus[menuId].renderItem(menuItem);
-            }
-        });
+            // we then add entries to the current menu
+            menuEntries.forEach(function (item) {
+                menu.addItem(item);
+            });
 
-        // we tell the menus that all their items have been rendered
-        _.forOwn(allMenus, function(menu) {
-            menu.trigger('itemsrendered');
+            // and finally render the whole menu
+            menu.renderItems();
         });
     }
 
+    /**
+     * The toolbox factory
+     */
     return function toolbarComponentFactory(specs, defaults) {
         var toolbarComponent;
 
