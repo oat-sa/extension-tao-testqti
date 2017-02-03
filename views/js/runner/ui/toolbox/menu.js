@@ -45,7 +45,9 @@ define([
     var keyCodes = {
         ENTER: 13,
         SPACE: 32,
+        LEFT:  37,
         UP:    38,
+        RIGHT: 39,
         DOWN:  40
     };
 
@@ -266,7 +268,9 @@ define([
                 switch (currentKeyCode) {
                     case keyCodes.SPACE:
                     case keyCodes.ENTER: self.triggerHighlightedItem(); e.stopPropagation(); break;
+                    case keyCodes.LEFT:
                     case keyCodes.UP:    self.moveUp();                 e.stopPropagation(); break;
+                    case keyCodes.RIGHT:
                     case keyCodes.DOWN:  self.moveDown();               e.stopPropagation(); break;
                 }
             });
