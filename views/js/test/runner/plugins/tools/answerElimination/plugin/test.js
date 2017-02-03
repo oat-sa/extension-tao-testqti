@@ -13,16 +13,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA
  */
 
 define([
-    'lodash',
-    'helpers',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/answerElimination/eliminator'
-], function(_, helpers, runnerFactory, providerMock, eliminator) {
+], function(runnerFactory, providerMock, eliminator) {
     'use strict';
 
     var providerName = 'mock';
@@ -31,7 +29,9 @@ define([
     QUnit.module('eliminator');
 
 
-    QUnit.test('module', 3, function(assert) {
+    QUnit.test('module', function(assert) {
+
+        QUnit.expect(3);
         var runner = runnerFactory(providerName);
 
         assert.equal(typeof eliminator, 'function', "Eliminator module exposes a function");

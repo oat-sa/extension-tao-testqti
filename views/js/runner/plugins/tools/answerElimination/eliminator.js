@@ -17,11 +17,16 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 
-// http://tao-act.lan/taoQtiTest/views/js/runner/plugins/tools/eliminator/eliminator.js?buster=3.2.0-sprint43
-//                    taoQtiTest/views/js/runner/plugins/tools/answerElimination/eliminator.js
-
 /**
- * Area Masking Plugin
+ * Answer Eliminator Plugin
+ *
+ * While the platform's answer eliminator works on a per-item base, this variation allows
+ * answer elimination on a test level. Essentially it allows to add a class 'eliminable'
+ * to a choice interaction, from there the aforementioned item-based behaviour and styling takes
+ * over.
+ *
+ * Alternative styling will be on a per customer basis and should always be published as a recipe
+ * in the theme-toolkit.
  *
  * @author Dieter Raber <dieter@taotesting.com>
  */
@@ -117,10 +122,6 @@ define([
                     }
                     self.show();
                 })
-                .on('unloaditem', function (){
-                    //remove all masks
-                    _.invoke(self.masks, 'destroy');
-                })
                 .on('enabletools renderitem', function (){
                     self.enable();
                 })
@@ -183,5 +184,3 @@ define([
         }
     });
 });
-
-
