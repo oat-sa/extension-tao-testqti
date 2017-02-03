@@ -101,9 +101,9 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'tags' => [ 'core', 'qti', 'required' ]
             ], [
                 'id' => 'keyNavigation',
-                'name' => 'Using key to navigate item content',
+                'name' => 'Using key to navigate test runner',
                 'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
-                'description' => 'Provide a way to navigate within item with the keyboard',
+                'description' => 'Provide a way to navigate within the test runner with the keyboard',
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
