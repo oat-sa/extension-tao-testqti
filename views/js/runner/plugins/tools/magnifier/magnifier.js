@@ -26,9 +26,8 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, magnifierPanelFactory, buttonTpl) {
+    'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, magnifierPanelFactory) {
     'use strict';
 
     /**
@@ -145,8 +144,10 @@ define([
                 if (self.getState('enabled')) {
                     if (self.getState('active')) {
                         hideMagnifier();
+                        self.button.deactivate();
                     } else {
                         showMagnifier();
+                        self.button.activate();
                     }
                 }
             }
@@ -178,15 +179,15 @@ define([
             }
 
             // build element (detached)
-            this.$button = $(buttonTpl({
+            this.button = this.getAreaBroker().getToolbox().createItem({
                 control: 'magnify',
                 title: __('Displays a customisable magnifier'),
                 text: __('Magnify'),
                 icon: 'find'
-            }));
+            });
 
             // attach behavior
-            this.$button.on('click', function (event) {
+            this.button.on('click', function (event) {
                 event.preventDefault();
                 testRunner.trigger(actionPrefix + 'toggle');
             });
@@ -262,49 +263,39 @@ define([
         },
 
         /**
-         * Called during the runner's render phase
-         */
-        render: function render() {
-            var $container = this.getAreaBroker().getToolboxArea();
-            $container.append(this.$button);
-        },
-
-        /**
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
             shortcut.remove('.' + pluginName);
-            this.$button.remove();
         },
 
         /**
          * Enables the button
          */
         enable: function enable() {
-            this.$button.removeProp('disabled')
-                .removeClass('disabled');
+            this.button.enable();
         },
 
         /**
          * Disables the button
          */
         disable: function disable() {
-            this.$button.prop('disabled', true)
-                .addClass('disabled');
+            this.button.disable();
+            this.button.deactivate();
         },
 
         /**
          * Shows the button
          */
         show: function show() {
-            hider.show(this.$button);
+            this.button.show();
         },
 
         /**
          * Hides the button
          */
         hide: function hide() {
-            hider.hide(this.$button);
+            this.button.hide();
         }
     });
 });
