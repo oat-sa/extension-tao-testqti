@@ -177,6 +177,10 @@ define([
                 description : __('enable calculator')
             },
             {
+                name : 'x-tao-option-eliminator',
+                description : __('enable answer eliminator tool')
+            },
+            {
                 name : 'x-tao-itemusage-informational',
                 description : __('describe the item as informational')
             }
