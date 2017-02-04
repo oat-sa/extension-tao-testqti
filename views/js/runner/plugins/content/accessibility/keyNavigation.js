@@ -36,13 +36,13 @@ define([
      * Init the navigation in the toolbar
      *
      * @param {Object} testRunner
-     * @returns {keyNavigator}
+     * @returns {Array}
      */
     function initToolbarNavigation(testRunner){
         var $navigationBar = $('.bottom-action-bar');
         var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
 
-        return keyNavigator({
+        keyNavigator({
             id : 'bottom-toolbar',
             replace : true,
             group : $navigationBar,
@@ -55,74 +55,81 @@ define([
             this.previous();
         }).on('activate', function(cursor){
             cursor.$dom.click();
-        });
+        })
+
+        return ['bottom-toolbar'];
     }
 
     /**
      * Init the navigation in the header block
      *
      * @param {Object} testRunner
-     * @returns {keyNavigator}
+     * @returns {Array}
      */
     function initHeaderNavigation(testRunner){
         //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
 
-        return keyNavigator({
+        keyNavigator({
             id : 'header-toolbar',
             elements : $headerElements,
             group : $headerElements,
             loop : true,
             replace : true
         });
+
+        return ['header-toolbar'];
     }
 
     /**
      * Init the navigation in the review panel
      *
      * @param {Object} testRunner
-     * @returns {keyNavigator} the keyNavigator of the main navigation group
+     * @returns {Array} the keyNavigator of the main navigation group
      */
     function initNavigatorNavigation(testRunner){
 
         var $panel = testRunner.getAreaBroker().getPanelArea();
         var $navigator = $panel.find('.qti-navigator');
 
-        var filterGroupNavigator = keyNavigator({
-            keepState : true,
-            id : 'navigator-filters',
-            replace : true,
-            elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
-            group : $navigator
-        }).on('right', function(){
-            this.next();
-        }).on('left', function(){
-            this.previous();
-        }).on('down', function(){
-            this.goto('navigator-items');
-        }).on('focus', function(cursor){
-            cursor.$dom.click();
-        });
+        if($navigator.length && !$navigator.hasClass('disabled')){
+            keyNavigator({
+                keepState : true,
+                id : 'navigator-filters',
+                replace : true,
+                elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
+                group : $navigator
+            }).on('right', function(){
+                this.next();
+            }).on('left', function(){
+                this.previous();
+            }).on('down', function(){
+                this.goto('navigator-items');
+            }).on('focus', function(cursor){
+                cursor.$dom.click();
+            });
 
-        keyNavigator({
-            id : 'navigator-items',
-            replace : true,
-            elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
-        }).on('down', function(){
-            this.next();
-        }).on('up', function(){
-            this.previous();
-        }).on('activate', function(cursor){
-            cursor.$dom.click();
-        }).on('lowerbound', function(){
-            this.goto('navigator-filters');
-        }).on('focus', function(cursor){
-            cursor.$dom.parent().addClass('key-navigation-highlight');
-        }).on('blur', function(cursor){
-            cursor.$dom.parent().removeClass('key-navigation-highlight');
-        });
+            keyNavigator({
+                id : 'navigator-items',
+                replace : true,
+                elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
+            }).on('down', function(){
+                this.next();
+            }).on('up', function(){
+                this.previous();
+            }).on('activate', function(cursor){
+                cursor.$dom.click();
+            }).on('lowerbound', function(){
+                this.goto('navigator-filters');
+            }).on('focus', function(cursor){
+                cursor.$dom.parent().addClass('key-navigation-highlight');
+            }).on('blur', function(cursor){
+                cursor.$dom.parent().removeClass('key-navigation-highlight');
+            });
 
-        return filterGroupNavigator;
+            return ['navigator-filters'];
+        }
+        return [];
     }
 
     /**
@@ -190,12 +197,12 @@ define([
         $itemElements.each(function(){
             var $itemElement = $(this);
             var id = 'rubric_element_navigation_group_'+rubricNavigators.length;
-                keyNavigator({
-                    id : id,
-                    elements : $itemElement,
-                    group : $itemElement,
-                    replace : true
-                });
+            keyNavigator({
+                id : id,
+                elements : $itemElement,
+                group : $itemElement,
+                replace : true
+            });
             rubricNavigators.push(id);
         });
 
@@ -209,17 +216,16 @@ define([
      */
     function initTestRunnerNavigation(testRunner){
 
-        var itemNavigators = initContentNavigation(testRunner);
-        var rubricNavigators = initRubricNavigation(testRunner);
-
-        initHeaderNavigation(testRunner);
-        initToolbarNavigation(testRunner);
-        initNavigatorNavigation(testRunner);
-
         return groupKeyNavigator({
             id : 'test-runner',
             replace : true,
-            groups : _.union(rubricNavigators, itemNavigators, ['bottom-toolbar', 'navigator-filters', 'header-toolbar'])
+            groups : _.union(
+                initRubricNavigation(testRunner),
+                initContentNavigation(testRunner),
+                initToolbarNavigation(testRunner),
+                initNavigatorNavigation(testRunner),
+                initHeaderNavigation(testRunner)
+            )
         });
     }
 
@@ -259,7 +265,7 @@ define([
 
             //update plugin state based on changes
             testRunner
-                .on('renderitem', function () {
+                .after('renderitem', function () {
                     self.groupNavigator = initTestRunnerNavigation(testRunner);
                     self.enable();
                 })
