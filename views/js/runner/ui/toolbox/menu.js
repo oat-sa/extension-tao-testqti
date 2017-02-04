@@ -45,7 +45,9 @@ define([
     var keyCodes = {
         ENTER: 13,
         SPACE: 32,
+        LEFT:  37,
         UP:    38,
+        RIGHT: 39,
         DOWN:  40
     };
 
@@ -132,7 +134,8 @@ define([
             if(document.activeElement){
                 document.activeElement.blur();
             }
-            this.$menuButton.focus();
+            this.$menuContainer.focus();
+            this.moveUp();//todo improve the focus style in submenu
 
             // component inner state
             this.setState('opened', true);
@@ -262,11 +265,14 @@ define([
                 var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
 
                 e.preventDefault();
+                e.stopPropagation();
 
                 switch (currentKeyCode) {
                     case keyCodes.SPACE:
                     case keyCodes.ENTER: self.triggerHighlightedItem(); e.stopPropagation(); break;
+                    case keyCodes.LEFT:
                     case keyCodes.UP:    self.moveUp();                 e.stopPropagation(); break;
+                    case keyCodes.RIGHT:
                     case keyCodes.DOWN:  self.moveDown();               e.stopPropagation(); break;
                 }
             });
@@ -314,7 +320,8 @@ define([
             } else if (this.highlightIndex === (this.menuItems.length - 1)) {
                 this.highlightIndex++;
                 this.turnOffItems();
-                this.$menuButton.focus();
+                this.$menuButton.closest('.action').focus();
+                this.closeMenu();
             }
         },
 
