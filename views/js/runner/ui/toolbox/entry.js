@@ -97,14 +97,14 @@ define([
         /**
          * Set the item as hovered, whether by the mouse or by keyboard navigation
          */
-        highlight: function highlight() {
+        hoverOn: function hoverOn() {
             this.setState('hover', true);
         },
 
         /**
          * Turn off the hovered style
          */
-        turnOff: function turnOff() {
+        hoverOff: function hoverOff() {
             this.setState('hover', false);
         }
     };

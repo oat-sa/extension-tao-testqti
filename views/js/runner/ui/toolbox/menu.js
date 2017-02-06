@@ -126,8 +126,8 @@ define([
 
             // setup keyboard navigation & highlighting
             this.enableShortcuts();
-            this.turnOffItems();
-            this.highlightIndex = this.menuItems.length; // we start on the button, not at the max array index
+            this.hoverOffAll();
+            this.hoverIndex = this.menuItems.length; // we start on the button, not at the max array index
                                                          // which would be menuItems.length-1
 
             // focus the button, for keyboard navigation
@@ -158,7 +158,7 @@ define([
 
             // disable keyboard navigation & highlighting
             this.disableShortcuts();
-            this.turnOffItems();
+            this.hoverOffAll();
 
             // component inner state
             this.setState('opened', false);
@@ -222,10 +222,10 @@ define([
             // look for item index
             this.menuItems.forEach(function (item, index) {
                 if (item.id === itemId) {
-                    self.highlightIndex = index;
+                    self.hoverIndex = index;
                 }
             });
-            this.highlightItem(itemId);
+            this.hoverItem(itemId);
         },
 
         /**
@@ -282,9 +282,9 @@ define([
 
                 if (currentKeyCode === keyCodes.UP) {
                     e.stopPropagation();
-                    self.highlightIndex = self.menuItems.length - 1;
+                    self.hoverIndex = self.menuItems.length - 1;
                     self.$menuContainer.focus();
-                    self.highlightItem(self.menuItems[self.highlightIndex].id);
+                    self.hoverItem(self.menuItems[self.hoverIndex].id);
                 }
             });
         },
@@ -301,9 +301,9 @@ define([
          * Move the highlight to the previous item
          */
         moveUp: function moveUp() {
-            if (this.highlightIndex > 0) {
-                this.highlightIndex--;
-                this.highlightItem(this.menuItems[this.highlightIndex].id);
+            if (this.hoverIndex > 0) {
+                this.hoverIndex--;
+                this.hoverItem(this.menuItems[this.hoverIndex].id);
             }
         },
 
@@ -312,14 +312,14 @@ define([
          */
         moveDown: function moveDown() {
             // move to the next item
-            if (this.highlightIndex < (this.menuItems.length - 1)) {
-                this.highlightIndex++;
-                this.highlightItem(this.menuItems[this.highlightIndex].id);
+            if (this.hoverIndex < (this.menuItems.length - 1)) {
+                this.hoverIndex++;
+                this.hoverItem(this.menuItems[this.hoverIndex].id);
 
             // move to the menu button
-            } else if (this.highlightIndex === (this.menuItems.length - 1)) {
-                this.highlightIndex++;
-                this.turnOffItems();
+            } else if (this.hoverIndex === (this.menuItems.length - 1)) {
+                this.hoverIndex++;
+                this.hoverOffAll();
                 this.$menuButton.closest('.action').focus();
                 this.closeMenu();
             }
@@ -329,19 +329,19 @@ define([
          * Highlight the given item
          * @param {String} itemId
          */
-        highlightItem: function highlightItem(itemId) {
-            var itemToHighlight = this.getItemById(itemId);
-            this.turnOffItems();
+        hoverItem: function hoverItem(itemId) {
+            var itemToHover = this.getItemById(itemId);
+            this.hoverOffAll();
 
-            itemToHighlight.highlight();
+            itemToHover.hoverOn();
         },
 
         /**
          * Remove highlight from all items
          */
-        turnOffItems: function turnOffItems() {
+        hoverOffAll: function hoverOffAll() {
             this.menuItems.forEach(function(current) {
-                current.turnOff();
+                current.hoverOff();
             });
         },
 
@@ -350,8 +350,8 @@ define([
          */
         triggerHighlightedItem: function triggerHighlightedItem() {
             var activeItem;
-            if (this.menuItems[this.highlightIndex]) {
-                activeItem = this.menuItems[this.highlightIndex];
+            if (this.menuItems[this.hoverIndex]) {
+                activeItem = this.menuItems[this.hoverIndex];
                 activeItem.getElement().trigger('click');
                 this.closeMenu();
             }
@@ -416,7 +416,7 @@ define([
                     self.closeMenu();
                 });
 
-                this.$menuContent.on('mouseleave', this.turnOffItems);
+                this.$menuContent.on('mouseleave', this.hoverOffAll);
 
             })
             .on('destroy', function() {
