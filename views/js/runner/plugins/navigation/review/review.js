@@ -100,10 +100,12 @@ define([
                 $button.find('.icon').attr('class', 'icon icon-' + data.icon);
                 $button.find('.text').text(data.text);
 
-                if (button.is('active')) {
-                    button.turnOff();
-                } else {
-                    button.turnOn();
+                if (_.contains(data.control, 'flag')) {
+                    if (button.is('active')) {
+                        button.turnOff();
+                    } else {
+                        button.turnOn();
+                    }
                 }
             }
         }
@@ -352,9 +354,6 @@ define([
             this.flagItemButton.enable();
             this.toggleButton.enable();
             this.navigator.enable();
-            if (! this.navigator.is('hidden')) {
-                this.toggleButton.turnOn();
-            }
             if (testContext.itemFlagged) {
                 this.flagItemButton.turnOn();
             } else {
@@ -370,7 +369,6 @@ define([
             this.flagItemButton.turnOff();
 
             this.toggleButton.disable();
-            this.toggleButton.turnOff();
 
             this.navigator.disable();
         },
@@ -386,6 +384,7 @@ define([
                 this.flagItemButton.hide();
             }
             this.toggleButton.show();
+
             if (!this.explicitlyHidden) {
                 this.navigator.show();
             } else {
