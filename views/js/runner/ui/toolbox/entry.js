@@ -16,13 +16,13 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * This factory creates a component to be used as a toolbox item
+ * This factory creates a component to be used as a toolbox entry
  * This component will then be rendered either:
  * - as a menu entry, if given a menuId that matches an existing menu
  * - as a standalone button otherwise
  *
  * Do not instanciate directly, but use the relevant toolbox method:
- * toolbox.createItem({
+ * toolbox.createEntry({
  *      control: 'item-id',
  *      title: __('Html title'),
  *      icon: 'icon',
@@ -34,8 +34,8 @@
 define([
     'lodash',
     'ui/component',
-    'tpl!taoQtiTest/runner/ui/toolbox/templates/item'
-], function(_, componentFactory, itemTpl) {
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function(_, componentFactory, entryTpl) {
     'use strict';
 
     var itemComponentApi = {
@@ -51,7 +51,7 @@ define([
          * Get the type of the component
          */
         getType: function getType() {
-            return 'item';
+            return 'entry';
         },
 
         /**
@@ -118,7 +118,7 @@ define([
         specs = _.defaults(specs || {}, itemComponentApi);
 
         itemComponent = componentFactory(specs, defaults)
-            .setTemplate(itemTpl)
+            .setTemplate(entryTpl)
             .on('enable', function() {
                 if (this.is('rendered')) {
                     this.$component.removeProp('disabled');

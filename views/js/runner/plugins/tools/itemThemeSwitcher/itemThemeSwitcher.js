@@ -103,7 +103,7 @@ define([
 
             // register menu entries
             state.availableThemes.forEach(function (theme) {
-                var themeEntry = self.getAreaBroker().getToolbox().createItem({
+                var themeEntry = self.getAreaBroker().getToolbox().createEntry({
                     control: theme.id,
                     title: theme.label,
                     icon: 'preview',

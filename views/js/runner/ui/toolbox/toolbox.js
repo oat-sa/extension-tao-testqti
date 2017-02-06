@@ -22,7 +22,7 @@
  *
  * var myText = toolbox.createText({...}); // a text entry with no special behavior
  * var myMenu = toolbox.createMenu({...}); // a menu
- * var myItem = toolbox.createItem({...}); // either a stand alone button or a menu entry
+ * var myItem = toolbox.createEntry({...}); // either a stand alone button or a menu entry
  * myItem.setMenuId('menuId');             // if you want to make the item part of a menu
  *
  * The rendering method can be overridden to create custom layouts:
@@ -47,11 +47,11 @@ define([
     'lodash',
     'jquery',
     'ui/component',
-    'taoQtiTest/runner/ui/toolbox/item',
+    'taoQtiTest/runner/ui/toolbox/entry',
     'taoQtiTest/runner/ui/toolbox/menu',
     'taoQtiTest/runner/ui/toolbox/text',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/toolbox'
-], function(_, $, componentFactory, itemFactory, menuFactory, textFactory, toolboxTpl) {
+], function(_, $, componentFactory, entryFactory, menuFactory, textFactory, toolboxTpl) {
     'use strict';
 
     var toolbarComponentApi = {
@@ -92,7 +92,7 @@ define([
         },
 
         /**
-         * Create a item component instance
+         * Create a entry component instance
          * @param {Object} config
          * @param {String} config.control - will be used as the instance id and in the data-control html attribute
          * @param {String} config.title - will be used in the title html attribute
@@ -100,8 +100,8 @@ define([
          * @param {String} config.text - the button label
          * @returns {Component} the create instance
          */
-        createItem: function createItem(config)  {
-            var item = itemFactory().init(config);
+        createEntry: function createEntry(config)  {
+            var item = entryFactory().init(config);
             this.allItems.push(item);
             return item;
         },
@@ -154,7 +154,7 @@ define([
 
             // first, we gather all items relevant to the current menu
             menuEntries = self.allItems.filter(function (item) {
-                return (item.getType() === 'item' && item.getMenuId() === menuId);
+                return (item.getType() === 'entry' && item.getMenuId() === menuId);
             });
 
             // we then add entries to the current menu

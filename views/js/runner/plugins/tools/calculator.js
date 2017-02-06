@@ -110,7 +110,7 @@ define([
             }
 
             //build element (detached)
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'calculator',
                 title : __('Open Calculator'),
                 icon : 'table',

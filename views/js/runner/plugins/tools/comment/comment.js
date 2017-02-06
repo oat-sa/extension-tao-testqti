@@ -88,7 +88,7 @@ define([
             }
 
             // register button in toolbox
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control: 'comment',
                 title: __('Leave a comment'),
                 icon: 'tag',

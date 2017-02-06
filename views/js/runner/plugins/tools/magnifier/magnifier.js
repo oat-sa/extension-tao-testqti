@@ -181,7 +181,7 @@ define([
             }
 
             // build element (detached)
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control: 'magnify',
                 title: __('Displays a customisable magnifier'),
                 text: __('Magnify'),

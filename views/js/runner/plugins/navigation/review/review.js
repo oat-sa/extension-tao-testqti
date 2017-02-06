@@ -237,13 +237,13 @@ define([
             this.explicitlyHidden = false;
 
             // register buttons in the toolbox component
-            this.toggleButton = this.getAreaBroker().getToolbox().createItem(getToggleButtonData(this.navigator));
+            this.toggleButton = this.getAreaBroker().getToolbox().createEntry(getToggleButtonData(this.navigator));
             this.toggleButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-reviewpanel');
             });
 
-            this.flagItemButton = this.getAreaBroker().getToolbox().createItem(getFlagItemButtonData(testContext));
+            this.flagItemButton = this.getAreaBroker().getToolbox().createEntry(getFlagItemButtonData(testContext));
             this.flagItemButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-flagitem');

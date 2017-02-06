@@ -54,14 +54,14 @@ define([
             var highlighter = highlighterFactory(testRunner);
 
             // create buttons
-            this.buttonMain = this.getAreaBroker().getToolbox().createItem({
+            this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
                 title: __('Highlight text'),
                 icon: 'text-marker',
                 control: 'highlight-trigger',
                 text: __('Highlight')
             });
 
-            this.buttonRemove = this.getAreaBroker().getToolbox().createItem({
+            this.buttonRemove = this.getAreaBroker().getToolbox().createEntry({
                 title: __('Clear highlights'),
                 control: 'highlight-clear',
                 text: __('Clear highlights')
