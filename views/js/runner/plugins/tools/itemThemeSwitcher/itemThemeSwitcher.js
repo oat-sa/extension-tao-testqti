@@ -116,15 +116,15 @@ define([
                     var themeId = this.config.control;
                     e.preventDefault();
 
-                    self.button.deactivateAll();
-                    this.activate();
+                    self.button.turnOffAll();
+                    this.turnOn();
 
                     changeTheme(themeId);
                 });
 
                 if (state.defaultTheme === theme.id) {
                     themeEntry.on('render', function() {
-                        this.activate();
+                        this.turnOn();
                     });
                 }
             });

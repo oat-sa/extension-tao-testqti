@@ -139,10 +139,10 @@ define([
                     highlighter.clearHighlights();
                 })
                 .on('plugin-start.highlighter', function() {
-                    self.buttonMain.activate();
+                    self.buttonMain.turnOn();
                 })
                 .on('plugin-end.highlighter', function() {
-                    self.buttonMain.deactivate();
+                    self.buttonMain.turnOff();
                 });
         },
 

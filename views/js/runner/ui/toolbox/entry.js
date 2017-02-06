@@ -81,16 +81,16 @@ define([
 
         /**
          * Set the item as active. For example, if it opens a tool,
-         * the item should be represented as long as the tool remains opened
+         * the item should be represented 'on' as long as the tool remains opened
          */
-        activate: function activate() {
+        turnOn: function turnOn() {
             this.setState('active', true);
         },
 
         /**
          * Set the item as inactive
          */
-        deactivate: function deactivate() {
+        turnOff: function turnOff() {
             this.setState('active', false);
         },
 

@@ -147,9 +147,9 @@ define([
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
-                            self.button.activate();
+                            self.button.turnOn();
                         } else {
-                            self.button.deactivate();
+                            self.button.turnOff();
                         }
                     }
                 });

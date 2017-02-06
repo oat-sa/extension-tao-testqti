@@ -101,9 +101,9 @@ define([
                 $button.find('.text').text(data.text);
 
                 if (button.is('active')) {
-                    button.deactivate();
+                    button.turnOff();
                 } else {
-                    button.activate();
+                    button.turnOn();
                 }
             }
         }
@@ -353,12 +353,12 @@ define([
             this.toggleButton.enable();
             this.navigator.enable();
             if (! this.navigator.is('hidden')) {
-                this.toggleButton.activate();
+                this.toggleButton.turnOn();
             }
             if (testContext.itemFlagged) {
-                this.flagItemButton.activate();
+                this.flagItemButton.turnOn();
             } else {
-                this.flagItemButton.deactivate();
+                this.flagItemButton.turnOff();
             }
         },
 
@@ -367,10 +367,10 @@ define([
          */
         disable: function disable() {
             this.flagItemButton.disable();
-            this.flagItemButton.deactivate();
+            this.flagItemButton.turnOff();
 
             this.toggleButton.disable();
-            this.toggleButton.deactivate();
+            this.toggleButton.turnOff();
 
             this.navigator.disable();
         },

@@ -80,9 +80,9 @@ define([
                     if (!hider.isHidden(self.$form)) {
                         //reset the form on each display
                         self.$input.val('').focus();
-                        self.button.activate();
+                        self.button.turnOn();
                     } else {
-                        self.button.deactivate();
+                        self.button.turnOff();
                     }
                 }
             }
@@ -106,7 +106,7 @@ define([
                 //hide the form without submit
                 self.$cancel.on('click', function () {
                     hider.hide(self.$form);
-                    self.button.deactivate();
+                    self.button.turnOff();
                 });
 
                 //submit the comment, then hide the form
@@ -115,7 +115,7 @@ define([
 
                     if (comment) {
                         self.disable();
-                        self.button.deactivate();
+                        self.button.turnOff();
 
                         testRunner.getProxy()
                             .callTestAction('comment', {
@@ -197,7 +197,7 @@ define([
                 hider.hide(this.$form);
             }
             this.button.disable();
-            this.button.deactivate();
+            this.button.turnOff();
         },
 
         /**

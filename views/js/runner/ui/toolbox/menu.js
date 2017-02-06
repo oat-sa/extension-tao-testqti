@@ -78,14 +78,14 @@ define([
         /**
          * Set the menu as active, essentially meaning that the menu panel is opened
          */
-        activate: function activate() {
+        turnOn: function turnOn() {
             this.setState('active', true);
         },
 
         /**
          * Set the menu as inactive
          */
-        deactivate: function deactivate() {
+        turnOff: function turnOff() {
             this.setState('active', false);
         },
 
@@ -122,7 +122,7 @@ define([
             this.$menuStateIcon.addClass('icon-down');
 
             // turn on the menu button
-            this.activate();
+            this.turnOn();
 
             // setup keyboard navigation & highlighting
             this.enableShortcuts();
@@ -154,7 +154,7 @@ define([
             this.$menuStateIcon.addClass('icon-up');
 
             // turn off the button
-            this.deactivate();
+            this.turnOff();
 
             // disable keyboard navigation & highlighting
             this.disableShortcuts();
@@ -241,9 +241,9 @@ define([
         /**
          * Set all entries in the menu to inactive
          */
-        deactivateAll: function deactivateAll() {
+        turnOffAll: function turnOffAll() {
             this.menuItems.forEach(function (current) {
-                current.deactivate();
+                current.turnOff();
             });
         },
 
