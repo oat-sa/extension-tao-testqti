@@ -134,7 +134,8 @@ define([
             if(document.activeElement){
                 document.activeElement.blur();
             }
-            this.$menuButton.focus();
+            this.$menuContainer.focus();
+            this.moveUp();//todo improve the focus style in submenu
 
             // component inner state
             this.setState('opened', true);
@@ -264,6 +265,7 @@ define([
                 var currentKeyCode = e.keyCode ? e.keyCode : e.charCode;
 
                 e.preventDefault();
+                e.stopPropagation();
 
                 switch (currentKeyCode) {
                     case keyCodes.SPACE:
@@ -318,7 +320,8 @@ define([
             } else if (this.highlightIndex === (this.menuItems.length - 1)) {
                 this.highlightIndex++;
                 this.turnOffItems();
-                this.$menuButton.focus();
+                this.$menuButton.closest('.action').focus();
+                this.closeMenu();
             }
         },
 
