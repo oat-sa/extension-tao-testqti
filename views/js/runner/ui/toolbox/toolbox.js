@@ -71,6 +71,7 @@ define([
          * @param {String} config.title - will be used in the title html attribute
          * @param {String} config.icon - the icon for the button
          * @param {String} config.text - the button label
+         * @param {String} config.className - an extra class
          * @returns {Component} the create instance
          */
         createMenu: function createMenu(config) {
@@ -98,6 +99,7 @@ define([
          * @param {String} config.title - will be used in the title html attribute
          * @param {String} config.icon - the icon for the button
          * @param {String} config.text - the button label
+         * @param {String} config.className - an extra class
          * @returns {Component} the create instance
          */
         createEntry: function createEntry(config)  {
@@ -111,6 +113,7 @@ define([
          * @param {Object} config
          * @param {String} config.control - will be used as the instance id and in the data-control html attribute
          * @param {String} config.text - the text content
+         * @param {String} config.className - an extra class
          * @returns {Component} the create instance
          */
         createText: function createText(config) {
