@@ -127,6 +127,7 @@ define([
             .on('disable', function() {
                 if (this.is('rendered')) {
                     this.$component.prop('disabled', true);
+                    this.turnOff();
                 }
             })
             .on('init', function () {

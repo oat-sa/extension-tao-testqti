@@ -376,6 +376,7 @@ define([
                 if (this.is('rendered')) {
                     this.$component.prop('disabled', true);
                     this.closeMenu();
+                    this.turnOff();
                 }
             })
             .on('hide', function disable() {
