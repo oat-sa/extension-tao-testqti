@@ -73,7 +73,7 @@ define([
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
 
             // register the button in the toolbox
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'eliminator',
                 title : __('Eliminate choices'),
                 icon : 'strike-through',
@@ -147,9 +147,9 @@ define([
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
-                            self.button.activate();
+                            self.button.turnOn();
                         } else {
-                            self.button.deactivate();
+                            self.button.turnOff();
                         }
                     }
                 });

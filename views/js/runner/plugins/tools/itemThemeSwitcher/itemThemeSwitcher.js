@@ -88,14 +88,14 @@ define([
             }
 
             // register toolbox button
-            this.button = this.getAreaBroker().getToolbox().createMenu({
+            this.menuButton = this.getAreaBroker().getToolbox().createMenu({
                 control: 'color-contrast',
                 title: __('Change the current color preset'),
                 icon: 'contrast',
                 text: __('Contrast')
             });
 
-            this.button.on('click', function (e) {
+            this.menuButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-themeswitcher-toggle');
             });
@@ -103,7 +103,7 @@ define([
 
             // register menu entries
             state.availableThemes.forEach(function (theme) {
-                var themeEntry = self.getAreaBroker().getToolbox().createItem({
+                var themeEntry = self.getAreaBroker().getToolbox().createEntry({
                     control: theme.id,
                     title: theme.label,
                     icon: 'preview',
@@ -116,15 +116,15 @@ define([
                     var themeId = this.config.control;
                     e.preventDefault();
 
-                    self.button.deactivateAll();
-                    this.activate();
+                    self.menuButton.turnOffAll();
+                    this.turnOn();
 
                     changeTheme(themeId);
                 });
 
                 if (state.defaultTheme === theme.id) {
                     themeEntry.on('render', function() {
-                        this.activate();
+                        this.turnOn();
                     });
                 }
             });
@@ -159,7 +159,7 @@ define([
                 })
                 .on('tool-themeswitcher-toggle', function () {
                     if (self.getState('enabled') !== false) {
-                        self.button.toggleMenu();
+                        self.menuButton.toggleMenu();
                     }
                 });
         },
@@ -175,14 +175,14 @@ define([
          * Enable the button
          */
         enable: function enable() {
-            this.button.enable();
+            this.menuButton.enable();
         },
 
         /**
          * Disable the button
          */
         disable: function disable() {
-            this.button.disable();
+            this.menuButton.disable();
 
         },
 
@@ -190,14 +190,14 @@ define([
          * Show the button
          */
         show: function show() {
-            this.button.show();
+            this.menuButton.show();
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            this.button.hide();
+            this.menuButton.hide();
         }
     });
 });

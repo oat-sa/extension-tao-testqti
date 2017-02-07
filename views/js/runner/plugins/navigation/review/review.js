@@ -100,10 +100,12 @@ define([
                 $button.find('.icon').attr('class', 'icon icon-' + data.icon);
                 $button.find('.text').text(data.text);
 
-                if (button.is('active')) {
-                    button.deactivate();
-                } else {
-                    button.activate();
+                if (_.contains(data.control, 'flag')) {
+                    if (button.is('active')) {
+                        button.turnOff();
+                    } else {
+                        button.turnOn();
+                    }
                 }
             }
         }
@@ -237,13 +239,13 @@ define([
             this.explicitlyHidden = false;
 
             // register buttons in the toolbox component
-            this.toggleButton = this.getAreaBroker().getToolbox().createItem(getToggleButtonData(this.navigator));
+            this.toggleButton = this.getAreaBroker().getToolbox().createEntry(getToggleButtonData(this.navigator));
             this.toggleButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-reviewpanel');
             });
 
-            this.flagItemButton = this.getAreaBroker().getToolbox().createItem(getFlagItemButtonData(testContext));
+            this.flagItemButton = this.getAreaBroker().getToolbox().createEntry(getFlagItemButtonData(testContext));
             this.flagItemButton.on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-flagitem');
@@ -352,13 +354,10 @@ define([
             this.flagItemButton.enable();
             this.toggleButton.enable();
             this.navigator.enable();
-            if (! this.navigator.is('hidden')) {
-                this.toggleButton.activate();
-            }
             if (testContext.itemFlagged) {
-                this.flagItemButton.activate();
+                this.flagItemButton.turnOn();
             } else {
-                this.flagItemButton.deactivate();
+                this.flagItemButton.turnOff();
             }
         },
 
@@ -367,10 +366,9 @@ define([
          */
         disable: function disable() {
             this.flagItemButton.disable();
-            this.flagItemButton.deactivate();
+            this.flagItemButton.turnOff();
 
             this.toggleButton.disable();
-            this.toggleButton.deactivate();
 
             this.navigator.disable();
         },
@@ -386,6 +384,7 @@ define([
                 this.flagItemButton.hide();
             }
             this.toggleButton.show();
+
             if (!this.explicitlyHidden) {
                 this.navigator.show();
             } else {

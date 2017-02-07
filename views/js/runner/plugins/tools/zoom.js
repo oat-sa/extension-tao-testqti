@@ -153,13 +153,13 @@ define([
             }
 
             //build element (detached)
-            this.buttonZoomOut = this.getAreaBroker().getToolbox().createItem({
+            this.buttonZoomOut = this.getAreaBroker().getToolbox().createEntry({
                 control : 'zoomOut',
                 title : __('Zoom out'),
                 icon : 'remove'
             });
 
-            this.buttonZoomIn = this.getAreaBroker().getToolbox().createItem({
+            this.buttonZoomIn = this.getAreaBroker().getToolbox().createEntry({
                 control : 'zoomIn',
                 title : __('Zoom in'),
                 icon : 'add'

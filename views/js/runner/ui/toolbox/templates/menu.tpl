@@ -1,4 +1,4 @@
-<li data-control="{{control}}" class="small btn-info action menu-group" title="{{title}}">
+<li data-control="{{control}}" class="small btn-info action {{#if className}} {{className}}{{/if}}" title="{{title}}">
     <a class="li-inner" data-control="{{control}}-button" href="#">
         {{#if icon}}<span class="icon icon-{{icon}}{{#unless text}} no-label{{/unless}}"></span>{{/if}}
         {{#if text}}<span class="text">{{text}}</span>{{/if}}

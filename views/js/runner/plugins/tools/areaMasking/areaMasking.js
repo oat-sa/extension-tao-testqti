@@ -78,7 +78,7 @@ define([
                 maskComponent()
                     .on('render', function(){
                         self.masks.push(this);
-                        self.button.activate();
+                        self.button.turnOn();
 
                         /**
                          * @event areaMasking#maskadd
@@ -91,7 +91,7 @@ define([
                             self.enable();
                         }
                         if (self.masks.length === 0) {
-                            self.button.deactivate();
+                            self.button.turnOff();
                         }
 
                         /**
@@ -110,7 +110,7 @@ define([
             this.masks = [];
 
             // register the element in the Toolbox
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'area-masking',
                 text : 'Mask tool',
                 title : __('Covers parts of the item'),
@@ -177,7 +177,7 @@ define([
                         addMask();
                     } else if (config.max === 1) {
                         _.invoke(self.masks, 'destroy');
-                        self.button.deactivate();
+                        self.button.turnOff();
                     }
                 });
 

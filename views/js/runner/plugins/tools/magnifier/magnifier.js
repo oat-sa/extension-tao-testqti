@@ -146,10 +146,10 @@ define([
                 if (self.getState('enabled')) {
                     if (self.getState('active')) {
                         hideMagnifier();
-                        self.button.deactivate();
+                        self.button.turnOff();
                     } else {
                         showMagnifier();
-                        self.button.activate();
+                        self.button.turnOn();
                     }
                 }
             }
@@ -181,7 +181,7 @@ define([
             }
 
             // build element (detached)
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control: 'magnify',
                 title: __('Displays a customisable magnifier'),
                 text: __('Magnify'),
@@ -283,7 +283,7 @@ define([
          */
         disable: function disable() {
             this.button.disable();
-            this.button.deactivate();
+            this.button.turnOff();
         },
 
         /**

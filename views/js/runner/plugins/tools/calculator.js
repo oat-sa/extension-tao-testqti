@@ -87,10 +87,10 @@ define([
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
                             self.calculator.show();
-                            self.button.activate();
+                            self.button.turnOn();
                         } else {
                             self.calculator.hide();
-                            self.button.deactivate();
+                            self.button.turnOff();
                         }
                     } else {
                         //build calculator widget
@@ -100,17 +100,17 @@ define([
                             draggableContainer: areaBroker.getContainer()
                         }, _default)).on('show', function () {
                             self.trigger('open');
-                            self.button.activate();
+                            self.button.turnOn();
                         }).on('hide', function () {
                             self.trigger('close');
-                            self.button.deactivate();
+                            self.button.turnOff();
                         }).show();
                     }
                 }
             }
 
             //build element (detached)
-            this.button = this.getAreaBroker().getToolbox().createItem({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'calculator',
                 title : __('Open Calculator'),
                 icon : 'table',

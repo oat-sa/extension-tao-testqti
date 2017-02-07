@@ -16,13 +16,13 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * This factory creates a component to be used as a toolbox item
+ * This factory creates a component to be used as a toolbox entry
  * This component will then be rendered either:
  * - as a menu entry, if given a menuId that matches an existing menu
  * - as a standalone button otherwise
  *
  * Do not instanciate directly, but use the relevant toolbox method:
- * toolbox.createItem({
+ * toolbox.createEntry({
  *      control: 'item-id',
  *      title: __('Html title'),
  *      icon: 'icon',
@@ -34,8 +34,8 @@
 define([
     'lodash',
     'ui/component',
-    'tpl!taoQtiTest/runner/ui/toolbox/templates/item'
-], function(_, componentFactory, itemTpl) {
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function(_, componentFactory, entryTpl) {
     'use strict';
 
     var itemComponentApi = {
@@ -51,7 +51,7 @@ define([
          * Get the type of the component
          */
         getType: function getType() {
-            return 'item';
+            return 'entry';
         },
 
         /**
@@ -81,30 +81,30 @@ define([
 
         /**
          * Set the item as active. For example, if it opens a tool,
-         * the item should be represented as long as the tool remains opened
+         * the item should be represented 'on' as long as the tool remains opened
          */
-        activate: function activate() {
+        turnOn: function turnOn() {
             this.setState('active', true);
         },
 
         /**
          * Set the item as inactive
          */
-        deactivate: function deactivate() {
+        turnOff: function turnOff() {
             this.setState('active', false);
         },
 
         /**
          * Set the item as hovered, whether by the mouse or by keyboard navigation
          */
-        highlight: function highlight() {
+        hoverOn: function hoverOn() {
             this.setState('hover', true);
         },
 
         /**
          * Turn off the hovered style
          */
-        turnOff: function turnOff() {
+        hoverOff: function hoverOff() {
             this.setState('hover', false);
         }
     };
@@ -118,7 +118,7 @@ define([
         specs = _.defaults(specs || {}, itemComponentApi);
 
         itemComponent = componentFactory(specs, defaults)
-            .setTemplate(itemTpl)
+            .setTemplate(entryTpl)
             .on('enable', function() {
                 if (this.is('rendered')) {
                     this.$component.removeProp('disabled');
@@ -127,6 +127,7 @@ define([
             .on('disable', function() {
                 if (this.is('rendered')) {
                     this.$component.prop('disabled', true);
+                    this.turnOff();
                 }
             })
             .on('init', function () {
