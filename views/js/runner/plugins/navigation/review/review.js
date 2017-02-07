@@ -25,7 +25,6 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'core/keyNavigator',
     'ui/hider',
     'util/shortcut',
     'util/namespace',
@@ -33,7 +32,7 @@ define([
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/navigation/review/navigator',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, keyNavigator, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, mapHelper, navigatorFactory, buttonTpl) {
     'use strict';
 
     /**
