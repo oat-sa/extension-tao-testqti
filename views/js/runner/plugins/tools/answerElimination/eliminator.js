@@ -76,7 +76,7 @@ define([
             this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'eliminator',
                 title : __('Eliminate choices'),
-                icon : 'strike-through',
+                icon : 'eliminate',
                 text : __('Eliminator')
             });
 
