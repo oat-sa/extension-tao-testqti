@@ -21,9 +21,16 @@
 define([
     'jquery',
     'lodash',
-    'taoTests/runner/areaBroker'
-], function ($, _, areaBroker) {
+    'taoTests/runner/areaBroker',
+    'taoQtiTest/runner/ui/toolbox/toolbox'
+], function ($, _, areaBrokerFactory, toolboxFactory) {
     'use strict';
+
+    /**
+     * The mock
+     * @type {Object}
+     */
+    var areaBroker;
 
     /**
      * The list of default areas
@@ -65,7 +72,11 @@ define([
 
         $('#qunit-fixture').append($container);
 
-        return areaBroker($container, mapping);
+        areaBroker = areaBrokerFactory($container, mapping);
+
+        areaBroker.setComponent('toolbox', toolboxFactory().init());
+
+        return areaBroker;
     }
 
     return areaBrokerMock;

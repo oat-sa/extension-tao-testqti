@@ -21,10 +21,11 @@
 define([
     'lodash',
     'helpers',
+    'ui/hider',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/highlighter/plugin'
-], function(_, helpers, runnerFactory, providerMock, pluginFactory) {
+], function(_, helpers, hider, runnerFactory, providerMock, pluginFactory) {
     'use strict';
 
     var pluginApi;
@@ -100,38 +101,35 @@ define([
 
     QUnit.asyncTest('render/destroy button', function(assert) {
         var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(5);
+        QUnit.expect(6);
 
         plugin.init()
             .then(function() {
-                plugin.render()
-                    .then(function() {
-                        var $container = getButtonContainer(runner);
-                        var $buttonGroup = $container.find(plugin.$buttonGroup);
+                var $container = getButtonContainer(runner),
+                    $buttonMain, $buttonRemove;
 
-                        assert.equal(plugin.getState('ready'), true, 'The plugin is ready');
-                        assert.equal($buttonGroup.length, 1, 'The plugin button has been inserted');
-                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button has been rendered disabled');
+                areaBroker.getToolbox().render($container);
 
-                        plugin.destroy()
-                            .then(function() {
-                                $buttonGroup = $container.find(plugin.$button);
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                $buttonRemove = $container.find('[data-control="highlight-clear"]');
 
-                                assert.equal(plugin.getState('init'), false, 'The plugin is destroyed');
-                                assert.equal($buttonGroup.length, 0, 'The button has been removed');
-                                QUnit.start();
-                            })
-                            .catch(function(err) {
-                                assert.ok(false, 'error in destroy method: ' + err);
-                                QUnit.start();
-                            });
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'error in render method: ' + err);
-                        QUnit.start();
-                    });
+                assert.equal($buttonMain.length, 1, 'The trigger button has been inserted');
+                assert.equal($buttonMain.hasClass('disabled'), true, 'The trigger button has been rendered disabled');
+                assert.equal($buttonRemove.length, 1, 'The remove button has been inserted');
+                assert.equal($buttonMain.hasClass('disabled'), true, 'The remove button has been rendered disabled');
+
+                areaBroker.getToolbox().destroy();
+
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                $buttonRemove = $container.find('[data-control="highlight-clear"]');
+
+                assert.equal($buttonMain.length, 0, 'The trigger button has been removed');
+                assert.equal($buttonRemove.length, 0, 'The remove button has been removed');
+                QUnit.start();
+
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
@@ -142,41 +140,40 @@ define([
 
     QUnit.asyncTest('enable/disable button', function(assert) {
         var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(4);
 
         plugin.init()
             .then(function() {
-                plugin.render()
+                var $container = getButtonContainer(runner),
+                    $buttonMain, $buttonRemove;
+
+                areaBroker.getToolbox().render($container);
+
+                plugin.enable()
                     .then(function() {
-                        plugin.enable()
+                        $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                        $buttonRemove = $container.find('[data-control="highlight-clear"]');
+
+                        assert.equal($buttonMain.hasClass('disabled'), false, 'The trigger button has been enabled');
+                        assert.equal($buttonRemove.hasClass('disabled'), false, 'The remove button has been enabled');
+
+                        plugin.disable()
                             .then(function() {
-                                var $container = getButtonContainer(runner);
-                                var $buttonGroup = $container.find(plugin.$buttonGroup);
+                                assert.equal($buttonMain.hasClass('disabled'), true, 'The trigger button has been disabled');
+                                assert.equal($buttonRemove.hasClass('disabled'), true, 'The remove button has been disabled');
 
-                                assert.equal(plugin.getState('enabled'), true, 'The plugin is enabled');
-                                assert.equal($buttonGroup.hasClass('disabled'), false, 'The button is not disabled');
-
-                                plugin.disable()
-                                    .then(function() {
-                                        assert.equal(plugin.getState('enabled'), false, 'The plugin is disabled');
-                                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button is disabled');
-
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        assert.ok(false, 'error in disable method: ' + err);
-                                        QUnit.start();
-                                    });
+                                QUnit.start();
                             })
                             .catch(function(err) {
-                                assert.ok(false, 'error in enable method: ' + err);
+                                assert.ok(false, 'error in disable method: ' + err);
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        assert.ok(false, 'error in render method: ' + err);
+                        assert.ok(false, 'error in enable method: ' + err);
                         QUnit.start();
                     });
             })
@@ -189,48 +186,81 @@ define([
 
     QUnit.asyncTest('show/hide button', function(assert) {
         var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(4);
+
+        plugin.init()
+            .then(function() {
+                var $container = getButtonContainer(runner),
+                    $buttonMain, $buttonRemove;
+
+                areaBroker.getToolbox().render($container);
+
+                plugin.hide()
+                    .then(function() {
+                        $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                        $buttonRemove = $container.find('[data-control="highlight-clear"]');
+
+                        assert.ok(hider.isHidden($buttonMain), 'The trigger button has been hidden');
+                        assert.ok(hider.isHidden($buttonRemove), 'The remove button has been hidden');
+
+                        plugin.show()
+                            .then(function() {
+                                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
+                                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
+
+                                QUnit.start();
+                            })
+                            .catch(function(err) {
+                                assert.ok(false, 'error in disable method: ' + err);
+                                QUnit.start();
+                            });
+                    })
+                    .catch(function(err) {
+                        assert.ok(false, 'error in enable method: ' + err);
+                        QUnit.start();
+                    });
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in init method: ' + err);
+                QUnit.start();
+            });
+    });
+
+
+    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(6);
 
         plugin.init()
             .then(function() {
-                plugin.render()
-                    .then(function() {
-                        var $container = getButtonContainer(runner);
-                        var $buttonGroup = $container.find(plugin.$buttonGroup);
+                var $container = getButtonContainer(runner),
+                    $buttonMain, $buttonRemove;
 
-                        plugin.setState('visible', true);
+                areaBroker.getToolbox().render($container);
 
-                        assert.equal(plugin.getState('ready'), true, 'The plugin is ready');
-                        assert.equal(plugin.getState('visible'), true, 'The plugin is visible');
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                $buttonRemove = $container.find('[data-control="highlight-clear"]');
 
-                        plugin.hide()
-                            .then(function() {
-                                assert.equal(plugin.getState('visible'), false, 'The plugin is not visible');
-                                assert.equal($buttonGroup.css('display'), 'none', 'The plugin element is hidden');
+                runner.trigger('loaditem');
 
-                                plugin.show()
-                                    .then(function() {
-                                        assert.equal(plugin.getState('visible'), true, 'The plugin is visible');
-                                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin element is visible');
+                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
+                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
 
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        assert.ok(false, 'error in show method: ' + err);
-                                        QUnit.start();
-                                    });
-                            })
-                            .catch(function(err) {
-                                assert.ok(false, 'error in hide method: ' + err);
-                                QUnit.start();
-                            });
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'error in render method: ' + err);
-                        QUnit.start();
-                    });
+                runner.trigger('unloaditem');
+
+                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is still visible');
+                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is still visible');
+
+                assert.equal($buttonMain.hasClass('disabled'), true, 'The trigger button has been disabled');
+                assert.equal($buttonRemove.hasClass('disabled'), true, 'The remove button has been disabled');
+
+                QUnit.start();
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
@@ -238,64 +268,36 @@ define([
             });
     });
 
-    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
-        var runner = runnerFactory(providerName);
-        var plugin = pluginFactory(runner, runner.getAreaBroker());
-
-        QUnit.expect(3);
-
-        plugin.init()
-            .then(function() {
-                plugin.render()
-                    .then(function() {
-                        var $container = getButtonContainer(runner);
-                        var $buttonGroup = $container.find(plugin.$buttonGroup);
-
-                        runner.trigger('loaditem');
-
-                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is visible');
-
-                        runner.trigger('unloaditem');
-
-                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is still visible');
-                        assert.equal($buttonGroup.hasClass('disabled'), true, 'The button is disabled');
-
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'error in render method: ' + err);
-                        QUnit.start();
-                    });
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
-            });
-    });
 
     QUnit.asyncTest('runner events: renderitem', function(assert) {
         var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(2);
+        QUnit.expect(4);
 
         plugin.init()
             .then(function() {
-                return plugin.render()
-                    .then(function() {
-                        var $container = getButtonContainer(runner);
-                        var $buttonGroup = $container.find(plugin.$buttonGroup);
+                var $container = getButtonContainer(runner),
+                    $buttonMain, $buttonRemove;
 
-                        runner.trigger('renderitem');
+                areaBroker.getToolbox().render($container);
 
-                        assert.notEqual($buttonGroup.css('display'), 'none', 'The plugin button is visible');
-                        assert.equal($buttonGroup.hasClass('disabled'), false, 'The button is not disabled');
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                $buttonRemove = $container.find('[data-control="highlight-clear"]');
 
-                        QUnit.start();
-                    });
+                runner.trigger('renderitem');
+
+                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
+                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
+
+                assert.equal($buttonMain.hasClass('disabled'), false, 'The trigger button is not disabled');
+                assert.equal($buttonRemove.hasClass('disabled'), false, 'The remove button is not disabled');
+
+                QUnit.start();
             })
             .catch(function(err) {
-                assert.ok(false, 'An error has occurred: ' + err);
+                assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
