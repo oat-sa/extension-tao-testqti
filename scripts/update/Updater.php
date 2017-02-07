@@ -1018,6 +1018,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('5.59.0');
         }
 
-        $this->skip('5.59.0', '6.2.0');
+        $this->skip('5.59.0', '6.0.0');
+
+        if($this->isVersion('6.0.0')){
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Using key to navigate test runner',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'description' => 'Provide a way to navigate within the test runner with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+            $this->setVersion('6.1.0');
+        }
+        $this->skip('6.1.0', '6.1.1');
     }
 }

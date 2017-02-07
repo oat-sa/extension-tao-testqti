@@ -4,10 +4,16 @@
 .test-runner-scope {
 
     .action-bar.content-action-bar {
+        padding: 2px;
         li {
             margin: 2px 0 0 10px;
+            border: none;
             &.btn-info {
-                border-color: white(.3);
+                padding-top: 6px;
+                height: 36px;
+                margin-top: 0;
+                border-bottom: solid 2px transparent;
+                border-radius: 0;
                 &.btn-group {
                     border:none !important;
                     overflow:hidden;
@@ -38,8 +44,8 @@
                         }
                     }
                 }
-                &:hover {
-                    border-color: white(.8);
+                &:hover, &.active {
+                    border-bottom-color: white(.8);
                 }
                 &:active,
                 &.active {
@@ -240,8 +246,8 @@
                     padding: 0;
 
                     position: absolute;
-                    bottom: 30px;
-                    left: 0;
+                    bottom: 36px;
+                    left: -3px;
 
                     .action {
                         display: inline-block;
@@ -282,10 +288,7 @@
                         &:hover {
                             background-color: $info;
                             color: $textHighlight;
-                            border-left: solid 3px black;
-                            padding-left: 13px;
-
-                            .label {
+                            .label, .icon {
                                 color: $textHighlight;
                             }
                             .icon {
