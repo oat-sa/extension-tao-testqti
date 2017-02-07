@@ -68,6 +68,12 @@ define([
                 weighted: 'SCORE_TOTAL_WEIGHTED',
                 categoryIdentifier: 'SCORE_CATEGORY_%s',
                 categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_%s'
+            }, {
+                formula: 'max',
+                identifier: 'SCORE_TOTAL_MAX',
+                weighted: 'SCORE_TOTAL_MAX_WEIGHTED',
+                categoryIdentifier: 'SCORE_CATEGORY_MAX_%s',
+                categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_MAX_%s'
             }],
             clean: true,
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
@@ -123,6 +129,35 @@ define([
                     addTotalScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryIdentifier), scoreIdentifier, null, category);
                     if (descriptor.categoryWeighted && scoring.weightIdentifier) {
                         addTotalScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryWeighted), scoreIdentifier, weightIdentifier, category);
+                    }
+                });
+            }
+        },
+
+        /**
+         * Generates the outcomes that compute the "Max score"
+         * @param {Object} descriptor
+         * @param {Object} scoring
+         * @param {Object} outcomes
+         * @param {Array} [categories]
+         */
+        max: function formulaMax(descriptor, scoring, outcomes, categories) {
+
+            var scoreIdentifier = scoring.scoreIdentifier;
+            var weightIdentifier = scoring.weightIdentifier;
+
+            // create the outcome and the rule that process the maximum overall score
+            addMaxScoreOutcomes(outcomes, descriptor.identifier, scoreIdentifier);
+            if (descriptor.weighted && scoring.weightIdentifier) {
+                addMaxScoreOutcomes(outcomes, descriptor.weighted, scoreIdentifier, weightIdentifier);
+            }
+
+            // create an outcome per categories
+            if (descriptor.categoryIdentifier && categories) {
+                _.forEach(categories, function (category) {
+                    addMaxScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryIdentifier), scoreIdentifier, null, category);
+                    if (descriptor.categoryWeighted && scoring.weightIdentifier) {
+                        addMaxScoreOutcomes(outcomes, formatCategoryOutcome(category, descriptor.categoryWeighted), scoreIdentifier, weightIdentifier, category);
                     }
                 });
             }
@@ -300,6 +335,37 @@ define([
         );
 
         outcomeHelper.addOutcome(model, outcome, processingRule);
+    }
+
+    /**
+     * Creates an outcome and the rule that process the maximum score
+     *
+     * @param {Object} model
+     * @param {String} identifier
+     * @param {String} [scoreIdentifier]
+     * @param {String} [weightIdentifier]
+     * @param {String} [category]
+     */
+    function addMaxScoreOutcomes(model, identifier, scoreIdentifier, weightIdentifier, category) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
+        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+            processingRuleHelper.sum(
+                processingRuleHelper.outcomeMaximum(scoreIdentifier, weightIdentifier, category)
+            )
+        );
+        var outcomeCondition = processingRuleHelper.outcomeCondition(
+            processingRuleHelper.outcomeIf(
+                processingRuleHelper.isNull(
+                    processingRuleHelper.variable(identifier)
+                ),
+                processingRuleHelper.setOutcomeValue(identifier,
+                    processingRuleHelper.numberPresented(category)
+                )
+            )
+        );
+
+        outcomeHelper.addOutcome(model, outcome, processingRule);
+        outcomeHelper.addOutcomeProcessing(model, outcomeCondition);
     }
 
     /**
