@@ -33,10 +33,12 @@ define([
     var divideCases;
     var sumCases;
     var testVariablesCases, testVariablesErrorCases;
+    var outcomeMaximumCases, outcomeMaximumErrorCases;
     var numberPresentedCases;
     var baseValueCases;
     var variableCases, variableErrorCases;
     var matchCases;
+    var isNullCases, isNullErrorCases;
     var outcomeConditionCases, outcomeConditionErrorCases;
     var outcomeIfCases, outcomeIfErrorCases;
     var outcomeElseCases, outcomeElseErrorCases;
@@ -50,10 +52,12 @@ define([
         {title: 'divide'},
         {title: 'sum'},
         {title: 'testVariables'},
+        {title: 'outcomeMaximum'},
         {title: 'numberPresented'},
         {title: 'baseValue'},
         {title: 'variable'},
         {title: 'match'},
+        {title: 'isNull'},
         {title: 'outcomeCondition'},
         {title: 'outcomeIf'},
         {title: 'outcomeElse'}
@@ -859,6 +863,115 @@ define([
         });
 
 
+    outcomeMaximumCases = [{
+        title: 'only identifier',
+        identifier: 'foo',
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: '',
+            sectionIdentifier: '',
+            includeCategories: [],
+            excludeCategories: []
+        }
+    }, {
+        title: 'identifier and weight',
+        identifier: 'foo',
+        weight: 'bar',
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: 'bar',
+            sectionIdentifier: '',
+            includeCategories: [],
+            excludeCategories: []
+        }
+    }, {
+        title: 'identifier and one category to include as string',
+        identifier: 'foo',
+        includeCategories: 'bar',
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: '',
+            sectionIdentifier: '',
+            includeCategories: ['bar'],
+            excludeCategories: []
+        }
+    }, {
+        title: 'identifier and one category to include as array',
+        identifier: 'foo',
+        includeCategories: ['bar'],
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: '',
+            sectionIdentifier: '',
+            includeCategories: ['bar'],
+            excludeCategories: []
+        }
+    }, {
+        title: 'identifier and one category to exclude as string',
+        identifier: 'foo',
+        excludeCategories: 'bar',
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: '',
+            sectionIdentifier: '',
+            includeCategories: [],
+            excludeCategories: ['bar']
+        }
+    }, {
+        title: 'identifier and one category to exclude as array',
+        identifier: 'foo',
+        excludeCategories: ['bar'],
+        expected: {
+            'qti-type': 'outcomeMaximum',
+            outcomeIdentifier: 'foo',
+            weightIdentifier: '',
+            sectionIdentifier: '',
+            includeCategories: [],
+            excludeCategories: ['bar']
+        }
+    }];
+
+    QUnit
+        .cases(outcomeMaximumCases)
+        .test('helpers/processingRule.outcomeMaximum()', function (data, assert) {
+            QUnit.expect(1);
+            assert.deepEqual(processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
+        });
+
+
+    outcomeMaximumErrorCases = [{
+        title: 'Missing identifier'
+    }, {
+        title: 'Empty identifier',
+        identifier: ''
+    }, {
+        title: 'Wrong identifier',
+        identifier: {foo: 'bar'}
+    }, {
+        title: 'Wrong weight identifier',
+        identifier: 'foo',
+        weight: {foo: 'bar'}
+    }, {
+        title: 'Bad weight identifier',
+        identifier: 'foo',
+        weight: '12 foo bar'
+    }];
+
+    QUnit
+        .cases(outcomeMaximumErrorCases)
+        .test('helpers/processingRule.outcomeMaximum() #error', function (data, assert) {
+            QUnit.expect(1);
+            assert.throws(function () {
+                processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories);
+            }, 'The processingRule throws error when the input is wrong');
+        });
+
+
     numberPresentedCases = [{
         title: 'no categories',
         expected: {
@@ -1067,6 +1180,53 @@ define([
         .test('helpers/processingRule.match()', function (data, assert) {
             QUnit.expect(1);
             assert.deepEqual(processingRule.match(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
+        });
+
+
+    isNullCases = [{
+        title: 'with parameter',
+        expression: {
+            'qti-type': 'foo'
+        },
+        expected: {
+            'qti-type': 'isNull',
+            minOperands: 1,
+            maxOperands: 1,
+            acceptedCardinalities: [5],
+            acceptedBaseTypes: [12],
+            expressions: [{
+                'qti-type': 'foo'
+            }]
+        }
+    }];
+
+    QUnit
+        .cases(isNullCases)
+        .test('helpers/processingRule.isNull()', function (data, assert) {
+            QUnit.expect(1);
+            assert.deepEqual(processingRule.isNull(data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
+        });
+
+
+    isNullErrorCases = [{
+        title: 'without parameter',
+        expected: {
+            'qti-type': 'isNull',
+            minOperands: 1,
+            maxOperands: 1,
+            acceptedCardinalities: [5],
+            acceptedBaseTypes: [12],
+            expressions: []
+        }
+    }];
+
+    QUnit
+        .cases(isNullErrorCases)
+        .test('helpers/processingRule.isNull() #error', function (data, assert) {
+            QUnit.expect(1);
+            assert.throws(function () {
+                processingRule.isNull(data.expression);
+            }, 'The processingRule throws error when the input is wrong');
         });
 
 

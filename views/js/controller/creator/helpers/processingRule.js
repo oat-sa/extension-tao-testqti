@@ -212,9 +212,38 @@ define([
             }
 
             processingRule.baseType = baseTypeHelper.getValid(type);
-            processingRule.sectionIdentifier = '';
-            processingRule.includeCategories = forceArray(includeCategories);
-            processingRule.excludeCategories = forceArray(excludeCategories);
+            addCategories(processingRule, includeCategories, excludeCategories);
+
+            return processingRule;
+        },
+
+        /**
+         * Creates a `outcomeMaximum` rule
+         * @param {String} identifier
+         * @param {String} weightIdentifier
+         * @param {String|String[]} [includeCategories]
+         * @param {String|String[]} [excludeCategories]
+         * @returns {Object}
+         * @throws {TypeError} if the identifier is empty or is not a string
+         */
+        outcomeMaximum: function outcomeMaximum(identifier, weightIdentifier, includeCategories, excludeCategories) {
+            var processingRule = processingRuleHelper.create('outcomeMaximum');
+
+            if (!outcomeValidator.validateIdentifier(identifier)) {
+                throw new TypeError('You must provide a valid identifier!');
+            }
+            processingRule.outcomeIdentifier = identifier;
+
+            if (weightIdentifier) {
+                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
+                    throw new TypeError('You must provide a valid weight identifier!');
+                }
+                processingRule.weightIdentifier = weightIdentifier;
+            } else {
+                processingRule.weightIdentifier = '';
+            }
+
+            addCategories(processingRule, includeCategories, excludeCategories);
 
             return processingRule;
         },
@@ -228,9 +257,7 @@ define([
         numberPresented: function numberPresented(includeCategories, excludeCategories) {
             var processingRule = processingRuleHelper.create('numberPresented');
 
-            processingRule.sectionIdentifier = '';
-            processingRule.includeCategories = forceArray(includeCategories);
-            processingRule.excludeCategories = forceArray(excludeCategories);
+            addCategories(processingRule, includeCategories, excludeCategories);
 
             return processingRule;
         },
@@ -286,6 +313,16 @@ define([
          */
         match: function match(left, right) {
             return binaryOperator('match', left, right, cardinalityHelper.SAME, cardinalityHelper.SAME);
+        },
+
+        /**
+         * Creates a `isNull` rule
+         * @param {Object|Array} expression - the operand
+         * @returns {Object}
+         * @throws {TypeError} if the operand is not valid QTI element
+         */
+        isNull: function isNull(expression) {
+            return unaryOperator('isNull', expression, baseTypeHelper.ANY, cardinalityHelper.ANY);
         },
 
         /**
@@ -367,6 +404,35 @@ define([
     };
 
     /**
+     * Creates a unary operator rule
+     * @param {String} type - The rule type
+     * @param {Object|Array} expression - The operand
+     * @param {Number|Array} [baseType] - The accepted base type
+     * @param {Number|Array} [cardinality] - The accepted cardinality
+     * @returns {Object}
+     * @throws {TypeError} if the type is empty or is not a string
+     * @throws {TypeError} if the operand is not valid QTI element
+     */
+    function unaryOperator(type, expression, baseType, cardinality) {
+        var processingRule = processingRuleHelper.create(type, null, [expression]);
+
+        processingRule.minOperands = 1;
+        processingRule.maxOperands = 1;
+
+        if (_.isUndefined(baseType)) {
+            baseType = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
+        }
+        if (_.isUndefined(cardinality)) {
+            cardinality = [cardinalityHelper.SINGLE];
+        }
+
+        processingRule.acceptedCardinalities = forceArray(cardinality);
+        processingRule.acceptedBaseTypes = forceArray(baseType);
+
+        return processingRule;
+    }
+
+    /**
      * Creates a binary operator rule
      * @param {String} type - The rule type
      * @param {Object|Array} left - The left operand
@@ -392,6 +458,22 @@ define([
 
         processingRule.acceptedCardinalities = forceArray(cardinality);
         processingRule.acceptedBaseTypes = forceArray(baseType);
+
+        return processingRule;
+    }
+
+    /**
+     * Extends a processing rule with categories ad section identifier.
+     * @param {Object} processingRule
+     * @param {Array|String} [includeCategories]
+     * @param {Array|String} [excludeCategories]
+     * @param {String} [sectionIdentifier]
+     * @returns {Object}
+     */
+    function addCategories(processingRule, includeCategories, excludeCategories, sectionIdentifier) {
+        processingRule.sectionIdentifier = sectionIdentifier || '';
+        processingRule.includeCategories = forceArray(includeCategories);
+        processingRule.excludeCategories = forceArray(excludeCategories);
 
         return processingRule;
     }
