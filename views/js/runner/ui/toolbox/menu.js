@@ -159,11 +159,6 @@ define([
             this.disableShortcuts();
             this.hoverOffAll();
 
-            // give back the focus
-            if(document.activeElement){
-                document.activeElement.blur();
-            }
-
             // component inner state
             this.setState('opened', false);
             this.trigger('closemenu', this);
@@ -357,6 +352,11 @@ define([
                 activeItem = this.menuItems[this.hoverIndex];
                 activeItem.getElement().trigger('click');
                 this.closeMenu();
+
+                // give back the focus
+                if(document.activeElement){
+                    document.activeElement.blur();
+                }
             }
         }
     };
