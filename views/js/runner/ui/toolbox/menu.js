@@ -159,6 +159,11 @@ define([
             this.disableShortcuts();
             this.hoverOffAll();
 
+            // give back the focus
+            if(document.activeElement){
+                document.activeElement.blur();
+            }
+
             // component inner state
             this.setState('opened', false);
             this.trigger('closemenu', this);

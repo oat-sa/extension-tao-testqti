@@ -83,7 +83,7 @@ define([
             // add an event handler to close all opened menu when opening
             menu.on('openmenu', function closeAllMenuExcept(openedMenu) {
                 self.allMenus.forEach(function(current) {
-                    if (openedMenu.getId() !== current.getId()) {
+                    if (openedMenu.getId() !== current.getId() && current.is('opened')) {
                         current.closeMenu();
                     }
                 });
