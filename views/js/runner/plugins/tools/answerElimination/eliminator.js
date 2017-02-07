@@ -77,7 +77,7 @@ define([
             this.$button = $(buttonTpl({
                 control : 'eliminator',
                 title : __('Eliminate choices'),
-                icon : 'strike-through'
+                icon : 'eliminate'
             }));
 
             /**
