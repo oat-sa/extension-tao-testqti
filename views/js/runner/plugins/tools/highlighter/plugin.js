@@ -29,9 +29,8 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/plugins/tools/highlighter/highlighter',
-    'tpl!taoQtiTest/runner/plugins/templates/button-group'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory, buttonGroupTpl) {
+    'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory) {
     'use strict';
 
     /**
@@ -54,43 +53,32 @@ define([
 
             var highlighter = highlighterFactory(testRunner);
 
-            /**
-             * Checks if the plugin is currently available
-             * @returns {Boolean}
-             */
-            function isEnabled() {
-                return self.getState('enabled') !== false;
-            }
-
-           //build element (detached)
-            this.$buttonGroup = $(buttonGroupTpl({
-                control : 'highlighter',
-                buttons: {
-                    main: {
-                        title: __('Highlight text'),
-                        icon: 'text-marker'
-                    },
-                    remove: {
-                        title: __('Remove highlights'),
-                        icon: 'result-nok'
-                    }
-                }
-            }));
-
-            this.$buttonMain = this.$buttonGroup.find('[data-key="main"]');
-            this.$buttonRemove = this.$buttonGroup.find('[data-key="remove"]');
-
-            //attach user events
-            // using 'mousedown' instead of 'click' to avoid losing current selection
-            this.$buttonMain.on('mousedown', function (e) {
-                e.preventDefault();
-                testRunner.trigger('tool-highlight');
+            // create buttons
+            this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
+                title: __('Highlight text'),
+                icon: 'text-marker',
+                control: 'highlight-trigger',
+                text: __('Highlight')
             });
 
-            this.$buttonRemove.on('click', function (e) {
-                e.preventDefault();
-                testRunner.trigger('tool-highlight-remove');
+            this.buttonRemove = this.getAreaBroker().getToolbox().createEntry({
+                title: __('Clear highlights'),
+                control: 'highlight-clear',
+                text: __('Clear highlights')
             });
+
+            // attach user events
+            this.buttonMain
+                .on('mousedown', function(e) { // using 'mousedown' instead of 'click' to avoid losing current selection
+                    e.preventDefault();
+                    testRunner.trigger('tool-highlight');
+                });
+
+            this.buttonRemove
+                .on('click', function(e) {
+                    e.preventDefault();
+                    testRunner.trigger('tool-highlight-remove');
+                });
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
@@ -103,11 +91,30 @@ define([
             //start disabled
             this.disable();
 
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-highlighter
+                return !!context.options.highlighter;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
+
             //update plugin state based on changes
             testRunner
-                .on('loaditem', function () {
-                    self.show();
-                })
+                .on('loaditem', togglePlugin)
                 .on('enabletools renderitem', function () {
                     self.enable();
                 })
@@ -132,19 +139,11 @@ define([
                     highlighter.clearHighlights();
                 })
                 .on('plugin-start.highlighter', function() {
-                    self.$buttonMain.addClass('active');
+                    self.buttonMain.turnOn();
                 })
                 .on('plugin-end.highlighter', function() {
-                    self.$buttonMain.removeClass('active');
+                    self.buttonMain.turnOff();
                 });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render: function render() {
-            var $container = this.getAreaBroker().getToolboxArea();
-            $container.append(this.$buttonGroup);
         },
 
         /**
@@ -153,37 +152,38 @@ define([
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
             $(document).off('.highlighter');
-            this.$buttonRemove.remove();
         },
 
         /**
          * Enable the button
          */
         enable: function enable() {
-            this.$buttonGroup.removeProp('disabled')
-                .removeClass('disabled');
+            this.buttonMain.enable();
+            this.buttonRemove.enable();
         },
 
         /**
          * Disable the button
          */
         disable: function disable() {
-            this.$buttonGroup.prop('disabled', true)
-                .addClass('disabled');
+            this.buttonMain.disable();
+            this.buttonRemove.disable();
         },
 
         /**
          * Show the button
          */
         show: function show() {
-            hider.show(this.$buttonGroup);
+            this.buttonMain.show();
+            this.buttonRemove.show();
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$buttonGroup);
+            this.buttonMain.hide();
+            this.buttonRemove.hide();
         }
     });
 });

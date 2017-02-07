@@ -21,7 +21,7 @@
 define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/category',
-    'json!taoQtiTest/test/creator/helpers/category/categories.json'
+    'json!taoQtiTest/test/creator/samples/categories.json'
 ], function (_,
              categoryHelper,
              testModelSample) {

@@ -1017,10 +1017,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('5.59.0');
         }
-      
-        $this->skip('5.59.0', '5.59.1');
 
-        if($this->isVersion('5.59.1')){
+        $this->skip('5.59.0', '6.0.0');
+
+        if($this->isVersion('6.0.0')){
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
             $registry->register(TestPlugin::fromArray([
@@ -1032,7 +1032,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
             ]));
-            $this->setVersion('5.60.0');
+            $this->setVersion('6.1.0');
         }
     }
 }

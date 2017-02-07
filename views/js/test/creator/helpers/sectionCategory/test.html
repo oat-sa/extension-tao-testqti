@@ -2,9 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Section Category Helper test</title>
-        <base href="../../../../../../tao/views/" />
-
+        <title>Test Authoring - Section Category Helper</title>
+        <base href="../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <link rel="stylesheet" type="text/css" href="css/tao-main-style.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
@@ -16,7 +15,7 @@
 
             QUnit.config.autostart = false;
             require(['/tao/ClientConfig/config'], function(){
-                require(['taoQtiTest/test/sectionCategory/test'], function(){
+                require(['taoQtiTest/test/creator/helpers/sectionCategory/test'], function(){
                     QUnit.config.reorder = false;
                     QUnit.start();
                 });

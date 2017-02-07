@@ -21,6 +21,7 @@
  */
 
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
@@ -372,56 +373,99 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getServiceContext();
+            $route = $serviceContext->getTestSession()->getRoute();
 
-            $stateId = $this->getStateId();
-            $itemState = $this->runnerService->getItemState($serviceContext, $stateId);
-            if (!count($itemState)) {
-                $itemState = new stdClass();
+            //verify the parameter
+            if($route->current()->getAssessmentItemRef()->getHref() != $itemRef){
+                throw new \common_exception_Unauthorized('Attempt to get another item');
             }
 
-            // TODO: make a better implementation
-            // As the rubric blocs are nested at the section level, it could be interesting to send these
-            // rubric blocs only once per section
-            if (count($serviceContext->getTestSession()->getRoute()->current()->getRubricBlockRefs())) {
-                $rubrics = $this->runnerService->getRubrics($serviceContext);
-            } else {
-                $rubrics = null;
-            }
+            //load item data
+            $response = $this->getItemDataResponse($serviceContext, $itemRef, $this->getStateId());
 
-            $itemData = $this->runnerService->getItemData($serviceContext, $itemRef);
-            $baseUrl = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
-            if (is_string($itemData)) {
-                $response = '{' .
-                    '"success":true,' .
-                    '"token":"' . $this->getCsrf()->getCsrfToken() . '",' .
-                    '"baseUrl":"'.$baseUrl.'",' .
-                    '"itemData":' . $itemData . ',' .
-                    '"itemState":' . json_encode($itemState) . ',' .
-                    '"rubrics":' . json_encode($rubrics) .
-                '}';
-            } else {
-                $response = [
-                    'success' => true,
-                    'itemData' => $itemData,
-                    'itemState' => $itemState,
-                    'baseUrl' => $baseUrl,
-                    'rubrics' => $rubrics
-                ];
-            }
-
+            //start the timer
             $this->runnerService->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
-        if (is_string($response)) {
-            header(HTTPToolkit::statusCodeHeader($code));
-            Context::getInstance()->getResponse()->setContentHeader('application/json');
-            echo $response;
-        } else {
-            $this->returnJson($response, $code);
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * Provides the definition data and the state of the 
+     * next item. 
+     */
+    public function getNextItemData()
+    {
+        $code = 200;
+
+        try {
+
+            $allowed = $this->runnerService->getTestConfig()->getConfigValue('allowBrowseNextItem');
+            if(!$allowed){
+                \common_Logger::w("Attempt to disclose the next item whitout the configuration");
+                throw new \common_exception_Unauthorized();
+            }
+            $serviceContext = $this->getServiceContext();
+            $session        = $serviceContext->getTestSession();
+            $route          = $session->getRoute();
+
+            if(!$route->isLast()){
+
+                $assessmentItemRef = $route->getNext()->getAssessmentItemRef();
+                $itemRef = $assessmentItemRef->getHref();
+                $stateId = $serviceContext->getTestExecutionUri() . $assessmentItemRef->getIdentifier();
+
+                $response = $this->getItemDataResponse($serviceContext, $itemRef, $stateId);
+                if(is_array($response)){
+                    $response['itemDefinition'] = $itemRef;
+                }
+            } else {
+                $response = [
+                    'success' => true
+                ];
+            }
+
+        } catch (common_Exception $e) {
+            \common_Logger::e($e);
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
         }
+
+        $this->returnJson($response, $code);
+    }
+
+    /**
+     * Create the item definition response for a given item
+     * @param RunnerServiceContext $context the current test context
+     * @param string $itemRef the item definition
+     * @param sttring $stateId
+     * @return array the item data
+     */
+    protected function getItemDataResponse(RunnerServiceContext $context, $itemRef, $stateId)
+    {
+        $itemData = $this->runnerService->getItemData($context, $itemRef);
+        $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
+        $rubrics  = $this->runnerService->getRubrics($context);
+        if(strlen(trim($rubrics)) == 0){
+            $rubrics = null;
+        }
+
+        $itemState = $this->runnerService->getItemState($context, $stateId);
+        if (!count($itemState)) {
+            $itemState = new stdClass();
+        }
+
+        return [
+            'success'   => true,
+            'baseUrl'   => $baseUrl,
+            'itemData'  => $itemData,
+            'itemState' => $itemState,
+            'rubrics'   => $rubrics
+        ];
     }
 
     /**
@@ -449,7 +493,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             // get the service context, but do not perform the test state check,
-            // as we need to store the item state whatever the test state is 
+            // as we need to store the item state whatever the test state is
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
@@ -490,16 +534,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 // we need a complete service context in order to build the test context
                 $serviceContext->init();
-                
+
                 $response = [
                     'success' => true,
                     'notAllowed' => true,
                     'message' => __('A response to this item is required.'),
-                    
+
                     // send an updated version of the test context
                     'testContext' => $this->runnerService->getTestContext($serviceContext),
                 ];
-                
+
                 // start the timer only after context build to avoid timing error
                 $this->runnerService->startTimer($serviceContext);
             }
@@ -519,9 +563,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $ref = $this->getRequestParameter('ref');
+        $ref       = $this->getRequestParameter('ref');
         $direction = $this->getRequestParameter('direction');
-        $scope = $this->getRequestParameter('scope');
+        $scope     = $this->getRequestParameter('scope');
+        $start     = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -536,7 +581,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
             }
 
+            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
+
             $this->runnerService->persist($serviceContext);
+
+            if($start == true){
+
+                // start the timer only when move starts the item session
+                // and after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
+            }
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -546,6 +600,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
+
     /**
      * Skip the current position to the provided scope: item, section, part
      */
@@ -553,10 +608,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $ref = $this->getRequestParameter('ref');
-        $scope = $this->getRequestParameter('scope');
-        $itemDuration = $this->getRequestParameter('itemDuration');
+        $ref               = $this->getRequestParameter('ref');
+        $scope             = $this->getRequestParameter('scope');
+        $itemDuration      = $this->getRequestParameter('itemDuration');
         $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
+        $start             = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -574,6 +630,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
 
+            if($start == true){
+
+                // start the timer only when move starts the item session
+                // and after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
+            }
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -581,6 +643,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+
 
     /**
      * Handles a test timeout

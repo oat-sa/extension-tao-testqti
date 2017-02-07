@@ -31,10 +31,9 @@ define([
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
-    'taoItems/assets/manager',
-    'taoItems/assets/strategies',
-    'taoQtiItem/portableElementRegistry/assetManager/portableAssetStrategy',
+    'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -43,24 +42,30 @@ define([
     store,
     Promise,
     cachedStore,
-    areaBroker,
+    areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
     mapHelper,
+    toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
-    assetStrategies,
-    assetPortableElement,
     layoutTpl) {
     'use strict';
 
     //the asset strategies
-    var assetManager = assetManagerFactory([
-        assetStrategies.external,
-        assetStrategies.base64,
-        assetStrategies.baseUrl,
-        assetPortableElement
-    ], { baseUrl: '' });
+    var assetManager = assetManagerFactory();
+
+    var $layout = $(layoutTpl());
+
+    var areaBroker = areaBrokerFactory($layout, {
+        content:    $('#qti-content', $layout),
+        toolbox:    $('.tools-box', $layout),
+        navigation: $('.navi-box-list', $layout),
+        control:    $('.top-action-bar .control-box', $layout),
+        actionsBar: $('.bottom-action-bar .control-box', $layout),
+        panel:      $('.test-sidebar-left', $layout),
+        header:     $('.title-box', $layout)
+    });
 
     /**
      * A Test runner provider to be registered against the runner
@@ -75,16 +80,7 @@ define([
          * @returns {areaBroker}
          */
         loadAreaBroker : function loadAreaBroker(){
-            var $layout = $(layoutTpl());
-            return areaBroker($layout, {
-                content:    $('#qti-content', $layout),
-                toolbox:    $('.tools-box-list', $layout),
-                navigation: $('.navi-box-list', $layout),
-                control:    $('.top-action-bar .control-box', $layout),
-                actionsBar: $('.bottom-action-bar .control-box', $layout),
-                panel:      $('.test-sidebar-left', $layout),
-                header:     $('.title-box', $layout)
-            });
+            return areaBroker;
         },
 
         /**
@@ -94,6 +90,7 @@ define([
         loadProxy : function loadProxy(){
             var config = this.getConfig();
 
+            var proxyProvider   = config.proxyProvider || 'qtiServiceProxy';
             var proxyConfig = _.pick(config, [
                 'testDefinition',
                 'testCompilation',
@@ -101,7 +98,7 @@ define([
                 'bootstrap'
             ]);
 
-            return proxyFactory('qtiServiceProxy', proxyConfig);
+            return proxyFactory(proxyProvider, proxyConfig);
         },
 
         /**
@@ -354,6 +351,9 @@ define([
                     (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
 
+            areaBroker.setComponent('toolbox', toolboxFactory());
+            areaBroker.getToolbox().init();
+
             /*
              * Install behavior on events
              */
@@ -570,6 +570,8 @@ define([
             var broker = this.getAreaBroker();
 
             config.renderTo.append(broker.getContainer());
+
+            areaBroker.getToolbox().render(areaBroker.getToolboxArea());
         },
 
         /**
@@ -769,6 +771,9 @@ define([
                 this.itemRunner.clear();
             }
             this.itemRunner = null;
+
+            areaBroker.getToolbox().destroy();
+            areaBroker = null;
         }
     };
 

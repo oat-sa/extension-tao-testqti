@@ -44,8 +44,21 @@
                         }
                     }
                 }
-                &:hover {
+                &:hover, &.active {
                     border-bottom-color: white(.8);
+                }
+                &:active,
+                &.active {
+                    a {
+                        color: whiten($info, .1);
+                        text-shadow: none;
+                    }
+                    background: whiten($info, .9);
+                    border-color: white(.8);
+
+                    &:hover {
+                        background: white(1);
+                    }
                 }
             }
         }
@@ -223,6 +236,7 @@
                 .menu {
                     color: $textColor;
                     background: $canvas;
+                    border: 1px solid blacken($canvas, 0.3);
                     overflow: auto;
                     list-style: none;
                     min-width: 150px;
@@ -242,27 +256,39 @@
                         white-space: nowrap;
                         overflow: hidden;
                         color: $textColor;
+                        border-bottom: 1px solid blacken($canvas, 0.2);
                         margin: 0;
                         @include border-radius(0);
                         height: 32px;
                         padding: 6px 15px;
                         line-height: 1;
 
-                        &.selected {
-                            background-color: whiten($info, .2);
-                            color: $textHighlight;
-                            .label, .icon {
-                                color: $textHighlight;
+                        .icon-checkbox-checked {
+                            display: none;
+                        }
+
+                        &.active {
+                            background-color: blacken($canvas, 0.1);
+                            font-weight: bold;
+                        }
+
+                        // display checked icon on hover & active states
+                        &.hover,
+                        &:hover,
+                        &.active {
+                            .icon-checkbox {
+                                display: none;
+                            }
+                            .icon-checkbox-checked {
+                                display: inline-block;
                             }
                         }
+
                         &.hover,
                         &:hover {
                             background-color: $info;
                             color: $textHighlight;
-                            border-left: solid 3px $textColor;
-                            padding-left: 13px;
-
-                            .label {
+                            .label, .icon {
                                 color: $textHighlight;
                             }
                             .icon {
@@ -289,6 +315,17 @@
                         padding-right: 0;
                     }
                 }
+                li.no-label {
+                    & > a {
+                        .icon {
+                            padding-right: 0;
+                        }
+                        .text {
+                            display: none;
+                        }
+                    }
+                }
+
             }
         }
     }
