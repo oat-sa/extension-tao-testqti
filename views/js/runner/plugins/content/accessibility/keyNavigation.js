@@ -53,8 +53,9 @@ define([
             this.next();
         }).on('left up', function(){
             this.previous();
-        }).on('activate', function(cursor){
+        }).on('activate', function(cursor, target){
             cursor.$dom.click();
+            cursor.$dom.mousedown();
         })
 
         return ['bottom-toolbar'];
@@ -215,6 +216,11 @@ define([
      * @returns {*}
      */
     function initTestRunnerNavigation(testRunner){
+
+        //blur current focused element, to reinitialize keyboard navigation
+        if (document.activeElement){
+            document.activeElement.blur();
+        }
 
         return groupKeyNavigator({
             id : 'test-runner',
