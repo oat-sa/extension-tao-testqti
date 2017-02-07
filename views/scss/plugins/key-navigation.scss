@@ -34,9 +34,9 @@
                     &:focus {
                         outline: none;
                         .qti-navigator-tab {
-                            border-top-color: black !important;
-                            border-left-color: black !important;
-                            border-right-color: black !important;
+                            border-top-color: $textColor !important;
+                            border-left-color: $textColor !important;
+                            border-right-color: $textColor !important;
                         }
                     }
 
@@ -44,7 +44,7 @@
             }
             li.qti-navigator-item.key-navigation-highlight {
                 padding-left: 8px;
-                border-left: solid 2px black;
+                border-left: solid 2px $textColor;
                 .key-navigation-highlight:focus {
                     outline: none;
                 }
@@ -55,17 +55,11 @@
 
     .bottom-action-bar.content-action-bar {
         &.key-navigation-group {
-            padding: 2px;
             &.focusin {
                 @include box-shadow(0, 0, 6px, 2px, whiten($info, .2));
                 z-index: 1;
             }
             .key-navigation-highlight {
-                padding-top: 4px;
-                height: 36px;
-                margin-top: 0;
-                border: solid 2px transparent !important;
-                border-radius: 0;
                 &:focus {
                     margin-bottom: 0;
                     border-bottom-color: whiten($info, .9) !important;
@@ -94,16 +88,5 @@ header{
                 border-bottom: solid 2px white !important;
             }
         }
-    }
-}
-
-
-//improve the sub menu style
-.test-runner-scope .action-bar.content-action-bar.horizontal-action-bar .tools-box .menu{
-    bottom: 36px;
-    left: -3px;
-    .hover{
-        border-left: solid 3px black;
-        padding-left: 13px;
     }
 }
