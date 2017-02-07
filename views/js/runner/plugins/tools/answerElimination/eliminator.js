@@ -37,9 +37,8 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     /**
@@ -73,12 +72,13 @@ define([
             var testConfig = testRunner.getTestData().config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
 
-            //build the control button
-            this.$button = $(buttonTpl({
+            // register the button in the toolbox
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'eliminator',
                 title : __('Eliminate choices'),
-                icon : 'eliminate'
-            }));
+                icon : 'eliminate',
+                text : __('Eliminator')
+            });
 
             /**
              * Checks if the plugin is currently available
@@ -102,7 +102,7 @@ define([
             }
 
             //add a new mask each time the button is pressed
-            this.$button.on('click', function (e){
+            this.button.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger(actionPrefix + 'toggle');
             });
@@ -146,15 +146,13 @@ define([
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
+                        if (self.$choiceInteractions.hasClass('eliminable')) {
+                            self.button.turnOn();
+                        } else {
+                            self.button.turnOff();
+                        }
                     }
                 });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-            this.getAreaBroker().getToolboxArea().append(this.$button);
         },
 
         /**
@@ -162,39 +160,34 @@ define([
          */
         destroy : function destroy(){
             shortcut.remove('.' + pluginName);
-            this.$button.remove();
         },
 
         /**
          * Enable the button
          */
         enable : function enable(){
-            this.$button
-                .removeProp('disabled')
-                .removeClass('disabled');
+            this.button.enable();
         },
 
         /**
          * Disable the button
          */
         disable : function disable(){
-            this.$button
-                .prop('disabled', true)
-                .addClass('disabled');
+            this.button.disable();
         },
 
         /**
          * Show the button
          */
         show : function show(){
-            hider.show(this.$button);
+            this.button.show();
         },
 
         /**
          * Hide the button
          */
         hide : function hide(){
-            hider.hide(this.$button);
+            this.button.hide();
         }
     });
 });

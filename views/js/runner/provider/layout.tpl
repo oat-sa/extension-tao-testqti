@@ -14,9 +14,7 @@
 
     <nav class="action-bar content-action-bar horizontal-action-bar bottom-action-bar">
         <div class="control-box size-wrapper">
-            <div class="lft tools-box">
-                <ul class="plain tools-box-list"></ul>
-            </div>
+            <div class="lft tools-box"></div>
             <div class="rgt navi-box">
                 <ul class="plain navi-box-list"></ul>
             </div>
