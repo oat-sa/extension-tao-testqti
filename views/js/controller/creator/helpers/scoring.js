@@ -573,7 +573,7 @@ define([
         // get the recipes that define the formula, include sub-recipes if any
         while(processingMode) {
             if (processingMode.outcomes) {
-                descriptors = descriptors.concat(processingMode.outcomes);
+                descriptors = [].concat(processingMode.outcomes, descriptors);
             }
             processingMode = processingMode.include && processingModes[processingMode.include];
         }
