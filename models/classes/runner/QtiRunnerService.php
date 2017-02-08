@@ -1105,6 +1105,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($session->isRunning() === true && $session->isTimeout() === false) {
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
+        } else {
+            $this->finish($context);
         }
 
         return $continue;
