@@ -405,7 +405,7 @@ define([
     }
 
     /**
-     * Extends a processing rule with categories ad section identifier.
+     * Extends a processing rule with categories
      * @param {Object} processingRule
      * @param {Array|String} [includeCategories]
      * @param {Array|String} [excludeCategories]
