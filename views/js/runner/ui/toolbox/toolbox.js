@@ -54,7 +54,7 @@ define([
 ], function(_, $, componentFactory, entryFactory, menuFactory, textFactory, toolboxTpl) {
     'use strict';
 
-    var toolbarComponentApi = {
+    var toolboxComponentApi = {
 
         /**
          * Initialize the toolbox
@@ -173,12 +173,12 @@ define([
     /**
      * The toolbox factory
      */
-    return function toolbarComponentFactory(specs, defaults) {
-        var toolbarComponent;
+    return function toolboxComponentFactory(specs, defaults) {
+        var toolboxComponent;
 
-        specs = _.defaults(specs || {}, toolbarComponentApi);
+        specs = _.defaults(specs || {}, toolboxComponentApi);
 
-        toolbarComponent = componentFactory(specs, defaults)
+        toolboxComponent = componentFactory(specs, defaults)
             .on('init', function () {
                 this.initToolbox();
             })
@@ -208,6 +208,6 @@ define([
             })
             .setTemplate(toolboxTpl);
 
-        return toolbarComponent;
+        return toolboxComponent;
     };
 });
