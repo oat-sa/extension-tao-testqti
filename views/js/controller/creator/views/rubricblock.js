@@ -61,7 +61,7 @@ define([
         setUp: function setUp(modelOverseer, rubricModel, $rubricBlock) {
             //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var syncRubricBlockContent = _.throttle(editorToModel, 100);
+            var syncRubricBlockContent = _.debounce(editorToModel, 100);
             var editor;
 
             /**
