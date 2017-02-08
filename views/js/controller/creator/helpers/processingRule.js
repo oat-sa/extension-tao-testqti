@@ -37,15 +37,11 @@ define([
          * @param {Array|Object} [expression]
          * @returns {Object}
          * @throws {TypeError} if the type is empty or is not a string
-         * @throws {TypeError} if the identifier is not a string
+         * @throws {TypeError} if the identifier is not valid
          * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         create: function create(type, identifier, expression) {
-            var processingRule = qtiElementHelper.create(type, identifier);
-
-            if (identifier && !outcomeValidator.validateIdentifier(identifier)) {
-                throw new TypeError('You must provide a valid identifier!');
-            }
+            var processingRule = qtiElementHelper.create(type, identifier && validateIdentifier(identifier));
 
             if (expression) {
                 processingRuleHelper.setExpression(processingRule, expression);
@@ -63,24 +59,16 @@ define([
         setExpression: function setExpression(processingRule, expression) {
             if (processingRule) {
                 if (_.isArray(expression)) {
-                    if (!outcomeValidator.validateOutcomes(expression)) {
-                        throw new TypeError('You must provide valid QTI elements as expression!');
-                    }
-
                     if (processingRule.expression) {
                         processingRule.expression = null;
                     }
-                    processingRule.expressions = expression;
+                    processingRule.expressions = validateOutcomeList(expression);
                 } else {
-                    if (!outcomeValidator.validateOutcome(expression)) {
-                        throw new TypeError('You must provide a valid QTI element as expression!');
-                    }
-
                     if (processingRule.expressions) {
                         processingRule.expressions = null;
                     }
                     if (expression) {
-                        processingRule.expression = expression;
+                        processingRule.expression = validateOutcome(expression);
                     }
                 }
             }
@@ -100,20 +88,12 @@ define([
                 }
 
                 if (_.isArray(expression)) {
-                    if (!outcomeValidator.validateOutcomes(expression)) {
-                        throw new TypeError('You must provide valid QTI elements as expression!');
-                    }
-
-                    processingRule.expressions = forceArray(processingRule.expressions).concat(expression);
+                    processingRule.expressions = forceArray(processingRule.expressions).concat(validateOutcomeList(expression));
                 } else {
-                    if (!outcomeValidator.validateOutcome(expression)) {
-                        throw new TypeError('You must provide a valid QTI element as expression!');
-                    }
-
                     if (processingRule.expressions) {
                         processingRule.expressions.push(expression);
                     } else {
-                        processingRule.expression = expression;
+                        processingRule.expression = validateOutcome(expression);
                     }
                 }
             }
@@ -128,10 +108,7 @@ define([
          * @throws {TypeError} if the expression does not contain valid QTI elements
          */
         setOutcomeValue: function setOutcomeValue(identifier, expression) {
-            if (!outcomeValidator.validateIdentifier(identifier)) {
-                throw new TypeError('You must provide a valid identifier!');
-            }
-            return processingRuleHelper.create('setOutcomeValue', identifier, expression);
+            return processingRuleHelper.create('setOutcomeValue',  validateIdentifier(identifier), expression);
         },
 
         /**
@@ -197,21 +174,10 @@ define([
         testVariables: function testVariables(identifier, type, weightIdentifier, includeCategories, excludeCategories) {
             var processingRule = processingRuleHelper.create('testVariables');
 
-            if (!outcomeValidator.validateIdentifier(identifier)) {
-                throw new TypeError('You must provide a valid identifier!');
-            }
-            processingRule.variableIdentifier = identifier;
-
-            if (weightIdentifier) {
-                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
-                    throw new TypeError('You must provide a valid weight identifier!');
-                }
-                processingRule.weightIdentifier = weightIdentifier;
-            } else {
-                processingRule.weightIdentifier = '';
-            }
-
+            processingRule.variableIdentifier = validateIdentifier(identifier);
             processingRule.baseType = baseTypeHelper.getValid(type);
+            addWeightIdentifier(processingRule, weightIdentifier);
+            addSectionIdentifier(processingRule, '');
             addCategories(processingRule, includeCategories, excludeCategories);
 
             return processingRule;
@@ -229,20 +195,10 @@ define([
         outcomeMaximum: function outcomeMaximum(identifier, weightIdentifier, includeCategories, excludeCategories) {
             var processingRule = processingRuleHelper.create('outcomeMaximum');
 
-            if (!outcomeValidator.validateIdentifier(identifier)) {
-                throw new TypeError('You must provide a valid identifier!');
-            }
-            processingRule.outcomeIdentifier = identifier;
+            processingRule.outcomeIdentifier = validateIdentifier(identifier);
 
-            if (weightIdentifier) {
-                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
-                    throw new TypeError('You must provide a valid weight identifier!');
-                }
-                processingRule.weightIdentifier = weightIdentifier;
-            } else {
-                processingRule.weightIdentifier = '';
-            }
-
+            addWeightIdentifier(processingRule, weightIdentifier);
+            addSectionIdentifier(processingRule, '');
             addCategories(processingRule, includeCategories, excludeCategories);
 
             return processingRule;
@@ -257,6 +213,7 @@ define([
         numberPresented: function numberPresented(includeCategories, excludeCategories) {
             var processingRule = processingRuleHelper.create('numberPresented');
 
+            addSectionIdentifier(processingRule, '');
             addCategories(processingRule, includeCategories, excludeCategories);
 
             return processingRule;
@@ -286,20 +243,9 @@ define([
          * @throws {TypeError} if the weight identifier is not valid
          */
         variable: function variable(identifier, weightIdentifier) {
-            var processingRule = processingRuleHelper.create('variable', identifier);
+            var processingRule = processingRuleHelper.create('variable', validateIdentifier(identifier));
 
-            if (!outcomeValidator.validateIdentifier(identifier)) {
-                throw new TypeError('You must provide a valid identifier!');
-            }
-
-            if (weightIdentifier) {
-                if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
-                    throw new TypeError('You must provide a valid weight identifier!');
-                }
-                processingRule.weightIdentifier = weightIdentifier;
-            } else {
-                processingRule.weightIdentifier = '';
-            }
+            addWeightIdentifier(processingRule, weightIdentifier);
 
             return processingRule;
         },
@@ -363,19 +309,12 @@ define([
         outcomeIf: function outcomeIf(expression, instruction) {
             var processingRule = processingRuleHelper.create('outcomeIf');
 
-            if (!outcomeValidator.validateOutcome(expression)) {
-                throw new TypeError('You must provide a valid outcomeIf element!');
-            }
-
             if (!_.isArray(instruction)) {
                 instruction = [instruction];
             }
-            if (!outcomeValidator.validateOutcomes(instruction)) {
-                throw new TypeError('You must provide a valid instruction element!');
-            }
 
-            processingRule.expression = expression;
-            processingRule.outcomeRules = instruction;
+            processingRule.expression = validateOutcome(expression);
+            processingRule.outcomeRules = validateOutcomeList(instruction);
 
             return processingRule;
         },
@@ -392,11 +331,8 @@ define([
             if (!_.isArray(instruction)) {
                 instruction = [instruction];
             }
-            if (!outcomeValidator.validateOutcomes(instruction)) {
-                throw new TypeError('You must provide a valid instruction element!');
-            }
 
-            processingRule.outcomeRules = instruction;
+            processingRule.outcomeRules = validateOutcomeList(instruction);
 
             return processingRule;
         }
@@ -419,15 +355,7 @@ define([
         processingRule.minOperands = 1;
         processingRule.maxOperands = 1;
 
-        if (_.isUndefined(baseType)) {
-            baseType = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
-        }
-        if (_.isUndefined(cardinality)) {
-            cardinality = [cardinalityHelper.SINGLE];
-        }
-
-        processingRule.acceptedCardinalities = forceArray(cardinality);
-        processingRule.acceptedBaseTypes = forceArray(baseType);
+        addTypeAndCardinality(processingRule, baseType, cardinality);
 
         return processingRule;
     }
@@ -449,9 +377,23 @@ define([
         processingRule.minOperands = 2;
         processingRule.maxOperands = 2;
 
+        addTypeAndCardinality(processingRule, baseType, cardinality);
+
+        return processingRule;
+    }
+
+    /**
+     * Appends the base type and the cardinality on a processing rule
+     * @param {Object} processingRule
+     * @param {Number|Array} [baseType] - The accepted base type
+     * @param {Number|Array} [cardinality] - The accepted cardinality
+     * @returns {Object}
+     */
+    function addTypeAndCardinality(processingRule, baseType, cardinality) {
         if (_.isUndefined(baseType)) {
             baseType = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
         }
+
         if (_.isUndefined(cardinality)) {
             cardinality = [cardinalityHelper.SINGLE];
         }
@@ -467,15 +409,92 @@ define([
      * @param {Object} processingRule
      * @param {Array|String} [includeCategories]
      * @param {Array|String} [excludeCategories]
-     * @param {String} [sectionIdentifier]
      * @returns {Object}
      */
-    function addCategories(processingRule, includeCategories, excludeCategories, sectionIdentifier) {
-        processingRule.sectionIdentifier = sectionIdentifier || '';
+    function addCategories(processingRule, includeCategories, excludeCategories) {
         processingRule.includeCategories = forceArray(includeCategories);
         processingRule.excludeCategories = forceArray(excludeCategories);
 
         return processingRule;
+    }
+
+    /**
+     * Appends the section identifier on a processing rule
+     * @param {Object} processingRule
+     * @param {String} [sectionIdentifier]
+     * @returns {Object}
+     * @throws {TypeError} if the weight identifier is not valid
+     */
+    function addSectionIdentifier(processingRule, sectionIdentifier) {
+        if (sectionIdentifier) {
+            if (!outcomeValidator.validateIdentifier(sectionIdentifier)) {
+                throw new TypeError('You must provide a valid weight identifier!');
+            }
+            processingRule.sectionIdentifier = sectionIdentifier;
+        } else {
+            processingRule.sectionIdentifier = '';
+        }
+
+        return processingRule;
+    }
+
+    /**
+     * Appends the weight identifier on a processing rule
+     * @param {Object} processingRule
+     * @param {String} [weightIdentifier]
+     * @returns {Object}
+     * @throws {TypeError} if the weight identifier is not valid
+     */
+    function addWeightIdentifier(processingRule, weightIdentifier) {
+        if (weightIdentifier) {
+            if (!outcomeValidator.validateIdentifier(weightIdentifier)) {
+                throw new TypeError('You must provide a valid weight identifier!');
+            }
+            processingRule.weightIdentifier = weightIdentifier;
+        } else {
+            processingRule.weightIdentifier = '';
+        }
+
+        return processingRule;
+    }
+
+    /**
+     * Validates an identifier
+     * @param {String} identifier
+     * @returns {String}
+     * @throws {TypeError} if the identifier is not valid
+     */
+    function validateIdentifier(identifier) {
+        if (!outcomeValidator.validateIdentifier(identifier)) {
+            throw new TypeError('You must provide a valid identifier!');
+        }
+        return identifier;
+    }
+
+    /**
+     * Validates an outcome
+     * @param {Object} outcome
+     * @returns {Object}
+     * @throws {TypeError} if the outcome is not valid
+     */
+    function validateOutcome(outcome) {
+        if (!outcomeValidator.validateOutcome(outcome)) {
+            throw new TypeError('You must provide a valid QTI element!');
+        }
+        return outcome;
+    }
+
+    /**
+     * Validates a list of outcomes
+     * @param {Array} outcomes
+     * @returns {Array}
+     * @throws {TypeError} if an outcome is not valid
+     */
+    function validateOutcomeList(outcomes) {
+        if (!outcomeValidator.validateOutcomes(outcomes)) {
+            throw new TypeError('You must provide a valid list of QTI elements!');
+        }
+        return outcomes;
     }
 
     /**
