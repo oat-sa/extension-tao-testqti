@@ -174,7 +174,8 @@ define([
      * The toolbox factory
      */
     return function toolboxComponentFactory(specs, defaults) {
-        var toolboxComponent;
+        var $document = $(document),
+            toolboxComponent;
 
         specs = _.defaults(specs || {}, toolboxComponentApi);
 
@@ -190,8 +191,8 @@ define([
                 var self = this;
 
                 // fixme: try to bind this behavior on the blur event of each menu
-                $(document).off('.toolboxmenu');
-                $(document).on('click.toolboxmenu', function() {
+                $document.off('.toolboxmenu');
+                $document.on('click.toolboxmenu', function() {
                     self.allMenus.forEach(function(menu) {
                         if (menu.is('opened')) {
                             menu.closeMenu();
@@ -200,7 +201,7 @@ define([
                 });
             })
             .on('destroy', function() {
-                $(document).off('.toolboxmenu');
+                $document.off('.toolboxmenu');
 
                 this.allItems.forEach(function (item) {
                     item.destroy();

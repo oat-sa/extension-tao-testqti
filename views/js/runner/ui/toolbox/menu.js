@@ -116,6 +116,7 @@ define([
         openMenu: function openMenu()  {
             // show the DOM element
             hider.show(this.$menuContainer);
+            console.log('here !');
 
             // change the menu button icon
             this.$menuStateIcon.removeClass('icon-up');
