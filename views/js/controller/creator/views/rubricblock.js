@@ -83,7 +83,10 @@ define([
              */
             function ensureWrap(html) {
                 html = (html || '').trim();
-                if (html.charAt(0) !== '<' && html.substr(3) !== '<br') {
+                if (html.charAt(0) !== '<' || html.charAt(html.length - 1) !== '>') {
+                    html = '<div>' + html + '</div>';
+                }
+                if ($(html).length > 1) {
                     html = '<div>' + html + '</div>';
                 }
                 return html;
