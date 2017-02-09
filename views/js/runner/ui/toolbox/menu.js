@@ -116,7 +116,6 @@ define([
         openMenu: function openMenu()  {
             // show the DOM element
             hider.show(this.$menuContainer);
-            console.log('here !');
 
             // change the menu button icon
             this.$menuStateIcon.removeClass('icon-up');
@@ -129,7 +128,7 @@ define([
             this.enableShortcuts();
             this.hoverOffAll();
             this.hoverIndex = this.menuItems.length; // we start on the button, not at the max array index
-                                                         // which would be menuItems.length-1
+                                                     // which would be menuItems.length-1
 
             // focus the button, for keyboard navigation
             if(document.activeElement){

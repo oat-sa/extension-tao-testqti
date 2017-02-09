@@ -255,7 +255,7 @@ define([
 
     QUnit.module('Menus interactions');
 
-    QUnit.test('Opening a menu close other menus', function() {
+    QUnit.test('Opening a menu close opened menus', function() {
         var toolbox = toolboxFactory(),
             $container = $(fixtureContainer),
             items = {},
@@ -298,25 +298,25 @@ define([
         QUnit.ok(hider.isHidden($menu2), 'menu2 is hidden');
         QUnit.ok(hider.isHidden($menu3), 'menu3 is hidden');
 
-        $toggle1.trigger('click');
+        $toggle1.click();
 
         QUnit.ok(! hider.isHidden($menu1), 'menu1 is visible');
         QUnit.ok(hider.isHidden($menu2), 'menu2 is hidden');
         QUnit.ok(hider.isHidden($menu3), 'menu3 is hidden');
 
-        $toggle2.trigger('click');
+        $toggle2.click();
 
         QUnit.ok(hider.isHidden($menu1), 'menu1 is hidden');
         QUnit.ok(! hider.isHidden($menu2), 'menu2 is visible');
         QUnit.ok(hider.isHidden($menu3), 'menu3 is hidden');
 
-        $toggle3.trigger('click');
+        $toggle3.click();
 
         QUnit.ok(hider.isHidden($menu1), 'menu1 is hidden');
         QUnit.ok(hider.isHidden($menu2), 'menu2 is hidden');
         QUnit.ok(! hider.isHidden($menu3), 'menu3 is visible');
 
-        $toggle3.trigger('click');
+        $toggle3.click();
 
         QUnit.ok(hider.isHidden($menu1), 'menu1 is hidden');
         QUnit.ok(hider.isHidden($menu2), 'menu2 is hidden');
@@ -349,13 +349,108 @@ define([
 
         QUnit.ok(hider.isHidden($menu), 'menu is hidden');
 
-        $toggle.trigger('click');
-
+        $toggle.click();
         QUnit.ok(! hider.isHidden($menu), 'menu is visible');
 
         $('#qunit').click();
-
         QUnit.ok(hider.isHidden($menu), 'menu is hidden');
+    });
+
+    QUnit.test('Clicking a menu entry closes the menu', function() {
+        var toolbox = toolboxFactory(),
+            $container = $(fixtureContainer),
+            items = {},
+            $toggle,
+            $menu,
+            $entry;
+
+        QUnit.expect(7);
+
+        toolbox.init();
+
+        items.menu   = toolbox.createMenu({control: 'menu'});
+        items.menu_1 = toolbox.createEntry({control: 'menu-entry1'}); items.menu_1.setMenuId('menu');
+        items.menu_2 = toolbox.createEntry({control: 'menu-entry2'}); items.menu_2.setMenuId('menu');
+        items.menu_3 = toolbox.createEntry({control: 'menu-entry3'}); items.menu_3.setMenuId('menu');
+
+        toolbox.render($container);
+        toolbox.enable();
+
+        _.invoke(items, 'enable'); // enable all items. This is usually the plugin responsability
+
+        $toggle = $container.find('[data-control="menu"]');
+        $menu = $container.find('[data-control="menu-menu"]');
+
+        QUnit.ok(hider.isHidden($menu), 'menu is hidden by default');
+
+        // open, then close with click on entry1
+        $toggle.click();
+        QUnit.ok(! hider.isHidden($menu), 'menu is visible');
+
+        $entry = $menu.find('[data-control="menu-entry1"]');
+
+        $entry.click();
+        QUnit.ok(hider.isHidden($menu), 'menu has hidden following a click on entry1');
+
+        // open, then close with click on entry2
+        $toggle.click();
+        QUnit.ok(! hider.isHidden($menu), 'menu is visible');
+
+        $entry = $menu.find('[data-control="menu-entry2"]');
+
+        $entry.click();
+        QUnit.ok(hider.isHidden($menu), 'menu has hidden following a click on entry2');
+
+        // open, then close with click on entry3
+        $toggle.click();
+        QUnit.ok(! hider.isHidden($menu), 'menu is visible');
+
+        $entry = $menu.find('[data-control="menu-entry3"]');
+
+        $entry.click();
+        QUnit.ok(hider.isHidden($menu), 'menu has hidden following a click on entry3');
+    });
+
+
+    QUnit.module('Menu button');
+
+    QUnit.test('button opened/closed state', function() {
+        var toolbox = toolboxFactory(),
+            $container = $(fixtureContainer),
+            items = {},
+            $result;
+
+        QUnit.expect(9);
+
+        toolbox.init();
+
+        items.menu = toolbox.createMenu({ control: 'sample-menu' });
+        items.menu_1 = toolbox.createEntry({control: 'menu-entry1'}); items.menu_1.setMenuId('sample-menu');
+        items.menu_2 = toolbox.createEntry({control: 'menu-entry2'}); items.menu_2.setMenuId('sample-menu');
+        items.menu_3 = toolbox.createEntry({control: 'menu-entry3'}); items.menu_3.setMenuId('sample-menu');
+
+        toolbox.render($container);
+
+        _.invoke(items, 'enable'); // enable all items. This is usually the plugin responsability
+
+        // check button
+        $result = $container.find('[data-control="sample-menu"]');
+
+        QUnit.equal($result.find('.icon-up').length, 1, 'closed menu has the correct state icon');
+        QUnit.equal($result.find('.icon-down').length, 0, 'closed menu has the correct state icon');
+        QUnit.ok(! $result.hasClass('active'), 'closed menu button is turned off');
+
+        $result.click();
+
+        QUnit.equal($result.find('.icon-up').length, 0, 'opened menu has the correct state icon');
+        QUnit.equal($result.find('.icon-down').length, 1, 'opened menu has the correct state icon');
+        QUnit.ok($result.hasClass('active'), 'opened menu button is turned on');
+
+        $result.click();
+
+        QUnit.equal($result.find('.icon-up').length, 1, 'closed menu has the correct state icon');
+        QUnit.equal($result.find('.icon-down').length, 0, 'closed menu has the correct state icon');
+        QUnit.ok(! $result.hasClass('active'), 'closed menu button is turned off');
     });
 
 });
