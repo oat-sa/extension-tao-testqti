@@ -160,6 +160,7 @@ define([
             var $itemElement = $(this);
             var id = 'item_element_navigation_group_'+itemNavigators.length;
             if($itemElement.hasClass('qti-interaction')){
+                $itemElement.off('.keyNavigation');
                 var $elements = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
                 if ($elements.length) {
                     keyNavigator({
