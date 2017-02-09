@@ -242,7 +242,6 @@ define([
             initNavigatorNavigation(testRunner),
             initHeaderNavigation(testRunner)
         );
-        console.log(groups);
         return groupKeyNavigator({
             id : 'test-runner',
             replace : true,
