@@ -151,7 +151,7 @@ define([
      * @returns {Array} of keyNavigator ids
      */
     function initContentNavigation(testRunner){
-        var $itemElements;
+        var $itemElements, $inputs;
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
@@ -161,11 +161,11 @@ define([
             var id = 'item_element_navigation_group_'+itemNavigators.length;
             if($itemElement.hasClass('qti-interaction')){
                 $itemElement.off('.keyNavigation');
-                var $elements = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
-                if ($elements.length) {
+                $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
+                if ($inputs.length) {
                     keyNavigator({
                         id : id,
-                        elements : $elements,
+                        elements : $inputs,
                         group : $itemElement,
                         loop : false,
                         replace : true
