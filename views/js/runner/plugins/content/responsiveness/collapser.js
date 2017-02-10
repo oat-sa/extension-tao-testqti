@@ -37,12 +37,29 @@ define([
     var noLabelHoverCls = 'no-tool-label-hover';
 
     /**
+     * Allow to set manually which buttons should collapse and in which order.
+     * This can be set by triggering the "collapser-set-order" event on the testRunner.
+     * Given as an array of jQuery selectors: first index will be the first to be collapsed, and so on.
+     * If no selector is given for a button, then this one will never collapse.
+     * ex:
+     * var collapseOrder = [
+     *      '[data-control="highlight-clear"],[data-control="highlight-trigger"]',  // those will collapse first...
+     *      '[data-control="hide-review"]',                                         // this one second...
+     *      '[data-control="set-item-flag"]',                                       // third...
+     *      ...                                                                     // ...
+     * ];
+     * @type {String[]}
+     */
+    var collapseOrder = [];
+
+    /**
      * Default plugin options
      * @type {Object}
      */
     var defaults = {
         collapseTools: true,        // collapse the tools buttons
         collapseNavigation: false,  // collapse the navigation buttons
+        collapseInOrder: false,     // collapse any button in the given order
         hover: false                // expand when the mouse is over a button
     };
 
@@ -89,7 +106,7 @@ define([
                 return getToolbarWidth() > getAvailableWidth();
             }
 
-            function reduceFormat(yes) {
+            function collapseAll(yes) {
                 if (config.collapseTools) {
                     $toolbox.toggleClass(collapseCls, yes);
                 }
@@ -98,10 +115,31 @@ define([
                 }
             }
 
+            function shouldCollapseInOrder() {
+                return config.collapseInOrder && _.isArray(collapseOrder) && collapseOrder.length;
+            }
+
+            function collapseInOrder() {
+                var collapseOrderCopy = _.clone(collapseOrder),
+                    toCollapse;
+
+                while (collapseNeeded() && collapseOrderCopy.length) {
+                    toCollapse = collapseOrderCopy.shift();
+                    $actionsBar.find(toCollapse).toggleClass(collapseCls, true);
+                }
+            }
+
             testRunner
                 .on('renderitem loaditem', function() {
-                    reduceFormat(false);
-                    reduceFormat(collapseNeeded());
+                    collapseAll(false);
+                    if (shouldCollapseInOrder()) {
+                        collapseInOrder();
+                    } else {
+                        collapseAll(collapseNeeded());
+                    }
+                })
+                .on('collapser-set-order', function(order) {
+                    collapseOrder = order;
                 });
         }
     });
