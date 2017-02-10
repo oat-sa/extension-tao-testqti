@@ -652,8 +652,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $ref = $this->getRequestParameter('ref');
+        $ref   = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
+        $start = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext();
@@ -668,6 +669,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
+
+            if($start == true){
+
+                // start the timer only when move starts the item session
+                // and after context build to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
+            }
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
