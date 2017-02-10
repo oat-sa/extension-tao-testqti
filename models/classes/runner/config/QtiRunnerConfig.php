@@ -86,7 +86,7 @@ class QtiRunnerConfig implements RunnerConfig
             'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
             'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
             'allowBrowseNextItem' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
-            'calculatorTemplate' => isset($rawConfig['calculator-template']) ? $rawConfig['calculator-template'] : '',
+            'calculator' => isset($rawConfig['calculator']) ? $rawConfig['calculator'] : []
         ];
     }
 

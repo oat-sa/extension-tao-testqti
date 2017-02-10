@@ -113,8 +113,9 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        if(testConfig.calculatorTemplate){
-                            require(['tpl!'+testConfig.calculatorTemplate.replace(/\.tpl$/, '')], function(calcTpl){
+                        console.log(testConfig);
+                        if(testConfig.calculator && testConfig.calculator.template){
+                            require(['tpl!'+testConfig.calculator.template.replace(/\.tpl$/, '')], function(calcTpl){
                                 buildCalculator(calcTpl);
                             }, function(){
                                 //in case of error, display the default calculator:
