@@ -21,12 +21,14 @@
 define([
     'lodash',
     'helpers',
+    'ui/hider',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
-], function(_, helpers, runnerFactory, providerMock, itemThemeSwitcher) {
+], function(_, helpers, hider, runnerFactory, providerMock, pluginFactory) {
     'use strict';
 
+    var pluginApi;
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
@@ -36,13 +38,13 @@ define([
     QUnit.test('module', 3, function(assert) {
         var runner = runnerFactory(providerName);
 
-        assert.equal(typeof itemThemeSwitcher, 'function', "The itemThemeSwitcher module exposes a function");
-        assert.equal(typeof itemThemeSwitcher(runner), 'object', "The itemThemeSwitcher factory produces an instance");
-        assert.notStrictEqual(itemThemeSwitcher(runner), itemThemeSwitcher(runner), "The itemThemeSwitcher factory provides a different instance on each call");
+        assert.equal(typeof pluginFactory, 'function', "The itemThemeSwitcher module exposes a function");
+        assert.equal(typeof pluginFactory(runner), 'object', "The itemThemeSwitcher factory produces an instance");
+        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), "The itemThemeSwitcher factory provides a different instance on each call");
     });
 
 
-    var pluginApi = [
+    pluginApi = [
         { name : 'init', title : 'init' },
         { name : 'render', title : 'render' },
         { name : 'finish', title : 'finish' },
@@ -64,249 +66,205 @@ define([
         .cases(pluginApi)
         .test('plugin API ', 1, function(data, assert) {
             var runner = runnerFactory(providerName);
-            var timer = itemThemeSwitcher(runner);
+            var timer = pluginFactory(runner);
             assert.equal(typeof timer[data.name], 'function', 'The itemThemeSwitcher instances expose a "' + data.name + '" function');
         });
 
 
 
-    QUnit.asyncTest('itemThemeSwitcher.init', function(assert) {
+    /**
+     * The following tests applies to buttons-type plugins
+     */
+    QUnit.module('plugin button');
+
+    QUnit.asyncTest('render/destroy button', function(assert) {
         var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, areaBroker);
 
-        switcher.init()
+        QUnit.expect(3);
+
+        plugin.init()
             .then(function() {
-                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
+                var $container = areaBroker.getToolboxArea(),
+                    $buttonMain;
 
+                areaBroker.getToolbox().render($container);
+
+                $buttonMain = $container.find('[data-control="color-contrast"]');
+
+                assert.equal($buttonMain.length, 1, 'The button has been inserted');
+                assert.equal($buttonMain.hasClass('disabled'), true, 'The button has been rendered disabled');
+
+                areaBroker.getToolbox().destroy();
+
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+
+                assert.equal($buttonMain.length, 0, 'The trigger button has been removed');
                 QUnit.start();
+
             })
             .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
+                assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
 
 
-
-    QUnit.asyncTest('itemThemeSwitcher.render', function(assert) {
+    QUnit.asyncTest('enable/disable button', function(assert) {
         var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, areaBroker);
 
-        switcher.init()
+        QUnit.expect(3);
+
+        plugin.init()
             .then(function() {
-                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
-                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
+                var $container = areaBroker.getToolboxArea(),
+                    $buttonMain;
 
-                switcher.render()
+                areaBroker.getToolbox().render($container);
+
+                $buttonMain = $container.find('[data-control="color-contrast"]');
+                assert.equal($buttonMain.length, 1, 'The button has been inserted');
+
+                plugin.enable()
                     .then(function() {
-                        var $container = runner.getAreaBroker().getToolboxArea();
 
-                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
-                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
+                        assert.equal($buttonMain.hasClass('disabled'), false, 'The button has been enabled');
 
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
-                        QUnit.start();
-                    });
-            })
-            .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
-                QUnit.start();
-            });
-    });
-
-
-    QUnit.asyncTest('itemThemeSwitcher.destroy', function(assert) {
-        var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
-
-        switcher.init()
-            .then(function() {
-                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
-                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
-                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
-
-                switcher.render()
-                    .then(function() {
-                        var $container = runner.getAreaBroker().getToolboxArea();
-
-                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
-                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
-
-                        switcher.enable()
+                        plugin.disable()
                             .then(function() {
-                                assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
-
-                                switcher.destroy()
-                                    .then(function() {
-                                        var $container = runner.getAreaBroker().getToolboxArea();
-
-                                        assert.equal(switcher.getState('init'), false, 'The switcher is destroyed');
-                                        assert.equal($container.find(switcher.$menu).length, 0, 'The switcher has removed its content from the layout');
-
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        console.log(err);
-                                        assert.ok(false, 'The destroy method must not fail');
-                                        QUnit.start();
-                                    });
-                            })
-                            .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The enable method must not fail');
-                                QUnit.start();
-                            });
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
-                        QUnit.start();
-                    });
-            })
-            .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
-                QUnit.start();
-            });
-    });
-
-
-    QUnit.asyncTest('itemThemeSwitcher.enable', function(assert) {
-        var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
-
-        switcher.init()
-            .then(function() {
-                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
-                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
-
-                switcher.enable()
-                    .then(function() {
-                        assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
-
-                        switcher.destroy()
-                            .then(function() {
-                                assert.equal(switcher.getState('init'), false, 'The switcher is destroyed');
+                                assert.equal($buttonMain.hasClass('disabled'), true, 'The button has been disabled');
 
                                 QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The destroy method must not fail');
+                                assert.ok(false, 'error in disable method: ' + err);
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The enable method must not fail');
+                        assert.ok(false, 'error in enable method: ' + err);
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
+                assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
 
 
-    QUnit.asyncTest('itemThemeSwitcher.disable', function(assert) {
+    QUnit.asyncTest('show/hide button', function(assert) {
         var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, areaBroker);
 
-        switcher.init()
+        QUnit.expect(3);
+
+        plugin.init()
             .then(function() {
-                assert.equal(switcher.getState('init'), true, 'The switcher is initialised');
-                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
+                var $container = areaBroker.getToolboxArea(),
+                    $buttonMain;
 
-                switcher.enable()
+                areaBroker.getToolbox().render($container);
+
+                $buttonMain = $container.find('[data-control="color-contrast"]');
+                assert.equal($buttonMain.length, 1, 'The button has been inserted');
+
+                plugin.hide()
                     .then(function() {
-                        assert.equal(switcher.getState('enabled'), true, 'The switcher is enabled');
+                        assert.ok(hider.isHidden($buttonMain), 'The button has been hidden');
 
-                        switcher.disable()
+                        plugin.show()
                             .then(function() {
-                                assert.equal(switcher.getState('enabled'), false, 'The switcher is disabled');
+                                assert.ok(! hider.isHidden($buttonMain), 'The button is visible');
 
                                 QUnit.start();
                             })
                             .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The disable method must not fail');
+                                assert.ok(false, 'error in disable method: ' + err);
                                 QUnit.start();
                             });
                     })
                     .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The enable method must not fail');
+                        assert.ok(false, 'error in enable method: ' + err);
                         QUnit.start();
                     });
             })
             .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
+                assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
 
 
-    QUnit.asyncTest('itemThemeSwitcher.show/itemThemeSwitcher.hide', function(assert) {
+    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
         var runner = runnerFactory(providerName);
-        var switcher = itemThemeSwitcher(runner, runner.getAreaBroker());
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, areaBroker);
 
-        switcher.init()
+        QUnit.expect(4);
+
+        plugin.init()
             .then(function() {
-                assert.equal(typeof switcher.$menu, 'object', 'The switcher has pre-rendered the element');
-                assert.equal(switcher.$menu.length, 1, 'The switcher has pre-rendered the container');
+                var $container = areaBroker.getToolboxArea(),
+                    $buttonMain;
 
-                switcher.render()
-                    .then(function() {
-                        var $container = runner.getAreaBroker().getToolboxArea();
-                        switcher.setState('visible', true);
+                areaBroker.getToolbox().render($container);
 
-                        assert.equal(switcher.getState('ready'), true, 'The switcher is ready');
-                        assert.equal(switcher.getState('visible'), true, 'The switcher is visible');
-                        assert.equal($container.find(switcher.$menu).length, 1, 'The switcher has inserted its content into the layout');
+                $buttonMain = $container.find('[data-control="color-contrast"]');
+                assert.equal($buttonMain.length, 1, 'The button has been inserted');
 
-                        switcher.hide()
-                            .then(function() {
-                                assert.equal(switcher.getState('visible'), false, 'The switcher is not visible');
-                                assert.equal(switcher.$button.css('display'), 'none', 'The switcher element is hidden');
+                runner.trigger('loaditem');
 
-                                switcher.show()
-                                    .then(function() {
-                                        assert.equal(switcher.getState('visible'), true, 'The switcher is visible');
-                                        assert.notEqual(switcher.$button.css('display'), 'none', 'The switcher element is visible');
+                assert.ok(! hider.isHidden($buttonMain), 'The button is visible');
 
-                                        QUnit.start();
-                                    })
-                                    .catch(function(err) {
-                                        console.log(err);
-                                        assert.ok(false, 'The show method must not fail');
-                                        QUnit.start();
-                                    });
-                            })
-                            .catch(function(err) {
-                                console.log(err);
-                                assert.ok(false, 'The hide method must not fail');
-                                QUnit.start();
-                            });
-                    })
-                    .catch(function(err) {
-                        console.log(err);
-                        assert.ok(false, 'The render method must not fail');
-                        QUnit.start();
-                    });
+                runner.trigger('unloaditem');
+
+                assert.ok(! hider.isHidden($buttonMain), 'The button is still visible');
+
+                assert.equal($buttonMain.hasClass('disabled'), true, 'The button has been disabled');
+
+                QUnit.start();
             })
             .catch(function(err) {
-                console.log(err);
-                assert.ok(false, 'The init method must not fail');
+                assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
+
+
+    QUnit.asyncTest('runner events: renderitem', function(assert) {
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, areaBroker);
+
+        QUnit.expect(3);
+
+        plugin.init()
+            .then(function() {
+                var $container = areaBroker.getToolboxArea(),
+                    $buttonMain;
+
+                areaBroker.getToolbox().render($container);
+
+                $buttonMain = $container.find('[data-control="color-contrast"]');
+                assert.equal($buttonMain.length, 1, 'The button has been inserted');
+
+                runner.trigger('renderitem');
+
+                assert.ok(! hider.isHidden($buttonMain), 'The button is visible');
+
+                assert.equal($buttonMain.hasClass('disabled'), false, 'The button is not disabled');
+
+                QUnit.start();
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in init method: ' + err);
+                QUnit.start();
+            });
+    });
+
 });

@@ -116,7 +116,7 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "End Test"
-msgstr ""
+msgstr "Finir le test"
 
 msgid "Enter a category"
 msgstr ""
@@ -453,19 +453,19 @@ msgid "Simultaneous"
 msgstr ""
 
 msgid "Skip"
-msgstr ""
+msgstr "Passer"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "Passer &amp; Finir le test"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "Passer jusqu'à la fin du test"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "Passer au prochain item"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "Passer à la prochaine section"
 
 msgid "Start Test-part"
 msgstr ""

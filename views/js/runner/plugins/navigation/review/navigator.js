@@ -86,6 +86,7 @@ define([
     var _selectors = {
         component: '.qti-navigator',
         filterBar: '.qti-navigator-filters',
+        filter: '.qti-navigator-filter',
         tree: '.qti-navigator-tree',
         collapseHandle: '.qti-navigator-collapsible',
         linearState: '.qti-navigator-linear',
@@ -681,7 +682,7 @@ define([
                 });
 
                 // click on a filter button
-                $filterBar.on('click' + _selectors.component, 'li', function () {
+                $filterBar.on('click' + _selectors.component, _selectors.filter, function () {
                     var $btn, mode;
 
                     if (!self.is('disabled')) {

@@ -22,9 +22,10 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'lodash',
     'jquery',
     'taoQtiTest/test/runner/mocks/areaBrokerMock'
-], function ($, areaBrokerMock) {
+], function (_, $, areaBrokerMock) {
     'use strict';
 
     QUnit.module('API');
@@ -108,5 +109,28 @@ define([
         _.forEach(areas, function (area) {
             assert.equal(broker.getArea(area).length, 1, "The container can retrieve the area " + area);
         });
+    });
+
+
+    QUnit.test('toolbox component', 5, function (assert) {
+        var areas = [
+            'content',
+            'toolbox',
+            'navigation',
+            'control',
+            'header',
+            'panel'
+        ];
+        var broker = areaBrokerMock(areas),
+            component;
+
+        assert.ok(_.isFunction(broker.getToolbox), 'the broker has a getToolbox() method');
+
+        component = broker.getToolbox();
+
+        assert.ok(_.isObject(component), 'the component is an object');
+        assert.ok(_.isFunction(component.init), 'the component has a init() method');
+        assert.ok(_.isFunction(component.render), 'the component has a render() method');
+        assert.ok(_.isFunction(component.destroy), 'the component has a destroy() method');
     });
 });
