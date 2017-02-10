@@ -215,17 +215,6 @@
                 [class^="btn-"], [class*=" btn-"] {
                     white-space: nowrap;
                 }
-
-                .no-tool-label {
-                    &, &-hover li:not(:hover) {
-                        .text {
-                            display: none;
-                        }
-                        .icon {
-                            padding: 0;
-                        }
-                    }
-                }
             }
             .tools-box {
                 .action {
@@ -315,14 +304,18 @@
                         padding-right: 0;
                     }
                 }
-                li.no-label {
-                    & > a {
-                        .icon {
-                            padding-right: 0;
-                        }
-                        .text {
-                            display: none;
-                        }
+
+                // label masking at toolbar level
+                .no-tool-label .btn-info,
+                .no-tool-label-hover .btn-info:not(:hover),
+                // label masking at tool level
+                .btn-info.no-tool-label,
+                .btn-info.no-tool-label-hover:not(:hover) {
+                    .text {
+                        display: none;
+                    }
+                    .icon {
+                        padding: 0;
                     }
                 }
 
