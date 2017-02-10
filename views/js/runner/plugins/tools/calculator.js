@@ -29,9 +29,8 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     var _default = {
@@ -55,6 +54,8 @@ define([
             var areaBroker = this.getAreaBroker();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginsConfig = testConfig.plugins || {};
+            var config = pluginsConfig.calculator || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
@@ -79,6 +80,25 @@ define([
             }
 
             /**
+             * Build the calculator component
+             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             */
+            function buildCalculator(calcTpl){
+                self.calculator = calculatorFactory(_.defaults({
+                    renderTo: self.$calculatorContainer,
+                    replace: true,
+                    draggableContainer: areaBroker.getContainer(),
+                    alternativeTemplate : calcTpl || null
+                }, _default)).on('show', function () {
+                    self.trigger('open');
+                    self.button.turnOn();
+                }).on('hide', function () {
+                    self.trigger('close');
+                    self.button.turnOff();
+                }).show();
+            }
+
+            /**
              * Show/hide the calculator
              */
             function toggleCalculator() {
@@ -94,17 +114,17 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        self.calculator = calculatorFactory(_.defaults({
-                            renderTo: self.$calculatorContainer,
-                            replace: true,
-                            draggableContainer: areaBroker.getContainer()
-                        }, _default)).on('show', function () {
-                            self.trigger('open');
-                            self.button.turnOn();
-                        }).on('hide', function () {
-                            self.trigger('close');
-                            self.button.turnOff();
-                        }).show();
+                        if(config.template){
+                            require(['tpl!' + config.template.replace(/\.tpl$/, '')], function(calcTpl){
+                                buildCalculator(calcTpl);
+                            }, function(){
+                                //in case of error, display the default calculator:
+                                buildCalculator();
+                            });
+                        }else{
+                            buildCalculator();
+                        }
+
                     }
                 }
             }

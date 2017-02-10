@@ -41,24 +41,25 @@ define([
     function initToolbarNavigation(testRunner){
         var $navigationBar = $('.bottom-action-bar');
         var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
-
-        keyNavigator({
-            id : 'bottom-toolbar',
-            replace : true,
-            group : $navigationBar,
-            elements : $focusables,
-            //start from the last button "goto next"
-            default : $focusables.length - 1
-        }).on('right down', function(){
-            this.next();
-        }).on('left up', function(){
-            this.previous();
-        }).on('activate', function(cursor, target){
-            cursor.$dom.click();
-            cursor.$dom.mousedown();
-        })
-
-        return ['bottom-toolbar'];
+        if ($focusables.length) {
+            keyNavigator({
+                id : 'bottom-toolbar',
+                replace : true,
+                group : $navigationBar,
+                elements : $focusables,
+                //start from the last button "goto next"
+                default : $focusables.length - 1
+            }).on('right down', function(){
+                this.next();
+            }).on('left up', function(){
+                this.previous();
+            }).on('activate', function(cursor, target){
+                cursor.$dom.click();
+                cursor.$dom.mousedown();
+            })
+            return ['bottom-toolbar'];
+        }
+        return [];
     }
 
     /**
@@ -71,15 +72,17 @@ define([
         //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
 
-        keyNavigator({
-            id : 'header-toolbar',
-            elements : $headerElements,
-            group : $headerElements,
-            loop : true,
-            replace : true
-        });
-
-        return ['header-toolbar'];
+        if ($headerElements.length) {
+            keyNavigator({
+                id : 'header-toolbar',
+                elements : $headerElements,
+                group : $headerElements,
+                loop : true,
+                replace : true
+            });
+            return ['header-toolbar'];
+        }
+        return [];
     }
 
     /**
@@ -92,45 +95,52 @@ define([
 
         var $panel = testRunner.getAreaBroker().getPanelArea();
         var $navigator = $panel.find('.qti-navigator');
-
+        var result = [];
         if($navigator.length && !$navigator.hasClass('disabled')){
-            keyNavigator({
-                keepState : true,
-                id : 'navigator-filters',
-                replace : true,
-                elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
-                group : $navigator
-            }).on('right', function(){
-                this.next();
-            }).on('left', function(){
-                this.previous();
-            }).on('down', function(){
-                this.goto('navigator-items');
-            }).on('focus', function(cursor){
-                cursor.$dom.click();
-            });
+            var $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
+            if ($filters.length) {
+                keyNavigator({
+                    keepState : true,
+                    id : 'navigator-filters',
+                    replace : true,
+                    elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
+                    group : $navigator
+                }).on('right', function(){
+                    this.next();
+                }).on('left', function(){
+                    this.previous();
+                }).on('down', function(){
+                    this.goto('navigator-items');
+                }).on('focus', function(cursor){
+                    cursor.$dom.click();
+                });
+                result = ['navigator-filters'];
+            }
 
-            keyNavigator({
-                id : 'navigator-items',
-                replace : true,
-                elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
-            }).on('down', function(){
-                this.next();
-            }).on('up', function(){
-                this.previous();
-            }).on('activate', function(cursor){
-                cursor.$dom.click();
-            }).on('lowerbound', function(){
-                this.goto('navigator-filters');
-            }).on('focus', function(cursor){
-                cursor.$dom.parent().addClass('key-navigation-highlight');
-            }).on('blur', function(cursor){
-                cursor.$dom.parent().removeClass('key-navigation-highlight');
-            });
+            var $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
+            if ($trees.length) {
+                keyNavigator({
+                    id : 'navigator-items',
+                    replace : true,
+                    elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
+                }).on('down', function(){
+                    this.next();
+                }).on('up', function(){
+                    this.previous();
+                }).on('activate', function(cursor){
+                    cursor.$dom.click();
+                }).on('lowerbound', function(){
+                    this.goto('navigator-filters');
+                }).on('focus', function(cursor){
+                    cursor.$dom.parent().addClass('key-navigation-highlight');
+                }).on('blur', function(cursor){
+                    cursor.$dom.parent().removeClass('key-navigation-highlight');
+                });
+                result = ['navigator-filters'];
+            }
 
-            return ['navigator-filters'];
         }
-        return [];
+        return result;
     }
 
     /**
@@ -141,7 +151,7 @@ define([
      * @returns {Array} of keyNavigator ids
      */
     function initContentNavigation(testRunner){
-        var $itemElements;
+        var $itemElements, $inputs;
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
@@ -151,23 +161,28 @@ define([
             var id = 'item_element_navigation_group_'+itemNavigators.length;
             if($itemElement.hasClass('qti-interaction')){
                 $itemElement.off('.keyNavigation');
-                keyNavigator({
-                    id : id,
-                    elements : $itemElement.is(':input') ? $itemElement : $itemElement.find(':input'),
-                    group : $itemElement,
-                    loop : false,
-                    replace : true
-                }).on('right down', function(){
-                    this.next();
-                }).on('left up', function(){
-                    this.previous();
-                }).on('activate', function(cursor){
-                    cursor.$dom.click();
-                }).on('focus', function(cursor){
-                    cursor.$dom.closest('.qti-choice').addClass('key-navigation-highlight');
-                }).on('blur', function(cursor){
-                    cursor.$dom.closest('.qti-choice').removeClass('key-navigation-highlight');
-                });
+                $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
+                if ($inputs.length) {
+                    keyNavigator({
+                        id : id,
+                        elements : $inputs,
+                        group : $itemElement,
+                        loop : false,
+                        replace : true
+                    }).on('right down', function(){
+                        this.next();
+                    }).on('left up', function(){
+                        this.previous();
+                    }).on('activate', function(cursor){
+                        cursor.$dom.click();
+                    }).on('focus', function(cursor){
+                        cursor.$dom.closest('.qti-choice').addClass('key-navigation-highlight');
+                    }).on('blur', function(cursor){
+                        cursor.$dom.closest('.qti-choice').removeClass('key-navigation-highlight');
+                    });
+                    itemNavigators.push(id);
+                }
+
             }else{
                 keyNavigator({
                     id : id,
@@ -175,8 +190,8 @@ define([
                     group : $itemElement,
                     replace : true
                 });
+                itemNavigators.push(id);
             }
-            itemNavigators.push(id);
         });
 
         return itemNavigators;
@@ -221,17 +236,17 @@ define([
         if (document.activeElement){
             document.activeElement.blur();
         }
-
+        var groups = _.union(
+            initRubricNavigation(testRunner),
+            initContentNavigation(testRunner),
+            initToolbarNavigation(testRunner),
+            initNavigatorNavigation(testRunner),
+            initHeaderNavigation(testRunner)
+        );
         return groupKeyNavigator({
             id : 'test-runner',
             replace : true,
-            groups : _.union(
-                initRubricNavigation(testRunner),
-                initContentNavigation(testRunner),
-                initToolbarNavigation(testRunner),
-                initNavigatorNavigation(testRunner),
-                initHeaderNavigation(testRunner)
-            )
+            groups : groups
         });
     }
 
