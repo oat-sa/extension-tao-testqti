@@ -49,8 +49,8 @@ define([
                 assert.ok(interaction.classList.contains('eliminable'), 'Class "eliminable" has been added');
                 runner.trigger('tool-eliminator-toggle');
                 assert.ok(!interaction.classList.contains('eliminable'), 'Class "eliminable" has been removed');
-                QUnit.start()
-            })
+                QUnit.start();
+            });
     });
 
 });
