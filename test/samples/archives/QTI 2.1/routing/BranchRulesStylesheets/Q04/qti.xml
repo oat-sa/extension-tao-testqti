@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  imsqti_v2p1.xsd"
+	identifier="Q04" title="Number 23" adaptive="false" timeDependent="false">
+	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+		<correctResponse>
+			<value>jordan</value>
+		</correctResponse>
+	</responseDeclaration>
+	<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
+		<defaultValue>
+			<value>0</value>
+		</defaultValue>
+	</outcomeDeclaration>
+	<stylesheet href="style.css" type="text/css" media="screen"/>
+	<itemBody id="itemBody">
+		<p id="stimulus">
+			<!-- From Wikipedia, Creative Commons Attribution-ShareAlike License, http://en.wikipedia.org/wiki/Basket_ball -->
+			Basketball is a sport played by two teams of five players on a rectangular court.
+			The objective is to shoot a ball through a hoop 18 inches (46 cm) in diameter and 10 feet (3.0 m) high
+			mounted to a backboard at each end. Basketball is one of the world's most popular and widely viewed sports.
+		</p>
+		<choiceInteraction id="interaction" responseIdentifier="RESPONSE" shuffle="true" maxChoices="1">
+			<prompt>I played for the Chicago Bulls Basket-ball team for years. My lucky number is 23. Who am I?</prompt>
+			<simpleChoice identifier="jordan">Michael Jordan</simpleChoice>
+			<simpleChoice identifier="pippen">Scottie Pippen</simpleChoice>
+			<simpleChoice identifier="rice">Glen Rice</simpleChoice>
+		</choiceInteraction>
+	</itemBody>
+	<responseProcessing template="http://www.imsglobal.org/question/qti_v2p1/rptemplates/match_correct"/>
+</assessmentItem>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd"
+    identifier="testBranchRules" title="Branch Rules Test">
+    <outcomeDeclaration identifier="step" baseType="identifier" cardinality="single">
+	<defaultValue>
+		<value>initial</value>
+	</defaultValue>
+    </outcomeDeclaration>
+    <testPart navigationMode="linear" submissionMode="individual" identifier="TP01">
+        <itemSessionControl maxAttempts="0" allowSkipping="false"/>
+        <assessmentSection identifier="S01" title="A Killer Test" visible="true">
+		<rubricBlock id="testMap" view="candidate">
+			<h1>QTI Trivia Test</h1>
+			<p>Be carefull, candidate. You deserve elimination for a single wrong answer!</p>
+			<div>
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="initial">
+					<img src="img/step0.png" alt="Initial Test Map"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step1">
+					<img src="img/step1.png" alt="Test Map - Q01 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step2">
+					<img src="img/step2.png" alt="Test Map - Q02 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step3">
+					<img src="img/step3.png" alt="Test Map - Q03 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step4">
+					<img src="img/step4.png" alt="Test Map - Q04 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step5">
+					<img src="img/step5.png" alt="Test Map - Q05 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step6">
+					<img src="img/step6.png" alt="Test Map - Q06 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step7">
+					<img src="img/step7.png" alt="Test Map - Q07 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step8">
+					<img src="img/step8.png" alt="Test Map - Q08 Success"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step9">
+					<img src="img/step9.png" alt="Test Map - Q09 Success"/>
+				</feedbackBlock>
+			</div>
+			<stylesheet href="styles/style-test-map.css" type="text/css" media="screen"/>
+		</rubricBlock>
+		<assessmentItemRef identifier="Q01" href="./Q01/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q01.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+
+		<assessmentItemRef identifier="Q02" href="./Q02/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q02.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+		
+		<assessmentItemRef identifier="Q03" href="./Q03/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q03.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>		
+
+		<assessmentItemRef identifier="Q04" href="./Q04/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q04.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+
+		<assessmentItemRef identifier="Q05" href="./Q05/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q05.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+
+		<assessmentItemRef identifier="Q06" href="./Q06/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q06.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+
+		<assessmentItemRef identifier="Q07" href="./Q07/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q07.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+
+		<assessmentItemRef identifier="Q08" href="./Q08/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q08.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+		</assessmentItemRef>
+		
+		<assessmentItemRef identifier="Q09" href="./Q09/qti.xml">
+			<branchRule target="TP02">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q09.SCORE"/>
+					<baseValue baseType="float">0.0</baseValue>
+				</equalRounded>
+			</branchRule>
+			<branchRule target="TP03">
+				<equalRounded roundingMode="decimalPlaces" figures="1">
+					<variable identifier="Q09.SCORE"/>
+					<baseValue baseType="float">1.0</baseValue>
+				</equalRounded>	
+			</branchRule>
+		</assessmentItemRef>
+        </assessmentSection>
+    </testPart>
+    <testPart navigationMode="linear" submissionMode="individual" identifier="TP02">
+    	<assessmentSection identifier="S02" title="You Failed!" visible="true">
+		<rubricBlock id="testFailure" view="candidate">
+			<h1>You Failed!</h1>
+			<p>I am sorry, candidate. You failed!</p>
+			<div>
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step1">
+					<img src="img/failure1.png" alt="Test Map - Q01 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step2">
+					<img src="img/failure2.png" alt="Test Map - Q02 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step3">
+					<img src="img/failure3.png" alt="Test Map - Q03 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step4">
+					<img src="img/failure4.png" alt="Test Map - Q04 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step5">
+					<img src="img/failure5.png" alt="Test Map - Q05 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step6">
+					<img src="img/failure6.png" alt="Test Map - Q06 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step7">
+					<img src="img/failure7.png" alt="Test Map - Q07 Failure"/>
+				</feedbackBlock>
+	
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step8">
+					<img src="img/failure8.png" alt="Test Map - Q08Failure"/>
+				</feedbackBlock>
+
+				<feedbackBlock outcomeIdentifier="step" showHide="show" identifier="step9">
+					<img src="img/failure9.png" alt="Test Map - Q09Failure"/>
+				</feedbackBlock>
+			</div>
+			<stylesheet href="styles/style-test-failure.css" type="text/css" media="screen"/>
+		</rubricBlock>
+		<assessmentItemRef identifier="I10" href="./I10/qti.xml">
+			<branchRule target="EXIT_TEST">
+				<match>
+					<baseValue baseType="boolean">true</baseValue>
+					<baseValue baseType="boolean">true</baseValue>
+				</match>
+			</branchRule>
+		</assessmentItemRef>
+	</assessmentSection>
+    </testPart>
+    <testPart navigationMode="linear" submissionMode="individual" identifier="TP03">
+    	<assessmentSection identifier="S03" title="You Succeeded!" visible="true">
+		<rubricBlock id="testSuccess" view="candidate">
+			<h1>You Won!</h1>
+			<p>You successfully reached the end of the test.</p>
+			<div>
+				<img src="img/step9.png" alt="Global Success!"/>
+			</div>
+			<stylesheet href="styles/style-test-success.css" type="text/css" media="screen"/>
+		</rubricBlock>
+		<assessmentItemRef identifier="I11" href="./I11/qti.xml"/>
+	</assessmentSection>
+    </testPart>
+    <outcomeProcessing>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q01.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step1</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q02.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step2</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q03.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step3</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q04.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step4</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q05.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step5</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q06.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step6</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q07.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step7</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q08.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step8</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+	<outcomeCondition>
+		<outcomeIf>
+			<match>
+				<variable identifier="Q09.completionStatus"/>
+				<baseValue baseType="identifier">completed</baseValue>
+			</match>
+			<setOutcomeValue identifier="step">
+				<baseValue baseType="identifier">step9</baseValue>
+			</setOutcomeValue>
+		</outcomeIf>
+	</outcomeCondition>
+    </outcomeProcessing>
+</assessmentTest>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  imsqti_v2p1.xsd"
+	identifier="I10" title="Failure" adaptive="false" timeDependent="false">
+	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+		<correctResponse>
+			<value>statisfied</value>
+		</correctResponse>
+	</responseDeclaration>
+	<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"/>
+	<stylesheet href="style.css" type="text/css" media="screen"/>
+	<itemBody id="itemBody">
+		<p id="stimulus">
+			Thank you for your time, candidate. Please anwser to the little satisfaction survey below!
+		</p>
+		<choiceInteraction id="interaction" responseIdentifier="RESPONSE" shuffle="false" maxChoices="1">
+			<prompt>Are you satisfied of your result?</prompt>
+			<simpleChoice identifier="statisfied">Yes, I am!</simpleChoice>
+			<simpleChoice identifier="not_satisfied">No, I am not!</simpleChoice>
+		</choiceInteraction>
+	</itemBody>
+	<responseProcessing>
+		<responseCondition>
+			<responseIf>
+				<match>
+					<variable identifier="RESPONSE"/>
+					<baseValue baseType="identifier">statisfied</baseValue>
+				</match>
+				<setOutcomeValue identifier="SCORE">
+					<baseValue baseType="float">1.0</baseValue>
+				</setOutcomeValue>
+			</responseIf>
+			<responseElse>
+				<setOutcomeValue identifier="SCORE">
+					<baseValue baseType="float">0.0</baseValue>
+				</setOutcomeValue>
+			</responseElse>
+		</responseCondition>
+	</responseProcessing>
+</assessmentItem>

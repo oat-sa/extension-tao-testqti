@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  imsqti_v2p1.xsd"
+	identifier="Q07" title="Internal Combustion Engine" adaptive="false" timeDependent="false">
+	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+		<correctResponse>
+			<value>lenoir</value>
+		</correctResponse>
+	</responseDeclaration>
+	<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
+		<defaultValue>
+			<value>0</value>
+		</defaultValue>
+	</outcomeDeclaration>
+	<stylesheet href="style.css" type="text/css" media="screen"/>
+	<itemBody id="itemBody">
+		<p id="stimulus">
+			<!-- From Wikipedia, Creative Commons Attribution-ShareAlike License, http://en.wikipedia.org/wiki/Engine -->
+			An engine or motor is a machine designed to convert energy into useful
+			mechanical motion. Heat engines, including internal combustion engines
+			and external combustion engines (such as steam engines) burn a fuel to
+			create heat, which then creates motion. Electric motors convert electrical
+			energy into mechanical motion, pneumatic motors use compressed air and others—such
+			as clockwork motors in wind-up toys—use elastic energy. In biological systems, molecular
+			motors, like myosins in muscles, use chemical energy to create motion.
+		</p>
+		<choiceInteraction id="interaction" responseIdentifier="RESPONSE" shuffle="true" maxChoices="1">
+			<prompt>Who developed the Internal Combustion Engine in 1858?</prompt>
+			<simpleChoice identifier="lenoir">Etienne Lenoir</simpleChoice>
+			<simpleChoice identifier="tesla">Nikola Tesla</simpleChoice>
+			<simpleChoice identifier="ford">Henry Ford</simpleChoice>
+		</choiceInteraction>
+	</itemBody>
+	<responseProcessing template="http://www.imsglobal.org/question/qti_v2p1/rptemplates/match_correct"/>
+</assessmentItem>

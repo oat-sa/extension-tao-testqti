@@ -60,6 +60,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         init: function init(config, params) {
+            var self = this;
 
             //we keep items here
             this.itemStore    = itemStoreFactory(cacheSize);
@@ -67,12 +68,37 @@ define([
             //keep track of the calls to prevent doing it again on navigating back and forward
             this.nextCalledBy = {};
 
-            //we don't peform the getItem call, we as start the session on move
-            this.startOnMove  = false;
+            //can we load the next item from the cache/store ?
+            this.getItemFromStore  = false;
 
             //check whether we're on the last item
             this.isLastItem   = false;
 
+            //keep a ref to the promise of the loadNextItem in case the call is not done when moving
+            this.loadNextPromise = Promise.resolve();
+
+            /**
+             * Check whether we have the next item in the store
+             * @param {String} uri - the CURRENT item identifier
+             * @returns {Boolean}
+             */
+            this.hasNextItem = function hasNextItem (uri){
+                return self.nextCalledBy[uri] && self.itemStore.has(self.nextCalledBy[uri]);
+            };
+
+            /**
+             * Check whether we have the previous item in the store
+             * @param {String} uri - the CURRENT item identifier
+             * @returns {Boolean}
+             */
+            this.hasPreviousItem = function hasPreviousItem(uri){
+                var key = _.findKey(self.nextCalledBy, function(itemUri){
+                    return itemUri === uri;
+                });
+                return key && self.itemStore.has(key);
+            };
+
+            //run the init
             return qtiServiceProxy.init.call(this, config, params);
         },
 
@@ -84,9 +110,10 @@ define([
         destroy: function destroy() {
 
             this.itemStore.clear();
-            this.nextCalledBy = [];
-            this.startOnMove = false;
-            this.isLastItem  = false;
+
+            this.nextCalledBy     = {};
+            this.getItemFromStore = false;
+            this.isLastItem       = false;
 
             return qtiServiceProxy.destroy.call(this);
         },
@@ -103,42 +130,52 @@ define([
 
             /**
              * try to load the next item
+             * @returns {Promise} that always resolves
              */
             var loadNextItem = function loadNextItem(){
-                if(!self.isLastItem && (!self.nextCalledBy[uri] || !self.itemStore.has(self.nextCalledBy[uri]))){
-                    _.delay(function(){
-                        self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
-                        .then(function(response){
-                            if(response && response.itemDefinition){
-                                self.itemStore.set(response.itemDefinition, response);
-                                self.startOnMove = true;
-                                self.nextCalledBy[uri] = response.itemDefinition;
+                return new Promise(function(resolve){
+                    //don't run a request if not needed
+                    if(!self.isLastItem && !self.hasNextItem(uri)){
 
-                                if(response.baseUrl && response.itemData && response.itemData.assets){
-                                    assetLoader(response.baseUrl, response.itemData.assets);
-                                }
-                            }
-                        })
-                        .catch(function(err){
-                            //just ignore it
-                            //TODO move to the logger
-                            window.console.error(err);
-                        });
-                    }, loadNextDelay);
-                }
+                        _.delay(function(){
+                            self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
+                                .then(function(response){
+                                    if(response && response.itemDefinition){
+
+                                        //store the response and start caching assets
+                                        self.itemStore.set(response.itemDefinition, response);
+                                        self.nextCalledBy[uri] = response.itemDefinition;
+
+                                        if(response.baseUrl && response.itemData && response.itemData.assets){
+                                            assetLoader(response.baseUrl, response.itemData.assets);
+                                        }
+                                    }
+                                    resolve();
+                                })
+                                .catch(resolve);
+                        }, loadNextDelay);
+                    } else {
+                        resolve();
+                    }
+                });
             };
 
             //resolve from the store
-            if(this.itemStore.has(uri)){
-                loadNextItem();
+            if(this.getItemFromStore && this.itemStore.has(uri)){
+                self.loadNextPromise = loadNextItem();
 
                 return Promise.resolve(this.itemStore.get(uri));
             }
 
             return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'))
-                    .then(function(data){
-                        loadNextItem();
-                        return data;
+                    .then(function(response){
+                        if(response && response.success){
+                            self.itemStore.set(uri, response);
+                        }
+
+                        self.loadNextPromise = loadNextItem();
+
+                        return response;
                     });
         },
 
@@ -153,15 +190,35 @@ define([
         callItemAction: function callItemAction(uri, action, params) {
             var self = this;
 
-            if(this.startOnMove){
-                params.start = true;
-            }
-            return this.request(this.configStorage.getItemActionUrl(uri, action), params)
-                    .then(function(response){
-                        self.isLast = response && response.testContext && response.testContext.isLast;
-                        return response;
-                    });
-        },
+            return this.loadNextPromise
+                .then(function(){
+
+                    self.getItemFromStore = false;
+
+                    //check if we have already the item for the action we are going to perform
+
+                    if( (action === 'timeout' || action === 'skip' ||
+                        (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
+                        self.hasNextItem(uri) ){
+
+                        self.getItemFromStore = true;
+                        params.start = true;
+
+                    } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(uri)){
+
+                        self.getItemFromStore = true;
+                        params.start = true;
+                    }
+                })
+                .then(function(){
+                    return self.request(self.configStorage.getItemActionUrl(uri, action), params);
+                })
+                .then(function(response){
+
+                    self.isLast = response && response.testContext && response.testContext.isLast;
+                    return response;
+                });
+        }
     }, qtiServiceProxy);
 
 

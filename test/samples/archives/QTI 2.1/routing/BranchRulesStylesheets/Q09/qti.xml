@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  imsqti_v2p1.xsd"
+	identifier="Q09" title="Radioactivity" adaptive="false" timeDependent="false">
+	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+		<correctResponse>
+			<value>curie</value>
+		</correctResponse>
+	</responseDeclaration>
+	<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
+		<defaultValue>
+			<value>0</value>
+		</defaultValue>
+	</outcomeDeclaration>
+	<stylesheet href="style.css" type="text/css" media="screen"/>
+	<itemBody id="itemBody">
+		<p id="stimulus">
+			<!-- From Wikipedia, Creative Commons Attribution-ShareAlike License, http://en.wikipedia.org/wiki/Radioactivity -->
+			Radioactive decay, also known as nuclear decay or radioactivity, is the process
+			by which a nucleus of an unstable atom loses energy by emitting particles of ionizing
+			radiation. A material that spontaneously emits this kind of radiation — which includes the 
+			emission of energetic alpha particles, beta particles, and gamma rays — is considered radioactive.
+		</p>
+		<choiceInteraction id="interaction" responseIdentifier="RESPONSE" shuffle="true" maxChoices="1">
+			<prompt>Who discovered radioactivity?</prompt>
+			<simpleChoice identifier="curie">Pierre and Marie Curie</simpleChoice>
+			<simpleChoice identifier="einstein">Albert Einstein</simpleChoice>
+			<simpleChoice identifier="hilleman">Maurice Hilleman</simpleChoice>
+		</choiceInteraction>
+	</itemBody>
+	<responseProcessing template="http://www.imsglobal.org/question/qti_v2p1/rptemplates/match_correct"/>
+</assessmentItem>

@@ -30,9 +30,8 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/plugins/tools/areaMasking/mask',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, maskComponent, buttonTpl){
+    'taoQtiTest/runner/plugins/tools/areaMasking/mask'
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, maskComponent){
     'use strict';
 
     /**
@@ -78,11 +77,8 @@ define([
             function addMask() {
                 maskComponent()
                     .on('render', function(){
-
                         self.masks.push(this);
-                        if(self.masks.length >= config.max){
-                            self.disable();
-                        }
+                        self.button.turnOn();
 
                         /**
                          * @event areaMasking#maskadd
@@ -90,10 +86,12 @@ define([
                         self.trigger('maskadd');
                     })
                     .on('destroy', function(){
-
                         self.masks = _.without(self.masks, this);
                         if(self.masks.length < config.max){
                             self.enable();
+                        }
+                        if (self.masks.length === 0) {
+                            self.button.turnOff();
                         }
 
                         /**
@@ -111,15 +109,16 @@ define([
             //keep a ref to all masks
             this.masks = [];
 
-            //build the control button
-            this.$button = $(buttonTpl({
+            // register the element in the Toolbox
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'area-masking',
+                text : 'Mask tool',
                 title : __('Covers parts of the item'),
                 icon : 'eye-slash'
-            }));
+            });
 
             //add a new mask each time the button is pressed
-            this.$button.on('click', function (e){
+            this.button.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger(actionPrefix + 'toggle');
             });
@@ -139,8 +138,29 @@ define([
             //start disabled
             this.disable();
 
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                //to be activated with the special category x-tao-option-areaMasking
+                return !!context.options.areaMasking;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
             //update plugin state based on changes
             testRunner
+                .on('loaditem', togglePlugin)
                 .on('unloaditem', function (){
                     //remove all masks
                     _.invoke(self.masks, 'destroy');
@@ -157,15 +177,10 @@ define([
                         addMask();
                     } else if (config.max === 1) {
                         _.invoke(self.masks, 'destroy');
+                        self.button.turnOff();
                     }
                 });
-        },
 
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-            this.getAreaBroker().getToolboxArea().append(this.$button);
         },
 
         /**
@@ -173,39 +188,34 @@ define([
          */
         destroy : function destroy(){
             shortcut.remove('.' + pluginName);
-            this.$button.remove();
         },
 
         /**
          * Enable the button
          */
         enable : function enable(){
-            this.$button
-                .removeProp('disabled')
-                .removeClass('disabled');
+            this.button.enable();
         },
 
         /**
          * Disable the button
          */
         disable : function disable(){
-            this.$button
-                .prop('disabled', true)
-                .addClass('disabled');
+            this.button.disable();
         },
 
         /**
          * Show the button
          */
         show : function show(){
-            hider.show(this.$button);
+            this.button.show();
         },
 
         /**
          * Hide the button
          */
         hide : function hide(){
-            hider.hide(this.$button);
+            this.button.hide();
         }
     });
 });

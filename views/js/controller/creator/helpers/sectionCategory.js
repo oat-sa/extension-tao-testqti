@@ -177,6 +177,18 @@ define([
                 description : __('enable calculator')
             },
             {
+                name : 'x-tao-option-areaMasking',
+                description : __('enable area masking tool')
+            },
+            {
+                name : 'x-tao-option-highlighter',
+                description : __('enable highlighter tool')
+            },
+            {
+                name : 'x-tao-option-magnifier',
+                description : __('enable magnifier tool')
+            },
+            {
                 name : 'x-tao-option-eliminator',
                 description : __('enable answer eliminator tool')
             },
