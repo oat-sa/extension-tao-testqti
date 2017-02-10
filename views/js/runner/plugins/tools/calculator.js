@@ -113,7 +113,6 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        console.log(testConfig);
                         if(testConfig.calculator && testConfig.calculator.template){
                             require(['tpl!'+testConfig.calculator.template.replace(/\.tpl$/, '')], function(calcTpl){
                                 buildCalculator(calcTpl);
