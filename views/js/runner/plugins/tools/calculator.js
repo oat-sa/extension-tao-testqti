@@ -79,6 +79,25 @@ define([
             }
 
             /**
+             * Build the calculator component
+             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             */
+            function buildCalculator(calcTpl){
+                self.calculator = calculatorFactory(_.defaults({
+                    renderTo: self.$calculatorContainer,
+                    replace: true,
+                    draggableContainer: areaBroker.getContainer(),
+                    alternativeTemplate : calcTpl || null
+                }, _default)).on('show', function () {
+                    self.trigger('open');
+                    self.button.turnOn();
+                }).on('hide', function () {
+                    self.trigger('close');
+                    self.button.turnOff();
+                }).show();
+            }
+
+            /**
              * Show/hide the calculator
              */
             function toggleCalculator() {
@@ -94,17 +113,17 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        self.calculator = calculatorFactory(_.defaults({
-                            renderTo: self.$calculatorContainer,
-                            replace: true,
-                            draggableContainer: areaBroker.getContainer()
-                        }, _default)).on('show', function () {
-                            self.trigger('open');
-                            self.button.turnOn();
-                        }).on('hide', function () {
-                            self.trigger('close');
-                            self.button.turnOff();
-                        }).show();
+                        if(testConfig.calculatorTemplate){
+                            require(['tpl!'+testConfig.calculatorTemplate.replace(/\.tpl$/, '')], function(calcTpl){
+                                buildCalculator(calcTpl);
+                            }, function(){
+                                //in case of error, display the default calculator:
+                                buildCalculator();
+                            });
+                        }else{
+                            buildCalculator();
+                        }
+
                     }
                 }
             }
