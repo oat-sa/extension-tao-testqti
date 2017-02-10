@@ -29,9 +29,8 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     var _default = {
