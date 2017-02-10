@@ -55,6 +55,8 @@ define([
             var areaBroker = this.getAreaBroker();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginsConfig = testConfig.plugins || {};
+            var config = pluginsConfig.calculator || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
@@ -113,8 +115,8 @@ define([
                         }
                     } else {
                         //build calculator widget
-                        if(testConfig.calculator && testConfig.calculator.template){
-                            require(['tpl!'+testConfig.calculator.template.replace(/\.tpl$/, '')], function(calcTpl){
+                        if(config.template){
+                            require(['tpl!' + config.template.replace(/\.tpl$/, '')], function(calcTpl){
                                 buildCalculator(calcTpl);
                             }, function(){
                                 //in case of error, display the default calculator:

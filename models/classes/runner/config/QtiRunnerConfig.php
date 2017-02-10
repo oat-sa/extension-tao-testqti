@@ -85,8 +85,7 @@ class QtiRunnerConfig implements RunnerConfig
             'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
             'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
             'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
-            'allowBrowseNextItem' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
-            'calculator' => isset($rawConfig['calculator']) ? $rawConfig['calculator'] : []
+            'allowBrowseNextItem' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false
         ];
     }
 
