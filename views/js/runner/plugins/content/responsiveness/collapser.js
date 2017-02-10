@@ -72,16 +72,9 @@ define([
         name: 'collapser',
 
         /**
-         * Initializes the plugin (called during runner's init)
-         */
-        init: function init() {
-            // this function is mandatory
-        },
-
-        /**
          * Installs the plugin (called when the runner bind the plugin)
          */
-        install: function install() {
+        init: function init() {
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
