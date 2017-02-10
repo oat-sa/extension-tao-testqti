@@ -31,23 +31,35 @@ define([
     'ui/feedback',
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
-    'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/qtiServiceProxy',
+    'taoQtiTest/runner/proxy/loader',
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
 ], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoaderFactory, urlUtil) {
+             runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
+    /**
+     * List of options required by the controller
+     * @type {String[]}
+     */
+    var requiredOptions = [
+        'testDefinition',
+        'testCompilation',
+        'serviceCallId',
+        'exitUrl',
+        'plugins'
+    ];
+
+    /**
+     * The Plugin Loader
+     */
     var pluginLoader = pluginLoaderFactory();
 
     /*
      *TODO provider registration should be loaded dynamically
      */
-
     runner.registerProvider('qti', qtiProvider);
-    proxy.registerProvider('qtiServiceProxy', qtiServiceProxy);
     communicator.registerProvider('poll', pollProvider);
 
     /**
@@ -105,21 +117,9 @@ define([
     }
 
     /**
-     * List of options required by the controller
-     * @type {String[]}
-     */
-    var requiredOptions = [
-        'testDefinition',
-        'testCompilation',
-        'serviceCallId',
-        'exitUrl',
-        'plugins'
-    ];
-
-    /**
      * The runner controller
      */
-    var runnerController = {
+    return {
 
         /**
          * Controller entry point
@@ -135,7 +135,6 @@ define([
 
             var startOptions = options || {};
             var missingOption = false;
-
 
             // verify required options
             _.forEach(requiredOptions, function(name) {
@@ -158,8 +157,17 @@ define([
                     pluginLoader.add(module, plugin.category);
                 });
 
-                pluginLoader.load()
+                //load the plugins and the proxy provider
+                Promise
+                    .all([
+                        proxyLoader().then(function(proxyProviderName){
+                            startOptions.proxyProvider = proxyProviderName;
+                        }),
+                        pluginLoader.load()
+                    ])
                     .then(function () {
+
+                        //here we initialize the Test Runner
                         initRunner(_.omit(startOptions, 'plugins'));
                     })
                     .catch(function () {
@@ -173,6 +181,4 @@ define([
             }
         }
     };
-
-    return runnerController;
 });

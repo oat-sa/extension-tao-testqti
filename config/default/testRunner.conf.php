@@ -413,6 +413,26 @@ return array(
         'dialog' => [
             'accept' => 'Enter',
             'reject' => 'Esc'
-        ]
+        ],
+        'magnifier' => array(
+            'toggle' => 'L',
+            'in' => 'Shift+I',
+            'out' => 'Shift+O',
+            'close' => 'esc'
+        ),
+        'highlighter' => array(
+            'toggle' => 'Shift+U'
+        ),
+        'area-masking' => array(
+            'toggle' => 'Y'
+        )
     ],
+
+    /**
+     * Allows to browse the next item (before it is displayed).
+     * The is required for caching scenarios
+     * @type boolean
+     */
+    'allow-browse-next-item' => false
+
 );
