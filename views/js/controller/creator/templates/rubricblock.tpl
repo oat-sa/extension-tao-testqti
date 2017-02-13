@@ -17,5 +17,4 @@
         </div>
     </div>
     <div class="rubricblock-content" contenteditable></div>
-    <div class="rubricblock-binding" data-bind="content" data-bind-html="true" data-bind-encoder="dom2qti"></div>
 </li>

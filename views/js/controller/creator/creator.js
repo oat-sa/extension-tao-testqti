@@ -187,6 +187,9 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
+                    //extract ids
+                    self.identifiers = qtiTestHelper.extractIdentifiers(model);
+
                     // the model must be wrapped in order to share more (events, internal states, and more)
                     modelOverseer = modelOverseerFactory(model, {
                         uri : options.uri,
@@ -197,9 +200,6 @@ define([
 
                     //detect the scoring mode
                     scoringHelper.init(modelOverseer);
-
-                    //extract ids
-                    self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
                     //register validators
                     validators.register('idFormat', qtiTestHelper.idFormatValidator());

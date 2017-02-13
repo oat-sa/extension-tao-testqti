@@ -29,9 +29,8 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     var _default = {
@@ -55,6 +54,8 @@ define([
             var areaBroker = this.getAreaBroker();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginsConfig = testConfig.plugins || {};
+            var config = pluginsConfig.calculator || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
@@ -79,6 +80,25 @@ define([
             }
 
             /**
+             * Build the calculator component
+             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             */
+            function buildCalculator(calcTpl){
+                self.calculator = calculatorFactory(_.defaults({
+                    renderTo: self.$calculatorContainer,
+                    replace: true,
+                    draggableContainer: areaBroker.getContainer(),
+                    alternativeTemplate : calcTpl || null
+                }, _default)).on('show', function () {
+                    self.trigger('open');
+                    self.button.turnOn();
+                }).on('hide', function () {
+                    self.trigger('close');
+                    self.button.turnOff();
+                }).show();
+            }
+
+            /**
              * Show/hide the calculator
              */
             function toggleCalculator() {
@@ -87,38 +107,42 @@ define([
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
                             self.calculator.show();
+                            self.button.turnOn();
                         } else {
                             self.calculator.hide();
+                            self.button.turnOff();
                         }
                     } else {
                         //build calculator widget
-                        self.calculator = calculatorFactory(_.defaults({
-                            renderTo: self.$calculatorContainer,
-                            replace: true,
-                            draggableContainer: areaBroker.getContainer()
-                        }, _default)).on('show', function () {
-                            self.trigger('open');
-                        }).on('hide', function () {
-                            self.trigger('close');
-                        }).show();
+                        if(config.template){
+                            require(['tpl!' + config.template.replace(/\.tpl$/, '')], function(calcTpl){
+                                buildCalculator(calcTpl);
+                            }, function(){
+                                //in case of error, display the default calculator:
+                                buildCalculator();
+                            });
+                        }else{
+                            buildCalculator();
+                        }
+
                     }
                 }
             }
 
             //build element (detached)
-            this.$button = $(buttonTpl({
+            this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'calculator',
                 title : __('Open Calculator'),
                 icon : 'table',
                 text : __('Calculator')
-            }));
+            });
             this.$calculatorContainer = $('<div class="widget-calculator">');
 
             //init calculator instance var, it will be created only necessary
             this.calculator = null;
 
             //attach behavior
-            this.$button.on('click', function (e){
+            this.button.on('click', function (e){
                 //prevent action if the click is made inside the form which is a sub part of the button
                 if($(e.target).closest('.widget-calculator').length){
                     return;
@@ -168,7 +192,6 @@ define([
          */
         render : function render(){
             var areaBroker = this.getAreaBroker();
-            areaBroker.getToolboxArea().append(this.$button);
             areaBroker.getContainer().append(this.$calculatorContainer);
         },
         /**
@@ -177,7 +200,6 @@ define([
         destroy : function destroy(){
             shortcut.remove('.' + this.getName());
 
-            this.$button.remove();
             this.$calculatorContainer.remove();
             if(this.calculator){
                 this.calculator.destroy();
@@ -187,15 +209,13 @@ define([
          * Enable the button
          */
         enable : function enable(){
-            this.$button.removeProp('disabled')
-                .removeClass('disabled');
+            this.button.enable();
         },
         /**
          * Disable the button
          */
         disable : function disable(){
-            this.$button.prop('disabled', true)
-                .addClass('disabled');
+            this.button.disable();
             if(this.calculator){
                 this.calculator.hide();
             }
@@ -204,13 +224,13 @@ define([
          * Show the button
          */
         show : function show(){
-            hider.show(this.$button);
+            this.button.show();
         },
         /**
          * Hide the button
          */
         hide : function hide(){
-            hider.hide(this.$button);
+            this.button.hide();
             if(this.calculator){
                 this.calculator.hide();
             }

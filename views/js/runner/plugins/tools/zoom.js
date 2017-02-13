@@ -26,9 +26,8 @@ define([
     'ui/transformer',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, __, hider, transformer, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, __, hider, transformer, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     /**
@@ -147,26 +146,26 @@ define([
             }
 
             //build element (detached)
-            this.$buttonZoomOut = $(buttonTpl({
+            this.buttonZoomOut = this.getAreaBroker().getToolbox().createEntry({
                 control : 'zoomOut',
                 title : __('Zoom out'),
                 icon : 'remove'
-            }));
+            });
 
-            this.$buttonZoomIn = $(buttonTpl({
+            this.buttonZoomIn = this.getAreaBroker().getToolbox().createEntry({
                 control : 'zoomIn',
                 title : __('Zoom in'),
                 icon : 'add'
-            }));
+            });
 
             //attach behavior
-            this.$buttonZoomIn.on('click', function (e){
+            this.buttonZoomIn.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger('tool-zoomin');
             });
 
             //attach behavior
-            this.$buttonZoomOut.on('click', function (e){
+            this.buttonZoomOut.on('click', function (e){
                 e.preventDefault();
                 testRunner.trigger('tool-zoomout');
             });
@@ -217,48 +216,38 @@ define([
                 .on('tool-zoomout', zoomOut);
         },
         /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-            var areaBroker = this.getAreaBroker();
-            areaBroker.getToolboxArea().append(this.$buttonZoomOut);
-            areaBroker.getToolboxArea().append(this.$buttonZoomIn);
-        },
-        /**
          * Called during the runner's destroy phase
          */
         destroy : function destroy(){
             shortcut.remove('.' + this.getName());
-            this.$buttonZoomIn.remove();
-            this.$buttonZoomOut.remove();
         },
         /**
          * Enable the button
          */
         enable : function enable(){
-            this.$buttonZoomIn.removeProp('disabled').removeClass('disabled');
-            this.$buttonZoomOut.removeProp('disabled').removeClass('disabled');
+            this.buttonZoomIn.enable();
+            this.buttonZoomOut.enable();
         },
         /**
          * Disable the button
          */
         disable : function disable(){
-            this.$buttonZoomIn.prop('disabled', true).addClass('disabled');
-            this.$buttonZoomOut.prop('disabled', true).addClass('disabled');
+            this.buttonZoomIn.disable();
+            this.buttonZoomOut.disable();
         },
         /**
          * Show the button
          */
         show : function show(){
-            hider.show(this.$buttonZoomIn);
-            hider.show(this.$buttonZoomOut);
+            this.buttonZoomIn.show();
+            this.buttonZoomOut.show();
         },
         /**
          * Hide the button
          */
         hide : function hide(){
-            hider.hide(this.$buttonZoomIn);
-            hider.hide(this.$buttonZoomOut);
+            this.buttonZoomIn.hide();
+            this.buttonZoomOut.hide();
         }
     });
 });
