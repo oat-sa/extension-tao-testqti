@@ -230,6 +230,16 @@ return array(
              * @type int
              */
             'zoomStep' => .5
+        ],
+
+        /**
+         * A student tool that provides a simple calculator
+         */
+        'calculator' => [
+            /**
+             * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
+             */
+            'template' => ''
         ]
     ],
 
