@@ -25,12 +25,12 @@ define([
     'lodash',
     'ui/keyNavigation/navigator',
     'ui/keyNavigation/domNavigableElement',
-    'core/groupKeyNavigator',
+    'ui/keyNavigation/groupNavigableElement',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, keyNavigator, domNavigableElement, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, domNavigableElement, groupNavigableElement, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -236,24 +236,27 @@ define([
      */
     function initTestRunnerNavigation(testRunner){
 
-        var groups;
+        var navigators;
 
         //blur current focused element, to reinitialize keyboard navigation
         if (document.activeElement){
             document.activeElement.blur();
         }
 
-        groups = _.union(
+        navigators = _.union(
             initRubricNavigation(testRunner),
             initContentNavigation(testRunner),
             initToolbarNavigation(testRunner),
             initNavigatorNavigation(testRunner),
             initHeaderNavigation(testRunner)
         );
-        return groupKeyNavigator({
+        navigators = groupNavigableElement.createFromNavigableDoms(navigators);
+
+        return keyNavigator({
             id : 'test-runner',
             replace : true,
-            groups : groups
+            loop : true,
+            elements : navigators
         });
     }
 
