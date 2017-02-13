@@ -206,7 +206,12 @@ return array(
              * When the buttons are reduced, allow an expand when the mouse is over a button
              * @type bool
              */
-            'hover' => false
+            'hover' => false,
+
+            /**
+             * Allow to set manually which buttons should collapse and in which order
+             */
+            'collapseOrder' => []
         ],
 
         /**
