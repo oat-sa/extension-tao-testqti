@@ -23,13 +23,14 @@
 define([
     'jquery',
     'lodash',
-    'core/keyNavigator',
+    'ui/keyNavigation/navigator',
+    'ui/keyNavigation/domNavigableElement',
     'core/groupKeyNavigator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, keyNavigator, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, domNavigableElement, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -38,26 +39,25 @@ define([
      * @param {Object} testRunner
      * @returns {Array}
      */
-    function initToolbarNavigation(testRunner){
+    function initToolbarNavigation(){
         var $navigationBar = $('.bottom-action-bar');
         var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
-        if ($focusables.length) {
-            keyNavigator({
+        var navigables = domNavigableElement.createFromJqueryContainer($focusables);
+        if (navigables.length) {
+            return [keyNavigator({
                 id : 'bottom-toolbar',
                 replace : true,
                 group : $navigationBar,
-                elements : $focusables,
+                elements : navigables,
                 //start from the last button "goto next"
-                default : $focusables.length - 1
+                default : navigables.length - 1
             }).on('right down', function(){
                 this.next();
             }).on('left up', function(){
                 this.previous();
-            }).on('activate', function(cursor, target){
-                cursor.$dom.click();
-                cursor.$dom.mousedown();
-            })
-            return ['bottom-toolbar'];
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click().mousedown();
+            })];
         }
         return [];
     }
@@ -68,19 +68,18 @@ define([
      * @param {Object} testRunner
      * @returns {Array}
      */
-    function initHeaderNavigation(testRunner){
+    function initHeaderNavigation(){
         //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
-
-        if ($headerElements.length) {
-            keyNavigator({
+        var navigables = domNavigableElement.createFromJqueryContainer($headerElements);
+        if (navigables.length) {
+            return [keyNavigator({
                 id : 'header-toolbar',
-                elements : $headerElements,
                 group : $headerElements,
+                elements : navigables,
                 loop : true,
                 replace : true
-            });
-            return ['header-toolbar'];
+            })];
         }
         return [];
     }
@@ -95,15 +94,18 @@ define([
 
         var $panel = testRunner.getAreaBroker().getPanelArea();
         var $navigator = $panel.find('.qti-navigator');
-        var result = [];
+        var navigators = [];
+        var $filters, $trees, navigableFilters, navigableTrees;
+
         if($navigator.length && !$navigator.hasClass('disabled')){
-            var $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
-            if ($filters.length) {
-                keyNavigator({
+            $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
+            navigableFilters = domNavigableElement.createFromJqueryContainer($filters);
+            if (navigableFilters.length) {
+                navigators.push(keyNavigator({
                     keepState : true,
                     id : 'navigator-filters',
                     replace : true,
-                    elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
+                    elements : navigableFilters,
                     group : $navigator
                 }).on('right', function(){
                     this.next();
@@ -112,35 +114,35 @@ define([
                 }).on('down', function(){
                     this.goto('navigator-items');
                 }).on('focus', function(cursor){
-                    cursor.$dom.click();
-                });
-                result = ['navigator-filters'];
+                    cursor.navigable.getElement().click();
+                }));
             }
 
-            var $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
-            if ($trees.length) {
+            $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
+            navigableTrees = domNavigableElement.createFromJqueryContainer($trees);
+            if (navigableTrees.length) {
+                //instantiate a key navigator but do not add it to the returned list of navigators as this is not supposed to be reached with tab key
                 keyNavigator({
                     id : 'navigator-items',
                     replace : true,
-                    elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
+                    elements : navigableTrees
                 }).on('down', function(){
                     this.next();
                 }).on('up', function(){
                     this.previous();
                 }).on('activate', function(cursor){
-                    cursor.$dom.click();
+                    cursor.navigable.getElement().click();
                 }).on('lowerbound', function(){
                     this.goto('navigator-filters');
                 }).on('focus', function(cursor){
-                    cursor.$dom.parent().addClass('key-navigation-highlight');
+                    cursor.navigable.getElement().parent().addClass('key-navigation-highlight');
                 }).on('blur', function(cursor){
-                    cursor.$dom.parent().removeClass('key-navigation-highlight');
+                    cursor.navigable.getElement().parent().removeClass('key-navigation-highlight');
                 });
-                result = ['navigator-filters'];
             }
 
         }
-        return result;
+        return navigators;
     }
 
     /**
@@ -158,14 +160,18 @@ define([
         $itemElements = $content.find('img,.key-navigation-focusable,.qti-interaction');
         $itemElements.each(function(){
             var $itemElement = $(this);
+            var itemNavigables = [];
             var id = 'item_element_navigation_group_'+itemNavigators.length;
+
             if($itemElement.hasClass('qti-interaction')){
                 $itemElement.off('.keyNavigation');
                 $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
-                if ($inputs.length) {
-                    keyNavigator({
+                itemNavigables = domNavigableElement.createFromJqueryContainer($inputs);
+
+                if (itemNavigables.length) {
+                    itemNavigators.push(keyNavigator({
                         id : id,
-                        elements : $inputs,
+                        elements : itemNavigables,
                         group : $itemElement,
                         loop : false,
                         replace : true
@@ -174,23 +180,21 @@ define([
                     }).on('left up', function(){
                         this.previous();
                     }).on('activate', function(cursor){
-                        cursor.$dom.click();
+                        cursor.navigable.getElement().click();
                     }).on('focus', function(cursor){
-                        cursor.$dom.closest('.qti-choice').addClass('key-navigation-highlight');
+                        cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
                     }).on('blur', function(cursor){
-                        cursor.$dom.closest('.qti-choice').removeClass('key-navigation-highlight');
-                    });
-                    itemNavigators.push(id);
+                        cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
+                    }));
                 }
 
             }else{
-                keyNavigator({
+                itemNavigators.push(keyNavigator({
                     id : id,
-                    elements : $itemElement,
+                    elements : domNavigableElement.createFromJqueryContainer($itemElement),
                     group : $itemElement,
                     replace : true
-                });
-                itemNavigators.push(id);
+                }));
             }
         });
 
@@ -204,7 +208,7 @@ define([
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
-    function initRubricNavigation(testRunner){
+    function initRubricNavigation(){
         var $itemElements;
         var rubricNavigators = [];
         var $rubricArea = $('#qti-rubrics');
@@ -213,13 +217,13 @@ define([
         $itemElements.each(function(){
             var $itemElement = $(this);
             var id = 'rubric_element_navigation_group_'+rubricNavigators.length;
-            keyNavigator({
+
+            rubricNavigators.push(keyNavigator({
                 id : id,
-                elements : $itemElement,
+                elements : domNavigableElement.createFromJqueryContainer($itemElement),
                 group : $itemElement,
                 replace : true
-            });
-            rubricNavigators.push(id);
+            }));
         });
 
         return rubricNavigators;
@@ -232,11 +236,14 @@ define([
      */
     function initTestRunnerNavigation(testRunner){
 
+        var groups;
+
         //blur current focused element, to reinitialize keyboard navigation
         if (document.activeElement){
             document.activeElement.blur();
         }
-        var groups = _.union(
+
+        groups = _.union(
             initRubricNavigation(testRunner),
             initContentNavigation(testRunner),
             initToolbarNavigation(testRunner),
