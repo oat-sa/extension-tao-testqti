@@ -218,7 +218,7 @@ define([
 
             // filter the items according to the provided criteria
             var filterCb = _filterMap[criteria];
-            var filtered  = _filterMap[filter ? 'filtered' : 'answered'];
+            var filtered = _filterMap[filter ? 'filtered' : 'answered'];
             if (filterCb) {
                 $items.filter(filterCb).addClass(_cssCls.hidden);
             }
