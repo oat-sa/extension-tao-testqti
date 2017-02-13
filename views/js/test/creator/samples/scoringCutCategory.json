@@ -10,72 +10,6 @@
     "normalMaximum": false,
     "normalMinimum": false,
     "masteryValue": false,
-    "identifier": "PASS_ALL",
-    "cardinality": 0,
-    "baseType": 1
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "PASS_ALL_RENDERING",
-    "cardinality": 0,
-    "baseType": 0
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "PASS_CATEGORY_HISTORY",
-    "cardinality": 0,
-    "baseType": 1
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
-    "cardinality": 0,
-    "baseType": 0
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "PASS_CATEGORY_MATH",
-    "cardinality": 0,
-    "baseType": 1
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
-    "identifier": "PASS_CATEGORY_MATH_RENDERING",
-    "cardinality": 0,
-    "baseType": 0
-  }, {
-    "qti-type": "outcomeDeclaration",
-    "views": [],
-    "interpretation": "",
-    "longInterpretation": "",
-    "normalMaximum": false,
-    "normalMinimum": false,
-    "masteryValue": false,
     "identifier": "SCORE_TOTAL",
     "cardinality": 0,
     "baseType": 3
@@ -134,6 +68,138 @@
     "identifier": "SCORE_CATEGORY_WEIGHTED_MATH",
     "cardinality": 0,
     "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_TOTAL_MAX",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_CATEGORY_MAX_MATH",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_ALL",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_ALL_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_CATEGORY_HISTORY",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_CATEGORY_MATH",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_CATEGORY_MATH_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
   }],
   "timeLimits": {
     "qti-type": "timeLimits",
@@ -388,261 +454,6 @@
     "qti-type": "outcomeProcessing",
     "outcomeRules": [{
       "qti-type": "setOutcomeValue",
-      "identifier": "PASS_ALL",
-      "expression": {
-        "qti-type": "gte",
-        "minOperands": 2,
-        "maxOperands": 2,
-        "acceptedCardinalities": [0],
-        "acceptedBaseTypes": [2, 3],
-        "expressions": [{
-          "qti-type": "divide",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [0],
-          "acceptedBaseTypes": [2, 3],
-          "expressions": [{
-            "qti-type": "sum",
-            "minOperands": 1,
-            "maxOperands": -1,
-            "acceptedCardinalities": [0, 1, 2],
-            "acceptedBaseTypes": [2, 3],
-            "expressions": [{
-              "qti-type": "testVariables",
-              "variableIdentifier": "SCORE",
-              "baseType": -1,
-              "weightIdentifier": "WEIGHT",
-              "sectionIdentifier": "",
-              "includeCategories": [],
-              "excludeCategories": []
-            }]
-          }, {
-            "qti-type": "numberPresented",
-            "sectionIdentifier": "",
-            "includeCategories": [],
-            "excludeCategories": []
-          }]
-        }, {
-          "qti-type": "baseValue",
-          "baseType": 3,
-          "value": 60
-        }]
-      }
-    }, {
-      "qti-type": "outcomeCondition",
-      "outcomeIf": {
-        "qti-type": "outcomeIf",
-        "expression": {
-          "qti-type": "match",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [4],
-          "acceptedBaseTypes": [4],
-          "expressions": [{
-            "qti-type": "variable",
-            "identifier": "PASS_ALL",
-            "weightIdentifier": ""
-          }, {
-            "qti-type": "baseValue",
-            "baseType": 1,
-            "value": true
-          }]
-        },
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_ALL_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "passed"
-          }
-        }]
-      },
-      "outcomeElseIfs": [],
-      "outcomeElse": {
-        "qti-type": "outcomeElse",
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_ALL_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "not_passed"
-          }
-        }]
-      }
-    }, {
-      "qti-type": "setOutcomeValue",
-      "identifier": "PASS_CATEGORY_HISTORY",
-      "expression": {
-        "qti-type": "gte",
-        "minOperands": 2,
-        "maxOperands": 2,
-        "acceptedCardinalities": [0],
-        "acceptedBaseTypes": [2, 3],
-        "expressions": [{
-          "qti-type": "divide",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [0],
-          "acceptedBaseTypes": [2, 3],
-          "expressions": [{
-            "qti-type": "sum",
-            "minOperands": 1,
-            "maxOperands": -1,
-            "acceptedCardinalities": [0, 1, 2],
-            "acceptedBaseTypes": [2, 3],
-            "expressions": [{
-              "qti-type": "testVariables",
-              "variableIdentifier": "SCORE",
-              "baseType": -1,
-              "weightIdentifier": "WEIGHT",
-              "sectionIdentifier": "",
-              "includeCategories": ["history"],
-              "excludeCategories": []
-            }]
-          }, {
-            "qti-type": "numberPresented",
-            "sectionIdentifier": "",
-            "includeCategories": ["history"],
-            "excludeCategories": []
-          }]
-        }, {
-          "qti-type": "baseValue",
-          "baseType": 3,
-          "value": 60
-        }]
-      }
-    }, {
-      "qti-type": "outcomeCondition",
-      "outcomeIf": {
-        "qti-type": "outcomeIf",
-        "expression": {
-          "qti-type": "match",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [4],
-          "acceptedBaseTypes": [4],
-          "expressions": [{
-            "qti-type": "variable",
-            "identifier": "PASS_CATEGORY_HISTORY",
-            "weightIdentifier": ""
-          }, {
-            "qti-type": "baseValue",
-            "baseType": 1,
-            "value": true
-          }]
-        },
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "passed"
-          }
-        }]
-      },
-      "outcomeElseIfs": [],
-      "outcomeElse": {
-        "qti-type": "outcomeElse",
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "not_passed"
-          }
-        }]
-      }
-    }, {
-      "qti-type": "setOutcomeValue",
-      "identifier": "PASS_CATEGORY_MATH",
-      "expression": {
-        "qti-type": "gte",
-        "minOperands": 2,
-        "maxOperands": 2,
-        "acceptedCardinalities": [0],
-        "acceptedBaseTypes": [2, 3],
-        "expressions": [{
-          "qti-type": "divide",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [0],
-          "acceptedBaseTypes": [2, 3],
-          "expressions": [{
-            "qti-type": "sum",
-            "minOperands": 1,
-            "maxOperands": -1,
-            "acceptedCardinalities": [0, 1, 2],
-            "acceptedBaseTypes": [2, 3],
-            "expressions": [{
-              "qti-type": "testVariables",
-              "variableIdentifier": "SCORE",
-              "baseType": -1,
-              "weightIdentifier": "WEIGHT",
-              "sectionIdentifier": "",
-              "includeCategories": ["math"],
-              "excludeCategories": []
-            }]
-          }, {
-            "qti-type": "numberPresented",
-            "sectionIdentifier": "",
-            "includeCategories": ["math"],
-            "excludeCategories": []
-          }]
-        }, {
-          "qti-type": "baseValue",
-          "baseType": 3,
-          "value": 60
-        }]
-      }
-    }, {
-      "qti-type": "outcomeCondition",
-      "outcomeIf": {
-        "qti-type": "outcomeIf",
-        "expression": {
-          "qti-type": "match",
-          "minOperands": 2,
-          "maxOperands": 2,
-          "acceptedCardinalities": [4],
-          "acceptedBaseTypes": [4],
-          "expressions": [{
-            "qti-type": "variable",
-            "identifier": "PASS_CATEGORY_MATH",
-            "weightIdentifier": ""
-          }, {
-            "qti-type": "baseValue",
-            "baseType": 1,
-            "value": true
-          }]
-        },
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_CATEGORY_MATH_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "passed"
-          }
-        }]
-      },
-      "outcomeElseIfs": [],
-      "outcomeElse": {
-        "qti-type": "outcomeElse",
-        "outcomeRules": [{
-          "qti-type": "setOutcomeValue",
-          "identifier": "PASS_CATEGORY_MATH_RENDERING",
-          "expression": {
-            "qti-type": "baseValue",
-            "baseType": 0,
-            "value": "not_passed"
-          }
-        }]
-      }
-    }, {
-      "qti-type": "setOutcomeValue",
       "identifier": "SCORE_TOTAL",
       "expression": {
         "qti-type": "sum",
@@ -753,6 +564,501 @@
           "sectionIdentifier": "",
           "includeCategories": ["math"],
           "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL_MAX",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_MAX",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_TOTAL_MAX",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": [],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "WEIGHT",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": [],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": ["history"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["history"],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "WEIGHT",
+          "sectionIdentifier": "",
+          "includeCategories": ["history"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["history"],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_CATEGORY_MAX_MATH",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": ["math"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_MAX_MATH",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_CATEGORY_MAX_MATH",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["math"],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "WEIGHT",
+          "sectionIdentifier": "",
+          "includeCategories": ["math"],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": ["math"],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_ALL",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_WEIGHTED",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+            "weightIdentifier": ""
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_ALL",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_ALL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_ALL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_CATEGORY_HISTORY",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_HISTORY",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+            "weightIdentifier": ""
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_CATEGORY_HISTORY",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_CATEGORY_HISTORY_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_CATEGORY_MATH",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "divide",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [0],
+          "acceptedBaseTypes": [2, 3],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MATH",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "variable",
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+            "weightIdentifier": ""
+          }]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 60
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_CATEGORY_MATH",
+            "weightIdentifier": ""
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_CATEGORY_MATH_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed"
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_CATEGORY_MATH_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed"
+          }
         }]
       }
     }]

@@ -197,10 +197,21 @@ return array(
             'collapseNavigation' => false,
 
             /**
+             * Manually manage the size of the bottom bar by specifying which tools to collapse and in which order
+             * @type bool
+             */
+            'collapseInOrder' => false,
+
+            /**
              * When the buttons are reduced, allow an expand when the mouse is over a button
              * @type bool
              */
-            'hover' => false
+            'hover' => false,
+
+            /**
+             * Allow to set manually which buttons should collapse and in which order
+             */
+            'collapseOrder' => []
         ],
 
         /**
@@ -224,6 +235,16 @@ return array(
              * @type int
              */
             'zoomStep' => .5
+        ],
+
+        /**
+         * A student tool that provides a simple calculator
+         */
+        'calculator' => [
+            /**
+             * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
+             */
+            'template' => ''
         ]
     ],
 

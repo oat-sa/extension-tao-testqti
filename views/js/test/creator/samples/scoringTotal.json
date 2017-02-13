@@ -13,6 +13,17 @@
     "identifier": "SCORE_TOTAL",
     "cardinality": 0,
     "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_TOTAL_MAX",
+    "cardinality": 0,
+    "baseType": 3
   }],
   "timeLimits": {
     "qti-type": "timeLimits",
@@ -284,6 +295,52 @@
           "excludeCategories": []
         }]
       }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL_MAX",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "outcomeMaximum",
+          "outcomeIdentifier": "SCORE",
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": []
+        }]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_MAX",
+            "weightIdentifier": ""
+          }]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_TOTAL_MAX",
+          "expression": {
+            "qti-type": "numberPresented",
+            "sectionIdentifier": "",
+            "includeCategories": [],
+            "excludeCategories": []
+          }
+        }]
+      },
+      "outcomeElseIfs": []
     }]
   },
   "testFeedbacks": []
