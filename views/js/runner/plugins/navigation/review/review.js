@@ -229,7 +229,8 @@ define([
                     if (self.getState('enabled') !== false) {
                         flagItem(position, flag);
                     }
-                });
+                })
+                .render();
 
             // restore current item in the navigator if movement not allowed
             testRunner.on('alert.notallowed', function() {
