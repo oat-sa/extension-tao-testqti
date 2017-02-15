@@ -40,27 +40,27 @@ define([
     var buttonData = {
         setFlag: {
             control: 'set-item-flag',
-            title: __('Mark the current item for later review'),
+            title: __('Flag the current item for later review'),
             icon: 'anchor',
-            text: __('Mark for review')
+            text: __('Flag for Review')
         },
         unsetFlag: {
             control: 'unset-item-flag',
-            title: __('Do not mark the current item for later review'),
+            title: __('Do not flag the current item for later review'),
             icon: 'anchor',
-            text: __('Unmark for review')
+            text: __('Unflag for Review')
         },
         showReview: {
             control: 'show-review',
             title: __('Show the review screen'),
             icon: 'right',
-            text: __('Show review')
+            text: __('Show Review')
         },
         hideReview: {
             control: 'hide-review',
             title: __('Hide the review screen'),
             icon: 'left',
-            text: __('Hide review')
+            text: __('Hide Review')
         }
     };
 
