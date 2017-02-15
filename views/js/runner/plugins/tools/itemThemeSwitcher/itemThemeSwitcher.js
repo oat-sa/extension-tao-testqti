@@ -110,7 +110,7 @@ define([
                     text: theme.label
                 });
 
-                self.menuButton.addItem(themeEntry);
+                themeEntry.setMenuId('color-contrast');
 
                 themeEntry.on('click', function(e) {
                     var themeId = this.config.control;
