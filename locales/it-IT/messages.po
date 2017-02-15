@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO v3.2.0-sprint44\n"
-"PO-Revision-Date: 2017-02-15T14:51:35\n"
+"PO-Revision-Date: 2017-02-15T16:39:46\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -217,11 +217,17 @@ msgstr ""
 msgid "displays the review screen / navigator"
 msgstr ""
 
-msgid "Do not mark the current item for later review"
-msgstr "Non contrassegnare l'item corrente per una revisione successiva"
-
 msgid "Do not flag the current item for later review"
 msgstr "Non contrassegnare l'item corrente per una revisione successiva"
+
+msgid "Eliminate choices"
+msgstr ""
+
+msgid "enable answer eliminator tool"
+msgstr ""
+
+msgid "enable area masking tool"
+msgstr ""
 
 msgid "enable calculator"
 msgstr ""
@@ -305,9 +311,6 @@ msgstr "Contrassegna l'item corrente per una revisione successiva"
 
 msgid "Flagged"
 msgstr "Contrassegnato"
-
-msgid "Hide review"
-msgstr "Nascondi revisione"
 
 msgid "Hide Review"
 msgstr "Nascondi revisione"
@@ -439,17 +442,14 @@ msgstr ""
 msgid "Manage Tests"
 msgstr "Gestisci Test"
 
+msgid "Mark for review"
+msgstr "Segna per la revisione"
+
 msgid "Masking"
 msgstr ""
 
 msgid "Match value"
 msgstr ""
-
-msgid "Mark for review"
-msgstr "Segna per la revisione"
-
-msgid "Mark the current item for later review"
-msgstr "Contrassegna l'item corrente per una revisione successiva"
 
 msgid "Max Attempts"
 msgstr "Numero massimo di tentativi"
@@ -700,9 +700,6 @@ msgstr ""
 msgid "Show Feedback"
 msgstr "Mostra commenti"
 
-msgid "Show review"
-msgstr "Mostra revisione"
-
 msgid "Show Review"
 msgstr "Mostra revisione"
 
@@ -916,9 +913,6 @@ msgstr "Deseleziona per la revisione"
 
 msgid "Unknown error."
 msgstr "Errore sconosciuto."
-
-msgid "Unmark for review"
-msgstr "Deseleziona per la revisione"
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Aggiornamento a QTI 2.1 Test Package File"
