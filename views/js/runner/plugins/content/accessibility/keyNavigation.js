@@ -166,6 +166,9 @@ define([
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
+        //adding retro-compatibility with legacy focusable class for defining focusable passages
+        $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
+
         $itemElements = $content.find('img,.key-navigation-focusable,.qti-interaction');
         $itemElements.each(function(){
             var $itemElement = $(this);
