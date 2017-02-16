@@ -102,7 +102,7 @@ define([
         //the tag to identify if the item listing has been browsed, to only "smart jump" to active item only on the first visit
         var itemListingVisited = false;
         //the position of the filter in memory, to only "smart jump" to active item only on the first visit
-        var filterCursorPos = -1;
+        var filterCursor;
 
         if($navigator.length && !$navigator.hasClass('disabled')){
             $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
@@ -139,9 +139,9 @@ define([
                     cursor.navigable.getElement().click();
 
                     //reset the item listing browsed tag whenever the focus on the filter happens after a focus on another element
-                    if(filterCursorPos !== cursor.position && !origin){
+                    if(!filterCursor || filterCursor.position !== cursor.position || !origin){
                         itemListingVisited = false;
-                        filterCursorPos = cursor.position;
+                        filterCursor = cursor;
                     }
                 });
                 navigators.push(filtersNavigator);
@@ -157,13 +157,16 @@ define([
                     elements : navigableTrees,
                     defaultPosition : function defaultPosition(navigables){
                         var pos = 0;
-                        _.forIn(navigables, function(navigable, i){
-                            var $parent = navigable.getElement().parent('.qti-navigator-item');
-                            if($parent.hasClass('active') && $parent.is(':visible')){
-                                pos = i;
-                                return false;
-                            }
-                        });
+                        if(filterCursor && filterCursor.navigable.getElement().data('mode') !== 'flagged'){
+                            _.forIn(navigables, function(navigable, i){
+                                var $parent = navigable.getElement().parent('.qti-navigator-item');
+                                //find the first active and visible item
+                                if($parent.hasClass('active') && $parent.is(':visible')){
+                                    pos = i;
+                                    return false;
+                                }
+                            });
+                        }
                         return pos;
                     }
                 }).on('down', function(){
