@@ -412,10 +412,7 @@ return array(
             'toggle' => 'A',
         ],
         'itemThemeSwitcher' => [
-            'toggle' => 'T',
-            'up' => 'ArrowUp',
-            'down' => 'ArrowDown',
-            'select' => 'Enter'
+            'toggle' => 'T'
         ],
         'review' => [
             'toggle' => 'R',

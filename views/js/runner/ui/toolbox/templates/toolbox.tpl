@@ -1,1 +1,1 @@
-<ul class="area-component plain tools-box-list"></ul>
+<ul class="plain tools-box-list"></ul>
