@@ -95,13 +95,20 @@ define([
         var $panel = testRunner.getAreaBroker().getPanelArea();
         var $navigator = $panel.find('.qti-navigator');
         var navigators = [];
+        var filtersNavigator;
+        var itemsNavigator;
         var $filters, $trees, navigableFilters, navigableTrees;
+
+        //the tag to identify if the item listing has been browsed, to only "smart jump" to active item only on the first visit
+        var itemListingVisited = false;
+        //the position of the filter in memory, to only "smart jump" to active item only on the first visit
+        var filterCursorPos = -1;
 
         if($navigator.length && !$navigator.hasClass('disabled')){
             $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
             navigableFilters = domNavigableElement.createFromJqueryContainer($filters);
             if (navigableFilters.length) {
-                navigators.push(keyNavigator({
+                filtersNavigator = keyNavigator({
                     keepState : true,
                     id : 'navigator-filters',
                     replace : true,
@@ -112,17 +119,39 @@ define([
                 }).on('left', function(){
                     this.previous();
                 }).on('down', function(){
-                    this.goto('navigator-items');
-                }).on('focus', function(cursor){
+                    if(itemsNavigator){
+                        _.defer(function(){
+                            if(itemListingVisited){
+                                itemsNavigator.focus().first();
+                            }else{
+                                itemsNavigator.focus();
+                            }
+                        });
+                    }
+                }).on('up', function(){
+                    if(itemsNavigator){
+                        _.defer(function(){
+                            itemsNavigator.last();
+                        });
+                    }
+                }).on('focus', function(cursor, origin){
+                    //activate the tab in the navigators
                     cursor.navigable.getElement().click();
-                }));
+
+                    //reset the item listing browsed tag whenever the focus on the filter happens after a focus on another element
+                    if(filterCursorPos !== cursor.position && !origin){
+                        itemListingVisited = false;
+                        filterCursorPos = cursor.position;
+                    }
+                });
+                navigators.push(filtersNavigator);
             }
 
             $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
             navigableTrees = domNavigableElement.createFromJqueryContainer($trees);
             if (navigableTrees.length) {
                 //instantiate a key navigator but do not add it to the returned list of navigators as this is not supposed to be reached with tab key
-                keyNavigator({
+                itemsNavigator = keyNavigator({
                     id : 'navigator-items',
                     replace : true,
                     elements : navigableTrees,
@@ -139,11 +168,22 @@ define([
                     this.next();
                 }).on('up', function(){
                     this.previous();
+                }).on('right', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus().next();
+                    }
+                }).on('left', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus().previous();
+                    }
                 }).on('activate', function(cursor){
                     cursor.navigable.getElement().click();
-                }).on('lowerbound', function(){
-                    this.goto('navigator-filters');
+                }).on('lowerbound upperbound', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus();
+                    }
                 }).on('focus', function(cursor){
+                    itemListingVisited = true;
                     cursor.navigable.getElement().parent().addClass('key-navigation-highlight');
                 }).on('blur', function(cursor){
                     cursor.navigable.getElement().parent().removeClass('key-navigation-highlight');
