@@ -700,6 +700,9 @@ define([
 
                         // filter the items
                         self.filter(mode);
+
+                        //after filtering, ensure that the active item (if exists) is visible
+                        self.autoScroll();
                     }
                 });
 
