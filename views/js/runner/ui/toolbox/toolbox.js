@@ -54,7 +54,7 @@ define([
 ], function(_, $, componentFactory, entryFactory, menuFactory, textFactory, toolboxTpl) {
     'use strict';
 
-    var toolbarComponentApi = {
+    var toolboxComponentApi = {
 
         /**
          * Initialize the toolbox
@@ -173,12 +173,13 @@ define([
     /**
      * The toolbox factory
      */
-    return function toolbarComponentFactory(specs, defaults) {
-        var toolbarComponent;
+    return function toolboxComponentFactory(specs, defaults) {
+        var $document = $(document),
+            toolboxComponent;
 
-        specs = _.defaults(specs || {}, toolbarComponentApi);
+        specs = _.defaults(specs || {}, toolboxComponentApi);
 
-        toolbarComponent = componentFactory(specs, defaults)
+        toolboxComponent = componentFactory(specs, defaults)
             .on('init', function () {
                 this.initToolbox();
             })
@@ -190,8 +191,8 @@ define([
                 var self = this;
 
                 // fixme: try to bind this behavior on the blur event of each menu
-                $(document).off('.toolboxmenu');
-                $(document).on('click.toolboxmenu', function() {
+                $document.off('.toolboxmenu');
+                $document.on('click.toolboxmenu', function() {
                     self.allMenus.forEach(function(menu) {
                         if (menu.is('opened')) {
                             menu.closeMenu();
@@ -200,7 +201,7 @@ define([
                 });
             })
             .on('destroy', function() {
-                $(document).off('.toolboxmenu');
+                $document.off('.toolboxmenu');
 
                 this.allItems.forEach(function (item) {
                     item.destroy();
@@ -208,6 +209,6 @@ define([
             })
             .setTemplate(toolboxTpl);
 
-        return toolbarComponent;
+        return toolboxComponent;
     };
 });
