@@ -75,7 +75,7 @@ define([
         if (navigables.length) {
             return [keyNavigator({
                 id : 'header-toolbar',
-                group : $headerElements,
+                group : $headerElements.closest('.infoControl'),
                 elements : navigables,
                 loop : true,
                 replace : true
