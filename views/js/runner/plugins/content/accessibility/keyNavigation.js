@@ -24,13 +24,13 @@ define([
     'jquery',
     'lodash',
     'ui/keyNavigation/navigator',
-    'ui/keyNavigation/domNavigableElement',
-    'ui/keyNavigation/groupNavigableElement',
+    'ui/keyNavigation/navigableDomElement',
+    'ui/keyNavigation/navigableGroupElement',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, keyNavigator, domNavigableElement, groupNavigableElement, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, navigableDomElement, navigableGroupElement, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -42,7 +42,7 @@ define([
     function initToolbarNavigation(){
         var $navigationBar = $('.bottom-action-bar');
         var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
-        var navigables = domNavigableElement.createFromJqueryContainer($focusables);
+        var navigables = navigableDomElement.createFromDoms($focusables);
         if (navigables.length) {
             return [keyNavigator({
                 id : 'bottom-toolbar',
@@ -50,7 +50,7 @@ define([
                 group : $navigationBar,
                 elements : navigables,
                 //start from the last button "goto next"
-                default : navigables.length - 1
+                defaultPosition : navigables.length - 1
             }).on('right down', function(){
                 this.next();
             }).on('left up', function(){
@@ -71,7 +71,7 @@ define([
     function initHeaderNavigation(){
         //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
-        var navigables = domNavigableElement.createFromJqueryContainer($headerElements);
+        var navigables = navigableDomElement.createFromDoms($headerElements);
         if (navigables.length) {
             return [keyNavigator({
                 id : 'header-toolbar',
@@ -106,7 +106,7 @@ define([
 
         if($navigator.length && !$navigator.hasClass('disabled')){
             $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
-            navigableFilters = domNavigableElement.createFromJqueryContainer($filters);
+            navigableFilters = navigableDomElement.createFromDoms($filters);
             if (navigableFilters.length) {
                 filtersNavigator = keyNavigator({
                     keepState : true,
@@ -148,18 +148,20 @@ define([
             }
 
             $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
-            navigableTrees = domNavigableElement.createFromJqueryContainer($trees);
+            navigableTrees = navigableDomElement.createFromDoms($trees);
             if (navigableTrees.length) {
                 //instantiate a key navigator but do not add it to the returned list of navigators as this is not supposed to be reached with tab key
                 itemsNavigator = keyNavigator({
                     id : 'navigator-items',
                     replace : true,
                     elements : navigableTrees,
-                    default : function(navigables){
+                    defaultPosition : function defaultPosition(navigables){
                         var pos = 0;
                         _.forIn(navigables, function(navigable, i){
-                            if(navigable.getElement().parent('.qti-navigator-item').hasClass('active')){
+                            var $parent = navigable.getElement().parent('.qti-navigator-item');
+                            if($parent.hasClass('active') && $parent.is(':visible')){
                                 pos = i;
+                                return false;
                             }
                         });
                         return pos;
@@ -218,7 +220,7 @@ define([
             if($itemElement.hasClass('qti-interaction')){
                 $itemElement.off('.keyNavigation');
                 $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
-                itemNavigables = domNavigableElement.createFromJqueryContainer($inputs);
+                itemNavigables = navigableDomElement.createFromDoms($inputs);
 
                 if (itemNavigables.length) {
                     itemNavigators.push(keyNavigator({
@@ -243,7 +245,7 @@ define([
             }else{
                 itemNavigators.push(keyNavigator({
                     id : id,
-                    elements : domNavigableElement.createFromJqueryContainer($itemElement),
+                    elements : navigableDomElement.createFromDoms($itemElement),
                     group : $itemElement,
                     replace : true
                 }));
@@ -272,7 +274,7 @@ define([
 
             rubricNavigators.push(keyNavigator({
                 id : id,
-                elements : domNavigableElement.createFromJqueryContainer($itemElement),
+                elements : navigableDomElement.createFromDoms($itemElement),
                 group : $itemElement,
                 replace : true
             }));
@@ -302,7 +304,7 @@ define([
             initNavigatorNavigation(testRunner),
             initHeaderNavigation(testRunner)
         );
-        navigators = groupNavigableElement.createFromNavigableDoms(navigators);
+        navigators = navigableGroupElement.createFromNavigators(navigators);
 
         return keyNavigator({
             id : 'test-runner',
