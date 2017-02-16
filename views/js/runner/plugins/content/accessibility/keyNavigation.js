@@ -125,7 +125,16 @@ define([
                 keyNavigator({
                     id : 'navigator-items',
                     replace : true,
-                    elements : navigableTrees
+                    elements : navigableTrees,
+                    default : function(navigables){
+                        var pos = 0;
+                        _.forIn(navigables, function(navigable, i){
+                            if(navigable.getElement().parent('.qti-navigator-item').hasClass('active')){
+                                pos = i;
+                            }
+                        });
+                        return pos;
+                    }
                 }).on('down', function(){
                     this.next();
                 }).on('up', function(){
