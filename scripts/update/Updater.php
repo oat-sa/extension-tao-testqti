@@ -1035,6 +1035,8 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.1.0');
         }
 
+        $this->skip('6.1.0', '6.3.0');
+
         if ($this->isVersion('6.3.0')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -1050,6 +1052,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.3.1');
         }
 
-        $this->skip('6.1.1', '6.3.2');
+        $this->skip('6.3.1', '6.3.3');
     }
 }
