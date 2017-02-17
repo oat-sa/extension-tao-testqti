@@ -217,19 +217,19 @@ define([
             var $items = this.controls.$tree.find(_selectors.items).removeClass(_cssCls.hidden);
 
             // filter the items according to the provided criteria
-            var filter = _filterMap[criteria];
+            var filterCb = _filterMap[criteria];
             var filtered = _filterMap[filter ? 'filtered' : 'answered'];
-            if (filter) {
-                $items.filter(filter).addClass(_cssCls.hidden);
+            if (filterCb) {
+                $items.filter(filterCb).addClass(_cssCls.hidden);
             }
 
             // update the section counters
             this.controls.$tree.find(_selectors.sections).each(function () {
-                var $section = $(this);
-                var $items = $section.find(_selectors.items + _selectors.notInformational);
-                var $filtered = $items.filter(filtered);
-                var total = $items.length;
-                var nb = total - $filtered.length;
+                var $section    = $(this);
+                var $itemsFound = $section.find(_selectors.items + _selectors.notInformational);
+                var $filtered   = $itemsFound.filter(filtered);
+                var total       = $itemsFound.length;
+                var nb          = total - $filtered.length;
                 self.writeCount($section.find(_selectors.counters), nb, total);
             });
             this.currentFilter = criteria;
@@ -270,6 +270,7 @@ define([
          * @param {Object} map The current test map
          * @param {Object} context The current test context
          * @returns {navigatorApi}
+         * @fires navigator#update
          */
         update: function update(map, context) {
             var scopedMap = this.getScopedMap(map, context);
@@ -314,6 +315,11 @@ define([
 
             // apply again the current filter
             this.filter(this.controls.$filters.filter(_selectors.actives).data('mode'));
+
+            /**
+             * @event navigator#update the navigation data have changed
+             */
+            this.trigger('update');
 
             return this;
         },
@@ -376,12 +382,15 @@ define([
          * @private
          */
         writeCount: function writeCount($place, count, total) {
+
+            var display = 0;
             if($place.parent().hasClass('qti-navigator-tab')){
-                $place.text(count);
+                display = Math.max(count, 0);
             }
-            else {
-                $place.text(count + '/' + total);
+            else if(total > 0){
+                display = Math.min(count, total) + '/' + total;
             }
+            $place.text(display);
         },
 
         /**
@@ -477,7 +486,7 @@ define([
          * @returns {navigatorApi}
          */
         toggle: function toggle(show) {
-            if (undefined === show) {
+            if (typeof show === 'undefined') {
                 show = this.is('hidden');
             }
 
@@ -504,6 +513,9 @@ define([
      * @returns {*}
      */
     function navigatorFactory(config, map, context) {
+
+        var navigator;
+
         /**
          * Flags an item
          * @param {jQuery} $item
@@ -540,17 +552,9 @@ define([
             navigator.trigger('jump', position);
         }
 
-        var navigator = component(navigatorApi, _defaults)
+        navigator = component(navigatorApi, _defaults)
             .setTemplate(navigatorTpl)
 
-            // post init
-            .on('init', function () {
-                if (!this.is('rendered')) {
-                    this.render();
-                }
-
-                this.update(map, context);
-            })
 
             // uninstalls the component
             .on('destroy', function () {
@@ -696,9 +700,13 @@ define([
 
                         // filter the items
                         self.filter(mode);
+
+                        //after filtering, ensure that the active item (if exists) is visible
+                        self.autoScroll();
                     }
                 });
 
+                this.update(map, context);
             });
 
         // set default filter

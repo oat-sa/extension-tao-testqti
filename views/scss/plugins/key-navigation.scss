@@ -81,6 +81,13 @@
 
 header{
     .settings-menu{
+        .key-navigation-group{
+            padding-right: 5px;
+            &.focusin{
+                background-color: rgba($info, .5);
+                padding-bottom: 10px;
+            }
+        }
         .key-navigation-highlight{
             &:focus{
                 height:54px;

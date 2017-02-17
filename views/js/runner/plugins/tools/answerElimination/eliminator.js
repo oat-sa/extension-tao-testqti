@@ -77,7 +77,7 @@ define([
                 control : 'eliminator',
                 title : __('Eliminate choices'),
                 icon : 'eliminate',
-                text : __('Eliminator')
+                text : __('Answer Eliminator')
             });
 
             /**
