@@ -184,7 +184,7 @@ define([
             this.button = this.getAreaBroker().getToolbox().createEntry({
                 control: 'magnify',
                 title: __('Displays a customisable magnifier'),
-                text: __('Magnify'),
+                text: __('Magnifying Glass'),
                 icon: 'find'
             });
 
