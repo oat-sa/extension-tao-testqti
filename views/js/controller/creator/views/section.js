@@ -398,6 +398,8 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 minimumInputLength: 3,
                 width: '100%',
                 multiple : false,
+                allowClear: true,
+                placeholder: __('Select a blueprint'),
                 formatNoMatches : function(){
                     return __('Enter a blueprint');
                 },
