@@ -139,10 +139,11 @@ define([
                     cursor.navigable.getElement().click();
 
                     //reset the item listing browsed tag whenever the focus on the filter happens after a focus on another element
-                    if(!filterCursor || filterCursor.position !== cursor.position || !origin){
+                    if((filterCursor && filterCursor.position !== cursor.position) || origin){
                         itemListingVisited = false;
-                        filterCursor = cursor;
                     }
+                    //set the filter cursor in memory
+                    filterCursor = cursor;
                 });
                 navigators.push(filtersNavigator);
             }
