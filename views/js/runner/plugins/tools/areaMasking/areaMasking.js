@@ -81,6 +81,7 @@ define([
                         self.masks.push(this);
                         self.button.turnOn();
                         zIndexManager.putOnTop(this.getElement());
+                        zIndexManager.topOnFocus(this.getElement());
 
                         /**
                          * @event areaMasking#maskadd

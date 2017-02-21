@@ -23,10 +23,6 @@ define([
 ], function($) {
     'use strict';
 
-
-
-
-
     function zIndexManagerFactory() {
         var zIndexManager,
             zIndex = 1000;
@@ -47,6 +43,14 @@ define([
                 console.log('putting on top with zIndex = ' + zIndex);
                 // todo: check if already highest
                 $element.css('z-index', zIndex);
+            },
+
+            topOnFocus: function topOnFocus($element) {
+                var self = this;
+
+                $element.on('mousedown.zIndexManager', function() {
+                    self.putOnTop($element);
+                });
             }
         };
 

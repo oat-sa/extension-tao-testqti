@@ -146,6 +146,8 @@ define([
             });
             this.$calculatorContainer = $('<div class="widget-calculator">');
 
+            zIndexManager.topOnFocus(self.$calculatorContainer);
+
             //init calculator instance var, it will be created only necessary
             this.calculator = null;
 

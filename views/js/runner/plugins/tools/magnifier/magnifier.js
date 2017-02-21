@@ -89,6 +89,9 @@ define([
                         levelMax: pluginConfig.zoomMax,
                         levelStep: pluginConfig.zoomStep
                     })
+                        .on('render', function () {
+                            zIndexManager.topOnFocus(this.getElement());
+                        })
                         .on('show', function () {
                             /**
                              * @event plugin-magnifier-show.magnifier
