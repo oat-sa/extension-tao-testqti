@@ -26,8 +26,9 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
+    'taoQtiTest/runner/ui/zIndexManager',
     'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, magnifierPanelFactory) {
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, zIndexManager, magnifierPanelFactory) {
     'use strict';
 
     /**
@@ -163,6 +164,7 @@ define([
 
                 if (magnifierPanel.is('hidden')) {
                     magnifierPanel.show();
+                    zIndexManager.putOnTop(magnifierPanel.getElement());
                 }
 
                 self.setState('active', true);

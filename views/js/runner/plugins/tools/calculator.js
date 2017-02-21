@@ -29,8 +29,9 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
+    'taoTests/runner/plugin',
+    'taoQtiTest/runner/ui/zIndexManager'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, zIndexManager){
     'use strict';
 
     var _default = {
@@ -95,7 +96,8 @@ define([
                 }).on('hide', function () {
                     self.trigger('close');
                     self.button.turnOff();
-                }).show();
+                });
+                showCalculator();
             }
 
             /**
@@ -106,8 +108,7 @@ define([
                     if (self.calculator) {
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
-                            self.calculator.show();
-                            self.button.turnOn();
+                            showCalculator();
                         } else {
                             self.calculator.hide();
                             self.button.turnOff();
@@ -128,6 +129,13 @@ define([
                     }
                 }
             }
+
+            function showCalculator() {
+                self.calculator.show();
+                self.button.turnOn();
+                zIndexManager.putOnTop(self.$calculatorContainer);
+            }
+
 
             //build element (detached)
             this.button = this.getAreaBroker().getToolbox().createEntry({
