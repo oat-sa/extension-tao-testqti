@@ -1034,7 +1034,24 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('6.1.0');
         }
-        
-        $this->skip('6.1.0', '6.4.0');
+
+        $this->skip('6.1.0', '6.3.0');
+
+        if ($this->isVersion('6.3.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['itemThemeSwitcher'] = [
+                'toggle' => 'T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.3.1');
+        }
+
+        $this->skip('6.3.1', '6.4.3');
     }
 }

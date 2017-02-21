@@ -179,6 +179,15 @@ define([
                     });
         },
 
+        submitItem: function submitItem(uri, state, response, params) {
+            if (this.itemStore.has(uri)) {
+                var itemData = this.itemStore.get(uri);
+                itemData.itemState = state;
+                this.itemStore.set(uri, itemData);
+            }
+            return qtiServiceProxy.submitItem.call(this, uri, state, response, params);
+        },
+
         /**
          * Calls an action related to a particular item
          * @param {String} uri - The URI of the item for which call the action

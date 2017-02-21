@@ -55,16 +55,16 @@ define([
 
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
-                title: __('Highlight text'),
+                title: __('Highlight Text'),
                 icon: 'text-marker',
                 control: 'highlight-trigger',
                 text: __('Highlight')
             });
 
             this.buttonRemove = this.getAreaBroker().getToolbox().createEntry({
-                title: __('Clear highlights'),
+                title: __('Clear all active highlights'),
                 control: 'highlight-clear',
-                text: __('Clear highlights')
+                text: __('Clear Highlights')
             });
 
             // attach user events
