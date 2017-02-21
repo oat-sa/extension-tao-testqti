@@ -27,6 +27,7 @@ define([
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
+    'core/logger',
     'layout/loading-bar',
     'ui/feedback',
     'taoTests/runner/runner',
@@ -35,7 +36,7 @@ define([
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, Promise, communicator, pollProvider, loadingBar, feedback,
+], function ($, _, __, Promise, communicator, pollProvider, loggerFactory, loadingBar, feedback,
              runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
@@ -51,10 +52,7 @@ define([
         'plugins'
     ];
 
-    /**
-     * The Plugin Loader
-     */
-    var pluginLoader = pluginLoaderFactory();
+
 
     /*
      *TODO provider registration should be loaded dynamically
@@ -62,18 +60,7 @@ define([
     runner.registerProvider('qti', qtiProvider);
     communicator.registerProvider('poll', pollProvider);
 
-    /**
-     * Catches errors
-     * @param {Object} err
-     */
-    function onError(err) {
-        loadingBar.stop();
 
-        feedback().error(err.message);
-
-        //TODO to be replaced by the logger
-        window.console.error(err);
-    }
 
     /**
      * Initializes and launches the test runner
@@ -133,36 +120,65 @@ define([
          */
         start: function start(options) {
 
-            var startOptions = options || {};
-            var missingOption = false;
+            var logger = loggerFactory('controller/runner', loggerFactory.levels.warn, options);
 
-            // verify required options
-            _.forEach(requiredOptions, function(name) {
-                if (!startOptions[name]) {
-                    onError({
-                        success: false,
-                        code: 0,
-                        type: 'error',
-                        message: __('Missing required option %s', name)
-                    });
-                    missingOption = true;
-                    return false;
-                }
-            });
+            var hasOption = function hasOption(name){
+                return typeof options[name] !== 'undefined';
+            };
 
-            if (!missingOption) {
-                loadingBar.start();
+            /**
+            * Catches errors
+            * @param {Object} err
+            */
+            var onError = function onError(err) {
 
-                _.forEach(options.plugins, function (plugin, module) {
+                loadingBar.stop();
+
+                feedback().error(err.message);
+
+                logger.error(err);
+            };
+
+
+
+            var loadPlugins = function loadPlugins(plugins){
+                var pluginLoader = pluginLoaderFactory();
+
+                _.forEach(plugins, function (plugin, module) {
                     pluginLoader.add(module, plugin.category);
                 });
+                return pluginLoader
+                        .load()
+                        .then(function(){
+                            return pluginLoader.getPlugins();
+                        });
+            };
+
+            var loadProxy = function loadProxy(){
+                return proxyLoader();
+            };
+
+            loadingBar.start();
+
+            // verify required options
+            if( ! _.every(requiredOptions, hasOption)) {
+                return onError({
+                    success: false,
+                    code: 0,
+                    type: 'error',
+                    message: __('Missing required option %s', name)
+                });
+
+            }
+
+
+
+
 
                 //load the plugins and the proxy provider
                 Promise
                     .all([
-                        proxyLoader().then(function(proxyProviderName){
-                            startOptions.proxyProvider = proxyProviderName;
-                        }),
+
                         pluginLoader.load()
                     ])
                     .then(function () {
@@ -178,7 +194,6 @@ define([
                             message: __('Plugin dependency error!')
                         });
                     });
-            }
         }
     };
 });
