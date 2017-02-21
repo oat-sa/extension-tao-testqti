@@ -64,9 +64,11 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
+
                 //to be activated with the special category x-tao-option-calculator
-                return !!context.options.calculator;
+                return !!options.calculator;
             }
 
             /**
