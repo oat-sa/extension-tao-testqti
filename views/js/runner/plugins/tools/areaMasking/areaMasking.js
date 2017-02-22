@@ -30,9 +30,9 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/ui/zIndexManager',
+    'taoQtiTest/runner/ui/stacker',
     'taoQtiTest/runner/plugins/tools/areaMasking/mask'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, zIndexManager, maskComponent){
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, stacker, maskComponent){
     'use strict';
 
     /**
@@ -80,8 +80,8 @@ define([
                     .on('render', function(){
                         self.masks.push(this);
                         self.button.turnOn();
-                        zIndexManager.putOnTop(this.getElement());
-                        zIndexManager.topOnFocus(this.getElement());
+                        stacker.bringToFront(this.getElement());
+                        stacker.autoBringToFront(this.getElement());
 
                         /**
                          * @event areaMasking#maskadd

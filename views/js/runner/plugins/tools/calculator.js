@@ -30,8 +30,8 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/ui/zIndexManager'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, zIndexManager){
+    'taoQtiTest/runner/ui/stacker'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, stacker){
     'use strict';
 
     var _default = {
@@ -135,7 +135,7 @@ define([
             function showCalculator() {
                 self.calculator.show();
                 self.button.turnOn();
-                zIndexManager.putOnTop(self.$calculatorContainer);
+                stacker.bringToFront(self.$calculatorContainer);
             }
 
 
@@ -148,7 +148,7 @@ define([
             });
             this.$calculatorContainer = $('<div class="widget-calculator">');
 
-            zIndexManager.topOnFocus(self.$calculatorContainer);
+            stacker.autoBringToFront(self.$calculatorContainer);
 
             //init calculator instance var, it will be created only necessary
             this.calculator = null;

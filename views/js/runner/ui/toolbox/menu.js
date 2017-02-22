@@ -37,10 +37,10 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/ui/zIndexManager',
+    'taoQtiTest/runner/ui/stacker',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu-item'
-], function($, _, componentFactory, hider, shortcut, namespaceHelper, zIndexManager, menuTpl, menuItemTpl) {
+], function($, _, componentFactory, hider, shortcut, namespaceHelper, stacker, menuTpl, menuItemTpl) {
     'use strict';
 
     var keyCodes = {

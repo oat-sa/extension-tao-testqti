@@ -26,9 +26,9 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/ui/zIndexManager',
+    'taoQtiTest/runner/ui/stacker',
     'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, zIndexManager, magnifierPanelFactory) {
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, stacker, magnifierPanelFactory) {
     'use strict';
 
     /**
@@ -90,7 +90,7 @@ define([
                         levelStep: pluginConfig.zoomStep
                     })
                         .on('render', function () {
-                            zIndexManager.topOnFocus(this.getElement());
+                            stacker.autoBringToFront(this.getElement());
                         })
                         .on('show', function () {
                             /**
@@ -167,7 +167,7 @@ define([
 
                 if (magnifierPanel.is('hidden')) {
                     magnifierPanel.show();
-                    zIndexManager.putOnTop(magnifierPanel.getElement());
+                    stacker.bringToFront(magnifierPanel.getElement());
                 }
 
                 self.setState('active', true);
