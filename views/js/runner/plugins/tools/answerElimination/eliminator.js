@@ -55,6 +55,17 @@ define([
 
 
     /**
+     * Some default options for the plugin
+     * @type {Object}
+     */
+    var defaultConfig = {
+        // when hiding the buttons, don't remove existing eliminations
+        removeEliminationsOnClose: false
+    };
+
+
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -71,6 +82,7 @@ define([
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
+            var config     = _.defaults(_.clone((testConfig.plugins || {})[pluginName]) || {}, defaultConfig);
 
             // register the button in the toolbox
             this.button = this.getAreaBroker().getToolbox().createEntry({
@@ -144,12 +156,19 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
+                    var $choices = self.$choiceInteractions.find('.qti-choice'),
+                        $inputs  = $choices.find('.real-label input');
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
                             self.button.turnOn();
                         } else {
                             self.button.turnOff();
+                            if(config.removeEliminationsOnClose) {
+                                $choices.removeClass('eliminated');
+                                $inputs.removeAttr('disabled');
+                                console.log(config)
+                            }
                         }
                     }
                 });
