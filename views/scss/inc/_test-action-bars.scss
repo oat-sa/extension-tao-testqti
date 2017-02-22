@@ -229,7 +229,6 @@
                     overflow: auto;
                     list-style: none;
                     min-width: 150px;
-                    z-index: 2000;
 
                     margin: 0;
                     padding: 0;
@@ -299,6 +298,7 @@
 
             &.bottom-action-bar {
                 overflow: visible;
+                position: relative;
                 .action {
                     line-height: 1.6;
                 }
