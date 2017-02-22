@@ -28,8 +28,9 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
+    'taoQtiTest/runner/ui/stacker',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, commentTpl) {
+], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, stacker, commentTpl) {
     'use strict';
 
     /**
@@ -81,6 +82,7 @@ define([
                         //reset the form on each display
                         self.$input.val('').focus();
                         self.button.turnOn();
+                        stacker.bringToFront(self.$form);
                     } else {
                         self.button.turnOff();
                     }
@@ -102,6 +104,8 @@ define([
                 self.$input = self.$button.find('[data-control="qti-comment-text"]');
                 self.$cancel = self.$button.find('[data-control="qti-comment-cancel"]');
                 self.$submit = self.$button.find('[data-control="qti-comment-send"]');
+
+                stacker.autoBringToFront(self.$form);
 
                 //hide the form without submit
                 self.$cancel.on('click', function () {

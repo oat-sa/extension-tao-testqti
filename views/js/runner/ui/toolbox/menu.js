@@ -117,6 +117,7 @@ define([
         openMenu: function openMenu()  {
             // show the DOM element
             hider.show(this.$menuContainer);
+            stacker.bringToFront(this.$menuContent);
 
             // change the menu button icon
             this.$menuStateIcon.removeClass('icon-up');
