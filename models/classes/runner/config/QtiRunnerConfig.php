@@ -22,14 +22,17 @@
 
 namespace oat\taoQtiTest\models\runner\config;
 
+use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
  * Class QtiRunnerOptions
  * @package oat\taoQtiTest\models\runner\options
  */
-class QtiRunnerConfig implements RunnerConfig
+class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 {
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
+    
     /**
      * The test runner config
      * @var array
@@ -48,7 +51,7 @@ class QtiRunnerConfig implements RunnerConfig
      */
     protected function buildConfig() {
         // get the raw server config, using the old notation
-        $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $rawConfig = $this->getServiceManager()->get('taoQtiTest/testRunner');
 
         // build the test config using the new notation
         return [
@@ -155,7 +158,7 @@ class QtiRunnerConfig implements RunnerConfig
      * @param RunnerServiceContext $context The test context
      * @return mixed
      */
-    public function getOptions(RunnerServiceContext $context)
+    public function getTestOptions(RunnerServiceContext $context)
     {
         if (is_null($this->options)) {
             // build the test config using the new notation
