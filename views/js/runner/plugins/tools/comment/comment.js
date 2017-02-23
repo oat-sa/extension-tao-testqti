@@ -26,11 +26,11 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
+    'ui/stacker',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/ui/stacker',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, stacker, commentTpl) {
+], function ($, __, pluginFactory, hider, stackerFactory, shortcut, namespaceHelper, commentTpl) {
     'use strict';
 
     /**
@@ -50,6 +50,7 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var stacker = stackerFactory('test-runner');
 
             /**
              * Checks if the plugin is currently available

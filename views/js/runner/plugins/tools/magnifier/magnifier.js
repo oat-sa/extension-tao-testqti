@@ -89,9 +89,6 @@ define([
                         levelMax: pluginConfig.zoomMax,
                         levelStep: pluginConfig.zoomStep
                     })
-                        .on('render', function () {
-                            stacker.autoBringToFront(this.getElement());
-                        })
                         .on('show', function () {
                             /**
                              * @event plugin-magnifier-show.magnifier
@@ -168,7 +165,6 @@ define([
 
                 if (magnifierPanel.is('hidden')) {
                     magnifierPanel.show();
-                    stacker.bringToFront(magnifierPanel.getElement());
                 }
 
                 self.setState('active', true);

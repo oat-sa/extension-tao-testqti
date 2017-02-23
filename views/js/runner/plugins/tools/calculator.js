@@ -29,16 +29,16 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'taoQtiTest/runner/ui/stacker'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, stacker){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     var _default = {
         height : 360,
         width : 240,
         top : 50,
-        left : 10
+        left : 10,
+        stackingScope: 'test-runner'
     };
 
     /**
@@ -94,7 +94,6 @@ define([
                     alternativeTemplate : calcTpl || null
                 }, _default)).on('show', function () {
                     self.trigger('open');
-                    stacker.bringToFront(self.$calculatorContainer);
                     self.button.turnOn();
                 }).on('hide', function () {
                     self.trigger('close');
@@ -139,8 +138,6 @@ define([
                 text : __('Calculator')
             });
             this.$calculatorContainer = $('<div class="widget-calculator">');
-
-            stacker.autoBringToFront(self.$calculatorContainer);
 
             //init calculator instance var, it will be created only necessary
             this.calculator = null;

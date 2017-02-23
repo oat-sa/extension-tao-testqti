@@ -84,7 +84,8 @@ define([
         height: defaultBaseSize * defaultLevel / screenRatio,
         minWidth: defaultBaseSize * defaultLevelMin,
         minHeight: defaultBaseSize * defaultLevelMin / screenRatio,
-        maxRatio: .5
+        maxRatio: .5,
+        stackingScope: 'test-runner'
     };
 
     /**

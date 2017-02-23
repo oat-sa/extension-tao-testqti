@@ -30,9 +30,8 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/ui/stacker',
     'taoQtiTest/runner/plugins/tools/areaMasking/mask'
-], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, stacker, maskComponent){
+], function ($, _, __, hider, shortcut, namespaceHelper, pluginFactory, maskComponent){
     'use strict';
 
     /**
@@ -80,8 +79,6 @@ define([
                     .on('render', function(){
                         self.masks.push(this);
                         self.button.turnOn();
-                        stacker.bringToFront(this.getElement());
-                        stacker.autoBringToFront(this.getElement());
 
                         /**
                          * @event areaMasking#maskadd
@@ -106,7 +103,8 @@ define([
                         x : self.masks.length * 10,
                         y : self.masks.length * 10
                     })
-                    .render($container);
+                    .render($container)
+                    .show();
             }
 
             //keep a ref to all masks

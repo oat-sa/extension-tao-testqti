@@ -35,12 +35,12 @@ define([
     'lodash',
     'ui/component',
     'ui/hider',
+    'ui/stacker',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/ui/stacker',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu',
     'tpl!taoQtiTest/runner/ui/toolbox/templates/menu-item'
-], function($, _, componentFactory, hider, shortcut, namespaceHelper, stacker, menuTpl, menuItemTpl) {
+], function($, _, componentFactory, hider, stackerFactory, shortcut, namespaceHelper, menuTpl, menuItemTpl) {
     'use strict';
 
     var keyCodes = {
@@ -51,6 +51,8 @@ define([
         RIGHT: 39,
         DOWN:  40
     };
+
+    var stacker = stackerFactory('test-runner');
 
     var menuComponentApi = {
         /**
