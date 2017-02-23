@@ -60,7 +60,9 @@ define([
      */
     var defaultConfig = {
         // when hiding the buttons, don't remove existing eliminations
-        removeEliminationsOnClose: false
+        removeEliminationsOnClose: false,
+        // when showing the buttons, restore previously set eliminations
+        restoreEliminationsOnOpen: false
     };
 
 
@@ -156,19 +158,31 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
-                    var $choices = self.$choiceInteractions.find('.qti-choice'),
-                        $inputs  = $choices.find('.real-label input');
+                    var $choices = self.$choiceInteractions.find('.qti-choice');
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
                             self.button.turnOn();
+                            if(config.restoreEliminationsOnOpen) {
+                                $choices.each(function() {
+                                    var input = this.querySelector('.real-label input');
+                                    if(!!this.dataset.wasEliminated) {
+                                        delete this.dataset.wasEliminated;
+                                        this.classList.add('eliminated');
+                                        input.setAttribute('disabled', 'disabled');
+                                        input.checked = false;
+                                    }
+                                });
+                            }
                         } else {
                             self.button.turnOff();
-                            if(config.removeEliminationsOnClose) {
-                                $choices.removeClass('eliminated');
-                                $inputs.removeAttr('disabled');
-                                console.log(config)
-                            }
+                            $choices.each(function() {
+                                if(this.classList.contains('eliminated')) {
+                                    this.dataset.wasEliminated = true;
+                                    this.classList.remove('eliminated');
+                                    this.querySelector('.real-label input').removeAttribute('disabled');
+                                }
+                            });
                         }
                     }
                 });
