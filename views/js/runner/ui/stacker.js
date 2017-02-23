@@ -16,47 +16,16 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * Helper to manages z-indexes within the same stacking context.
- * It can be use to ensure a given element will be rendered on top of the others
+ * Create a stacker instance to manage the z-index of the test runners elements
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
-define([], function() {
+define([
+    'ui/stacker'
+], function(stackerFactory) {
     'use strict';
 
-    function stackerFactory() {
-        var stacker,
-            zIndex = 1000,
-            max = 0;
+    var stacker = stackerFactory();
 
-        function isHighest($element) {
-            return ($element.css('zIndex') >= zIndex);
-        }
-
-        function getNext() {
-            return ++zIndex;
-        }
-
-        stacker = {
-            bringToFront: function bringToFront($element) {
-                if (! isHighest($element)) {
-                    zIndex = getNext();
-                    console.log('putting on top with zIndex = ' + zIndex);
-                    $element.css('z-index', zIndex);
-                }
-            },
-
-            autoBringToFront: function autoBringToFront($element) {
-                var self = this;
-
-                $element.on('mousedown.stacker', function() {
-                    self.bringToFront($element);
-                });
-            }
-        };
-
-        return stacker;
-    }
-
-    return stackerFactory();
+    return stacker;
 });
