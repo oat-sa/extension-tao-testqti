@@ -124,27 +124,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext->setServiceManager($this->getServiceManager());
         $serviceContext->setTestConfig($this->getTestConfig());
 
-        $testSession = $serviceContext->getTestSession();
-        if ($testSession instanceof TestSession) {
-
-            $config = $this->getTestConfig()->getConfigValue('timer');
-
-            // sets the target from which computes the durations.
-            if (isset($config['target'])) {
-                switch (strtolower($config['target'])) {
-                    case 'client':
-                        $target = TimePoint::TARGET_CLIENT;
-                        break;
-
-                    case 'server':
-                    default:
-                        $target = TimePoint::TARGET_SERVER;
-                }
-
-                $testSession->setTimerTarget($target);
-            }
-        }
-
         if ($check) {
             // will throw exception if the test session is not valid
             $this->check($serviceContext);
@@ -215,7 +194,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestConfig()
     {
         if (is_null($this->testConfig)) {
-            $this->testConfig = new QtiRunnerConfig();
+            $this->testConfig = $this->getServiceLocator()->get(QtiRunnerConfig::SERVICE_ID);
         }
         return $this->testConfig;
     }
@@ -402,7 +381,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['numberRubrics'] = count($route->current()->getRubricBlockRefs());
 
                 // append dynamic options
-                $response['options'] = $config->getOptions($context);
+                $response['options'] = $config->getTestOptions($context);
             }
 
         } else {
