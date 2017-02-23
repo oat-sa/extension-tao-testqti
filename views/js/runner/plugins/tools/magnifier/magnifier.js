@@ -127,9 +127,10 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
                 //to be activated with the special category x-tao-option-magnifier
-                return !!context.options.magnifier;
+                return !!options.magnifier;
             }
 
             /**
@@ -185,7 +186,7 @@ define([
                 }
             }
 
-            // build element (detached)
+            // build element
             this.button = this.getAreaBroker().getToolbox().createEntry({
                 control: 'magnify',
                 title: __('Displays a customisable magnifier'),

@@ -85,9 +85,8 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext() || {},
+                var context = testRunner.getTestContext()|| {},
                     options = context.options || {};
-
                 //to be activated with the special category x-tao-option-eliminator
                 return !!options.eliminator;
             }
