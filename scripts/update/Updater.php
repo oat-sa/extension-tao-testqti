@@ -1053,9 +1053,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.3.1');
         }
 
-        $this->skip('6.3.1', '6.4.2');
-        
-        if ($this->isVersion('6.4.2')) {
+        $this->skip('6.3.1', '6.4.3');
+
+         if ($this->isVersion('6.4.3')) {
             $service = new QtiRunnerConfig();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(QtiRunnerConfig::SERVICE_ID, $service);

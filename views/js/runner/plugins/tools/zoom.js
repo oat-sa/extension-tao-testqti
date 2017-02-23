@@ -130,13 +130,6 @@ define([
                     sy = Math.max(0, sy + (after.height - before.height) / 2);
 
                     self.$container.scrollLeft(sx).scrollTop(sy);
-
-                    // center the item while zooming out
-                    margin = Math.max(0, self.$zoomTarget.outerWidth() - after.width) / 2;
-                    self.$zoomTarget.css({
-                        'margin-left' : margin + 'px',
-                        'margin-right' : -margin + 'px'
-                    });
                 }
             }
 
