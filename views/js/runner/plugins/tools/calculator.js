@@ -94,12 +94,12 @@ define([
                     alternativeTemplate : calcTpl || null
                 }, _default)).on('show', function () {
                     self.trigger('open');
+                    stacker.bringToFront(self.$calculatorContainer);
                     self.button.turnOn();
                 }).on('hide', function () {
                     self.trigger('close');
                     self.button.turnOff();
-                });
-                showCalculator();
+                }).show();
             }
 
             /**
@@ -110,10 +110,9 @@ define([
                     if (self.calculator) {
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
-                            showCalculator();
+                            self.calculator.show();
                         } else {
                             self.calculator.hide();
-                            self.button.turnOff();
                         }
                     } else {
                         //build calculator widget
@@ -131,13 +130,6 @@ define([
                     }
                 }
             }
-
-            function showCalculator() {
-                self.calculator.show();
-                self.button.turnOn();
-                stacker.bringToFront(self.$calculatorContainer);
-            }
-
 
             //build element (detached)
             this.button = this.getAreaBroker().getToolbox().createEntry({
