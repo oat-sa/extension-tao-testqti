@@ -103,8 +103,7 @@ define([
                         x : self.masks.length * 10,
                         y : self.masks.length * 10
                     })
-                    .render($container)
-                    .show();
+                    .render($container);
             }
 
             //keep a ref to all masks
