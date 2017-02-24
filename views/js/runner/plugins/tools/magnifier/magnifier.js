@@ -26,9 +26,8 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/ui/stacker',
     'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, stacker, magnifierPanelFactory) {
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, magnifierPanelFactory) {
     'use strict';
 
     /**
