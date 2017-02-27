@@ -39,9 +39,17 @@ define([
 
     QUnit.asyncTest('Toggle eliminator mode on/off', function(assert) {
         var runner      = runnerFactory(providerName);
-        var eliminator  = eliminatorFactory(runner);
+        var areaBroker  = runner.getAreaBroker();
+        var eliminator  = eliminatorFactory(runner, areaBroker);
         var interaction = document.querySelector('.qti-choiceInteraction');
-        runner.getAreaBroker().getContentArea().append(interaction);
+
+        runner.setTestContext({
+            options: {
+                eliminator: true
+            }
+        });
+
+        areaBroker.getContentArea().append(interaction);
         eliminator.init()
             .then(function() {
                 runner.trigger('renderitem');
