@@ -119,7 +119,9 @@ define([
         notFlagged: ':not(.flagged)',
         notAnswered: ':not(.answered)',
         notInformational: ':not(.info)',
-        hidden: '.hidden'
+        informational: '.info',
+        hidden: '.hidden',
+        disabled : '.disabled'
     };
 
     /**
@@ -130,7 +132,7 @@ define([
      */
     var _filterMap = {
         all: "",
-        unanswered: _selectors.answered,
+        unanswered: [_selectors.answered, _selectors.informational].join(','),
         flagged: _selectors.notFlagged,
         answered: _selectors.notAnswered,
         filtered: _selectors.hidden
@@ -218,19 +220,16 @@ define([
 
             // filter the items according to the provided criteria
             var filterCb = _filterMap[criteria];
-            var filtered = _filterMap[filter ? 'filtered' : 'answered'];
             if (filterCb) {
                 $items.filter(filterCb).addClass(_cssCls.hidden);
             }
 
             // update the section counters
             this.controls.$tree.find(_selectors.sections).each(function () {
-                var $section    = $(this);
-                var $itemsFound = $section.find(_selectors.items + _selectors.notInformational);
-                var $filtered   = $itemsFound.filter(filtered);
-                var total       = $itemsFound.length;
-                var nb          = total - $filtered.length;
-                self.writeCount($section.find(_selectors.counters), nb, total);
+                var $section     = $(this);
+                var $itemsFound  = $section.find(_selectors.items).not(_selectors.hidden);
+                var $filtered    = $itemsFound.not(_selectors.disabled);
+                self.writeCount($section.find(_selectors.counters), $filtered.length, $itemsFound.length);
             });
             this.currentFilter = criteria;
         },
