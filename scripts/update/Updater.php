@@ -1059,10 +1059,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             $service = new QtiRunnerConfig();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(QtiRunnerConfig::SERVICE_ID, $service);
-            
+
             $this->setVersion('6.5.0');
         }
-        
-        $this->skip('6.5.0', '6.6.0');
+
+        $this->skip('6.5.0', '6.6.1');
     }
 }
