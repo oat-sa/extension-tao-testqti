@@ -167,7 +167,7 @@ define([
                                 $choices.each(function() {
                                     var input = this.querySelector('.real-label input');
                                     if(!!this.dataset.wasEliminated) {
-                                        delete this.dataset.wasEliminated;
+                                        this.dataset.wasEliminated = null;
                                         this.classList.add('eliminated');
                                         input.setAttribute('disabled', 'disabled');
                                         input.checked = false;
