@@ -26,10 +26,11 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
+    'ui/stacker',
     'util/shortcut',
     'util/namespace',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, hider, shortcut, namespaceHelper, commentTpl) {
+], function ($, __, pluginFactory, hider, stackerFactory, shortcut, namespaceHelper, commentTpl) {
     'use strict';
 
     /**
@@ -49,6 +50,7 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var stacker = stackerFactory('test-runner');
 
             /**
              * Checks if the plugin is currently available
@@ -81,6 +83,7 @@ define([
                         //reset the form on each display
                         self.$input.val('').focus();
                         self.button.turnOn();
+                        stacker.bringToFront(self.$form);
                     } else {
                         self.button.turnOff();
                     }
@@ -102,6 +105,8 @@ define([
                 self.$input = self.$button.find('[data-control="qti-comment-text"]');
                 self.$cancel = self.$button.find('[data-control="qti-comment-cancel"]');
                 self.$submit = self.$button.find('[data-control="qti-comment-send"]');
+
+                stacker.autoBringToFront(self.$form);
 
                 //hide the form without submit
                 self.$cancel.on('click', function () {
@@ -162,10 +167,10 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('renderitem', function () {
+                .on('renderitem enabletools', function () {
                     self.enable();
                 })
-                .on('unloaditem', function () {
+                .on('unloaditem disabletools', function () {
                     self.disable();
                 })
                 .on('tool-comment', function () {
