@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models\runner\session;
 
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
@@ -51,7 +52,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * The target from which compute the durations
      * @var int
      */
-    protected $timerTarget = TimePoint::TARGET_SERVER;
+    protected $timerTarget;
 
     /**
      * A temporary cache for computed durations
@@ -111,6 +112,21 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getTimerTarget()
     {
+        if (is_null($this->timerTarget)) {
+            $testConfig = $this->getServiceLocator()->get(QtiRunnerConfig::SERVICE_ID);
+            $config = $testConfig->getConfigValue('timer');
+            switch (strtolower($config['target'])) {
+                case 'client':
+                    $target = TimePoint::TARGET_CLIENT;
+                    break;
+
+                case 'server':
+                default:
+                    $target = TimePoint::TARGET_SERVER;
+            }
+
+            $this->setTimerTarget($target);
+        }
         return $this->timerTarget;
     }
 
@@ -228,7 +244,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function getTimerDuration($identifier, $target = 0)
     {
         if (!$target) {
-            $target = $this->timerTarget;
+            $target = $this->getTimerTarget();
         }
 
         $durationKey = $target . '-';
