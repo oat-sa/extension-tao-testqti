@@ -79,12 +79,15 @@ define([
                         var headers = {};
                         var tokenHandler = self.getTokenHandler();
                         var token;
+                        var noop;
+
                         if (!noToken) {
                             token = tokenHandler.getToken();
                             if (token) {
                                 headers['X-Auth-Token'] = token;
                             }
                         }
+
                         $.ajax({
                             url: url,
                             type: reqParams ? 'POST' : 'GET',
@@ -93,7 +96,7 @@ define([
                             headers: headers,
                             async: true,
                             dataType: 'json',
-                            contentType: contentType || undefined,
+                            contentType: contentType || noop,
                             timeout: self.configStorage.getTimeout()
                         })
                         .done(function(data) {
@@ -111,18 +114,20 @@ define([
                             var data;
                             try {
                                 data = JSON.parse(jqXHR.responseText);
-                            } catch (e) {
-                                data = {
-                                    success: false,
-                                    source: 'network',
-                                    purpose: 'proxy',
-                                    context: this,
-                                    code: jqXHR.status,
-                                    type: textStatus || 'error',
-                                    message: errorThrown || __('An error occurred!')
-                                };
+                            } catch(err) {
+                                data = {};
                             }
 
+                            data = _.defaults(data, {
+                                success: false,
+                                source: 'network',
+                                cause : url,
+                                purpose: 'proxy',
+                                context: this,
+                                code: jqXHR.status,
+                                type: textStatus || 'error',
+                                message: errorThrown || __('An error occurred!')
+                            });
                             if (data.token) {
                                 tokenHandler.setToken(data.token);
                             } else if (!noToken) {
