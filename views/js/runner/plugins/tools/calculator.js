@@ -37,7 +37,8 @@ define([
         height : 360,
         width : 240,
         top : 50,
-        left : 10
+        left : 10,
+        stackingScope: 'test-runner'
     };
 
     /**
@@ -63,9 +64,11 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
+
                 //to be activated with the special category x-tao-option-calculator
-                return !!context.options.calculator;
+                return !!options.calculator;
             }
 
             /**
@@ -107,10 +110,8 @@ define([
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
                             self.calculator.show();
-                            self.button.turnOn();
                         } else {
                             self.calculator.hide();
-                            self.button.turnOff();
                         }
                     } else {
                         //build calculator widget
