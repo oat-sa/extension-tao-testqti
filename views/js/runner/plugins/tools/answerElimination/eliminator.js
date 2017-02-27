@@ -55,6 +55,19 @@ define([
 
 
     /**
+     * Some default options for the plugin
+     * @type {Object}
+     */
+    var defaultConfig = {
+        // when hiding the buttons, don't remove existing eliminations
+        removeEliminationsOnClose: false,
+        // when showing the buttons, restore previously set eliminations
+        restoreEliminationsOnOpen: false
+    };
+
+
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -71,6 +84,7 @@ define([
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
+            var config     = _.defaults(_.clone((testConfig.plugins || {})[pluginName]) || {}, defaultConfig);
 
             // register the button in the toolbox
             this.button = this.getAreaBroker().getToolbox().createEntry({
@@ -145,12 +159,31 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
+                    var $choices = self.$choiceInteractions.find('.qti-choice');
                     if (isEnabled()) {
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
                             self.button.turnOn();
+                            if(config.restoreEliminationsOnOpen) {
+                                $choices.each(function() {
+                                    var input = this.querySelector('.real-label input');
+                                    if(this.dataset.wasEliminated) {
+                                        this.dataset.wasEliminated = null;
+                                        this.classList.add('eliminated');
+                                        input.setAttribute('disabled', 'disabled');
+                                        input.checked = false;
+                                    }
+                                });
+                            }
                         } else {
                             self.button.turnOff();
+                            $choices.each(function() {
+                                if(this.classList.contains('eliminated')) {
+                                    this.dataset.wasEliminated = true;
+                                    this.classList.remove('eliminated');
+                                    this.querySelector('.real-label input').removeAttribute('disabled');
+                                }
+                            });
                         }
                     }
                 });
