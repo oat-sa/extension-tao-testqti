@@ -554,7 +554,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $filler = new \taoQtiCommon_helpers_PciVariableFiller(
                 $currentItem,
-                $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID);
+                $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
             );
 
             if (is_array($response)) {
