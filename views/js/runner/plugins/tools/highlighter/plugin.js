@@ -55,16 +55,16 @@ define([
 
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
-                title: __('Highlight text'),
+                title: __('Highlight Text'),
                 icon: 'text-marker',
                 control: 'highlight-trigger',
                 text: __('Highlight')
             });
 
             this.buttonRemove = this.getAreaBroker().getToolbox().createEntry({
-                title: __('Clear highlights'),
+                title: __('Clear all active highlights'),
                 control: 'highlight-clear',
-                text: __('Clear highlights')
+                text: __('Clear Highlights')
             });
 
             // attach user events
@@ -96,9 +96,10 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
                 //to be activated with the special category x-tao-option-highlighter
-                return !!context.options.highlighter;
+                return !!options.highlighter;
             }
 
             /**

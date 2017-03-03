@@ -215,17 +215,6 @@
                 [class^="btn-"], [class*=" btn-"] {
                     white-space: nowrap;
                 }
-
-                .no-tool-label {
-                    &, &-hover li:not(:hover) {
-                        .text {
-                            display: none;
-                        }
-                        .icon {
-                            padding: 0;
-                        }
-                    }
-                }
             }
             .tools-box {
                 .action {
@@ -240,7 +229,6 @@
                     overflow: auto;
                     list-style: none;
                     min-width: 150px;
-                    z-index: 2000;
 
                     margin: 0;
                     padding: 0;
@@ -262,6 +250,7 @@
                         height: 32px;
                         padding: 6px 15px;
                         line-height: 1;
+                        border-left: solid 3px transparent;
 
                         .icon-checkbox-checked {
                             display: none;
@@ -288,6 +277,8 @@
                         &:hover {
                             background-color: $info;
                             color: $textHighlight;
+                            border-left-color: blacken($canvas, 0.8) !important;
+
                             .label, .icon {
                                 color: $textHighlight;
                             }
@@ -307,6 +298,7 @@
 
             &.bottom-action-bar {
                 overflow: visible;
+                position: relative;
                 .action {
                     line-height: 1.6;
                 }
@@ -315,14 +307,18 @@
                         padding-right: 0;
                     }
                 }
-                li.no-label {
-                    & > a {
-                        .icon {
-                            padding-right: 0;
-                        }
-                        .text {
-                            display: none;
-                        }
+
+                // label masking at toolbar level
+                .no-tool-label .btn-info,
+                .no-tool-label-hover .btn-info:not(:hover),
+                // label masking at tool level
+                .btn-info.no-tool-label,
+                .btn-info.no-tool-label-hover:not(:hover) {
+                    .text {
+                        display: none;
+                    }
+                    .icon {
+                        padding: 0;
                     }
                 }
 
@@ -350,7 +346,6 @@
         position: absolute;
         bottom: 33px;
         left: 8px;
-        z-index: 9999;
         text-align: right;
         padding: 5px;
         @include simple-border();

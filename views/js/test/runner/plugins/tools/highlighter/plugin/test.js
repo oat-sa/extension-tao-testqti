@@ -237,6 +237,12 @@ define([
 
         QUnit.expect(6);
 
+        runner.setTestContext({
+            options: {
+                highlighter: true
+            }
+        });
+
         plugin.init()
             .then(function() {
                 var $container = getButtonContainer(runner),
