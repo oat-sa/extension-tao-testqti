@@ -1063,9 +1063,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.5.0');
         }
 
-        $this->skip('6.5.0', '6.8.0');
+        $this->skip('6.5.0', '6.9.0');
 
-        if ($this->isVersion('6.8.0')) {
+        if ($this->isVersion('6.9.0')) {
 
             //removes the shortcut from dialog
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -1073,7 +1073,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['shortcuts']['dialog'] = [];
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('6.9.0');
+            $this->setVersion('6.10.0');
         }
     }
 }
