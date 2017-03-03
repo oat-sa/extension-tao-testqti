@@ -1055,7 +1055,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('6.3.1', '6.4.3');
 
-         if ($this->isVersion('6.4.3')) {
+        if ($this->isVersion('6.4.3')) {
             $service = new QtiRunnerConfig();
             $service->setServiceManager($this->getServiceManager());
             $this->getServiceManager()->register(QtiRunnerConfig::SERVICE_ID, $service);
@@ -1064,5 +1064,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('6.5.0', '6.9.0');
+
+        if ($this->isVersion('6.9.0')) {
+
+            //removes the shortcut from dialog
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['dialog'] = [];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.10.0');
+        }
     }
 }
