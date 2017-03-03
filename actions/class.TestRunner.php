@@ -36,6 +36,8 @@ use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * Runs a QTI Test.
@@ -745,7 +747,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 common_Logger::e($msg);
             }
 
-            $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            $filler = new taoQtiCommon_helpers_PciVariableFiller(
+                $currentItem,
+                ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
+            );
 
             if (is_array($jsonPayload)) {
                 foreach ($jsonPayload as $id => $response) {

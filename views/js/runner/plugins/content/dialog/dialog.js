@@ -136,6 +136,7 @@ define([
                 stack.push(handle);
                 opened.push(handle);
 
+                handle.dialog.focus();
                 handle.dialog.on('closed.modal', function() {
                     removeHandle(stack, handle.dialog);
                     removeHandle(opened, handle.dialog);
