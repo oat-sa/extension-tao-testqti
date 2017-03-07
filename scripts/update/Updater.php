@@ -1081,6 +1081,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['test-session-storage'] = '\taoQtiTest_helpers_TestSessionStorage';
+            $extension->setConfig('testRunner', $config);
             
             $this->setVersion('6.11.0');
         }
