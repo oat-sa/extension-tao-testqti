@@ -291,7 +291,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $storageClassName = $config['test-session-storage'];
+        $this->setStorage(new $storageClassName($sessionManager, $seeker, $userUri));
+        
         $this->retrieveTestSession();
 
         // @TODO: use some storage to get the potential reason of the state (close/suspended)
