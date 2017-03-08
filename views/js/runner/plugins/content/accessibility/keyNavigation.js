@@ -79,6 +79,8 @@ define([
                 elements : navigables,
                 loop : true,
                 replace : true
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click();
             })];
         }
         return [];

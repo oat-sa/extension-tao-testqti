@@ -49,7 +49,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 /**
  * Class QtiRunnerService
  *
@@ -552,7 +552,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::e($msg);
             }
 
-            $filler = new \taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            $filler = new \taoQtiCommon_helpers_PciVariableFiller(
+                $currentItem,
+                $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
+            );
 
             if (is_array($response)) {
                 foreach ($response as $id => $responseData) {

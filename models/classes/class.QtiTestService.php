@@ -898,9 +898,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
             if (is_null($file)) {
                 throw new Exception('No QTI-XML test file found.');
             }
-            $Details = $file->getMetadata();
             $file = current($files);
-            $fileName = str_replace($dir->getPrefix() . '/', '' , $Details['path']);
+        $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
             $this->setQtiIndexFile($dir , $fileName);
             return $file;
     }

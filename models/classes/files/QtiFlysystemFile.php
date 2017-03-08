@@ -116,4 +116,9 @@ class QtiFlysystemFile extends File implements QtiFile
     {
         return BaseType::FILE;
     }
+    
+    public function __toString()
+    {
+        return $this->getFileName();
+    }
 }
