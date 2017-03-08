@@ -1,0 +1,1 @@
+<div class="line-reader-mask" style="background: white"></div>
