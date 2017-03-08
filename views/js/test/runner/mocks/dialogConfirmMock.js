@@ -29,7 +29,8 @@ define([
         var dlg = eventifier({
             hide: function() {
                 this.trigger('closed.modal');
-            }
+            },
+            focus : _.noop
         });
 
         dlg.on('okbtn.modal', function() {
