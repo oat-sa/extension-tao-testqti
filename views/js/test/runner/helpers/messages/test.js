@@ -28,19 +28,21 @@ define([
     QUnit.module('helpers/messages');
 
 
-    QUnit.test('module', 1, function (assert) {
+    QUnit.test('module', function (assert) {
+        QUnit.expect(1);
         assert.equal(typeof messagesHelper, 'object', "The messages helper module exposes an object");
     });
 
 
     var messagesHelperApi = [
-        {name: 'getExitMessage', title: 'getExitMessage'}
+        {title: 'getExitMessage'}
     ];
 
     QUnit
         .cases(messagesHelperApi)
-        .test('helpers/messages API ', 1, function (data, assert) {
-            assert.equal(typeof messagesHelper[data.name], 'function', 'The messages helper expose a "' + data.name + '" function');
+        .test('helpers/messages API ', function (data, assert) {
+            QUnit.expect(1);
+            assert.equal(typeof messagesHelper[data.title], 'function', 'The messages helper expose a "' + data.title + '" function');
         });
 
     /**
@@ -136,6 +138,8 @@ define([
         var responses = {RESPONSE: {base: null}};
         var runner = runnerMock(map, context, data, responses, declarations);
         var message = 'This is a test.';
+
+        QUnit.expect(18);
 
         // all answered, no flagged
         assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test"');
@@ -247,6 +251,8 @@ define([
         var responses = {RESPONSE: {base: null}};
         var runner = runnerMock(map, context, data, responses, declarations);
         var message = 'This is a test.';
+
+        QUnit.expect(18);
 
         // all answered, no flagged
         assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test"');
