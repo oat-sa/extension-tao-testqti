@@ -1,1 +1,1 @@
-<div class="line-reader-mask" style="background: white"></div>
+<div class="line-reader-mask" style="background: white; box-sizing: border-box"></div>

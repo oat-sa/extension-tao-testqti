@@ -16,6 +16,8 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
+ * A coumpond mask is a mask built with multiple ui/components that interacts with each other.
+ *
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
@@ -26,7 +28,8 @@ define([
     'ui/component',
     'ui/component/draggable',
     'ui/component/resizable',
-    'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/maskPart'
+    'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/maskPart',
+    'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/overlayPart'
 ], function(
     $,
     _,
@@ -35,7 +38,8 @@ define([
     componentFactory,
     makeDraggable,
     makeResizable,
-    maskPartTpl
+    maskPartTpl,
+    overlayPartTpl
 ) {
     'use strict';
 
@@ -48,43 +52,154 @@ define([
         initialY:       100
     };
 
-    function createPart(allParts, id, config) {
-        var part = componentFactory({}, config);
-
-        makeDraggable(part);
-
-        part
-            .on('render', function() {
-                var $element = this.getElement();
-
-                if (_.isArray(this.config.borders)) {
-                    this.config.borders.forEach(function(borderPosition) {
-                        $element.css('border-' + borderPosition, '1px solid black'); // todo: improve this. consider box model to take border width into account in dimensions
-                    });
-                }
-            })
-            .on('dragmove', function moveAllPartsTogether(xOffset, yOffset) {
-                _.forOwn(allParts, function(current, currentId) {
-                    if (currentId !== id) {
-                        current.moveBy(xOffset, yOffset);
-                    }
-                });
-            })
-            .init()
-            .setTemplate(maskPartTpl);
-
-        allParts[id] = part;
-    }
-
     return function compoundMaskFactory(config) {
         var compoundMask,
-            maskParts = {},
-            dimensions;
+            allParts = {},
+            dimensions = {},
+            position = {};
+
+        function createCompoundMask() {
+            createPart('n', {
+                width: dimensions.innerWidth,
+                height: dimensions.topHeight,
+                initialX: position.x + dimensions.leftWidth,
+                initialY: position.y,
+                borders: ['top', 'bottom']
+            });
+            createPart('ne', {
+                width: dimensions.rightWidth,
+                height: dimensions.topHeight,
+                initialX: position.x + dimensions.leftWidth + dimensions.innerWidth,
+                initialY: position.y,
+                borders: ['top', 'right']
+            });
+            createPart('e', {
+                width: dimensions.rightWidth,
+                height: dimensions.innerHeight,
+                initialX: position.x + dimensions.leftWidth + dimensions.innerWidth,
+                initialY: position.y + dimensions.topHeight,
+                borders: ['left', 'right']
+            });
+            createPart('se', {
+                width: dimensions.rightWidth,
+                height: dimensions.bottomHeight,
+                initialX: position.x + dimensions.leftWidth + dimensions.innerWidth,
+                initialY: position.y + dimensions.topHeight + dimensions.innerHeight,
+                borders: ['bottom', 'right']
+            });
+            createPart('s', {
+                width: dimensions.innerWidth,
+                height: dimensions.bottomHeight,
+                initialX: position.x + dimensions.leftWidth,
+                initialY: position.y + dimensions.topHeight + dimensions.innerHeight,
+                borders: ['top', 'bottom']
+            });
+            createPart('sw', {
+                width: dimensions.leftWidth,
+                height: dimensions.bottomHeight,
+                initialX: position.x,
+                initialY: position.y + dimensions.topHeight + dimensions.innerHeight,
+                borders: ['left', 'bottom']
+            });
+            createPart('w', {
+                width: dimensions.leftWidth,
+                height: dimensions.innerHeight,
+                initialX: position.x,
+                initialY: position.y + dimensions.topHeight,
+                borders: ['left', 'right']
+            });
+            createPart('nw', {
+                width: dimensions.leftWidth,
+                height: dimensions.topHeight,
+                initialX: position.x,
+                initialY: position.y,
+                borders: ['left', 'top']
+            });
+        }
+
+        function createPart(id, partConfig) {
+            allParts[id] = {
+                mask: createMask(id, partConfig),
+                overlay: createOverlay(id, partConfig)
+            };
+        }
+
+        function createMask(id, maskConfig) {
+            return makeResizable(componentFactory({}, maskConfig))
+                .on('render', function() {
+                    var $element = this.getElement();
+
+                    if (_.isArray(this.config.borders)) {
+                        this.config.borders.forEach(function(borderPosition) {
+                            $element.css('border-' + borderPosition, '1px solid black'); // todo: improve this. consider box model to take border width into account in dimensions
+                        });
+                    }
+                })
+                .init()
+                .setTemplate(maskPartTpl);
+        }
+
+        function createOverlay(id, overlayConfig) {
+            var overlay = componentFactory({}, overlayConfig);
+
+            return makeDraggable(overlay)
+                .on('render', function() {
+                    var self = this,
+                        $element = this.getElement();
+
+                    $element
+                        .on('mousedown', function coverAllCompoundMask() {
+                            self.setSize(dimensions.outterWidth, dimensions.outterHeight);
+                            self.moveTo(position.x, position.y);
+                        })
+                        .on('mouseup', function () {
+                            resetOverlays(); // todo: mmmmm, doublon
+                        });
+                })
+                .on('dragmove', function moveAllPartsTogether(xOffsetRelative, yOffsetRelative) {
+                    _.forOwn(allParts, function(part) {
+                        part.mask.moveBy(xOffsetRelative, yOffsetRelative);
+                    });
+                    updatePosition();
+                })
+                .on('dragend', function () {
+                    resetOverlays();
+                })
+                .init()
+                .setTemplate(overlayPartTpl);
+        }
+
+        function updateDimensions() {
+
+        }
+
+        function updatePosition() {
+            var nwPosition = allParts.nw.mask.getPosition(); //todo: huh?
+            position.x = nwPosition.x;
+            position.y = nwPosition.y;
+        }
+
+        function resetOverlays() {
+            _.forOwn(allParts, function(part) {
+                var mask = part.mask,
+                    overlay = part.overlay,
+                    size = mask.getSize(),
+                    pos = mask.getPosition();
+
+                overlay.setSize(size.width, size.height);
+                overlay.moveTo(pos.x, pos.y);
+            });
+        }
 
         config = _.defaults(config || {}, defaultConfig);
 
+
         compoundMask = {
             init: function init() {
+                position = {
+                    x: config.initialX,
+                    y: config.initialY
+                };
                 dimensions = {
                     outterWidth:    config.outterWidth,
                     outterHeight:   config.outterHeight,
@@ -96,73 +211,22 @@ define([
                 dimensions.rightWidth   =
                 dimensions.leftWidth    = (dimensions.outterWidth - dimensions.innerWidth) / 2;
 
-                createPart(maskParts, 'n', {
-                    width: dimensions.innerWidth,
-                    height: dimensions.topHeight,
-                    initialX: config.initialX + dimensions.leftWidth,
-                    initialY: config.initialY,
-                    borders: ['top', 'bottom']
-                });
-                createPart(maskParts, 'ne', {
-                    width: dimensions.rightWidth,
-                    height: dimensions.topHeight,
-                    initialX: config.initialX + dimensions.leftWidth + dimensions.innerWidth,
-                    initialY: config.initialY,
-                    borders: ['top', 'right']
-                });
-                createPart(maskParts, 'e', {
-                    width: dimensions.rightWidth,
-                    height: dimensions.innerHeight,
-                    initialX: config.initialX + dimensions.leftWidth + dimensions.innerWidth,
-                    initialY: config.initialY + dimensions.topHeight,
-                    borders: ['left', 'right']
-                });
-                createPart(maskParts, 'se', {
-                    width: dimensions.rightWidth,
-                    height: dimensions.bottomHeight,
-                    initialX: config.initialX + dimensions.leftWidth + dimensions.innerWidth,
-                    initialY: config.initialY + dimensions.topHeight + dimensions.innerHeight,
-                    borders: ['bottom', 'right']
-                });
-                createPart(maskParts, 's', {
-                    width: dimensions.innerWidth,
-                    height: dimensions.bottomHeight,
-                    initialX: config.initialX + dimensions.leftWidth,
-                    initialY: config.initialY + dimensions.topHeight + dimensions.innerHeight,
-                    borders: ['top', 'bottom']
-                });
-                createPart(maskParts, 'sw', {
-                    width: dimensions.leftWidth,
-                    height: dimensions.bottomHeight,
-                    initialX: config.initialX,
-                    initialY: config.initialY + dimensions.topHeight + dimensions.innerHeight,
-                    borders: ['left', 'bottom']
-                });
-                createPart(maskParts, 'w', {
-                    width: dimensions.leftWidth,
-                    height: dimensions.innerHeight,
-                    initialX: config.initialX,
-                    initialY: config.initialY + dimensions.topHeight,
-                    borders: ['left', 'right']
-                });
-                createPart(maskParts, 'nw', {
-                    width: dimensions.leftWidth,
-                    height: dimensions.topHeight,
-                    initialX: config.initialX,
-                    initialY: config.initialY,
-                    borders: ['left', 'top']
-                });
+                createCompoundMask();
             },
 
             render: function render($container) {
-                _.forOwn(maskParts, function(part) {
-                    part.render($container);
+                _.forOwn(allParts, function(part) {
+                    part.mask.render($container);
+                });
+                _.forOwn(allParts, function(part) {
+                    part.overlay.render($container);
                 });
             },
 
             destroy: function destroy() {
-                _.forOwn(maskParts, function(part) {
-                    part.destroy();
+                _.forOwn(allParts, function(part) {
+                    part.mask.destroy();
+                    part.overlay.destroy();
                 });
             },
 
