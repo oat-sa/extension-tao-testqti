@@ -26,6 +26,7 @@ define([
     'core/eventifier',
     'core/statifier',
     'ui/component',
+    'ui/component/placeable',
     'ui/component/draggable',
     'ui/component/resizable',
     'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/maskPart',
@@ -36,6 +37,7 @@ define([
     eventifier,
     statifier,
     componentFactory,
+    makePlaceable,
     makeDraggable,
     makeResizable,
     maskPartTpl,
@@ -44,8 +46,8 @@ define([
     'use strict';
 
     var defaultConfig = {
-        outterWidth:    500,
-        outterHeight:   300,
+        outerWidth:     500,
+        outerHeight:    300,
         innerWidth:     400,
         innerHeight:    50,
         initialX:       100,
@@ -125,13 +127,13 @@ define([
         }
 
         function createMask(id, maskConfig) {
-            return makeResizable(componentFactory({}, maskConfig))
+            return makePlaceable(componentFactory({}, maskConfig))
                 .on('render', function() {
                     var $element = this.getElement();
 
                     if (_.isArray(this.config.borders)) {
                         this.config.borders.forEach(function(borderPosition) {
-                            $element.css('border-' + borderPosition, '1px solid black'); // todo: improve this. consider box model to take border width into account in dimensions
+                            $element.css('border-' + borderPosition + '-width', '1px');
                         });
                     }
                 })
@@ -149,7 +151,7 @@ define([
 
                     $element
                         .on('mousedown', function coverAllCompoundMask() {
-                            self.setSize(dimensions.outterWidth, dimensions.outterHeight);
+                            self.setSize(dimensions.outerWidth, dimensions.outerHeight);
                             self.moveTo(position.x, position.y);
                         })
                         .on('mouseup', function () {
@@ -201,15 +203,15 @@ define([
                     y: config.initialY
                 };
                 dimensions = {
-                    outterWidth:    config.outterWidth,
-                    outterHeight:   config.outterHeight,
+                    outerWidth:     config.outerWidth,
+                    outerHeight:    config.outerHeight,
                     innerWidth:     config.innerWidth,
                     innerHeight:    config.innerHeight
                 };
                 dimensions.topHeight    =
-                dimensions.bottomHeight = (dimensions.outterHeight - dimensions.innerHeight) / 2;
+                dimensions.bottomHeight = (dimensions.outerHeight - dimensions.innerHeight) / 2;
                 dimensions.rightWidth   =
-                dimensions.leftWidth    = (dimensions.outterWidth - dimensions.innerWidth) / 2;
+                dimensions.leftWidth    = (dimensions.outerWidth - dimensions.innerWidth) / 2;
 
                 createCompoundMask();
             },

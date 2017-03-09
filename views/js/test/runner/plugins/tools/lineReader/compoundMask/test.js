@@ -35,14 +35,14 @@ define([
 
     QUnit.test('.getDimensions()', function (assert) {
         var mask = compoundMaskFactory({
-                outterWidth:  500,
-                outterHeight: 300,
+                outerWidth:   500,
+                outerHeight:  300,
                 innerWidth:   400,
                 innerHeight:  50
             }),
             expectedDimensions = {
-                outterWidth:  500,
-                outterHeight: 300,
+                outerWidth:   500,
+                outerHeight:  300,
                 innerWidth:   400,
                 innerHeight:  50,
                 topHeight:    125,
@@ -68,6 +68,7 @@ define([
         mask.init();
         mask.render($container);
 
+        assert.ok(true);
         QUnit.start();
 
     });
