@@ -1,1 +1,1 @@
-<div class="line-reader-overlay" style="background: yellow"></div>
+<div class="line-reader-overlay"></div>
