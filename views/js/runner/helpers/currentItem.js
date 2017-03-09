@@ -21,9 +21,8 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
     'lodash'
-], function ($, _) {
+], function (_) {
     'use strict';
 
     /**
