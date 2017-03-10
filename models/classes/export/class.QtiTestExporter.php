@@ -178,7 +178,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // 2. Export the test definition itself.
         $this->exportTest($itemIdentifiers);
 
-        // 3. Persist manifest in archive.
+        // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
 
         return $report;

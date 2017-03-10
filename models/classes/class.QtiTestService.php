@@ -54,6 +54,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
 
     /**
+     * @var MetadataImporter Service to manage Lom metadata during package import
+     */
+    protected $metadataImporter;
+
+    /**
      * Get the QTI Test document formated in JSON.
      *
      * @param core_kernel_classes_Resource $test
@@ -365,11 +370,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         $domManifest = new DOMDocument('1.0', 'UTF-8');
         $domManifest->load($folder . 'imsmanifest.xml');
 
-        // Prepare Metadata mechanisms.
-        /** @var MetadataImporter $metadataImporter */
-        $metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
-
-        $metadataValues = $metadataImporter->extract($domManifest);
+        $metadataValues = $this->getMetadataImporter()->extract($domManifest);
 
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
@@ -422,7 +423,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
 
                                 // Check if the item is already stored in the bank.
-                                $guardian = $metadataImporter->guard($resourceIdentifier);
+                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier);
                                 if ($guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
                                     \common_Logger::i($message);
@@ -435,7 +436,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                                 $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
                                 // If metadata should be aware of the test context...
-                                foreach ($metadataImporter->getExtractors() as $extractor) {
+                                foreach ($this->getMetadataImporter()->getExtractors() as $extractor) {
                                     if ($extractor instanceof MetadataTestContextAware) {
                                         $metadataValues = array_merge(
                                             $metadataValues, 
@@ -519,7 +520,7 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
                             
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
-                            $metadataImporter->inject($qtiTestResource->getIdentifier(), $testResource);
+                            $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
 
                             // 5. if $targetClass does not contain any instances (because everything resolved by class lookups),
                             // Just delete it.
@@ -1049,5 +1050,18 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
     {
         $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
+    }
+
+    /**
+     * Get the lom metadata importer
+     *
+     * @return MetadataImporter
+     */
+    protected function getMetadataImporter()
+    {
+        if (! $this->metadataImporter) {
+            $this->metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
+        }
+        return $this->metadataImporter;
     }
 }
