@@ -46,13 +46,21 @@ define([
     'use strict';
 
     var defaultConfig = {
+        // dimensions
         outerWidth:     500,
         outerHeight:    300,
         innerWidth:     400,
         innerHeight:    50,
+        maskMinWidth:   50,
+        maskMinHeight:   50,
+
+        // position
         initialX:       100,
         initialY:       100
     };
+
+    //fixme: what is my purpose in this world ?!??
+    var overlayOffset = 5;
 
     return function compoundMaskFactory(config) {
         var compoundMask,
@@ -66,7 +74,34 @@ define([
                 height: dimensions.topHeight,
                 initialX: position.x + dimensions.leftWidth,
                 initialY: position.y,
-                borders: ['top', 'bottom']
+                minWidth: dimensions.maskMinWidth,
+                minHeight: dimensions.maskMinHeight,
+                maxHeight: dimensions.topHeight + (dimensions.innerHeight - dimensions.maskMinHeight),
+                borders: ['top', 'bottom'],
+                onResize: function onResize(width, height, x, y, fromLeft, fromTop) {
+                    var ne = allParts.ne.mask,
+                        e  = allParts.e.mask,
+                        w  = allParts.w.mask,
+                        s  = allParts.s.mask,
+                        nw = allParts.nw.mask,
+                        innerHeight;
+
+                    nw.resizeTo(nw.getSize().width, height, fromLeft, fromTop);
+                    ne.resizeTo(ne.getSize().width, height, fromLeft, fromTop);
+
+                    if (! fromTop) {
+                        innerHeight = s.getPosition().y - (y + height);
+                        e.resizeTo(e.getSize().width, innerHeight, false, true);
+                        w.resizeTo(w.getSize().width, innerHeight, false, true);
+                    }
+                },
+                beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
+                    if (! fromTop) {
+                        this.config.maxHeight = dimensions.topHeight + (dimensions.innerHeight - dimensions.maskMinHeight);
+                    } else {
+                        this.config.maxHeight = null;
+                    }
+                }
             });
             createPart('ne', {
                 width: dimensions.rightWidth,
@@ -121,13 +156,13 @@ define([
 
         function createPart(id, partConfig) {
             allParts[id] = {
-                mask: createMask(id, partConfig),
-                overlay: createOverlay(id, partConfig)
+                mask: createMask(partConfig),
+                overlay: createOverlay(partConfig)
             };
         }
 
-        function createMask(id, maskConfig) {
-            return makePlaceable(componentFactory({}, maskConfig))
+        function createMask(maskConfig) {
+            return makeResizable(componentFactory({}, maskConfig))
                 .on('render', function() {
                     var $element = this.getElement();
 
@@ -137,14 +172,29 @@ define([
                         });
                     }
                 })
+                .on('resize', maskConfig.onResize || _.noop)
+                .on('resize', updateDimensions) // fixme: hmpf
+                .on('beforeresize', maskConfig.beforeResize || _.noop)
+                .on('resizeend', function () {
+                    resetOverlays();
+                })
                 .init()
                 .setTemplate(maskPartTpl);
         }
 
-        function createOverlay(id, overlayConfig) {
-            var overlay = componentFactory({}, overlayConfig);
+        function createOverlay(overlayConfig) {
+            var overlay;
 
-            return makeDraggable(overlay)
+            overlayConfig.width     -= (overlayOffset * 2);
+            overlayConfig.height    -= (overlayOffset * 2);
+            overlayConfig.initialX  += overlayOffset;
+            overlayConfig.initialY  += overlayOffset;
+
+            overlay = componentFactory({}, overlayConfig);
+
+            makeDraggable(overlay);
+
+            return overlay
                 .on('render', function() {
                     var self = this,
                         $element = this.getElement();
@@ -172,7 +222,19 @@ define([
         }
 
         function updateDimensions() {
+            var n = allParts.n.mask.getSize(),
+                e = allParts.e.mask.getSize(),
+                s = allParts.s.mask.getSize(),
+                w = allParts.w.mask.getSize();
 
+            dimensions.outerWidth   = w.width + n.width + e.width;
+            dimensions.outerHeight  = n.height + w.height + s.height;
+            dimensions.innerWidth   = n.width;
+            dimensions.innerHeight  = w.height;
+            dimensions.topHeight    = n.height;
+            dimensions.rightWidth   = e.width;
+            dimensions.bottomHeight = s.height;
+            dimensions.leftWidth    = w.width;
         }
 
         function updatePosition() {
@@ -188,8 +250,14 @@ define([
                     size = mask.getSize(),
                     pos = mask.getPosition();
 
-                overlay.setSize(size.width, size.height);
-                overlay.moveTo(pos.x, pos.y);
+                overlay.setSize(
+                    size.width - (overlayOffset * 2),
+                    size.height - (overlayOffset * 2)
+                );
+                overlay.moveTo(
+                    pos.x + overlayOffset,
+                    pos.y + overlayOffset
+                );
             });
         }
 
@@ -206,12 +274,14 @@ define([
                     outerWidth:     config.outerWidth,
                     outerHeight:    config.outerHeight,
                     innerWidth:     config.innerWidth,
-                    innerHeight:    config.innerHeight
+                    innerHeight:    config.innerHeight,
+                    maskMinWidth:   config.maskMinWidth,
+                    maskMinHeight:  config.maskMinHeight
                 };
                 dimensions.topHeight    =
-                dimensions.bottomHeight = (dimensions.outerHeight - dimensions.innerHeight) / 2;
+                dimensions.bottomHeight = (dimensions.outerHeight - dimensions.innerHeight) / 2; //todo: find suitable defauls
                 dimensions.rightWidth   =
-                dimensions.leftWidth    = (dimensions.outerWidth - dimensions.innerWidth) / 2;
+                dimensions.leftWidth    = (dimensions.outerWidth - dimensions.innerWidth) / 2; //todo: find suitable defauls
 
                 createCompoundMask();
             },
