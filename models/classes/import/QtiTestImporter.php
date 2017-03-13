@@ -39,6 +39,7 @@ class QtiTestImporter extends AbstractTestImporter
      */
     public function import(File $file)
     {
+        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
         return $service->importQtiTest($file);
     }
