@@ -24,9 +24,8 @@ define([
     'jquery',
     'lodash',
     'core/eventifier',
-    'core/statifier',
+    'core/statifier', // todo: needed ?
     'ui/component',
-    'ui/component/placeable',
     'ui/component/draggable',
     'ui/component/resizable',
     'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/maskPart',
@@ -37,7 +36,6 @@ define([
     eventifier,
     statifier,
     componentFactory,
-    makePlaceable,
     makeDraggable,
     makeResizable,
     maskPartTpl,
@@ -77,8 +75,24 @@ define([
             constrains  = {};
 
         function createCompoundMask() {
+
+            // North
             createPart('n', _.assign({}, constrains, {
                 edges: { top: true, right: false, bottom: true, left: false },
+
+                // move and dimension the mask
+                place: function place() {
+                    this.moveTo(
+                        position.innerX,
+                        position.outerY
+                    ).setSize(
+                        dimensions.innerWidth,
+                        dimensions.topHeight
+                    );
+                },
+
+                // set a resize limit whenever resize happens on an inner edge (here, the top inner edge),
+                // so the min/max width/height limit for adjacent components are respected
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
                         this.config.maxHeight = null;
@@ -86,9 +100,11 @@ define([
                         this.config.maxHeight = dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
                     }
                 },
+
+                // set the new dimension and position of the whole following this specific mask resize
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (fromTop) {
-                        dimensions.outerHeight = (y + height) + dimensions.innerHeight + dimensions.bottomHeight;
+                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
                         position.outerY = y;
                     } else {
                         dimensions.innerHeight = dimensions.outerHeight - height - dimensions.bottomHeight;
@@ -98,8 +114,21 @@ define([
                     applyGeographics();
                 }
             }));
+
+            // North-east
             createPart('ne', _.assign({}, constrains, {
                 edges: { top: true, right: true, bottom: false, left: false },
+
+                place: function place() {
+                    this.moveTo(
+                        position.innerX + dimensions.innerWidth,
+                        position.outerY
+                    ).setSize(
+                        dimensions.rightWidth,
+                        dimensions.topHeight
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (! fromLeft) {
                         dimensions.outerWidth = (x + width) - position.outerX;
@@ -107,13 +136,27 @@ define([
                     }
                     if (fromTop) {
                         position.outerY = y;
+                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
                         dimensions.topHeight = height;
                     }
                     applyGeographics(); // todo: scope updates
                 }
             }));
+
+            // East
             createPart('e', _.assign({}, constrains, {
                 edges: { top: false, right: true, bottom: false, left: true },
+
+                place: function place() {
+                    this.moveTo(
+                        position.innerX + dimensions.innerWidth,
+                        position.innerY
+                    ).setSize(
+                        dimensions.rightWidth,
+                        dimensions.innerHeight
+                    );
+                },
+
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
                         this.config.maxWidth = dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth);
@@ -121,6 +164,7 @@ define([
                         this.config.maxWidth = null;
                     }
                 },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (! fromLeft) {
                         dimensions.outerWidth = (x + width) - position.outerX;
@@ -131,21 +175,48 @@ define([
                     applyGeographics();
                 }
             }));
+
+            // South east
             createPart('se', _.assign({}, constrains, {
                 edges: { top: false, right: true, bottom: true, left: false },
+
+                place: function place() {
+                    this.moveTo(
+                        position.innerX + dimensions.innerWidth,
+                        position.innerY + dimensions.innerHeight
+                    ).setSize(
+                        dimensions.rightWidth,
+                        dimensions.bottomHeight
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (! fromLeft) {
                         dimensions.outerWidth = (x + width) - position.outerX;
                         dimensions.rightWidth = width;
                     }
                     if (! fromTop) {
+                        dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
                         dimensions.bottomHeight = height;
                     }
                     applyGeographics();
                 }
             }));
+
+            // South
             createPart('s', _.assign({}, constrains, {
                 edges: { top: true, right: false, bottom: true, left: false },
+
+                place: function place() {
+                    this.moveTo(
+                        position.innerX ,
+                        position.innerY + dimensions.innerHeight
+                    ).setSize(
+                        dimensions.innerWidth,
+                        dimensions.bottomHeight
+                    );
+                },
+
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
                         this.config.maxHeight = dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight);
@@ -153,6 +224,7 @@ define([
                         this.config.maxHeight = null;
                     }
                 },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (fromTop) {
                         dimensions.innerHeight = y - position.innerY;
@@ -163,22 +235,49 @@ define([
                     applyGeographics();
                 }
             }));
+
+            // South-west
             createPart('sw', _.assign({}, constrains, {
                 edges: { top: false, right: false, bottom: true, left: true },
+
+                place: function place() {
+                    this.moveTo(
+                        position.outerX,
+                        position.innerY + dimensions.innerHeight
+                    ).setSize(
+                        dimensions.leftWidth,
+                        dimensions.bottomHeight
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (fromLeft) {
-                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.leftWidth;
+                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
                         dimensions.leftWidth = width;
                         position.outerX = x;
                     }
                     if (! fromTop) {
+                        dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
                         dimensions.bottomHeight = height;
                     }
                     applyGeographics();
                 }
             }));
+
+            // West
             createPart('w', _.assign({}, constrains, {
                 edges: { top: false, right: true, bottom: false, left: true },
+
+                place: function place() {
+                    this.moveTo(
+                        position.outerX,
+                        position.innerY
+                    ).setSize(
+                        dimensions.leftWidth,
+                        dimensions.innerHeight
+                    );
+                },
+
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
                         this.config.maxWidth = null;
@@ -186,6 +285,7 @@ define([
                         this.config.maxWidth = dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
                     }
                 },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (fromLeft) {
                         dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
@@ -198,23 +298,38 @@ define([
                     applyGeographics();
                 }
             }));
+
+            // North-west
             createPart('nw', _.assign({}, constrains, {
                 edges: { top: true, right: false, bottom: false, left: true },
+
+                place: function place() {
+                    this.moveTo(
+                        position.outerX,
+                        position.outerY
+                    ).setSize(
+                        dimensions.leftWidth,
+                        dimensions.topHeight
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (fromLeft) {
-                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.leftWidth;
+                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
                         dimensions.leftWidth = width;
                         position.outerX = x;
                     }
                     if (fromTop) {
-                        position.outerY = y;
+                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
                         dimensions.topHeight = height;
+                        position.outerY = y;
                     }
                     applyGeographics();
                 }
             }));
         }
 
+        // jsdoc me !!
         function createPart(id, partConfig) {
             allParts[id] = {
                 mask: createMask(partConfig),
@@ -223,7 +338,9 @@ define([
         }
 
         function createMask(maskConfig) {
-            return makeResizable(componentFactory({}, maskConfig))
+            return makeResizable(componentFactory({
+                place: maskConfig.place
+            }, maskConfig))
                 .on('render', function() {
                     var $element = this.getElement();
 
@@ -235,12 +352,6 @@ define([
                     });
                 })
                 .on('resize', maskConfig.onResize || _.noop)
-                .on('resize', updateDimensions) // fixme: hmpf
-                .on('resize', function(width, height, fromLeft, fromTop) {
-                    if (fromTop || fromLeft) {
-                        updatePosition(); // fixme: hmpf?!
-                    }
-                })
                 .on('beforeresize', maskConfig.beforeResize || _.noop)
                 .on('resizeend', function () {
                     resetOverlays();
@@ -256,12 +367,12 @@ define([
             overlayAPI = {
                 place: function place(maskX, maskY, maskWidth, maskHeight) {
                     this.setSize(
-                        maskWidth - this._overlayWidthOffset,
-                        maskHeight - this._overlayHeightOffset
+                        maskWidth - this._widthOffset,
+                        maskHeight - this._heightOffset
                     );
                     this.moveTo(
-                        maskX + this._overlayXOffset,
-                        maskY + this._overlayYOffset
+                        maskX + this._xOffset,
+                        maskY + this._yOffset
                     );
                 }
             };
@@ -270,24 +381,24 @@ define([
 
             return makeDraggable(overlay)
                 .on('init', function() {
-                    this._overlayWidthOffset = 0;
-                    this._overlayHeightOffset = 0;
-                    this._overlayXOffset = 0;
-                    this._overlayYOffset = 0;
+                    this._widthOffset = 0;
+                    this._heightOffset = 0;
+                    this._xOffset = 0;
+                    this._yOffset = 0;
 
                     if (this.config.edges.top) {
-                        this._overlayHeightOffset += overlayOffset;
-                        this._overlayYOffset += overlayOffset;
+                        this._heightOffset += overlayOffset;
+                        this._yOffset += overlayOffset;
                     }
                     if (this.config.edges.right) {
-                        this._overlayWidthOffset += overlayOffset;
+                        this._widthOffset += overlayOffset;
                     }
                     if (this.config.edges.bottom) {
-                        this._overlayHeightOffset += overlayOffset;
+                        this._heightOffset += overlayOffset;
                     }
                     if (this.config.edges.left) {
-                        this._overlayWidthOffset += overlayOffset;
-                        this._overlayXOffset += overlayOffset;
+                        this._widthOffset += overlayOffset;
+                        this._xOffset += overlayOffset;
                     }
                 })
                 .on('render', function() {
@@ -386,78 +497,11 @@ define([
         }
 
         function applyGeographics() {
-            allParts.n.mask
-                .moveTo(
-                    position.innerX,
-                    position.outerY
-                ).setSize(
-                    dimensions.innerWidth,
-                    dimensions.topHeight
-                );
+            _.forOwn(allParts, function(part) {
+                part.mask.place.call(part);
+            });
 
-            allParts.ne.mask
-                .moveTo(
-                    position.innerX + dimensions.innerWidth,
-                    position.outerY
-                ).setSize(
-                    dimensions.rightWidth,
-                    dimensions.topHeight
-                );
-
-            allParts.e.mask
-                .moveTo(
-                    position.innerX + dimensions.innerWidth,
-                    position.innerY
-                ).setSize(
-                    dimensions.rightWidth,
-                    dimensions.innerHeight
-                );
-
-            allParts.se.mask
-                .moveTo(
-                    position.innerX + dimensions.innerWidth,
-                    position.innerY + dimensions.innerHeight
-                ).setSize(
-                    dimensions.rightWidth,
-                    dimensions.bottomHeight
-                );
-
-            allParts.s.mask
-                .moveTo(
-                    position.innerX ,
-                    position.innerY + dimensions.innerHeight
-                ).setSize(
-                    dimensions.innerWidth,
-                    dimensions.bottomHeight
-                );
-
-            allParts.sw.mask
-                .moveTo(
-                    position.outerX,
-                    position.innerY + dimensions.innerHeight
-                ).setSize(
-                    dimensions.leftWidth,
-                    dimensions.bottomHeight
-                );
-
-            allParts.w.mask
-                .moveTo(
-                    position.outerX,
-                    position.innerY
-                ).setSize(
-                    dimensions.leftWidth,
-                    dimensions.innerHeight
-                );
-
-            allParts.nw.mask
-                .moveTo(
-                    position.outerX,
-                    position.outerY
-                ).setSize(
-                    dimensions.leftWidth,
-                    dimensions.topHeight
-                );
-
+            resetOverlays();
         }
 
         config = _.defaults(config || {}, defaultConfig);
@@ -470,11 +514,8 @@ define([
 
         compoundMask = {
             init: function init() {
-
                 setGeographics(config);
-
                 createCompoundMask();
-                // applyGeographics();
             },
 
             render: function render($container) {
@@ -485,7 +526,6 @@ define([
                     part.overlay.render($container);
                 });
                 applyGeographics();
-                resetOverlays();
             },
 
             destroy: function destroy() {
