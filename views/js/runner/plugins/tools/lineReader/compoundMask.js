@@ -92,25 +92,16 @@ define([
                 },
 
                 // set a resize limit whenever resize happens on an inner edge (here, the top inner edge),
-                // so the min/max width/height limit for adjacent components are respected
+                // so the min/max width/height limit for "inner component" is respected
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
-                    if (fromTop) {
-                        this.config.maxHeight = null;
-                    } else {
-                        this.config.maxHeight = dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
-                    }
+                    this.config.maxHeight = (fromTop)
+                        ? null
+                        : dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
                 },
 
-                // set the new dimension and position of the whole following this specific mask resize
+                // set the new geographics (dimension and position) resulting from the current mask resize, and apply them
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
-                    if (fromTop) {
-                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
-                        position.outerY = y;
-                    } else {
-                        dimensions.innerHeight = dimensions.outerHeight - height - dimensions.bottomHeight;
-                        position.innerY = position.outerY + height;
-                    }
-                    dimensions.topHeight = height;
+                    setTopHeight(height, y, fromTop);
                     applyGeographics();
                 }
             }));
@@ -130,16 +121,9 @@ define([
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
-                    if (! fromLeft) {
-                        dimensions.outerWidth = (x + width) - position.outerX;
-                        dimensions.rightWidth = width;
-                    }
-                    if (fromTop) {
-                        position.outerY = y;
-                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
-                        dimensions.topHeight = height;
-                    }
-                    applyGeographics(); // todo: scope updates
+                    setTopHeight(height, y, fromTop);
+                    setRightWidth(width, x, fromLeft);
+                    applyGeographics(); // todo: scope updates?
                 }
             }));
 
@@ -158,20 +142,13 @@ define([
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft) {
-                    if (fromLeft) {
-                        this.config.maxWidth = dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth);
-                    } else {
-                        this.config.maxWidth = null;
-                    }
+                    this.config.maxWidth = (fromLeft)
+                        ? dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth)
+                        : null;
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
-                    if (! fromLeft) {
-                        dimensions.outerWidth = (x + width) - position.outerX;
-                    } else {
-                        dimensions.innerWidth = x - position.innerX;
-                    }
-                    dimensions.rightWidth = width;
+                    setRightWidth(width, x, fromLeft);
                     applyGeographics();
                 }
             }));
@@ -190,15 +167,9 @@ define([
                     );
                 },
 
-                onResize: function onResize(width, height, fromLeft, fromTop, x) {
-                    if (! fromLeft) {
-                        dimensions.outerWidth = (x + width) - position.outerX;
-                        dimensions.rightWidth = width;
-                    }
-                    if (! fromTop) {
-                        dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
-                        dimensions.bottomHeight = height;
-                    }
+                onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
+                    setRightWidth(width, x, fromLeft);
+                    setBottomHeight(height, y, fromTop);
                     applyGeographics();
                 }
             }));
@@ -218,20 +189,13 @@ define([
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
-                    if (fromTop) {
-                        this.config.maxHeight = dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight);
-                    } else {
-                        this.config.maxHeight = null;
-                    }
+                    this.config.maxHeight = (fromTop)
+                        ? dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight)
+                        : null;
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
-                    if (fromTop) {
-                        dimensions.innerHeight = y - position.innerY;
-                    } else {
-                        dimensions.outerHeight = (y + height) - position.outerY;
-                    }
-                    dimensions.bottomHeight = height;
+                    setBottomHeight(height, y, fromTop);
                     applyGeographics();
                 }
             }));
@@ -250,16 +214,9 @@ define([
                     );
                 },
 
-                onResize: function onResize(width, height, fromLeft, fromTop, x) {
-                    if (fromLeft) {
-                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
-                        dimensions.leftWidth = width;
-                        position.outerX = x;
-                    }
-                    if (! fromTop) {
-                        dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
-                        dimensions.bottomHeight = height;
-                    }
+                onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
+                    setBottomHeight(height, y, fromTop);
+                    setLeftWidth(width, x, fromLeft);
                     applyGeographics();
                 }
             }));
@@ -279,22 +236,13 @@ define([
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft) {
-                    if (fromLeft) {
-                        this.config.maxWidth = null;
-                    } else {
-                        this.config.maxWidth = dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
-                    }
+                    this.config.maxWidth = (fromLeft)
+                        ? null
+                        : dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
-                    if (fromLeft) {
-                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
-                        position.outerX = x;
-                    } else {
-                        dimensions.innerWidth = dimensions.outerWidth - width - dimensions.rightWidth;
-                        position.innerX = position.outerX + width;
-                    }
-                    dimensions.leftWidth = width;
+                    setLeftWidth(width, x, fromLeft);
                     applyGeographics();
                 }
             }));
@@ -314,19 +262,56 @@ define([
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
-                    if (fromLeft) {
-                        dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
-                        dimensions.leftWidth = width;
-                        position.outerX = x;
-                    }
-                    if (fromTop) {
-                        dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
-                        dimensions.topHeight = height;
-                        position.outerY = y;
-                    }
+                    setTopHeight(height, y, fromTop);
+                    setLeftWidth(width, x, fromLeft);
                     applyGeographics();
                 }
             }));
+        }
+
+        function setTopHeight(height, y, fromTop) {
+            dimensions.topHeight = height;
+
+            if (fromTop) {
+                dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
+                position.outerY = y;
+            } else {
+                dimensions.innerHeight = dimensions.outerHeight - height - dimensions.bottomHeight;
+                position.innerY = position.outerY + height;
+            }
+        }
+
+        function setRightWidth(width, x, fromLeft) {
+            dimensions.rightWidth = width;
+
+            if (fromLeft) {
+                dimensions.innerWidth = x - position.innerX;
+            } else {
+                dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + width;
+            }
+        }
+
+        function setBottomHeight(height, y, fromTop) {
+            dimensions.bottomHeight = height;
+
+            if (fromTop) {
+                dimensions.innerHeight = y - position.innerY;
+                dimensions.bottomHeight = height;
+            } else {
+                dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
+            }
+        }
+
+        function setLeftWidth(width, x, fromLeft) {
+            dimensions.leftWidth = width;
+
+            if (fromLeft) {
+                dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
+                position.outerX = x;
+            } else {
+                dimensions.innerWidth = dimensions.outerWidth - width - dimensions.rightWidth;
+                position.innerX = position.outerX + width;
+            }
         }
 
         // jsdoc me !!

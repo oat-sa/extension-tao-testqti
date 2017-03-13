@@ -320,15 +320,15 @@ define([
                 dimensions: { outerWidth: 500 + 20, leftWidth: 50 + 20 }, position: { outerX: 50 - 20 }     },
 
             {   title: 'north-west / shrink 20 from top',
-                maskId: 'nw', width: 350, height: 50 - 20, fromTop: true,
+                maskId: 'nw', width: 50, height: 50 - 20, fromTop: true,
                 dimensions: { outerHeight: 300 - 20, topHeight: 30 }, position: { outerY: 50 + 20 }         },
 
             {   title: 'north-west / shrink 40 from top, capped to 30',
-                maskId: 'nw', width: 350, height: 50 - 40, fromTop: true,
+                maskId: 'nw', width: 50, height: 50 - 40, fromTop: true,
                 dimensions: { outerHeight: 300 - 30, topHeight: 20 }, position: { outerY: 50 + 30 }         },
 
             {   title: 'north-west / expand 20 from top',
-                maskId: 'nw', width: 350, height: 50 + 20, fromTop: true,
+                maskId: 'nw', width: 50, height: 50 + 20, fromTop: true,
                 dimensions: { outerHeight: 300 + 20, topHeight: 50 + 20 }, position: { outerY: 50 - 20 }    }
         ])
         .test('Resize', function (data, assert) {
