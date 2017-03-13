@@ -6,7 +6,17 @@
     //opacity: 0.5;
 }
 
-.line-reader-overlay {
-    background-color: yellow;
-    //opacity: 0.5;
+
+$overlayBg1: yellow;
+$overlayBg2: whiten($overlayBg1, 0.2);
+$overlayBg3: whiten($overlayBg1, 0.4);
+
+.line-reader-overlay:nth-of-type(1n) {
+    background-color: $overlayBg1;
+}
+.line-reader-overlay:nth-of-type(2n) {
+    background-color: $overlayBg2;
+}
+.line-reader-overlay:nth-of-type(3n) {
+    background-color: $overlayBg3;
 }
