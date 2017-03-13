@@ -270,10 +270,16 @@ return array(
     ],
 
     /**
-     * The namespace of the TestSession class
+     * The FQCN of the TestSession class
      * @type string
      */
     'test-session' => '\taoQtiTest_helpers_TestSession',
+    
+    /**
+     * The FQCN of the TestSessionStorage class
+     * @type string
+     */
+     'test-session-storage' => '\taoQtiTest_helpers_TestSessionStorage',
 
     /**
      * A config set that will be provided though the bootstrap
