@@ -57,7 +57,8 @@ return array(
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins',
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
             'oat\\taoQtiTest\\scripts\\install\\CreateTestSessionFilesystem',
-            RegisterQtiFlysystemManager::class
+            RegisterQtiFlysystemManager::class,
+            \oat\taoQtiTest\scripts\install\RegisterTestImporters::class
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
