@@ -217,13 +217,14 @@ define([
         //adding retro-compatibility with legacy focusable class for defining focusable passages
         $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
 
-        $itemElements = $content.find('img,.key-navigation-focusable,.qti-interaction');
+        //$itemElements = $content.find('.key-navigation-focusable,.qti-interaction');
+        $itemElements = $content.find('.key-navigation-focusable,.choice-area');
         $itemElements.each(function(){
             var $itemElement = $(this);
             var itemNavigables = [];
             var id = 'item_element_navigation_group_'+itemNavigators.length;
 
-            if($itemElement.hasClass('qti-interaction')){
+            if($itemElement.hasClass('choice-area')){
                 $itemElement.off('.keyNavigation');
                 $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
                 itemNavigables = navigableDomElement.createFromDoms($inputs);
@@ -253,7 +254,8 @@ define([
                     id : id,
                     elements : navigableDomElement.createFromDoms($itemElement),
                     group : $itemElement,
-                    replace : true
+                    replace : true,
+                    propagateTab : false
                 }));
             }
         });
@@ -310,13 +312,35 @@ define([
             initNavigatorNavigation(testRunner),
             initHeaderNavigation(testRunner)
         );
+
+        console.log('navigators', _.map(navigators, function(nav){
+            return nav.getGroup();
+        }));
+
         navigators = navigableGroupElement.createFromNavigators(navigators);
 
         return keyNavigator({
             id : 'test-runner',
             replace : true,
             loop : true,
-            elements : navigators
+            elements : navigators,
+        }).on('tab', function(target){
+            console.log('tab');
+            this.next();
+
+            return;
+
+            var cursor = this.getCursor();
+            if(cursor && cursor.navigable){
+                console.log('tt tab', cursor.navigable.getElement());
+                if(cursor.navigable.getElement().get(0) === target){
+                    this.next();
+                }
+            }else{
+                this.next();
+            }
+        }).on('shift+tab', function(){
+            this.previous();
         });
     }
 
@@ -333,23 +357,12 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            if (testConfig.allowShortcuts) {
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.previous, this.getName(), true), function () {
-                    testRunner.trigger('previous-focusable');
-                }, {
-                    prevent: true
-                });
-
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.next, this.getName(), true), function () {
-                    testRunner.trigger('next-focusable');
-                }, {
-                    prevent: true
-                });
-            }
+            shortcut.add('tab shift+tab', function(){
+                if(!self.groupNavigator.isFocused()){
+                    self.groupNavigator.focus();
+                }
+            });
 
             //start disabled
             this.disable();
@@ -362,16 +375,6 @@ define([
                 })
                 .on('unloaditem', function () {
                     self.disable();
-                })
-                .on('previous-focusable', function() {
-                    if (self.getState('enabled') && self.groupNavigator) {
-                        self.groupNavigator.previous();
-                    }
-                })
-                .on('next-focusable', function() {
-                    if (self.getState('enabled') && self.groupNavigator) {
-                        self.groupNavigator.next();
-                    }
                 });
         },
 
@@ -381,7 +384,7 @@ define([
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
             if(this.groupNavigator) {
-                this.groupNavigator.next();
+                this.groupNavigator.destroy();
             }
         }
     });
