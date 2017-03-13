@@ -48,8 +48,8 @@ define([
                 innerWidth:     350,
                 innerHeight:    50,
 
-                maskMinWidth:   20,
-                maskMinHeight:  20
+                minWidth:   20,
+                minHeight:  20
             }),
             expectedDimensions = {
                 outerWidth:     500,
@@ -69,11 +69,10 @@ define([
                 innerY:         100
             },
             expectedConstrains = {
-                maskMinWidth:   20,
-                maskMinHeight:  20
+                minWidth:   20,
+                minHeight:  20
             },
-            allParts = mask.getParts(),
-            $element;
+            allParts = mask.getParts();
 
         // QUnit.expect(1);
 
@@ -352,8 +351,8 @@ define([
                     innerY:         100
                 },
                 mask = compoundMaskFactory(_.assign({
-                    maskMinWidth:   20,
-                    maskMinHeight:  20
+                    minWidth:   20,
+                    minHeight:  20
                 }, dimensions, position)),
                 allParts = mask.getParts();
 
@@ -391,8 +390,8 @@ define([
                 innerWidth:     350,
                 innerHeight:    50,
 
-                maskMinWidth:   20,
-                maskMinHeight:  20
+                minWidth:   20,
+                minHeight:  20
             }),
             $container = $('#outside');
 

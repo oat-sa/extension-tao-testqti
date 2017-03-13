@@ -59,8 +59,8 @@ define([
         innerY:         100,
 
         // constrains
-        maskMinWidth:   20,
-        maskMinHeight:  20
+        minWidth:   20,
+        minHeight:  20
     };
 
     //fixme: what is my purpose in this world ?!??
@@ -74,20 +74,14 @@ define([
             constrains  = {};
 
         function createCompoundMask() {
-            createPart('n', {
-                width: dimensions.innerWidth,
-                height: dimensions.topHeight,
-                initialX: position.outerX + dimensions.leftWidth,
-                initialY: position.outerY,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            createPart('n', _.assign({}, constrains, {
                 borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
                         this.config.maxHeight = null;
                     } else {
-                        this.config.maxHeight = dimensions.topHeight + (dimensions.innerHeight - constrains.maskMinHeight);
+                        this.config.maxHeight = dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
                     }
                 },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
@@ -101,14 +95,8 @@ define([
                     dimensions.topHeight = height;
                     applyGeographics();
                 }
-            });
-            createPart('ne', {
-                width: dimensions.rightWidth,
-                height: dimensions.topHeight,
-                initialX: position.innerX + dimensions.innerWidth,
-                initialY: position.outerY,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('ne', _.assign({}, constrains, {
                 borders: ['top', 'right'],
                 edges: { top: true, right: true, bottom: false, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
@@ -122,19 +110,13 @@ define([
                     }
                     applyGeographics(); // todo: scope updates
                 }
-            });
-            createPart('e', {
-                width: dimensions.rightWidth,
-                height: dimensions.innerHeight,
-                initialX: position.innerX + dimensions.innerWidth,
-                initialY: position.innerY,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('e', _.assign({}, constrains, {
                 borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
-                        this.config.maxWidth = dimensions.rightWidth + (dimensions.innerWidth - constrains.maskMinWidth);
+                        this.config.maxWidth = dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth);
                     } else {
                         this.config.maxWidth = null;
                     }
@@ -148,14 +130,8 @@ define([
                     dimensions.rightWidth = width;
                     applyGeographics();
                 }
-            });
-            createPart('se', {
-                width: dimensions.rightWidth,
-                height: dimensions.bottomHeight,
-                initialX: position.innerX + dimensions.innerWidth,
-                initialY: position.innerY + dimensions.innerHeight,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('se', _.assign({}, constrains, {
                 borders: ['bottom', 'right'],
                 edges: { top: false, right: true, bottom: true, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -168,19 +144,13 @@ define([
                     }
                     applyGeographics();
                 }
-            });
-            createPart('s', {
-                width: dimensions.innerWidth,
-                height: dimensions.bottomHeight,
-                initialX: position.outerX + dimensions.leftWidth,
-                initialY: position.innerY + dimensions.innerHeight,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('s', _.assign({}, constrains, {
                 borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
-                        this.config.maxHeight = dimensions.bottomHeight + (dimensions.innerHeight - constrains.maskMinHeight);
+                        this.config.maxHeight = dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight);
                     } else {
                         this.config.maxHeight = null;
                     }
@@ -194,14 +164,8 @@ define([
                     dimensions.bottomHeight = height;
                     applyGeographics();
                 }
-            });
-            createPart('sw', {
-                width: dimensions.leftWidth,
-                height: dimensions.bottomHeight,
-                initialX: position.outerX,
-                initialY: position.innerY + dimensions.innerHeight,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('sw', _.assign({}, constrains, {
                 borders: ['left', 'bottom'],
                 edges: { top: false, right: false, bottom: true, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -215,21 +179,15 @@ define([
                     }
                     applyGeographics();
                 }
-            });
-            createPart('w', {
-                width: dimensions.leftWidth,
-                height: dimensions.innerHeight,
-                initialX: position.outerX,
-                initialY: position.innerY,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('w', _.assign({}, constrains, {
                 borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
                         this.config.maxWidth = null;
                     } else {
-                        this.config.maxWidth = dimensions.leftWidth + (dimensions.innerWidth - constrains.maskMinWidth);
+                        this.config.maxWidth = dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
                     }
                 },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -243,14 +201,8 @@ define([
                     dimensions.leftWidth = width;
                     applyGeographics();
                 }
-            });
-            createPart('nw', {
-                width: dimensions.leftWidth,
-                height: dimensions.topHeight,
-                initialX: position.outerX,
-                initialY: position.outerY,
-                minWidth: constrains.maskMinWidth,
-                minHeight: constrains.maskMinHeight,
+            }));
+            createPart('nw', _.assign({}, constrains, {
                 borders: ['left', 'top'],
                 edges: { top: true, right: false, bottom: false, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
@@ -265,7 +217,7 @@ define([
                     }
                     applyGeographics();
                 }
-            });
+            }));
         }
 
         function createPart(id, partConfig) {
@@ -302,18 +254,46 @@ define([
         }
 
         function createOverlay(overlayConfig) {
-            var overlay;
+            var overlay,
+                overlayAPI;
 
-            overlayConfig.width     -= (overlayOffset * 2);
-            overlayConfig.height    -= (overlayOffset * 2);
-            overlayConfig.initialX  += overlayOffset;
-            overlayConfig.initialY  += overlayOffset;
+            overlayAPI = {
+                place: function place(maskX, maskY, maskWidth, maskHeight) {
+                    this.setSize(
+                        maskWidth - this._overlayWidthOffset,
+                        maskHeight - this._overlayHeightOffset
+                    );
+                    this.moveTo(
+                        maskX + this._overlayXOffset,
+                        maskY + this._overlayYOffset
+                    );
+                }
+            };
 
-            overlay = componentFactory({}, overlayConfig);
+            overlay = componentFactory(overlayAPI, overlayConfig);
 
-            makeDraggable(overlay);
+            return makeDraggable(overlay)
+                .on('init', function() {
+                    this._overlayWidthOffset = 0;
+                    this._overlayHeightOffset = 0;
+                    this._overlayXOffset = 0;
+                    this._overlayYOffset = 0;
 
-            return overlay
+                    if (this.config.edges.top) {
+                        this._overlayHeightOffset += overlayOffset;
+                        this._overlayYOffset += overlayOffset;
+                    }
+                    if (this.config.edges.right) {
+                        this._overlayWidthOffset += overlayOffset;
+                    }
+                    if (this.config.edges.bottom) {
+                        this._overlayHeightOffset += overlayOffset;
+                    }
+                    if (this.config.edges.left) {
+                        this._overlayWidthOffset += overlayOffset;
+                        this._overlayXOffset += overlayOffset;
+                    }
+                })
                 .on('render', function() {
                     var self = this,
                         $element = this.getElement();
@@ -369,18 +349,16 @@ define([
 
         function resetOverlays() {
             _.forOwn(allParts, function(part) {
-                var mask = part.mask,
-                    overlay = part.overlay,
-                    size = mask.getSize(),
-                    pos = mask.getPosition();
+                var overlay = part.overlay,
+                    mask    = part.mask,
+                    size    = mask.getSize(),
+                    pos     = mask.getPosition();
 
-                overlay.setSize(
-                    size.width - (overlayOffset * 2),
-                    size.height - (overlayOffset * 2)
-                );
-                overlay.moveTo(
-                    pos.x + overlayOffset,
-                    pos.y + overlayOffset
+                overlay.place(
+                    pos.x,
+                    pos.y,
+                    size.width,
+                    size.height
                 );
             });
         }
@@ -406,8 +384,8 @@ define([
             };
 
             constrains = {
-                maskMinWidth: geoConfig.maskMinWidth,
-                maskMinHeight: geoConfig.maskMinHeight
+                minWidth: geoConfig.minWidth,
+                minHeight: geoConfig.minHeight
             };
         }
 
@@ -510,6 +488,8 @@ define([
                 _.forOwn(allParts, function(part) {
                     part.overlay.render($container);
                 });
+                applyGeographics();
+                resetOverlays();
             },
 
             destroy: function destroy() {
