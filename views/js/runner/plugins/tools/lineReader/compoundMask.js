@@ -79,8 +79,8 @@ define([
                 height: dimensions.topHeight,
                 initialX: position.outerX + dimensions.leftWidth,
                 initialY: position.outerY,
-                minWidth: dimensions.maskMinWidth,
-                minHeight: dimensions.maskMinHeight,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
@@ -107,6 +107,8 @@ define([
                 height: dimensions.topHeight,
                 initialX: position.innerX + dimensions.innerWidth,
                 initialY: position.outerY,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['top', 'right'],
                 edges: { top: true, right: true, bottom: false, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
@@ -126,6 +128,8 @@ define([
                 height: dimensions.innerHeight,
                 initialX: position.innerX + dimensions.innerWidth,
                 initialY: position.innerY,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
@@ -150,6 +154,8 @@ define([
                 height: dimensions.bottomHeight,
                 initialX: position.innerX + dimensions.innerWidth,
                 initialY: position.innerY + dimensions.innerHeight,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['bottom', 'right'],
                 edges: { top: false, right: true, bottom: true, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -168,6 +174,8 @@ define([
                 height: dimensions.bottomHeight,
                 initialX: position.outerX + dimensions.leftWidth,
                 initialY: position.innerY + dimensions.innerHeight,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
@@ -192,6 +200,8 @@ define([
                 height: dimensions.bottomHeight,
                 initialX: position.outerX,
                 initialY: position.innerY + dimensions.innerHeight,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['left', 'bottom'],
                 edges: { top: false, right: false, bottom: true, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -211,6 +221,8 @@ define([
                 height: dimensions.innerHeight,
                 initialX: position.outerX,
                 initialY: position.innerY,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
@@ -237,6 +249,8 @@ define([
                 height: dimensions.topHeight,
                 initialX: position.outerX,
                 initialY: position.outerY,
+                minWidth: constrains.maskMinWidth,
+                minHeight: constrains.maskMinHeight,
                 borders: ['left', 'top'],
                 edges: { top: true, right: false, bottom: false, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
