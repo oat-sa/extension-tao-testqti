@@ -8,8 +8,8 @@
 
 
 $overlayBg1: yellow;
-$overlayBg2: whiten($overlayBg1, 0.2);
-$overlayBg3: whiten($overlayBg1, 0.4);
+$overlayBg2: red;
+$overlayBg3: blue;
 
 .line-reader-overlay:nth-of-type(1n) {
     background-color: $overlayBg1;
