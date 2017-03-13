@@ -2,8 +2,11 @@
 
 .test-runner-scope {
     .content-wrapper {
-        div.key-navigation-group {
+        p.key-navigation-group, div.key-navigation-group {
             padding: 5px !important;
+        }
+        span.key-navigation-group.focusin{
+            outline: solid $info 1px !important;
         }
         .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction) {
             border-width: 1px !important;
