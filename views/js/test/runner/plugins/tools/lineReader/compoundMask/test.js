@@ -49,7 +49,9 @@ define([
                 innerHeight:    50,
 
                 minWidth:   20,
-                minHeight:  20
+                minHeight:  20,
+
+                resizeHandleSize: 7
             }),
             expectedDimensions = {
                 outerWidth:     500,
@@ -63,51 +65,66 @@ define([
                 leftWidth:      50
             },
             expectedPosition = {
-                outerX:         50,
-                outerY:         50,
-                innerX:         100,
-                innerY:         100
+                outerX: 50,
+                outerY: 50,
+                innerX: 100,
+                innerY: 100
             },
             expectedConstrains = {
                 minWidth:   20,
-                minHeight:  20
+                minHeight:  20,
+                resizeHandleSize: 7
             },
             allParts = mask.getParts();
 
-        // QUnit.expect(1);
+        QUnit.expect(35);
 
         mask.init();
         mask.render($container);
 
-        assert.deepEqual(mask.getDimensions(), expectedDimensions, 'dimensions have been correctly set');
-        assert.deepEqual(mask.getPosition(), expectedPosition, 'position have been correctly set');
-        assert.deepEqual(mask.getConstrains(), expectedConstrains, 'constrains have been correctly set');
+        assert.deepEqual(mask.getDimensions(),  expectedDimensions, 'dimensions have been correctly set');
+        assert.deepEqual(mask.getPosition(),    expectedPosition,   'position have been correctly set');
+        assert.deepEqual(mask.getConstrains(),  expectedConstrains, 'constrains have been correctly set');
 
-        assert.deepEqual(allParts.n.mask.getPosition(), { x: 100,       y: 50 },        'north mask has the right position');
-        assert.deepEqual(allParts.n.mask.getSize(),     { width: 350,   height: 50 },   'north mask has the right dimensions');
+        assert.deepEqual(allParts.n.mask.getSize(),         { width: 350,   height: 50 },   'north mask has the right dimensions');
+        assert.deepEqual(allParts.n.mask.getPosition(),     { x: 100,       y: 50 },        'north mask has the right position');
+        assert.deepEqual(allParts.n.overlay.getSize(),      { width: 350,   height: 50-14 },'north overlay has the right dimensions');
+        assert.deepEqual(allParts.n.overlay.getPosition(),  { x: 100,       y: 50 + 7 },    'north overlay has the right position');
 
-        assert.deepEqual(allParts.ne.mask.getSize(),    { width: 100,   height: 50 },   'north-east mask has the right dimensions');
-        assert.deepEqual(allParts.ne.mask.getPosition(),{ x: 450,       y: 50 },        'north-east mask has the right position');
+        assert.deepEqual(allParts.ne.mask.getSize(),        { width: 100,   height: 50 },   'north-east mask has the right dimensions');
+        assert.deepEqual(allParts.ne.mask.getPosition(),    { x: 450,       y: 50 },        'north-east mask has the right position');
+        assert.deepEqual(allParts.ne.overlay.getSize(),     { width: 100-7, height: 50-14 },'north-east overlay has the right dimensions');
+        assert.deepEqual(allParts.ne.overlay.getPosition(), { x: 450,       y: 50 + 7 },    'north-east overlay has the right position');
 
-        assert.deepEqual(allParts.e.mask.getSize(),     { width: 100,   height: 50 },   'east mask has the right dimensions');
-        assert.deepEqual(allParts.e.mask.getPosition(), { x: 450,       y: 100 },       'east mask has the right position');
+        assert.deepEqual(allParts.e.mask.getSize(),         { width: 100,   height: 50 },   'east mask has the right dimensions');
+        assert.deepEqual(allParts.e.mask.getPosition(),     { x: 450,       y: 100 },       'east mask has the right position');
+        assert.deepEqual(allParts.e.overlay.getSize(),      { width: 100-14,height: 50+14 },'east overlay has the right dimensions');
+        assert.deepEqual(allParts.e.overlay.getPosition(),  { x: 450 + 7,   y: 100 - 7 },   'east overlay has the right position');
 
-        assert.deepEqual(allParts.se.mask.getSize(),    { width: 100,   height: 200 },  'south-east mask has the right dimensions');
-        assert.deepEqual(allParts.se.mask.getPosition(),{ x: 450,       y: 150 },       'south-east mask has the right position');
+        assert.deepEqual(allParts.se.mask.getSize(),        { width: 100,   height: 200 },  'south-east mask has the right dimensions');
+        assert.deepEqual(allParts.se.mask.getPosition(),    { x: 450,       y: 150 },       'south-east mask has the right position');
+        assert.deepEqual(allParts.se.overlay.getSize(),     { width: 100-7, height:200-14 },'south-east overlay has the right dimensions');
+        assert.deepEqual(allParts.se.overlay.getPosition(), { x: 450,       y: 150+7 },     'south-east overlay has the right position');
 
-        assert.deepEqual(allParts.s.mask.getSize(),     { width: 350,   height: 200 },  'south mask has the right dimensions');
-        assert.deepEqual(allParts.s.mask.getPosition(), { x: 100,       y: 150 },       'south mask has the right position');
+        assert.deepEqual(allParts.s.mask.getSize(),         { width: 350,   height: 200 },  'south mask has the right dimensions');
+        assert.deepEqual(allParts.s.mask.getPosition(),     { x: 100,       y: 150 },       'south mask has the right position');
+        assert.deepEqual(allParts.s.overlay.getSize(),      { width: 350,   height:200-14 },'south overlay has the right dimensions');
+        assert.deepEqual(allParts.s.overlay.getPosition(),  { x: 100,       y: 150+7 },     'south overlay has the right position');
 
-        assert.deepEqual(allParts.sw.mask.getSize(),    { width: 50,   height: 200 },   'south-west mask has the right dimensions');
-        assert.deepEqual(allParts.sw.mask.getPosition(),{ x: 50,       y: 150 },        'south-west mask has the right position');
+        assert.deepEqual(allParts.sw.mask.getSize(),        { width: 50,   height: 200 },   'south-west mask has the right dimensions');
+        assert.deepEqual(allParts.sw.mask.getPosition(),    { x: 50,       y: 150 },        'south-west mask has the right position');
+        assert.deepEqual(allParts.sw.overlay.getSize(),     { width: 50-7, height: 200-14 },'south-west overlay has the right dimensions');
+        assert.deepEqual(allParts.sw.overlay.getPosition(), { x: 50+7,     y: 150+7 },      'south-west overlay has the right position');
 
-        assert.deepEqual(allParts.w.mask.getSize(),     { width: 50,   height: 50 },    'west mask has the right dimensions');
-        assert.deepEqual(allParts.w.mask.getPosition(), { x: 50,       y: 100 },        'west mask has the right position');
+        assert.deepEqual(allParts.w.mask.getSize(),         { width: 50,   height: 50 },    'west mask has the right dimensions');
+        assert.deepEqual(allParts.w.mask.getPosition(),     { x: 50,       y: 100 },        'west mask has the right position');
+        assert.deepEqual(allParts.w.overlay.getSize(),      { width:50-14, height: 50+14 }, 'west overlay has the right dimensions');
+        assert.deepEqual(allParts.w.overlay.getPosition(),  { x: 50+7,     y: 100-7 },      'west overlay has the right position');
 
-        assert.deepEqual(allParts.nw.mask.getSize(),    { width: 50,   height: 50 },    'north-west mask has the right dimensions');
-        assert.deepEqual(allParts.nw.mask.getPosition(),{ x: 50,       y: 50 },         'north-west mask has the right position');
-
-
+        assert.deepEqual(allParts.nw.mask.getSize(),        { width: 50,   height: 50 },    'north-west mask has the right dimensions');
+        assert.deepEqual(allParts.nw.mask.getPosition(),    { x: 50,       y: 50 },         'north-west mask has the right position');
+        assert.deepEqual(allParts.nw.overlay.getSize(),     { width: 50-7, height: 50-14 }, 'north-west overlay has the right dimensions');
+        assert.deepEqual(allParts.nw.overlay.getPosition(), { x: 50+7,     y: 50+7 },       'north-west overlay has the right position');
     });
 
 
@@ -368,7 +385,7 @@ define([
                 data.fromTop || false
             );
 
-            // we only check that the resize triggers the correct dimension and position changes
+            // we only check that the resize triggers the correct dimension and position changes in the model
             // the actual check of whether those values are correctly translated in each component is made by .applyGeometrics() test
             assert.deepEqual(mask.getDimensions(), _.assign(dimensions, data.dimensions), 'dimensions after resize are correct');
             assert.deepEqual(mask.getPosition(), _.assign(position, data.position), 'positions after resize are correct');

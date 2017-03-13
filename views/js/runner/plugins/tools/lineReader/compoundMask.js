@@ -16,7 +16,8 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * A coumpond mask is a mask built with multiple ui/components that interacts with each other.
+ * A compound mask is a mask built with multiple ui/components that interacts with each other.
+ * The compound mask itself is not a ui/component but mimic most of its API.
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -45,20 +46,21 @@ define([
 
     var defaultConfig = {
         // dimensions
-        outerWidth:     500,
-        outerHeight:    300,
-        innerWidth:     400,
-        innerHeight:    20,
+        outerWidth:  500,
+        outerHeight: 300,
+        innerWidth:  400,
+        innerHeight: 20,
 
         // position
-        outerX:         100,
-        outerY:         50,
-        innerX:         150,
-        innerY:         100,
+        outerX: 100,
+        outerY: 50,
+        innerX: 150,
+        innerY: 100,
 
         // constrains
-        minWidth:   20,
-        minHeight:  20
+        minWidth:  20,
+        minHeight: 20,
+        resizeHandleSize: 5
     };
 
     //fixme: what is my purpose in this world ?!??
@@ -91,7 +93,20 @@ define([
                     );
                 },
 
-                // set a resize limit whenever resize happens on an inner edge (here, the top inner edge),
+                // move and dimension the overlay
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width,
+                        size.height - (constrains.resizeHandleSize * 2)
+                    );
+                },
+
+                // set a resize limit whenever resize happens on an inner edge (here, the top inner edge, eg. the bottom of the mask),
                 // so the min/max width/height limit for "inner component" is respected
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     this.config.maxHeight = (fromTop)
@@ -120,6 +135,18 @@ define([
                     );
                 },
 
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - constrains.resizeHandleSize,
+                        size.height - (constrains.resizeHandleSize * 2)
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
                     setRightWidth(width, x, fromLeft);
@@ -138,6 +165,18 @@ define([
                     ).setSize(
                         dimensions.rightWidth,
                         dimensions.innerHeight
+                    );
+                },
+
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x + constrains.resizeHandleSize,
+                        pos.y - constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - (constrains.resizeHandleSize * 2),
+                        size.height + (constrains.resizeHandleSize * 2)
                     );
                 },
 
@@ -167,6 +206,18 @@ define([
                     );
                 },
 
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - constrains.resizeHandleSize,
+                        size.height - (constrains.resizeHandleSize * 2)
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setRightWidth(width, x, fromLeft);
                     setBottomHeight(height, y, fromTop);
@@ -185,6 +236,18 @@ define([
                     ).setSize(
                         dimensions.innerWidth,
                         dimensions.bottomHeight
+                    );
+                },
+
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width,
+                        size.height - (constrains.resizeHandleSize * 2)
                     );
                 },
 
@@ -214,6 +277,18 @@ define([
                     );
                 },
 
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x + constrains.resizeHandleSize,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - constrains.resizeHandleSize,
+                        size.height - (constrains.resizeHandleSize * 2)
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setBottomHeight(height, y, fromTop);
                     setLeftWidth(width, x, fromLeft);
@@ -232,6 +307,18 @@ define([
                     ).setSize(
                         dimensions.leftWidth,
                         dimensions.innerHeight
+                    );
+                },
+
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x + constrains.resizeHandleSize,
+                        pos.y - constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - (constrains.resizeHandleSize * 2),
+                        size.height + (constrains.resizeHandleSize * 2)
                     );
                 },
 
@@ -261,12 +348,166 @@ define([
                     );
                 },
 
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x + constrains.resizeHandleSize,
+                        pos.y + constrains.resizeHandleSize
+                    ).setSize(
+                        size.width - constrains.resizeHandleSize,
+                        size.height - (constrains.resizeHandleSize * 2)
+                    );
+                },
+
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
                     setLeftWidth(width, x, fromLeft);
                     applyGeographics();
                 }
             }));
+        }
+
+        // jsdoc me !!
+        function createPart(id, partConfig) {
+            allParts[id] = {
+                mask: createMask(partConfig),
+                overlay: createOverlay(partConfig)
+            };
+        }
+
+        function createMask(maskConfig) {
+            var maskAPI;
+
+            maskAPI = {
+                place: maskConfig.place,
+                placeOverlay: maskConfig.placeOverlay
+            };
+
+            return makeResizable(componentFactory(maskAPI, maskConfig))
+                .on('render', function() {
+                    var $element = this.getElement();
+
+                    // style each resizable edge
+                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                        if (isResizable) {
+                            $element.css('border-' + edgeId + '-width', '1px'); // todo: create style
+                        }
+                    });
+                })
+                .on('resize', maskConfig.onResize || _.noop)
+                .on('beforeresize', maskConfig.beforeResize || _.noop)
+                .on('resizeend', function () {
+                    resetOverlays();
+                })
+                .init()
+                .setTemplate(maskPartTpl);
+        }
+
+        function createOverlay(overlayConfig) {
+            var overlay = componentFactory({}, overlayConfig);
+
+            return makeDraggable(overlay)
+                .on('render', function() {
+                    var self = this,
+                        $element = this.getElement();
+
+                    $element
+                        .on('mousedown', function coverAllCompoundMask() {
+                            self.setSize(dimensions.outerWidth, dimensions.outerHeight);
+                            self.moveTo(position.outerX, position.outerY);
+                        })
+                        .on('mouseup', function () {
+                            resetOverlays();
+                        });
+                })
+                .on('dragmove', function moveAllPartsTogether(xOffsetRelative, yOffsetRelative) {
+                    _.forOwn(allParts, function(part) {
+                        part.mask.moveBy(xOffsetRelative, yOffsetRelative);
+                    });
+                    updatePosition();
+                })
+                .on('dragend', function () {
+                    resetOverlays();
+                })
+                .init()
+                .setTemplate(overlayPartTpl);
+        }
+
+        function updateDimensions() {
+            var n = allParts.n.mask.getSize(),
+                e = allParts.e.mask.getSize(),
+                s = allParts.s.mask.getSize(),
+                w = allParts.w.mask.getSize();
+
+            dimensions.outerWidth   = w.width + n.width + e.width;
+            dimensions.outerHeight  = n.height + w.height + s.height;
+            dimensions.innerWidth   = n.width;
+            dimensions.innerHeight  = w.height;
+            dimensions.topHeight    = n.height;
+            dimensions.rightWidth   = e.width;
+            dimensions.bottomHeight = s.height;
+            dimensions.leftWidth    = w.width;
+        }
+
+        function updatePosition() {
+            var nwPosition  = allParts.nw.mask.getPosition(),
+                nwSize      = allParts.nw.mask.getSize();
+
+            position.outerX = nwPosition.x;
+            position.outerY = nwPosition.y;
+            position.innerX = nwPosition.x + nwSize.width;
+            position.innerY = nwPosition.y + nwSize.height;
+        }
+
+        function setGeographics(geoConfig) {
+            dimensions = {
+                outerWidth:     geoConfig.outerWidth,
+                outerHeight:    geoConfig.outerHeight,
+                innerWidth:     geoConfig.innerWidth,
+                innerHeight:    geoConfig.innerHeight,
+
+                topHeight:      geoConfig.innerY - geoConfig.outerY,
+                rightWidth:     geoConfig.outerWidth - (geoConfig.innerX - geoConfig.outerX) - geoConfig.innerWidth,
+                bottomHeight:   geoConfig.outerHeight - (geoConfig.innerY - geoConfig.outerY) - geoConfig.innerHeight,
+                leftWidth:      geoConfig.innerX - geoConfig.outerX
+            };
+
+            position = {
+                outerX: geoConfig.outerX,
+                outerY: geoConfig.outerY,
+                innerX: geoConfig.innerX,
+                innerY: geoConfig.innerY
+            };
+
+            constrains = {
+                minWidth: geoConfig.minWidth,
+                minHeight: geoConfig.minHeight,
+                resizeHandleSize: geoConfig.resizeHandleSize
+            };
+        }
+
+        function applyGeographics() {
+            _.forOwn(allParts, function(part) {
+                part.mask.place.call(part); // todo: needed? use invoke?
+            });
+            resetOverlays();
+        }
+
+        function resetOverlays() {
+            _.forOwn(allParts, function(part) {
+                // var overlay = part.overlay,
+                //     mask    = part.mask,
+                //     size    = mask.getSize(),
+                //     pos     = mask.getPosition();
+                part.mask.placeOverlay(part.overlay);
+                // overlay.place(
+                //     pos.x,
+                //     pos.y,
+                //     size.width,
+                //     size.height
+                // );
+            });
         }
 
         function setTopHeight(height, y, fromTop) {
@@ -314,180 +555,6 @@ define([
             }
         }
 
-        // jsdoc me !!
-        function createPart(id, partConfig) {
-            allParts[id] = {
-                mask: createMask(partConfig),
-                overlay: createOverlay(partConfig)
-            };
-        }
-
-        function createMask(maskConfig) {
-            return makeResizable(componentFactory({
-                place: maskConfig.place
-            }, maskConfig))
-                .on('render', function() {
-                    var $element = this.getElement();
-
-                    // style each resizable edge
-                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
-                        if (isResizable) {
-                            $element.css('border-' + edgeId + '-width', '1px'); // todo: create style
-                        }
-                    });
-                })
-                .on('resize', maskConfig.onResize || _.noop)
-                .on('beforeresize', maskConfig.beforeResize || _.noop)
-                .on('resizeend', function () {
-                    resetOverlays();
-                })
-                .init()
-                .setTemplate(maskPartTpl);
-        }
-
-        function createOverlay(overlayConfig) {
-            var overlay,
-                overlayAPI;
-
-            overlayAPI = {
-                place: function place(maskX, maskY, maskWidth, maskHeight) {
-                    this.setSize(
-                        maskWidth - this._widthOffset,
-                        maskHeight - this._heightOffset
-                    );
-                    this.moveTo(
-                        maskX + this._xOffset,
-                        maskY + this._yOffset
-                    );
-                }
-            };
-
-            overlay = componentFactory(overlayAPI, overlayConfig);
-
-            return makeDraggable(overlay)
-                .on('init', function() {
-                    this._widthOffset = 0;
-                    this._heightOffset = 0;
-                    this._xOffset = 0;
-                    this._yOffset = 0;
-
-                    if (this.config.edges.top) {
-                        this._heightOffset += overlayOffset;
-                        this._yOffset += overlayOffset;
-                    }
-                    if (this.config.edges.right) {
-                        this._widthOffset += overlayOffset;
-                    }
-                    if (this.config.edges.bottom) {
-                        this._heightOffset += overlayOffset;
-                    }
-                    if (this.config.edges.left) {
-                        this._widthOffset += overlayOffset;
-                        this._xOffset += overlayOffset;
-                    }
-                })
-                .on('render', function() {
-                    var self = this,
-                        $element = this.getElement();
-
-                    $element
-                        .on('mousedown', function coverAllCompoundMask() {
-                            self.setSize(dimensions.outerWidth, dimensions.outerHeight);
-                            self.moveTo(position.outerX, position.outerY);
-                        })
-                        .on('mouseup', function () {
-                            resetOverlays(); // todo: mmmmm, doublon
-                        });
-                })
-                .on('dragmove', function moveAllPartsTogether(xOffsetRelative, yOffsetRelative) {
-                    _.forOwn(allParts, function(part) {
-                        part.mask.moveBy(xOffsetRelative, yOffsetRelative);
-                    });
-                    updatePosition();
-                })
-                .on('dragend', function () {
-                    resetOverlays();
-
-                })
-                .init()
-                .setTemplate(overlayPartTpl);
-        }
-
-        function updateDimensions() {
-            var n = allParts.n.mask.getSize(),
-                e = allParts.e.mask.getSize(),
-                s = allParts.s.mask.getSize(),
-                w = allParts.w.mask.getSize();
-
-            dimensions.outerWidth   = w.width + n.width + e.width;
-            dimensions.outerHeight  = n.height + w.height + s.height;
-            dimensions.innerWidth   = n.width;
-            dimensions.innerHeight  = w.height;
-            dimensions.topHeight    = n.height;
-            dimensions.rightWidth   = e.width;
-            dimensions.bottomHeight = s.height;
-            dimensions.leftWidth    = w.width;
-        }
-
-        function updatePosition() {
-            var nwPosition  = allParts.nw.mask.getPosition(),
-                nwSize      = allParts.nw.mask.getSize();
-
-            position.outerX = nwPosition.x;
-            position.outerY = nwPosition.y;
-            position.innerX = nwPosition.x + nwSize.width;
-            position.innerY = nwPosition.y + nwSize.height;
-        }
-
-        function resetOverlays() {
-            _.forOwn(allParts, function(part) {
-                var overlay = part.overlay,
-                    mask    = part.mask,
-                    size    = mask.getSize(),
-                    pos     = mask.getPosition();
-
-                overlay.place(
-                    pos.x,
-                    pos.y,
-                    size.width,
-                    size.height
-                );
-            });
-        }
-
-        function setGeographics(geoConfig) {
-            dimensions = {
-                outerWidth:     geoConfig.outerWidth,
-                outerHeight:    geoConfig.outerHeight,
-                innerWidth:     geoConfig.innerWidth,
-                innerHeight:    geoConfig.innerHeight,
-
-                topHeight:      geoConfig.innerY - geoConfig.outerY,
-                rightWidth:     geoConfig.outerWidth - (geoConfig.innerX - geoConfig.outerX) - geoConfig.innerWidth,
-                bottomHeight:   geoConfig.outerHeight - (geoConfig.innerY - geoConfig.outerY) - geoConfig.innerHeight,
-                leftWidth:      geoConfig.innerX - geoConfig.outerX
-            };
-
-            position = {
-                outerX: geoConfig.outerX,
-                outerY: geoConfig.outerY,
-                innerX: geoConfig.innerX,
-                innerY: geoConfig.innerY
-            };
-
-            constrains = {
-                minWidth: geoConfig.minWidth,
-                minHeight: geoConfig.minHeight
-            };
-        }
-
-        function applyGeographics() {
-            _.forOwn(allParts, function(part) {
-                part.mask.place.call(part);
-            });
-
-            resetOverlays();
-        }
 
         config = _.defaults(config || {}, defaultConfig);
 
