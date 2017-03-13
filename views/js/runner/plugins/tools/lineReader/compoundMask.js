@@ -66,6 +66,9 @@ define([
     //fixme: what is my purpose in this world ?!??
     var overlayOffset = 5;
 
+    /**
+     * JsDoc me !!!
+     */
     return function compoundMaskFactory(config) {
         var compoundMask,
             allParts    = {},
@@ -75,7 +78,6 @@ define([
 
         function createCompoundMask() {
             createPart('n', _.assign({}, constrains, {
-                borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
@@ -97,7 +99,6 @@ define([
                 }
             }));
             createPart('ne', _.assign({}, constrains, {
-                borders: ['top', 'right'],
                 edges: { top: true, right: true, bottom: false, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (! fromLeft) {
@@ -112,7 +113,6 @@ define([
                 }
             }));
             createPart('e', _.assign({}, constrains, {
-                borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
@@ -132,7 +132,6 @@ define([
                 }
             }));
             createPart('se', _.assign({}, constrains, {
-                borders: ['bottom', 'right'],
                 edges: { top: false, right: true, bottom: true, left: false },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (! fromLeft) {
@@ -146,7 +145,6 @@ define([
                 }
             }));
             createPart('s', _.assign({}, constrains, {
-                borders: ['top', 'bottom'],
                 edges: { top: true, right: false, bottom: true, left: false },
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     if (fromTop) {
@@ -166,7 +164,6 @@ define([
                 }
             }));
             createPart('sw', _.assign({}, constrains, {
-                borders: ['left', 'bottom'],
                 edges: { top: false, right: false, bottom: true, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     if (fromLeft) {
@@ -181,7 +178,6 @@ define([
                 }
             }));
             createPart('w', _.assign({}, constrains, {
-                borders: ['left', 'right'],
                 edges: { top: false, right: true, bottom: false, left: true },
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     if (fromLeft) {
@@ -203,7 +199,6 @@ define([
                 }
             }));
             createPart('nw', _.assign({}, constrains, {
-                borders: ['left', 'top'],
                 edges: { top: true, right: false, bottom: false, left: true },
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     if (fromLeft) {
@@ -232,11 +227,12 @@ define([
                 .on('render', function() {
                     var $element = this.getElement();
 
-                    if (_.isArray(this.config.borders)) {
-                        this.config.borders.forEach(function(borderPosition) {
-                            $element.css('border-' + borderPosition + '-width', '1px');
-                        });
-                    }
+                    // style each resizable edge
+                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                        if (isResizable) {
+                            $element.css('border-' + edgeId + '-width', '1px'); // todo: create style
+                        }
+                    });
                 })
                 .on('resize', maskConfig.onResize || _.noop)
                 .on('resize', updateDimensions) // fixme: hmpf
