@@ -264,7 +264,7 @@ define([
         $interaction.off('.keyNavigation');
 
         //search for inputs that represent the interaction focusable choices
-        $inputs = $interaction.is(':input') ? $interaction : $interaction.find('input');
+        $inputs = $interaction.is(':input') ? $interaction : $interaction.find(':input');
         interactionNavigables = navigableDomElement.createFromDoms($inputs);
 
         if (interactionNavigables.length) {
