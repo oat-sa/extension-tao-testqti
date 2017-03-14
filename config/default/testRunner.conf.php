@@ -274,7 +274,7 @@ return array(
      * @type string
      */
     'test-session' => '\taoQtiTest_helpers_TestSession',
-    
+
     /**
      * The FQCN of the TestSessionStorage class
      * @type string
@@ -446,6 +446,9 @@ return array(
         ),
         'area-masking' => array(
             'toggle' => 'Y'
+        ),
+        'lineReader' => array(
+            'toggle' => 'G'
         )
     ],
 
