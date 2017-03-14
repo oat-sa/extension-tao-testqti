@@ -19,13 +19,15 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+    'jquery',
     'lodash',
     'helpers',
     'ui/hider',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/tools/lineReader/plugin'
-], function(_, helpers, hider, runnerFactory, providerMock, pluginFactory) {
+    'taoQtiTest/runner/plugins/tools/lineReader/plugin',
+    'lib/simulator/jquery.simulate'
+], function($, _, helpers, hider, runnerFactory, providerMock, pluginFactory) {
     'use strict';
 
     var pluginApi;
@@ -272,6 +274,170 @@ define([
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
+                QUnit.start();
+            });
+    });
+
+
+    /**
+     * The following tests are specific to this plugin
+     */
+    QUnit.module('line reader');
+
+    QUnit.asyncTest('Render compound mask', function(assert) {
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(4);
+
+        runner.setTestContext({
+            options: {
+                lineReader: true
+            }
+        });
+
+        plugin.init()
+            .then(function() {
+                var $contentContainer = areaBroker.getContentArea().parent(),
+                    $masks = $contentContainer.find('.line-reader-mask'),
+                    $overlays = $contentContainer.find('.line-reader-overlay');
+
+                runner.trigger('renderitem');
+
+                assert.equal($masks.length, 8, '8 masks have been rendered');
+                assert.equal($overlays.length, 8, '8 overlays have been rendered');
+
+                assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
+                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
+
+                QUnit.start();
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Unexpected error: ' + err);
+                QUnit.start();
+            });
+    });
+
+    QUnit.asyncTest('Toggle on click', function(assert) {
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(8);
+
+        runner.setTestContext({
+            options: {
+                lineReader: true
+            }
+        });
+
+        plugin.init()
+            .then(function() {
+                var $contentContainer = areaBroker.getContentArea().parent(),
+                    $toolboxContainer = areaBroker.getToolboxArea(),
+                    $masks = $contentContainer.find('.line-reader-mask'),
+                    $overlays = $contentContainer.find('.line-reader-overlay'),
+                    $button;
+
+                runner.trigger('renderitem');
+
+                areaBroker.getToolbox().render($toolboxContainer);
+                $button = areaBroker.getToolboxArea().find('[data-control="line-reader"]');
+
+                assert.equal($masks.length, 8, '8 masks have been rendered');
+                assert.equal($overlays.length, 8, '8 overlays have been rendered');
+
+                assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
+                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
+
+                $button.click();
+
+                assert.ok(! $masks.hasClass('hidden'), 'masks are now visible on a button mouse click');
+                assert.ok(! $overlays.hasClass('hidden'), 'overlays are now visible on a button mouse click');
+
+                $button.click();
+
+                assert.ok($masks.hasClass('hidden'), 'masks are hidden again on a button mouse click');
+                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden again on a button mouse click');
+
+                QUnit.start();
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Unexpected error: ' + err);
+                QUnit.start();
+            });
+    });
+
+    QUnit.asyncTest('Toggle on keyboard shortcut', function(assert) {
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+        QUnit.expect(6);
+
+        runner.setTestContext({
+            options: {
+                lineReader: true
+            }
+        });
+
+        runner.setTestData({
+            config: {
+                allowShortcuts: true,
+                shortcuts: {
+                    'line-reader': {
+                        toggle: 'c'
+                    }
+                }
+            }
+        });
+
+        plugin.init()
+            .then(function() {
+                var $contentContainer = areaBroker.getContentArea().parent(),
+                    $masks = $contentContainer.find('.line-reader-mask'),
+                    $overlays = $contentContainer.find('.line-reader-overlay');
+
+                runner.trigger('renderitem');
+
+                assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
+                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
+
+                $contentContainer.simulate('keydown', {
+                    charCode: 0,
+                    keyCode: 67,
+                    which: 67,
+                    code: 'KeyC',
+                    key: 'c',
+                    ctrlKey: false,
+                    shiftKey: false,
+                    altKey: false,
+                    metaKey: false
+                });
+
+                assert.ok(! $masks.hasClass('hidden'), 'masks are now visible on keyboard shortcut');
+                assert.ok(! $overlays.hasClass('hidden'), 'overlays are now visible on keyboard shortcut');
+
+                $contentContainer.simulate('keydown', {
+                    charCode: 0,
+                    keyCode: 67,
+                    which: 67,
+                    code: 'KeyC',
+                    key: 'c',
+                    ctrlKey: false,
+                    shiftKey: false,
+                    altKey: false,
+                    metaKey: false
+                });
+
+                assert.ok($masks.hasClass('hidden'), 'masks are hidden again on keyboard shortcut');
+                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden again on keyboard shortcut');
+
+                QUnit.start();
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Unexpected error: ' + err);
                 QUnit.start();
             });
     });
