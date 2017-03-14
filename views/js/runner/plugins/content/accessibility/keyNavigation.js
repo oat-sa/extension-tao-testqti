@@ -204,67 +204,26 @@ define([
 
     /**
      * Init the navigation in the item content
-     * It returns an array of keyNavigator ids as the content is dynamically determined
+     * Navigable item content are interaction choices and body element with the special class "key-navigation-focusable"
+     * It returns an array of keyNavigators as the content is dynamically determined
      *
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
     function initContentNavigation(testRunner){
-        var $itemElements, $inputs;
+
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
-        //adding retro-compatibility with legacy focusable class for defining focusable passages
+        //the item focusable body elements are considered scrollable
         $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
-
-        //$itemElements = $content.find('.key-navigation-focusable,.choice-area');
-        $itemElements = $content.find('.key-navigation-focusable,.qti-interaction');
-        var $bodyElements = $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+        $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+            //filter out interaction as it will be managed separately
             return (!$(this).parents('.qti-interaction').length);
-        });
-
-        $bodyElements.each(function(){
+        }).each(function(){
             var $itemElement = $(this);
-            var itemNavigables = [];
-
-            //if($itemElement.hasClass('choice-area')){
             if($itemElement.hasClass('qti-interaction')){
-
-                //add navigable elements from prompt
-                var $prompts = $itemElement.find('.key-navigation-focusable').each(function(){
-                    var $nav = $(this);
-                    if(!$nav.closest('.qti-choice').length){
-                        itemNavigators.push(keyNavigator({
-                            elements : navigableDomElement.createFromDoms($nav),
-                            group : $nav,
-                            propagateTab : false
-                        }));
-                    }
-                });
-
-                //reset interaction custom key navigation to override the behaviour with the new one
-                $itemElement.off('.keyNavigation');
-                $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
-                itemNavigables = navigableDomElement.createFromDoms($inputs);
-
-                if (itemNavigables.length) {
-                    itemNavigators.push(keyNavigator({
-                        elements : itemNavigables,
-                        group : $itemElement,
-                        loop : false
-                    }).on('right down', function(){
-                        this.next();
-                    }).on('left up', function(){
-                        this.previous();
-                    }).on('activate', function(cursor){
-                        cursor.navigable.getElement().click();
-                    }).on('focus', function(cursor){
-                        cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
-                    }).on('blur', function(cursor){
-                        cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
-                    }));
-                }
-
+                itemNavigators = _.union(itemNavigators, initInteractionNavigation($itemElement));
             }else{
                 itemNavigators.push(keyNavigator({
                     elements : navigableDomElement.createFromDoms($itemElement),
@@ -275,6 +234,58 @@ define([
         });
 
         return itemNavigators;
+    }
+
+    /**
+     * Init interaction key navigation from the interaction navigator
+     *
+     * @param {JQuery} $interaction - the interaction container
+     * @returns {Array} array of navigators created from interaction container
+     */
+    function initInteractionNavigation($interaction){
+
+        var $inputs;
+        var interactionNavigables;
+        var interactionNavigators = [];
+
+        //add navigable elements from prompt
+        $interaction.find('.key-navigation-focusable').each(function(){
+            var $nav = $(this);
+            if(!$nav.closest('.qti-choice').length){
+                interactionNavigators.push(keyNavigator({
+                    elements : navigableDomElement.createFromDoms($nav),
+                    group : $nav,
+                    propagateTab : false
+                }));
+            }
+        });
+
+        //reset interaction custom key navigation to override the behaviour with the new one
+        $interaction.off('.keyNavigation');
+
+        //search for inputs that represent the interaction focusable choices
+        $inputs = $interaction.is(':input') ? $interaction : $interaction.find('input');
+        interactionNavigables = navigableDomElement.createFromDoms($inputs);
+
+        if (interactionNavigables.length) {
+            interactionNavigators.push(keyNavigator({
+                elements : interactionNavigables,
+                group : $interaction,
+                loop : false
+            }).on('right down', function(){
+                this.next();
+            }).on('left up', function(){
+                this.previous();
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click();
+            }).on('focus', function(cursor){
+                cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
+            }).on('blur', function(cursor){
+                cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
+            }));
+        }
+
+        return interactionNavigators;
     }
 
     /**
