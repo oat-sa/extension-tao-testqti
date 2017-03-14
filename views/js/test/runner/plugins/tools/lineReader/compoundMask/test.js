@@ -405,10 +405,7 @@ define([
                 innerX:         100,
                 innerY:         100,
                 innerWidth:     350,
-                innerHeight:    50,
-
-                minWidth:   20,
-                minHeight:  20
+                innerHeight:    50
             }),
             $container = $('#outside');
 

@@ -58,9 +58,9 @@ define([
         innerY: 100,
 
         // constrains
-        minWidth:  20,
-        minHeight: 20,
-        resizeHandleSize: 5
+        minWidth:  30,
+        minHeight: 30,
+        resizeHandleSize: 10
     };
 
     //fixme: what is my purpose in this world ?!??
