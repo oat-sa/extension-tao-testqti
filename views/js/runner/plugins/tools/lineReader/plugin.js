@@ -62,7 +62,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})['lineReader'] || {};
 
             var compoundMask = compoundMaskFactory();
 
