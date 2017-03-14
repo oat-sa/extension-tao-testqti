@@ -568,6 +568,8 @@ define([
             init: function init() {
                 setGeographics(config);
                 createCompoundMask();
+
+                return this;
             },
 
             render: function render($container) {
@@ -576,8 +578,11 @@ define([
                 });
                 _.forOwn(allParts, function(part) {
                     part.overlay.render($container);
+                    part.overlay.hide();
                 });
                 applyGeographics();
+
+                return this;
             },
 
             destroy: function destroy() {
@@ -585,6 +590,28 @@ define([
                     part.mask.destroy();
                     part.overlay.destroy();
                 });
+
+                return this;
+            },
+
+            show: function show() {
+                _.forOwn(allParts, function(part) {
+                    part.mask.show();
+                    part.overlay.show();
+                });
+                this.setState('hidden', false);
+
+                return this;
+            },
+
+            hide: function hide() {
+                _.forOwn(allParts, function(part) {
+                    part.mask.hide();
+                    part.overlay.hide();
+                });
+                this.setState('hidden', true);
+
+                return this;
             },
 
             getDimensions: function getDimensions() {

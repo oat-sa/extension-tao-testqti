@@ -63,10 +63,56 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})['lineReader'] || {};
+            var $container = testRunner.getAreaBroker().getContentArea().parent();
 
-            var compoundMask = compoundMaskFactory();
+            var compoundMask = compoundMaskFactory()
+                .init()
+                .render($container)
+                .hide();
 
-            // create buttons
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
+                //to be activated with the special category x-tao-option-lineReader
+                return !!options.lineReader;
+            }
+
+            /**
+             * Is plugin activated ? if not, then we hide the button
+             */
+            function toggleButton() {
+                if (isEnabled()) {
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
+
+            function toggleMask() {
+                if (compoundMask.getState('hidden')) {
+                    showMask();
+                } else {
+                    hideMask();
+                }
+            }
+
+            function showMask() {
+                testRunner.trigger('plugin-start.' + pluginName);
+                self.button.turnOn();
+                compoundMask.show();
+            }
+
+            function hideMask() {
+                testRunner.trigger('plugin-end.' + pluginName);
+                self.button.turnOff();
+                compoundMask.hide();
+            }
+
+            // create button
             this.button = this.getAreaBroker().getToolbox().createEntry({
                 title: __('Line Reader'),
                 icon: 'insert-horizontal-line',
@@ -92,40 +138,19 @@ define([
             //start disabled
             this.disable();
 
-            /**
-             * Checks if the plugin is currently available
-             * @returns {Boolean}
-             */
-            function isEnabled() {
-                var context = testRunner.getTestContext() || {},
-                    options = context.options || {};
-                //to be activated with the special category x-tao-option-lineReader
-                return !!options.lineReader;
-            }
-
-            /**
-             * Is plugin activated ? if not, then we hide the plugin
-             */
-            function togglePlugin() {
-                if (isEnabled()) {
-                    self.show();
-                } else {
-                    self.hide();
-                }
-            }
-
             //update plugin state based on changes
             testRunner
-                .on('loaditem', togglePlugin)
+                .on('loaditem', toggleButton)
                 .on('enabletools renderitem', function () {
                     self.enable();
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
+                    hideMask();
                 })
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {
-                        compoundMask.toggle();
+                        toggleMask();
                     }
                 });
         },
