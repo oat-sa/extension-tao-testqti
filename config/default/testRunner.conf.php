@@ -447,7 +447,7 @@ return array(
         'area-masking' => array(
             'toggle' => 'Y'
         ),
-        'lineReader' => array(
+        'line-reader' => array(
             'toggle' => 'G'
         )
     ],

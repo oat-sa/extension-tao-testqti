@@ -1106,7 +1106,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             // Register line reader shortcut
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['shortcuts']['lineReader'] = [
+            $config['shortcuts']['line-reader'] = [
                 'toggle' => 'G'
             ];
             $extension->setConfig('testRunner', $config);
