@@ -144,30 +144,22 @@ define([
 
                 areaBroker.getToolbox().render($container);
 
-                plugin.enable()
+                return plugin.enable()
                     .then(function() {
                         $button = $container.find('[data-control="line-reader"]');
 
                         assert.equal($button.hasClass('disabled'), false, 'The trigger button has been enabled');
 
-                        plugin.disable()
+                        return plugin.disable()
                             .then(function() {
                                 assert.equal($button.hasClass('disabled'), true, 'The trigger button has been disabled');
 
                                 QUnit.start();
-                            })
-                            .catch(function(err) {
-                                assert.ok(false, 'error in disable method: ' + err);
-                                QUnit.start();
                             });
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'error in enable method: ' + err);
-                        QUnit.start();
                     });
             })
             .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
+                assert.ok(false, 'Unexpected error: ' + err);
                 QUnit.start();
             });
     });
@@ -178,7 +170,7 @@ define([
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(2);
+        QUnit.expect(3);
 
         plugin.init()
             .then(function() {
@@ -187,30 +179,27 @@ define([
 
                 areaBroker.getToolbox().render($container);
 
-                plugin.hide()
+                return plugin.hide()
                     .then(function() {
                         $button = $container.find('[data-control="line-reader"]');
 
                         assert.ok(hider.isHidden($button), 'The trigger button has been hidden');
 
-                        plugin.show()
+                        return plugin.show()
                             .then(function() {
                                 assert.ok(! hider.isHidden($button), 'The trigger button is visible');
 
-                                QUnit.start();
-                            })
-                            .catch(function(err) {
-                                assert.ok(false, 'error in disable method: ' + err);
-                                QUnit.start();
+                                return plugin.hide().then(
+                                    function() {
+                                        assert.ok(hider.isHidden($button), 'The trigger button has been hidden again');
+
+                                        QUnit.start();
+                                    });
                             });
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'error in enable method: ' + err);
-                        QUnit.start();
                     });
             })
             .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
+                assert.ok(false, 'Unexpected error: ' + err);
                 QUnit.start();
             });
     });
@@ -225,7 +214,7 @@ define([
 
         runner.setTestContext({
             options: {
-                highlighter: true
+                lineReader: true
             }
         });
 
