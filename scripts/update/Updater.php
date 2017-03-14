@@ -1075,17 +1075,17 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('6.10.0');
         }
-        
+
         if ($this->isVersion('6.10.0')) {
-            
+
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['test-session-storage'] = '\taoQtiTest_helpers_TestSessionStorage';
             $extension->setConfig('testRunner', $config);
-            
+
             $this->setVersion('6.11.0');
         }
 
-        $this->skip('6.11.0', '6.11.1');
+        $this->skip('6.11.0', '6.12.0');
     }
 }

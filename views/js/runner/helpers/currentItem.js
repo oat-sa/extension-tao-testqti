@@ -21,9 +21,8 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
     'lodash'
-], function ($, _) {
+], function (_) {
     'use strict';
 
     /**
@@ -31,94 +30,144 @@ define([
      * @type {Object}
      */
     var responseCardinalities = {
-        single : 'base',
-        multiple : 'list',
-        ordered : 'list',
-        record : 'record'
+        single: 'base',
+        multiple: 'list',
+        ordered: 'list',
+        record: 'record'
     };
 
     /**
-     * Checks if the provided value can be considered as null
-     * @param {Object} value
-     * @param {String} baseType
-     * @param {String} cardinality
-     * @returns {boolean}
+     * @typedef {currentItemHelper}
      */
-    function isQtiValueNull(value, baseType, cardinality) {
-        var mappedCardinality = responseCardinalities[cardinality];
-        if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
-            value = value[mappedCardinality][baseType];
-        }
-        return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
-    }
+    var currentItemHelper = {
+        /**
+         * Gets the responses declarations of the current item.
+         * @param {Object} runner - testRunner instance
+         * @returns {Object}
+         */
+        getDeclarations: function getDeclarations(runner) {
+            var itemRunner = runner.itemRunner;
+            return itemRunner._item && itemRunner._item.responses;
+        },
 
-    /**
-     * Convert a value to a response object
-     * @param {Array} value
-     * @param {String} baseType
-     * @param {String} cardinality
-     * @returns {Object}
-     */
-    function toResponse(value, baseType, cardinality) {
-        var mappedCardinality = responseCardinalities[cardinality];
-        var response = {};
-
-        value = _.map(value || [], function(v){
-            return (baseType === 'boolean') ? (v === true || v === 'true') : v;
-        });
-
-        if (mappedCardinality) {
-            if (mappedCardinality === 'base') {
-                if (value.length === 0) {
-                    //return empty response:
-                    response.base = null;
-                } else {
-                    response.base = {};
-                    response.base[baseType] = value[0];
-                }
-            } else {
-                response[mappedCardinality] = {};
-                response[mappedCardinality][baseType] = value;
-            }
-        }
-
-        return response;
-    }
-
-    /**
-     * Tells is the current item has been answered or not
-     * The item is considered answered when at least one response has been set to not empty {base : null}
-     * @param {Object} runner - testRunner instance
-     * @returns {Boolean}
-     */
-    function isAnswered(runner) {
-        var itemRunner = runner.itemRunner;
-        var responses = itemRunner && itemRunner.getResponses();
-        var count = 0;
-        var empty = 0;
-
-        if (itemRunner) {
-            _.forEach(itemRunner._item && itemRunner._item.responses, function (declaration) {
+        /**
+         * Gets a response declaration by the identifier of the response
+         * @param {Object} runner - testRunner instance
+         * @param {String} identifier - The identifier of the response
+         * @returns {Object|null}
+         */
+        getResponseDeclaration: function getResponseDeclaration(runner, identifier) {
+            var found = null;
+            _.forEach(currentItemHelper.getDeclarations(runner), function (declaration) {
                 var attributes = declaration.attributes || {};
-                var response = responses[attributes.identifier];
-                var baseType = attributes.baseType;
-                var cardinality = attributes.cardinality;
-
-                count ++;
-                if (isQtiValueNull(response, baseType, cardinality)) {
-                    if (isQtiValueNull(declaration.defaultValue, baseType, cardinality)) {
-                        empty++;
-                    }
-                } else if (_.isEqual(response, toResponse(declaration.defaultValue, baseType, cardinality))) {
-                    empty++;
+                if (attributes.identifier === identifier) {
+                    found = declaration;
+                    return false;
                 }
             });
+            return found;
+        },
+
+        /**
+         * Convert a value to a response object
+         * @param {Array|String} value
+         * @param {String} baseType
+         * @param {String} cardinality
+         * @returns {Object}
+         */
+        toResponse: function toResponse(value, baseType, cardinality) {
+            var mappedCardinality = responseCardinalities[cardinality];
+            var response = {};
+
+            if (_.isString(value)) {
+                value = [value];
+            }
+
+            value = _.map(value || [], function (v) {
+                return (baseType === 'boolean') ? (v === true || v === 'true') : v;
+            });
+
+            if (mappedCardinality) {
+                if (mappedCardinality === 'base') {
+                    if (value.length === 0) {
+                        //return empty response:
+                        response.base = null;
+                    } else {
+                        response.base = {};
+                        response.base[baseType] = value[0];
+                    }
+                } else {
+                    response[mappedCardinality] = {};
+                    response[mappedCardinality][baseType] = value;
+                }
+            }
+
+            return response;
+        },
+
+        /**
+         * Checks if the provided value can be considered as null
+         * @param {Object} value
+         * @param {String} baseType
+         * @param {String} cardinality
+         * @returns {boolean}
+         */
+        isQtiValueNull: function isQtiValueNull(value, baseType, cardinality) {
+            var mappedCardinality = responseCardinalities[cardinality];
+            if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
+                value = value[mappedCardinality][baseType];
+            }
+            return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
+        },
+
+        /**
+         * Tells if an item question has been answered or not
+         * @param response
+         * @param baseType
+         * @param cardinality
+         * @param [defaultValue]
+         * @returns {*}
+         */
+        isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue) {
+            var answered;
+            defaultValue = defaultValue || null;
+            if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
+                answered = !currentItemHelper.isQtiValueNull(defaultValue, baseType, cardinality);
+            } else {
+                answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
+            }
+            return answered;
+        },
+
+        /**
+         * Tells is the current item has been answered or not
+         * The item is considered answered when at least one response has been set to not empty {base : null}
+         * @param {Object} runner - testRunner instance
+         * @returns {Boolean}
+         */
+        isAnswered: function isAnswered(runner) {
+            var itemRunner = runner.itemRunner;
+            var responses = itemRunner && itemRunner.getResponses();
+            var count = 0;
+            var empty = 0;
+
+            if (itemRunner) {
+                _.forEach(currentItemHelper.getDeclarations(runner), function (declaration) {
+                    var attributes = declaration.attributes || {};
+                    var response = responses[attributes.identifier];
+                    var baseType = attributes.baseType;
+                    var cardinality = attributes.cardinality;
+
+                    count++;
+                    if (!currentItemHelper.isQuestionAnswered(response, baseType, cardinality, declaration.defaultValue)) {
+                        empty++;
+                    }
+                });
+            }
+
+            return count !== 0 && empty !== count;
         }
-
-        return count !== 0 && empty !== count;
-    }
-
-    return {
-        isAnswered: isAnswered
     };
+
+    return currentItemHelper;
 });

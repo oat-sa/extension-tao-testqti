@@ -21,12 +21,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
     'lodash',
-    'i18n',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/currentItem'
-], function ($, _, __, mapHelper, currentItemHelper) {
+], function (_, mapHelper, currentItemHelper) {
     'use strict';
 
     /**
