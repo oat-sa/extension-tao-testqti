@@ -217,25 +217,41 @@ define([
         //adding retro-compatibility with legacy focusable class for defining focusable passages
         $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
 
-        //$itemElements = $content.find('.key-navigation-focusable,.qti-interaction');
-        $itemElements = $content.find('.key-navigation-focusable,.choice-area');
-        $itemElements.each(function(){
+        //$itemElements = $content.find('.key-navigation-focusable,.choice-area');
+        $itemElements = $content.find('.key-navigation-focusable,.qti-interaction');
+        var $bodyElements = $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+            return (!$(this).parents('.qti-interaction').length);
+        });
+
+        $bodyElements.each(function(){
             var $itemElement = $(this);
             var itemNavigables = [];
-            var id = 'item_element_navigation_group_'+itemNavigators.length;
 
-            if($itemElement.hasClass('choice-area')){
+            //if($itemElement.hasClass('choice-area')){
+            if($itemElement.hasClass('qti-interaction')){
+
+                //add navigable elements from prompt
+                var $prompts = $itemElement.find('.key-navigation-focusable').each(function(){
+                    var $nav = $(this);
+                    if(!$nav.closest('.qti-choice').length){
+                        itemNavigators.push(keyNavigator({
+                            elements : navigableDomElement.createFromDoms($nav),
+                            group : $nav,
+                            propagateTab : false
+                        }));
+                    }
+                });
+
+                //reset interaction custom key navigation to override the behaviour with the new one
                 $itemElement.off('.keyNavigation');
                 $inputs = $itemElement.is(':input') ? $itemElement : $itemElement.find('input');
                 itemNavigables = navigableDomElement.createFromDoms($inputs);
 
                 if (itemNavigables.length) {
                     itemNavigators.push(keyNavigator({
-                        id : id,
                         elements : itemNavigables,
                         group : $itemElement,
-                        loop : false,
-                        replace : true
+                        loop : false
                     }).on('right down', function(){
                         this.next();
                     }).on('left up', function(){
@@ -251,10 +267,8 @@ define([
 
             }else{
                 itemNavigators.push(keyNavigator({
-                    id : id,
                     elements : navigableDomElement.createFromDoms($itemElement),
                     group : $itemElement,
-                    replace : true,
                     propagateTab : false
                 }));
             }
@@ -313,10 +327,6 @@ define([
             initHeaderNavigation(testRunner)
         );
 
-        console.log('navigators', _.map(navigators, function(nav){
-            return nav.getGroup();
-        }));
-
         navigators = navigableGroupElement.createFromNavigators(navigators);
 
         return keyNavigator({
@@ -324,21 +334,8 @@ define([
             replace : true,
             loop : true,
             elements : navigators,
-        }).on('tab', function(target){
-            console.log('tab');
+        }).on('tab', function(){
             this.next();
-
-            return;
-
-            var cursor = this.getCursor();
-            if(cursor && cursor.navigable){
-                console.log('tt tab', cursor.navigable.getElement());
-                if(cursor.navigable.getElement().get(0) === target){
-                    this.next();
-                }
-            }else{
-                this.next();
-            }
         }).on('shift+tab', function(){
             this.previous();
         });
