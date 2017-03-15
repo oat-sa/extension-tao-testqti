@@ -5,16 +5,16 @@ $lrMaskBg: #ffffff;
 
 @mixin resizableBorder($edge) {
     &.border-#{$edge} {
-        border-#{$edge}: $lrThinBorder solid $lrBorderColor;
+        border-#{$edge}-width: $lrThinBorder;
         &.resizing {
-            border-#{$edge}: 2px solid $lrBorderColor;
+            border-#{$edge}-width: $lrThickBorder;
         }
     }
 }
 
 .line-reader-mask {
     box-sizing: border-box;
-    border: none;
+    border: 0 solid $lrBorderColor;
     background-color: $lrMaskBg;
 
     &.hidden {
@@ -44,8 +44,8 @@ $lrMaskBg: #ffffff;
         overflow: hidden;
         position: absolute;
         opacity: 1;
-        background-color: transparent !important;
-        border: 2px solid $lrBorderColor !important;
+        background-color: transparent;
+        border: $lrThickBorder solid $lrBorderColor;
     }
 
     .inner-window {

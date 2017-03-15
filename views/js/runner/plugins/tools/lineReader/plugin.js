@@ -46,6 +46,14 @@ define([
     var actionPrefix = 'tool-' + pluginName + '-';
 
 
+    function setMaskCoordinates($container) {
+        var $qtiContent = $container.find('.qti-content');
+
+
+
+    }
+
+
     /**
      * Returns the configured plugin
      */
@@ -143,6 +151,7 @@ define([
                 .on('loaditem', toggleButton)
                 .on('enabletools renderitem', function () {
                     self.enable();
+                    setMaskCoordinates($container);
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
