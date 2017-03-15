@@ -1086,9 +1086,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.11.0');
         }
 
-        $this->skip('6.11.0', '6.12.0');
+        $this->skip('6.11.0', '6.13.0');
 
-        if($this->isVersion('6.12.0')){
+        if($this->isVersion('6.13.0')){
             // Register line reader plugin
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
@@ -1101,7 +1101,6 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active' => true,
                 'tags' => [  ]
             ]));
-            $this->setVersion('6.13.0');
 
             // Register line reader shortcut
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -1111,6 +1110,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ];
             $extension->setConfig('testRunner', $config);
 
+            $this->setVersion('6.14.0');
         }
     }
 }
