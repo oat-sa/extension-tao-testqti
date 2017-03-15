@@ -1,22 +1,63 @@
+$lrThinBorder: 1px;
+$lrThickBorder: 2px;
+$lrBorderColor: $textColor;
+$lrMaskBg: #ffffff;
+
+@mixin resizableBorder($edge) {
+    &.border-#{$edge} {
+        border-#{$edge}: $lrThinBorder solid $lrBorderColor;
+        &.resizing {
+            border-#{$edge}: 2px solid $lrBorderColor;
+        }
+    }
+}
+
 .line-reader-mask {
     box-sizing: border-box;
-    border: 0 solid $textColor;
+    border: none;
+    background-color: $lrMaskBg;
 
-    background-color: white;
-    //opacity: 0.5;
+    &.hidden {
+        display: none;
+    }
+
+    &.resizing {
+        background-color: rgba($lrMaskBg, 0.7);
+    }
+
+    @include resizableBorder('top');
+    @include resizableBorder('right');
+    @include resizableBorder('bottom');
+    @include resizableBorder('left');
 }
 
 
-$overlayBg1: yellow;
-$overlayBg2: red;
-$overlayBg3: blue;
+.line-reader-overlay {
+    box-sizing: border-box;
+    opacity: 0;
 
-.line-reader-overlay:nth-of-type(1n) {
-    background-color: $overlayBg1;
+    &.hidden {
+        display: none;
+    }
+
+    &.moving, .inner-window {
+        overflow: hidden;
+        position: absolute;
+        opacity: 1;
+        background-color: transparent !important;
+        border: 2px solid $lrBorderColor !important;
+    }
+
+    .inner-window {
+        box-sizing: content-box;
+    }
+
+    // the actual white transparent background is actually made of a border
+    .mask-bg {
+        box-sizing: border-box;
+        border: 0 solid rgba($lrMaskBg, 0.7);
+        background-color: transparent;
+        position: absolute;
+    }
 }
-.line-reader-overlay:nth-of-type(2n) {
-    background-color: $overlayBg2;
-}
-.line-reader-overlay:nth-of-type(3n) {
-    background-color: $overlayBg3;
-}
+
