@@ -73,7 +73,7 @@ define([
             position     = {},
             constrains   = {},
             visualGuides = {
-                borderWidth: 2 // this mirror a css property todo: make this better?
+                borderWidth: 2 // this mirror $lrThickBorder css variable
             };
 
         function createCompoundMask() {
@@ -150,7 +150,7 @@ define([
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
                     setRightWidth(width, x, fromLeft);
-                    applyTransformToMasks(); // todo: scope updates?
+                    applyTransformToMasks();
                 }
             }));
 
@@ -530,56 +530,30 @@ define([
             });
         }
 
-        function updateDimensions() {
-            var n = allParts.n.mask.getSize(),
-                e = allParts.e.mask.getSize(),
-                s = allParts.s.mask.getSize(),
-                w = allParts.w.mask.getSize();
-
-            dimensions.outerWidth   = w.width + n.width + e.width;
-            dimensions.outerHeight  = n.height + w.height + s.height;
-            dimensions.innerWidth   = n.width;
-            dimensions.innerHeight  = w.height;
-            dimensions.topHeight    = n.height;
-            dimensions.rightWidth   = e.width;
-            dimensions.bottomHeight = s.height;
-            dimensions.leftWidth    = w.width;
-        }
-
-        function updatePosition() {
-            var nwPosition  = allParts.nw.mask.getPosition(),
-                nwSize      = allParts.nw.mask.getSize();
-
-            position.outerX = nwPosition.x;
-            position.outerY = nwPosition.y;
-            position.innerX = nwPosition.x + nwSize.width;
-            position.innerY = nwPosition.y + nwSize.height;
-        }
-
-        function setTransforms(geoConfig) {
+        function setTransforms(transformsConfig) {
             dimensions = {
-                outerWidth:     geoConfig.outerWidth,
-                outerHeight:    geoConfig.outerHeight,
-                innerWidth:     geoConfig.innerWidth,
-                innerHeight:    geoConfig.innerHeight,
+                outerWidth:     transformsConfig.outerWidth,
+                outerHeight:    transformsConfig.outerHeight,
+                innerWidth:     transformsConfig.innerWidth,
+                innerHeight:    transformsConfig.innerHeight,
 
-                topHeight:      geoConfig.innerY - geoConfig.outerY,
-                rightWidth:     geoConfig.outerWidth - (geoConfig.innerX - geoConfig.outerX) - geoConfig.innerWidth,
-                bottomHeight:   geoConfig.outerHeight - (geoConfig.innerY - geoConfig.outerY) - geoConfig.innerHeight,
-                leftWidth:      geoConfig.innerX - geoConfig.outerX
+                topHeight:      transformsConfig.innerY - transformsConfig.outerY,
+                rightWidth:     transformsConfig.outerWidth - (transformsConfig.innerX - transformsConfig.outerX) - transformsConfig.innerWidth,
+                bottomHeight:   transformsConfig.outerHeight - (transformsConfig.innerY - transformsConfig.outerY) - transformsConfig.innerHeight,
+                leftWidth:      transformsConfig.innerX - transformsConfig.outerX
             };
 
             position = {
-                outerX: geoConfig.outerX,
-                outerY: geoConfig.outerY,
-                innerX: geoConfig.innerX,
-                innerY: geoConfig.innerY
+                outerX: transformsConfig.outerX,
+                outerY: transformsConfig.outerY,
+                innerX: transformsConfig.innerX,
+                innerY: transformsConfig.innerY
             };
 
             constrains = {
-                minWidth: geoConfig.minWidth,
-                minHeight: geoConfig.minHeight,
-                resizeHandleSize: geoConfig.resizeHandleSize
+                minWidth: transformsConfig.minWidth,
+                minHeight: transformsConfig.minHeight,
+                resizeHandleSize: transformsConfig.resizeHandleSize
             };
         }
 
@@ -595,48 +569,48 @@ define([
             });
         }
 
-        function setTopHeight(height, y, fromTop) {
-            dimensions.topHeight = height;
+        function setTopHeight(newHeight, newY, fromTop) {
+            dimensions.topHeight = newHeight;
 
             if (fromTop) {
-                dimensions.outerHeight = height + dimensions.innerHeight + dimensions.bottomHeight;
-                position.outerY = y;
+                dimensions.outerHeight = newHeight + dimensions.innerHeight + dimensions.bottomHeight;
+                position.outerY = newY;
             } else {
-                dimensions.innerHeight = dimensions.outerHeight - height - dimensions.bottomHeight;
-                position.innerY = position.outerY + height;
+                dimensions.innerHeight = dimensions.outerHeight - newHeight - dimensions.bottomHeight;
+                position.innerY = position.outerY + newHeight;
             }
         }
 
-        function setRightWidth(width, x, fromLeft) {
-            dimensions.rightWidth = width;
+        function setRightWidth(newWidth, newX, fromLeft) {
+            dimensions.rightWidth = newWidth;
 
             if (fromLeft) {
-                dimensions.innerWidth = x - position.innerX;
+                dimensions.innerWidth = newX - position.innerX;
             } else {
-                dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + width;
+                dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + newWidth;
             }
         }
 
-        function setBottomHeight(height, y, fromTop) {
-            dimensions.bottomHeight = height;
+        function setBottomHeight(newHeight, newY, fromTop) {
+            dimensions.bottomHeight = newHeight;
 
             if (fromTop) {
-                dimensions.innerHeight = y - position.innerY;
-                dimensions.bottomHeight = height;
+                dimensions.innerHeight = newY - position.innerY;
+                dimensions.bottomHeight = newHeight;
             } else {
-                dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + height;
+                dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + newHeight;
             }
         }
 
-        function setLeftWidth(width, x, fromLeft) {
-            dimensions.leftWidth = width;
+        function setLeftWidth(newWidth, newX, fromLeft) {
+            dimensions.leftWidth = newWidth;
 
             if (fromLeft) {
-                dimensions.outerWidth = width + dimensions.innerWidth + dimensions.rightWidth;
-                position.outerX = x;
+                dimensions.outerWidth = newWidth + dimensions.innerWidth + dimensions.rightWidth;
+                position.outerX = newX;
             } else {
-                dimensions.innerWidth = dimensions.outerWidth - width - dimensions.rightWidth;
-                position.innerX = position.outerX + width;
+                dimensions.innerWidth = dimensions.outerWidth - newWidth - dimensions.rightWidth;
+                position.innerX = position.outerX + newWidth;
             }
         }
 
