@@ -44,20 +44,19 @@ define([
 ) {
     'use strict';
 
-    var defaultConfig = {
-        // dimensions
-        outerWidth:  500,
-        outerHeight: 300,
-        innerWidth:  400,
-        innerHeight: 20,
-
-        // position
-        outerX: 100,
-        outerY: 50,
-        innerX: 150,
-        innerY: 100,
-
-        // constrains
+    var defaultDimensions = {
+        outerWidth:  600,
+        outerHeight: 400,
+        innerWidth:  500,
+        innerHeight: 20
+    };
+    var defaultPosition = {
+        outerX: 0,
+        outerY: 0,
+        innerX: 50,
+        innerY: 50
+    };
+    var defaultConstrains = {
         minWidth:  30,
         minHeight: 30,
         resizeHandleSize: 10
@@ -66,12 +65,9 @@ define([
     /**
      * JsDoc me !!!
      */
-    return function compoundMaskFactory(config) {
+    return function compoundMaskFactory(dimensions, position, constrains) {
         var compoundMask,
             allParts     = {},
-            dimensions   = {},
-            position     = {},
-            constrains   = {},
             visualGuides = {
                 borderWidth: 2 // this mirror $lrThickBorder css variable
             };
@@ -377,23 +373,25 @@ define([
         }
 
         function createMask(maskConfig) {
-            var maskAPI;
-
-            maskAPI = {
+            var maskAPI = {
                 place: maskConfig.place,
-                placeOverlay: maskConfig.placeOverlay
+                placeOverlay: maskConfig.placeOverlay,
+
+                styleResizableEdges: function styleResizableEdges() {
+                    var $element = this.getElement();
+                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                        if (isResizable) {
+                            $element.addClass('border-' + edgeId);
+                        }
+                    });
+                }
             };
 
             return makeResizable(componentFactory(maskAPI, maskConfig))
                 .on('render', function() {
                     var $element = this.getElement();
 
-                    // style each resizable edge
-                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
-                        if (isResizable) {
-                            $element.addClass('border-' + edgeId);
-                        }
-                    });
+                    this.styleResizableEdges();
 
                     $element
                         .on('mousedown', function() {
@@ -447,19 +445,19 @@ define([
                     $element.append(visualGuides.$innerWindow);
 
                     visualGuides.$maskBg.css({
-                        width: dimensions.outerWidth - borderOffset,
+                        width:  dimensions.outerWidth - borderOffset,
                         height: dimensions.outerHeight - borderOffset,
-                        'border-top-width': dimensions.topHeight - borderOffset,
-                        'border-right-width': dimensions.rightWidth - borderOffset,
-                        'border-bottom-width': dimensions.bottomHeight - borderOffset,
-                        'border-left-width': dimensions.leftWidth - borderOffset
+                        'border-top-width':     dimensions.topHeight - borderOffset,
+                        'border-right-width':   dimensions.rightWidth - borderOffset,
+                        'border-bottom-width':  dimensions.bottomHeight - borderOffset,
+                        'border-left-width':    dimensions.leftWidth - borderOffset
                     });
 
                     visualGuides.$innerWindow.css({
-                        width: dimensions.innerWidth,
+                        width:  dimensions.innerWidth,
                         height: dimensions.innerHeight,
-                        left: dimensions.leftWidth - borderOffset,
-                        top: dimensions.topHeight - borderOffset
+                        left:   dimensions.leftWidth - borderOffset,
+                        top:    dimensions.topHeight - borderOffset
                     });
                 },
 
@@ -530,33 +528,6 @@ define([
             });
         }
 
-        function setTransforms(transformsConfig) {
-            dimensions = {
-                outerWidth:     transformsConfig.outerWidth,
-                outerHeight:    transformsConfig.outerHeight,
-                innerWidth:     transformsConfig.innerWidth,
-                innerHeight:    transformsConfig.innerHeight,
-
-                topHeight:      transformsConfig.innerY - transformsConfig.outerY,
-                rightWidth:     transformsConfig.outerWidth - (transformsConfig.innerX - transformsConfig.outerX) - transformsConfig.innerWidth,
-                bottomHeight:   transformsConfig.outerHeight - (transformsConfig.innerY - transformsConfig.outerY) - transformsConfig.innerHeight,
-                leftWidth:      transformsConfig.innerX - transformsConfig.outerX
-            };
-
-            position = {
-                outerX: transformsConfig.outerX,
-                outerY: transformsConfig.outerY,
-                innerX: transformsConfig.innerX,
-                innerY: transformsConfig.innerY
-            };
-
-            constrains = {
-                minWidth: transformsConfig.minWidth,
-                minHeight: transformsConfig.minHeight,
-                resizeHandleSize: transformsConfig.resizeHandleSize
-            };
-        }
-
         function applyTransformToMasks() {
             _.forOwn(allParts, function(part) {
                 part.mask.place.call(part); // todo: needed? use invoke?
@@ -624,19 +595,17 @@ define([
             });
         }
 
-        config = _.defaults(config || {}, defaultConfig);
-
-
-
-
-
-
+        dimensions  = _.defaults(dimensions || {}, defaultDimensions);
+        position    = _.defaults(position   || {}, defaultPosition);
+        constrains  = _.defaults(constrains || {}, defaultConstrains);
 
         compoundMask = {
             init: function init() {
-                setTransforms(config);
+                this.setTransforms(dimensions, position, constrains);
+
                 createCompoundMask();
                 createVisualGuides();
+
                 return this;
             },
 
@@ -680,6 +649,21 @@ define([
                 this.setState('hidden', true);
 
                 return this;
+            },
+
+            setTransforms: function setTransforms(dim, pos, cons) {
+                dimensions  = _.defaults(dim, defaultDimensions);
+                position    = _.defaults(pos, defaultPosition);
+                constrains  = _.defaults(cons, defaultConstrains);
+
+                // automatically complete the dimensions
+                dimensions.topHeight    = pos.innerY - pos.outerY;
+                dimensions.rightWidth   = dim.outerWidth - (pos.innerX - pos.outerX) - dim.innerWidth;
+                dimensions.bottomHeight = dim.outerHeight - (pos.innerY - pos.outerY) - dim.innerHeight;
+                dimensions.leftWidth    = pos.innerX - pos.outerX;
+
+                applyTransformToMasks();
+                applyTranformsToOverlays();
             },
 
             getDimensions: function getDimensions() {

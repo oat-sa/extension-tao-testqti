@@ -35,24 +35,9 @@ define([
     QUnit.module('Behavior');
 
 
-    QUnit.test('.applyGeographics()', function (assert) {
+    QUnit.test('setTransforms / applyTransforms', function (assert) {
         var $container = $('#qunit-fixture'),
-            mask = compoundMaskFactory({
-                outerX:         50,
-                outerY:         50,
-                outerWidth:     500,
-                outerHeight:    300,
-
-                innerX:         100,
-                innerY:         100,
-                innerWidth:     350,
-                innerHeight:    50,
-
-                minWidth:   20,
-                minHeight:  20,
-
-                resizeHandleSize: 7
-            }),
+            mask = compoundMaskFactory(),
             expectedDimensions = {
                 outerWidth:     500,
                 outerHeight:    300,
@@ -81,6 +66,22 @@ define([
 
         mask.init();
         mask.render($container);
+
+        mask.setTransforms({
+            outerWidth:  500,
+            outerHeight: 300,
+            innerWidth:  350,
+            innerHeight: 50
+        }, {
+            outerX: 50,
+            outerY: 50,
+            innerX: 100,
+            innerY: 100
+        }, {
+            minWidth:   20,
+            minHeight:  20,
+            resizeHandleSize: 7
+        });
 
         assert.deepEqual(mask.getDimensions(),  expectedDimensions, 'dimensions have been correctly set');
         assert.deepEqual(mask.getPosition(),    expectedPosition,   'position have been correctly set');
@@ -367,10 +368,11 @@ define([
                     innerX:         100,
                     innerY:         100
                 },
-                mask = compoundMaskFactory(_.assign({
+                constrains = {
                     minWidth:   20,
                     minHeight:  20
-                }, dimensions, position)),
+                },
+                mask = compoundMaskFactory(dimensions, position, constrains),
                 allParts = mask.getParts();
 
             QUnit.expect(2);
@@ -386,7 +388,7 @@ define([
             );
 
             // we only check that the resize triggers the correct dimension and position changes in the model
-            // the actual check of whether those values are correctly translated in each component is made by .applyGeometrics() test
+            // the actual check of whether those values are correctly translated in each component is made by set/applyTransform test
             assert.deepEqual(mask.getDimensions(), _.assign(dimensions, data.dimensions), 'dimensions after resize are correct');
             assert.deepEqual(mask.getPosition(), _.assign(position, data.position), 'positions after resize are correct');
         });
@@ -396,17 +398,7 @@ define([
     QUnit.module('Visual test');
 
     QUnit.asyncTest('display and play', function (assert) {
-        var mask = compoundMaskFactory({
-                outerX:         50,
-                outerY:         50,
-                outerWidth:     500,
-                outerHeight:    300,
-
-                innerX:         100,
-                innerY:         100,
-                innerWidth:     350,
-                innerHeight:    50
-            }),
+        var mask = compoundMaskFactory(),
             $container = $('#outside');
 
         QUnit.expect(1);
