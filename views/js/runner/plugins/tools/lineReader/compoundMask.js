@@ -542,6 +542,36 @@ define([
             });
         }
 
+        /**
+         * Check that the given dimensions respect the current constrains.
+         * If not, correct them
+         */
+        function correctTransforms() {
+            if (dimensions.topHeight < constrains.minHeight) {
+                dimensions.topHeight = constrains.minHeight;
+                position.innerY = position.outerY + constrains.minHeight;
+            }
+            if (dimensions.innerHeight < constrains.minHeight) {
+                dimensions.innerHeight = constrains.minHeight;
+            }
+            if (dimensions.bottomHeight < constrains.minHeight) {
+                dimensions.bottomHeight = constrains.minHeight;
+            }
+            dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
+
+            if (dimensions.leftWidth < constrains.minWidth) {
+                dimensions.leftWidth = constrains.minWidth;
+                position.innerX = position.outerX + constrains.minWidth;
+            }
+            if (dimensions.innerWidth < constrains.minWidth) {
+                dimensions.innerWidth = constrains.minWidth;
+            }
+            if (dimensions.rightWidth < constrains.minWidth) {
+                dimensions.rightWidth = constrains.minWidth;
+            }
+            dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
+        }
+
         function setTopHeight(newHeight, newY, fromTop) {
             dimensions.topHeight = newHeight;
 
@@ -647,9 +677,9 @@ define([
 
             // set the transform model
             setTransforms: function setTransforms(dim, pos, cons) {
-                dimensions  = _.defaults(dim, defaultDimensions);
-                position    = _.defaults(pos, defaultPosition);
-                constrains  = _.defaults(cons, defaultConstrains);
+                dimensions  = _.defaults(dim || {}, dimensions);
+                position    = _.defaults(pos || {}, position);
+                constrains  = _.defaults(cons || {}, constrains);
 
                 // automatically complete the dimensions
                 dimensions.topHeight    = pos.innerY - pos.outerY;
@@ -657,6 +687,7 @@ define([
                 dimensions.bottomHeight = dim.outerHeight - (pos.innerY - pos.outerY) - dim.innerHeight;
                 dimensions.leftWidth    = pos.innerX - pos.outerX;
 
+                correctTransforms();
                 applyTransforms();
             },
 

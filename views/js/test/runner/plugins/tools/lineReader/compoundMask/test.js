@@ -377,8 +377,8 @@ define([
 
             QUnit.expect(2);
 
-            mask.init();
-            mask.render($container);
+            mask.init()
+                .render($container);
 
             allParts[data.maskId].mask.resizeTo(
                 data.width,
@@ -393,7 +393,84 @@ define([
             assert.deepEqual(mask.getPosition(), _.assign(position, data.position), 'positions after resize are correct');
         });
 
+    QUnit
+        .cases([
+            {
+                title: 'topHeight too short',
+                positionIn: { innerY: 10 },
+                positionOut: { innerY: 20 },
+                dimensionsOut: { topHeight: 20, outerHeight: 210, bottomHeight: 200 - (50 + 10) }
+            }, {
+                title: 'innerHeight too short',
+                dimensionsIn: { innerHeight: 10 },
+                dimensionsOut: { innerHeight: 20, outerHeight: 210, bottomHeight: 200 - (50 + 10) }
+            }, {
+                title: 'bottom Height too short',
+                dimensionsIn: { outerHeight: 110 },
+                dimensionsOut: { outerHeight: 120, bottomHeight: 20 }
+            }, {
+                title: 'leftWith too short',
+                positionIn: { innerX: 10 },
+                positionOut: { innerX: 20 },
+                dimensionsOut: { outerWidth: 210, leftWidth: 20, rightWidth: 200 - (100 + 10) }
+            }, {
+                title: 'innerWidth too short',
+                dimensionsIn: { innerWidth: 10 },
+                dimensionsOut: { outerWidth: 210, innerWidth: 20, rightWidth: 200 - (50 + 10) }
+            }, {
+                title: 'leftWidth too short',
+                dimensionsIn: { outerWidth: 160 },
+                dimensionsOut: { outerWidth: 170, rightWidth: 20 }
+            }
+        ])
+        .test('correctTransforms()', function(data, assert) {
+            var $container = $('#qunit-fixture'),
+                dimensions = {
+                    innerWidth:  100,
+                    innerHeight: 50,
+                    outerWidth:  200,
+                    outerHeight: 200
+                },
+                position = {
+                    outerX:         0,
+                    outerY:         0,
+                    innerX:         50,
+                    innerY:         50
+                },
+                constrains = {
+                    minWidth:   20,
+                    minHeight:  20
+                },
+                compDimensions = {
+                    topHeight:   50,
+                    rightWidth:  50,
+                    bottomHeight:100,
+                    leftWidth:   50
+                },
+                mask = compoundMaskFactory();
 
+            QUnit.expect(2);
+
+            mask.init()
+                .render($container)
+                .setTransforms(
+                    _.assign({}, dimensions, data.dimensionsIn || {}),
+                    _.assign({}, position, data.positionIn || {}),
+                    constrains
+                );
+
+            assert.deepEqual(
+                mask.getDimensions(),
+                _.assign({}, dimensions, compDimensions, data.dimensionsOut || {}),
+                'dimensions have been corrected'
+            );
+            assert.deepEqual(
+                mask.getPosition(),
+                _.assign({}, position, data.positionOut || {}),
+                'position have been corrected'
+            );
+
+        });
 
     QUnit.module('Visual test');
 
