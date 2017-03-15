@@ -69,7 +69,7 @@ define([
         var compoundMask,
             allParts     = {},
             visualGuides = {
-                borderWidth: 2 // this mirror $lrThickBorder css variable
+                borderWidth: 2 // this mirror the $lrThickBorder css variable
             };
 
         function createCompoundMask() {
@@ -113,7 +113,7 @@ define([
                 // set the new transform values (dimension and position) resulting from the current mask resize, and apply them
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -146,7 +146,7 @@ define([
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
                     setRightWidth(width, x, fromLeft);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -184,7 +184,7 @@ define([
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     setRightWidth(width, x, fromLeft);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -217,7 +217,7 @@ define([
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setRightWidth(width, x, fromLeft);
                     setBottomHeight(height, y, fromTop);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -255,7 +255,7 @@ define([
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setBottomHeight(height, y, fromTop);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -288,7 +288,7 @@ define([
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setBottomHeight(height, y, fromTop);
                     setLeftWidth(width, x, fromLeft);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -326,7 +326,7 @@ define([
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
                     setLeftWidth(width, x, fromLeft);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
 
@@ -359,7 +359,7 @@ define([
                 onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
                     setTopHeight(height, y, fromTop);
                     setLeftWidth(width, x, fromLeft);
-                    applyTransformToMasks();
+                    applyTransformsToMasks();
                 }
             }));
         }
@@ -406,7 +406,7 @@ define([
                 .on('resize', maskConfig.onResize || _.noop)
                 .on('beforeresize', maskConfig.beforeResize || _.noop)
                 .on('resizeend', function () {
-                    applyTranformsToOverlays();
+                    applyTransformsToOverlays();
                     invokeOnOverlays('show');
                     invokeOnMasks('setState', ['resizing', false]);
                 })
@@ -505,8 +505,7 @@ define([
                     this.setState('dragging', false);
 
                     // apply the transform model
-                    applyTransformToMasks();
-                    applyTranformsToOverlays();
+                    applyTransforms();
                 })
                 .init()
                 .setTemplate(overlayPartTpl);
@@ -528,13 +527,16 @@ define([
             });
         }
 
-        function applyTransformToMasks() {
-            _.forOwn(allParts, function(part) {
-                part.mask.place.call(part); // todo: needed? use invoke?
-            });
+        function applyTransforms() {
+            applyTransformsToMasks();
+            applyTransformsToOverlays();
         }
 
-        function applyTranformsToOverlays() {
+        function applyTransformsToMasks() {
+            invokeOnMasks('place');
+        }
+
+        function applyTransformsToOverlays() {
             _.forOwn(allParts, function(part) {
                 part.mask.placeOverlay(part.overlay);
             });
@@ -610,32 +612,25 @@ define([
             },
 
             render: function render($container) {
-                _.forOwn(allParts, function(part) {
-                    part.mask.render($container);
-                });
-                _.forOwn(allParts, function(part) {
-                    part.overlay.render($container);
-                });
-                applyTransformToMasks();
-                applyTranformsToOverlays();
+                invokeOnMasks('render', [$container]);
+                invokeOnOverlays('render', [$container]);
+
+                applyTransforms();
 
                 return this;
             },
 
             destroy: function destroy() {
-                _.forOwn(allParts, function(part) {
-                    part.mask.destroy();
-                    part.overlay.destroy();
-                });
+                invokeOnMasks('destroy');
+                invokeOnOverlays('destroy');
 
                 return this;
             },
 
             show: function show() {
                 invokeOnMasks('show');
-                _.forOwn(allParts, function(part) {
-                    part.overlay.show();
-                });
+                invokeOnOverlays('show');
+
                 this.setState('hidden', false);
 
                 return this;
@@ -643,14 +638,14 @@ define([
 
             hide: function hide() {
                 invokeOnMasks('hide');
-                _.forOwn(allParts, function(part) {
-                    part.overlay.hide();
-                });
+                invokeOnOverlays('hide');
+
                 this.setState('hidden', true);
 
                 return this;
             },
 
+            // set the transform model
             setTransforms: function setTransforms(dim, pos, cons) {
                 dimensions  = _.defaults(dim, defaultDimensions);
                 position    = _.defaults(pos, defaultPosition);
@@ -662,8 +657,7 @@ define([
                 dimensions.bottomHeight = dim.outerHeight - (pos.innerY - pos.outerY) - dim.innerHeight;
                 dimensions.leftWidth    = pos.innerX - pos.outerX;
 
-                applyTransformToMasks();
-                applyTranformsToOverlays();
+                applyTransforms();
             },
 
             getDimensions: function getDimensions() {
