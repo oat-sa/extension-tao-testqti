@@ -1106,5 +1106,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('6.14.0');
         }
+
+        $this->skip('6.14.0', '6.15.0');
     }
 }
