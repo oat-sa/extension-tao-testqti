@@ -109,7 +109,7 @@ define([
                     this.styleResizableEdges();
 
                     $element
-                        .addClass('line-reader-mask')
+                        .addClass('line-reader-mask ' + maskConfig.id)
                         .on('mousedown', function() {
                             bringAllToFront();
                         });
@@ -209,7 +209,7 @@ define([
                         $element = this.getElement();
 
                     $element
-                        .addClass('line-reader-overlay')
+                        .addClass('line-reader-overlay ' + overlayConfig.id)
                         .on('mousedown', function() {
                             bringAllToFront();
                             self.transformOverlay();
@@ -459,7 +459,8 @@ define([
         function createCompoundMask() {
 
             // North
-            createPart('n',{
+            createPart({
+                id: 'n',
                 edges: { top: true, right: false, bottom: true, left: false },
 
                 // move and dimension the mask
@@ -502,7 +503,8 @@ define([
             });
 
             // North-east
-            createPart('ne',{
+            createPart({
+                id: 'ne',
                 edges: { top: true, right: true, bottom: false, left: false },
 
                 place: function place() {
@@ -535,7 +537,8 @@ define([
             });
 
             // East
-            createPart('e',{
+            createPart({
+                id: 'e',
                 edges: { top: false, right: true, bottom: false, left: true },
 
                 place: function place() {
@@ -573,7 +576,8 @@ define([
             });
 
             // South east
-            createPart('se',{
+            createPart({
+                id: 'se',
                 edges: { top: false, right: true, bottom: true, left: false },
 
                 place: function place() {
@@ -606,7 +610,8 @@ define([
             });
 
             // South
-            createPart('s',{
+            createPart({
+                id: 's',
                 edges: { top: true, right: false, bottom: true, left: false },
 
                 place: function place() {
@@ -644,7 +649,8 @@ define([
             });
 
             // South-west
-            createPart('sw',{
+            createPart({
+                id: 'sw',
                 edges: { top: false, right: false, bottom: true, left: true },
 
                 place: function place() {
@@ -677,7 +683,8 @@ define([
             });
 
             // West
-            createPart('w',{
+            createPart({
+                id: 'w',
                 edges: { top: false, right: true, bottom: false, left: true },
 
                 place: function place() {
@@ -715,7 +722,8 @@ define([
             });
 
             // North-west
-            createPart('nw', {
+            createPart({
+                id: 'nw',
                 edges: { top: true, right: false, bottom: false, left: true },
 
                 place: function place() {
@@ -749,8 +757,8 @@ define([
         }
 
         // jsdoc me !! or replace me ?
-        function createPart(id, partConfig) {
-            allParts[id] = {
+        function createPart(partConfig) {
+            allParts[partConfig.id] = {
                 mask: createMask(_.assign({}, constrains, partConfig)),
                 overlay: createOverlay(partConfig)
             };

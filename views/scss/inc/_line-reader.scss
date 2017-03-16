@@ -20,6 +20,11 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
     &.border-right   { border-right-width: $lrBorderWidth; }
     &.border-bottom  { border-bottom-width: $lrBorderWidth; }
     &.border-left    { border-left-width: $lrBorderWidth; }
+
+    &.ne { @include border-radius-top-right(5); }
+    &.se { @include border-radius-bottom-right(5); }
+    &.sw { @include border-radius-bottom-left(5); }
+    &.nw { @include border-radius-top-left(5); }
 }
 
 
