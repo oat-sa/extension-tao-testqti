@@ -21,19 +21,18 @@
 
 namespace oat\taoQtiTest\models\tasks;
 
-use oat\oatbox\action\Action;
+use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
 use oat\oatbox\task\Task;
-use oat\oatbox\filesystem\FileSystemService;
-use oat\generis\model\fileReference\ResourceFileSerializer;
-
+use oat\tao\model\import\ImportersService;
+use \oat\taoQtiTest\models\import\QtiTestImporter;
 /**
  * Class ImportQtiTest
  * @package oat\taoQtiTest\models\tasks
  * @author Aleh Hutnikau, <hutnikau@1pt.com>
  */
-class ImportQtiTest implements Action, \JsonSerializable
+class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 {
     const FILE_DIR = 'ImportQtiTestTask';
 
@@ -51,11 +50,11 @@ class ImportQtiTest implements Action, \JsonSerializable
         }
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
-        $this->service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
-
-        $report = $this->service->importQtiTest($file);
-        return $report;
+        /** @var ImportersService $importersService */
+        $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
+        $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
+        return $importer->import($file);
     }
 
     /**
@@ -73,55 +72,13 @@ class ImportQtiTest implements Action, \JsonSerializable
      */
     public static function createTask($packageFile)
     {
-        $serviceManager = ServiceManager::getServiceManager();
         $action = new self();
+        $action->setServiceLocator(ServiceManager::getServiceManager());
 
-        //put test package file to the flysystem
-        $filename = $action->getUniqueFilename($packageFile['name']);
+        $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
+        $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        /** @var \oat\oatbox\filesystem\Directory $dir */
-        $dir = $serviceManager->get(FileSystemService::SERVICE_ID)
-            ->getDirectory(Queue::FILE_SYSTEM_ID);
-        /** @var \oat\oatbox\filesystem\FileSystem $filesystem */
-        $filesystem = $dir->getFileSystem();
-
-        $stream = fopen($packageFile['tmp_name'], 'r+');
-        $filesystem->writeStream($filename, $stream);
-        fclose($stream);
-
-        $file = $dir->getFile($filename);
-        $fileUri = $action->getFileReferenceSerializer()->serialize($file);
-
-        $queue = ServiceManager::getServiceManager()->get(Queue::CONFIG_ID);
-
-        //put task in queue with reference to the uploaded file
-        $task = $queue->createTask($action, ['file' => $fileUri]);
-        return $task;
+        return $queue->createTask($action, ['file' => $fileUri]);
     }
 
-    /**
-     * Create a new unique filename based on an existing filename
-     *
-     * @param string $fileName
-     * @return string
-     */
-    protected function getUniqueFilename($fileName)
-    {
-        $value = uniqid(md5($fileName));
-        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-        if (!empty($ext)){
-            $value .= '.' . $ext;
-        }
-        return self::FILE_DIR . '/' . $value;
-    }
-
-    /**
-     * Get serializer to persist filesystem object
-     * @return ResourceFileSerializer
-     */
-    protected function getFileReferenceSerializer()
-    {
-        $serviceManager = ServiceManager::getServiceManager();
-        return $serviceManager->get(ResourceFileSerializer::SERVICE_ID);
-    }
 }

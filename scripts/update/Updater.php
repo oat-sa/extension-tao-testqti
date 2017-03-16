@@ -37,6 +37,8 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\tao\model\import\ImportersService;
+use oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
  *
@@ -1087,5 +1089,24 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('6.11.0', '6.13.0');
+
+        if ($this->isVersion('6.13.0')) {
+
+            /** @var ImportersService $importersService */
+            $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
+            if ($importersService->hasOption(ImportersService::OPTION_IMPORTERS)) {
+                $importers = $importersService->getOption(ImportersService::OPTION_IMPORTERS);
+            } else {
+                $importers = [];
+            }
+            $importers[QtiTestImporter::IMPORTER_ID] = QtiTestImporter::class;
+            $importersService->setOption(ImportersService::OPTION_IMPORTERS, $importers);
+
+            $this->getServiceManager()->register(ImportersService::SERVICE_ID, $importersService);
+
+            $this->setVersion('6.14.0');
+        }
+
+        $this->skip('6.14.0', '6.15.0');
     }
 }
