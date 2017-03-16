@@ -112,20 +112,17 @@ define([
                     $element
                         .on('mousedown', function() {
                             bringAllToFront();
-
-                            invokeOnOverlays('hide');
-                            invokeOnMasks('setState', ['resizing', true]);
-                        })
-                        .on('mouseup', function() {
-                            invokeOnOverlays('show');
-                            invokeOnMasks('setState', ['resizing', false]);
                         });
 
                     // uncomment this to see what's going on with masks:
                     $element.css({ border: '1px solid olive'});
                 })
-                .on('resize', maskConfig.onResize || _.noop)
+                .on('resizestart', function () {
+                    invokeOnOverlays('hide');
+                    invokeOnMasks('setState', ['resizing', true]);
+                })
                 .on('beforeresize', maskConfig.beforeResize || _.noop)
+                .on('resize', maskConfig.onResize || _.noop)
                 .on('resizeend', function () {
                     applyTransformsToOverlays();
                     invokeOnOverlays('show');
@@ -218,7 +215,7 @@ define([
                         });
 
                     // uncomment this to see what's going on with overlays:
-                    // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
+                    $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
                 })
                 .on('dragstart', function() {
                     invokeOnMasks('hide');
