@@ -72,10 +72,311 @@ define([
      */
     return function compoundMaskFactory(dimensions, position, constrains) {
         var compoundMask,
-            allParts     = {},
+            allParts = {},
             visualGuides = {
                 borderWidth: 2 // this mirror the $lrThickBorder css variable
             };
+
+        /**
+         * ============================================
+         * Definition of Mask & Overlay component types
+         * ============================================
+         */
+
+        function createMask(maskConfig) {
+            var mask,
+                maskAPI = {
+                    place: maskConfig.place,
+                    placeOverlay: maskConfig.placeOverlay,
+
+                    styleResizableEdges: function styleResizableEdges() {
+                        var $element = this.getElement();
+                        _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                            if (isResizable) {
+                                $element.addClass('border-' + edgeId);
+                            }
+                        });
+                    }
+                };
+
+            mask = componentFactory(maskAPI, maskConfig);
+            makeResizable(mask);
+            makeStackable(mask, stackingOptions);
+
+            return mask
+                .on('render', function() {
+                    var $element = this.getElement();
+
+                    this.styleResizableEdges();
+
+                    $element
+                        .on('mousedown', function() {
+                            bringAllToFront();
+
+                            invokeOnOverlays('hide');
+                            invokeOnMasks('setState', ['resizing', true]);
+                        })
+                        .on('mouseup', function() {
+                            invokeOnOverlays('show');
+                            invokeOnMasks('setState', ['resizing', false]);
+                        });
+
+                    // uncomment this to see what's going on with masks:
+                    $element.css({ border: '1px solid olive'});
+                })
+                .on('resize', maskConfig.onResize || _.noop)
+                .on('beforeresize', maskConfig.beforeResize || _.noop)
+                .on('resizeend', function () {
+                    applyTransformsToOverlays();
+                    invokeOnOverlays('show');
+                    invokeOnMasks('setState', ['resizing', false]);
+                })
+                .init()
+                .setTemplate(maskPartTpl);
+        }
+
+
+
+        function createOverlay(overlayConfig) {
+            var overlay,
+                overlayAPI = {
+                    transformOverlay: function transformOverlay() {
+                        var $element = this.getElement();
+
+                        this._sizeBackup = this.getSize();
+                        this._posBackup = this.getPosition();
+
+                        this.setSize(dimensions.outerWidth, dimensions.outerHeight)
+                            .moveTo(position.outerX, position.outerY);
+                        $element.addClass('moving');
+
+                        this.setState('transformed', true);
+                    },
+
+                    restoreOverlay: function restoreOverlay() {
+                        var $element = this.getElement();
+
+                        if (this.is('transformed')) {
+
+                            this.setSize(this._sizeBackup.width, this._sizeBackup.height)
+                                .moveTo(this._posBackup.x, this._posBackup.y);
+                            $element.removeClass('moving');
+
+                            this._sizeBackup = null;
+                            this._posBackup = null;
+
+                            this.setState('transformed', false);
+                        }
+                    },
+
+                    appendVisualGuides: function appendVisualGuides() {
+                        var $element = this.getElement(),
+                            borderOffset = visualGuides.borderWidth * 2;
+
+                        $element.append(visualGuides.$maskBg);
+                        $element.append(visualGuides.$innerWindow);
+
+                        visualGuides.$maskBg.css({
+                            width:  dimensions.outerWidth - borderOffset,
+                            height: dimensions.outerHeight - borderOffset,
+                            'border-top-width':     dimensions.topHeight - borderOffset,
+                            'border-right-width':   dimensions.rightWidth - borderOffset,
+                            'border-bottom-width':  dimensions.bottomHeight - borderOffset,
+                            'border-left-width':    dimensions.leftWidth - borderOffset
+                        });
+
+                        visualGuides.$innerWindow.css({
+                            width:  dimensions.innerWidth,
+                            height: dimensions.innerHeight,
+                            left:   dimensions.leftWidth - borderOffset,
+                            top:    dimensions.topHeight - borderOffset
+                        });
+                    },
+
+                    removeVisualGuides: function removeVisualGuides() {
+                        visualGuides.$maskBg.remove();
+                        visualGuides.$innerWindow.remove();
+                    }
+                };
+
+            overlay = componentFactory(overlayAPI, overlayConfig);
+            makeDraggable(overlay);
+            makeStackable(overlay, stackingOptions);
+
+            return overlay
+                .on('render', function() {
+                    var self = this,
+                        $element = this.getElement();
+
+                    $element
+                        .on('mousedown', function() {
+                            bringAllToFront();
+                            self.transformOverlay();
+                        })
+                        .on('mouseup', function() {
+                            self.restoreOverlay();
+                        });
+
+                    // uncomment this to see what's going on with overlays:
+                    // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
+                })
+                .on('dragstart', function() {
+                    invokeOnMasks('hide');
+                    this.appendVisualGuides();
+                })
+                .on('dragmove', function moveAllPartsTogether(xOffsetRelative, yOffsetRelative) {
+                    // update the transform model
+                    position.outerX += xOffsetRelative;
+                    position.outerY += yOffsetRelative;
+                    position.innerX += xOffsetRelative;
+                    position.innerY += yOffsetRelative;
+                })
+                .on('dragend', function() {
+                    this.removeVisualGuides();
+                    // although they are already display, calling show() again on the overlays
+                    // will force their z-Index at the top of the stack
+                    invokeOnAll('show');
+
+                    // apply the new transform model
+                    applyTransforms();
+                })
+                .init()
+                .setTemplate(overlayPartTpl);
+        }
+
+
+        /**
+         * =================
+         * Utility functions
+         * =================
+         */
+        function bringAllToFront() {
+            invokeOnAll('bringToFront');
+        }
+
+        function invokeOnAll(fn, args) {
+            invokeOnMasks(fn, args);
+            invokeOnOverlays(fn, args);
+        }
+
+        function invokeOnMasks(fn, args) {
+            invokeOn('mask', fn, args);
+        }
+
+        function invokeOnOverlays(fn, args) {
+            invokeOn('overlay', fn, args);
+        }
+
+        function invokeOn(target, fn, args) {
+            _.forOwn(allParts, function(part) {
+                if (_.isObject(part[target]) && _.isFunction(part[target][fn])) {
+                    part[target][fn].apply(part[target], args);
+                }
+            });
+        }
+
+        /**
+         * =================================
+         * Transform model related functions
+         * =================================
+         */
+
+        function applyTransforms() {
+            applyTransformsToMasks();
+            applyTransformsToOverlays();
+        }
+
+        function applyTransformsToMasks() {
+            invokeOnMasks('place');
+        }
+
+        function applyTransformsToOverlays() {
+            _.forOwn(allParts, function(part) {
+                part.mask.placeOverlay(part.overlay);
+            });
+        }
+
+        /**
+         * Check that the given dimensions respect the current constrains.
+         * If not, correct them
+         */
+        function correctTransforms() {
+            if (dimensions.topHeight < constrains.minHeight) {
+                dimensions.topHeight = constrains.minHeight;
+                position.innerY = position.outerY + constrains.minHeight;
+            }
+            if (dimensions.innerHeight < constrains.minHeight) {
+                dimensions.innerHeight = constrains.minHeight;
+            }
+            if (dimensions.bottomHeight < constrains.minHeight) {
+                dimensions.bottomHeight = constrains.minHeight;
+            }
+            dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
+
+            if (dimensions.leftWidth < constrains.minWidth) {
+                dimensions.leftWidth = constrains.minWidth;
+                position.innerX = position.outerX + constrains.minWidth;
+            }
+            if (dimensions.innerWidth < constrains.minWidth) {
+                dimensions.innerWidth = constrains.minWidth;
+            }
+            if (dimensions.rightWidth < constrains.minWidth) {
+                dimensions.rightWidth = constrains.minWidth;
+            }
+            dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
+        }
+
+        function setTopHeight(newHeight, newY, fromTop) {
+            dimensions.topHeight = newHeight;
+
+            if (fromTop) {
+                dimensions.outerHeight = newHeight + dimensions.innerHeight + dimensions.bottomHeight;
+                position.outerY = newY;
+            } else {
+                dimensions.innerHeight = dimensions.outerHeight - newHeight - dimensions.bottomHeight;
+                position.innerY = position.outerY + newHeight;
+            }
+        }
+
+        function setRightWidth(newWidth, newX, fromLeft) {
+            dimensions.rightWidth = newWidth;
+
+            if (fromLeft) {
+                dimensions.innerWidth = newX - position.innerX;
+            } else {
+                dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + newWidth;
+            }
+        }
+
+        function setBottomHeight(newHeight, newY, fromTop) {
+            dimensions.bottomHeight = newHeight;
+
+            if (fromTop) {
+                dimensions.innerHeight = newY - position.innerY;
+                dimensions.bottomHeight = newHeight;
+            } else {
+                dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + newHeight;
+            }
+        }
+
+        function setLeftWidth(newWidth, newX, fromLeft) {
+            dimensions.leftWidth = newWidth;
+
+            if (fromLeft) {
+                dimensions.outerWidth = newWidth + dimensions.innerWidth + dimensions.rightWidth;
+                position.outerX = newX;
+            } else {
+                dimensions.innerWidth = dimensions.outerWidth - newWidth - dimensions.rightWidth;
+                position.innerX = position.outerX + newWidth;
+            }
+        }
+
+
+        /**
+         * ======================================
+         * Mask parts and other elements creation
+         * ======================================
+         */
 
         function createCompoundMask() {
 
@@ -369,286 +670,13 @@ define([
             });
         }
 
-        // jsdoc me !!
+        // jsdoc me !! or replace me ?
         function createPart(id, partConfig) {
             allParts[id] = {
                 mask: createMask(_.assign({}, constrains, partConfig)),
                 overlay: createOverlay(partConfig)
             };
         }
-
-        function createMask(maskConfig) {
-            var mask,
-                maskAPI = {
-                    place: maskConfig.place,
-                    placeOverlay: maskConfig.placeOverlay,
-
-                    styleResizableEdges: function styleResizableEdges() {
-                        var $element = this.getElement();
-                        _.forOwn(this.config.edges, function (isResizable, edgeId) {
-                            if (isResizable) {
-                                $element.addClass('border-' + edgeId);
-                            }
-                        });
-                    }
-                };
-
-            mask = componentFactory(maskAPI, maskConfig);
-            makeResizable(mask);
-            makeStackable(mask, stackingOptions);
-
-            return mask
-                .on('render', function() {
-                    var $element = this.getElement();
-
-                    this.styleResizableEdges();
-
-                    $element
-                        .on('mousedown', function() {
-                            bringAllToFront();
-
-                            invokeOnOverlays('hide');
-                            invokeOnMasks('setState', ['resizing', true]);
-                        })
-                        .on('mouseup', function() {
-                            invokeOnOverlays('show');
-                            invokeOnMasks('setState', ['resizing', false]);
-                        });
-
-                    // uncomment this to see what's going on with masks:
-                    $element.css({ border: '1px solid olive'});
-                })
-                .on('resize', maskConfig.onResize || _.noop)
-                .on('beforeresize', maskConfig.beforeResize || _.noop)
-                .on('resizeend', function () {
-                    applyTransformsToOverlays();
-                    invokeOnOverlays('show');
-                    invokeOnMasks('setState', ['resizing', false]);
-                })
-                .init()
-                .setTemplate(maskPartTpl);
-        }
-
-
-
-        function createOverlay(overlayConfig) {
-            var overlay,
-                overlayAPI = {
-                    transformOverlay: function transformOverlay() {
-                        var $element = this.getElement();
-
-                        this._sizeBackup = this.getSize();
-                        this._posBackup = this.getPosition();
-
-                        this.setSize(dimensions.outerWidth, dimensions.outerHeight)
-                            .moveTo(position.outerX, position.outerY);
-                        $element.addClass('moving');
-
-                        this.setState('transformed', true);
-                    },
-
-                    restoreOverlay: function restoreOverlay() {
-                        var $element = this.getElement();
-
-                        if (this.is('transformed')) {
-
-                            this.setSize(this._sizeBackup.width, this._sizeBackup.height)
-                                .moveTo(this._posBackup.x, this._posBackup.y);
-                            $element.removeClass('moving');
-
-                            this._sizeBackup = null;
-                            this._posBackup = null;
-
-                            this.setState('transformed', false);
-                        }
-                    },
-
-                    appendVisualGuides: function appendVisualGuides() {
-                        var $element = this.getElement(),
-                            borderOffset = visualGuides.borderWidth * 2;
-
-                        $element.append(visualGuides.$maskBg);
-                        $element.append(visualGuides.$innerWindow);
-
-                        visualGuides.$maskBg.css({
-                            width:  dimensions.outerWidth - borderOffset,
-                            height: dimensions.outerHeight - borderOffset,
-                            'border-top-width':     dimensions.topHeight - borderOffset,
-                            'border-right-width':   dimensions.rightWidth - borderOffset,
-                            'border-bottom-width':  dimensions.bottomHeight - borderOffset,
-                            'border-left-width':    dimensions.leftWidth - borderOffset
-                        });
-
-                        visualGuides.$innerWindow.css({
-                            width:  dimensions.innerWidth,
-                            height: dimensions.innerHeight,
-                            left:   dimensions.leftWidth - borderOffset,
-                            top:    dimensions.topHeight - borderOffset
-                        });
-                    },
-
-                    removeVisualGuides: function removeVisualGuides() {
-                        visualGuides.$maskBg.remove();
-                        visualGuides.$innerWindow.remove();
-                    }
-                };
-
-            overlay = componentFactory(overlayAPI, overlayConfig);
-            makeDraggable(overlay);
-            makeStackable(overlay, stackingOptions);
-
-            return overlay
-                .on('render', function() {
-                    var self = this,
-                        $element = this.getElement();
-
-                    $element
-                        .on('mousedown', function() {
-                            bringAllToFront();
-                            self.transformOverlay();
-                        })
-                        .on('mouseup', function() {
-                            self.restoreOverlay();
-                        });
-
-                    // uncomment this to see what's going on with overlays:
-                    // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
-                })
-                .on('dragstart', function() {
-                    invokeOnMasks('hide');
-                    this.appendVisualGuides();
-                })
-                .on('dragmove', function moveAllPartsTogether(xOffsetRelative, yOffsetRelative) {
-                    // update the transform model
-                    position.outerX += xOffsetRelative;
-                    position.outerY += yOffsetRelative;
-                    position.innerX += xOffsetRelative;
-                    position.innerY += yOffsetRelative;
-                })
-                .on('dragend', function() {
-                    this.removeVisualGuides();
-                    // although they are already display, calling show() again on the overlays
-                    // will force their z-Index at the top of the stack
-                    invokeOnAll('show');
-
-                    // apply the new transform model
-                    applyTransforms();
-                })
-                .init()
-                .setTemplate(overlayPartTpl);
-        }
-
-        function invokeOnMasks(fn, args) {
-            invokeOn('mask', fn, args);
-        }
-
-        function invokeOnOverlays(fn, args) {
-            invokeOn('overlay', fn, args);
-        }
-
-        function invokeOnAll(fn, args) {
-            invokeOnMasks(fn, args);
-            invokeOnOverlays(fn, args);
-        }
-
-        function invokeOn(target, fn, args) {
-            _.forOwn(allParts, function(part) {
-                if (_.isObject(part[target]) && _.isFunction(part[target][fn])) {
-                    part[target][fn].apply(part[target], args);
-                }
-            });
-        }
-
-        function applyTransforms() {
-            applyTransformsToMasks();
-            applyTransformsToOverlays();
-        }
-
-        function applyTransformsToMasks() {
-            invokeOnMasks('place');
-        }
-
-        function applyTransformsToOverlays() {
-            _.forOwn(allParts, function(part) {
-                part.mask.placeOverlay(part.overlay);
-            });
-        }
-
-        /**
-         * Check that the given dimensions respect the current constrains.
-         * If not, correct them
-         */
-        function correctTransforms() {
-            if (dimensions.topHeight < constrains.minHeight) {
-                dimensions.topHeight = constrains.minHeight;
-                position.innerY = position.outerY + constrains.minHeight;
-            }
-            if (dimensions.innerHeight < constrains.minHeight) {
-                dimensions.innerHeight = constrains.minHeight;
-            }
-            if (dimensions.bottomHeight < constrains.minHeight) {
-                dimensions.bottomHeight = constrains.minHeight;
-            }
-            dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
-
-            if (dimensions.leftWidth < constrains.minWidth) {
-                dimensions.leftWidth = constrains.minWidth;
-                position.innerX = position.outerX + constrains.minWidth;
-            }
-            if (dimensions.innerWidth < constrains.minWidth) {
-                dimensions.innerWidth = constrains.minWidth;
-            }
-            if (dimensions.rightWidth < constrains.minWidth) {
-                dimensions.rightWidth = constrains.minWidth;
-            }
-            dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
-        }
-
-        function setTopHeight(newHeight, newY, fromTop) {
-            dimensions.topHeight = newHeight;
-
-            if (fromTop) {
-                dimensions.outerHeight = newHeight + dimensions.innerHeight + dimensions.bottomHeight;
-                position.outerY = newY;
-            } else {
-                dimensions.innerHeight = dimensions.outerHeight - newHeight - dimensions.bottomHeight;
-                position.innerY = position.outerY + newHeight;
-            }
-        }
-
-        function setRightWidth(newWidth, newX, fromLeft) {
-            dimensions.rightWidth = newWidth;
-
-            if (fromLeft) {
-                dimensions.innerWidth = newX - position.innerX;
-            } else {
-                dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + newWidth;
-            }
-        }
-
-        function setBottomHeight(newHeight, newY, fromTop) {
-            dimensions.bottomHeight = newHeight;
-
-            if (fromTop) {
-                dimensions.innerHeight = newY - position.innerY;
-                dimensions.bottomHeight = newHeight;
-            } else {
-                dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + newHeight;
-            }
-        }
-
-        function setLeftWidth(newWidth, newX, fromLeft) {
-            dimensions.leftWidth = newWidth;
-
-            if (fromLeft) {
-                dimensions.outerWidth = newWidth + dimensions.innerWidth + dimensions.rightWidth;
-                position.outerX = newX;
-            } else {
-                dimensions.innerWidth = dimensions.outerWidth - newWidth - dimensions.rightWidth;
-                position.innerX = position.outerX + newWidth;
-            }
-        }
-
 
         function createVisualGuides() {
             visualGuides.$maskBg = $('<div>', {
@@ -659,9 +687,12 @@ define([
             });
         }
 
-        function bringAllToFront() {
-            invokeOnAll('bringToFront');
-        }
+
+        /**
+         * =========================
+         * The compoundMask instance
+         * =========================
+         */
 
         dimensions  = _.defaults(dimensions || {}, defaultDimensions);
         position    = _.defaults(position   || {}, defaultPosition);
@@ -678,36 +709,25 @@ define([
             },
 
             render: function render($container) {
-                invokeOnMasks('render', [$container]);
-                invokeOnOverlays('render', [$container]);
-
+                invokeOnAll('render', [$container]);
                 applyTransforms();
-
                 return this;
             },
 
             destroy: function destroy() {
-                invokeOnMasks('destroy');
-                invokeOnOverlays('destroy');
-
+                invokeOnAll('destroy');
                 return this;
             },
 
             show: function show() {
-                invokeOnMasks('show');
-                invokeOnOverlays('show');
-
+                invokeOnAll('show');
                 this.setState('hidden', false);
-
                 return this;
             },
 
             hide: function hide() {
-                invokeOnMasks('hide');
-                invokeOnOverlays('hide');
-
+                invokeOnAll('hide');
                 this.setState('hidden', true);
-
                 return this;
             },
 
@@ -748,6 +768,5 @@ define([
         statifier(compoundMask);
 
         return compoundMask;
-
     };
 });
