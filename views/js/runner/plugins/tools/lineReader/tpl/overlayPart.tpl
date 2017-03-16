@@ -1,1 +1,0 @@
-<div class="line-reader-overlay"></div>

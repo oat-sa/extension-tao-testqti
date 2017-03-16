@@ -29,9 +29,7 @@ define([
     'ui/component',
     'ui/component/draggable',
     'ui/component/resizable',
-    'ui/component/stackable',
-    'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/maskPart',
-    'tpl!taoQtiTest/runner/plugins/tools/lineReader/tpl/overlayPart'
+    'ui/component/stackable'
 ], function(
     $,
     _,
@@ -40,9 +38,7 @@ define([
     componentFactory,
     makeDraggable,
     makeResizable,
-    makeStackable,
-    maskPartTpl,
-    overlayPartTpl
+    makeStackable
 ) {
     'use strict';
 
@@ -113,6 +109,7 @@ define([
                     this.styleResizableEdges();
 
                     $element
+                        .addClass('line-reader-mask')
                         .on('mousedown', function() {
                             bringAllToFront();
                         });
@@ -135,8 +132,7 @@ define([
                     invokeOnOverlays('show');
                     innerDrag.handle.show();
                 })
-                .init()
-                .setTemplate(maskPartTpl);
+                .init();
         }
 
 
@@ -213,6 +209,7 @@ define([
                         $element = this.getElement();
 
                     $element
+                        .addClass('line-reader-overlay')
                         .on('mousedown', function() {
                             bringAllToFront();
                             self.transformOverlay();
@@ -246,8 +243,7 @@ define([
                     // apply the new transform model
                     applyTransforms();
                 })
-                .init()
-                .setTemplate(overlayPartTpl);
+                .init();
         }
 
 
