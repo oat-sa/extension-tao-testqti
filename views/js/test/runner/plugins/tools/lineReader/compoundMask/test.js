@@ -37,7 +37,11 @@ define([
 
     QUnit.test('setTransforms / applyTransforms', function (assert) {
         var $container = $('#qunit-fixture'),
-            mask = compoundMaskFactory(),
+            mask = compoundMaskFactory({
+                minWidth:   20,
+                minHeight:  20,
+                resizeHandleSize: 7
+            }),
             expectedDimensions = {
                 outerWidth:     500,
                 outerHeight:    300,
@@ -55,14 +59,9 @@ define([
                 innerX: 100,
                 innerY: 100
             },
-            expectedConstrains = {
-                minWidth:   20,
-                minHeight:  20,
-                resizeHandleSize: 7
-            },
             allParts = mask.getParts();
 
-        QUnit.expect(35);
+        QUnit.expect(34);
 
         mask.init();
         mask.render($container);
@@ -85,7 +84,6 @@ define([
 
         assert.deepEqual(mask.getDimensions(),  expectedDimensions, 'dimensions have been correctly set');
         assert.deepEqual(mask.getPosition(),    expectedPosition,   'position have been correctly set');
-        assert.deepEqual(mask.getConstrains(),  expectedConstrains, 'constrains have been correctly set');
 
         assert.deepEqual(allParts.n.mask.getSize(),         { width: 350,   height: 50 },   'north mask has the right dimensions');
         assert.deepEqual(allParts.n.mask.getPosition(),     { x: 100,       y: 50 },        'north mask has the right position');
@@ -368,11 +366,10 @@ define([
                     innerX:         100,
                     innerY:         100
                 },
-                constrains = {
+                mask = compoundMaskFactory({
                     minWidth:   20,
                     minHeight:  20
-                },
-                mask = compoundMaskFactory(dimensions, position, constrains),
+                }, dimensions, position),
                 allParts = mask.getParts();
 
             QUnit.expect(2);
@@ -437,17 +434,16 @@ define([
                     innerX:         50,
                     innerY:         50
                 },
-                constrains = {
-                    minWidth:   20,
-                    minHeight:  20
-                },
                 compDimensions = {
                     topHeight:   50,
                     rightWidth:  50,
                     bottomHeight:100,
                     leftWidth:   50
                 },
-                mask = compoundMaskFactory();
+                mask = compoundMaskFactory({
+                    minWidth:   20,
+                    minHeight:  20
+                });
 
             QUnit.expect(2);
 
@@ -455,8 +451,7 @@ define([
                 .render($container)
                 .setTransforms(
                     _.assign({}, dimensions, data.dimensionsIn || {}),
-                    _.assign({}, position, data.positionIn || {}),
-                    constrains
+                    _.assign({}, position, data.positionIn || {})
                 );
 
             assert.deepEqual(

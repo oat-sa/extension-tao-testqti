@@ -54,10 +54,12 @@ define([
         innerX: 50,
         innerY: 50
     };
-    var defaultConstrains = {
+    var defaultOptions = {
         minWidth:  30,
         minHeight: 30,
-        resizeHandleSize: 10
+        resizeHandleSize: 10,
+        innerDragWidth: 5,
+        borderWidth: 1 // this mirror the $lrBorderWidth css variable
     };
     var stackingOptions = {
         stackingScope: 'test-runner'
@@ -66,15 +68,11 @@ define([
     /**
      * JsDoc me !!!
      */
-    return function compoundMaskFactory(dimensions, position, constrains) {
+    return function compoundMaskFactory(options, dimensions, position) {
         var compoundMask,
             allParts = {},
-            innerDrag = {
-                width: 5
-            },
-            visualGuides = {
-                borderWidth: 1 // this mirror the $lrBorderWidth css variable
-            };
+            innerDrag,
+            visualGuides = {};
 
         /**
          * ============================================
@@ -118,7 +116,7 @@ define([
                     // $element.css({ border: '1px solid olive'});
                 })
                 .on('resizestart', function () {
-                    innerDrag.handle.hide();
+                    innerDrag.hide();
                     invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
                 })
@@ -130,7 +128,7 @@ define([
 
                     invokeOnMasks('setState', ['resizing', false]);
                     invokeOnOverlays('show');
-                    innerDrag.handle.show();
+                    innerDrag.show();
                 })
                 .init();
         }
@@ -171,7 +169,7 @@ define([
 
                     appendVisualGuides: function appendVisualGuides() {
                         var $element = this.getElement(),
-                            borderOffset = visualGuides.borderWidth * 2;
+                            borderOffset = options.borderWidth * 2;
 
                         $element.append(visualGuides.$maskBg);
                         $element.append(visualGuides.$innerWindow);
@@ -222,7 +220,7 @@ define([
                     // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
                 })
                 .on('dragstart', function() {
-                    innerDrag.handle.hide();
+                    innerDrag.hide();
                     invokeOnMasks('hide');
                     this.appendVisualGuides();
                 })
@@ -238,7 +236,7 @@ define([
                     // although they are already display, calling show() again on the overlays
                     // will force their z-Index at the top of the stack
                     invokeOnAll('show');
-                    innerDrag.handle.show();
+                    innerDrag.show();
 
                     // apply the new transform model
                     applyTransforms();
@@ -254,21 +252,21 @@ define([
          */
 
         function createInnerDragHandle() {
-            innerDrag.handle = componentFactory();
+            innerDrag = componentFactory();
 
-            makeStackable(innerDrag.handle, stackingOptions);
-            makeDraggable(innerDrag.handle, {
+            makeStackable(innerDrag, stackingOptions);
+            makeDraggable(innerDrag, {
                 dragRestriction: function dragRestriction() {
                     var fixedXY = allParts.nw.mask.getElement().offset();
 
                     return {
-                        x: fixedXY.left + (constrains.minWidth - constrains.resizeHandleSize * 2),
-                        y: fixedXY.top + constrains.minHeight,
+                        x: fixedXY.left + (options.minWidth - options.resizeHandleSize - options.innerDragWidth),
+                        y: fixedXY.top + options.minHeight,
                         width: dimensions.outerWidth
-                        - dimensions.innerWidth
-                        - constrains.minWidth
-                        - constrains.resizeHandleSize - innerDrag.width,
-                        height: dimensions.outerHeight - (constrains.minHeight * 2)
+                            - dimensions.innerWidth
+                            - options.minWidth
+                            - options.resizeHandleSize - options.innerDragWidth,
+                        height: dimensions.outerHeight - (options.minHeight * 2)
                     };
                 }
             })
@@ -299,7 +297,7 @@ define([
                 })
                 .on('dragend', function() {
                     invokeOnOverlays('show');
-                    innerDrag.handle.bringToFront();
+                    innerDrag.bringToFront();
                     invokeOnMasks('setState', ['resizing', false]);
 
                     applyTransformsToOverlays();
@@ -317,7 +315,7 @@ define([
          */
         function bringAllToFront() {
             invokeOnAll('bringToFront');
-            innerDrag.handle.bringToFront();
+            innerDrag.bringToFront();
         }
 
         function invokeOnAll(fn, args) {
@@ -364,11 +362,11 @@ define([
         }
 
         function applyTransformsToInnerDrag() {
-            if (innerDrag.handle) {
-                innerDrag.handle
-                    .setSize(innerDrag.width, dimensions.innerHeight)
+            if (innerDrag) {
+                innerDrag
+                    .setSize(options.innerDragWidth, dimensions.innerHeight)
                     .moveTo(
-                        position.innerX - constrains.resizeHandleSize - innerDrag.width, // todo check minWidth constrain validity
+                        position.innerX - options.resizeHandleSize - options.innerDragWidth, // todo check minWidth constrain validity
                         position.innerY
                     );
             }
@@ -379,27 +377,27 @@ define([
          * If not, correct them
          */
         function correctTransforms() {
-            if (dimensions.topHeight < constrains.minHeight) {
-                dimensions.topHeight = constrains.minHeight;
-                position.innerY = position.outerY + constrains.minHeight;
+            if (dimensions.topHeight < options.minHeight) {
+                dimensions.topHeight = options.minHeight;
+                position.innerY = position.outerY + options.minHeight;
             }
-            if (dimensions.innerHeight < constrains.minHeight) {
-                dimensions.innerHeight = constrains.minHeight;
+            if (dimensions.innerHeight < options.minHeight) {
+                dimensions.innerHeight = options.minHeight;
             }
-            if (dimensions.bottomHeight < constrains.minHeight) {
-                dimensions.bottomHeight = constrains.minHeight;
+            if (dimensions.bottomHeight < options.minHeight) {
+                dimensions.bottomHeight = options.minHeight;
             }
             dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
 
-            if (dimensions.leftWidth < constrains.minWidth) {
-                dimensions.leftWidth = constrains.minWidth;
-                position.innerX = position.outerX + constrains.minWidth;
+            if (dimensions.leftWidth < options.minWidth) {
+                dimensions.leftWidth = options.minWidth;
+                position.innerX = position.outerX + options.minWidth;
             }
-            if (dimensions.innerWidth < constrains.minWidth) {
-                dimensions.innerWidth = constrains.minWidth;
+            if (dimensions.innerWidth < options.minWidth) {
+                dimensions.innerWidth = options.minWidth;
             }
-            if (dimensions.rightWidth < constrains.minWidth) {
-                dimensions.rightWidth = constrains.minWidth;
+            if (dimensions.rightWidth < options.minWidth) {
+                dimensions.rightWidth = options.minWidth;
             }
             dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
         }
@@ -480,10 +478,10 @@ define([
                         size = this.getSize();
                     overlay.moveTo(
                         pos.x,
-                        pos.y + constrains.resizeHandleSize
+                        pos.y + options.resizeHandleSize
                     ).setSize(
                         size.width,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
@@ -492,7 +490,7 @@ define([
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     this.config.maxHeight = (fromTop)
                         ? null
-                        : dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
+                        : dimensions.topHeight + (dimensions.innerHeight - options.minHeight);
                 },
 
                 // set the new transform values (dimension and position) resulting from the current mask resize, and apply them
@@ -522,10 +520,10 @@ define([
                         size = this.getSize();
                     overlay.moveTo(
                         pos.x,
-                        pos.y + constrains.resizeHandleSize
+                        pos.y + options.resizeHandleSize
                     ).setSize(
-                        size.width - constrains.resizeHandleSize,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.width - options.resizeHandleSize,
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
@@ -555,17 +553,17 @@ define([
                     var pos = this.getPosition(),
                         size = this.getSize();
                     overlay.moveTo(
-                        pos.x + constrains.resizeHandleSize,
-                        pos.y - constrains.resizeHandleSize
+                        pos.x + options.resizeHandleSize,
+                        pos.y - options.resizeHandleSize
                     ).setSize(
-                        size.width - (constrains.resizeHandleSize * 2),
-                        size.height + (constrains.resizeHandleSize * 2)
+                        size.width - (options.resizeHandleSize * 2),
+                        size.height + (options.resizeHandleSize * 2)
                     );
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     this.config.maxWidth = (fromLeft)
-                        ? dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth)
+                        ? dimensions.rightWidth + (dimensions.innerWidth - options.minWidth)
                         : null;
                 },
 
@@ -595,10 +593,10 @@ define([
                         size = this.getSize();
                     overlay.moveTo(
                         pos.x,
-                        pos.y + constrains.resizeHandleSize
+                        pos.y + options.resizeHandleSize
                     ).setSize(
-                        size.width - constrains.resizeHandleSize,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.width - options.resizeHandleSize,
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
@@ -629,16 +627,16 @@ define([
                         size = this.getSize();
                     overlay.moveTo(
                         pos.x,
-                        pos.y + constrains.resizeHandleSize
+                        pos.y + options.resizeHandleSize
                     ).setSize(
                         size.width,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     this.config.maxHeight = (fromTop)
-                        ? dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight)
+                        ? dimensions.bottomHeight + (dimensions.innerHeight - options.minHeight)
                         : null;
                 },
 
@@ -667,11 +665,11 @@ define([
                     var pos = this.getPosition(),
                         size = this.getSize();
                     overlay.moveTo(
-                        pos.x + constrains.resizeHandleSize,
-                        pos.y + constrains.resizeHandleSize
+                        pos.x + options.resizeHandleSize,
+                        pos.y + options.resizeHandleSize
                     ).setSize(
-                        size.width - constrains.resizeHandleSize,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.width - options.resizeHandleSize,
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
@@ -701,18 +699,18 @@ define([
                     var pos = this.getPosition(),
                         size = this.getSize();
                     overlay.moveTo(
-                        pos.x + constrains.resizeHandleSize,
-                        pos.y - constrains.resizeHandleSize
+                        pos.x + options.resizeHandleSize,
+                        pos.y - options.resizeHandleSize
                     ).setSize(
-                        size.width - (constrains.resizeHandleSize * 2),
-                        size.height + (constrains.resizeHandleSize * 2)
+                        size.width - (options.resizeHandleSize * 2),
+                        size.height + (options.resizeHandleSize * 2)
                     );
                 },
 
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     this.config.maxWidth = (fromLeft)
                         ? null
-                        : dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
+                        : dimensions.leftWidth + (dimensions.innerWidth - options.minWidth);
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -740,11 +738,11 @@ define([
                     var pos = this.getPosition(),
                         size = this.getSize();
                     overlay.moveTo(
-                        pos.x + constrains.resizeHandleSize,
-                        pos.y + constrains.resizeHandleSize
+                        pos.x + options.resizeHandleSize,
+                        pos.y + options.resizeHandleSize
                     ).setSize(
-                        size.width - constrains.resizeHandleSize,
-                        size.height - (constrains.resizeHandleSize * 2)
+                        size.width - options.resizeHandleSize,
+                        size.height - (options.resizeHandleSize * 2)
                     );
                 },
 
@@ -759,7 +757,7 @@ define([
         // jsdoc me !! or replace me ?
         function createPart(partConfig) {
             allParts[partConfig.id] = {
-                mask: createMask(_.assign({}, constrains, partConfig)),
+                mask: createMask(_.assign({}, options, partConfig)),
                 overlay: createOverlay(partConfig)
             };
         }
@@ -783,11 +781,11 @@ define([
 
         dimensions  = _.defaults(dimensions || {}, defaultDimensions);
         position    = _.defaults(position   || {}, defaultPosition);
-        constrains  = _.defaults(constrains || {}, defaultConstrains);
+        options     = _.defaults(options    || {}, defaultOptions);
 
         compoundMask = {
             init: function init() {
-                this.setTransforms(dimensions, position, constrains);
+                this.setTransforms(dimensions, position);
 
                 createCompoundMask();
                 createVisualGuides();
@@ -797,7 +795,7 @@ define([
 
             render: function render($container) {
                 invokeOnAll('render', [$container]);
-                innerDrag.handle.render($container);
+                innerDrag.render($container);
                 applyTransforms();
                 return this;
             },
@@ -810,23 +808,22 @@ define([
 
             show: function show() {
                 invokeOnAll('show');
-                innerDrag.handle.show();
+                innerDrag.show();
                 this.setState('hidden', false);
                 return this;
             },
 
             hide: function hide() {
                 invokeOnAll('hide');
-                innerDrag.handle.hide();
+                innerDrag.hide();
                 this.setState('hidden', true);
                 return this;
             },
 
             // set the transform model
-            setTransforms: function setTransforms(dim, pos, cons) {
+            setTransforms: function setTransforms(dim, pos) {
                 dimensions  = _.defaults(dim || {}, dimensions);
                 position    = _.defaults(pos || {}, position);
-                constrains  = _.defaults(cons || {}, constrains);
 
                 // automatically complete the dimensions
                 dimensions.topHeight    = pos.innerY - pos.outerY;
@@ -844,10 +841,6 @@ define([
 
             getPosition: function getPosition() {
                 return position;
-            },
-
-            getConstrains: function getConstrains() {
-                return constrains;
             },
 
             getParts: function getParts() {

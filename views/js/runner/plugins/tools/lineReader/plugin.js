@@ -50,7 +50,6 @@ define([
     function setMaskTransforms($container, compoundMask) {
         var dimensions,
             position,
-            constrains,
             $qtiContent = $container.find('#qti-content'),
             contentPosition = $qtiContent.position();
 
@@ -68,13 +67,7 @@ define([
             innerY: contentPosition.top + 25
         };
 
-        // this never changes, so we keep it hardcoded
-        constrains = {
-            minWidth: 25,
-            minHeight: 25,
-            resizeHandleSize: 10
-        };
-        compoundMask.setTransforms(dimensions, position, constrains);
+        compoundMask.setTransforms(dimensions, position);
     }
 
 
@@ -97,7 +90,11 @@ define([
                 pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {},
                 $container = testRunner.getAreaBroker().getContentArea().parent();
 
-            this.compoundMask = compoundMaskFactory()
+            this.compoundMask = compoundMaskFactory({
+                minWidth: 25,
+                minHeight: 25,
+                resizeHandleSize: 10
+            })
                 .init()
                 .render($container)
                 .hide();
