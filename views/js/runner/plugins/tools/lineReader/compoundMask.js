@@ -252,22 +252,30 @@ define([
          */
 
         function createInnerDragHandle() {
+            // uncomment this (and a few lines below) if debugging is needed:
+            // var $boundingBox = $('<div>').css({ position: 'fixed', 'box-sizing': 'border-box', border: '1px solid red' });
+
             innerDrag = componentFactory();
 
             makeStackable(innerDrag, stackingOptions);
             makeDraggable(innerDrag, {
                 dragRestriction: function dragRestriction() {
-                    var fixedXY = allParts.nw.mask.getElement().offset();
+                    var fixedXY = allParts.nw.mask.getElement().offset(),
+                        rect;
 
-                    return {
+                    rect = {
                         x: fixedXY.left + (options.minWidth - options.resizeHandleSize - options.innerDragWidth),
                         y: fixedXY.top + options.minHeight,
-                        width: dimensions.outerWidth
-                            - dimensions.innerWidth
-                            - options.minWidth
-                            - options.resizeHandleSize - options.innerDragWidth,
+                        width: dimensions.outerWidth -
+                            (dimensions.innerWidth + options.minWidth * 2 - options.innerDragWidth),
                         height: dimensions.outerHeight - (options.minHeight * 2)
                     };
+
+                    // uncomment to see what's going on:
+                    // allParts.ne.mask.getContainer().append($boundingBox);
+                    // $boundingBox.css({ width: rect.width, height: rect.height, top: rect.y, left: rect.x });
+
+                    return rect;
                 }
             })
                 .on('render', function() {
@@ -754,7 +762,6 @@ define([
             });
         }
 
-        // jsdoc me !! or replace me ?
         function createPart(partConfig) {
             allParts[partConfig.id] = {
                 mask: createMask(_.assign({}, options, partConfig)),
