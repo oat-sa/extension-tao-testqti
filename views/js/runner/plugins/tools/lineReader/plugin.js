@@ -64,14 +64,14 @@ define([
         position = {
             outerX: 0,
             outerY: 0,
-            innerX: contentPosition.left + 30,
-            innerY: contentPosition.top + 30
+            innerX: contentPosition.left + 25,
+            innerY: contentPosition.top + 25
         };
 
         // this never changes, so we keep it hardcoded
         constrains = {
-            minWidth: 30,
-            minHeight: 30,
+            minWidth: 25,
+            minHeight: 25,
             resizeHandleSize: 10
         };
         compoundMask.setTransforms(dimensions, position, constrains);

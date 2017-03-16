@@ -73,9 +73,11 @@ define([
     return function compoundMaskFactory(dimensions, position, constrains) {
         var compoundMask,
             allParts = {},
-            innerDrag = {},
+            innerDrag = {
+                width: 5
+            },
             visualGuides = {
-                borderWidth: 2 // this mirror the $lrThickBorder css variable
+                borderWidth: 1 // this mirror the $lrBorderWidth css variable
             };
 
         /**
@@ -116,9 +118,10 @@ define([
                         });
 
                     // uncomment this to see what's going on with masks:
-                    $element.css({ border: '1px solid olive'});
+                    // $element.css({ border: '1px solid olive'});
                 })
                 .on('resizestart', function () {
+                    innerDrag.handle.hide();
                     invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
                 })
@@ -126,8 +129,11 @@ define([
                 .on('resize', maskConfig.onResize || _.noop)
                 .on('resizeend', function () {
                     applyTransformsToOverlays();
-                    invokeOnOverlays('show');
+                    applyTransformsToInnerDrag();
+
                     invokeOnMasks('setState', ['resizing', false]);
+                    invokeOnOverlays('show');
+                    innerDrag.handle.show();
                 })
                 .init()
                 .setTemplate(maskPartTpl);
@@ -216,9 +222,10 @@ define([
                         });
 
                     // uncomment this to see what's going on with overlays:
-                    $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
+                    // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
                 })
                 .on('dragstart', function() {
+                    innerDrag.handle.hide();
                     invokeOnMasks('hide');
                     this.appendVisualGuides();
                 })
@@ -234,6 +241,7 @@ define([
                     // although they are already display, calling show() again on the overlays
                     // will force their z-Index at the top of the stack
                     invokeOnAll('show');
+                    innerDrag.handle.show();
 
                     // apply the new transform model
                     applyTransforms();
@@ -245,11 +253,75 @@ define([
 
         /**
          * =================
+         * Inner Drag Handle
+         * =================
+         */
+
+        function createInnerDragHandle() {
+            innerDrag.handle = componentFactory();
+
+            makeStackable(innerDrag.handle, stackingOptions);
+            makeDraggable(innerDrag.handle, {
+                dragRestriction: function dragRestriction() {
+                    var fixedXY = allParts.nw.mask.getElement().offset();
+
+                    return {
+                        x: fixedXY.left + (constrains.minWidth - constrains.resizeHandleSize * 2),
+                        y: fixedXY.top + constrains.minHeight,
+                        width: dimensions.outerWidth
+                        - dimensions.innerWidth
+                        - constrains.minWidth
+                        - constrains.resizeHandleSize - innerDrag.width,
+                        height: dimensions.outerHeight - (constrains.minHeight * 2)
+                    };
+                }
+            })
+                .on('render', function() {
+                    var $element = this.getElement();
+
+                    $element.addClass('line-reader-inner-drag');
+
+                    $element.on('mousedown', function(e) {
+                        e.stopPropagation();
+                    });
+                })
+                .on('dragstart', function() {
+                    invokeOnOverlays('hide');
+                    invokeOnMasks('setState', ['resizing', true]);
+                })
+                .on('dragmove', function(xOffsetRelative, yOffsetRelative) {
+                    position.innerX += xOffsetRelative;
+                    position.innerY += yOffsetRelative;
+
+                    dimensions.leftWidth += xOffsetRelative;
+                    dimensions.topHeight += yOffsetRelative;
+
+                    dimensions.rightWidth   -= xOffsetRelative;
+                    dimensions.bottomHeight -= yOffsetRelative;
+
+                    applyTransformsToMasks();
+                })
+                .on('dragend', function() {
+                    invokeOnOverlays('show');
+                    innerDrag.handle.bringToFront();
+                    invokeOnMasks('setState', ['resizing', false]);
+
+                    applyTransformsToOverlays();
+                })
+                .init();
+
+            //todo: enforce minimum size for handler in transform checks
+
+        }
+
+        /**
+         * =================
          * Utility functions
          * =================
          */
         function bringAllToFront() {
             invokeOnAll('bringToFront');
+            innerDrag.handle.bringToFront();
         }
 
         function invokeOnAll(fn, args) {
@@ -282,6 +354,7 @@ define([
         function applyTransforms() {
             applyTransformsToMasks();
             applyTransformsToOverlays();
+            applyTransformsToInnerDrag();
         }
 
         function applyTransformsToMasks() {
@@ -292,6 +365,17 @@ define([
             _.forOwn(allParts, function(part) {
                 part.mask.placeOverlay(part.overlay);
             });
+        }
+
+        function applyTransformsToInnerDrag() {
+            if (innerDrag.handle) {
+                innerDrag.handle
+                    .setSize(innerDrag.width, dimensions.innerHeight)
+                    .moveTo(
+                        position.innerX - constrains.resizeHandleSize - innerDrag.width, // todo check minWidth constrain validity
+                        position.innerY
+                    );
+            }
         }
 
         /**
@@ -676,6 +760,7 @@ define([
             };
         }
 
+
         function createVisualGuides() {
             visualGuides.$maskBg = $('<div>', {
                 'class': 'mask-bg'
@@ -683,13 +768,6 @@ define([
             visualGuides.$innerWindow = $('<div>', {
                 'class': 'inner-window'
             });
-        }
-
-        function createInnerDragHandle() {
-            innerDrag.$handle = $('<div>', {
-                text: 'X'
-            });
-            // innerDrag:overlay
         }
 
 
@@ -709,12 +787,13 @@ define([
 
                 createCompoundMask();
                 createVisualGuides();
-
+                createInnerDragHandle();
                 return this;
             },
 
             render: function render($container) {
                 invokeOnAll('render', [$container]);
+                innerDrag.handle.render($container);
                 applyTransforms();
                 return this;
             },
@@ -727,12 +806,14 @@ define([
 
             show: function show() {
                 invokeOnAll('show');
+                innerDrag.handle.show();
                 this.setState('hidden', false);
                 return this;
             },
 
             hide: function hide() {
                 invokeOnAll('hide');
+                innerDrag.handle.hide();
                 this.setState('hidden', true);
                 return this;
             },

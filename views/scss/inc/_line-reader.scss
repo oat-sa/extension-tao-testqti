@@ -1,16 +1,7 @@
-$lrThinBorder: 1px;
-$lrThickBorder: 2px; // this mirrors the visualGuides.borderWidth JS variable
+$lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
 $lrBorderColor: $textColor;
 $lrMaskBg: #ffffff;
-
-@mixin resizableBorder($edge) {
-    &.border-#{$edge} {
-        border-#{$edge}-width: $lrThinBorder;
-        &.resizing {
-            border-#{$edge}-width: $lrThickBorder;
-        }
-    }
-}
+$lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
 .line-reader-mask {
     box-sizing: border-box;
@@ -22,13 +13,13 @@ $lrMaskBg: #ffffff;
     }
 
     &.resizing {
-        background-color: rgba($lrMaskBg, 0.7);
+        background-color: $lrMaskBgTransparent;
     }
 
-    @include resizableBorder('top');
-    @include resizableBorder('right');
-    @include resizableBorder('bottom');
-    @include resizableBorder('left');
+    &.border-top     { border-top-width: $lrBorderWidth; }
+    &.border-right   { border-right-width: $lrBorderWidth; }
+    &.border-bottom  { border-bottom-width: $lrBorderWidth; }
+    &.border-left    { border-left-width: $lrBorderWidth; }
 }
 
 
@@ -45,7 +36,7 @@ $lrMaskBg: #ffffff;
         position: absolute;
         opacity: 1;
         background-color: transparent;
-        border: $lrThickBorder solid $lrBorderColor;
+        border: $lrBorderWidth solid $lrBorderColor;
     }
 
     .inner-window {
@@ -55,9 +46,16 @@ $lrMaskBg: #ffffff;
     // the actual white transparent background is actually made of a border
     .mask-bg {
         box-sizing: border-box;
-        border: 0 solid rgba($lrMaskBg, 0.7);
+        border: 0 solid $lrMaskBgTransparent;
         background-color: transparent;
         position: absolute;
     }
 }
 
+.line-reader-inner-drag {
+    background-color: whiten($textColor, 0.85);
+    &:hover {
+        background-color: whiten($textColor, 0.6);
+    }
+    @include border-radius(3);
+}
