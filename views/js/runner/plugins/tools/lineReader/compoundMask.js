@@ -73,6 +73,7 @@ define([
     return function compoundMaskFactory(dimensions, position, constrains) {
         var compoundMask,
             allParts = {},
+            innerDrag = {},
             visualGuides = {
                 borderWidth: 2 // this mirror the $lrThickBorder css variable
             };
@@ -684,6 +685,13 @@ define([
             });
         }
 
+        function createInnerDragHandle() {
+            innerDrag.$handle = $('<div>', {
+                text: 'X'
+            });
+            // innerDrag:overlay
+        }
+
 
         /**
          * =========================
@@ -713,6 +721,7 @@ define([
 
             destroy: function destroy() {
                 invokeOnAll('destroy');
+                visualGuides = null;
                 return this;
             },
 

@@ -46,11 +46,35 @@ define([
     var actionPrefix = 'tool-' + pluginName + '-';
 
 
-    function setMaskCoordinates($container) {
-        var $qtiContent = $container.find('.qti-content');
+    // we assume here that the content area has a uniform padding of 30
+    function setMaskTransforms($container, compoundMask) {
+        var dimensions,
+            position,
+            constrains,
+            $qtiContent = $container.find('#qti-content'),
+            contentPosition = $qtiContent.position();
 
+        dimensions = {
+            outerWidth:     $container.width(),
+            outerHeight:    200, // reasonable default height to allow vertical moving
+            innerWidth:     $qtiContent.width(),
+            innerHeight:    20   // reasonable default line height
+        };
 
+        position = {
+            outerX: 0,
+            outerY: 0,
+            innerX: contentPosition.left + 30,
+            innerY: contentPosition.top + 30
+        };
 
+        // this never changes, so we keep it hardcoded
+        constrains = {
+            minWidth: 30,
+            minHeight: 30,
+            resizeHandleSize: 10
+        };
+        compoundMask.setTransforms(dimensions, position, constrains);
     }
 
 
@@ -65,15 +89,15 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
-            var self = this;
+            var self = this,
 
-            var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
-            var $container = testRunner.getAreaBroker().getContentArea().parent();
+                testRunner = this.getTestRunner(),
+                testData = testRunner.getTestData() || {},
+                testConfig = testData.config || {},
+                pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {},
+                $container = testRunner.getAreaBroker().getContentArea().parent();
 
-            var compoundMask = compoundMaskFactory()
+            this.compoundMask = compoundMaskFactory()
                 .init()
                 .render($container)
                 .hide();
@@ -101,7 +125,8 @@ define([
             }
 
             function toggleMask() {
-                if (compoundMask.getState('hidden')) {
+                if (self.compoundMask.getState('hidden')) {
+                    setMaskTransforms($container, self.compoundMask);
                     showMask();
                 } else {
                     hideMask();
@@ -111,13 +136,13 @@ define([
             function showMask() {
                 testRunner.trigger('plugin-start.' + pluginName);
                 self.button.turnOn();
-                compoundMask.show();
+                self.compoundMask.show();
             }
 
             function hideMask() {
                 testRunner.trigger('plugin-end.' + pluginName);
                 self.button.turnOff();
-                compoundMask.hide();
+                self.compoundMask.hide();
             }
 
             // create button
@@ -149,9 +174,11 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', toggleButton)
+                .on('renderitem', function() {
+                    setMaskTransforms($container, self.compoundMask);
+                })
                 .on('enabletools renderitem', function () {
                     self.enable();
-                    setMaskCoordinates($container);
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
@@ -168,6 +195,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
+            this.compoundMask.destroy();
             shortcut.remove('.' + this.getName());
         },
 
