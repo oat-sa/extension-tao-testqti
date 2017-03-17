@@ -44,11 +44,15 @@ define([
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     if (data && data.type && data.type === 'TestState') {
+                        // spread the world about the reason of the leave
+                        testRunner.setState('closedOrSuspended', true);
+
                         if (!testRunner.getState('ready')) {
                             // if we open an inconsistent test just leave
                             // should happen if we refresh an auto paused test
-                            testRunner.setState('closedOrSuspended', true);
                             testRunner.trigger('destroy');
+                        } else {
+                            testRunner.trigger('leave', data);
                         }
                         // break the chain to avoid uncaught exception in promise...
                         // this will lead to unresolved promise, but the browser will be redirected soon!
@@ -70,7 +74,6 @@ define([
                 .channel('teststate', function (data) {
                     if (!isLeaving && data && ('close' === data.type || 'pause' === data.type)) {
                         isLeaving = true;
-                        testRunner.setState('closedOrSuspended', true);
                         testRunner.trigger('leave', data);
                     }
                 });

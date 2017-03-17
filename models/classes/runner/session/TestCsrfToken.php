@@ -22,7 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner\session;
 
-use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoTests\models\runner\AbstractCsrfToken;
 
@@ -48,12 +47,21 @@ class TestCsrfToken extends AbstractCsrfToken
     protected $sessionId;
 
     /**
+     * temporary variable until proper servicemanager integration
+     * @var ExtendedStateService
+     */
+    private static $extendedStateService;
+
+    /**
      * temporary helper until proper servicemanager integration
      * @return ExtendedStateService
      */
     static public function getExtendedStateService()
     {
-        return ServiceManager::getServiceManager()->get(ExtendedStateService::SERVICE_ID);
+        if (!isset(self::$extendedStateService)) {
+            self::$extendedStateService = new ExtendedStateService();
+        }
+        return self::$extendedStateService;
     }
     
     /**

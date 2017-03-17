@@ -20,15 +20,11 @@
 
 namespace oat\taoQtiTest\models;
 
-use oat\oatbox\service\ConfigurableService;
-
 /**
  * Manage the flagged items
  */
-class ExtendedStateService extends ConfigurableService
+class ExtendedStateService
 {
-    const SERVICE_ID = 'taoQtiTest/ExtendedState';
-    
     const STORAGE_PREFIX = 'extra_';
 
     const VAR_REVIEW = 'review';

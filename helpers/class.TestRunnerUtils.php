@@ -32,7 +32,6 @@ use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use qtism\common\datatypes\QtiString;
-use oat\oatbox\service\ServiceManager;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -43,12 +42,21 @@ use oat\oatbox\service\ServiceManager;
 class taoQtiTest_helpers_TestRunnerUtils {
     
     /**
+     * temporary variable until proper servicemanager integration
+     * @var ExtendedStateService
+     */
+    private static $extendedStateService;
+
+    /**
      * temporary helper until proper servicemanager integration
      * @return ExtendedStateService
      */
     static public function getExtendedStateService()
     {
-        return ServiceManager::getServiceManager()->get(ExtendedStateService::SERVICE_ID);
+        if (!isset(self::$extendedStateService)) {
+            self::$extendedStateService = new ExtendedStateService();
+        }
+        return self::$extendedStateService;
     }
     
     /**
