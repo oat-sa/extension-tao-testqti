@@ -419,7 +419,7 @@ define([
         }
 
         /**
-         * Check that the given dimensions respect the current constrains.
+         * Check that the given transform model respect the current constrains.
          * If not, correct them
          * todo: some checks should also be made regarding consistency of minWidth/Height and other config options like resizeHandleSize / innerDragWidth
          */
@@ -901,9 +901,8 @@ define([
              * @param {Number} pos
              * @param {Number} pos.outerX - overall mask x
              * @param {Number} pos.outerY - overall mask y
-             * @param {Number} pos.innerX - inner window mask x
-             * @param {Number} pos.innerY - inner window mask y
-
+             * @param {Number} pos.innerX - inner window x
+             * @param {Number} pos.innerY - inner window y
              */
             setTransforms: function setTransforms(dim, pos) {
                 dimensions  = _.defaults(dim || {}, dimensions);

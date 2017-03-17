@@ -72,7 +72,7 @@ define([
         var $qtiContent = $container.find('#qti-content'),
             $qtiItem = $qtiContent.find('.qti-item'),
 
-            itemPosition = $qtiItem.position(),
+            itemPosition = $qtiItem.position() || {},
 
             paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
             paddingTop = parseInt($qtiItem.css('padding-top'), 10);

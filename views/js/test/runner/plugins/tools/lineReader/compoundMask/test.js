@@ -39,10 +39,6 @@ define([
             { title: 'render',  method: 'render' },
             { title: 'destroy', method: 'destroy' },
 
-            { title: 'eventifier.on',       method: 'on' },
-            { title: 'eventifier.off',      method: 'off' },
-            { title: 'eventifier.trigger',  method: 'trigger' },
-
             { title: 'statifier.getState',  method: 'getState' },
             { title: 'statifier.setState',  method: 'setState' }
         ])
@@ -60,7 +56,8 @@ define([
             mask = compoundMaskFactory({
                 minWidth:   20,
                 minHeight:  20,
-                resizeHandleSize: 7
+                resizeHandleSize: 7,
+                innerDragWidth: 6
             }),
             expectedDimensions = {
                 outerWidth:     500,
@@ -79,9 +76,10 @@ define([
                 innerX: 100,
                 innerY: 100
             },
-            allParts = mask.getParts();
+            allParts = mask.getParts(),
+            $innerDrag;
 
-        QUnit.expect(34);
+        QUnit.expect(36);
 
         mask.init();
         mask.render($container);
@@ -96,10 +94,6 @@ define([
             outerY: 50,
             innerX: 100,
             innerY: 100
-        }, {
-            minWidth:   20,
-            minHeight:  20,
-            resizeHandleSize: 7
         });
 
         assert.deepEqual(mask.getDimensions(),  expectedDimensions, 'dimensions have been correctly set');
@@ -145,7 +139,9 @@ define([
         assert.deepEqual(allParts.nw.overlay.getSize(),     { width: 50-7, height: 50-14 }, 'north-west overlay has the right dimensions');
         assert.deepEqual(allParts.nw.overlay.getPosition(), { x: 50+7,     y: 50+7 },       'north-west overlay has the right position');
 
-        // todo: add innerMAsk
+        $innerDrag = $container.find('.line-reader-inner-drag');
+        assert.equal($innerDrag.position().left, 87, 'inner drag has the correct x position');
+        assert.equal($innerDrag.position().top, 100, 'inner drag has the correct y position');
     });
 
 
