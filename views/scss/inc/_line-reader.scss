@@ -1,0 +1,72 @@
+$lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
+$lrBorderColor: $textColor;
+$lrMaskBg: #ffffff;
+$lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
+
+.line-reader-mask {
+    box-sizing: border-box;
+    border: 0 solid $lrBorderColor;
+    background-color: $lrMaskBg;
+
+    &.hidden {
+        display: none;
+    }
+
+    &.resizing {
+        background-color: $lrMaskBgTransparent;
+    }
+
+    &.border-top     { border-top-width: $lrBorderWidth; }
+    &.border-right   { border-right-width: $lrBorderWidth; }
+    &.border-bottom  { border-bottom-width: $lrBorderWidth; }
+    &.border-left    { border-left-width: $lrBorderWidth; }
+
+    &.ne { @include border-radius-top-right(5); }
+    &.se { @include border-radius-bottom-right(5); }
+    &.sw { @include border-radius-bottom-left(5); }
+    &.nw { @include border-radius-top-left(5); }
+}
+
+
+.line-reader-overlay {
+    box-sizing: border-box;
+    opacity: 0;
+
+    &.hidden {
+        display: none;
+    }
+
+    &.moving, .inner-window {
+        overflow: hidden;
+        position: absolute;
+        opacity: 1;
+        background-color: transparent;
+        border: $lrBorderWidth solid $lrBorderColor;
+    }
+
+    .inner-window {
+        box-sizing: content-box;
+    }
+
+    // the actual white transparent background is actually made of a border
+    .mask-bg {
+        box-sizing: border-box;
+        border: 0 solid $lrMaskBgTransparent;
+        background-color: transparent;
+        position: absolute;
+    }
+}
+
+.line-reader-inner-drag {
+    @include border-radius(3);
+    background-color: whiten($textColor, 0.85);
+
+    &.hidden {
+        display: none;
+    }
+
+    &:hover {
+        background-color: whiten($textColor, 0.6);
+    }
+
+}
