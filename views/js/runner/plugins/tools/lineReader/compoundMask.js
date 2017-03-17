@@ -311,10 +311,7 @@ define([
                     applyTransformsToOverlays();
                 })
                 .init();
-
-            //todo: enforce minimum size for handler in transform checks
-
-        }
+  }
 
         /**
          * =================
@@ -374,7 +371,7 @@ define([
                 innerDrag
                     .setSize(options.innerDragWidth, dimensions.innerHeight)
                     .moveTo(
-                        position.innerX - options.resizeHandleSize - options.innerDragWidth, // todo check minWidth constrain validity
+                        position.innerX - options.resizeHandleSize - options.innerDragWidth,
                         position.innerY
                     );
             }
@@ -383,6 +380,7 @@ define([
         /**
          * Check that the given dimensions respect the current constrains.
          * If not, correct them
+         * todo: some checks should also be made regarding consistency of minWidth/Height and other config options like resizeHandleSize / innerDragWidth
          */
         function correctTransforms() {
             if (dimensions.topHeight < options.minHeight) {
@@ -810,6 +808,7 @@ define([
             destroy: function destroy() {
                 invokeOnAll('destroy');
                 visualGuides = null;
+                innerDrag = null;
                 return this;
             },
 

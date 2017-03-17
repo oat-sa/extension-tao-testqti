@@ -124,6 +124,8 @@ define([
         assert.deepEqual(allParts.nw.mask.getPosition(),    { x: 50,       y: 50 },         'north-west mask has the right position');
         assert.deepEqual(allParts.nw.overlay.getSize(),     { width: 50-7, height: 50-14 }, 'north-west overlay has the right dimensions');
         assert.deepEqual(allParts.nw.overlay.getPosition(), { x: 50+7,     y: 50+7 },       'north-west overlay has the right position');
+
+        // todo: add innerMAsk
     });
 
 
@@ -418,6 +420,14 @@ define([
                 title: 'leftWidth too short',
                 dimensionsIn: { outerWidth: 160 },
                 dimensionsOut: { outerWidth: 170, rightWidth: 20 }
+            }, {
+                title: 'innerWidth too big',
+                dimensionsIn: { innerWidth: 300 },
+                dimensionsOut: { innerWidth: 300, outerWidth: 300 + 50 + 20, rightWidth: 20 }
+            }, {
+                title: 'innerHeight too big',
+                dimensionsIn: { innerHeight: 300 },
+                dimensionsOut: { innerHeight: 300, outerHeight: 300 + 50 + 20, bottomHeight: 20 }
             }
         ])
         .test('correctTransforms()', function(data, assert) {

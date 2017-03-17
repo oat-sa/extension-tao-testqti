@@ -45,31 +45,50 @@ define([
      */
     var actionPrefix = 'tool-' + pluginName + '-';
 
+    var dimensions,
+        position;
 
-    // we assume here that the content area has a uniform padding of 30
-    function setMaskTransforms($container, compoundMask) {
-        var dimensions,
-            position,
-            $qtiContent = $container.find('#qti-content'),
-            contentPosition = $qtiContent.position();
+    /**
+     * This is first effort to place the mask on the first line on the item
+     * It makes a lot of assumptions:
+     * - the item starts with a text
+     * - the padding is set on the .qti-item container
+     * - the padding is consistent with the minWidth/minHeight configuration of the mask
+     * - and some other...
+     * @param $container
+     */
+    function getDimensions($container) {
+        var $qtiContent = $container.find('#qti-content'),
+            lineHeight = Math.ceil(parseFloat($qtiContent.css('line-height'))) || 20; // reasonable default line height
 
-        dimensions = {
+        return {
             outerWidth:     $container.width(),
-            outerHeight:    200, // reasonable default height to allow vertical moving
+            outerHeight:    $qtiContent.height(),
             innerWidth:     $qtiContent.width(),
-            innerHeight:    20   // reasonable default line height
+            innerHeight:    lineHeight
         };
+    }
+    function getPosition($container) {
+        var $qtiContent = $container.find('#qti-content'),
+            $qtiItem = $qtiContent.find('.qti-item'),
 
-        position = {
+            itemPosition = $qtiItem.position(),
+
+            paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
+            paddingTop = parseInt($qtiItem.css('padding-top'), 10);
+
+        return {
             outerX: 0,
             outerY: 0,
-            innerX: contentPosition.left + 25,
-            innerY: contentPosition.top + 25
+            innerX: parseInt(itemPosition.left, 10) + paddingLeft - 5, // the -5 is to let the text breathe a bit
+            innerY: parseInt(itemPosition.top, 10) + paddingTop - 5
         };
-
-        compoundMask.setTransforms(dimensions, position);
     }
 
+    function containerWidthHasChanged($container) {
+        var newDimensions = getDimensions($container);
+        return newDimensions.outerWidth !== dimensions.outerWidth;
+    }
 
     /**
      * Returns the configured plugin
@@ -110,9 +129,6 @@ define([
                 return !!options.lineReader;
             }
 
-            /**
-             * Is plugin activated ? if not, then we hide the button
-             */
             function toggleButton() {
                 if (isEnabled()) {
                     self.show();
@@ -123,7 +139,9 @@ define([
 
             function toggleMask() {
                 if (self.compoundMask.getState('hidden')) {
-                    setMaskTransforms($container, self.compoundMask);
+                    if (containerWidthHasChanged($container)) {
+                        transformMask($container);
+                    }
                     showMask();
                 } else {
                     hideMask();
@@ -140,6 +158,15 @@ define([
                 testRunner.trigger('plugin-end.' + pluginName);
                 self.button.turnOff();
                 self.compoundMask.hide();
+            }
+
+            function transformMask($maskContainer) {
+                dimensions = getDimensions($maskContainer);
+                position = getPosition($maskContainer);
+                self.compoundMask.setTransforms(
+                    _.clone(dimensions),
+                    _.clone(position)
+                );
             }
 
             // create button
@@ -172,7 +199,7 @@ define([
             testRunner
                 .on('loaditem', toggleButton)
                 .on('renderitem', function() {
-                    setMaskTransforms($container, self.compoundMask);
+                    transformMask($container);
                 })
                 .on('enabletools renderitem', function () {
                     self.enable();
