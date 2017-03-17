@@ -19,12 +19,14 @@
  * A compound mask is a mask built with multiple ui/components that interacts with each other.
  * The compound mask itself is not a ui/component but mimic most of its API.
  *
+ * Most mask transformations (resize, drag) are achieved by updating a very simple transform model (position, dimensions)
+ * which is latter applied to the actual individual components at a proper time
+ *
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
     'jquery',
     'lodash',
-    'core/eventifier',
     'core/statifier',
     'ui/component',
     'ui/component/draggable',
@@ -33,7 +35,6 @@ define([
 ], function(
     $,
     _,
-    eventifier,
     statifier,
     componentFactory,
     makeDraggable,
@@ -58,15 +59,28 @@ define([
         minWidth:  30,
         minHeight: 30,
         resizeHandleSize: 10,
-        innerDragWidth: 5,
-        borderWidth: 1 // this mirror the $lrBorderWidth css variable
+        innerDragWidth: 5
     };
     var stackingOptions = {
         stackingScope: 'test-runner'
     };
 
     /**
-     * JsDoc me !!!
+     * @param {Object} options
+     * @param {Number} options.minWidth - minimal width of every component of the compound mask
+     * @param {Number} options.minHeight - minimal height of every component of the compound mask
+     * @param {Number} options.resizeHandleSize - margin left on the mask by drag overlays to allow resizing
+     * @param {Number} options.innerDragWidth - width of the inner window drag handle
+     * @param {Object} dimensions
+     * @param {Number} dimensions.outerWidth - overall mask width
+     * @param {Number} dimensions.outerHeight - overall mask height
+     * @param {Number} dimensions.innerWidth - inner window width
+     * @param {Number} dimensions.innerHeight - inner window height
+     * @param {Number} position
+     * @param {Number} position.outerX - overall mask x
+     * @param {Number} position.outerY - overall mask y
+     * @param {Number} position.innerX - inner window mask x
+     * @param {Number} position.innerY - inner window mask y
      */
     return function compoundMaskFactory(options, dimensions, position) {
         var compoundMask,
@@ -80,6 +94,16 @@ define([
          * ============================================
          */
 
+        /**
+         * Create a mask component. They are used for masking (obviously) but also resizing the compound mask
+         * @param {Object} maskConfig
+         * @param {String} maskConfig.id
+         * @param {Function} maskConfig.place - size and position the mask according to the transform model
+         * @param {Function} maskConfig.placeOverlay - size and position the overlay according to the transform model
+         * @param {Function} maskConfig.beforeResize - used to set the resize limit depending on which edge the resizing occurs
+         * @param {Function} maskConfig.onResize - how the resize affect the transform model
+         * @param {Object} maskConfig.edges - Interact configuration to specify which edges can be used for resizing
+         */
         function createMask(maskConfig) {
             var mask,
                 maskAPI = {
@@ -134,7 +158,14 @@ define([
         }
 
 
-
+        /**
+         * Create a overlay component. Overlay are invisible and are used for dragging.
+         * When clicked, the whole mask is hidden and only the overlay is displayed, after being resized to fit the whole mask surface
+         * this allows for performance improvement as well as giving the dragged element proper dragging boundaries.
+         * Also, visual guides are added, like a fake inner window, during the drag
+         * @param {Object} overlayConfig
+         * @param {String} overlayConfig.id
+         */
         function createOverlay(overlayConfig) {
             var overlay,
                 overlayAPI = {
@@ -169,7 +200,8 @@ define([
 
                     appendVisualGuides: function appendVisualGuides() {
                         var $element = this.getElement(),
-                            borderOffset = options.borderWidth * 2;
+                            borderWidth = 1, // this mirror the $lrBorderWidth css variable
+                            borderOffset = borderWidth * 2;
 
                         $element.append(visualGuides.$maskBg);
                         $element.append(visualGuides.$innerWindow);
@@ -251,6 +283,9 @@ define([
          * =================
          */
 
+        /**
+         * This handle allows to drag the inner window
+         */
         function createInnerDragHandle() {
             // uncomment this (and a few lines below) if debugging is needed:
             // var $boundingBox = $('<div>').css({ position: 'fixed', 'box-sizing': 'border-box', border: '1px solid red' });
@@ -311,7 +346,7 @@ define([
                     applyTransformsToOverlays();
                 })
                 .init();
-  }
+        }
 
         /**
          * =================
@@ -336,6 +371,12 @@ define([
             invokeOn('overlay', fn, args);
         }
 
+        /**
+         * Invoke a method on all compound mask parts, whether mask or overlays
+         * @param {String} target - mask | overlay
+         * @param {String} fn - the name of the method to invoke
+         * @param {*[]} args - arguments passed on invoke
+         */
         function invokeOn(target, fn, args) {
             _.forOwn(allParts, function(part) {
                 if (_.isObject(part[target]) && _.isFunction(part[target][fn])) {
@@ -408,6 +449,12 @@ define([
             dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
         }
 
+        /**
+         * Update the transform model during a resize affecting the top height
+         * @param {Number} newHeight
+         * @param {Number} newY
+         * @param {Boolean} fromTop - if the resize occurs from the top
+         */
         function setTopHeight(newHeight, newY, fromTop) {
             dimensions.topHeight = newHeight;
 
@@ -420,6 +467,12 @@ define([
             }
         }
 
+        /**
+         * Update the transform model during a resize affecting the right width
+         * @param {Number} newWidth
+         * @param {Number} newX
+         * @param {Boolean} fromLeft - if the resize occurs from the left
+         */
         function setRightWidth(newWidth, newX, fromLeft) {
             dimensions.rightWidth = newWidth;
 
@@ -430,6 +483,12 @@ define([
             }
         }
 
+        /**
+         * Update the transform model during a resize affecting the bottom height
+         * @param {Number} newHeight
+         * @param {Number} newY
+         * @param {Boolean} fromTop - if the resize occurs from the top
+         */
         function setBottomHeight(newHeight, newY, fromTop) {
             dimensions.bottomHeight = newHeight;
 
@@ -441,6 +500,12 @@ define([
             }
         }
 
+        /**
+         * Update the transform model during a resize affecting the left width
+         * @param {Number} newWidth
+         * @param {Number} newX
+         * @param {Boolean} fromLeft - if the resize occurs from the left
+         */
         function setLeftWidth(newWidth, newX, fromLeft) {
             dimensions.leftWidth = newWidth;
 
@@ -826,7 +891,20 @@ define([
                 return this;
             },
 
-            // set the transform model
+            /**
+             * Allow updating the transform model
+             * @param {Object} dim
+             * @param {Number} dim.outerWidth - overall mask width
+             * @param {Number} dim.outerHeight - overall mask height
+             * @param {Number} dim.innerWidth - inner window width
+             * @param {Number} dim.innerHeight - inner window height
+             * @param {Number} pos
+             * @param {Number} pos.outerX - overall mask x
+             * @param {Number} pos.outerY - overall mask y
+             * @param {Number} pos.innerX - inner window mask x
+             * @param {Number} pos.innerY - inner window mask y
+
+             */
             setTransforms: function setTransforms(dim, pos) {
                 dimensions  = _.defaults(dim || {}, dimensions);
                 position    = _.defaults(pos || {}, position);
@@ -854,7 +932,6 @@ define([
             }
         };
 
-        eventifier(compoundMask);
         statifier(compoundMask);
 
         return compoundMask;

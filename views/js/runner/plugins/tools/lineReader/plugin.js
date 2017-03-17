@@ -49,13 +49,13 @@ define([
         position;
 
     /**
-     * This is first effort to place the mask on the first line on the item
-     * It makes a lot of assumptions:
+     * These functions are a first effort to place the mask on the first line on the item
+     * They make a lot of assumptions:
      * - the item starts with a text
      * - the padding is set on the .qti-item container
      * - the padding is consistent with the minWidth/minHeight configuration of the mask
      * - and some other...
-     * @param $container
+     * @param {jQuery} $container - where the mask is appended
      */
     function getDimensions($container) {
         var $qtiContent = $container.find('#qti-content'),
