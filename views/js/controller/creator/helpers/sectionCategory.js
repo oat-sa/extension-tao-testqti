@@ -185,6 +185,10 @@ define([
                 description : __('enable highlighter tool')
             },
             {
+                name : 'x-tao-option-line-reader',
+                description : __('enable line reader tool')
+            },
+            {
                 name : 'x-tao-option-magnifier',
                 description : __('enable magnifier tool')
             },

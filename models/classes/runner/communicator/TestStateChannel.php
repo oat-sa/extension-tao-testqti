@@ -58,13 +58,13 @@ class TestStateChannel implements CommunicationChannel
             $result = [
                 'type' => 'close',
                 'code' => $state,
-                'message' => __('This test has been terminated'),
+                'message' => __('The assessment has been terminated.'),
             ];
         } else if ($state == AssessmentTestSessionState::SUSPENDED) {
             $result = [
                 'type' => 'pause',
                 'code' => $state,
-                'message' => __('This test has been suspended'),
+                'message' => __('The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required.'),
             ];
         }
 

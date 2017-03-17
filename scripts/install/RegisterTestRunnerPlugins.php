@@ -252,6 +252,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => false,
                 'tags' => [  ]
+            ], [
+                'id' => 'lineReader',
+                'name' => 'Line Reader',
+                'module' => 'taoQtiTest/runner/plugins/tools/lineReader/plugin',
+                'description' => 'Display a customisable mask with a customisable hole in it!',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
             ]
         ],
         'security' => [
