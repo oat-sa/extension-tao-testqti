@@ -22,8 +22,11 @@
 
 namespace oat\taoQtiTest\models\runner\communicator;
 
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  * Class TestStateChannel
@@ -32,8 +35,10 @@ use qtism\runtime\tests\AssessmentTestSessionState;
  *
  * @package oat\taoQtiTest\models\runner\communicator
  */
-class TestStateChannel implements CommunicationChannel
+class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationChannel
 {
+    use ServiceLocatorAwareTrait;
+    
     /**
      * Get name of channel
      * @return string
@@ -54,17 +59,19 @@ class TestStateChannel implements CommunicationChannel
         $result = null;
         $state = $context->getTestSession()->getState();
 
+        $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
+        
         if ($state == AssessmentTestSessionState::CLOSED) {
             $result = [
                 'type' => 'close',
                 'code' => $state,
-                'message' => __('This test has been terminated'),
+                'message' => $messageService->getStateMessage($context->getTestSession()),
             ];
         } else if ($state == AssessmentTestSessionState::SUSPENDED) {
             $result = [
                 'type' => 'pause',
                 'code' => $state,
-                'message' => __('This test has been suspended'),
+                'message' => $messageService->getStateMessage($context->getTestSession()),
             ];
         }
 
