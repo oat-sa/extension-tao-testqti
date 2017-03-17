@@ -2,7 +2,7 @@
 
 .test-runner-scope {
     .content-wrapper {
-        div.key-navigation-group {
+        p.key-navigation-group, div.key-navigation-group {
             padding: 5px !important;
         }
         .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction) {
@@ -17,6 +17,13 @@
                 .qti-choice.key-navigation-highlight {
                     background: whiten($info, .9) !important;
                 }
+            }
+        }
+        span.key-navigation-group{
+            border: none !important;
+            &.focusin{
+                outline: solid $info 1px !important;
+                outline-offset: 1px;
             }
         }
     }

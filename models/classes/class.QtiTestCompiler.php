@@ -438,6 +438,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function explodeRubricBlocks(XmlCompactDocument $compiledDoc)
     {
+        common_Logger::t("Exploding QTI rubricBlocks...");
+        
         $privateDir = $this->getPrivateDirectory();
         $explodedRubricBlocks = $compiledDoc->explodeRubricBlocks();
 
@@ -513,6 +515,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $assessmentTest The AssessmentTest object you want to compile the rubrickBlocks.
      */
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
+        common_Logger::t("Compiling QTI rubricBlocks...");
+        
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $sourceDir = $testService->getQtiTestDir($this->getResource());
@@ -702,8 +706,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @param AssessmentTest $test
      */
     protected function compileTest(AssessmentTest $test) {
+        common_Logger::t("Compiling QTI test definition...");
         // Compiling a test may require extra processing time.
-        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::MEDIUM);
+        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
         $phpCompiledDoc = new PhpDocument('2.1', $test);
         $data = $phpCompiledDoc->saveToString();
@@ -719,6 +724,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileMeta(AssessmentTest $test)
     {
+        common_Logger::t("Compiling test metadata...");
         $compiledDocDir = $this->getPrivateDirectory();
         $meta = taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
         $phpCode = common_Utils::toPHPVariableString($meta);

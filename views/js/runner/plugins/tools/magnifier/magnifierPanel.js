@@ -427,10 +427,10 @@ define([
             if (controls && controls.$target) {
                 position = magnifierPanel.getPosition();
 
-                position.left += dx + controls.$target.scrollLeft();
-                position.top += dy + controls.$target.scrollTop();
+                position.x += dx + controls.$target.scrollLeft();
+                position.y += dy + controls.$target.scrollTop();
 
-                magnifierPanel.zoomAt(position.left, position.top);
+                magnifierPanel.zoomAt(position.x, position.y);
             }
         }
 
