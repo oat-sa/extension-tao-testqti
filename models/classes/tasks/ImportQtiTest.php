@@ -25,7 +25,8 @@ use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
 use oat\oatbox\task\Task;
-
+use oat\tao\model\import\ImportersService;
+use \oat\taoQtiTest\models\import\QtiTestImporter;
 /**
  * Class ImportQtiTest
  * @package oat\taoQtiTest\models\tasks
@@ -49,11 +50,11 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         }
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
-        $this->service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
-
-        $report = $this->service->importQtiTest($file);
-        return $report;
+        /** @var ImportersService $importersService */
+        $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
+        $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
+        return $importer->import($file);
     }
 
     /**
