@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\communicator;
 
+use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -39,13 +40,15 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
 {
     use ServiceLocatorAwareTrait;
     
+    const CHANNEL_NAME = 'teststate';
+    
     /**
      * Get name of channel
      * @return string
      */
     public function getName()
     {
-        return 'teststate';
+        return self::CHANNEL_NAME;
     }
 
     /**
@@ -58,23 +61,50 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
     {
         $result = null;
         $state = $context->getTestSession()->getState();
+        $sessionId = $context->getTestSession()->getSessionId();
 
         $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
-        
-        if ($state == AssessmentTestSessionState::CLOSED) {
-            $result = [
-                'type' => 'close',
-                'code' => $state,
-                'message' => $messageService->getStateMessage($context->getTestSession()),
-            ];
-        } else if ($state == AssessmentTestSessionState::SUSPENDED) {
-            $result = [
-                'type' => 'pause',
-                'code' => $state,
-                'message' => $messageService->getStateMessage($context->getTestSession()),
-            ];
+        $stateService = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+        $events = $stateService->getEvents($sessionId);
+        $ids = [];
+        foreach ($events as $event) {
+            if ($event['type'] == self::CHANNEL_NAME) {
+                $ids[] = $event['id'];
+                if (isset($event['data']['state'])) {
+                    $state = $event['data']['state'];
+                } else {
+                    \common_Logger::w('The state is missing from the ' . self::CHANNEL_NAME . ' event context');
+                }
+
+                if (isset($event['data']['message'])) {
+                    $message = $event['data']['message'];
+                } else {
+                    $message = $messageService->getStateMessage($context->getTestSession());
+                    \common_Logger::w('The message is missing from the ' . self::CHANNEL_NAME . ' event context');
+                }
+
+                if (!$result || $state == AssessmentTestSessionState::CLOSED) {
+
+                    if ($state == AssessmentTestSessionState::CLOSED) {
+                        $type = 'close';
+                    } else if ($state == AssessmentTestSessionState::SUSPENDED) {
+                        $type = 'pause';
+                    } else {
+                        $type = null;
+                        \common_Logger::w('Inconsistent ' . self::CHANNEL_NAME . ' event');
+                    }
+
+                    $result = [
+                        'type' => $type,
+                        'code' => $state,
+                        'message' => $message,
+                    ];
+                }
+            }
         }
 
-        return $result;
+        if (count($ids)) {
+            $stateService->removeEvents($sessionId, $ids);
+        }
     }
 }

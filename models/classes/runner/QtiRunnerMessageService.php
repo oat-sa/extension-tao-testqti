@@ -36,7 +36,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
  */
 class QtiRunnerMessageService extends ConfigurableService implements RunnerMessageService
 {
-    const SERVICE_ID = 'taoQtiTest/RunnerMessageService';
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
     
     /**
      * Gets a message related to the state of the assessment test session

@@ -62,7 +62,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function __construct()
     {
-        $this->runnerService = $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
+        $this->runnerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
 
         // Prevent anything to be cached by the client.
         TestRunnerUtils::noHttpClientCache();
