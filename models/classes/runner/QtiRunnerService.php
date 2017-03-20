@@ -1323,7 +1323,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
 
-            $stateService = new ExtendedStateService();
+            $stateService = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
             $lastStoreId = $stateService->getStoreId($sessionId);
 
             if($lastStoreId == false || $lastStoreId != $receivedStoreId){
