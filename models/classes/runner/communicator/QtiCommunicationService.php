@@ -35,6 +35,11 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  */
 class QtiCommunicationService extends ConfigurableService implements CommunicationService
 {
+    const SERVICE_ID = 'taoQtiTest/QtiCommunicationService';
+
+    /**
+     * @deprecated use SERVICE_ID
+     */
     const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
 
     const OPTION_CHANNELS = 'channels';
