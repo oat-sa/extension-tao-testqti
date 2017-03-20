@@ -100,6 +100,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
         }
 
+        // auto append platform messages, if any
+        if ($this->serviceContext) {
+            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+            $data['messages'] = $communicationService->processOutput($this->serviceContext);    
+        }
+
         return parent::returnJson($data, $httpStatus);
     }
 
