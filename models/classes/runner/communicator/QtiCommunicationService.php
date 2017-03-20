@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class QtiCommunicationService
@@ -145,7 +146,20 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
         $channel = new $channels[$channelType][$channelName];
+        $this->propagateDependencies($channel);
         return $channel;
+    }
+
+    /**
+     * Injects dependencies onto te provided instance
+     * @param object $instance
+     * @return mixed
+     */
+    protected function propagateDependencies($instance)
+    {
+        if ($instance instanceof ServiceLocatorAwareInterface) {
+            $instance->setServiceLocator($this->getServiceLocator());
+        }
     }
 
     /**
