@@ -36,6 +36,7 @@ use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
@@ -1143,6 +1144,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('6.17.1')) {
             $this->getServiceManager()->register(ExtendedStateService::SERVICE_ID, new ExtendedStateService());
+            $this->getServiceManager()->register(TestSessionService::SERVICE_ID, new TestSessionService());
             $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, new QtiTestListenerService());
             $this->getServiceManager()->register(QtiRunnerMessageService::SERVICE_ID, new QtiRunnerMessageService());
 
