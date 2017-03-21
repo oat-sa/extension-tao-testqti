@@ -42,9 +42,7 @@ class QtiTestListenerService extends ConfigurableService
     public function sessionStateChanged(QtiTestStateChangeEvent $event)
     {
         $sessionMemento = $event->getSessionMemento();
-        if (in_array($sessionMemento->getState(), [AssessmentTestSessionState::SUSPENDED, AssessmentTestSessionState::CLOSED])) {
-            $this->logStateEvent($sessionMemento->getSession());
-        }
+        $this->logStateEvent($sessionMemento->getSession());
     }
 
     /**
@@ -56,7 +54,7 @@ class QtiTestListenerService extends ConfigurableService
         if ($event->getPreviousState() == DeliveryExecution::STATE_ACTIVE) {
             $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
             $session = $testSessionService->getTestSession($event->getDeliveryExecution());
-            if ($session && in_array($session->getState(), [AssessmentTestSessionState::SUSPENDED, AssessmentTestSessionState::CLOSED])) {
+            if ($session) {
                 $this->logStateEvent($session);
             }
         }
