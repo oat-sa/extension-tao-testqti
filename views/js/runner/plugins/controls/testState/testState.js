@@ -19,8 +19,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'lodash',
     'taoTests/runner/plugin'
-], function (pluginFactory) {
+], function (_, pluginFactory) {
     'use strict';
 
     /**
@@ -44,11 +45,15 @@ define([
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
                     if (data && data.type && data.type === 'TestState') {
+                        // spread the world about the reason of the leave
+                        testRunner.setState('closedOrSuspended', true);
+
                         if (!testRunner.getState('ready')) {
                             // if we open an inconsistent test just leave
                             // should happen if we refresh an auto paused test
-                            testRunner.setState('closedOrSuspended', true);
                             testRunner.trigger('destroy');
+                        } else if (_.isEmpty(data.messages) || !_.find(data.messages, {channel: 'teststate'})) {
+                            testRunner.trigger('leave', data);
                         }
                         // break the chain to avoid uncaught exception in promise...
                         // this will lead to unresolved promise, but the browser will be redirected soon!

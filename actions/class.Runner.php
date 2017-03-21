@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
@@ -101,7 +102,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         // auto append platform messages, if any
-        if ($this->serviceContext) {
+        if ($this->serviceContext && !isset($data['messages'])) {
             /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
             $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
             $data['messages'] = $communicationService->processOutput($this->serviceContext);    
@@ -182,6 +183,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             switch (true) {
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
+                    if ($this->serviceContext) {
+                        $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
+                        $response['message'] = $messageService->getStateMessage($this->serviceContext->getTestSession());
+                    }
                     $response['type'] = 'TestState';
                     break;
 
