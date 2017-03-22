@@ -20,11 +20,15 @@
 
 namespace oat\taoQtiTest\models;
 
+use oat\oatbox\service\ConfigurableService;
+
 /**
  * Manage the flagged items
  */
-class ExtendedStateService
+class ExtendedStateService extends ConfigurableService
 {
+    const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
+    
     const STORAGE_PREFIX = 'extra_';
 
     const VAR_REVIEW = 'review';
@@ -32,6 +36,7 @@ class ExtendedStateService
     const VAR_SECURITY_TOKEN = 'security_token';
     const VAR_SESSION_TOKEN = 'session_token';
     const VAR_STORE_ID = 'client_store_id';
+    const VAR_EVENTS_QUEUE = 'events_queue';
 
     private static $cache = null;
 
@@ -202,5 +207,81 @@ class ExtendedStateService
     {
         $extra = $this->getExtra($testSessionId);
         return isset($extra[self::VAR_STORE_ID]) ? $extra[self::VAR_STORE_ID] : false;
+    }
+
+    /**
+     * Add an event on top of the queue
+     * @param string $testSessionId
+     * @param string $eventName
+     * @param mixed $data
+     * @return string
+     */
+    public function addEvent($testSessionId, $eventName, $data = null)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        $eventId = uniqid('event', true);
+
+        $extra[self::VAR_EVENTS_QUEUE][$eventId] = [
+            'id' => $eventId,
+            'timestamp' => microtime(true),
+            'user' => \common_session_SessionManager::getSession()->getUserUri(),
+            'type' => $eventName,
+            'data' => $data,
+        ];
+        
+        $this->saveExtra($testSessionId, $extra);
+        
+        return $eventId;
+    }
+
+    /**
+     * Gets all events from the queue
+     * @param $testSessionId
+     * @return array|mixed
+     */
+    public function getEvents($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            $events = $extra[self::VAR_EVENTS_QUEUE];
+        } else {
+            $events = [];
+        }
+        return $events;
+    }
+
+    /**
+     * Removes particular events from the queue
+     * @param $testSessionId
+     * @param array $ids
+     */
+    public function removeEvents($testSessionId, $ids = [])
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            foreach ($ids as $id) {
+                if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
+                    unset($extra[self::VAR_EVENTS_QUEUE][$id]);
+                }
+            }
+        }
+
+        $this->saveExtra($testSessionId, $extra);
+    }
+    
+    /**
+     * Removes all events from the queue
+     * @param $testSessionId
+     */
+    public function clearEvents($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        $extra[self::VAR_EVENTS_QUEUE] = [];
+
+        $this->saveExtra($testSessionId, $extra);
     }
 }

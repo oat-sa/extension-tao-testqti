@@ -20,6 +20,9 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\QtiTestListenerService;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
@@ -31,7 +34,9 @@ use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -1135,5 +1140,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('6.17.0', '6.17.2');
+
+        if ($this->isVersion('6.17.2')) {
+            $this->getServiceManager()->register(ExtendedStateService::SERVICE_ID, new ExtendedStateService());
+            $this->getServiceManager()->register(TestSessionService::SERVICE_ID, new TestSessionService());
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, new QtiTestListenerService());
+            $this->getServiceManager()->register(QtiRunnerMessageService::SERVICE_ID, new QtiRunnerMessageService());
+
+            $this->runExtensionScript(SetupEventListeners::class);
+
+            $this->setVersion(('6.18.0'));
+        }
     }
 }
