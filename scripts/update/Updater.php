@@ -19,10 +19,7 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
-use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -39,6 +36,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -1149,10 +1147,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, new QtiTestListenerService());
             $this->getServiceManager()->register(QtiRunnerMessageService::SERVICE_ID, new QtiRunnerMessageService());
 
-            $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
-            $eventManager->attach(DeliveryExecutionState::class, [QtiTestListenerService::SERVICE_ID, 'executionStateChanged']);
-            $eventManager->attach(QtiTestStateChangeEvent::class, [QtiTestListenerService::SERVICE_ID, 'sessionStateChanged']);
-            $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
+            $this->runExtensionScript(SetupEventListeners::class);
 
             $this->setVersion(('6.18.0'));
         }
