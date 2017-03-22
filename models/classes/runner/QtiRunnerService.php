@@ -202,7 +202,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestConfig()
     {
         if (is_null($this->testConfig)) {
-            $this->testConfig = $this->getServiceLocator()->get(QtiRunnerConfig::SERVICE_ID);
+            $this->testConfig = $this->getServiceManager()->get(QtiRunnerConfig::SERVICE_ID);
         }
         return $this->testConfig;
     }
@@ -1325,7 +1325,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
 
-            $stateService = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+            $stateService = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID);
             $lastStoreId = $stateService->getStoreId($sessionId);
 
             if($lastStoreId == false || $lastStoreId != $receivedStoreId){
