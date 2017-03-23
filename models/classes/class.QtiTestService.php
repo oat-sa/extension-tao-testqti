@@ -37,11 +37,22 @@ use qtism\data\AssessmentItemRef;
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_TestsService {
+class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     const CONFIG_QTITEST_FOLDER = 'qtiTestFolder';
 
     const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
+
+    const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
+
+    const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
+
+    const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
+
+    /**
+     * @var MetadataImporter Service to manage Lom metadata during package import
+     */
+    protected $metadataImporter;
 
     /**
      * Get the QTI Test document formated in JSON.
@@ -59,11 +70,11 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
 
     /**
      *
-     * @see taoTests_models_classes_TestsService::setDefaultModel()
+     * @see TestService::setDefaultModel()
      */
     protected function setDefaultModel($test)
     {
-        $this->setTestModel($test, new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI));
+        $this->setTestModel($test, new core_kernel_classes_Resource(self::INSTANCE_TEST_MODEL_QTI));
     }
 
     /**
@@ -328,8 +339,8 @@ class taoQtiTest_models_classes_QtiTestService extends taoTests_models_classes_T
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
         $testResource = $this->createInstance($testClass);
-        $qtiTestModelResource = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
-        $modelProperty = new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL);
+        $qtiTestModelResource = new core_kernel_classes_Resource(self::INSTANCE_TEST_MODEL_QTI);
+        $modelProperty = new core_kernel_classes_Property(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
 
         // Create the report that will hold information about the import
