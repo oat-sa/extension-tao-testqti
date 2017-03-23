@@ -36,6 +36,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -129,6 +130,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
         $serviceContext->setServiceManager($this->getServiceManager());
         $serviceContext->setTestConfig($this->getTestConfig());
+
+        $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage());
 
         if ($check) {
             // will throw exception if the test session is not valid
