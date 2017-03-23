@@ -75,7 +75,7 @@ class taoQtiTest_models_classes_export_ExportForm
     {
 
     	$testService = taoTests_models_classes_TestsService::singleton();
-    	$testModel = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
+    	$testModel = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI);
 
 		$fileName = '';
     	$options = array();
@@ -93,7 +93,7 @@ class taoQtiTest_models_classes_export_ExportForm
 	    		$class = $this->data['class'];
 	    	}
 	    	else{
-	    		$class = $itemService->getRootClass();
+	    		$class = $testService->getRootClass();
 	    	}
     		if($class instanceof core_kernel_classes_Class){
 					$fileName =  strtolower(tao_helpers_Display::textCleaner($class->getLabel(), '*'));
