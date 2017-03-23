@@ -122,7 +122,7 @@ msgid "Calculator"
 msgstr "Calcolatrice"
 
 msgid "Cancel"
-msgstr "Cancella"
+msgstr "No"
 
 msgid "Candidate"
 msgstr "Candidato"
@@ -536,13 +536,13 @@ msgid "Not shuffled, the position remains fixed."
 msgstr "Non mescolate, la posizione rimane fissa."
 
 msgid "Ok"
-msgstr "Ok"
+msgstr "Sì"
 
 msgid "OK"
-msgstr "OK"
+msgstr "SI"
 
 msgid "OK & End test"
-msgstr "OK & Fine test"
+msgstr "SI & Fine test"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Uno o più item dipendenti IMS QTI non potevano essere importati"
@@ -990,16 +990,16 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Stai per uscire dal test! Una volta uscito non potrai piu' rientrare! Clicca Ok per uscire dal test!"
+msgstr "Una volta chiusa non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
 
 msgid "You have %s item(s) marked for review."
-msgstr "Hai %s item segnalati per la revisione"
+msgstr " "
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "Non hai risposto a %s domanda/e e hai %s item contrassegnati per la revisione."
+msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
 
 msgid "You have %s unanswered question(s)."
-msgstr "Non hai risposto a %s domanda/e."
+msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
 
 msgid "Your comment…"
 msgstr "Il tuo commento :"
