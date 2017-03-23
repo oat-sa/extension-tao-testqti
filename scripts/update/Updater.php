@@ -1092,7 +1092,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('6.11.0');
         }
-      
+
         $this->skip('6.11.0', '6.13.0');
 
         if ($this->isVersion('6.13.0')) {
@@ -1152,6 +1152,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion(('6.18.0'));
         }
 
-        $this->skip('6.18.0', '6.18.1');
+        $this->skip('6.18.0', '6.18.2');
     }
 }
