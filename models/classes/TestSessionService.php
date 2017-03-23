@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -59,7 +60,10 @@ class TestSessionService extends ConfigurableService
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
-        $qtiStorage = new \taoQtiTest_helpers_TestSessionStorage(
+
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $storageClassName = $config['test-session-storage'];
+        $qtiStorage = new $storageClassName(
             $sessionManager,
             new BinaryAssessmentTestSeeker($testDefinition), $userId
         );
@@ -103,6 +107,21 @@ class TestSessionService extends ConfigurableService
         }
 
         return self::$cache[$sessionId]['session'];
+    }
+    
+    /**
+     * Register a test session
+     *
+     * @param TestSession $session
+     * @param \taoQtiTest_helpers_TestSessionStorage $storage
+     */
+    public function registerTestSession($session, $storage)
+    {
+        $sessionId = $session->getSessionId();
+        self::$cache[$sessionId] = [
+            'session' => $session,
+            'storage' => $storage
+        ];
     }
 
     /**

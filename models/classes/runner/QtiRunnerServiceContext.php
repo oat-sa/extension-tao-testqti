@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestSessionService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
@@ -116,6 +117,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function init()
     {
+        $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+        $sessionService->registerTestSession($this->getTestSession(), $this->getStorage());
+        
         // code borrowed from the previous implementation, maybe obsolete...
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
