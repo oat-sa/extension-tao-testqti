@@ -39,6 +39,22 @@ class ExtendedStateService extends ConfigurableService
     const VAR_EVENTS_QUEUE = 'events_queue';
 
     private static $cache = null;
+    private static $deliveryExecutions = null;
+
+    /**
+     * @param string $testSessionId
+     * @return string
+     */
+    protected function getSessionUserUri($testSessionId)
+    {
+        if (!isset(self::$deliveryExecutions[$testSessionId])) {
+            self::$deliveryExecutions[$testSessionId] = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
+        }
+        if (self::$deliveryExecutions[$testSessionId]) {
+            return self::$deliveryExecutions[$testSessionId]->getUserIdentifier();
+        }
+        return \common_session_SessionManager::getSession()->getUserUri();
+    }
 
     /**
      * Retrieves extended state information
@@ -50,7 +66,7 @@ class ExtendedStateService extends ConfigurableService
     {
         if (!isset(self::$cache[$testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
-            $userUri = \common_session_SessionManager::getSession()->getUserUri();
+            $userUri = $this->getSessionUserUri($testSessionId);
 
             $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
             if ($data) {
@@ -79,7 +95,7 @@ class ExtendedStateService extends ConfigurableService
         self::$cache[$testSessionId] = $extra;
 
         $storageService = \tao_models_classes_service_StateStorage::singleton();
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = $this->getSessionUserUri($testSessionId);
 
         $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
     }
