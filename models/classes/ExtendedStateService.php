@@ -20,11 +20,15 @@
 
 namespace oat\taoQtiTest\models;
 
+use oat\oatbox\service\ConfigurableService;
+
 /**
  * Manage the flagged items
  */
-class ExtendedStateService
+class ExtendedStateService extends ConfigurableService
 {
+    const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
+    
     const STORAGE_PREFIX = 'extra_';
 
     const VAR_REVIEW = 'review';
@@ -32,8 +36,25 @@ class ExtendedStateService
     const VAR_SECURITY_TOKEN = 'security_token';
     const VAR_SESSION_TOKEN = 'session_token';
     const VAR_STORE_ID = 'client_store_id';
+    const VAR_EVENTS_QUEUE = 'events_queue';
 
     private static $cache = null;
+    private static $deliveryExecutions = null;
+
+    /**
+     * @param string $testSessionId
+     * @return string
+     */
+    protected function getSessionUserUri($testSessionId)
+    {
+        if (!isset(self::$deliveryExecutions[$testSessionId])) {
+            self::$deliveryExecutions[$testSessionId] = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
+        }
+        if (self::$deliveryExecutions[$testSessionId]) {
+            return self::$deliveryExecutions[$testSessionId]->getUserIdentifier();
+        }
+        return \common_session_SessionManager::getSession()->getUserUri();
+    }
 
     /**
      * Retrieves extended state information
@@ -45,7 +66,7 @@ class ExtendedStateService
     {
         if (!isset(self::$cache[$testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
-            $userUri = \common_session_SessionManager::getSession()->getUserUri();
+            $userUri = $this->getSessionUserUri($testSessionId);
 
             $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
             if ($data) {
@@ -74,7 +95,7 @@ class ExtendedStateService
         self::$cache[$testSessionId] = $extra;
 
         $storageService = \tao_models_classes_service_StateStorage::singleton();
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = $this->getSessionUserUri($testSessionId);
 
         $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
     }
@@ -202,5 +223,81 @@ class ExtendedStateService
     {
         $extra = $this->getExtra($testSessionId);
         return isset($extra[self::VAR_STORE_ID]) ? $extra[self::VAR_STORE_ID] : false;
+    }
+
+    /**
+     * Add an event on top of the queue
+     * @param string $testSessionId
+     * @param string $eventName
+     * @param mixed $data
+     * @return string
+     */
+    public function addEvent($testSessionId, $eventName, $data = null)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        $eventId = uniqid('event', true);
+
+        $extra[self::VAR_EVENTS_QUEUE][$eventId] = [
+            'id' => $eventId,
+            'timestamp' => microtime(true),
+            'user' => \common_session_SessionManager::getSession()->getUserUri(),
+            'type' => $eventName,
+            'data' => $data,
+        ];
+        
+        $this->saveExtra($testSessionId, $extra);
+        
+        return $eventId;
+    }
+
+    /**
+     * Gets all events from the queue
+     * @param $testSessionId
+     * @return array|mixed
+     */
+    public function getEvents($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            $events = $extra[self::VAR_EVENTS_QUEUE];
+        } else {
+            $events = [];
+        }
+        return $events;
+    }
+
+    /**
+     * Removes particular events from the queue
+     * @param $testSessionId
+     * @param array $ids
+     */
+    public function removeEvents($testSessionId, $ids = [])
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            foreach ($ids as $id) {
+                if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
+                    unset($extra[self::VAR_EVENTS_QUEUE][$id]);
+                }
+            }
+        }
+
+        $this->saveExtra($testSessionId, $extra);
+    }
+    
+    /**
+     * Removes all events from the queue
+     * @param $testSessionId
+     */
+    public function clearEvents($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        $extra[self::VAR_EVENTS_QUEUE] = [];
+
+        $this->saveExtra($testSessionId, $extra);
     }
 }

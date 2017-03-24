@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class QtiCommunicationService
@@ -34,6 +35,11 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
  */
 class QtiCommunicationService extends ConfigurableService implements CommunicationService
 {
+    const SERVICE_ID = 'taoQtiTest/QtiCommunicationService';
+
+    /**
+     * @deprecated use SERVICE_ID
+     */
     const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
 
     const OPTION_CHANNELS = 'channels';
@@ -145,6 +151,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
         $channel = new $channels[$channelType][$channelName];
+        $this->getServiceManager()->propagate($channel);
         return $channel;
     }
 

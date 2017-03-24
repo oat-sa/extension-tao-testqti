@@ -36,6 +36,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -50,6 +51,7 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+
 /**
  * Class QtiRunnerService
  *
@@ -59,6 +61,11 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
  */
 class QtiRunnerService extends ConfigurableService implements RunnerService
 {
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerService';
+    
+    /**
+     * @deprecated use SERVICE_ID
+     */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
     /**
@@ -124,6 +131,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext->setServiceManager($this->getServiceManager());
         $serviceContext->setTestConfig($this->getTestConfig());
 
+        $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage());
+
         if ($check) {
             // will throw exception if the test session is not valid
             $this->check($serviceContext);
@@ -165,7 +175,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The test has just been instantiated.
                 $session->beginTestSession();
                 $event = new TestInitEvent($session);
-                $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+                $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
                 \common_Logger::i("Assessment Test Session begun.");
             }
 
@@ -173,6 +183,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->isTimeout() === false) {
                 TestRunnerUtils::beginCandidateInteraction($session);
             }
+            
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -194,7 +206,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestConfig()
     {
         if (is_null($this->testConfig)) {
-            $this->testConfig = $this->getServiceLocator()->get(QtiRunnerConfig::SERVICE_ID);
+            $this->testConfig = $this->getServiceManager()->get(QtiRunnerConfig::SERVICE_ID);
         }
         return $this->testConfig;
     }
@@ -868,7 +880,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
 
             $event = new TestExitEvent($session);
-            $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             $session->endTestSession();
         } else {
@@ -1105,7 +1117,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode(), true);
-        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
         switch ($timeOutException->getCode()) {
@@ -1146,7 +1158,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         $event = new TestTimeoutEvent($session, $timeOutException->getCode(), false);
-        $this->getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         $this->continueInteraction($context);
     }
@@ -1317,7 +1329,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
 
-            $stateService = new ExtendedStateService();
+            $stateService = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID);
             $lastStoreId = $stateService->getStoreId($sessionId);
 
             if($lastStoreId == false || $lastStoreId != $receivedStoreId){

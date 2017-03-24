@@ -728,7 +728,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @return EventManager
      */
     protected function getEventManager() {
-        return $this->getServiceLocator()->get(EventManager::CONFIG_ID);
+        return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
     }
     
     protected function getServiceLocator() {

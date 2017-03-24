@@ -19,8 +19,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'lodash',
     'taoTests/runner/plugin'
-], function (pluginFactory) {
+], function (_, pluginFactory) {
     'use strict';
 
     /**
@@ -51,7 +52,7 @@ define([
                             // if we open an inconsistent test just leave
                             // should happen if we refresh an auto paused test
                             testRunner.trigger('destroy');
-                        } else {
+                        } else if (_.isEmpty(data.messages) || !_.find(data.messages, {channel: 'teststate'})) {
                             testRunner.trigger('leave', data);
                         }
                         // break the chain to avoid uncaught exception in promise...
@@ -74,6 +75,7 @@ define([
                 .channel('teststate', function (data) {
                     if (!isLeaving && data && ('close' === data.type || 'pause' === data.type)) {
                         isLeaving = true;
+                        testRunner.setState('closedOrSuspended', true);
                         testRunner.trigger('leave', data);
                     }
                 });
