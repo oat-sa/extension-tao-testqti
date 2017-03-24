@@ -308,7 +308,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $constraints[] = array(
                     'label' => $label,
                     'source' => $tc->getSource()->getIdentifier(),
-                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
+                    'seconds' => self::getDurationWithMicroseconds($tc->getMaximumRemainingTime()),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $tc->getSource()->getQtiClassName()
                 );
@@ -1189,5 +1189,21 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function isQtiValueNull($value){
         return is_null($value) === true || ($value instanceof QtiString && $value->getValue() === '') || ($value instanceof Container && count($value) === 0);
+    }
+
+    /**
+     * Gets the amount of seconds with the microseconds as fractional part from a Duration instance.
+     * @param \qtism\common\datatypes\Duration $duration
+     * @return float|null
+     */
+    public static function getDurationWithMicroseconds($duration)
+    {
+        if ($duration) {
+            if (method_exists($duration, 'getMicroseconds')) {
+                return $duration->getMicroseconds(true) / 1e6;
+            }
+            return $duration->getSeconds(true);
+        }
+        return null;
     }
 }

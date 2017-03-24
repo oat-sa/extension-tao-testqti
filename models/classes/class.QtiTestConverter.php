@@ -140,7 +140,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                             $array[$property->getName()] = $this->componentToArray($value);
                         } else
                             if ($value instanceof QtiDuration) {
-                                $array[$property->getName()] = $value->getSeconds(true);
+                                $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds($value);
                             } else
                                 if ($value instanceof IntegerCollection || $value instanceof StringCollection) {
                                     $array[$property->getName()] = array();
