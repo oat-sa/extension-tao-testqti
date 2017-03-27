@@ -145,8 +145,8 @@ define([
                 description : __('displays a warning before the user finishes the test')
             },
             {
-                name : 'x-tao-option-unansweredWarning',
-                description : __('displays a warning before the user finishes the test, only if there are unanswered/marked for review items')
+                name : 'x-tao-option-nextPartWarning',
+                description : __('displays a warning before the user finishes the part')
             },
             {
                 name : 'x-tao-option-nextSectionWarning',
