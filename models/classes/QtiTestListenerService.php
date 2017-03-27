@@ -66,14 +66,17 @@ class QtiTestListenerService extends ConfigurableService
      */
     protected function logStateEvent(AssessmentTestSession $session)
     {
-        $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
-        $stateService = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID);
+        $route = $session->getRoute();
+        if ($route->valid()) {
+            $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
+            $stateService = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID);
 
-        $data = [
-            'state' => $session->getState(),
-            'message' => $messageService->getStateMessage($session),
-        ];
+            $data = [
+                'state' => $session->getState(),
+                'message' => $messageService->getStateMessage($session),
+            ];
 
-        $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
+            $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
+        }
     }
 }

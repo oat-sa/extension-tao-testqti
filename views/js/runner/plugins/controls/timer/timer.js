@@ -445,7 +445,12 @@ define([
                                     removeTimer(timerTypes.item);
                                 })
                                 .catch(function cancelMove() {
-                                    testRunner.trigger('enableitem enablenav');
+                                    // Use `defer` to be sure the timer resume will occur after the move event is
+                                    // finished to be handled. Otherwise, the duration plugin will be frozen and
+                                    // the additional time will not be taken into account!
+                                    _.defer(function() {
+                                        testRunner.trigger('enableitem enablenav');
+                                    });
                                 });
 
                             return movePromise;

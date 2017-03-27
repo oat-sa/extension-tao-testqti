@@ -255,14 +255,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($timeLimits) {
                 if ($timeLimits->hasMinTime()) {
                     $response['timeLimits']['minTime'] = [
-                        'duration' => $timeLimits->getMinTime()->getSeconds(true),
+                        'duration' => TestRunnerUtils::getDurationWithMicroseconds($timeLimits->getMinTime()),
                         'iso' => $timeLimits->getMinTime()->__toString(),
                     ];
                 }
 
                 if ($timeLimits->hasMaxTime()) {
                     $response['timeLimits']['maxTime'] = [
-                        'duration' => $timeLimits->getMaxTime()->getSeconds(true),
+                        'duration' => TestRunnerUtils::getDurationWithMicroseconds($timeLimits->getMaxTime()),
                         'iso' => $timeLimits->getMaxTime()->__toString(),
                     ];
                 }
@@ -329,7 +329,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['attempt'] = $itemSession['numAttempts']->getValue();
 
                 // Duration of the current item attempt
-                $response['attemptDuration'] = $session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER)->getSeconds(true);
+                $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
 
                 // Whether or not the current step is timed out.
                 $response['isTimeout'] = $session->isTimeout();
@@ -883,6 +883,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             $session->endTestSession();
+
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -920,6 +922,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
                 $result = false;
             }
+
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1188,7 +1192,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $constraints[] = array(
                     'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
                     'source' => $identifier,
-                    'seconds' => $timeRemaining->getSeconds(true),
+                    'seconds' => TestRunnerUtils::getDurationWithMicroseconds($timeRemaining),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $source->getQtiClassName()
                 );
