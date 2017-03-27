@@ -123,6 +123,8 @@ define([
                 var nextPartWarning = testOptions.nextPartWarning || testOptions.unansweredWarning;
                 var unansweredOnly = testOptions.unansweredWarning;
 
+                var warningScope = (nextPartWarning) ? 'part' : 'test';
+
                 var warningHelper = nextWarningHelper({
                     endTestWarning:     testOptions.endTestWarning,
                     isLast:             context.isLast,
@@ -133,11 +135,9 @@ define([
                     remainingAttempts:  context.remainingAttempts,
                     testPartId:         context.testPartId,
                     unansweredWarning:  testOptions.unansweredWarning,
-                    stats:              statsHelper.getInstantStats('test', testRunner),
+                    stats:              statsHelper.getInstantStats(warningScope, testRunner),
                     unansweredOnly:     unansweredOnly
                 });
-
-                var warningScope = (nextPartWarning) ? 'part' : 'test';
 
                 function enable() {
                     testRunner.trigger('enablenav enabletools');
