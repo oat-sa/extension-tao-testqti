@@ -286,6 +286,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         $routeItem = $this->getCurrentRouteItem();
         $sections = $routeItem->getAssessmentSections();
+        $sections->rewind();
         return $this->getTimerDuration(key(current($sections)), $target);
     }
 
