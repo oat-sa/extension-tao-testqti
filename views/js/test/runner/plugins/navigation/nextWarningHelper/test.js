@@ -36,62 +36,30 @@ define([
             output: { warnNext: false, warnEnd: true }
         },
         {
-            title: 'Unanswered Items Warning option active, no other conditions fulfilled',
-            input: { unansweredWarning: true },
-            output: { warnNext: false, warnEnd: false }
-        },
-        {
-            title: 'Unanswered Items Warning option active, test is on the last item, but no stats',
+            title: 'nextPartWarning: warning is not displayed if next part is the same',
             input: {
-                unansweredWarning: true,
-                isLast: true
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'CURRENT_PART' }
             },
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'Unanswered Items warning active, last item, but no unanswered items',
+            title: 'nextPartWarning: warning is not displayed if next part is different, but the category is not set',
             input: {
-                unansweredWarning: true,
-                stats: { flagged: 0, questions: 10, answered: 10 },
-                isLast: true
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' }
             },
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'Unanswered Items warning active, last item, flagged items',
+            title: 'nextPartWarning: warning is displayed if next part is different',
             input: {
-                unansweredWarning: true,
-                stats: { flagged: 5 },
-                isLast: true
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' }
             },
             output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, unanswered items',
-            input: {
-                unansweredWarning: true,
-                stats: { questions: 10, answered: 5 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, unanswered & flagged items',
-            input: {
-                unansweredWarning: true,
-                stats: { flagged: 5, questions: 10, answered: 5 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'End test warning active because of the next item warning being active on the last item',
-            input: {
-                isLast: true,
-                nextItemWarning: true,
-                isLinear: true
-            },
-            output: { warnEnd: true, warnNext: true }
         }
     ];
 
