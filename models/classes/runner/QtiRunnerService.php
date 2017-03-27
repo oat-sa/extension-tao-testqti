@@ -883,6 +883,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             $session->endTestSession();
+
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -920,6 +922,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
                 $result = false;
             }
+
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
