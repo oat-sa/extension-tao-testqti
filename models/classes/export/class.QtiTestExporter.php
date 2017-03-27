@@ -273,7 +273,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
         foreach ($iterator as $f) {
             // Only add dependency files...
-            if ($f->getBasename() !== TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
+            if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
 
                 // Add the file to the archive.
                 $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
