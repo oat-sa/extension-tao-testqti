@@ -43,7 +43,7 @@ class taoQtiTest_actions_QtiExporter extends \tao_actions_Export
     {
         /** @var \core_kernel_classes_Resource $model */
         $model = \taoQtiTest_models_classes_QtiTestService::singleton()->getTestModel($formData['instance']);
-        return $model->getUri() == INSTANCE_TEST_MODEL_QTI;
+        return $model->getUri() == taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI;
     }
 
     protected function getNotExportableMessage($formData)
