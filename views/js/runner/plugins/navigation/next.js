@@ -119,8 +119,9 @@ define([
                 var nextItemPosition = context.itemPosition + 1;
 
                 // x-tao-option-unansweredWarning is a deprecated option whose behavior now matches the one of
-                // x-tao-option-nextPartWarning
+                // x-tao-option-nextPartWarning with the unansweredOnly option
                 var nextPartWarning = testOptions.nextPartWarning || testOptions.unansweredWarning;
+                var unansweredOnly = testOptions.unansweredWarning;
 
                 var warningHelper = nextWarningHelper({
                     endTestWarning:     testOptions.endTestWarning,
@@ -130,7 +131,10 @@ define([
                     nextPartWarning:    nextPartWarning,
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
-                    testPartId:         context.testPartId
+                    testPartId:         context.testPartId,
+                    unansweredWarning:  testOptions.unansweredWarning,
+                    stats:              statsHelper.getInstantStats('test', testRunner),
+                    unansweredOnly:     unansweredOnly
                 });
 
                 var warningScope = (nextPartWarning) ? 'part' : 'test';

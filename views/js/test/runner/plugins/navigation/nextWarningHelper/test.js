@@ -23,12 +23,12 @@ define([
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'End test warning option active, but test is not on the last item',
+            title: 'endTestWarning: not on last item',
             input: { endTestWarning: true },
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'End test warning active because test is on last item',
+            title: 'endTestWarning: last item',
             input: {
                 endTestWarning: true,
                 isLast: true
@@ -36,7 +36,47 @@ define([
             output: { warnNext: false, warnEnd: true }
         },
         {
-            title: 'nextPartWarning: warning is not displayed if next part is the same',
+            title: 'endTestWarning: last item, unansweredOnly, no unanswered / flagged items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { flagged: 0, questions: 10, answered: 10 }
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, flagged items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { flagged: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, unanswered items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, unanswered & flagged items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { flagged: 5, questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part identical',
             input: {
                 nextPartWarning: true,
                 testPartId: 'CURRENT_PART',
@@ -45,7 +85,7 @@ define([
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'nextPartWarning: warning is not displayed if next part is different, but the category is not set',
+            title: 'nextPartWarning: next part different, category not set',
             input: {
                 testPartId: 'CURRENT_PART',
                 nextPart: { id: 'NEXT_PART' }
@@ -53,11 +93,55 @@ define([
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'nextPartWarning: warning is displayed if next part is different',
+            title: 'nextPartWarning: next part different',
             input: {
                 nextPartWarning: true,
                 testPartId: 'CURRENT_PART',
                 nextPart: { id: 'NEXT_PART' }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, no unanswered / flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 0, questions: 10, answered: 10 }
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, unanswered',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, unanswered & flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 1, questions: 10, answered: 5 }
             },
             output: { warnNext: false, warnEnd: true }
         }
