@@ -23,12 +23,12 @@ define([
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'End test warning option active, but test is not on the last item',
+            title: 'endTestWarning: not on last item',
             input: { endTestWarning: true },
             output: { warnNext: false, warnEnd: false }
         },
         {
-            title: 'End test warning active because test is on last item',
+            title: 'endTestWarning: last item',
             input: {
                 endTestWarning: true,
                 isLast: true
@@ -36,62 +36,114 @@ define([
             output: { warnNext: false, warnEnd: true }
         },
         {
-            title: 'Unanswered Items Warning option active, no other conditions fulfilled',
-            input: { unansweredWarning: true },
-            output: { warnNext: false, warnEnd: false }
-        },
-        {
-            title: 'Unanswered Items Warning option active, test is on the last item, but no stats',
+            title: 'endTestWarning: last item, unansweredOnly, no unanswered / flagged items',
             input: {
-                unansweredWarning: true,
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: false }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, but no unanswered items',
-            input: {
-                unansweredWarning: true,
-                stats: { flagged: 0, questions: 10, answered: 10 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: false }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, flagged items',
-            input: {
-                unansweredWarning: true,
-                stats: { flagged: 5 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, unanswered items',
-            input: {
-                unansweredWarning: true,
-                stats: { questions: 10, answered: 5 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'Unanswered Items warning active, last item, unanswered & flagged items',
-            input: {
-                unansweredWarning: true,
-                stats: { flagged: 5, questions: 10, answered: 5 },
-                isLast: true
-            },
-            output: { warnNext: false, warnEnd: true }
-        },
-        {
-            title: 'End test warning active because of the next item warning being active on the last item',
-            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
                 isLast: true,
-                nextItemWarning: true,
-                isLinear: true
+                stats: { flagged: 0, questions: 10, answered: 10 }
             },
-            output: { warnEnd: true, warnNext: true }
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, flagged items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { flagged: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, unanswered items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'endTestWarning: last item, unansweredOnly, unanswered & flagged items',
+            input: {
+                unansweredOnly: true,
+                endTestWarning: true,
+                isLast: true,
+                stats: { flagged: 5, questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part identical',
+            input: {
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'CURRENT_PART' }
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'nextPartWarning: next part different, category not set',
+            input: {
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' }
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'nextPartWarning: next part different',
+            input: {
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, no unanswered / flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 0, questions: 10, answered: 10 }
+            },
+            output: { warnNext: false, warnEnd: false }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, unanswered',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
+        },
+        {
+            title: 'nextPartWarning: next part different, unansweredOnly, unanswered & flagged',
+            input: {
+                unansweredOnly: true,
+                nextPartWarning: true,
+                testPartId: 'CURRENT_PART',
+                nextPart: { id: 'NEXT_PART' },
+                stats: { flagged: 1, questions: 10, answered: 5 }
+            },
+            output: { warnNext: false, warnEnd: true }
         }
     ];
 

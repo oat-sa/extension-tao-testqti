@@ -118,17 +118,26 @@ define([
                 var map = testRunner.getTestMap();
                 var nextItemPosition = context.itemPosition + 1;
 
+                // x-tao-option-unansweredWarning is a deprecated option whose behavior now matches the one of
+                // x-tao-option-nextPartWarning with the unansweredOnly option
+                var nextPartWarning = testOptions.nextPartWarning || testOptions.unansweredWarning;
+                var unansweredOnly = testOptions.unansweredWarning;
+
                 var warningHelper = nextWarningHelper({
                     endTestWarning:     testOptions.endTestWarning,
                     isLast:             context.isLast,
                     isLinear:           context.isLinear,
                     nextItemWarning:    nextItemWarning,
+                    nextPartWarning:    nextPartWarning,
                     nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                     remainingAttempts:  context.remainingAttempts,
                     testPartId:         context.testPartId,
                     unansweredWarning:  testOptions.unansweredWarning,
-                    stats:              statsHelper.getInstantStats('test', testRunner)
+                    stats:              statsHelper.getInstantStats('test', testRunner),
+                    unansweredOnly:     unansweredOnly
                 });
+
+                var warningScope = (nextPartWarning) ? 'part' : 'test';
 
                 function enable() {
                     testRunner.trigger('enablenav enabletools');
@@ -142,7 +151,7 @@ define([
                             'confirm.endTest',
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                                'test', testRunner),
+                                warningScope, testRunner),
                             _.partial(triggerNextAction, context), // if the test taker accept
                             enable  // if the test taker refuse
                         );
