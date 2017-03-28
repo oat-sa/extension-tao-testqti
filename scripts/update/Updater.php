@@ -280,5 +280,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
             $this->setVersion('2.16.9');
         }
+
+        $this->skip('2.16.9', '2.16.10');
     }
 }
