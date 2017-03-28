@@ -27,6 +27,7 @@ use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
+use taoTests_models_classes_TestsService as TestService;
 
 /**
  * the QTI TestModel service.
@@ -632,11 +633,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         }
 
         $testPath = $testContent->getAbsolutePath();
-        $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, TAOQTITEST_FILENAME);
+        $finalPath = taoQtiTest_helpers_Utils::storeQtiResource($testContent, $qtiResource, $extractionFolder, false, self::TAOQTITEST_FILENAME);
 
         // Delete template test.xml file (created by self::createContent() method) from the root.
         // (Absolutely necessary when the test.xml file is not in the root folder of the archive)
-        unlink($testPath . $ds . TAOQTITEST_FILENAME);
+        unlink($testPath . $ds . self::TAOQTITEST_FILENAME);
 
         try {
             $testDefinition->save($finalPath);
@@ -688,14 +689,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                );
         }
 
-        $testModel = $test->getOnePropertyValue(new core_kernel_classes_Property(PROPERTY_TEST_TESTMODEL));
-        if(is_null($testModel) || $testModel->getUri() != INSTANCE_TEST_MODEL_QTI) {
+        $testModel = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_TESTMODEL));
+        if(is_null($testModel) || $testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                     'The selected test is not a QTI test',
                     taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
                );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
         if(!is_null($file)){
             return new core_kernel_file_File($file);
         }
@@ -751,7 +752,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         foreach ($files as $f) {
             $pathinfo = pathinfo($f);
             $filename = $pathinfo['filename'] . '.' . $pathinfo['extension'];
-            if (in_array($filename, array(TAOQTITEST_FILENAME, 'assessment.xml'))) {
+            if (in_array($filename, array(self::TAOQTITEST_FILENAME, 'assessment.xml'))) {
                 $dirContent[] = $f;
             }
         }
@@ -882,7 +883,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     foreach ($files as $f) {
                         $pathinfo = pathinfo($f);
 
-                        if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === TAOQTITEST_FILENAME) {
+                        if ($pathinfo['filename'] . '.' . $pathinfo['extension'] === self::TAOQTITEST_FILENAME) {
                             $dirContent[] = $f;
                         }
                     }
@@ -953,7 +954,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             
             $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
 
-            $filePath = $dirPath . TAOQTITEST_FILENAME;
+            $filePath = $dirPath . self::TAOQTITEST_FILENAME;
             if ($doc->save($filePath) === false) {
                 $msg = "Unable to write raw QTI Test template at location '${filePath}'.";
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
@@ -962,7 +963,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             common_Logger::i("Created QTI Test content at location '" . $filePath . "'.");
         }
 
-        $test->editPropertyValues(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $directory);
+        $test->editPropertyValues(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP), $directory);
         return $directory;
     }
 
@@ -973,7 +974,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function deleteContent(core_kernel_classes_Resource $test)
     {
-        $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP));
+        $content = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
 
         if (!is_null($content)) {
             $file = new core_kernel_file_File($content);
@@ -992,7 +993,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             }
 
             $file->delete();
-            $test->removePropertyValue(new core_kernel_classes_Property(TEST_TESTCONTENT_PROP), $file);
+            $test->removePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP), $file);
         }
     }
 

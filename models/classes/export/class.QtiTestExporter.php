@@ -271,7 +271,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             // Only add dependency files...
             if (is_dir($f) === false
                 && strpos($f, $this->getTestDefinitionFileName()) === false
-                && strpos($f, TAOQTITEST_FILENAME) === false
+                && strpos($f, taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME) === false
             ) {
                 // Add the file to the archive.
                 $fileHref = $testBasePath . ltrim(str_replace($testPath, '', $f), '/');
@@ -373,14 +373,14 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
     protected function getTestDefinitionFileName()
     {
-        return TAOQTITEST_FILENAME;
+        return taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME;
     }
 
     protected function getTestExtraPath($testPath)
     {
         $extraPath = trim(
             str_replace(
-                array($testPath, TAOQTITEST_FILENAME, $this->getTestDefinitionFileName()),
+                array($testPath, taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME, $this->getTestDefinitionFileName()),
                 '',
                 $this->getTestService()->getDocPath($this->getItem())
             ),

@@ -246,7 +246,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $testContentPath = $testService->getDocPath($this->getResource());
         $testDataPath = $testService->getTestContent($this->getResource())->getAbsolutePath();
-        $this->setExtraPath(str_replace(array($testDataPath, TAOQTITEST_FILENAME), '', $testContentPath));
+        $this->setExtraPath(str_replace(array($testDataPath, taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME), '', $testContentPath));
         
         // Initialize rendering engine.
         $renderingEngine = new XhtmlRenderingEngine();
