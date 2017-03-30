@@ -73,9 +73,11 @@ define([
             // immediate handling of proctor's actions
             testRunner.getProxy()
                 .channel('teststate', function (data) {
-                    if (!isLeaving && data && ('close' === data.type || 'pause' === data.type)) {
+                    if (!isLeaving && data && ('close' === data.type || 'pause' === data.type) && !testRunner.getState('closedOrSuspended')) {
                         isLeaving = true;
+
                         testRunner.setState('closedOrSuspended', true);
+
                         testRunner.trigger('leave', data);
                     }
                 });
