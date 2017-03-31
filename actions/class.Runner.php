@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use \oat\taoTests\models\runner\CsrfToken;
@@ -62,7 +63,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function __construct()
     {
-        $this->runnerService = $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
+        $this->runnerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
 
         // Prevent anything to be cached by the client.
         TestRunnerUtils::noHttpClientCache();
@@ -98,6 +99,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     $data->token = $this->getCsrf()->getCsrfToken();
                 }
             }
+        }
+
+        // auto append platform messages, if any
+        if ($this->serviceContext && !isset($data['messages'])) {
+            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+            $data['messages'] = $communicationService->processOutput($this->serviceContext);    
         }
 
         return parent::returnJson($data, $httpStatus);
@@ -175,6 +183,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             switch (true) {
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
+                    if ($this->serviceContext) {
+                        $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
+                        $response['message'] = $messageService->getStateMessage($this->serviceContext->getTestSession());
+                    }
                     $response['type'] = 'TestState';
                     break;
 
@@ -872,7 +884,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => $stored == $size
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
-            $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::CONFIG_ID);
+            $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::SERVICE_ID);
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
 
@@ -903,7 +915,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, false);
 
             /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
-            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::CONFIG_ID);
+            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
 
             $response = [
                 'responses' => $communicationService->processInput($serviceContext, $input),

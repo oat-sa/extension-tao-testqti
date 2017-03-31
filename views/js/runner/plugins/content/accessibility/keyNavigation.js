@@ -23,13 +23,14 @@
 define([
     'jquery',
     'lodash',
-    'core/keyNavigator',
-    'core/groupKeyNavigator',
+    'ui/keyNavigation/navigator',
+    'ui/keyNavigation/navigableDomElement',
+    'ui/keyNavigation/navigableGroupElement',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin',
     'css!taoQtiTestCss/plugins/key-navigation'
-], function ($, _, keyNavigator, groupKeyNavigator, shortcut, namespaceHelper, pluginFactory) {
+], function ($, _, keyNavigator, navigableDomElement, navigableGroupElement, shortcut, namespaceHelper, pluginFactory) {
     'use strict';
 
     /**
@@ -38,27 +39,27 @@ define([
      * @param {Object} testRunner
      * @returns {Array}
      */
-    function initToolbarNavigation(testRunner){
+    function initToolbarNavigation(){
         var $navigationBar = $('.bottom-action-bar');
         var $focusables = $navigationBar.find('.action:not(.btn-group):visible, .action.btn-group .li-inner:visible');
-
-        keyNavigator({
-            id : 'bottom-toolbar',
-            replace : true,
-            group : $navigationBar,
-            elements : $focusables,
-            //start from the last button "goto next"
-            default : $focusables.length - 1
-        }).on('right down', function(){
-            this.next();
-        }).on('left up', function(){
-            this.previous();
-        }).on('activate', function(cursor, target){
-            cursor.$dom.click();
-            cursor.$dom.mousedown();
-        })
-
-        return ['bottom-toolbar'];
+        var navigables = navigableDomElement.createFromDoms($focusables);
+        if (navigables.length) {
+            return [keyNavigator({
+                id : 'bottom-toolbar',
+                replace : true,
+                group : $navigationBar,
+                elements : navigables,
+                //start from the last button "goto next"
+                defaultPosition : navigables.length - 1
+            }).on('right down', function(){
+                this.next();
+            }).on('left up', function(){
+                this.previous();
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click().mousedown();
+            })];
+        }
+        return [];
     }
 
     /**
@@ -67,19 +68,22 @@ define([
      * @param {Object} testRunner
      * @returns {Array}
      */
-    function initHeaderNavigation(testRunner){
+    function initHeaderNavigation(){
         //need global selector as currently no way to access delivery frame from test runner
         var $headerElements = $('[data-control="exit"]:visible a');
-
-        keyNavigator({
-            id : 'header-toolbar',
-            elements : $headerElements,
-            group : $headerElements,
-            loop : true,
-            replace : true
-        });
-
-        return ['header-toolbar'];
+        var navigables = navigableDomElement.createFromDoms($headerElements);
+        if (navigables.length) {
+            return [keyNavigator({
+                id : 'header-toolbar',
+                group : $headerElements.closest('.infoControl'),
+                elements : navigables,
+                loop : true,
+                replace : true
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click();
+            })];
+        }
+        return [];
     }
 
     /**
@@ -92,94 +96,196 @@ define([
 
         var $panel = testRunner.getAreaBroker().getPanelArea();
         var $navigator = $panel.find('.qti-navigator');
+        var navigators = [];
+        var filtersNavigator;
+        var itemsNavigator;
+        var $filters, $trees, navigableFilters, navigableTrees;
+
+        //the tag to identify if the item listing has been browsed, to only "smart jump" to active item only on the first visit
+        var itemListingVisited = false;
+        //the position of the filter in memory, to only "smart jump" to active item only on the first visit
+        var filterCursor;
 
         if($navigator.length && !$navigator.hasClass('disabled')){
-            keyNavigator({
-                keepState : true,
-                id : 'navigator-filters',
-                replace : true,
-                elements : $navigator.find('.qti-navigator-filters .qti-navigator-filter'),
-                group : $navigator
-            }).on('right', function(){
-                this.next();
-            }).on('left', function(){
-                this.previous();
-            }).on('down', function(){
-                this.goto('navigator-items');
-            }).on('focus', function(cursor){
-                cursor.$dom.click();
-            });
+            $filters = $navigator.find('.qti-navigator-filters .qti-navigator-filter');
+            navigableFilters = navigableDomElement.createFromDoms($filters);
+            if (navigableFilters.length) {
+                filtersNavigator = keyNavigator({
+                    keepState : true,
+                    id : 'navigator-filters',
+                    replace : true,
+                    elements : navigableFilters,
+                    group : $navigator
+                }).on('right', function(){
+                    this.next();
+                }).on('left', function(){
+                    this.previous();
+                }).on('down', function(){
+                    if(itemsNavigator){
+                        _.defer(function(){
+                            if(itemListingVisited){
+                                itemsNavigator.focus().first();
+                            }else{
+                                itemsNavigator.focus();
+                            }
+                        });
+                    }
+                }).on('up', function(){
+                    if(itemsNavigator){
+                        _.defer(function(){
+                            itemsNavigator.last();
+                        });
+                    }
+                }).on('focus', function(cursor, origin){
+                    //activate the tab in the navigators
+                    cursor.navigable.getElement().click();
 
-            keyNavigator({
-                id : 'navigator-items',
-                replace : true,
-                elements : $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label')
-            }).on('down', function(){
-                this.next();
-            }).on('up', function(){
-                this.previous();
-            }).on('activate', function(cursor){
-                cursor.$dom.click();
-            }).on('lowerbound', function(){
-                this.goto('navigator-filters');
-            }).on('focus', function(cursor){
-                cursor.$dom.parent().addClass('key-navigation-highlight');
-            }).on('blur', function(cursor){
-                cursor.$dom.parent().removeClass('key-navigation-highlight');
-            });
+                    //reset the item listing browsed tag whenever the focus on the filter happens after a focus on another element
+                    if((filterCursor && filterCursor.position !== cursor.position) || origin){
+                        itemListingVisited = false;
+                    }
+                    //set the filter cursor in memory
+                    filterCursor = cursor;
+                });
+                navigators.push(filtersNavigator);
+            }
 
-            return ['navigator-filters'];
+            $trees = $navigator.find('.qti-navigator-tree .qti-navigator-item:not(.unseen) .qti-navigator-label');
+            navigableTrees = navigableDomElement.createFromDoms($trees);
+            if (navigableTrees.length) {
+                //instantiate a key navigator but do not add it to the returned list of navigators as this is not supposed to be reached with tab key
+                itemsNavigator = keyNavigator({
+                    id : 'navigator-items',
+                    replace : true,
+                    elements : navigableTrees,
+                    defaultPosition : function defaultPosition(navigables){
+                        var pos = 0;
+                        if(filterCursor && filterCursor.navigable.getElement().data('mode') !== 'flagged'){
+                            _.forIn(navigables, function(navigable, i){
+                                var $parent = navigable.getElement().parent('.qti-navigator-item');
+                                //find the first active and visible item
+                                if($parent.hasClass('active') && $parent.is(':visible')){
+                                    pos = i;
+                                    return false;
+                                }
+                            });
+                        }
+                        return pos;
+                    }
+                }).on('down', function(){
+                    this.next();
+                }).on('up', function(){
+                    this.previous();
+                }).on('right', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus().next();
+                    }
+                }).on('left', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus().previous();
+                    }
+                }).on('activate', function(cursor){
+                    cursor.navigable.getElement().click();
+                }).on('lowerbound upperbound', function(){
+                    if(filtersNavigator){
+                        filtersNavigator.focus();
+                    }
+                }).on('focus', function(cursor){
+                    itemListingVisited = true;
+                    cursor.navigable.getElement().parent().addClass('key-navigation-highlight');
+                }).on('blur', function(cursor){
+                    cursor.navigable.getElement().parent().removeClass('key-navigation-highlight');
+                });
+            }
+
         }
-        return [];
+        return navigators;
     }
 
     /**
      * Init the navigation in the item content
-     * It returns an array of keyNavigator ids as the content is dynamically determined
+     * Navigable item content are interaction choices and body element with the special class "key-navigation-focusable"
+     * It returns an array of keyNavigators as the content is dynamically determined
      *
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
     function initContentNavigation(testRunner){
-        var $itemElements;
+
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
-        $itemElements = $content.find('img,.key-navigation-focusable,.qti-interaction');
-        $itemElements.each(function(){
+        //the item focusable body elements are considered scrollable
+        $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
+        $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+            //filter out interaction as it will be managed separately
+            return (!$(this).parents('.qti-interaction').length);
+        }).each(function(){
             var $itemElement = $(this);
-            var id = 'item_element_navigation_group_'+itemNavigators.length;
             if($itemElement.hasClass('qti-interaction')){
-                $itemElement.off('.keyNavigation');
-                keyNavigator({
-                    id : id,
-                    elements : $itemElement.is(':input') ? $itemElement : $itemElement.find(':input'),
-                    group : $itemElement,
-                    loop : false,
-                    replace : true
-                }).on('right down', function(){
-                    this.next();
-                }).on('left up', function(){
-                    this.previous();
-                }).on('activate', function(cursor){
-                    cursor.$dom.click();
-                }).on('focus', function(cursor){
-                    cursor.$dom.closest('.qti-choice').addClass('key-navigation-highlight');
-                }).on('blur', function(cursor){
-                    cursor.$dom.closest('.qti-choice').removeClass('key-navigation-highlight');
-                });
+                itemNavigators = _.union(itemNavigators, initInteractionNavigation($itemElement));
             }else{
-                keyNavigator({
-                    id : id,
-                    elements : $itemElement,
+                itemNavigators.push(keyNavigator({
+                    elements : navigableDomElement.createFromDoms($itemElement),
                     group : $itemElement,
-                    replace : true
-                });
+                    propagateTab : false
+                }));
             }
-            itemNavigators.push(id);
         });
 
         return itemNavigators;
+    }
+
+    /**
+     * Init interaction key navigation from the interaction navigator
+     *
+     * @param {JQuery} $interaction - the interaction container
+     * @returns {Array} array of navigators created from interaction container
+     */
+    function initInteractionNavigation($interaction){
+
+        var $inputs;
+        var interactionNavigables;
+        var interactionNavigators = [];
+
+        //add navigable elements from prompt
+        $interaction.find('.key-navigation-focusable').each(function(){
+            var $nav = $(this);
+            if(!$nav.closest('.qti-choice').length){
+                interactionNavigators.push(keyNavigator({
+                    elements : navigableDomElement.createFromDoms($nav),
+                    group : $nav,
+                    propagateTab : false
+                }));
+            }
+        });
+
+        //reset interaction custom key navigation to override the behaviour with the new one
+        $interaction.off('.keyNavigation');
+
+        //search for inputs that represent the interaction focusable choices
+        $inputs = $interaction.is(':input') ? $interaction : $interaction.find(':input');
+        interactionNavigables = navigableDomElement.createFromDoms($inputs);
+
+        if (interactionNavigables.length) {
+            interactionNavigators.push(keyNavigator({
+                elements : interactionNavigables,
+                group : $interaction,
+                loop : false
+            }).on('right down', function(){
+                this.next();
+            }).on('left up', function(){
+                this.previous();
+            }).on('activate', function(cursor){
+                cursor.navigable.getElement().click();
+            }).on('focus', function(cursor){
+                cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
+            }).on('blur', function(cursor){
+                cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
+            }));
+        }
+
+        return interactionNavigators;
     }
 
     /**
@@ -189,7 +295,7 @@ define([
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
-    function initRubricNavigation(testRunner){
+    function initRubricNavigation(){
         var $itemElements;
         var rubricNavigators = [];
         var $rubricArea = $('#qti-rubrics');
@@ -198,13 +304,13 @@ define([
         $itemElements.each(function(){
             var $itemElement = $(this);
             var id = 'rubric_element_navigation_group_'+rubricNavigators.length;
-            keyNavigator({
+
+            rubricNavigators.push(keyNavigator({
                 id : id,
-                elements : $itemElement,
+                elements : navigableDomElement.createFromDoms($itemElement),
                 group : $itemElement,
                 replace : true
-            });
-            rubricNavigators.push(id);
+            }));
         });
 
         return rubricNavigators;
@@ -217,21 +323,32 @@ define([
      */
     function initTestRunnerNavigation(testRunner){
 
+        var navigators;
+
         //blur current focused element, to reinitialize keyboard navigation
         if (document.activeElement){
             document.activeElement.blur();
         }
 
-        return groupKeyNavigator({
+        navigators = _.union(
+            initRubricNavigation(testRunner),
+            initContentNavigation(testRunner),
+            initToolbarNavigation(testRunner),
+            initNavigatorNavigation(testRunner),
+            initHeaderNavigation(testRunner)
+        );
+
+        navigators = navigableGroupElement.createFromNavigators(navigators);
+
+        return keyNavigator({
             id : 'test-runner',
             replace : true,
-            groups : _.union(
-                initRubricNavigation(testRunner),
-                initContentNavigation(testRunner),
-                initToolbarNavigation(testRunner),
-                initNavigatorNavigation(testRunner),
-                initHeaderNavigation(testRunner)
-            )
+            loop : true,
+            elements : navigators,
+        }).on('tab', function(){
+            this.next();
+        }).on('shift+tab', function(){
+            this.previous();
         });
     }
 
@@ -248,23 +365,12 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            if (testConfig.allowShortcuts) {
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.previous, this.getName(), true), function () {
-                    testRunner.trigger('previous-focusable');
-                }, {
-                    prevent: true
-                });
-
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.next, this.getName(), true), function () {
-                    testRunner.trigger('next-focusable');
-                }, {
-                    prevent: true
-                });
-            }
+            shortcut.add('tab shift+tab', function(){
+                if(!self.groupNavigator.isFocused()){
+                    self.groupNavigator.focus();
+                }
+            });
 
             //start disabled
             this.disable();
@@ -277,16 +383,6 @@ define([
                 })
                 .on('unloaditem', function () {
                     self.disable();
-                })
-                .on('previous-focusable', function() {
-                    if (self.getState('enabled') && self.groupNavigator) {
-                        self.groupNavigator.previous();
-                    }
-                })
-                .on('next-focusable', function() {
-                    if (self.getState('enabled') && self.groupNavigator) {
-                        self.groupNavigator.next();
-                    }
                 });
         },
 
@@ -296,7 +392,7 @@ define([
         destroy: function destroy() {
             shortcut.remove('.' + this.getName());
             if(this.groupNavigator) {
-                this.groupNavigator.next();
+                this.groupNavigator.destroy();
             }
         }
     });

@@ -36,6 +36,8 @@ use qtism\data\NavigationMode;
 use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * Runs a QTI Test.
@@ -289,7 +291,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         
-        $this->setStorage(new taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri));
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $storageClassName = $config['test-session-storage'];
+        $this->setStorage(new $storageClassName($sessionManager, $seeker, $userUri));
+        
         $this->retrieveTestSession();
 
         // @TODO: use some storage to get the potential reason of the state (close/suspended)
@@ -297,7 +302,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $state = $session->getState();
         if ($state == AssessmentTestSessionState::CLOSED) {
             if ($notifyError) {
-                $this->notifyError(__('This test has been terminated'), $state);
+                $this->notifyError(__('The assessment has been terminated.'), $state);
             }
             return false;
         }
@@ -305,7 +310,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // @TODO: maybe use an option to enable this behavior
         if ($state == AssessmentTestSessionState::SUSPENDED) {
             if ($notifyError) {
-                $this->notifyError(__('This test has been suspended'), $state);
+                $this->notifyError(__('The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required.'), $state);
             }
             return false;
         }
@@ -745,7 +750,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 common_Logger::e($msg);
             }
 
-            $filler = new taoQtiCommon_helpers_PciVariableFiller($currentItem);
+            $filler = new taoQtiCommon_helpers_PciVariableFiller(
+                $currentItem,
+                ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
+            );
 
             if (is_array($jsonPayload)) {
                 foreach ($jsonPayload as $id => $response) {

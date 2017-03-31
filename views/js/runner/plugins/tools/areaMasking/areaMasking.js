@@ -112,7 +112,7 @@ define([
             // register the element in the Toolbox
             this.button = this.getAreaBroker().getToolbox().createEntry({
                 control : 'area-masking',
-                text : 'Mask tool',
+                text : __('Masking'),
                 title : __('Covers parts of the item'),
                 icon : 'eye-slash'
             });

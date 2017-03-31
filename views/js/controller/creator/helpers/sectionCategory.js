@@ -145,8 +145,8 @@ define([
                 description : __('displays a warning before the user finishes the test')
             },
             {
-                name : 'x-tao-option-unansweredWarning',
-                description : __('displays a warning before the user finishes the test, only if there are unanswered/marked for review items')
+                name : 'x-tao-option-nextPartWarning',
+                description : __('displays a warning before the user finishes the part')
             },
             {
                 name : 'x-tao-option-nextSectionWarning',
@@ -183,6 +183,10 @@ define([
             {
                 name : 'x-tao-option-highlighter',
                 description : __('enable highlighter tool')
+            },
+            {
+                name : 'x-tao-option-line-reader',
+                description : __('enable line reader tool')
             },
             {
                 name : 'x-tao-option-magnifier',

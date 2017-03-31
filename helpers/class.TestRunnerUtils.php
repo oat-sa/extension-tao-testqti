@@ -32,6 +32,7 @@ use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use qtism\common\datatypes\QtiString;
+use oat\oatbox\service\ServiceManager;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -42,21 +43,12 @@ use qtism\common\datatypes\QtiString;
 class taoQtiTest_helpers_TestRunnerUtils {
     
     /**
-     * temporary variable until proper servicemanager integration
-     * @var ExtendedStateService
-     */
-    private static $extendedStateService;
-
-    /**
      * temporary helper until proper servicemanager integration
      * @return ExtendedStateService
      */
     static public function getExtendedStateService()
     {
-        if (!isset(self::$extendedStateService)) {
-            self::$extendedStateService = new ExtendedStateService();
-        }
-        return self::$extendedStateService;
+        return ServiceManager::getServiceManager()->get(ExtendedStateService::SERVICE_ID);
     }
     
     /**
@@ -316,7 +308,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $constraints[] = array(
                     'label' => $label,
                     'source' => $tc->getSource()->getIdentifier(),
-                    'seconds' => $tc->getMaximumRemainingTime()->getSeconds(true),
+                    'seconds' => self::getDurationWithMicroseconds($tc->getMaximumRemainingTime()),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $tc->getSource()->getQtiClassName()
                 );
@@ -1197,5 +1189,21 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function isQtiValueNull($value){
         return is_null($value) === true || ($value instanceof QtiString && $value->getValue() === '') || ($value instanceof Container && count($value) === 0);
+    }
+
+    /**
+     * Gets the amount of seconds with the microseconds as fractional part from a Duration instance.
+     * @param \qtism\common\datatypes\Duration $duration
+     * @return float|null
+     */
+    public static function getDurationWithMicroseconds($duration)
+    {
+        if ($duration) {
+            if (method_exists($duration, 'getMicroseconds')) {
+                return $duration->getMicroseconds(true) / 1e6;
+            }
+            return $duration->getSeconds(true);
+        }
+        return null;
     }
 }

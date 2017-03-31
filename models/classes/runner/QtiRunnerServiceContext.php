@@ -161,7 +161,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
 
-        $this->storage = new \taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri);
+
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $storageClassName = $config['test-session-storage'];
+        $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
     }
 
     /**

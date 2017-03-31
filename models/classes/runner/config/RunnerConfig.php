@@ -48,5 +48,5 @@ interface RunnerConfig
      * @param RunnerServiceContext $context The test context
      * @return mixed
      */
-    public function getOptions(RunnerServiceContext $context);
+    public function getTestOptions(RunnerServiceContext $context);
 }

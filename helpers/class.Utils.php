@@ -261,10 +261,22 @@ class taoQtiTest_helpers_Utils {
         $data = \tao_models_classes_service_FileStorage::singleton()
             ->getDirectoryById($directoryIds[0])
             ->read(TAOQTITEST_COMPILED_FILENAME);
+            
+        // Store a copy to get it in opcache...
+        $expectedCacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';
+        $expectedCacheFile = $expectedCacheDir . '/' . md5($qtiTestCompilation) . '.php';
+        
+        if (!is_dir($expectedCacheDir)) {
+            mkdir($expectedCacheDir);
+        }
+        
+        if (!is_file($expectedCacheFile)) {
+            file_put_contents($expectedCacheFile, $data);
+        }
 
-        common_Logger::d("Loading QTI-PHP file from stream");
+        common_Logger::d("Loading QTI-PHP file from '${expectedCacheFile}'.");
         $doc = new PhpDocument();
-        $doc->loadFromString($data);
+        $doc->load($expectedCacheFile);
 
         return $doc->getDocumentComponent();
     }

@@ -29,7 +29,8 @@ define([
     'use strict';
 
     var defaultConfig = {
-        previewDelay: 3000
+        previewDelay: 3000,
+        stackingScope: 'test-runner'
     };
 
     /**

@@ -20,6 +20,9 @@
 
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\Directory;
+use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
+use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * A specialization of QTI ItemExporter aiming at exporting IMS QTI Test definitions from the TAO
@@ -61,6 +64,11 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      * @var DOMDocument
      */
     private $manifest = null;
+
+    /**
+     * @var MetadataExporter Service to export metadata to IMSManifest
+     */
+    protected $metadataExporter;
 
     /**
      * Create a new instance of QtiTestExport.
@@ -178,7 +186,10 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // 2. Export the test definition itself.
         $this->exportTest($itemIdentifiers);
 
-        // 3. Persist manifest in archive.
+        // 3. Export test metadata to manifest
+        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
+
+        // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
 
         return $report;
@@ -262,7 +273,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
         foreach ($iterator as $f) {
             // Only add dependency files...
-            if ($f->getBasename() !== TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
+            if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
 
                 // Add the file to the archive.
                 $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
@@ -360,5 +371,19 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function postProcessing($testXmlDocument)
     {
         return $testXmlDocument;
+    }
+
+    /**
+     * Get the service to export Metadata
+     *
+     * @return MetadataExporter
+     */
+    protected function getMetadataExporter()
+    {
+        if (! $this->metadataExporter) {
+            $this->metadataExporter = ServiceManager::getServiceManager()->get(MetadataService::SERVICE_ID)->getExporter();
+        }
+        return $this->metadataExporter;
+
     }
 }

@@ -29,16 +29,16 @@ define([
     'ui/calculator',
     'util/shortcut',
     'util/namespace',
-    'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory, buttonTpl){
+    'taoTests/runner/plugin'
+], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
     'use strict';
 
     var _default = {
         height : 360,
         width : 240,
         top : 50,
-        left : 10
+        left : 10,
+        stackingScope: 'test-runner'
     };
 
     /**
@@ -55,6 +55,8 @@ define([
             var areaBroker = this.getAreaBroker();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginsConfig = testConfig.plugins || {};
+            var config = pluginsConfig.calculator || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
@@ -62,9 +64,11 @@ define([
              * @returns {Boolean}
              */
             function isEnabled() {
-                var context = testRunner.getTestContext();
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
+
                 //to be activated with the special category x-tao-option-calculator
-                return !!context.options.calculator;
+                return !!options.calculator;
             }
 
             /**
@@ -79,6 +83,25 @@ define([
             }
 
             /**
+             * Build the calculator component
+             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             */
+            function buildCalculator(calcTpl){
+                self.calculator = calculatorFactory(_.defaults({
+                    renderTo: self.$calculatorContainer,
+                    replace: true,
+                    draggableContainer: areaBroker.getContainer(),
+                    alternativeTemplate : calcTpl || null
+                }, _default)).on('show', function () {
+                    self.trigger('open');
+                    self.button.turnOn();
+                }).on('hide', function () {
+                    self.trigger('close');
+                    self.button.turnOff();
+                }).show();
+            }
+
+            /**
              * Show/hide the calculator
              */
             function toggleCalculator() {
@@ -87,24 +110,22 @@ define([
                         //just show/hide the calculator widget
                         if (self.calculator.is('hidden')) {
                             self.calculator.show();
-                            self.button.turnOn();
                         } else {
                             self.calculator.hide();
-                            self.button.turnOff();
                         }
                     } else {
                         //build calculator widget
-                        self.calculator = calculatorFactory(_.defaults({
-                            renderTo: self.$calculatorContainer,
-                            replace: true,
-                            draggableContainer: areaBroker.getContainer()
-                        }, _default)).on('show', function () {
-                            self.trigger('open');
-                            self.button.turnOn();
-                        }).on('hide', function () {
-                            self.trigger('close');
-                            self.button.turnOff();
-                        }).show();
+                        if(config.template){
+                            require(['tpl!' + config.template.replace(/\.tpl$/, '')], function(calcTpl){
+                                buildCalculator(calcTpl);
+                            }, function(){
+                                //in case of error, display the default calculator:
+                                buildCalculator();
+                            });
+                        }else{
+                            buildCalculator();
+                        }
+
                     }
                 }
             }

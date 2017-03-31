@@ -20,8 +20,12 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\QtiTestListenerService;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
@@ -30,12 +34,16 @@ use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\tao\model\import\ImportersService;
+use oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
  *
@@ -1034,6 +1042,116 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('6.1.0');
         }
-        $this->skip('6.1.0', '6.2.0');
+
+        $this->skip('6.1.0', '6.3.0');
+
+        if ($this->isVersion('6.3.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['itemThemeSwitcher'] = [
+                'toggle' => 'T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.3.1');
+        }
+
+        $this->skip('6.3.1', '6.4.3');
+
+        if ($this->isVersion('6.4.3')) {
+            $service = new QtiRunnerConfig();
+            $service->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(QtiRunnerConfig::SERVICE_ID, $service);
+
+            $this->setVersion('6.5.0');
+        }
+
+        $this->skip('6.5.0', '6.9.0');
+
+        if ($this->isVersion('6.9.0')) {
+
+            //removes the shortcut from dialog
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['dialog'] = [];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.10.0');
+        }
+
+        if ($this->isVersion('6.10.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-session-storage'] = '\taoQtiTest_helpers_TestSessionStorage';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.11.0');
+        }
+
+        $this->skip('6.11.0', '6.13.0');
+
+        if ($this->isVersion('6.13.0')) {
+
+            /** @var ImportersService $importersService */
+            $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
+            if ($importersService->hasOption(ImportersService::OPTION_IMPORTERS)) {
+                $importers = $importersService->getOption(ImportersService::OPTION_IMPORTERS);
+            } else {
+                $importers = [];
+            }
+            $importers[QtiTestImporter::IMPORTER_ID] = QtiTestImporter::class;
+            $importersService->setOption(ImportersService::OPTION_IMPORTERS, $importers);
+
+            $this->getServiceManager()->register(ImportersService::SERVICE_ID, $importersService);
+
+            $this->setVersion('6.14.0');
+        }
+
+        $this->skip('6.14.0', '6.16.0');
+
+        if($this->isVersion('6.16.0')){
+            // Register line reader plugin
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'lineReader',
+                'name' => 'Line Reader',
+                'module' => 'taoQtiTest/runner/plugins/tools/lineReader/plugin',
+                'description' => 'Display a customisable mask with a customisable hole in it!',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+
+            // Register line reader shortcut
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['line-reader'] = [
+                'toggle' => 'G'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('6.17.0');
+        }
+
+        $this->skip('6.17.0', '6.17.2');
+
+        if ($this->isVersion('6.17.2')) {
+            $this->getServiceManager()->register(ExtendedStateService::SERVICE_ID, new ExtendedStateService());
+            $this->getServiceManager()->register(TestSessionService::SERVICE_ID, new TestSessionService());
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, new QtiTestListenerService());
+            $this->getServiceManager()->register(QtiRunnerMessageService::SERVICE_ID, new QtiRunnerMessageService());
+
+            $this->runExtensionScript(SetupEventListeners::class);
+
+            $this->setVersion(('6.18.0'));
+        }
+
+        $this->skip('6.18.0', '7.2.0');
     }
 }

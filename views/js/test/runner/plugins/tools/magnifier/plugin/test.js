@@ -74,18 +74,24 @@ define([
 
 
     QUnit.asyncTest('init', function (assert) {
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = runner.getAreaBroker().getToolboxArea(),
+            $button;
 
         QUnit.expect(4);
 
         magnifier.init()
             .then(function () {
+                areaBroker.getToolbox().render($container);
 
-                assert.equal(magnifier.$button.length, 1, 'The magnifier has created a button');
+                $button = $container.find('[data-control="magnify"]');
+
+                assert.equal($button.length, 1, 'The magnifier has created a button');
                 assert.ok(magnifier.getState('init'), 'The magnifier is initialised');
                 assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
-                assert.ok(magnifier.$button.hasClass('disabled'), 'The button starts disabled');
+                assert.ok($button.hasClass('disabled'), 'The button starts disabled');
 
                 QUnit.start();
             })
@@ -97,9 +103,11 @@ define([
 
 
     QUnit.asyncTest('render', function (assert) {
-        var $container = $('#qunit-fixture');
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = runner.getAreaBroker().getToolboxArea(),
+            $button;
 
         QUnit.expect(4);
 
@@ -108,14 +116,15 @@ define([
 
                 assert.ok(magnifier.getState('init'), 'The magnifier is initialised');
 
-                return magnifier.render().then(function () {
+                areaBroker.getToolbox().render($container);
 
-                    assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
-                    assert.equal($('.toolbox [data-control="magnify"]', $container).length, 1, 'The plugin button has been appended');
-                    assert.ok($('.toolbox [data-control="magnify"]', $container).hasClass('disabled'), 'The plugin button starts disabled');
+                $button = $container.find('[data-control="magnify"]');
 
-                    QUnit.start();
-                });
+                assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
+                assert.equal($button.length, 1, 'The plugin button has been appended');
+                assert.ok($button.hasClass('disabled'), 'The plugin button starts disabled');
+
+                QUnit.start();
             })
             .catch(function (err) {
                 assert.ok(false, 'Unexpected failure : ' + err.message);
@@ -125,9 +134,11 @@ define([
 
 
     QUnit.asyncTest('state', function (assert) {
-        var $container = $('#qunit-fixture');
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = runner.getAreaBroker().getToolboxArea(),
+            $button;
 
         QUnit.expect(11);
 
@@ -136,30 +147,31 @@ define([
 
                 assert.ok(magnifier.getState('init'), 'The magnifier is initialised');
 
-                return magnifier.render().then(function () {
+                areaBroker.getToolbox().render($container);
 
-                    assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
-                    assert.equal($('.toolbox [data-control="magnify"]', $container).length, 1, 'The plugin button has been appended');
-                    assert.ok($('.toolbox [data-control="magnify"]', $container).hasClass('disabled'), 'The plugin button starts disabled');
+                $button = $container.find('[data-control="magnify"]');
 
-                    return magnifier.enable().then(function () {
-                        assert.ok(magnifier.getState('enabled'), 'The magnifier is now enabled');
-                        assert.ok(!$('.toolbox [data-control="magnify"]', $container).hasClass('disabled'), 'The plugin button is enabled');
+                assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
+                assert.equal($button.length, 1, 'The plugin button has been appended');
+                assert.ok($button.hasClass('disabled'), 'The plugin button starts disabled');
 
-                        assert.ok(!$('.toolbox [data-control="magnify"]', $container).hasClass('hidden'), 'The plugin button is visible');
+                return magnifier.enable().then(function () {
+                    assert.ok(magnifier.getState('enabled'), 'The magnifier is now enabled');
+                    assert.ok(!$button.hasClass('disabled'), 'The plugin button is enabled');
 
-                        return magnifier.hide().then(function () {
-                            assert.ok($('.toolbox [data-control="magnify"]', $container).hasClass('hidden'), 'The plugin button is hidden');
+                    assert.ok(!$button.hasClass('hidden'), 'The plugin button is visible');
 
-                            return magnifier.show().then(function () {
-                                assert.ok(!$('.toolbox [data-control="magnify"]', $container).hasClass('hidden'), 'The plugin button is visible');
+                    return magnifier.hide().then(function () {
+                        assert.ok($button.hasClass('hidden'), 'The plugin button is hidden');
 
-                                return magnifier.disable().then(function () {
-                                    assert.ok(!magnifier.getState('enabled'), 'The magnifier is now disabled');
-                                    assert.ok($('.toolbox [data-control="magnify"]', $container).hasClass('disabled'), 'The plugin button is disabled');
+                        return magnifier.show().then(function () {
+                            assert.ok(!$button.hasClass('hidden'), 'The plugin button is visible');
 
-                                    QUnit.start();
-                                });
+                            return magnifier.disable().then(function () {
+                                assert.ok(!magnifier.getState('enabled'), 'The magnifier is now disabled');
+                                assert.ok($button.hasClass('disabled'), 'The plugin button is disabled');
+
+                                QUnit.start();
                             });
                         });
                     });
@@ -173,24 +185,31 @@ define([
 
 
     QUnit.asyncTest('destroy', function (assert) {
-        var $container = $('#qunit-fixture');
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = runner.getAreaBroker().getToolboxArea(),
+            $button;
 
         QUnit.expect(3);
 
         magnifier.init()
             .then(function () {
+                areaBroker.getToolbox().render($container);
+
+                $button = $container.find('[data-control="magnify"]');
+
                 assert.ok(magnifier.getState('init'), 'The magnifier is initialised');
 
-                return magnifier.render().then(function () {
+                assert.equal($button.length, 1, 'The plugin button has been appended');
 
-                    assert.equal($('.toolbox [data-control="magnify"]', $container).length, 1, 'The plugin button has been appended');
+                return magnifier.destroy().then(function () {
+                    areaBroker.getToolbox().destroy();
 
-                    return magnifier.destroy().then(function () {
-                        assert.equal($('.toolbox [data-control="magnify"]', $container).length, 0, 'The plugin button has been removed');
-                        QUnit.start();
-                    });
+                    $button = $container.find('[data-control="magnify"]');
+
+                    assert.equal($button.length, 0, 'The plugin button has been removed');
+                    QUnit.start();
                 });
             })
             .catch(function (err) {
@@ -204,11 +223,19 @@ define([
 
 
     QUnit.asyncTest('create', function (assert) {
-        var $container = $('#qunit-fixture');
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = $('#qunit-fixture'),
+            $button;
 
-        QUnit.expect(9);
+        QUnit.expect(12);
+
+        runner.setTestContext({
+            options: {
+                magnifier: true
+            }
+        });
 
         runner.on('plugin-magnifier-create.magnifier', function () {
             assert.equal($('.magnifier', $container).length, 1, 'A magnifier has been created');
@@ -218,9 +245,10 @@ define([
         runner.on('plugin-magnifier-show.magnifier', function () {
             _.defer(function() {
                 assert.ok(!$('.magnifier', $container).hasClass('hidden'), 'The magnifier is visible');
+                assert.ok($button.hasClass('active'), 'The button is turned on');
 
                 _.delay(function() {
-                    $('.toolbox [data-control="magnify"]', $container).trigger('click');
+                    $button.trigger('click');
                 }, 250);
             });
         });
@@ -228,6 +256,7 @@ define([
         runner.on('plugin-magnifier-hide.magnifier', function () {
             _.defer(function() {
                 assert.ok($('.magnifier', $container).hasClass('hidden'), 'The magnifier is hidden');
+                assert.ok(!$button.hasClass('active'), 'The button is turned off');
 
                 QUnit.start();
             });
@@ -235,16 +264,16 @@ define([
 
         magnifier.init()
             .then(function () {
-
                 assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
 
-                magnifier.enable();
-                return magnifier.render().then(function () {
-                    var $button = $('.toolbox [data-control="magnify"]', $container);
+                areaBroker.getToolbox().render(areaBroker.getToolboxArea());
+                $button = $('[data-control="magnify"]', areaBroker.getToolboxArea());
 
+                return magnifier.enable().then(function() {
                     assert.ok(magnifier.getState('enabled'), 'The magnifier is not disabled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');
+                    assert.ok(!$button.hasClass('active'), 'The button is not turned on');
 
                     assert.equal($('.magnifier', $container).length, 0, 'No magnifier exists yet');
 
@@ -259,12 +288,20 @@ define([
 
 
     QUnit.asyncTest('zoom', function (assert) {
-        var $container = $('#qunit-fixture');
-        var runner = runnerFactory(providerName);
-        var magnifier = magnifierFactory(runner, runner.getAreaBroker());
-        var expectedZoomLevel = 2;
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            magnifier = magnifierFactory(runner, areaBroker),
+            $container = $('#qunit-fixture'),
+            $button,
+            expectedZoomLevel = 2;
 
         QUnit.expect(8);
+
+        runner.setTestContext({
+            options: {
+                magnifier: true
+            }
+        });
 
         runner.on('plugin-magnifier-create.magnifier', function () {
             assert.equal($('.magnifier', $container).length, 1, 'A magnifier has been created');
@@ -291,13 +328,12 @@ define([
 
         magnifier.init()
             .then(function () {
-
                 assert.ok(!magnifier.getState('enabled'), 'The magnifier starts disabled');
 
-                magnifier.enable();
-                return magnifier.render().then(function () {
-                    var $button = $('.toolbox [data-control="magnify"]', $container);
+                areaBroker.getToolbox().render(areaBroker.getToolboxArea());
+                $button = $('[data-control="magnify"]', areaBroker.getToolboxArea());
 
+                return magnifier.enable().then(function () {
                     assert.ok(magnifier.getState('enabled'), 'The magnifier is not disabled anymore');
                     assert.equal($button.length, 1, 'The plugin button has been appended');
                     assert.ok(!$button.hasClass('disabled'), 'The button is not disabled anymore');

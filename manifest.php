@@ -14,16 +14,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
- *
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
-/*
- * @author CRP Henri Tudor - TAO Team - {@link http://www.tao.lu}
- * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
- *
- */
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
@@ -34,12 +28,13 @@ return array(
     'label' => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '6.2.0',
+    'version'     => '7.2.0',
     'author' => 'Open Assessment Technologies',
     'requires' => array(
-        'taoTests' => '>=3.7.0',
-        'taoQtiItem' => '>=6.12.0',
-        'tao'        => '>=7.64.0'
+        'taoTests'   => '>=4.0.0',
+        'taoQtiItem' => '>=6.19.0',
+        'tao'        => '>=7.87.0',
+        'generis'    => '>=3.19.0',
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -56,7 +51,9 @@ return array(
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins',
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
             'oat\\taoQtiTest\\scripts\\install\\CreateTestSessionFilesystem',
-            RegisterQtiFlysystemManager::class
+            RegisterQtiFlysystemManager::class,
+            \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
+            \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
 		)
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
