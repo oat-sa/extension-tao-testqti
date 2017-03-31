@@ -722,24 +722,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Finishes the test
-     */
-    public function finish()
-    {
-        try {
-            $serviceContext = $this->getServiceContext(false);
-
-            $response = [
-                'success' => $this->runnerService->finish($serviceContext),
-            ];
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-        }
-
-        $this->returnJson($response);
-    }
-
-    /**
      * Sets the test in paused state
      */
     public function pause()

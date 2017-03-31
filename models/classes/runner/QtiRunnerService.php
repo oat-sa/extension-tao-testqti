@@ -884,7 +884,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $session->endTestSession();
 
-            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
+            $this->finish($context);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1103,6 +1103,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($session->isRunning() === true && $session->isTimeout() === false) {
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
+        } else {
+            $this->finish($context);
         }
 
         return $continue;
