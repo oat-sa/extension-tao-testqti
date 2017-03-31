@@ -883,8 +883,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             $session->endTestSession();
-            
-            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
 
             $this->finish($context);
         } else {
