@@ -443,13 +443,15 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .after('timeout', function (scope, ref) {
+                .after('timeout', function (scope) {
                     if (scope === 'assessmentSection' || scope === 'testPart') {
                         self.trigger('endsession');
                     }
                 })
                 .on('pause', function(data){
                     var pause;
+
+                    this.setState('closedOrSuspended', true);
 
                     if (!self.getState('disconnected')) {
                     // will notify the server that the test was auto paused
@@ -622,24 +624,24 @@ define([
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
-                    .on('error', function(err){
-                        self.trigger('enablenav');
-                        reject(err);
-                    })
-                    .on('init', function(){
-                        if(itemData.state){
-                            this.setState(itemData.state);
-                        }
-                        this.render(self.getAreaBroker().getContentArea());
-                    })
-                    .on('render', function(){
+                .on('error', function(err){
+                    self.trigger('enablenav');
+                    reject(err);
+                })
+                .on('init', function(){
+                    if(itemData.state){
+                        this.setState(itemData.state);
+                    }
+                    this.render(self.getAreaBroker().getContentArea());
+                })
+                .on('render', function(){
 
-                        this.on('responsechange', changeState);
-                        this.on('statechange', changeState);
+                    this.on('responsechange', changeState);
+                    this.on('statechange', changeState);
 
-                        resolve();
-                    })
-                    .init();
+                    resolve();
+                })
+                .init();
             });
         },
 
@@ -766,14 +768,17 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy : function destroy(){
+
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
                 this.itemRunner.clear();
             }
             this.itemRunner = null;
 
-            areaBroker.getToolbox().destroy();
-            areaBroker = null;
+            if(areaBroker){
+                areaBroker.getToolbox().destroy();
+                areaBroker = null;
+            }
         }
     };
 

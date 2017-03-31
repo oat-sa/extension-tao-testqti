@@ -186,6 +186,8 @@ define([
                             }
                         })
                         .after('destroy', function () {
+                            this.removeAllListeners();
+
                             // at the end, we are redirected to the exit URL
                             exit(exitReason);
                         })
