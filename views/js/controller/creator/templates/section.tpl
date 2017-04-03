@@ -9,14 +9,14 @@
                         <span class="tlb-bar">
                             <span class="tlb-start"></span>
                             <span class="tlb-group">
-                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" ><span class="icon-rubric"></span></a>
+                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" role="button" aria-label="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" ><span class="icon-rubric"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}"><span class="icon-settings"></span></a>
+                                <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}"role="button" aria-label="{{title}} Properties"><span class="icon-settings"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}"><span class="icon-up"></span></a>
-                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}"><span class="icon-down"></span></a>
+                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}"role="button" aria-label="Move Up {{title}}"><span class="icon-up"></span></a>
+                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}"role="button" aria-label="Move Down {{title}}"><span class="icon-down"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}" data-delete=":parent .section"><span class="icon-bin"></span></a>
+                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}"role="button" aria-label="Remove {{title}}" data-delete=":parent .section"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
                         </span>
