@@ -1,7 +1,7 @@
 $lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
 $lrBorderColor: $textColor;
 $lrMaskBg: #ffffff;
-$lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
+$lrMaskBgTransparent: rgba($lrMaskBg, 0.55);
 
 .line-reader-mask {
     box-sizing: border-box;
@@ -14,6 +14,7 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
     &.resizing {
         background-color: $lrMaskBgTransparent;
+        border-color: whiten($lrBorderColor, 0.6);
     }
 
     &.border-top     { border-top-width: $lrBorderWidth; }
@@ -36,12 +37,16 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
         display: none;
     }
 
+    &.moving {
+        @include border-radius(5);
+    }
+
     &.moving, .inner-window {
         overflow: hidden;
         position: absolute;
         opacity: 1;
         background-color: transparent;
-        border: $lrBorderWidth solid $lrBorderColor;
+        border: $lrBorderWidth solid whiten($lrBorderColor, 0.6);
     }
 
     .inner-window {
