@@ -1,7 +1,7 @@
 $lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
 $lrBorderColor: $textColor;
 $lrMaskBg: #ffffff;
-$lrMaskBgTransparent: rgba($lrMaskBg, 0.55);
+$lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
 .line-reader-mask {
     box-sizing: border-box;
@@ -64,14 +64,18 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.55);
 
 .line-reader-inner-drag {
     @include border-radius(3);
-    background-color: whiten($textColor, 0.85);
+    text-align: center;
 
     &.hidden {
         display: none;
     }
 
     &:hover {
-        background-color: whiten($textColor, 0.6);
+        background-color: whiten($textColor, 0.9);
+    }
+
+    &.moving {
+        background-color: transparent;
     }
 
 }
