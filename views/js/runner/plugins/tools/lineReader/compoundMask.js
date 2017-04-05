@@ -58,19 +58,22 @@ define([
     var defaultOptions = {
         minWidth:  30,
         minHeight: 30,
+        minBottomHeight: 40,
         resizeHandleSize: 10,
-        innerDragWidth: 5
+        innerDragHeight: 20
     };
     var stackingOptions = {
         stackingScope: 'test-runner'
     };
+    var constrains;
 
     /**
      * @param {Object} options
-     * @param {Number} options.minWidth - minimal width of every component of the compound mask
-     * @param {Number} options.minHeight - minimal height of every component of the compound mask
+     * @param {Number} options.minWidth - minimal width of every component of the compound mask, including the resizeHandleSize
+     * @param {Number} options.minHeight - minimal height of top and middle component of the compound mask, including the resizeHandleSize
+     * @param {Number} options.minBottomHeight - minimal height of the bottom components of the compound mask, including the resizeHandleSize and the innerDragHeight
      * @param {Number} options.resizeHandleSize - margin left on the mask by drag overlays to allow resizing
-     * @param {Number} options.innerDragWidth - width of the inner window drag handle
+     * @param {Number} options.innerDragHeight - height of the inner window drag handle
      * @param {Object} dimensions
      * @param {Number} dimensions.outerWidth - overall mask width
      * @param {Number} dimensions.outerHeight - overall mask height
@@ -299,11 +302,11 @@ define([
                         rect;
 
                     rect = {
-                        x: fixedXY.left + (options.minWidth - options.resizeHandleSize - options.innerDragWidth),
-                        y: fixedXY.top + options.minHeight,
-                        width: dimensions.outerWidth -
-                            (dimensions.innerWidth + options.minWidth * 2 - options.innerDragWidth),
-                        height: dimensions.outerHeight - (options.minHeight * 2)
+                        x: fixedXY.left + options.minWidth,
+                        y: fixedXY.top + (options.minHeight + dimensions.innerHeight + options.resizeHandleSize),
+                        width: dimensions.outerWidth - (options.minWidth * 2 ),
+                        height: dimensions.outerHeight -
+                            (dimensions.innerHeight + options.minHeight + options.minBottomHeight - options.innerDragHeight) // todo: improve this?
                     };
 
                     // uncomment to see what's going on:
@@ -317,6 +320,11 @@ define([
                     var $element = this.getElement();
 
                     $element.addClass('line-reader-inner-drag');
+
+                    $element.append($('<img>', {
+                        // todo: something better than that:
+                        src: '/taoQtiTest/views/js/runner/plugins/tools/lineReader/drag.svg'
+                    }));
 
                     $element.on('mousedown', function(e) {
                         e.stopPropagation();
@@ -410,10 +418,10 @@ define([
         function applyTransformsToInnerDrag() {
             if (innerDrag) {
                 innerDrag
-                    .setSize(options.innerDragWidth, dimensions.innerHeight)
+                    .setSize(dimensions.innerWidth, options.innerDragHeight)
                     .moveTo(
-                        position.innerX - options.resizeHandleSize - options.innerDragWidth,
-                        position.innerY
+                        position.innerX,
+                        position.innerY + dimensions.innerHeight + options.resizeHandleSize
                     );
             }
         }
@@ -421,7 +429,7 @@ define([
         /**
          * Check that the given transform model respect the current constrains.
          * If not, correct them
-         * todo: some checks should also be made regarding consistency of minWidth/Height and other config options like resizeHandleSize / innerDragWidth
+         * todo: some checks should also be made regarding consistency of minWidth/Height and other config options like resizeHandleSize / innerDragHeight
          */
         function correctTransforms() {
             if (dimensions.topHeight < options.minHeight) {
@@ -431,8 +439,8 @@ define([
             if (dimensions.innerHeight < options.minHeight) {
                 dimensions.innerHeight = options.minHeight;
             }
-            if (dimensions.bottomHeight < options.minHeight) {
-                dimensions.bottomHeight = options.minHeight;
+            if (dimensions.bottomHeight < options.minBottomHeight) {
+                dimensions.bottomHeight = options.minBottomHeight;
             }
             dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
 
@@ -648,6 +656,7 @@ define([
             createPart({
                 id: 'se',
                 edges: { top: false, right: true, bottom: true, left: false },
+                minHeight: options.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -682,6 +691,7 @@ define([
             createPart({
                 id: 's',
                 edges: { top: true, right: false, bottom: true, left: false },
+                minHeight: options.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -721,6 +731,7 @@ define([
             createPart({
                 id: 'sw',
                 edges: { top: false, right: false, bottom: true, left: true },
+                minHeight: options.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -852,6 +863,12 @@ define([
         dimensions  = _.defaults(dimensions || {}, defaultDimensions);
         position    = _.defaults(position   || {}, defaultPosition);
         options     = _.defaults(options    || {}, defaultOptions);
+
+        constrains = {
+            minWidth: options.resizeHandleSize * 2 + options.innerSpace,
+            minHeight: options.resizeHandleSize * 2 + options.innerSpace,
+            minBottomHeight: options.resizeHandleSize * 2 + options.innerDragHeight
+        };
 
         compoundMask = {
             init: function init() {
