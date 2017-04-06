@@ -125,6 +125,14 @@ define([
             this.compoundMask = compoundMaskFactory(maskOptions)
                 .init()
                 .render($container)
+                .on('show', function() {
+                    testRunner.trigger('plugin-start.' + pluginName);
+                    self.button.turnOn();
+                })
+                .on('hide', function() {
+                    testRunner.trigger('plugin-end.' + pluginName);
+                    self.button.turnOff();
+                })
                 .hide();
 
             /**
@@ -151,22 +159,10 @@ define([
                     if (containerWidthHasChanged($container)) {
                         transformMask($container);
                     }
-                    showMask();
+                    self.compoundMask.show();
                 } else {
-                    hideMask();
+                    self.compoundMask.hide();
                 }
-            }
-
-            function showMask() {
-                testRunner.trigger('plugin-start.' + pluginName);
-                self.button.turnOn();
-                self.compoundMask.show();
-            }
-
-            function hideMask() {
-                testRunner.trigger('plugin-end.' + pluginName);
-                self.button.turnOff();
-                self.compoundMask.hide();
             }
 
             function transformMask($maskContainer) {
@@ -215,7 +211,7 @@ define([
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
-                    hideMask();
+                    self.compoundMask.hide();
                 })
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {

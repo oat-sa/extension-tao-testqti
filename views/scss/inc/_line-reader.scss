@@ -85,3 +85,16 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
     }
 
 }
+
+// The button to close the line reader
+.line-reader-closer {
+    cursor: pointer;
+    color: whiten($textColor, 0.3);
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+
+    &:hover {
+        color: $textColor;
+    }
+}

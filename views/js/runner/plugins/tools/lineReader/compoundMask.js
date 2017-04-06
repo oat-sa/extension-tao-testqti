@@ -28,7 +28,9 @@ define([
     'jquery',
     'lodash',
     'core/statifier',
+    'core/eventifier',
     'ui/component',
+    'ui/component/placeable',
     'ui/component/draggable',
     'ui/component/resizable',
     'ui/component/stackable'
@@ -36,7 +38,9 @@ define([
     $,
     _,
     statifier,
+    eventifier,
     componentFactory,
+    makePlaceable,
     makeDraggable,
     makeResizable,
     makeStackable
@@ -87,6 +91,7 @@ define([
         var compoundMask,
             allParts = {},
             innerDrag,
+            closer,
             visualGuides = {};
 
         /**
@@ -144,6 +149,7 @@ define([
                 })
                 .on('resizestart', function () {
                     innerDrag.hide();
+                    closer.hide();
                     invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
                 })
@@ -152,10 +158,12 @@ define([
                 .on('resizeend', function () {
                     applyTransformsToOverlays();
                     applyTransformsToInnerDrag();
+                    applyTransformsToCloser();
 
                     invokeOnMasks('setState', ['resizing', false]);
                     invokeOnOverlays('show');
                     innerDrag.show();
+                    closer.show();
                 })
                 .init();
         }
@@ -256,6 +264,7 @@ define([
                 })
                 .on('dragstart', function() {
                     innerDrag.hide();
+                    closer.hide();
                     invokeOnMasks('hide');
                     this.appendVisualGuides();
                 })
@@ -272,6 +281,7 @@ define([
                     // will force their z-Index at the top of the stack
                     invokeOnAll('show');
                     innerDrag.show();
+                    closer.show();
 
                     // apply the new transform model
                     applyTransforms();
@@ -281,9 +291,9 @@ define([
 
 
         /**
-         * =================
-         * Inner Drag Handle
-         * =================
+         * ==========================
+         * Inner Drag Handle & Closer
+         * ==========================
          */
 
         /**
@@ -329,6 +339,7 @@ define([
                     });
                 })
                 .on('dragstart', function() {
+                    closer.hide();
                     invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
                 })
@@ -347,9 +358,36 @@ define([
                 .on('dragend', function() {
                     invokeOnOverlays('show');
                     innerDrag.bringToFront();
+                    closer.show();
                     invokeOnMasks('setState', ['resizing', false]);
 
                     applyTransformsToOverlays();
+                })
+                .init();
+        }
+
+        /**
+         * Close button for the compound mask
+         */
+        function createCloser() {
+            closer = componentFactory();
+
+            makeStackable(closer, stackingOptions);
+            makePlaceable(closer)
+                .on('render', function() {
+                    var self = this,
+                        $element = this.getElement(),
+                        $closeIcon = $('<div>', {
+                            'class': 'icon icon-result-nok'
+                        });
+
+                    $element.append($closeIcon);
+                    $element.addClass('line-reader-closer');
+
+                    $element.on('click', function(e) {
+                        e.stopPropagation();
+                        self.trigger('click');
+                    });
                 })
                 .init();
         }
@@ -362,6 +400,7 @@ define([
         function bringAllToFront() {
             invokeOnAll('bringToFront');
             innerDrag.bringToFront();
+            closer.bringToFront();
         }
 
         function invokeOnAll(fn, args) {
@@ -401,6 +440,7 @@ define([
             applyTransformsToMasks();
             applyTransformsToOverlays();
             applyTransformsToInnerDrag();
+            applyTransformsToCloser();
         }
 
         function applyTransformsToMasks() {
@@ -420,6 +460,20 @@ define([
                     .moveTo(
                         position.innerX,
                         position.innerY + dimensions.innerHeight + options.resizeHandleSize
+                    );
+            }
+        }
+
+        function applyTransformsToCloser() {
+            if (closer) {
+                closer
+                    .setSize(
+                        constrains.minWidth - options.resizeHandleSize,
+                        constrains.minHeight - options.resizeHandleSize
+                    )
+                    .moveTo(
+                        position.outerX + dimensions.outerWidth - constrains.minWidth,
+                        position.outerY + options.resizeHandleSize
                     );
             }
         }
@@ -869,17 +923,26 @@ define([
 
         compoundMask = {
             init: function init() {
+                var self = this;
+
                 this.setTransforms(dimensions, position);
 
                 createCompoundMask();
                 createVisualGuides();
                 createInnerDragHandle();
+                createCloser();
+
+                closer.on('click', function() {
+                    self.hide();
+                });
+
                 return this;
             },
 
             render: function render($container) {
                 invokeOnAll('render', [$container]);
                 innerDrag.render($container);
+                closer.render($container);
                 applyTransforms();
                 return this;
             },
@@ -888,12 +951,14 @@ define([
                 invokeOnAll('destroy');
                 visualGuides = null;
                 innerDrag = null;
+                closer = null;
                 return this;
             },
 
             show: function show() {
                 invokeOnAll('show');
                 innerDrag.show();
+                closer.show();
                 this.setState('hidden', false);
                 return this;
             },
@@ -901,6 +966,7 @@ define([
             hide: function hide() {
                 invokeOnAll('hide');
                 innerDrag.hide();
+                closer.hide();
                 this.setState('hidden', true);
                 return this;
             },
@@ -946,6 +1012,7 @@ define([
         };
 
         statifier(compoundMask);
+        eventifier(compoundMask);
 
         return compoundMask;
     };
