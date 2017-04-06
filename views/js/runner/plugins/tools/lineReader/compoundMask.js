@@ -56,9 +56,8 @@ define([
         innerY: 50
     };
     var defaultOptions = {
-        minWidth:  30,
-        minHeight: 30,
-        minBottomHeight: 40,
+        dragMinWidth: 10,
+        dragMinHeight: 10,
         resizeHandleSize: 10,
         innerDragHeight: 20
     };
@@ -69,10 +68,9 @@ define([
 
     /**
      * @param {Object} options
-     * @param {Number} options.minWidth - minimal width of every component of the compound mask, including the resizeHandleSize
-     * @param {Number} options.minHeight - minimal height of top and middle component of the compound mask, including the resizeHandleSize
-     * @param {Number} options.minBottomHeight - minimal height of the bottom components of the compound mask, including the resizeHandleSize and the innerDragHeight
-     * @param {Number} options.resizeHandleSize - margin left on the mask by drag overlays to allow resizing
+     * @param {Number} options.resizeHandleSize - size of the resize handlers on each resizable edge
+     * @param {Number} options.dragMinWidth - minimal width for the draggable area of each component.
+     * @param {Number} options.dragMinHeight - minimal height for the draggable area of each component.
      * @param {Number} options.innerDragHeight - height of the inner window drag handle
      * @param {Object} dimensions
      * @param {Number} dimensions.outerWidth - overall mask width
@@ -106,6 +104,8 @@ define([
          * @param {Function} maskConfig.beforeResize - used to set the resize limit depending on which edge the resizing occurs
          * @param {Function} maskConfig.onResize - how the resize affect the transform model
          * @param {Object} maskConfig.edges - Interact configuration to specify which edges can be used for resizing
+         * @param {Number} maskConfig.minWidth
+         * @param {Number} maskConfig.minHeight
          */
         function createMask(maskConfig) {
             var mask,
@@ -302,11 +302,11 @@ define([
                         rect;
 
                     rect = {
-                        x: fixedXY.left + options.minWidth,
-                        y: fixedXY.top + (options.minHeight + dimensions.innerHeight + options.resizeHandleSize),
-                        width: dimensions.outerWidth - (options.minWidth * 2 ),
+                        x: fixedXY.left + constrains.minWidth,
+                        y: fixedXY.top + (constrains.minHeight + dimensions.innerHeight + options.resizeHandleSize),
+                        width: dimensions.outerWidth - (constrains.minWidth * 2 ),
                         height: dimensions.outerHeight -
-                            (dimensions.innerHeight + options.minHeight + options.minBottomHeight - options.innerDragHeight) // todo: improve this?
+                            (dimensions.innerHeight + constrains.minHeight + constrains.minBottomHeight - options.innerDragHeight) // todo: improve this?
                     };
 
                     // uncomment to see what's going on:
@@ -429,30 +429,29 @@ define([
         /**
          * Check that the given transform model respect the current constrains.
          * If not, correct them
-         * todo: some checks should also be made regarding consistency of minWidth/Height and other config options like resizeHandleSize / innerDragHeight
          */
         function correctTransforms() {
-            if (dimensions.topHeight < options.minHeight) {
-                dimensions.topHeight = options.minHeight;
-                position.innerY = position.outerY + options.minHeight;
+            if (dimensions.topHeight < constrains.minHeight) {
+                dimensions.topHeight = constrains.minHeight;
+                position.innerY = position.outerY + constrains.minHeight;
             }
-            if (dimensions.innerHeight < options.minHeight) {
-                dimensions.innerHeight = options.minHeight;
+            if (dimensions.innerHeight < constrains.minHeight) {
+                dimensions.innerHeight = constrains.minHeight;
             }
-            if (dimensions.bottomHeight < options.minBottomHeight) {
-                dimensions.bottomHeight = options.minBottomHeight;
+            if (dimensions.bottomHeight < constrains.minBottomHeight) {
+                dimensions.bottomHeight = constrains.minBottomHeight;
             }
             dimensions.outerHeight = dimensions.topHeight + dimensions.innerHeight + dimensions.bottomHeight;
 
-            if (dimensions.leftWidth < options.minWidth) {
-                dimensions.leftWidth = options.minWidth;
-                position.innerX = position.outerX + options.minWidth;
+            if (dimensions.leftWidth < constrains.minWidth) {
+                dimensions.leftWidth = constrains.minWidth;
+                position.innerX = position.outerX + constrains.minWidth;
             }
-            if (dimensions.innerWidth < options.minWidth) {
-                dimensions.innerWidth = options.minWidth;
+            if (dimensions.innerWidth < constrains.minWidth) {
+                dimensions.innerWidth = constrains.minWidth;
             }
-            if (dimensions.rightWidth < options.minWidth) {
-                dimensions.rightWidth = options.minWidth;
+            if (dimensions.rightWidth < constrains.minWidth) {
+                dimensions.rightWidth = constrains.minWidth;
             }
             dimensions.outerWidth = dimensions.leftWidth + dimensions.innerWidth + dimensions.rightWidth;
         }
@@ -569,7 +568,7 @@ define([
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     this.config.maxHeight = (fromTop)
                         ? null
-                        : dimensions.topHeight + (dimensions.innerHeight - options.minHeight);
+                        : dimensions.topHeight + (dimensions.innerHeight - constrains.minHeight);
                 },
 
                 // set the new transform values (dimension and position) resulting from the current mask resize, and apply them
@@ -642,7 +641,7 @@ define([
 
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     this.config.maxWidth = (fromLeft)
-                        ? dimensions.rightWidth + (dimensions.innerWidth - options.minWidth)
+                        ? dimensions.rightWidth + (dimensions.innerWidth - constrains.minWidth)
                         : null;
                 },
 
@@ -656,7 +655,7 @@ define([
             createPart({
                 id: 'se',
                 edges: { top: false, right: true, bottom: true, left: false },
-                minHeight: options.minBottomHeight,
+                minHeight: constrains.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -691,7 +690,7 @@ define([
             createPart({
                 id: 's',
                 edges: { top: true, right: false, bottom: true, left: false },
-                minHeight: options.minBottomHeight,
+                minHeight: constrains.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -717,7 +716,7 @@ define([
 
                 beforeResize: function beforeResize(width, height, fromLeft, fromTop) {
                     this.config.maxHeight = (fromTop)
-                        ? dimensions.bottomHeight + (dimensions.innerHeight - options.minHeight)
+                        ? dimensions.bottomHeight + (dimensions.innerHeight - constrains.minHeight)
                         : null;
                 },
 
@@ -731,7 +730,7 @@ define([
             createPart({
                 id: 'sw',
                 edges: { top: false, right: false, bottom: true, left: true },
-                minHeight: options.minBottomHeight,
+                minHeight: constrains.minBottomHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -792,7 +791,7 @@ define([
                 beforeResize: function beforeResize(width, height, fromLeft) {
                     this.config.maxWidth = (fromLeft)
                         ? null
-                        : dimensions.leftWidth + (dimensions.innerWidth - options.minWidth);
+                        : dimensions.leftWidth + (dimensions.innerWidth - constrains.minWidth);
                 },
 
                 onResize: function onResize(width, height, fromLeft, fromTop, x) {
@@ -838,7 +837,7 @@ define([
 
         function createPart(partConfig) {
             allParts[partConfig.id] = {
-                mask: createMask(_.assign({}, options, partConfig)),
+                mask: createMask(_.assign({}, constrains, partConfig)),
                 overlay: createOverlay(partConfig)
             };
         }
@@ -865,9 +864,9 @@ define([
         options     = _.defaults(options    || {}, defaultOptions);
 
         constrains = {
-            minWidth: options.resizeHandleSize * 2 + options.innerSpace,
-            minHeight: options.resizeHandleSize * 2 + options.innerSpace,
-            minBottomHeight: options.resizeHandleSize * 2 + options.innerDragHeight
+            minWidth:           (options.resizeHandleSize * 2) + options.dragMinWidth,
+            minHeight:          (options.resizeHandleSize * 2) + options.dragMinHeight,
+            minBottomHeight:    (options.resizeHandleSize * 2) + options.innerDragHeight
         };
 
         compoundMask = {

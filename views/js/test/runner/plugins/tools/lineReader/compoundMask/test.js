@@ -54,10 +54,10 @@ define([
     QUnit.test('setTransforms / applyTransforms', function (assert) {
         var $container = $('#qunit-fixture'),
             mask = compoundMaskFactory({
-                minWidth:   20,
-                minHeight:  20,
+                dragMinWidth: 4,
+                dragMinHeight: 4,
                 resizeHandleSize: 7,
-                innerDragWidth: 6
+                innerDragHeight: 20
             }),
             expectedDimensions = {
                 outerWidth:     500,
@@ -385,9 +385,11 @@ define([
                     innerY:         100
                 },
                 mask = compoundMaskFactory({
-                    minWidth:   20,
-                    minHeight:  20,
-                    minBottomHeight: 40
+                    resizeHandleSize: 10,
+                    dragMinWidth: 0,
+                    dragMinHeight: 0,
+                    innerDragHeight: 20
+
                 }, dimensions, position),
                 allParts = mask.getParts();
 
@@ -468,8 +470,10 @@ define([
                     leftWidth:   50
                 },
                 mask = compoundMaskFactory({
-                    minWidth:   20,
-                    minHeight:  20
+                    resizeHandleSize: 10,
+                    dragMinWidth: 0,
+                    dragMinHeight: 0,
+                    innerDragHeight: 20
                 });
 
             QUnit.expect(2);
@@ -497,7 +501,12 @@ define([
     QUnit.module('Visual test');
 
     QUnit.asyncTest('display and play', function (assert) {
-        var mask = compoundMaskFactory(),
+        var mask = compoundMaskFactory({
+                dragMinHeight: 5,
+                dragMinWidth: 5,
+                innerDragHeight: 20,
+                resizeHandleSize: 7
+            }),
             $container = $('#outside');
 
         QUnit.expect(1);
