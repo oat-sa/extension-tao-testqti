@@ -454,8 +454,12 @@ define([
                     this.setState('closedOrSuspended', true);
 
                     if (!self.getState('disconnected')) {
-                    // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause');
+                        // will notify the server that the test was auto paused
+                        pause = self.getProxy().callTestAction('pause', {reason: {
+                                reasons: data && data.reasons,
+                                comment : data && data.message
+                            }
+                        });
                     } else {
                         pause = Promise.resolve();
                     }
