@@ -317,15 +317,13 @@ define([
                 }
             })
                 .on('render', function() {
-                    var $element = this.getElement();
+                    var $element = this.getElement(),
+                        $dragIcon = $('<div>', {
+                            'class': 'icon icon-move'
+                        });
 
                     $element.addClass('line-reader-inner-drag');
-
-                    $element.append($('<img>', {
-                        // todo: something better than that:
-                        src: '/taoQtiTest/views/js/runner/plugins/tools/lineReader/drag.svg'
-                    }));
-
+                    $element.append($dragIcon);
                     $element.on('mousedown', function(e) {
                         e.stopPropagation();
                     });
