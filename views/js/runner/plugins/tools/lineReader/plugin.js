@@ -45,6 +45,17 @@ define([
      */
     var actionPrefix = 'tool-' + pluginName + '-';
 
+    /**
+     * Options for the compoundMask factory
+     * @type {Object}
+     */
+    var maskOptions = {
+        dragMinWidth: 7,
+        dragMinHeight: 7,
+        resizeHandleSize: 7,
+        innerDragHeight: 20
+    };
+
     var dimensions,
         position;
 
@@ -62,8 +73,8 @@ define([
             lineHeight = Math.ceil(parseFloat($qtiContent.css('line-height'))) || 20; // reasonable default line height
 
         return {
-            outerWidth:     $container.width(),
-            outerHeight:    $qtiContent.height(),
+            outerWidth:     $qtiContent.width() + (maskOptions.resizeHandleSize * 4) + (maskOptions.dragMinWidth * 2),
+            outerHeight:    150, // reasonable default height
             innerWidth:     $qtiContent.width(),
             innerHeight:    lineHeight
         };
@@ -75,13 +86,15 @@ define([
             itemPosition = $qtiItem.position() || {},
 
             paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
-            paddingTop = parseInt($qtiItem.css('padding-top'), 10);
+            paddingTop = parseInt($qtiItem.css('padding-top'), 10),
+
+            textPadding = 5; // this is to let the text breathe a bit
 
         return {
-            outerX: 0,
+            outerX: parseInt(itemPosition.left, 10) - (maskOptions.resizeHandleSize * 2) - maskOptions.dragMinWidth,
             outerY: 0,
-            innerX: parseInt(itemPosition.left, 10) + paddingLeft - 5, // the -5 is to let the text breathe a bit
-            innerY: parseInt(itemPosition.top, 10) + paddingTop - 5
+            innerX: parseInt(itemPosition.left, 10) + paddingLeft - textPadding,
+            innerY: parseInt(itemPosition.top, 10) + paddingTop - textPadding
         };
     }
 
@@ -109,11 +122,7 @@ define([
                 pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {},
                 $container = testRunner.getAreaBroker().getContentArea().parent();
 
-            this.compoundMask = compoundMaskFactory({
-                minWidth: 25,
-                minHeight: 25,
-                resizeHandleSize: 10
-            })
+            this.compoundMask = compoundMaskFactory(maskOptions)
                 .init()
                 .render($container)
                 .hide();
