@@ -70,12 +70,14 @@ define([
      */
     function getDimensions($container) {
         var $qtiContent = $container.find('#qti-content'),
+            $qtiItem = $qtiContent.find('.qti-item'),
+
             lineHeight = Math.ceil(parseFloat($qtiContent.css('line-height'))) || 20; // reasonable default line height
 
         return {
-            outerWidth:     $qtiContent.width() + (maskOptions.resizeHandleSize * 4) + (maskOptions.dragMinWidth * 2),
+            outerWidth:     $qtiItem.width() + (maskOptions.resizeHandleSize * 4) + (maskOptions.dragMinWidth * 2),
             outerHeight:    175, // reasonable default height
-            innerWidth:     $qtiContent.width(),
+            innerWidth:     $qtiItem.width(),
             innerHeight:    lineHeight
         };
     }
@@ -88,7 +90,7 @@ define([
             paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
             paddingTop = parseInt($qtiItem.css('padding-top'), 10),
 
-            textPadding = 5, // this is to let the text breathe a bit
+            textPadding = 3, // this is to let the text breathe a bit
 
             innerX = parseInt(itemPosition.left, 10) + paddingLeft - textPadding,
             innerY = parseInt(itemPosition.top, 10) + paddingTop - textPadding;
