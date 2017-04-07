@@ -88,13 +88,16 @@ define([
             paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
             paddingTop = parseInt($qtiItem.css('padding-top'), 10),
 
-            textPadding = 5; // this is to let the text breathe a bit
+            textPadding = 5, // this is to let the text breathe a bit
+
+            innerX = parseInt(itemPosition.left, 10) + paddingLeft - textPadding,
+            innerY = parseInt(itemPosition.top, 10) + paddingTop - textPadding;
 
         return {
-            outerX: parseInt(itemPosition.left, 10) - (maskOptions.resizeHandleSize * 2) - maskOptions.dragMinWidth,
+            outerX: innerX - (maskOptions.resizeHandleSize * 2) - maskOptions.dragMinWidth,
             outerY: 0,
-            innerX: parseInt(itemPosition.left, 10) + paddingLeft - textPadding,
-            innerY: parseInt(itemPosition.top, 10) + paddingTop - textPadding
+            innerX: innerX,
+            innerY: innerY
         };
     }
 
