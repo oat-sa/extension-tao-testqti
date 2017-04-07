@@ -84,6 +84,9 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
         color: whiten($textColor, 0.6);
     }
 
+    .icon {
+        text-shadow: none !important;
+    }
 }
 
 // The button to close the line reader
@@ -96,5 +99,9 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
     &:hover {
         color: $textColor;
+    }
+
+    .icon {
+        text-shadow: none !important;
     }
 }
