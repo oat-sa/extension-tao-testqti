@@ -316,7 +316,7 @@ define([
                         y: fixedXY.top + (constrains.minHeight + dimensions.innerHeight + options.resizeHandleSize),
                         width: dimensions.outerWidth - (constrains.minWidth * 2 ),
                         height: dimensions.outerHeight -
-                            (dimensions.innerHeight + constrains.minHeight + constrains.minBottomHeight - options.innerDragHeight) // todo: improve this?
+                            (dimensions.innerHeight + constrains.minHeight + constrains.minBottomHeight - options.innerDragHeight)
                     };
 
                     // uncomment to see what's going on:
