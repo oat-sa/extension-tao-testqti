@@ -1,11 +1,10 @@
 $lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
-$lrBorderColor: $textColor;
-$lrMaskBg: #ffffff;
+$lrMaskBg: whiten($pluginBorder, .95);
 $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
 .line-reader-mask {
     box-sizing: border-box;
-    border: 0 solid $lrBorderColor;
+    border: 0 solid $pluginBorder;
     background-color: $lrMaskBg;
 
     &.hidden {
@@ -14,7 +13,7 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
     &.resizing {
         background-color: $lrMaskBgTransparent;
-        border-color: whiten($lrBorderColor, 0.6);
+        border-color: $pluginBorderTransparent;
     }
 
     &.border-top     { border-top-width: $lrBorderWidth; }
@@ -47,7 +46,7 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
         position: absolute;
         opacity: 1;
         background-color: transparent;
-        border: $lrBorderWidth solid whiten($lrBorderColor, 0.6);
+        border: $lrBorderWidth solid $pluginBorderTransparent;
     }
 
     .inner-window {
@@ -68,20 +67,20 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
     @include border-radius(3);
     text-align: center;
     padding-top: 3px;
-    color: whiten($textColor, 0.3);
+    color: $pluginLink;
 
     &.hidden {
         display: none;
     }
 
     &:hover {
-        background-color: whiten($textColor, 0.9);
-        color: $textColor;
+        background-color: whiten($pluginLink, .5);
+        color: $pluginLinkHover;
     }
 
     &.moving {
         background-color: transparent;
-        color: whiten($textColor, 0.6);
+        color: whiten($pluginLink, 0.6);
     }
 
     .icon {
@@ -92,13 +91,13 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 // The button to close the line reader
 .line-reader-closer {
     cursor: pointer;
-    color: whiten($textColor, 0.3);
+    color: $pluginLink;
     width: 12px;
     height: 12px;
     font-size: 12px;
 
     &:hover {
-        color: $textColor;
+        color: $pluginLinkHover;
     }
 
     .icon {
