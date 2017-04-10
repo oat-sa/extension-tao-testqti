@@ -24,10 +24,18 @@
         border-color: $pluginBorderTransparent;
         opacity: .55;
     }
+    &.moving {
+        .controls {
+            display: none;
+        }
+    }
     &.sizing {
         border-color: $pluginBorderTransparent;
         .inner{
             opacity: .55;
+        }
+        .controls {
+            display: none;
         }
     }
     &.previewing .inner {

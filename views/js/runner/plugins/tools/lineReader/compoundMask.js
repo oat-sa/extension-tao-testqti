@@ -336,6 +336,7 @@ define([
                     $element.append($dragIcon);
                     $element.on('mousedown', function(e) {
                         e.stopPropagation();
+                        bringAllToFront();
                     });
                 })
                 .on('dragstart', function() {
@@ -383,6 +384,10 @@ define([
 
                     $element.append($closeIcon);
                     $element.addClass('line-reader-closer');
+
+                    $element.on('mousedown', function() {
+                        bringAllToFront();
+                    });
 
                     $element.on('click', function(e) {
                         e.stopPropagation();
@@ -472,7 +477,7 @@ define([
                         constrains.minHeight - options.resizeHandleSize
                     )
                     .moveTo(
-                        position.outerX + dimensions.outerWidth - constrains.minWidth,
+                        position.outerX + dimensions.outerWidth - constrains.minWidth + 3, // manual adjustment so it looks better
                         position.outerY + options.resizeHandleSize
                     );
             }
