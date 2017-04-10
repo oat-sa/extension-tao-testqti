@@ -43,7 +43,7 @@
             text-decoration: none;
             margin-right: 5px;
             vertical-align: middle;
-            a:hover {
+            &:hover {
                 color: $pluginLinkHover;
             }
         }
