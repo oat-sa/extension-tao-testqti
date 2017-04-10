@@ -90,11 +90,11 @@ $lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
 
 // The button to close the line reader
 .line-reader-closer {
+    @include font-size(12);
     cursor: pointer;
     color: $pluginLink;
     width: 12px;
     height: 12px;
-    font-size: 12px;
 
     &:hover {
         color: $pluginLinkHover;
