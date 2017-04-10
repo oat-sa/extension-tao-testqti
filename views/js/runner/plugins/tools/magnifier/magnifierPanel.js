@@ -50,7 +50,7 @@ define([
      * The default base size
      * @type {Number}
      */
-    var defaultBaseSize = 100;
+    var defaultBaseSize = 115;
 
     /**
      * The minimum zoom level
@@ -581,6 +581,12 @@ define([
                     if (action && self[action]) {
                         self[action]();
                     }
+                });
+
+                // click on close controls
+                $component.on('click', '.close', function (event) {
+                    event.preventDefault();
+                    self.hide();
                 });
 
                 // interact through the magnifier glass with the zoomed content
