@@ -23,10 +23,11 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'core/promiseQueue',
     'core/communicator',
     'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, communicatorFactory, helpers, configFactory) {
+], function($, _, __, Promise, promiseQueue, communicatorFactory, helpers, configFactory) {
     'use strict';
 
     /**
@@ -56,11 +57,9 @@ define([
             this.configStorage = configFactory(initConfig);
 
             /**
-             * Keep a reference of the last running promise to
-             * ensure the tokened protected called are chained
-             * @type {Promise}
+             * A promise queue to ensure requests run in serie
              */
-            this.runningPromise = null;
+            this.queue = promiseQueue();
 
             /**
              * Proxy request function. Returns a promise
@@ -73,9 +72,10 @@ define([
              */
             this.request = function request(url, reqParams, contentType, noToken) {
 
-                //run the request Promise
-                var requestPromise = function requestPromise() {
+                //run the request, just a function wrapper
+                var runRequest = function runRequest() {
                     return new Promise(function(resolve, reject) {
+
                         var headers = {};
                         var tokenHandler = self.getTokenHandler();
                         var token;
@@ -141,27 +141,10 @@ define([
 
                 //no token protection, run the request
                 if (noToken === true) {
-                    return requestPromise();
+                    return runRequest();
                 }
 
-                //first promise, keep the ref
-                if (!self.runningPromise) {
-                    self.runningPromise = requestPromise();
-                    return self.runningPromise;
-                }
-
-                //create a wrapping promise
-                return new Promise(function(resolve, reject) {
-                    //run the current request
-                    var runRequest = function() {
-                        var p = requestPromise();
-                        self.runningPromise = p; //and keep the ref
-                        p.then(resolve).catch(reject);
-                    };
-
-                    //wait the previous to resolve or fail and run the current one
-                    self.runningPromise.then(runRequest).catch(runRequest);
-                });
+                return this.queue.serie(runRequest);
             };
 
             // request for initialization
@@ -176,7 +159,7 @@ define([
         destroy: function destroy() {
             // no request, just a resources cleaning
             this.configStorage = null;
-            this.runningPromise = null;
+            this.queue = null;
 
             // the method must return a promise
             return Promise.resolve();
