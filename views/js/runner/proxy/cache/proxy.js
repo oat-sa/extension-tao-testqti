@@ -180,8 +180,9 @@ define([
         },
 
         submitItem: function submitItem(uri, state, response, params) {
+            var itemData;
             if (this.itemStore.has(uri)) {
-                var itemData = this.itemStore.get(uri);
+                itemData = this.itemStore.get(uri);
                 itemData.itemState = state;
                 this.itemStore.set(uri, itemData);
             }
@@ -229,7 +230,6 @@ define([
                 });
         }
     }, qtiServiceProxy);
-
 
     return cacheProxy;
 });
