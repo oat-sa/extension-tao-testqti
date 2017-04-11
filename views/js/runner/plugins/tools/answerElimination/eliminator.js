@@ -164,6 +164,8 @@ define([
                         self.$choiceInteractions.toggleClass('eliminable');
                         if (self.$choiceInteractions.hasClass('eliminable')) {
                             self.button.turnOn();
+                            testRunner.trigger('plugin-start.' + pluginName);
+
                             if(config.restoreEliminationsOnOpen) {
                                 $choices.each(function() {
                                     var input = this.querySelector('.real-label input');
@@ -177,6 +179,8 @@ define([
                             }
                         } else {
                             self.button.turnOff();
+                            testRunner.trigger('plugin-end.' + pluginName);
+
                             $choices.each(function() {
                                 if(this.classList.contains('eliminated')) {
                                     this.dataset.wasEliminated = true;
