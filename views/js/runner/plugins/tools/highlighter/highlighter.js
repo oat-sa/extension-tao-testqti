@@ -110,6 +110,7 @@ define([
             trigger: function trigger() {
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
+                        testRunner.trigger('plugin-trigger.highlighter');
                         highlightHelper.highlightRanges(getAllRanges());
                         selection.removeAllRanges();
                     } else {
