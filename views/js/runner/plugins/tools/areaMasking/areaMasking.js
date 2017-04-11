@@ -92,6 +92,7 @@ define([
                         }
                         if (self.masks.length === 0) {
                             self.button.turnOff();
+                            testRunner.trigger('plugin-close.' + pluginName);
                         }
 
                         /**
@@ -173,11 +174,15 @@ define([
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
-                    if( self.masks.length < config.max ) {
-                        addMask();
-                    } else if (config.max === 1) {
-                        _.invoke(self.masks, 'destroy');
-                        self.button.turnOff();
+                    if (isEnabled()) {
+                        if (self.masks.length === 0) {
+                            testRunner.trigger('plugin-open.' + pluginName);
+                        }
+                        if (self.masks.length < config.max) {
+                            addMask();
+                        } else if (config.max === 1) {
+                            _.invoke(self.masks, 'destroy');
+                        }
                     }
                 });
 
