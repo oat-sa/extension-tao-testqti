@@ -49,7 +49,7 @@ define([
      * The default base size
      * @type {Number}
      */
-    var defaultBaseSize = 115;
+    var defaultBaseSize = 116;
 
     /**
      * The minimum zoom level

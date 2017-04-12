@@ -15,10 +15,10 @@
 
     @include keyframes(fadeIn) {
         0%   {opacity:0; visibility: visible;}
-        100% {opacity:.8; visibility: visible;}
+        100% {opacity:1; visibility: visible;}
     }
     @include keyframes(fadeOut) {
-        0%   {opacity:.8; visibility: visible;}
+        0%   {opacity:1; visibility: visible;}
         100% {opacity:0; visibility: hidden;}
     }
     @include keyframes(pop) {
@@ -69,10 +69,6 @@
         @include vendor-prefix(animation, fadeOut 600ms forwards, property);
         border: 0 solid $pluginBorder;
 
-        &:hover {
-            opacity: 1!important;
-        }
-
         a {
             color: $pluginLink;
             text-decoration: none;
@@ -93,7 +89,7 @@
         @include border-radius-top-left(5);
 
         a {
-            @include font-size(24);
+            @include font-size(20);
         }
     }
 
