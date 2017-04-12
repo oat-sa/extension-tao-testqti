@@ -428,8 +428,10 @@ define([
 
             })
             .on('destroy', function() {
-                this.$menuContainer.off('.menuNavigation');
-                this.$menuButton.off('.menuNavigation');
+                if (this.is('rendered')) {
+                    this.$menuContainer.off('.menuNavigation');
+                    this.$menuButton.off('.menuNavigation');
+                }
             });
 
         return menuComponent;
