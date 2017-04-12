@@ -22,8 +22,7 @@ define([
     'jquery',
     'lodash',
     'ui/movableComponent',
-    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
-    'css!taoQtiTestCss/plugins/magnifier'
+    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
 ], function ($, _, movableComponent, magnifierPanelTpl) {
     'use strict';
 
