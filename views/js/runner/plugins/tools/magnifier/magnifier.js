@@ -147,10 +147,8 @@ define([
                 if (self.getState('enabled')) {
                     if (self.getState('active')) {
                         hideMagnifier();
-                        self.button.turnOff();
                     } else {
                         showMagnifier();
-                        self.button.turnOn();
                     }
                 }
             }
@@ -165,6 +163,8 @@ define([
                 if (magnifierPanel.is('hidden')) {
                     magnifierPanel.show();
                 }
+                self.button.turnOn();
+                testRunner.trigger('plugin-open.' + pluginName);
 
                 self.setState('active', true);
             }
@@ -175,6 +175,9 @@ define([
              */
             function hideMagnifier() {
                 self.setState('active', false);
+
+                self.button.turnOff();
+                testRunner.trigger('plugin-close.' + pluginName);
 
                 if (magnifierPanel && !magnifierPanel.is('hidden')) {
                     magnifierPanel.hide();
@@ -284,7 +287,6 @@ define([
          */
         disable: function disable() {
             this.button.disable();
-            this.button.turnOff();
         },
 
         /**
