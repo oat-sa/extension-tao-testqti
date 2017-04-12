@@ -54,10 +54,10 @@ define([
     QUnit.test('setTransforms / applyTransforms', function (assert) {
         var $container = $('#qunit-fixture'),
             mask = compoundMaskFactory({
-                minWidth:   20,
-                minHeight:  20,
+                dragMinWidth: 4,
+                dragMinHeight: 4,
                 resizeHandleSize: 7,
-                innerDragWidth: 6
+                innerDragHeight: 20
             }),
             expectedDimensions = {
                 outerWidth:     500,
@@ -140,8 +140,8 @@ define([
         assert.deepEqual(allParts.nw.overlay.getPosition(), { x: 50+7,     y: 50+7 },       'north-west overlay has the right position');
 
         $innerDrag = $container.find('.line-reader-inner-drag');
-        assert.equal($innerDrag.position().left, 87, 'inner drag has the correct x position');
-        assert.equal($innerDrag.position().top, 100, 'inner drag has the correct y position');
+        assert.equal($innerDrag.position().left, 100, 'inner drag has the correct x position');
+        assert.equal($innerDrag.position().top, 157, 'inner drag has the correct y position');
     });
 
 
@@ -249,9 +249,9 @@ define([
                 maskId: 'se', width: 100, height: 200 - 20,
                 dimensions: { outerHeight: 300 - 20, bottomHeight: 200 - 20 }                               },
 
-            {   title: 'south-east / shrink 190 from bottom, capped to 180',
+            {   title: 'south-east / shrink 190 from bottom, capped to 160',
                 maskId: 'se', width: 100, height: 200 - 190,
-                dimensions: { outerHeight: 300 - 180, bottomHeight: 200 - 180 }                             },
+                dimensions: { outerHeight: 300 - 160, bottomHeight: 200 - 160 }                             },
 
             {   title: 'south-east / expand 20 from bottom',
                 maskId: 'se', width: 100, height: 200 + 20,
@@ -262,9 +262,9 @@ define([
                 maskId: 's', width: 350, height: 200 - 20,
                 dimensions: { outerHeight: 300 - 20, bottomHeight: 200 - 20 }                               },
 
-            {   title: 'south / shrink 190 from bottom, capped to 180',
+            {   title: 'south / shrink 190 from bottom, capped to 160',
                 maskId: 's', width: 350, height: 200 - 190,
-                dimensions: { outerHeight: 300 - 180, bottomHeight: 200 - 180 }                             },
+                dimensions: { outerHeight: 300 - 160, bottomHeight: 200 - 160 }                             },
 
             {   title: 'south / expand 20 from bottom',
                 maskId: 's', width: 350, height: 200 + 20,
@@ -274,9 +274,9 @@ define([
                 maskId: 's', width: 350, height: 200 - 20, fromTop: true,
                 dimensions: { innerHeight: 50 + 20, bottomHeight: 200 - 20 }                                },
 
-            {   title: 'south / shrink 190 from top, capped to 180',
+            {   title: 'south / shrink 190 from top, capped to 160',
                 maskId: 's', width: 350, height: 200 - 190, fromTop: true,
-                dimensions: { innerHeight: 50 + 180, bottomHeight: 200 - 180 }                              },
+                dimensions: { innerHeight: 50 + 160, bottomHeight: 200 - 160 }                              },
 
             {   title: 'south / expand 20 from top',
                 maskId: 's', width: 350, height: 200 + 20, fromTop: true,
@@ -291,9 +291,9 @@ define([
                 maskId: 'sw', width: 50, height: 200 - 20,
                 dimensions: { outerHeight: 300 - 20, bottomHeight: 200 - 20 }                               },
 
-            {   title: 'south-west / shrink 190 from bottom, capped to 180',
+            {   title: 'south-west / shrink 190 from bottom, capped to 160',
                 maskId: 'sw', width: 50, height: 200 - 190,
-                dimensions: { outerHeight: 300 - 180, bottomHeight: 200 - 180 }                             },
+                dimensions: { outerHeight: 300 - 160, bottomHeight: 200 - 160 }                             },
 
             {   title: 'south-west / expand 20 from bottom',
                 maskId: 'sw', width: 50, height: 200 + 20,
@@ -385,8 +385,11 @@ define([
                     innerY:         100
                 },
                 mask = compoundMaskFactory({
-                    minWidth:   20,
-                    minHeight:  20
+                    resizeHandleSize: 10,
+                    dragMinWidth: 0,
+                    dragMinHeight: 0,
+                    innerDragHeight: 20
+
                 }, dimensions, position),
                 allParts = mask.getParts();
 
@@ -404,8 +407,8 @@ define([
 
             // we only check that the resize triggers the correct dimension and position changes in the model
             // the actual check of whether those values are correctly translated in each component is made by set/applyTransform test
-            assert.deepEqual(mask.getDimensions(), _.assign(dimensions, data.dimensions), 'dimensions after resize are correct');
-            assert.deepEqual(mask.getPosition(), _.assign(position, data.position), 'positions after resize are correct');
+            assert.deepEqual(mask.getDimensions(), _.assign({}, dimensions, data.dimensions), 'dimensions after resize are correct');
+            assert.deepEqual(mask.getPosition(), _.assign({}, position, data.position), 'positions after resize are correct');
         });
 
     QUnit
@@ -422,7 +425,7 @@ define([
             }, {
                 title: 'bottom Height too short',
                 dimensionsIn: { outerHeight: 110 },
-                dimensionsOut: { outerHeight: 120, bottomHeight: 20 }
+                dimensionsOut: { outerHeight: 140, bottomHeight: 40 }
             }, {
                 title: 'leftWith too short',
                 positionIn: { innerX: 10 },
@@ -443,7 +446,7 @@ define([
             }, {
                 title: 'innerHeight too big',
                 dimensionsIn: { innerHeight: 300 },
-                dimensionsOut: { innerHeight: 300, outerHeight: 300 + 50 + 20, bottomHeight: 20 }
+                dimensionsOut: { innerHeight: 300, outerHeight: 300 + 50 + 40, bottomHeight: 40 }
             }
         ])
         .test('correctTransforms()', function(data, assert) {
@@ -467,8 +470,10 @@ define([
                     leftWidth:   50
                 },
                 mask = compoundMaskFactory({
-                    minWidth:   20,
-                    minHeight:  20
+                    resizeHandleSize: 10,
+                    dragMinWidth: 0,
+                    dragMinHeight: 0,
+                    innerDragHeight: 20
                 });
 
             QUnit.expect(2);
@@ -496,7 +501,12 @@ define([
     QUnit.module('Visual test');
 
     QUnit.asyncTest('display and play', function (assert) {
-        var mask = compoundMaskFactory(),
+        var mask = compoundMaskFactory({
+                dragMinHeight: 5,
+                dragMinWidth: 5,
+                innerDragHeight: 20,
+                resizeHandleSize: 7
+            }),
             $container = $('#outside');
 
         QUnit.expect(1);

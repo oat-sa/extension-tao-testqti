@@ -1,5 +1,3 @@
-@import "inc/bootstrap";
-
 .magnifier {
     position: absolute;
     top: 0;
@@ -11,10 +9,9 @@
     overflow: hidden;
     background-color: $uiGeneralContentBg;
     opacity: 1;
-    border: solid 1px $uiClickableHoverBg;
+    border: solid 1px $pluginBorder;
     @include border-radius(5);
     @include vendor-prefix(property, transform, translateZ(0));
-    @include box-shadow();
 
     @include keyframes(fadeIn) {
         0%   {opacity:0; visibility: visible;}
@@ -73,17 +70,22 @@
 
         @include vendor-prefix(animation, fadeOut 600ms forwards, property);
         @include border-radius-top-left(5);
-        border-top: solid 1px $uiClickableHoverBg;
-        border-left: solid 1px $uiClickableHoverBg;
+        border-top: solid 1px $pluginBorder;
+        border-left: solid 1px $pluginBorder;
 
         &:hover {
             opacity: 1!important;
         }
 
         a {
+            color: $pluginLink;
             text-decoration: none;
             @include font-size(16);
             margin: 0 2px;
+
+            &:hover {
+                color: $pluginLinkHover;
+            }
         }
     }
 
@@ -92,7 +94,7 @@
     }
 
     &.sizing {
-        border-style: dashed;
+        border-color: $pluginBorderTransparent;
 
         .inner, .controls, .level {
             opacity: .45!important;

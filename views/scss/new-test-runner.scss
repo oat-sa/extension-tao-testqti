@@ -1,4 +1,5 @@
 @import "inc/bootstrap";
+@import "inc/colors";
 @import "inc/loading-bar";
 @import "inc/action-bars";
 @import "inc/section-container";
@@ -6,6 +7,7 @@
 @import "inc/document-viewer";
 @import "inc/area-masking";
 @import "inc/line-reader";
+@import "inc/magnifier";
 
 @import 'inc/test-delivery-override';
 @import 'inc/test-layout';
