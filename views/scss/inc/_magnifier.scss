@@ -118,9 +118,7 @@
     }
 
     &:hover {
-        .close {
-            @include vendor-prefix(animation, fadeIn 600ms forwards, property);
-        }
+        .close,
         .controls {
             @include vendor-prefix(animation, fadeIn 600ms forwards, property);
         }
