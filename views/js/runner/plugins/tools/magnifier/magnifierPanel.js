@@ -572,7 +572,7 @@ define([
                 $initTarget = null;
 
                 // click on zoom-in or zoom-out controls
-                $component.on('click', '.control', function (event) {
+                $component.on('click', '.zoom', function (event) {
                     var $button = $(event.target).closest('.control');
                     var action = $button.data('control');
 
@@ -583,9 +583,10 @@ define([
                 });
 
                 // click on close controls
-                $component.on('click', '.close', function (event) {
+                $component.on('click', '.closeMagnifier', function (event) {
                     event.preventDefault();
                     self.hide();
+                    self.trigger('close');
                 });
 
                 // interact through the magnifier glass with the zoomed content

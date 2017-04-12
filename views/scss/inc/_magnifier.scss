@@ -64,15 +64,10 @@
     > .controls {
         position: absolute;
         z-index: 3;
-        bottom: 0;
-        right: 0;
         padding: 3px;
         background-color: $uiGeneralContentBg;
-
         @include vendor-prefix(animation, fadeOut 600ms forwards, property);
-        @include border-radius-top-left(5);
-        border-top: solid 1px $pluginBorder;
-        border-left: solid 1px $pluginBorder;
+        border: 0 solid $pluginBorder;
 
         &:hover {
             opacity: 1!important;
@@ -81,37 +76,33 @@
         a {
             color: $pluginLink;
             text-decoration: none;
-            @include font-size(24);
-            margin: 0 2px;
-        }
-    }
-
-    > .close {
-        position: absolute;
-        z-index: 3;
-        top: 0;
-        right: 0;
-        padding: 3px;
-        background-color: $uiGeneralContentBg;
-
-        @include vendor-prefix(animation, fadeOut 600ms forwards, property);
-        @include border-radius-bottom-left(5);
-        border-bottom: solid 1px $uiClickableHoverBg;
-        border-left: solid 1px $uiClickableHoverBg;
-
-        &:hover {
-            opacity: 1!important;
-        }
-
-        a {
-            text-decoration: none;
-            @include font-size(14);
+            @include font-size(12);
             margin: 0 2px;
 
             &:hover {
                 color: $pluginLinkHover;
             }
         }
+    }
+
+    > .zoom {
+        bottom: 0;
+        right: 0;
+        border-top-width: 1px;
+        border-left-width: 1px;
+        @include border-radius-top-left(5);
+
+        a {
+            @include font-size(24);
+        }
+    }
+
+    > .close {
+        top: 0;
+        right: 0;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        @include border-radius-bottom-left(5);
     }
 
     .inner {
