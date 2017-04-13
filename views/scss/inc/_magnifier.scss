@@ -15,10 +15,10 @@
 
     @include keyframes(fadeIn) {
         0%   {opacity:0; visibility: visible;}
-        100% {opacity:.8; visibility: visible;}
+        100% {opacity:1; visibility: visible;}
     }
     @include keyframes(fadeOut) {
-        0%   {opacity:.8; visibility: visible;}
+        0%   {opacity:1; visibility: visible;}
         100% {opacity:0; visibility: hidden;}
     }
     @include keyframes(pop) {
@@ -64,29 +64,41 @@
     > .controls {
         position: absolute;
         z-index: 3;
-        bottom: 0;
-        right: 0;
+        padding: 3px;
         background-color: $uiGeneralContentBg;
-
         @include vendor-prefix(animation, fadeOut 600ms forwards, property);
-        @include border-radius-top-left(5);
-        border-top: solid 1px $pluginBorder;
-        border-left: solid 1px $pluginBorder;
-
-        &:hover {
-            opacity: 1!important;
-        }
+        border: 0 solid $pluginBorder;
 
         a {
             color: $pluginLink;
             text-decoration: none;
-            @include font-size(16);
+            @include font-size(12);
             margin: 0 2px;
 
             &:hover {
                 color: $pluginLinkHover;
             }
         }
+    }
+
+    > .zoom {
+        bottom: 0;
+        right: 0;
+        border-top-width: 1px;
+        border-left-width: 1px;
+        @include border-radius-top-left(5);
+
+        a {
+            @include font-size(20);
+        }
+    }
+
+    > .close {
+        top: 0;
+        right: 0;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        @include border-radius-bottom-left(5);
     }
 
     .inner {
@@ -102,6 +114,7 @@
     }
 
     &:hover {
+        .close,
         .controls {
             @include vendor-prefix(animation, fadeIn 600ms forwards, property);
         }

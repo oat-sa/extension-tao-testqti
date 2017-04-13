@@ -107,6 +107,9 @@ define([
                              */
                             self.trigger('magnifier-zoom', level);
                         })
+                        .on('close', function () {
+                            hideMagnifier();
+                        })
                         .setTarget($container)
                         .render($container.parent());
 

@@ -83,7 +83,7 @@ define([
         var $container = $('#qunit-fixture');
         var component = magnifierPanelFactory();
 
-        QUnit.expect(9);
+        QUnit.expect(11);
 
         assert.equal($container.length, 1, 'The container exists');
         assert.equal($container.children().length, 0, 'The container is empty');
@@ -95,9 +95,11 @@ define([
                 var $element = $('.magnifier', $container);
                 assert.equal($element.length, 1, 'The component has been attached to the container');
                 assert.ok($element.hasClass('rendered'), 'The component has the rendered class');
-                assert.equal($('.controls', $element).length, 1, 'The controls element is there');
-                assert.equal($('.controls [data-control="zoomIn"]', $element).length, 1, 'The zoomIn controls element is there');
-                assert.equal($('.controls [data-control="zoomOut"]', $element).length, 1, 'The zoomOut controls element is there');
+                assert.equal($('.zoom', $element).length, 1, 'The zoom controls element are there');
+                assert.equal($('.zoom [data-control="zoomIn"]', $element).length, 1, 'The zoomIn controls element is there');
+                assert.equal($('.zoom [data-control="zoomOut"]', $element).length, 1, 'The zoomOut controls element is there');
+                assert.equal($('.close', $element).length, 1, 'The close controls element is there');
+                assert.equal($('.close [data-control="closeMagnifier"]', $element).length, 1, 'The closeMagnifier controls element is there');
                 assert.deepEqual($element[0], this.getElement()[0], 'The found element match the one bound to the component');
 
                 QUnit.start();
