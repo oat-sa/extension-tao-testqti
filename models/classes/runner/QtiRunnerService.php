@@ -1236,6 +1236,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
         if ($context instanceof QtiRunnerServiceContext) {
+            if (!is_string($variableValue) && !is_numeric($variableValue)) {
+                $variableValue = json_encode($variableValue);
+            }
+            
             $metaVariable = new \taoResultServer_models_classes_TraceVariable();
             $metaVariable->setIdentifier($variableIdentifier);
             $metaVariable->setBaseType('string');
@@ -1251,7 +1255,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
-                $transmissionId = "${sessionId}.${$currentItem}.${$currentOccurrence}";
+                $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
                 $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
             } else {
                 $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
