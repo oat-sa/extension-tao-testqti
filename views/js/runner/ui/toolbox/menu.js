@@ -385,7 +385,7 @@ define([
     return function menuComponentFactory(specs, defaults) {
         var menuComponent;
 
-        specs = _.defaults(specs || {}, menuComponentApi, _defaults);
+        specs = _.defaults(specs || {}, menuComponentApi);
 
         menuComponent = componentFactory(specs, defaults)
             .setTemplate(menuTpl)
@@ -444,6 +444,9 @@ define([
                 this.$menuContainer.off('.menuNavigation');
                 this.$menuButton.off('.menuNavigation');
             });
+
+        // Apply default properties to the menuComponent
+        _.defaults(menuComponent, _defaults);
 
         return menuComponent;
     };
