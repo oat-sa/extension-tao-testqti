@@ -857,7 +857,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $size   = count($traceData);
 
             foreach($traceData  as $variableIdentifier => $variableValue){
-                if($this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, json_encode($variableValue))){
+                if($this->runnerService->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)){
                     $stored++;
                 }
             }
