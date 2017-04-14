@@ -35,6 +35,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
@@ -1153,5 +1154,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('6.18.0', '7.1.2');
+
+        if ($this->isVersion('7.1.2')) {
+
+            $action = new RegisterCreatorServices();
+            $action->setServiceLocator($this->getServiceManager());
+            $action->__invoke([]);
+
+            $this->setVersion(('7.2.0'));
+        }
     }
 }

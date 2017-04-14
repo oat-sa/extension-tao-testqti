@@ -14,9 +14,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
+use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoItems\model\CategoryService;
 
 /**
@@ -65,6 +66,54 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     }
 
     /**
+     * Get the list of items classes
+     */
+    public function getItemClasses()
+    {
+        try {
+            $data = $this->getCreatorItemsService()->getItemClasses();
+        } catch(\common_Exception $e){
+
+            return $this->returnFailure($e);
+        }
+
+        return $this->returnSuccess([$data]);
+    }
+
+    /**
+     * Retrieve non empty QTI Items, using different parameters :
+     *  - format (list or tree)
+     *  - classUri (top class)
+     *  - pattern (label filtering)
+     *  - offset/limit (paginate)
+     */
+    public function getItems()
+    {
+        try {
+            if(!$this->hasRequestParameter('classUri')){
+                throw new \InvalidArgumentException('Missing parameter classUri');
+            }
+            if(!$this->hasRequestParameter('format')){
+                throw new \InvalidArgumentException('Missing parameter format');
+            }
+
+            $classUri = $this->getRequestParameter('classUri');
+            $format   = $this->getRequestParameter('format');
+            $pattern  = $this->hasRequestParameter('pattern') ? $this->getRequestParameter('pattern') : null;
+            $limit    = $this->hasRequestParameter('limit') ? $this->getRequestParameter('limit') : 50;
+            $offset   = $this->hasRequestParameter('offset') ? $this->getRequestParameter('offset') : 0;
+
+            $itemClass = new \core_kernel_classes_Class($classUri);
+            $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $pattern, $offset, $limit);
+        } catch(\Exception $e){
+            return $this->returnFailure($e);
+        }
+
+        return $this->returnSuccess($data);
+    }
+
+
+    /**
      * Get all categories related to a list of items.
      *
      * The response is encoded in JSON and contains the list of items and its categories.
@@ -82,14 +131,13 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $uris = $this->getRequestParameter('uris');
         $uris = (!is_array($uris)) ? array($uris) : $uris;
 
-        $items = $this->getItems($uris);
+        $items = $this->getQtiItems($uris);
 
         if (count($items) > 0) {
             $service = $this->getServiceManager()->get(CategoryService::SERVICE_ID);
             $categories = $service->getItemsCategories($items);
         }
         $this->returnJson($categories);
-
     }
 
     /**
@@ -97,17 +145,70 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      * @param array $itemUris list of item uris to get
      * @return core_kernel_classes_Resource[] $items
      */
-    private function getItems(array $itemUris)
+    private function getQtiItems(array $itemUris)
     {
         $items = array();
 
         foreach ($itemUris as $uri) {
             $item = new \core_kernel_classes_Resource($uri);
-            if (\taoItems_models_classes_ItemsService::singleton()->hasItemModel($item, array(\oat\taoQtiItem\model\ItemModel::MODEL_URI))) {
+            if ($this->getItemService()->hasItemModel($item, array(\oat\taoQtiItem\model\ItemModel::MODEL_URI))) {
                 $items[$uri] = $item;
             }
         }
 
         return $items;
+    }
+
+    /**
+     * Get the ItemService
+     * @return \taoItems_models_classes_ItemsService the service
+     */
+    private function getItemService()
+    {
+        return \taoItems_models_classes_ItemsService::singleton();
+    }
+
+    /**
+     * Get the CreatorItems service
+     * @return CreatorItems the service
+     */
+    private function getCreatorItemsService()
+    {
+        return $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
+    }
+
+    /**
+     * Helps you to format 200 responses,
+     * using the usual format [success,data]
+     * @param mixed $data the response data to encode
+     * @return string the json
+     */
+    protected function returnSuccess($data)
+    {
+        $returnArray = [
+            'success' => true,
+            'data' => $data
+        ];
+
+        return $this->returnJson($returnArray);
+    }
+
+    /**
+     * Helps you to format failures responses.
+     * @param \Exception $e
+     * @return string the json
+     */
+    protected function returnFailure(\Exception $exception)
+    {
+
+        \common_Logger::e($exception);
+
+        $returnArray = [
+            'success' => false,
+            'errorCode' => 500,
+            'errorMsg' => $exception->getMessage()
+        ];
+
+        return $this->returnJson($returnArray, 500);
     }
 }
