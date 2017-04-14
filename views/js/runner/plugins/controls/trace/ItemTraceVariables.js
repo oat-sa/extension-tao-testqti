@@ -82,7 +82,7 @@ define([
                     return tracesStore;
                 }).then(function (tracesStore) {
                     testRunner
-                        .after('renderitem resumeitem', function () {
+                        .after('renderitem enableitem', function () {
                             var context = testRunner.getTestContext();
 
                             variables = {
@@ -106,13 +106,14 @@ define([
                             variables.ITEM_END_TIME_CLIENT = timestamp();
                             variables.ITEM_TIMEZONE = moment().utcOffset(moment().utcOffset()).format('Z');
 
-                            return tracesStore.setItem(context.itemUri, variables)
-                                .then(function () {
-                                    testRunner.getProxy().callItemAction(context.itemUri, 'storeTraceData', {
-                                        traceData: JSON.stringify(variables)
-                                    });
-                                })
-                                .catch(onError);
+                            return tracesStore.setItem(context.itemUri, variables).catch(onError);
+                        })
+
+                        .after('move skip exit timeout', function () {
+                            var context = testRunner.getTestContext();
+                            testRunner.getProxy().callItemAction(context.itemUri, 'storeTraceData', {
+                                traceData: JSON.stringify(variables)
+                            });
                         })
 
                         .before('finish', function () {
