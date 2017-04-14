@@ -939,6 +939,7 @@ define([
 
                 closer.on('click', function() {
                     self.hide();
+                    self.trigger('close');
                 });
 
                 return this;
