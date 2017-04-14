@@ -1035,5 +1035,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('6.1.0');
         }
         $this->skip('6.1.0', '6.1.4');
+
+        if($this->isVersion('6.1.4')){
+            // Register item trace variables plugin
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/controls/trace/itemTraceVariables');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'itemTraceVariables',
+                'name' => 'Item trace variables',
+                'module' => 'taoQtiTest/runner/plugins/controls/trace/itemTraceVariables',
+                'description' => 'Send item trace variables',
+                'category' => 'controls',
+                'active' => false,
+                'tags' => [ 'core', 'technical' ]
+            ]));
+
+            $this->setVersion('6.1.5');
+        }
     }
 }
