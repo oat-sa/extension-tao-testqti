@@ -150,6 +150,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'controls',
                 'active' => true,
                 'tags' => [ 'core', 'technical', 'required' ]
+            ], [
+                'id' => 'itemTraceVariables',
+                'name' => 'Item trace variables',
+                'module' => 'taoQtiTest/runner/plugins/controls/trace/itemTraceVariables',
+                'description' => 'Send item trace variables',
+                'category' => 'controls',
+                'active' => false,
+                'tags' => [ 'core', 'technical' ]
             ]
         ],
         'navigation' => [

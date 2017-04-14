@@ -45,6 +45,17 @@ define([
      */
     var actionPrefix = 'tool-' + pluginName + '-';
 
+    /**
+     * Options for the compoundMask factory
+     * @type {Object}
+     */
+    var maskOptions = {
+        dragMinWidth: 7,
+        dragMinHeight: 7,
+        resizeHandleSize: 7,
+        innerDragHeight: 20
+    };
+
     var dimensions,
         position;
 
@@ -59,12 +70,14 @@ define([
      */
     function getDimensions($container) {
         var $qtiContent = $container.find('#qti-content'),
+            $qtiItem = $qtiContent.find('.qti-item'),
+
             lineHeight = Math.ceil(parseFloat($qtiContent.css('line-height'))) || 20; // reasonable default line height
 
         return {
-            outerWidth:     $container.width(),
-            outerHeight:    $qtiContent.height(),
-            innerWidth:     $qtiContent.width(),
+            outerWidth:     $qtiItem.width() + (maskOptions.resizeHandleSize * 4) + (maskOptions.dragMinWidth * 2),
+            outerHeight:    175, // reasonable default height
+            innerWidth:     $qtiItem.width(),
             innerHeight:    lineHeight
         };
     }
@@ -75,13 +88,18 @@ define([
             itemPosition = $qtiItem.position() || {},
 
             paddingLeft = parseInt($qtiItem.css('padding-left'), 10),
-            paddingTop = parseInt($qtiItem.css('padding-top'), 10);
+            paddingTop = parseInt($qtiItem.css('padding-top'), 10),
+
+            textPadding = 3, // this is to let the text breathe a bit
+
+            innerX = parseInt(itemPosition.left, 10) + paddingLeft - textPadding,
+            innerY = parseInt(itemPosition.top, 10) + paddingTop - textPadding;
 
         return {
-            outerX: 0,
+            outerX: innerX - (maskOptions.resizeHandleSize * 2) - maskOptions.dragMinWidth,
             outerY: 0,
-            innerX: parseInt(itemPosition.left, 10) + paddingLeft - 5, // the -5 is to let the text breathe a bit
-            innerY: parseInt(itemPosition.top, 10) + paddingTop - 5
+            innerX: innerX,
+            innerY: innerY
         };
     }
 
@@ -109,13 +127,12 @@ define([
                 pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {},
                 $container = testRunner.getAreaBroker().getContentArea().parent();
 
-            this.compoundMask = compoundMaskFactory({
-                minWidth: 25,
-                minHeight: 25,
-                resizeHandleSize: 10
-            })
+            this.compoundMask = compoundMaskFactory(maskOptions)
                 .init()
                 .render($container)
+                .on('close', function() {
+                    closeMask();
+                })
                 .hide();
 
             /**
@@ -142,22 +159,24 @@ define([
                     if (containerWidthHasChanged($container)) {
                         transformMask($container);
                     }
-                    showMask();
+                    openMask();
                 } else {
-                    hideMask();
+                    closeMask();
                 }
             }
 
-            function showMask() {
+            function openMask() {
+                self.compoundMask.show();
                 testRunner.trigger('plugin-start.' + pluginName);
                 self.button.turnOn();
-                self.compoundMask.show();
             }
 
-            function hideMask() {
+            function closeMask() {
+                if (! self.compoundMask.getState('hidden')) {
+                    self.compoundMask.hide();
+                }
                 testRunner.trigger('plugin-end.' + pluginName);
                 self.button.turnOff();
-                self.compoundMask.hide();
             }
 
             function transformMask($maskContainer) {
@@ -206,7 +225,7 @@ define([
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
-                    hideMask();
+                    self.compoundMask.hide();
                 })
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {

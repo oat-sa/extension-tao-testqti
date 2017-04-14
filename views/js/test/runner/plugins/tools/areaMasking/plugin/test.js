@@ -113,6 +113,12 @@ define([
 
         QUnit.expect(9);
 
+        runner.setTestContext({
+            options: {
+                areaMasking: true
+            }
+        });
+
         runner.on('plugin-maskadd.area-masking', function(){
 
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
@@ -159,6 +165,12 @@ define([
         var $button;
 
         QUnit.expect(12);
+
+        runner.setTestContext({
+            options: {
+                areaMasking: true
+            }
+        });
 
         runner.on('plugin-maskadd.area-masking', function(){
             assert.equal($('.mask', $container).length, 1, 'A mask has been created');
@@ -214,6 +226,12 @@ define([
         var areaMasking   = areaMaskingFactory(runner, areaBroker);
 
         QUnit.expect(17);
+
+        runner.setTestContext({
+            options: {
+                areaMasking: true
+            }
+        });
 
         areaMasking.init()
             .then(function() {
