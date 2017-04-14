@@ -127,7 +127,7 @@ define([
             items = {},
             $result;
 
-        QUnit.expect(11);
+        QUnit.expect(12);
 
         toolbox.init();
 
@@ -141,6 +141,8 @@ define([
         items.menu_1 = toolbox.createEntry({control: 'menu-entry1'}); items.menu_1.setMenuId('sample-menu');
         items.menu_2 = toolbox.createEntry({control: 'menu-entry2'}); items.menu_2.setMenuId('sample-menu');
         items.menu_3 = toolbox.createEntry({control: 'menu-entry3'}); items.menu_3.setMenuId('sample-menu');
+
+        QUnit.ok(items.menu.trigger('destroy'), 'destroying menu before rendering does not throw exception');
 
         toolbox.render($container);
 
