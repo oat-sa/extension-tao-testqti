@@ -148,15 +148,15 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          */
         function acceptItemRefs(){
             var $selected;
-            var $items     = $('.test-creator-items');
+            var $itemsPanel     = $('.test-creator-items .item-selection');
 
             //the item selector trigger a select event
-            $items.on('itemselect.creator', function(){
-                var selection = Array.prototype.slice.call(arguments, 1);
+            $itemsPanel.on('itemselect.creator', function(e, selection){
+
                 var $placeholder = $('.itemref-placeholder', $section);
                 var $placeholders = $('.itemref-placeholder');
 
-                if(selection.length > 0){
+                if(_.size(selection) > 0){
                     $placeholder.show().off('click').on('click', function(){
 
                         //prepare the item data
@@ -174,11 +174,11 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                         defaultItemData.categories = _.clone(categories.propagated);
 
                         _.forEach(selection, function(item){
-                            var $item = $(item);
-                            var itemCategories = $item.data('categories');
+                            //var $item = $(item);
+                            var itemCategories = item.categories;
                             var itemData = _.defaults({
-                                href        : uri.decode($item.data('uri')),
-                                label       : $.trim($item.clone().children().remove().end().text()),
+                                href        : item.uri,
+                                label       : item.label,
                                 'qti-type'  : 'assessmentItemRef'
                             }, defaultItemData);
                             if(!_.isEmpty(itemCategories)){
@@ -189,7 +189,11 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                         });
 
                         //reset the current selection
-                        $('.ui-selected', $items).removeClass('ui-selected').removeClass('selected');
+                        //$('.ui-selected', $items).removeClass('ui-selected').removeClass('selected');
+                        console.log('trigger', 'itemselected.creator', $itemsPanel);
+
+                        $itemsPanel.trigger('itemselected.creator');
+
                         $placeholders.hide().off('click');
                     });
                 } else {
@@ -219,10 +223,10 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
                 });
 
             //on set up, if there is a selection ongoing, we trigger the event
-            $selected = $('.selected', $items);
-            if($selected.length > 0){
-                $items.trigger('itemselect.creator', $selected);
-            }
+            //$selected = $('.selected', $items);
+            //if($selected.length > 0){
+                //$items.trigger('itemselect.creator', $selected);
+            //}
         }
 
         /**

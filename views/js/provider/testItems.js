@@ -25,9 +25,8 @@ define([
     'lodash',
     'i18n',
     'util/url',
-    'core/dataProvider/request',
-    'core/promise'
-], function (_, __, urlUtil, request, Promise) {
+    'core/dataProvider/request'
+], function (_, __, urlUtil, request) {
     'use strict';
 
     /**
@@ -38,8 +37,7 @@ define([
             url : urlUtil.route('getItemClasses', 'Items', 'taoQtiTest')
         },
         getItems : {
-            list : urlUtil.route('getItemList', 'Items', 'taoQtiTest'),
-            tree : urlUtil.route('getItemTree', 'Items', 'taoQtiTest')
+            url : urlUtil.route('getItems', 'Items', 'taoQtiTest')
         },
     };
 
@@ -59,20 +57,21 @@ define([
         return {
 
             /**
-             * @returns {Promise} that resolves with the list of created assignements
+             * Get the list of Items classes and sub classes
+             * @returns {Promise} that resolves with the classes
              */
             getItemClasses: function getItemClasses(){
                 return request(config.getItemClasses.url);
             },
 
+            /**
+             * Get QTI Items in different formats
+             * @param {Object} [params] - the parameters to pass through the request
+             * @returns {Promise} that resolves with the classes
+             */
             getItems : function getItems(params){
-                var url = config.getItems[params.format];
-                if(!url){
-                    return Promise.reject(new TypeError('Wrong format parameter'));
-                }
-                return request(url, params);
+                return request(config.getItems.url, params);
             }
-
         };
     };
 });
