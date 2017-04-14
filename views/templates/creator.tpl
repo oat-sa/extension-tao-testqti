@@ -13,12 +13,7 @@
             </ul>
         </div>
         <h1><?=__('Select Items')?></h1>
-        <div class='item-selection'>
-            <input id="item-filter" type="search" placeholder='<?=__('Filter')?>' />
-            <br />
-            <small><?=__("Use Ctrl/Meta key or Lasso for multiple selection")?></small>
-            <ul class='item-box plain'></ul>
-        </div>
+        <div class='item-selection'></div>
     </section>
 
 <!-- test editor  -->
