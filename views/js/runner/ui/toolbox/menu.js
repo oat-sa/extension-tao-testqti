@@ -43,6 +43,22 @@ define([
 ], function($, _, componentFactory, hider, stackerFactory, shortcut, namespaceHelper, menuTpl, menuItemTpl) {
     'use strict';
 
+    /**
+     * Defaults for all menuComponent properties
+     */
+    var _defaults = {
+        $component: $(),
+        $menuButton: $(),
+        $menuContainer: $(),
+        $menuContent: $(),
+        $menuItems: $(),
+        $menuStateIcon: $(),
+        config: {},
+        hoverIndex: null,
+        id: null,
+        menuItems: []
+    };
+
     var keyCodes = {
         ENTER: 13,
         SPACE: 32,
@@ -372,7 +388,7 @@ define([
     return function menuComponentFactory(specs, defaults) {
         var menuComponent;
 
-        specs = _.defaults(specs || {}, menuComponentApi);
+        specs = _.defaults(specs || {}, menuComponentApi, _defaults);
 
         menuComponent = componentFactory(specs, defaults)
             .setTemplate(menuTpl)
