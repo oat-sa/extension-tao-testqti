@@ -1152,9 +1152,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion(('6.18.0'));
         }
 
-        $this->skip('6.18.0', '7.4.0');
+        $this->skip('6.18.0', '7.4.1');
 
-        if($this->isVersion('7.4.0')){
+        if($this->isVersion('7.4.1')){
             // Register item trace variables plugin
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/controls/trace/itemTraceVariables');

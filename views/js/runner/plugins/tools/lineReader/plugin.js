@@ -130,13 +130,8 @@ define([
             this.compoundMask = compoundMaskFactory(maskOptions)
                 .init()
                 .render($container)
-                .on('show', function() {
-                    testRunner.trigger('plugin-start.' + pluginName);
-                    self.button.turnOn();
-                })
-                .on('hide', function() {
-                    testRunner.trigger('plugin-end.' + pluginName);
-                    self.button.turnOff();
+                .on('close', function() {
+                    closeMask();
                 })
                 .hide();
 
@@ -164,10 +159,24 @@ define([
                     if (containerWidthHasChanged($container)) {
                         transformMask($container);
                     }
-                    self.compoundMask.show();
+                    openMask();
                 } else {
+                    closeMask();
+                }
+            }
+
+            function openMask() {
+                self.compoundMask.show();
+                testRunner.trigger('plugin-start.' + pluginName);
+                self.button.turnOn();
+            }
+
+            function closeMask() {
+                if (! self.compoundMask.getState('hidden')) {
                     self.compoundMask.hide();
                 }
+                testRunner.trigger('plugin-end.' + pluginName);
+                self.button.turnOff();
             }
 
             function transformMask($maskContainer) {
