@@ -109,9 +109,9 @@ define([
                             return tracesStore.setItem(context.itemUri, variables).catch(onError);
                         })
 
-                        .after('move skip exit timeout', function () {
+                        .before('unloaditem', function () {
                             var context = testRunner.getTestContext();
-                            testRunner.getProxy().callItemAction(context.itemUri, 'storeTraceData', {
+                            return testRunner.getProxy().callItemAction(context.itemUri, 'storeTraceData', {
                                 traceData: JSON.stringify(variables)
                             });
                         })
