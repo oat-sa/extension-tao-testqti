@@ -127,7 +127,7 @@ define([
             items = {},
             $result;
 
-        QUnit.expect(12);
+        QUnit.expect(11);
 
         toolbox.init();
 
@@ -141,8 +141,6 @@ define([
         items.menu_1 = toolbox.createEntry({control: 'menu-entry1'}); items.menu_1.setMenuId('sample-menu');
         items.menu_2 = toolbox.createEntry({control: 'menu-entry2'}); items.menu_2.setMenuId('sample-menu');
         items.menu_3 = toolbox.createEntry({control: 'menu-entry3'}); items.menu_3.setMenuId('sample-menu');
-
-        QUnit.ok(items.menu.trigger('destroy'), 'destroying menu before rendering does not throw exception');
 
         toolbox.render($container);
 
@@ -256,6 +254,34 @@ define([
 
 
     QUnit.module('Menus interactions');
+
+    QUnit.test('Interacting with a pre-rendered menu does not cause errors', function () {
+        var toolbox = toolboxFactory(),
+            $container = $(fixtureContainer),
+            menu;
+
+        QUnit.expect(5);
+
+        toolbox.init();
+        menu = toolbox.createMenu();
+
+        _.each(Object.getOwnPropertyNames(menu), function (prop) {
+            if (typeof menu[prop] === 'function') {
+                menu[prop].call(menu);
+            }
+        });
+
+        QUnit.ok(true, 'methods');
+
+        QUnit.ok(menu.trigger('enable'), 'enable');
+        QUnit.ok(menu.trigger('disable'), 'disable');
+        QUnit.ok(menu.trigger('hide'), 'hide');
+        QUnit.ok(menu.trigger('destroy'), 'destroying');
+
+        toolbox.render($container);
+        toolbox.enable();
+        menu.enable();
+    });
 
     QUnit.test('Opening a menu close opened menus', function() {
         var toolbox = toolboxFactory(),
