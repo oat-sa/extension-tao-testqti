@@ -27,7 +27,7 @@ class CreatorItems extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerService';
 
-    const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Items';
+    const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
     const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
     const PROPERTY_ITEM_MODEL_URI   = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemModel';
     const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
