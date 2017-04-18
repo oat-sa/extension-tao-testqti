@@ -75,7 +75,7 @@ class CreatorItems extends ConfigurableService
         ];
 
         if(!is_null($pattern) && strlen(trim($pattern)) > 0){
-            $propertyFilters[LABEL_URI] = $pattern;
+            $propertyFilters[self::LABEL_URI] = $pattern;
         }
 
         $result = [];
