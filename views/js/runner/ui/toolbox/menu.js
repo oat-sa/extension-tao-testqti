@@ -192,7 +192,9 @@ define([
          * @param {Component} item
          */
         addItem: function addItem(item) {
-            this.menuItems.push(item);
+            if (item) {
+                this.menuItems.push(item);
+            }
         },
 
         /**
@@ -335,7 +337,9 @@ define([
             var itemToHover = this.getItemById(itemId);
             this.hoverOffAll();
 
-            itemToHover.hoverOn();
+            if (itemToHover) {
+                itemToHover.hoverOn();
+            }
         },
 
         /**
@@ -343,7 +347,9 @@ define([
          */
         hoverOffAll: function hoverOffAll() {
             this.menuItems.forEach(function(current) {
-                current.hoverOff();
+                if (current) {
+                    current.hoverOff();
+                }
             });
         },
 
@@ -370,7 +376,20 @@ define([
      * The menu component factory
      */
     return function menuComponentFactory(specs, defaults) {
-        var menuComponent;
+        var _defaults,
+            menuComponent;
+
+        _defaults = {
+            $component: $(),
+            $menuButton: $(),
+            $menuContainer: $(),
+            $menuContent: $(),
+            $menuItems: $(),
+            $menuStateIcon: $(),
+            hoverIndex: null,
+            id: null,
+            menuItems: []
+        };
 
         specs = _.defaults(specs || {}, menuComponentApi);
 
@@ -395,7 +414,6 @@ define([
             })
             .on('init', function init() {
                 this.initMenu();
-
             })
             .on('render', function render() {
                 var self = this;
@@ -428,9 +446,14 @@ define([
 
             })
             .on('destroy', function() {
-                this.$menuContainer.off('.menuNavigation');
-                this.$menuButton.off('.menuNavigation');
+                if (this.is('rendered')) {
+                    this.$menuContainer.off('.menuNavigation');
+                    this.$menuButton.off('.menuNavigation');
+                }
             });
+
+        // Apply default properties to the menuComponent
+        _.defaults(menuComponent, _defaults);
 
         return menuComponent;
     };

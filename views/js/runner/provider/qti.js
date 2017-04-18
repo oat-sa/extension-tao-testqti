@@ -454,8 +454,12 @@ define([
                     this.setState('closedOrSuspended', true);
 
                     if (!self.getState('disconnected')) {
-                    // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause');
+                        // will notify the server that the test was auto paused
+                        pause = self.getProxy().callTestAction('pause', {reason: {
+                                reasons: data && data.reasons,
+                                comment : data && data.message
+                            }
+                        });
                     } else {
                         pause = Promise.resolve();
                     }
@@ -683,24 +687,9 @@ define([
             if (!this.getState('finish')) {
                 this.trigger('disablenav disabletools');
 
-                // will be executed after the runner has been flushed
-                // use the "before" queue to ensure the query will be fully processed before destroying
-                // we do not use the "destroy" event because the proxy is destroyed before this event is triggered
-                this.before('flush', function() {
-                    var finishPromise = this.getProxy()
-                        .callTestAction('finish')
-                        .then(function() {
-                            if (self.stateStorage) {
-                                return self.stateStorage.removeStore();
-                            }
-                        });
-
-                    finishPromise.catch(function(err) {
-                        self.trigger('error', err);
-                    });
-
-                    return finishPromise;
-                });
+                if (self.stateStorage) {
+                    return self.stateStorage.removeStore();
+                }
             }
         },
 

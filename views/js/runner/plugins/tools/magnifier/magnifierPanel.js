@@ -22,8 +22,7 @@ define([
     'jquery',
     'lodash',
     'ui/movableComponent',
-    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
-    'css!taoQtiTestCss/plugins/magnifier'
+    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
 ], function ($, _, movableComponent, magnifierPanelTpl) {
     'use strict';
 
@@ -50,7 +49,7 @@ define([
      * The default base size
      * @type {Number}
      */
-    var defaultBaseSize = 100;
+    var defaultBaseSize = 116;
 
     /**
      * The minimum zoom level
@@ -573,7 +572,7 @@ define([
                 $initTarget = null;
 
                 // click on zoom-in or zoom-out controls
-                $component.on('click', '.control', function (event) {
+                $component.on('click', '.zoom', function (event) {
                     var $button = $(event.target).closest('.control');
                     var action = $button.data('control');
 
@@ -581,6 +580,13 @@ define([
                     if (action && self[action]) {
                         self[action]();
                     }
+                });
+
+                // click on close controls
+                $component.on('click', '.closeMagnifier', function (event) {
+                    event.preventDefault();
+                    self.hide();
+                    self.trigger('close');
                 });
 
                 // interact through the magnifier glass with the zoomed content
