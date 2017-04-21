@@ -255,6 +255,34 @@ define([
 
     QUnit.module('Menus interactions');
 
+    QUnit.test('Interacting with a pre-rendered menu does not cause errors', function () {
+        var toolbox = toolboxFactory(),
+            $container = $(fixtureContainer),
+            menu;
+
+        QUnit.expect(5);
+
+        toolbox.init();
+        menu = toolbox.createMenu();
+
+        _.each(Object.getOwnPropertyNames(menu), function (prop) {
+            if (typeof menu[prop] === 'function') {
+                menu[prop].call(menu);
+            }
+        });
+
+        QUnit.ok(true, 'methods');
+
+        QUnit.ok(menu.trigger('enable'), 'enable');
+        QUnit.ok(menu.trigger('disable'), 'disable');
+        QUnit.ok(menu.trigger('hide'), 'hide');
+        QUnit.ok(menu.trigger('destroy'), 'destroying');
+
+        toolbox.render($container);
+        toolbox.enable();
+        menu.enable();
+    });
+
     QUnit.test('Opening a menu close opened menus', function() {
         var toolbox = toolboxFactory(),
             $container = $(fixtureContainer),

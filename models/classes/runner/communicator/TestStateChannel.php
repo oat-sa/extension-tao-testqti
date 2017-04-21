@@ -92,14 +92,17 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
                         $type = 'pause';
                     } else {
                         $type = null;
-                        \common_Logger::w('Inconsistent ' . self::CHANNEL_NAME . ' event');
                     }
 
-                    $result = [
-                        'type' => $type,
-                        'code' => $state,
-                        'message' => $message,
-                    ];
+                    if(is_null($type)){
+                        \common_Logger::w('Inconsistent ' . self::CHANNEL_NAME . ' event');
+                    } else {
+                        $result = [
+                            'type' => $type,
+                            'code' => $state,
+                            'message' => $message,
+                        ];
+                    }
                 }
             }
         }
