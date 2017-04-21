@@ -88,13 +88,13 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
 
                     if ($state == AssessmentTestSessionState::CLOSED) {
                         $type = 'close';
-
                     } else if ($state == AssessmentTestSessionState::SUSPENDED) {
                         $type = 'pause';
-
-                    }
-                    if(is_null($type)){
+                    } else {
                         $type = null;
+                    }
+
+                    if(is_null($type)){
                         \common_Logger::w('Inconsistent ' . self::CHANNEL_NAME . ' event');
                     } else {
                         $result = [
