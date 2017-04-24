@@ -313,7 +313,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
                 $itemRef = $session->getCurrentAssessmentItemRef();
-                $currentSection = $session->getCurrentAssessmentSection();
+
+                $reviewConfig = $config->getConfigValue('review');
+                $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+
+                if ($displaySubsectionTitle) {
+                    $currentSection = $session->getCurrentAssessmentSection();
+                } else {
+                    $sections = $currentItem->getAssessmentSections()->getArrayCopy();
+                    $currentSection = $sections[0];
+                }
 
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
