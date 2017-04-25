@@ -26,8 +26,9 @@ define([
     'taoTests/runner/plugin',
     'ui/hider',
     'util/shortcut',
-    'util/namespace'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper) {
+    'util/namespace',
+    'taoQtiTest/runner/plugins/tools/answerMasking/answerMasking'
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, answerMaskingFactory) {
     'use strict';
 
     /**
@@ -59,6 +60,9 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})['answer-masking'] || {};
+            var $contentArea = this.getAreaBroker().getContentArea();
+
+            var answerMasking = answerMaskingFactory($contentArea);
 
             // create buttons
             this.button = this.getAreaBroker().getToolbox().createEntry({
@@ -72,7 +76,12 @@ define([
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
                 //to be activated with the special category x-tao-option-answerMasking
-                return options.answerMasking;
+                return options.answerMasking && itemContainsChoiceInteraction();
+            }
+
+            function itemContainsChoiceInteraction() {
+                var $container = self.getAreaBroker().getContentArea().parent();
+                return $container.find('.qti-choiceInteraction').length;
             }
 
             function togglePluginButton() {
@@ -83,16 +92,15 @@ define([
                 }
             }
 
-            var state = false;
             function togglePlugin() {
-                if (! state) {
-                    state = true;
+                if (! answerMasking.getState('enabled')) {
+                    answerMasking.enable();
                     self.button.turnOn();
-                    testRunner.trigger('plugin-start.' + pluginName);
+                    testRunner.trigger('plugin-start.answer-masking');
                 } else {
-                    state = false;
+                    answerMasking.disable();
                     self.button.turnOff();
-                    testRunner.trigger('plugin-end.' + pluginName);
+                    testRunner.trigger('plugin-end.answer-masking');
                 }
             }
 
@@ -118,6 +126,7 @@ define([
             testRunner
                 .on('loaditem', togglePluginButton)
                 .on('enabletools renderitem', function () {
+                    togglePluginButton(); // we repeat this here as we need the rendered item markup in order to decide whether the plugin is enabled or not
                     self.enable();
                 })
                 .on('disabletools unloaditem', function () {

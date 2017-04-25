@@ -220,6 +220,10 @@ define([
             }
         });
 
+        areaBroker.getContentArea().append($('<div>', {
+            class: 'qti-choiceInteraction'
+        }));
+
         plugin.init()
             .then(function() {
                 var $container = runner.getAreaBroker().getToolboxArea(),
@@ -311,6 +315,10 @@ define([
             }
         });
 
+        areaBroker.getContentArea().append($('<div>', {
+            class: 'qti-choiceInteraction'
+        }));
+
         runner.after('tool-answerMasking-toggle', function() {
             toggleCounter++;
 
@@ -380,6 +388,10 @@ define([
                 answerMasking: true
             }
         });
+
+        areaBroker.getContentArea().append($('<div>', {
+            class: 'qti-choiceInteraction'
+        }));
 
         runner.after('tool-answerMasking-toggle', function() {
             toggleCounter++;
