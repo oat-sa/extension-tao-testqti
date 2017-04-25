@@ -83,6 +83,19 @@ define([
                 }
             }
 
+            var state = true;
+            function togglePlugin() {
+                if (state) {
+                    state = false;
+                    self.button.turnOn();
+                    testRunner.trigger('plugin-start.' + pluginName);
+                } else {
+                    state = true;
+                    self.button.turnOff();
+                    testRunner.trigger('plugin-end.' + pluginName);
+                }
+            }
+
             // attach user events
             this.button
                 .on('click', function(e) {
@@ -112,8 +125,7 @@ define([
                 })
                 .on('tool-answerMasking-toggle', function () {
                     if (isPluginEnabled()) {
-                        console.log('toggling');
-                        // Do Something !!!
+                        togglePlugin();
                     }
                 })
                 .on('plugin-start.' + pluginName, function() {
