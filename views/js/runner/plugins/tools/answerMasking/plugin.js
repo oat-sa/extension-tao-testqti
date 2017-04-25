@@ -86,7 +86,6 @@ define([
             var state = false;
             function togglePlugin() {
                 if (! state) {
-                    console.log('turning on');
                     state = true;
                     self.button.turnOn();
                     testRunner.trigger('plugin-start.' + pluginName);
@@ -128,12 +127,6 @@ define([
                     if (isPluginEnabled()) {
                         togglePlugin();
                     }
-                })
-                .on('plugin-start.' + pluginName, function() {
-                    self.button.turnOn();
-                })
-                .on('plugin-end.' +  pluginName, function() {
-                    self.button.turnOff();
                 });
         },
 
