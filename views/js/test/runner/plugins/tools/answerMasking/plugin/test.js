@@ -285,13 +285,14 @@ define([
     QUnit.module('plugin UI');
 
     QUnit.asyncTest('Toggle on keyboard shortcut', function(assert) {
-        var runner = runnerFactory(providerName);
-        var areaBroker = runner.getAreaBroker();
-        var plugin = pluginFactory(runner, runner.getAreaBroker());
-        var $contentContainer = areaBroker.getContentArea();
-        var toggleCounter = 0;
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            plugin = pluginFactory(runner, runner.getAreaBroker()),
+            $contentContainer = areaBroker.getContentArea(),
+            toggleCounter = 0,
+            $button;
 
-        QUnit.expect(2);
+        QUnit.expect(5);
 
         runner.setTestContext({
             options: {
@@ -310,11 +311,12 @@ define([
             }
         });
 
-        runner.on('tool-answerMasking-toggle', function() {
+        runner.after('tool-answerMasking-toggle', function() {
             toggleCounter++;
 
             if (toggleCounter === 1) {
                 assert.ok(true, 'first keypressed has triggered the correct event');
+                assert.equal($button.hasClass('active'), true, 'button is turned on');
 
                 $(document).simulate('keydown', {
                     charCode: 0,
@@ -329,12 +331,22 @@ define([
                 });
             } else if (toggleCounter === 2) {
                 assert.ok(true, 'second keypressed has triggered the correct event');
+                assert.equal($button.hasClass('active'), false, 'button is turned off again');
                 QUnit.start();
             }
         });
 
         plugin.init()
             .then(function() {
+                var $toolboxContainer = areaBroker.getToolboxArea();
+
+                areaBroker.getToolbox().render($toolboxContainer);
+                $button = areaBroker.getToolboxArea().find('[data-control="answer-masking"]');
+
+                runner.trigger('renderitem');
+
+                assert.equal($button.hasClass('active'), false, 'button is turned off');
+
                 $contentContainer.simulate('keydown', {
                     charCode: 0,
                     keyCode: 67,
@@ -361,7 +373,7 @@ define([
         var toggleCounter = 0;
         var $button;
 
-        QUnit.expect(2);
+        QUnit.expect(5);
 
         runner.setTestContext({
             options: {
@@ -369,15 +381,17 @@ define([
             }
         });
 
-        runner.on('tool-answerMasking-toggle', function() {
+        runner.after('tool-answerMasking-toggle', function() {
             toggleCounter++;
 
             if (toggleCounter === 1) {
                 assert.ok(true, 'first click has triggered the correct event');
+                assert.equal($button.hasClass('active'), true, 'button is turned on');
                 $button.click();
 
             } else if (toggleCounter === 2) {
                 assert.ok(true, 'second click has triggered the correct event');
+                assert.equal($button.hasClass('active'), false, 'button is turned off again');
                 QUnit.start();
             }
         });
@@ -386,10 +400,13 @@ define([
             .then(function() {
                 var $toolboxContainer = areaBroker.getToolboxArea();
 
-                runner.trigger('renderitem');
-
                 areaBroker.getToolbox().render($toolboxContainer);
                 $button = areaBroker.getToolboxArea().find('[data-control="answer-masking"]');
+
+                runner.trigger('renderitem');
+
+                assert.equal($button.hasClass('active'), false, 'button is turned off');
+
                 $button.click();
             })
             .catch(function(err) {

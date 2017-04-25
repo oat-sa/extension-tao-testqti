@@ -83,14 +83,15 @@ define([
                 }
             }
 
-            var state = true;
+            var state = false;
             function togglePlugin() {
-                if (state) {
-                    state = false;
+                if (! state) {
+                    console.log('turning on');
+                    state = true;
                     self.button.turnOn();
                     testRunner.trigger('plugin-start.' + pluginName);
                 } else {
-                    state = true;
+                    state = false;
                     self.button.turnOff();
                     testRunner.trigger('plugin-end.' + pluginName);
                 }
