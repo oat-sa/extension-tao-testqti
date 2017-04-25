@@ -457,6 +457,9 @@ return array(
         ),
         'line-reader' => array(
             'toggle' => 'G'
+        ),
+        'answer-masking' => array(
+            'toggle' => 'D'
         )
     ],
 

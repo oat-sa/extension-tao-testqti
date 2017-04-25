@@ -58,7 +58,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})['answer-masking'] || {};
 
             // create buttons
             this.button = this.getAreaBroker().getToolbox().createEntry({
@@ -87,8 +87,6 @@ define([
             this.button
                 .on('click', function(e) {
                     e.preventDefault();
-                    console.log('click, triggering ', actionPrefix + 'toggle');
-
                     testRunner.trigger(actionPrefix + 'toggle');
                 });
 

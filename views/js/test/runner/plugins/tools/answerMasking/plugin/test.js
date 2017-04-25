@@ -303,7 +303,7 @@ define([
             config: {
                 allowShortcuts: true,
                 shortcuts: {
-                    'answerMasking': {
+                    'answer-masking': {
                         toggle: 'c'
                     }
                 }

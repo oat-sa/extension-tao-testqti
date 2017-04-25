@@ -1180,5 +1180,30 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('7.6.0');
         }
+
+        if($this->isVersion('7.6.0')){
+            // Register answer masking plugin
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'answerMasking',
+                'name' => 'Answer Masking',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerMasking/plugin',
+                'description' => 'Hide all answers of a choice interaction and allow revealing them',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+
+            // Register answer masking shortcut
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['answer-masking'] = [
+                'toggle' => 'D'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('7.7.0');
+        }
+
     }
 }

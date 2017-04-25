@@ -268,6 +268,14 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => true,
                 'tags' => [  ]
+            ], [
+                'id' => 'answerMasking',
+                'name' => 'Answer Masking',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerMasking/plugin',
+                'description' => 'Hide all answers of a choice interaction and allow revealing them',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
             ]
         ],
         'security' => [
