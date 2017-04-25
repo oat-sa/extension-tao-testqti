@@ -1171,7 +1171,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('7.5.0');
         }
 
-        $this->skip('7.5.0', '7.5.5');
+        $this->skip('7.5.0', '7.5.6');
 
         if ($this->isVersion('7.5.5')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
