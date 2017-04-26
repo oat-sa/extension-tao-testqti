@@ -21,42 +21,84 @@
 define([
     'jquery',
     'core/statifier',
-    'ui/component'
-], function($, statifier, componentFactory) {
+    'ui/component',
+    'tpl!taoQtiTest/runner/plugins/tools/answerMasking/tpl/mask'
+], function($, statifier, componentFactory, maskTpl) {
     'use strict';
-
-
 
     return function answerMaskingFactory($contentArea) {
         var answerMasking,
-            masks;
+            allMasks = [],
+
+            maskApi = {
+                toggle: function toggle() {
+                    if (this.is('masked')) {
+                        this.reveal();
+                    } else {
+                        this.mask();
+                    }
+                },
+
+                reveal: function reveal() {
+                    var $container = this.getContainer();
+                    $container.removeClass('masked');
+
+                    this.setState('masked', false);
+
+                    this.trigger('reveal');
+                },
+
+                mask: function hide() {
+                    var $container = this.getContainer();
+                    $container.addClass('masked');
+
+                    this.setState('masked', true);
+
+                    this.trigger('mask');
+                }
+            };
+
+        function createMask($container) {
+            var mask = componentFactory(maskApi)
+                .setTemplate(maskTpl)
+                .on('render', function() {
+                    var self = this,
+                        $component = this.getElement();
+
+                    $component.on('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        self.toggle();
+                    });
+                })
+                .init()
+                .render($container)
+                .mask();
+
+            allMasks.push(mask);
+        }
 
         answerMasking = {
             enable: function enable() {
-                var $qtiChoices = $contentArea.find('.qti-choice');
+                var $choiceInteractions = $contentArea.find('.qti-choiceInteraction'),
+                    $qtiChoices = $contentArea.find('.qti-choice');
 
-                $qtiChoices.css({
-                    'background-color': 'red'
-                });
+                $choiceInteractions.addClass('maskable');
+
                 $qtiChoices.each(function () {
-                    $(this).prepend($('<span>', {
-                        style: 'background-color: yellow',
-                        html: 'mask'
-                    }));
+                    createMask($(this)); // todo: move in init
                 });
-
 
                 this.setState('enabled', true);
-
-
-
             },
 
             disable: function disable() {
-                var $qtiChoices = $contentArea.find('.qti-choice');
+                var $choiceInteractions = $contentArea.find('.qti-choiceInteraction');
+                $choiceInteractions.removeClass('maskable');
 
-                $qtiChoices.css({
-                    'background-color': 'white'
+                allMasks.forEach(function(mask) {
+                    mask.destroy(); // todo: move in destroy
                 });
 
                 this.setState('enabled', false);
