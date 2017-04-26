@@ -44,6 +44,20 @@ define([
     var actionPrefix = 'tool-' + pluginName + '-';
 
     /**
+     * Stores the masking state for each item in the test
+     * @type {Object}
+     */
+    var itemStates = {};
+
+    /**
+     * Default Configuration
+     */
+    var defaultConfig = {
+        restoreStateOnToggle: true,
+        restoreStateOnMove: true
+    };
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -56,11 +70,12 @@ define([
         init: function init() {
             var self = this;
 
-            var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginShortcuts = (testConfig.shortcuts || {})['answer-masking'] || {};
-            var $contentArea = this.getAreaBroker().getContentArea();
+            var testRunner = this.getTestRunner(),
+                testData = testRunner.getTestData() || {},
+                testConfig = testData.config || {},
+                pluginConfig = _.defaults((testConfig.plugins || {})['answer-masking'] || {}, defaultConfig),
+                pluginShortcuts = (testConfig.shortcuts || {})['answer-masking'] || {},
+                $contentArea = this.getAreaBroker().getContentArea();
 
             var answerMasking = answerMaskingFactory($contentArea);
 
@@ -86,14 +101,33 @@ define([
 
             function togglePlugin() {
                 if (! answerMasking.getState('enabled')) {
-                    answerMasking.enable();
-                    self.button.turnOn();
-                    testRunner.trigger('plugin-start.answer-masking');
+                    enableMasking();
                 } else {
-                    answerMasking.disable();
-                    self.button.turnOff();
-                    testRunner.trigger('plugin-end.answer-masking');
+                    disableMasking();
                 }
+            }
+
+            function enableMasking() {
+                var testContext = testRunner.getTestContext(),
+                    itemId = testContext.itemIdentifier;
+
+                answerMasking.enable();
+                if (pluginConfig.restoreStateOnToggle) {
+                    answerMasking.setMasksState(itemStates[itemId]);
+                }
+                self.button.turnOn();
+                testRunner.trigger('plugin-start.answer-masking');
+            }
+
+            function disableMasking() {
+                var testContext = testRunner.getTestContext(),
+                    itemId = testContext.itemIdentifier;
+
+                itemStates[itemId] = answerMasking.getMasksState();
+
+                answerMasking.disable();
+                self.button.turnOff();
+                testRunner.trigger('plugin-end.answer-masking');
             }
 
             // create buttons
@@ -124,10 +158,24 @@ define([
 
             //update plugin state based on changes
             testRunner
-                .on('loaditem', togglePluginButton)
+                .on('loaditem', function() {
+                    var testContext = testRunner.getTestContext(),
+                        itemId = testContext.itemIdentifier;
+
+                    if (! pluginConfig.restoreStateOnMove) {
+                        itemStates[itemId] = [];
+                    }
+
+                    togglePluginButton();
+                })
                 .on('enabletools renderitem', function () {
                     togglePluginButton(); // we repeat this here as we need the rendered item markup in order to decide whether the plugin is enabled
                     self.enable();
+                })
+                .on('beforeunloaditem', function() {
+                    if (answerMasking.getState('enabled')) {
+                        disableMasking();
+                    }
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();

@@ -121,6 +121,8 @@ define([
             },
 
             setMasksState: function setMasksState(state) {
+                state = state || [];
+
                 state.forEach(function (masked, index) {
                     var mask = allMasks[index];
 
