@@ -1,0 +1,57 @@
+.qti-choiceInteraction {
+    &.maskable {
+
+        .qti-choice {
+            .answer-mask {
+                position: absolute;
+                top: 0;
+                right: 0;
+
+                height: 100%;
+                padding: 5px 10px 0 10px;
+
+                z-index: 10;
+
+                color: $darkBrown;
+                background-color: transparent;
+                text-align: right;
+                vertical-align: middle;
+
+                &:hover {
+                    color: whiten($darkBrown, .3);
+                }
+
+                &.left {
+                    left: 0;
+                    right: auto;
+                    text-align: left;
+                }
+
+                .answer-mask-toggle:before {
+                    @include tao-icon-setup;
+                    @include icon-eye-slash;
+                }
+            }
+
+            &.masked {
+                .answer-mask {
+                    background-color: whiten($grey, .4);
+                    width: 100%;
+
+                    .answer-mask-toggle:before {
+                        @include tao-icon-setup;
+                        @include icon-preview;
+                    }
+
+                    &:hover {
+                        background-color: whiten($grey, .5);
+                    }
+
+                }
+            }
+
+        }
+    }
+
+
+}
