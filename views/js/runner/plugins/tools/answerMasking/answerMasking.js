@@ -27,11 +27,20 @@ define([
 ], function(_, $, statifier, componentFactory, maskTpl) {
     'use strict';
 
+    var ns = '.answerMasking';
+
+    /**
+     * @param {jQuery} $contentArea - DOM element containing the rendered item
+     */
     return function answerMaskingFactory($contentArea) {
         var answerMasking,
             allMasks = [],
 
             maskApi = {
+                /**
+                 * Toggle mask visibility
+                 * @returns {component}
+                 */
                 toggle: function toggle() {
                     if (this.is('masked')) {
                         return this.reveal();
@@ -40,29 +49,38 @@ define([
                     }
                 },
 
+                /**
+                 * Show the choice under the current mask
+                 * @returns {component}
+                 */
                 reveal: function reveal() {
                     var $container = this.getContainer();
                     $container.removeClass('masked');
 
                     this.setState('masked', false);
 
-                    this.trigger('reveal');
-
                     return this;
                 },
 
+                /**
+                 * Cover the whole choice with the mask
+                 * @returns {component}
+                 */
                 mask: function hide() {
                     var $container = this.getContainer();
                     $container.addClass('masked');
 
                     this.setState('masked', true);
 
-                    this.trigger('mask');
-
                     return this;
                 }
             };
 
+        /**
+         * Creates a ui/component to serve as a mask over a QTI Choice
+         * @param {jQuery} $container - the qti-choice element
+         * @returns {component}
+         */
         function createMask($container) {
             return componentFactory(maskApi)
                 .setTemplate(maskTpl)
@@ -70,19 +88,29 @@ define([
                     var self = this,
                         $component = this.getElement();
 
-                    $component.on('click', function(e) {
+                    $component.on('click' + ns, function(e) {
                         e.stopPropagation();
                         e.preventDefault();
 
                         self.toggle();
                     });
                 })
+                .on('destroy', function() {
+                    var $component = this.getElement();
+                    $component.off(ns);
+                })
                 .init()
                 .render($container)
                 .mask();
         }
 
+        /**
+         * The answer masking helper
+         */
         answerMasking = {
+            /**
+             * Enable the answer masking functionality by creating masks over the Qti Choices
+             */
             enable: function enable() {
                 var $choiceInteractions = $contentArea.find('.qti-choiceInteraction'),
                     $qtiChoices = $contentArea.find('.qti-choice');
@@ -99,6 +127,9 @@ define([
                 this.setState('enabled', true);
             },
 
+            /**
+             * Remove any answerMasking-related markup from the rendered item
+             */
             disable: function disable() {
                 var $choiceInteractions = $contentArea.find('.qti-choiceInteraction');
                 $choiceInteractions.removeClass('maskable');
@@ -113,6 +144,10 @@ define([
                 this.setState('enabled', false);
             },
 
+            /**
+             * Return the current state of the masks
+             * @returns {Boolean[]} - true if the choice is masked, false if the choice is revealed
+             */
             getMasksState: function getMasksState() {
                 var state = allMasks.map(function (mask) {
                     return mask.is('masked');
@@ -120,6 +155,10 @@ define([
                 return state;
             },
 
+            /**
+             * Restore a previously saved state for the masked choices
+             * @param {Boolean[]} state - array of boolean, most probably given by the getMasksState method
+             */
             setMasksState: function setMasksState(state) {
                 state = state || [];
 

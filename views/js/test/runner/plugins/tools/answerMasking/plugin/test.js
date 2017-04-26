@@ -102,7 +102,7 @@ define([
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(4);
+        QUnit.expect(3);
 
         plugin.init()
             .then(function() {
@@ -113,15 +113,14 @@ define([
 
                 $button = $container.find('[data-control="answer-masking"]');
 
-                assert.equal($button.length, 1, 'The trigger button has been inserted');
-                assert.equal($button.hasClass('disabled'), true, 'The trigger button has been rendered disabled');
-                assert.equal($button.hasClass('disabled'), true, 'The remove button has been rendered disabled');
+                assert.equal($button.length, 1, 'The button has been inserted');
+                assert.equal($button.hasClass('disabled'), true, 'The button has been rendered disabled');
 
                 areaBroker.getToolbox().destroy();
 
                 $button = $container.find('[data-control="answer-masking"]');
 
-                assert.equal($button.length, 0, 'The trigger button has been removed');
+                assert.equal($button.length, 0, 'The button has been removed');
                 QUnit.start();
 
             })
@@ -150,11 +149,11 @@ define([
                     .then(function() {
                         $button = $container.find('[data-control="answer-masking"]');
 
-                        assert.equal($button.hasClass('disabled'), false, 'The trigger button has been enabled');
+                        assert.equal($button.hasClass('disabled'), false, 'The button has been enabled');
 
                         return plugin.disable()
                             .then(function() {
-                                assert.equal($button.hasClass('disabled'), true, 'The trigger button has been disabled');
+                                assert.equal($button.hasClass('disabled'), true, 'The button has been disabled');
 
                                 QUnit.start();
                             });
@@ -185,15 +184,15 @@ define([
                     .then(function() {
                         $button = $container.find('[data-control="answer-masking"]');
 
-                        assert.ok(hider.isHidden($button), 'The trigger button has been hidden');
+                        assert.ok(hider.isHidden($button), 'The button has been hidden');
 
                         return plugin.show()
                             .then(function() {
-                                assert.ok(! hider.isHidden($button), 'The trigger button is visible');
+                                assert.ok(! hider.isHidden($button), 'The button is visible');
 
                                 return plugin.hide().then(
                                     function() {
-                                        assert.ok(hider.isHidden($button), 'The trigger button has been hidden again');
+                                        assert.ok(hider.isHidden($button), 'The button has been hidden again');
 
                                         QUnit.start();
                                     });
@@ -235,11 +234,11 @@ define([
 
                 runner.trigger('loaditem');
 
-                assert.ok(! hider.isHidden($button), 'The trigger button is visible');
+                assert.ok(! hider.isHidden($button), 'The button is visible');
 
                 runner.trigger('unloaditem');
 
-                assert.ok(! hider.isHidden($button), 'The trigger button is still visible');
+                assert.ok(! hider.isHidden($button), 'The button is still visible');
 
                 assert.equal($button.hasClass('disabled'), true, 'The trigger button has been disabled');
 
@@ -259,6 +258,16 @@ define([
 
         QUnit.expect(2);
 
+        runner.setTestContext({
+            options: {
+                answerMasking: true
+            }
+        });
+
+        areaBroker.getContentArea().append($('<div>', {
+            class: 'qti-choiceInteraction'
+        }));
+
         plugin.init()
             .then(function() {
                 var $container = runner.getAreaBroker().getToolboxArea(),
@@ -266,13 +275,13 @@ define([
 
                 areaBroker.getToolbox().render($container);
 
-                $button = $container.find('[data-control="answer-masking"]');
-
                 runner.trigger('renderitem');
 
-                assert.ok(! hider.isHidden($button), 'The trigger button is visible');
+                $button = $container.find('[data-control="answer-masking"]');
 
-                assert.equal($button.hasClass('disabled'), false, 'The trigger button is not disabled');
+                assert.ok(! hider.isHidden($button), 'The button is visible');
+
+                assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
 
                 QUnit.start();
             })
