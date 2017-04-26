@@ -12,13 +12,13 @@
 
                 z-index: 10;
 
-                color: $darkBrown;
+                color: $info;
                 background-color: transparent;
                 text-align: right;
                 vertical-align: middle;
 
                 &:hover {
-                    color: whiten($darkBrown, .3);
+                    color: whiten($info, .3);
                 }
 
                 &.left {
@@ -35,7 +35,7 @@
 
             &.masked {
                 .answer-mask {
-                    background-color: whiten($grey, .4);
+                    background-color: whiten($darkBlueGrey, .4);
                     width: 100%;
 
                     .answer-mask-toggle:before {
@@ -44,7 +44,7 @@
                     }
 
                     &:hover {
-                        background-color: whiten($grey, .5);
+                        background-color: whiten($darkBlueGrey, .5);
                     }
 
                 }
