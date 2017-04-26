@@ -123,7 +123,9 @@ define([
                 var testContext = testRunner.getTestContext(),
                     itemId = testContext.itemIdentifier;
 
-                itemStates[itemId] = answerMasking.getMasksState();
+                if (answerMasking.getState('enabled')) {
+                    itemStates[itemId] = answerMasking.getMasksState();
+                }
 
                 answerMasking.disable();
                 self.button.turnOff();
@@ -173,9 +175,7 @@ define([
                     self.enable();
                 })
                 .on('beforeunloaditem', function() {
-                    if (answerMasking.getState('enabled')) {
-                        disableMasking();
-                    }
+                    disableMasking();
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
@@ -184,6 +184,10 @@ define([
                     if (isPluginEnabled()) {
                         togglePlugin();
                     }
+                })
+                // Answer-eliminator and Answer-masking are mutually exclusive tools
+                .on('tool-eliminator-toggle', function () {
+                    disableMasking();
                 });
         },
 
