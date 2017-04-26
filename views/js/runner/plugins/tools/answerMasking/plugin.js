@@ -64,14 +64,6 @@ define([
 
             var answerMasking = answerMaskingFactory($contentArea);
 
-            // create buttons
-            this.button = this.getAreaBroker().getToolbox().createEntry({
-                title: __('Answer Masking'),
-                icon: 'result-nok',
-                control: 'answer-masking',
-                text: __('Answer Masking')
-            });
-
             function isPluginEnabled() {
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
@@ -104,6 +96,14 @@ define([
                 }
             }
 
+            // create buttons
+            this.button = this.getAreaBroker().getToolbox().createEntry({
+                title: __('Answer Masking'),
+                icon: 'result-nok',
+                control: 'answer-masking',
+                text: __('Answer Masking')
+            });
+
             // attach user events
             this.button
                 .on('click', function(e) {
@@ -126,7 +126,7 @@ define([
             testRunner
                 .on('loaditem', togglePluginButton)
                 .on('enabletools renderitem', function () {
-                    togglePluginButton(); // we repeat this here as we need the rendered item markup in order to decide whether the plugin is enabled or not
+                    togglePluginButton(); // we repeat this here as we need the rendered item markup in order to decide whether the plugin is enabled
                     self.enable();
                 })
                 .on('disabletools unloaditem', function () {

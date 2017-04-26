@@ -19,11 +19,12 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+    'lodash',
     'jquery',
     'core/statifier',
     'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/answerMasking/tpl/mask'
-], function($, statifier, componentFactory, maskTpl) {
+], function(_, $, statifier, componentFactory, maskTpl) {
     'use strict';
 
     return function answerMaskingFactory($contentArea) {
@@ -33,9 +34,9 @@ define([
             maskApi = {
                 toggle: function toggle() {
                     if (this.is('masked')) {
-                        this.reveal();
+                        return this.reveal();
                     } else {
-                        this.mask();
+                        return this.mask();
                     }
                 },
 
@@ -46,6 +47,8 @@ define([
                     this.setState('masked', false);
 
                     this.trigger('reveal');
+
+                    return this;
                 },
 
                 mask: function hide() {
@@ -55,11 +58,13 @@ define([
                     this.setState('masked', true);
 
                     this.trigger('mask');
+
+                    return this;
                 }
             };
 
         function createMask($container) {
-            var mask = componentFactory(maskApi)
+            return componentFactory(maskApi)
                 .setTemplate(maskTpl)
                 .on('render', function() {
                     var self = this,
@@ -75,8 +80,6 @@ define([
                 .init()
                 .render($container)
                 .mask();
-
-            allMasks.push(mask);
         }
 
         answerMasking = {
@@ -84,10 +87,13 @@ define([
                 var $choiceInteractions = $contentArea.find('.qti-choiceInteraction'),
                     $qtiChoices = $contentArea.find('.qti-choice');
 
+                allMasks = [];
+
                 $choiceInteractions.addClass('maskable');
 
                 $qtiChoices.each(function () {
-                    createMask($(this)); // todo: move in init
+                    var $choice = $(this);
+                    allMasks.push(createMask($choice));
                 });
 
                 this.setState('enabled', true);
@@ -98,10 +104,30 @@ define([
                 $choiceInteractions.removeClass('maskable');
 
                 allMasks.forEach(function(mask) {
-                    mask.destroy(); // todo: move in destroy
+                    mask.reveal(); // remove class on container
+                    mask.destroy();
                 });
 
+                allMasks = [];
+
                 this.setState('enabled', false);
+            },
+
+            getMasksState: function getMasksState() {
+                var state = allMasks.map(function (mask) {
+                    return mask.is('masked');
+                });
+                return state;
+            },
+
+            setMasksState: function setMasksState(state) {
+                state.forEach(function (masked, index) {
+                    var mask = allMasks[index];
+
+                    if (_.isObject(mask) && _.isFunction(mask.reveal) && ! masked) {
+                        mask.reveal();
+                    }
+                });
             }
         };
 
