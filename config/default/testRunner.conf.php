@@ -134,6 +134,14 @@ return array(
     'test-taker-review-can-collapse' => false,
 
     /**
+     * Option to display to the test taker the title of subsection
+     * If it's define to true, test taker will see the immediate section of item (last on the hierarchy)
+     * If it's define to false, test taker will see the top section of item (first on the hierarchy)
+     * @type boolean
+     */
+    'test-taker-review-display-subsection-title' => true,
+
+    /**
      * Enable/Disable warning message about unanswered items at the end of the test.
      * @type boolean
      */

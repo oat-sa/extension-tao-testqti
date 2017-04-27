@@ -1171,6 +1171,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('7.5.0');
         }
 
-        $this->skip('7.5.0', '8.0.0');
+        $this->skip('7.5.0', '7.5.6');
+
+        if ($this->isVersion('7.5.6')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-display-subsection-title'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('7.6.0');
+        }
+        $this->skip('7.6.0', '8.0.0');
     }
 }
