@@ -66,7 +66,7 @@ define([
                  * Cover the whole choice with the mask
                  * @returns {component}
                  */
-                mask: function hide() {
+                mask: function mask() {
                     var $container = this.getContainer();
                     $container.addClass('masked');
 

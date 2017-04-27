@@ -35,7 +35,7 @@ define([
      * The public name of the plugin
      * @type {String}
      */
-    var pluginName = 'answerMasking';
+    var pluginName = 'answer-masking';
 
     /**
      * The prefix of actions triggered through the event loop
@@ -73,8 +73,8 @@ define([
             var testRunner = this.getTestRunner(),
                 testData = testRunner.getTestData() || {},
                 testConfig = testData.config || {},
-                pluginConfig = _.defaults((testConfig.plugins || {})['answer-masking'] || {}, defaultConfig),
-                pluginShortcuts = (testConfig.shortcuts || {})['answer-masking'] || {},
+                pluginConfig = _.defaults((testConfig.plugins || {})[pluginName] || {}, defaultConfig),
+                pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {},
                 $contentArea = this.getAreaBroker().getContentArea();
 
             var answerMasking = answerMaskingFactory($contentArea);
@@ -116,7 +116,7 @@ define([
                     answerMasking.setMasksState(itemStates[itemId]);
                 }
                 self.button.turnOn();
-                testRunner.trigger('plugin-start.answer-masking');
+                this.trigger('start');
             }
 
             function disableMasking() {
@@ -129,7 +129,7 @@ define([
 
                 answerMasking.disable();
                 self.button.turnOff();
-                testRunner.trigger('plugin-end.answer-masking');
+                this.trigger('end');
             }
 
             // create buttons

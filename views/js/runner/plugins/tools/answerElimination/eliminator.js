@@ -212,7 +212,7 @@ define([
                     }
                 })
                 // Answer-eliminator and Answer-masking are mutually exclusive tools
-                .on('tool-answerMasking-toggle', function () {
+                .on('tool-answer-masking-toggle', function () {
                     if (isEliminable()) {
                         disableEliminator();
                     }
