@@ -21,12 +21,6 @@
                     color: whiten($info, .3);
                 }
 
-                &.left {
-                    left: 0;
-                    right: auto;
-                    text-align: left;
-                }
-
                 .answer-mask-toggle:before {
                     @include tao-icon-setup;
                     @include icon-eye-slash;
@@ -46,12 +40,9 @@
                     &:hover {
                         background-color: whiten($darkBlueGrey, .5);
                     }
-
                 }
             }
-
         }
     }
-
 
 }
