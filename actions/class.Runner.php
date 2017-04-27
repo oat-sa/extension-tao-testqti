@@ -28,10 +28,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
-use \oat\taoTests\models\runner\CsrfToken;
-use \oat\taoQtiTest\models\runner\session\TestCsrfToken;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-
+use oat\tao\model\security\xsrf\TokenService;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -52,11 +50,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected $serviceContext;
 
-    /**
-     * The anti-CSRF manager
-     * @var CsrfToken;
-     */
-    protected $csrf;
 
     /**
      * taoQtiTest_actions_Runner constructor.
@@ -70,15 +63,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Gets the anti-CSRF manager
-     * @return CsrfToken
+     * Get the token service
+     * @return TokenService
      */
-    protected function getCsrf()
+    protected function getTokenService()
     {
-        if (!$this->csrf) {
-            $this->csrf = new TestCsrfToken($this->getSessionId());
-        }
-        return $this->csrf;
+        return $this->getServiceManager()->get(TokenService::SERVICE_ID);
     }
 
     /**
@@ -92,11 +82,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if ($token) {
             if (is_array($data)) {
                 if ($data['success'] || $httpStatus != 403) {
-                    $data['token'] = $this->getCsrf()->getCsrfToken();
+                    $data['token'] = $this->getTokenService()->createToken();
                 }
             } else if (is_object($data)) {
                 if ($data->success || $httpStatus != 403) {
-                    $data->token = $this->getCsrf()->getCsrfToken();
+                    $data->token = $this->getTokenService()->createToken();
                 }
             }
         }
@@ -143,8 +133,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 if(isset($config['csrfToken']) && $config['csrfToken'] == true){
 
                     $csrfToken = $this->getRequestParameter('X-Auth-Token');
-                    if (!$this->getCsrf()->checkCsrfToken($csrfToken)) {
-                        \common_Logger::w("CSRF attempt! The token $csrfToken is no longer valid!");
+                    if($this->getTokenService()->checkToken($csrfToken)){
+                        $this->getTokenService()->revokeToken($csrfToken);
+                    } else {
+                        \common_Logger::e("XSRF attempt! The token $csrfToken is no longer valid! " .
+                                          "or the previous request failed silently without creating a token");
                         throw new \common_exception_Unauthorized();
                     }
                 }
@@ -262,8 +255,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->getCsrf()->revokeCsrfToken();
-            $serviceContext = $this->getServiceContext();
+            $serviceContext = $this->getServiceContext(true, false);
 
 
             if ($this->hasRequestParameter('clientState')) {
