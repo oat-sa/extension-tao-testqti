@@ -116,7 +116,7 @@ define([
                     answerMasking.setMasksState(itemStates[itemId]);
                 }
                 self.button.turnOn();
-                this.trigger('start');
+                self.trigger('start');
             }
 
             function disableMasking() {
@@ -129,7 +129,7 @@ define([
 
                 answerMasking.disable();
                 self.button.turnOff();
-                this.trigger('end');
+                self.trigger('end');
             }
 
             // create buttons
@@ -180,7 +180,7 @@ define([
                 .on('disabletools unloaditem', function () {
                     self.disable();
                 })
-                .on('tool-answerMasking-toggle', function () {
+                .on(actionPrefix + 'toggle', function () {
                     if (isPluginEnabled()) {
                         togglePlugin();
                     }
