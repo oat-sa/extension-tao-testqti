@@ -1180,8 +1180,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('7.6.0');
         }
+      
+        $this->skip('7.6.0', '8.0.0');
 
-        if($this->isVersion('7.6.0')){
+        if($this->isVersion('8.0.0')){
             // Register answer masking plugin
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
@@ -1202,8 +1204,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ];
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('7.7.0');
+            $this->setVersion('8.1.0');
         }
-
     }
 }

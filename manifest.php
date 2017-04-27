@@ -28,12 +28,12 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '7.7.0',
+    'version'     => '8.1.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=4.0.0',
         'taoQtiItem' => '>=6.19.0',
-        'tao'        => '>=8.3.0',
+        'tao'        => '>=9.0.0',
         'generis'    => '>=3.19.0',
     ),
 	'models' => array(
@@ -89,9 +89,6 @@ return array(
 
 		#BASE URL (usually the domain root)
 		'BASE_URL'				=> ROOT_URL	.'taoQtiTest/',
-
-		#BASE WWW the web resources path
-		'BASE_WWW'				=> ROOT_URL	.'taoQtiTest/views/',
 	),
     'extra' => array(
         'structures' => dirname(__FILE__).DIRECTORY_SEPARATOR.'actions'.DIRECTORY_SEPARATOR.'structures.xml',
