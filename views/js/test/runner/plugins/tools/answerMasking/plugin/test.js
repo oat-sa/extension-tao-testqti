@@ -328,7 +328,7 @@ define([
             class: 'qti-choiceInteraction'
         }));
 
-        runner.after('tool-answerMasking-toggle', function() {
+        runner.after('tool-answer-masking-toggle', function() {
             toggleCounter++;
 
             if (toggleCounter === 1) {
@@ -402,7 +402,7 @@ define([
             class: 'qti-choiceInteraction'
         }));
 
-        runner.after('tool-answerMasking-toggle', function() {
+        runner.after('tool-answer-masking-toggle', function() {
             toggleCounter++;
 
             if (toggleCounter === 1) {
@@ -436,46 +436,4 @@ define([
             });
     });
 
-
-    /**
-     * The following tests are specific to this plugin
-     */
-    QUnit.module('Answer Masking');
-
-/*
-    QUnit.asyncTest('Render compound mask', function(assert) {
-        var runner = runnerFactory(providerName);
-        var areaBroker = runner.getAreaBroker();
-        var plugin = pluginFactory(runner, runner.getAreaBroker());
-
-        QUnit.expect(4);
-
-        runner.setTestContext({
-            options: {
-                answerMasking: true
-            }
-        });
-
-        plugin.init()
-            .then(function() {
-                var $contentContainer = areaBroker.getContentArea().parent(),
-                    $masks = $contentContainer.find('.answer-masking-mask'),
-                    $overlays = $contentContainer.find('.answer-masking-overlay');
-
-                runner.trigger('renderitem');
-
-                assert.equal($masks.length, 8, '8 masks have been rendered');
-                assert.equal($overlays.length, 8, '8 overlays have been rendered');
-
-                assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
-                assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
-
-                QUnit.start();
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Unexpected error: ' + err);
-                QUnit.start();
-            });
-    });
-    */
 });
