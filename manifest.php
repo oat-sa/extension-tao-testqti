@@ -33,7 +33,7 @@ return array(
     'requires'    => array(
         'taoTests'   => '>=6.0.0',
         'taoQtiItem' => '>=6.19.0',
-        'tao'        => '>=9.1.0',
+        'tao'        => '>=9.2.0',
         'generis'    => '>=3.19.0',
     ),
 	'models' => array(

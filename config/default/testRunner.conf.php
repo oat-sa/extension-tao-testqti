@@ -178,6 +178,21 @@ return array(
      */
     'plugins' => [
         /**
+         * The plugin responsible for the answer masking functionality in choice interactions
+         */
+        'answer-masking' => [
+            /**
+             * if the mask state should be restored each time the tool is toggled on/off
+             */
+            'restoreStateOnToggle' => true,
+
+            /**
+             * if the mask state should be restored when navigating between items. Require previous option.
+             */
+            'restoreStateOnMove' => true
+        ],
+
+        /**
          * The plugin responsible of the runner's overlay mask
          */
         'overlay' => [
@@ -457,6 +472,9 @@ return array(
         ),
         'line-reader' => array(
             'toggle' => 'G'
+        ),
+        'answer-masking' => array(
+            'toggle' => 'D'
         )
     ],
 
