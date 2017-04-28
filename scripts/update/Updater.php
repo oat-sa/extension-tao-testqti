@@ -1171,6 +1171,42 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('7.5.0');
         }
 
-        $this->skip('7.5.0', '7.5.4');
+        $this->skip('7.5.0', '7.5.6');
+
+        if ($this->isVersion('7.5.6')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-display-subsection-title'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('7.6.0');
+        }
+      
+        $this->skip('7.6.0', '8.0.0');
+
+        if($this->isVersion('8.0.0')){
+            // Register answer masking plugin
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'answerMasking',
+                'name' => 'Answer Masking',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerMasking/plugin',
+                'description' => 'Hide all answers of a choice interaction and allow revealing them',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+
+            // Register answer masking shortcut
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['shortcuts']['answer-masking'] = [
+                'toggle' => 'D'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('8.1.0');
+        }
+
+        $this->skip('8.1.0', '9.0.0');
     }
 }
