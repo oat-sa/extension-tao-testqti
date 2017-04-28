@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd" identifier="i14932063269505416" title="Item 3" label="Item 3" xml:lang="en-US" adaptive="false" timeDependent="false" toolName="TAO" toolVersion="3.2.0-sprint50½">
+  <responseDeclaration identifier="RESPONSE" cardinality="multiple" baseType="identifier"/>
+  <responseDeclaration identifier="RESPONSE_1" cardinality="multiple" baseType="identifier"/>
+  <responseDeclaration identifier="RESPONSE_2" cardinality="multiple" baseType="identifier"/>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"/>
+  <itemBody>
+    <div class="grid-row">
+      <div class="col-12">
+        <choiceInteraction responseIdentifier="RESPONSE" shuffle="false" maxChoices="0" minChoices="0" orientation="vertical">
+          <prompt>
+            <p>Choice interaction #1</p>
+          </prompt>
+          <simpleChoice identifier="choice_1" fixed="false" showHide="show">choice #1.1</simpleChoice>
+          <simpleChoice identifier="choice_2" fixed="false" showHide="show">choice #1.2</simpleChoice>
+          <simpleChoice identifier="choice_3" fixed="false" showHide="show">choice #1.3</simpleChoice>
+        </choiceInteraction>
+      </div>
+    </div>
+    <div class="grid-row">
+      <div class="col-12">
+        <choiceInteraction responseIdentifier="RESPONSE_1" shuffle="false" maxChoices="0" minChoices="0" orientation="vertical">
+          <prompt>
+            <p>Choice interaction #2</p>
+          </prompt>
+          <simpleChoice identifier="choice_4" fixed="false" showHide="show">choice #2.1</simpleChoice>
+          <simpleChoice identifier="choice_5" fixed="false" showHide="show">choice #2.2<br />choice #2.2<br />choice #2.2</simpleChoice>
+          <simpleChoice identifier="choice_6" fixed="false" showHide="show">choice #2.3</simpleChoice>
+        </choiceInteraction>
+      </div>
+    </div>
+    <div class="grid-row">
+      <div class="col-12">
+        <choiceInteraction responseIdentifier="RESPONSE_2" shuffle="false" maxChoices="0" minChoices="0" orientation="vertical">
+          <prompt>
+            <p>Choice interaction #3</p>
+          </prompt>
+          <simpleChoice identifier="choice_7" fixed="false" showHide="show">choice #3.1<br />choice #3.1</simpleChoice>
+          <simpleChoice identifier="choice_8" fixed="false" showHide="show">choice #3.2</simpleChoice>
+          <simpleChoice identifier="choice_9" fixed="false" showHide="show">choice #3.3</simpleChoice>
+        </choiceInteraction>
+      </div>
+    </div>
+  </itemBody>
+  <responseProcessing>
+    <responseCondition>
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE"/>
+          <correct identifier="RESPONSE"/>
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+    </responseCondition>
+    <responseCondition>
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE_1"/>
+          <correct identifier="RESPONSE_1"/>
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+    </responseCondition>
+    <responseCondition>
+      <responseIf>
+        <match>
+          <variable identifier="RESPONSE_2"/>
+          <correct identifier="RESPONSE_2"/>
+        </match>
+        <setOutcomeValue identifier="SCORE">
+          <sum>
+            <variable identifier="SCORE"/>
+            <baseValue baseType="integer">1</baseValue>
+          </sum>
+        </setOutcomeValue>
+      </responseIf>
+    </responseCondition>
+  </responseProcessing>
+</assessmentItem>
