@@ -193,7 +193,7 @@ define([
                 description : __('enable highlighter tool')
             },
             {
-                name : 'x-tao-option-line-reader',
+                name : 'x-tao-option-lineReader',
                 description : __('enable line reader tool')
             },
             {
