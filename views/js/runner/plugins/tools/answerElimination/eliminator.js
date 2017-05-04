@@ -133,7 +133,7 @@ define([
                 var $choices = self.$choiceInteractions.find('.qti-choice');
 
                 self.button.turnOn();
-                testRunner.trigger('plugin-start.' + pluginName);
+                self.trigger('start');
 
                 if(config.restoreEliminationsOnOpen) {
                     $choices.each(function() {
@@ -153,7 +153,7 @@ define([
 
                 self.$choiceInteractions.removeClass('eliminable');
                 self.button.turnOff();
-                testRunner.trigger('plugin-end.' + pluginName);
+                self.trigger('end');
 
                 $choices.each(function() {
                     if(this.classList.contains('eliminated')) {
@@ -204,7 +204,9 @@ define([
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
+                    disableEliminator();
                 })
+
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
                     if (isPluginEnabled()) {

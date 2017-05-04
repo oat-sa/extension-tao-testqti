@@ -1180,7 +1180,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('7.6.0');
         }
-      
+
         $this->skip('7.6.0', '8.0.0');
 
         if($this->isVersion('8.0.0')){
@@ -1207,6 +1207,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('8.1.0');
         }
 
-        $this->skip('8.1.0', '9.0.0');
+        $this->skip('8.1.0', '9.0.1');
     }
 }

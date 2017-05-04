@@ -167,7 +167,7 @@ define([
 
             function openMask() {
                 self.compoundMask.show();
-                testRunner.trigger('plugin-start.' + pluginName);
+                self.trigger('start');
                 self.button.turnOn();
             }
 
@@ -175,7 +175,7 @@ define([
                 if (! self.compoundMask.getState('hidden')) {
                     self.compoundMask.hide();
                 }
-                testRunner.trigger('plugin-end.' + pluginName);
+                self.trigger('end');
                 self.button.turnOff();
             }
 
@@ -225,7 +225,7 @@ define([
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
-                    self.compoundMask.hide();
+                    closeMask();
                 })
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {
