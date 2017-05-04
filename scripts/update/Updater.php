@@ -44,6 +44,7 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\tao\model\accessControl\func\AclProxy;
 
 /**
  *
@@ -258,9 +259,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->setVersion($currentVersion);
 
         if ($this->isBetween('2.16.0','2.17.0')) {
-            $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
-            $accessService = \funcAcl_models_classes_AccessService::singleton();
-            $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
+            AclProxy::applyRule(new AccessRule(
+                'grant',
+                'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole',
+                ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
+            ));
 
             try {
                 $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
