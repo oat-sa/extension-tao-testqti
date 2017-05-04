@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
+use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
