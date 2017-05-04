@@ -261,7 +261,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isBetween('2.16.0','2.17.0')) {
             AclProxy::applyRule(new AccessRule(
                 AccessRule::GRANT,
-                'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole',
+                INSTANCE_ROLE_DELIVERY,
                 ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
             ));
 
