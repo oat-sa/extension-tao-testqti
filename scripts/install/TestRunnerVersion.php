@@ -18,6 +18,7 @@
  */
 
 namespace oat\taoQtiTest\scripts\install;
+use oat\taoQtiItem\model\ItemModel;
 
 /**
  * Class TestRunnerVersion
@@ -87,9 +88,10 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
      */
     private function checkCompiler()
     {
-        $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiItem');
 
-        $compilerClass = $ext->getConfig('compilerClass');
+        /** @var ItemModel $itemModelService */
+        $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);
+        $compilerClass = $itemModelService->getOption(ItemModel::COMPILER);
 
         $oldRunnerClass = 'oat\\taoQtiItem\\model\\QtiItemCompiler';
         $newRunnerClass = 'oat\\taoQtiItem\\model\\QtiJsonItemCompiler';
