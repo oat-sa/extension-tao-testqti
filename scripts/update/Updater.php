@@ -258,9 +258,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->setVersion($currentVersion);
 
         if ($this->isBetween('2.16.0','2.17.0')) {
-            $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
-            $accessService = \funcAcl_models_classes_AccessService::singleton();
-            $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
+            AclProxy::applyRule(new AccessRule(
+                AccessRule::GRANT,
+                'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole',
+                ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
+            ));
 
             try {
                 $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
@@ -1207,6 +1209,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('8.1.0');
         }
 
-        $this->skip('8.1.0', '9.0.0');
+        $this->skip('8.1.0', '9.0.1');
     }
 }
