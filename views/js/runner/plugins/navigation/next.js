@@ -121,7 +121,10 @@ define([
                 // x-tao-option-unansweredWarning is a deprecated option whose behavior now matches the one of
                 // x-tao-option-nextPartWarning with the unansweredOnly option
                 var nextPartWarning = testOptions.nextPartWarning || testOptions.unansweredWarning;
-                var unansweredOnly = testOptions.unansweredWarning;
+                var unansweredOnly =
+                    !testOptions.endTestWarning // this check to avoid an edge case where having both endTestWarning
+                                                // and unansweredWarning options would prevent endTestWarning to behave normally
+                    && testOptions.unansweredWarning;
 
                 var warningScope = (nextPartWarning) ? 'part' : 'test';
 
