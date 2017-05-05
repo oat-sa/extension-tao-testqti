@@ -34,6 +34,8 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
+    'taoQtiItem/portableElementRegistry/provider/directProvider',
+    'taoQtiItem/portableElementRegistry/ciRegistry',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -49,6 +51,8 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
+    ciProvider,
+    ciRegistry,
     layoutTpl) {
     'use strict';
 
@@ -598,7 +602,8 @@ define([
                         content : data.itemData,
                         baseUrl : data.baseUrl,
                         state : data.itemState,
-                        rubrics : data.rubrics
+                        rubrics : data.rubrics,
+                        pcis : data.pcis
                     };
                 });
         },
@@ -617,6 +622,12 @@ define([
             var changeState = function changeState(){
                 self.setItemState(itemRef, 'changed', true);
             };
+
+            if(itemData.pcis){
+                ciProvider.register(itemData.pcis);
+                ciRegistry.registerProvider('directProvider', ciProvider);
+                ciRegistry.loadRuntimes(true);
+            }
 
             if (itemData.rubrics) {
                 this.trigger('loadrubricblock', itemData.rubrics);

@@ -468,6 +468,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             'baseUrl'   => $baseUrl,
             'itemData'  => $itemData,
             'itemState' => $itemState,
+            'pcis' => (new \oat\qtiItemPci\model\PciModel())->getRegistry()->getLatestRuntimes(),
             'rubrics'   => $rubrics
         ];
     }
