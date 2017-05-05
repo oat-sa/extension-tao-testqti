@@ -64,6 +64,18 @@ module.exports = function(grunt) {
         }
     };
 
+    requirejs.taoqtitestplugins = {
+        options: {
+            baseUrl : '../js',
+            mainConfigFile : './config/requirejs.build.js',
+            findNestedDependencies : true,
+            paths : paths,
+            include: testPlugins,
+            exclude : ['json!i18ntr/messages.json'].concat(libs),
+            out: out + "/testPlugins.min.js"
+        }
+    };
+
     /**
      * copy the bundles to the right place
      */
@@ -72,7 +84,9 @@ module.exports = function(grunt) {
             { src: [out + '/taoQtiTest/controller/routes.js'],  dest: root + '/taoQtiTest/views/js/controllers.min.js' },
             { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' },
             { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js' },
-            { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' }
+            { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' },
+            { src: [out + '/testPlugins.min.js'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js' },
+            { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' }
         ]
     };
 
@@ -81,5 +95,5 @@ module.exports = function(grunt) {
     grunt.config('copy', copy);
 
     // bundle task
-    grunt.registerTask('taoqtitestbundle', ['clean:taoqtitestbundle', 'requirejs:taoqtitestbundle', 'requirejs:qtitestrunner', 'copy:taoqtitestbundle']);
+    grunt.registerTask('taoqtitestbundle', ['clean:taoqtitestbundle', 'requirejs:taoqtitestbundle', 'requirejs:qtitestrunner', 'requirejs:taoqtitestplugins', 'copy:taoqtitestbundle']);
 };
