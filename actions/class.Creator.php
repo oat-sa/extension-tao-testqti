@@ -44,8 +44,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             }
             $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
 
-            $testCategories = $this->getServiceManager()->get(TestCategoryProvider::SERVICE_ID);
-            $this->setData('qtiCategoriesData', json_encode(tao_helpers_Uri::encodeArray($testCategories->getCategories(), tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
+            $testCategoriesService = $this->getServiceManager()->get(TestCategoryProvider::SERVICE_ID);
+            $this->setData('qtiCategoriesData', json_encode($testCategoriesService->getCategories()));
 
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
