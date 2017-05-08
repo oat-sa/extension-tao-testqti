@@ -88,6 +88,10 @@
         </div>
     </div>
 
+    <h4 class="toggler closed" data-toggle="~ .category-presets">{{__ 'Categories'}}</h4>
+
+    <div class="category-presets toggled"></div>
+
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 
     <div class="itemref-weights toggled">

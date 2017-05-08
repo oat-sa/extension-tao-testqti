@@ -37,6 +37,7 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
+    'taoQtiTest/controller/creator/helpers/categoryPresets',
     'core/validator/validators',
     'core/promise'
 ], function(
@@ -57,6 +58,7 @@ define([
     templates,
     qtiTestHelper,
     scoringHelper,
+    categoryPresets,
     validators,
     Promise
     ){
@@ -126,7 +128,9 @@ define([
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
+            options.qtiCategories = options.qtiCategories || {};
 
+            categoryPresets.setPresets(options.qtiCategories);
 
             //back button
             $('#authoringBack').on('click', function(e){

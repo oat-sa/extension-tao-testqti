@@ -24,18 +24,20 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
+    'taoQtiTest/controller/creator/helpers/categoryPresets',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight'
+    'taoQtiTest/controller/creator/templates/index'
 ],
 function(
     $,
     _,
     __,
     actions,
+    categoryPresets,
     sectionCategory,
     qtiTestHelper,
-    weightTpl
+    templates
 ){
     'use strict';
 
@@ -122,6 +124,21 @@ function(
             function initCategories(){
                 $select.select2('val', refModel.categories);
             }
+
+
+            // ===================================================== NEW
+
+            var $categoryPresets = $view.find('.category-presets'),
+                presetsTpl = templates.properties.categorypresets;
+
+            $categoryPresets.append(
+                presetsTpl(categoryPresets.getPresets())
+            );
+
+            console.table(categoryPresets.getPresets());
+
+
+
         }
 
 
@@ -130,7 +147,8 @@ function(
          */
         function weightsProperty(propView) {
             var $view = propView.getView(),
-                $weightList = $view.find('[data-bind-each="weights"]');
+                $weightList = $view.find('[data-bind-each="weights"]'),
+                weightTpl = templates.properties.itemrefweight;
 
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
