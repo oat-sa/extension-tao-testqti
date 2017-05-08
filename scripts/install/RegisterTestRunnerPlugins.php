@@ -33,6 +33,8 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
 class RegisterTestRunnerPlugins extends InstallAction
 {
 
+    public static $bundle = 'taoQtiTest/loader/testPlugins.min';
+
     public static $plugins = [
         'content' => [
             [
@@ -299,6 +301,7 @@ class RegisterTestRunnerPlugins extends InstallAction
 
         foreach(self::$plugins as $category => $categoryPlugins) {
             foreach($categoryPlugins as $pluginData){
+                $pluginData['bundle'] = self::$bundle;
                 if( $registry->register(TestPlugin::fromArray($pluginData)) ) {
                     $count++;
                 }
