@@ -95,6 +95,7 @@ function(
          */
         function categoriesProperty($view){
             var $select = $view.find('[name=itemref-category]');
+            /*
             $select.select2({
                 width: '100%',
                 tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
@@ -108,10 +109,10 @@ function(
                 /**
                  * @event modelOverseer#category-change
                  * @param {Array} categories
-                 */
+                 * /
                 modelOverseer.trigger('category-change', e.val);
             });
-
+            */
             initCategories();
             $view.on('propopen.propview', function(){
                 initCategories();
@@ -143,9 +144,30 @@ function(
                 presetsTpl(presetList)
             );
 
-            console.table(presetList);
+            $categoryPresets.on('click', function(e) {
+                var $target = $(e.target),
+                    qtiCategory = $target.closest('.category-preset').data('qti-category');
 
+                toggleCategory($view, qtiCategory);
+            });
+        }
 
+        function toggleCategory($view, category) {
+            var $categoriesModel = $view.find('[data-bind="categories"]'),
+                categoryIndex = refModel.categories.indexOf(category);
+
+            if (categoryIndex === -1) {
+                refModel.categories.push(category);
+            } else {
+                refModel.categories.splice(categoryIndex, 1);
+            }
+            $categoriesModel.val(refModel.categories.join(','));
+
+            /**
+             * @event modelOverseer#category-change
+             * @param {Array} categories
+             */
+            modelOverseer.trigger('category-change', refModel.categories);
 
         }
 
