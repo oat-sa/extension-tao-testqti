@@ -1,11 +1,11 @@
 {{#each this}}
-<div class="grid-row">
+<div class="grid-row pseudo-label-box">
     <div class="col-5">
         <label for="itemref-category-preset-{{id}}">{{label}}</label>
     </div>
     <div class="col-6">
         <label>
-            <input type="checkbox" name="itemref-category-preset-{{id}}" />
+            <input type="checkbox" name="itemref-category-preset-{{id}}" value="{{qtiCategory}}"{{#if checked}} checked="checked"{{/if}}"/>
             <span class="icon-checkbox"></span>
         </label>
     </div>

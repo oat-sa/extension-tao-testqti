@@ -129,13 +129,21 @@ function(
             // ===================================================== NEW
 
             var $categoryPresets = $view.find('.category-presets'),
-                presetsTpl = templates.properties.categorypresets;
+                presetsTpl = templates.properties.categorypresets,
+                presetList = categoryPresets.getPresets();
+
+            presetList.map(function (preset) {
+                if (refModel.categories.indexOf(preset.qtiCategory) !== -1) {
+                    preset.checked = true;
+                }
+                return preset;
+            });
 
             $categoryPresets.append(
-                presetsTpl(categoryPresets.getPresets())
+                presetsTpl(presetList)
             );
 
-            console.table(categoryPresets.getPresets());
+            console.table(presetList);
 
 
 
