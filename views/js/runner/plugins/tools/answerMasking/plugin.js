@@ -179,6 +179,7 @@ define([
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
+                    disableMasking();
                 })
                 .on(actionPrefix + 'toggle', function () {
                     if (isPluginEnabled()) {

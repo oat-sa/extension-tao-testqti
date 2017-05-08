@@ -92,7 +92,7 @@ define([
                         }
                         if (self.masks.length === 0) {
                             self.button.turnOff();
-                            testRunner.trigger('plugin-close.' + pluginName);
+                            self.trigger('close');
                         }
 
                         /**
@@ -163,21 +163,19 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('unloaditem', function (){
-                    //remove all masks
-                    _.invoke(self.masks, 'destroy');
-                })
                 .on('enabletools renderitem', function (){
                     self.enable();
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
+                    //remove all masks
+                    _.invoke(self.masks, 'destroy');
                 })
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
                     if (isEnabled()) {
                         if (self.masks.length === 0) {
-                            testRunner.trigger('plugin-open.' + pluginName);
+                            self.trigger('open');
                         }
                         if (self.masks.length < config.max) {
                             addMask();

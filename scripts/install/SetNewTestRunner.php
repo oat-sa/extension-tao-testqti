@@ -18,6 +18,8 @@
  */
 
 namespace oat\taoQtiTest\scripts\install;
+use oat\oatbox\extension\InstallAction;
+use oat\taoQtiItem\model\ItemModel;
 
 /**
  * Class SetNewTestRunner
@@ -26,7 +28,7 @@ namespace oat\taoQtiTest\scripts\install;
  * 
  * @package oat\taoQtiTest\scripts\install
  */
-class SetNewTestRunner extends \common_ext_action_InstallAction
+class SetNewTestRunner extends InstallAction
 {
     public function __invoke($params)
     {
@@ -35,9 +37,12 @@ class SetNewTestRunner extends \common_ext_action_InstallAction
         $deliveryServerConfig->setOption('deliveryContainer', 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer');
         $deliveryExt->setConfig('deliveryServer', $deliveryServerConfig);
 
-        $itemQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiItem');
         $compilerClassConfig = 'oat\\taoQtiItem\\model\\QtiJsonItemCompiler';
-        $itemQtiExt->setConfig('compilerClass', $compilerClassConfig);
+
+        /** @var ItemModel $itemModelService */
+        $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);
+        $itemModelService->setOption(ItemModel::COMPILER, $compilerClassConfig);
+        $this->getServiceManager()->register(ItemModel::SERVICE_ID, $itemModelService);
 
         $testQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $testRunnerConfig = $testQtiExt->getConfig('testRunner');
