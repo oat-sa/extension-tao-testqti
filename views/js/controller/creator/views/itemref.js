@@ -94,8 +94,8 @@ function(
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            var $select = $view.find('[name=itemref-category]');
             /*
+            var $select = $view.find('[name=itemref-category]');
             $select.select2({
                 width: '100%',
                 tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
@@ -112,7 +112,6 @@ function(
                  * /
                 modelOverseer.trigger('category-change', e.val);
             });
-            */
             initCategories();
             $view.on('propopen.propview', function(){
                 initCategories();
@@ -121,23 +120,21 @@ function(
             /**
              * save the categories into the model
              * @private
-             */
+             * /
             function initCategories(){
                 $select.select2('val', refModel.categories);
             }
+            */
 
-
-            // ===================================================== NEW
+            // ===================================================== PRESETS
 
             var $categoryPresets = $view.find('.category-presets'),
                 presetsTpl = templates.properties.categorypresets,
-                presetList = categoryPresets.getPresets();
+                presetList = categoryPresets.getPresets(),
+                categoriesModel = refModel.categories;
 
-            presetList.map(function (preset) {
-                if (refModel.categories.indexOf(preset.qtiCategory) !== -1) {
-                    preset.checked = true;
-                }
-                return preset;
+            presetList.forEach(function (preset) {
+                preset.checked = (categoriesModel.indexOf(preset.qtiCategory) !== -1);
             });
 
             $categoryPresets.append(
@@ -150,6 +147,25 @@ function(
 
                 toggleCategory($view, qtiCategory);
             });
+
+            // ======================================================== CUSTOM
+            /*
+            var $select = $view.find('[name=itemref-category]');
+
+            initCategories();
+            $view.on('propopen.propview', function(){
+                initCategories();
+            });
+
+            /**
+             * save the categories into the model
+             * @private
+             */
+            function initCategories(){
+                $select.select2('val', refModel.categories);
+            }
+            */
+
         }
 
         function toggleCategory($view, category) {
@@ -168,7 +184,6 @@ function(
              * @param {Array} categories
              */
             modelOverseer.trigger('category-change', refModel.categories);
-
         }
 
 
