@@ -117,6 +117,9 @@ define([
             }
 
             function togglePlugin() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
                 self.$choiceInteractions.toggleClass('eliminable');
                 if (isEliminable()) {
                     enableEliminator();
@@ -126,11 +129,18 @@ define([
             }
 
             function isEliminable() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
                 return self.$choiceInteractions.hasClass('eliminable');
             }
 
             function enableEliminator() {
-                var $choices = self.$choiceInteractions.find('.qti-choice');
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
 
                 self.button.turnOn();
                 self.trigger('start');
@@ -149,7 +159,11 @@ define([
             }
 
             function disableEliminator() {
-                var $choices = self.$choiceInteractions.find('.qti-choice');
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
 
                 self.$choiceInteractions.removeClass('eliminable');
                 self.button.turnOff();
