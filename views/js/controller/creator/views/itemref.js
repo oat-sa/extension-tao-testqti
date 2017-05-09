@@ -24,7 +24,7 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
-    'taoQtiTest/controller/creator/helpers/categoryPresets',
+    'taoQtiTest/controller/creator/helpers/categoryManager',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/templates/index'
@@ -34,7 +34,7 @@ function(
     _,
     __,
     actions,
-    categoryPresets,
+    categoryManagerFactory,
     sectionCategory,
     qtiTestHelper,
     templates
@@ -94,140 +94,21 @@ function(
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            /*
-            var $select = $view.find('[name=itemref-category]');
-            $select.select2({
-                width: '100%',
-                tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
-                multiple : true,
-                tokenSeparators: [",", " ", ";"],
-                formatNoMatches : function(){
-                    return __('Enter a category');
-                },
-                maximumInputLength : 32
-            }).on('change', function(e){
-                /**
-                 * @event modelOverseer#category-change
-                 * @param {Array} categories
-                 * /
-                modelOverseer.trigger('category-change', e.val);
-            });
-            initCategories();
+            var categoryManager = categoryManagerFactory($view, refModel.categories),
+                $categoryField = $view.find('[name="itemref-category"]');
+
+            categoryManager.createForm();
+            categoryManager.initForm();
+
             $view.on('propopen.propview', function(){
-                initCategories();
+                categoryManager.initForm();
             });
 
-            /**
-             * save the categories into the model
-             * @private
-             * /
-            function initCategories(){
-                $select.select2('val', refModel.categories);
-            }
-            */
+            categoryManager.on('category-change', function(categories) {
+                $categoryField.val(categories.join(','));
 
-            // ===================================================== PRESETS
-
-            var $categoryPresets = $view.find('.category-presets'),
-                presetsTpl = templates.properties.categorypresets,
-                presetList = categoryPresets.getPresets(),
-                categoriesModel = refModel.categories;
-
-            var $select = $view.find('[name=itemref-category-custom]'),
-                presetListId = presetList.map(function(preset) {
-                    return preset.qtiCategory;
-                }),
-                customCategories = _.difference(categoriesModel, presetListId);
-
-
-            presetList.forEach(function (preset) {
-                preset.checked = (categoriesModel.indexOf(preset.qtiCategory) !== -1);
+                modelOverseer.trigger('category-change', categories);
             });
-
-            $categoryPresets.append(
-                presetsTpl(presetList)
-            );
-
-            $categoryPresets.on('click', function() {
-                // var $target = $(e.target),
-                //     qtiCategory = $target.closest('.category-preset').data('qti-category');
-                //
-                // toggleCategory($view, qtiCategory);
-                _.defer(function() {
-                    updateCategories($view, $select);
-                });
-            });
-
-            // ======================================================== CUSTOM
-
-            $select.select2({
-                width: '100%',
-                tags : [],
-                multiple : true,
-                tokenSeparators: [",", " ", ";"],
-                formatNoMatches : function(){
-                    return __('Enter a custom category');
-                },
-                maximumInputLength : 32
-            }).on('change', function(){
-                updateCategories($view, $select);
-
-            });
-
-            initCategories();
-            $view.on('propopen.propview', function(){
-                initCategories();
-            });
-
-            /**
-             * save the categories into the model
-             * @private
-             */
-            function initCategories(){
-                $select.select2('val', customCategories);
-            }
-
-        }
-
-        function updateCategories($view, $select) {
-            var $categoriesModel = $view.find('[data-bind="categories"]'),
-                $presetCheckboxes = $view.find('.category-preset input:checked'),
-                presetCategories = [],
-                customCategories = $select.val().split(',').filter(function(val) { return !!val; }),
-                allCategories;
-
-            $presetCheckboxes.each(function() {
-                presetCategories.push($(this).val());
-            });
-
-            allCategories = presetCategories.concat(customCategories);
-
-            $categoriesModel.val(allCategories.join(','));
-
-            /**
-             * @event modelOverseer#category-change
-             * @param {Array} categories
-             */
-            modelOverseer.trigger('category-change', allCategories);
-
-        }
-
-        function toggleCategory($view, category) {
-            var $categoriesModel = $view.find('[data-bind="categories"]'),
-                categoryIndex = refModel.categories.indexOf(category);
-
-            if (categoryIndex === -1) {
-                refModel.categories.push(category);
-            } else {
-                refModel.categories.splice(categoryIndex, 1);
-            }
-            $categoriesModel.val(refModel.categories.join(','));
-
-            /**
-             * @event modelOverseer#category-change
-             * @param {Array} categories
-             */
-            modelOverseer.trigger('category-change', refModel.categories);
         }
 
 
