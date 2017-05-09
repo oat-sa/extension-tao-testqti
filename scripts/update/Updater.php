@@ -1218,7 +1218,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             foreach($registry->getMap() as $module => $plugin){
                 if(preg_match("/^taoQtiTest/", $module) && is_null($plugin['bundle'])){
                     $plugin['bundle'] = 'taoQtiTest/loader/testPlugins.min';
-                    $registry->register($plugin);
+                    $registry->register(TestPlugin::fromArray($plugin));
                 }
             }
             $this->setVersion('9.2.0');
