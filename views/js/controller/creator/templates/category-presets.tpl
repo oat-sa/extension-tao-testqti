@@ -1,8 +1,9 @@
+<h3>Tools</h3>
 {{#each this}}
 <div class="grid-row pseudo-label-box category-preset" data-qti-category="{{qtiCategory}}">
     <div class="col-1">
         <label>
-            <input type="checkbox" name="itemref-category-preset-{{id}}"{{#if checked}} checked="checked"{{/if}}"/>
+            <input type="checkbox" name="itemref-category-preset-{{id}}" value="{{qtiCategory}}"{{#if checked}} checked="checked"{{/if}}"/>
             <span class="icon-checkbox"></span>
         </label>
     </div>

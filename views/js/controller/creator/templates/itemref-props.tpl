@@ -72,30 +72,30 @@
         </div>
     </div>
 
-    <h4 class="toggler closed" data-toggle="~ .category-presets">{{__ 'Categories'}}</h4>
+    <h4 class="toggler closed" data-toggle="~ .categories">{{__ 'Categories'}}</h4>
 
-    <div class="category-presets toggled"></div>
+    <div class="categories toggled">
 
-    <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
-    <textarea type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
+        <div class="category-presets"></div>
 
-<!--
-
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="itemref-category">{{__ 'Categories'}}</label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'Items can optionally be assigned to one or more categories.'}}
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="itemref-category-custom">{{__ 'Custom categories'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="itemref-category-custom"/>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'Items can optionally be assigned to one or more categories.'}}
+                </div>
             </div>
         </div>
+
+        <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
+        <textarea type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
     </div>
-    -->
 
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 

@@ -133,6 +133,13 @@ function(
                 presetList = categoryPresets.getPresets(),
                 categoriesModel = refModel.categories;
 
+            var $select = $view.find('[name=itemref-category-custom]'),
+                presetListId = presetList.map(function(preset) {
+                    return preset.qtiCategory;
+                }),
+                customCategories = _.difference(categoriesModel, presetListId);
+
+
             presetList.forEach(function (preset) {
                 preset.checked = (categoriesModel.indexOf(preset.qtiCategory) !== -1);
             });
@@ -141,16 +148,31 @@ function(
                 presetsTpl(presetList)
             );
 
-            $categoryPresets.on('click', function(e) {
-                var $target = $(e.target),
-                    qtiCategory = $target.closest('.category-preset').data('qti-category');
-
-                toggleCategory($view, qtiCategory);
+            $categoryPresets.on('click', function() {
+                // var $target = $(e.target),
+                //     qtiCategory = $target.closest('.category-preset').data('qti-category');
+                //
+                // toggleCategory($view, qtiCategory);
+                _.defer(function() {
+                    updateCategories($view, $select);
+                });
             });
 
             // ======================================================== CUSTOM
-            /*
-            var $select = $view.find('[name=itemref-category]');
+
+            $select.select2({
+                width: '100%',
+                tags : [],
+                multiple : true,
+                tokenSeparators: [",", " ", ";"],
+                formatNoMatches : function(){
+                    return __('Enter a custom category');
+                },
+                maximumInputLength : 32
+            }).on('change', function(){
+                updateCategories($view, $select);
+
+            });
 
             initCategories();
             $view.on('propopen.propview', function(){
@@ -160,11 +182,33 @@ function(
             /**
              * save the categories into the model
              * @private
-             * /
+             */
             function initCategories(){
-                $select.select2('val', refModel.categories);
+                $select.select2('val', customCategories);
             }
-            */
+
+        }
+
+        function updateCategories($view, $select) {
+            var $categoriesModel = $view.find('[data-bind="categories"]'),
+                $presetCheckboxes = $view.find('.category-preset input:checked'),
+                presetCategories = [],
+                customCategories = $select.val().split(',').filter(function(val) { return !!val; }),
+                allCategories;
+
+            $presetCheckboxes.each(function() {
+                presetCategories.push($(this).val());
+            });
+
+            allCategories = presetCategories.concat(customCategories);
+
+            $categoriesModel.val(allCategories.join(','));
+
+            /**
+             * @event modelOverseer#category-change
+             * @param {Array} categories
+             */
+            modelOverseer.trigger('category-change', allCategories);
 
         }
 
