@@ -160,7 +160,7 @@ function(
             /**
              * save the categories into the model
              * @private
-             */
+             * /
             function initCategories(){
                 $select.select2('val', refModel.categories);
             }
