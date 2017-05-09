@@ -33,14 +33,13 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
 class RegisterTestRunnerPlugins extends InstallAction
 {
 
-    public static $bundle = 'taoQtiTest/loader/testPlugins.min';
-
     public static $plugins = [
         'content' => [
             [
                 'id' => 'rubricBlock',
                 'name' => 'Rubric Block',
                 'module' => 'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display test rubric blocks',
                 'category' => 'content',
                 'active' => true,
@@ -49,6 +48,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'overlay',
                 'name' => 'Overlay',
                 'module' => 'taoQtiTest/runner/plugins/content/overlay/overlay',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Add an overlay over items when disabled',
                 'category' => 'content',
                 'active' => true,
@@ -57,6 +57,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'dialog',
                 'name' => 'Dialog',
                 'module' =>'taoQtiTest/runner/plugins/content/dialog/dialog',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display popups that require user interactions',
                 'category' => 'content',
                 'active' => true,
@@ -65,6 +66,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'feedback',
                 'name' => 'Feedback',
                 'module' => 'taoQtiTest/runner/plugins/content/feedback/feedback',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display notifications into feedback popups',
                 'category' => 'content',
                 'active' => true,
@@ -73,6 +75,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'exitMessages',
                 'name' => 'Exit Messages',
                 'module' => 'taoQtiTest/runner/plugins/content/dialog/exitMessages',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display messages when a test taker leaves the test',
                 'category' => 'content',
                 'active' => true,
@@ -81,6 +84,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'loading',
                 'name' => 'Loading bar',
                 'module' => 'taoQtiTest/runner/plugins/content/loading/loading',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Show a loading bar when the test is loading',
                 'category' => 'content',
                 'active' => true,
@@ -89,6 +93,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'title',
                 'name' => 'Title indicator',
                 'module' => 'taoQtiTest/runner/plugins/controls/title/title',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display the title of current test element',
                 'category' => 'controls',
                 'active' => true,
@@ -97,6 +102,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'modalFeedback',
                 'name' => 'QTI modal feedbacks',
                 'module' => 'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display Qti modalFeedback element',
                 'category' => 'content',
                 'active' => true,
@@ -105,6 +111,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'keyNavigation',
                 'name' => 'Using key to navigate test runner',
                 'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Provide a way to navigate within the test runner with the keyboard',
                 'category' => 'content',
                 'active' => true,
@@ -116,6 +123,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'timer',
                 'name' => 'Timer indicator',
                 'module' => 'taoQtiTest/runner/plugins/controls/timer/timer',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Add countdown when remaining time',
                 'category' => 'controls',
                 'active' => true,
@@ -124,6 +132,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'progressbar',
                 'name' => 'Progress indicator',
                 'module' => 'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display the current progression within the test',
                 'category' => 'controls',
                 'active' => true,
@@ -132,6 +141,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'duration',
                 'name' => 'Duration record',
                 'module' => 'taoQtiTest/runner/plugins/controls/duration/duration',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Record accurately time spent by the test taker',
                 'category' => 'controls',
                 'active' => true,
@@ -140,6 +150,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'connectivity',
                 'name' => 'Connectivity check',
                 'module' => 'taoQtiTest/runner/plugins/controls/connectivity/connectivity',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Pause the test when the network loose the connection',
                 'category' => 'controls',
                 'active' => true,
@@ -148,6 +159,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'testState',
                 'name' => 'Test state',
                 'module' => 'taoQtiTest/runner/plugins/controls/testState/testState',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Manage test state',
                 'category' => 'controls',
                 'active' => true,
@@ -156,6 +168,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'itemTraceVariables',
                 'name' => 'Item trace variables',
                 'module' => 'taoQtiTest/runner/plugins/controls/trace/itemTraceVariables',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Send item trace variables',
                 'category' => 'controls',
                 'active' => false,
@@ -167,6 +180,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'review',
                 'name' => 'Navigation and review panel',
                 'module' => 'taoQtiTest/runner/plugins/navigation/review/review',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Enable a panel to handle navigation and item reviews',
                 'category' => 'navigation',
                 'active' => true,
@@ -175,6 +189,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'previous',
                 'name' => 'Previous button',
                 'module' => 'taoQtiTest/runner/plugins/navigation/previous',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Enable to move backward',
                 'category' => 'navigation',
                 'active' => true,
@@ -183,6 +198,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'next',
                 'name' => 'Next button',
                 'module' => 'taoQtiTest/runner/plugins/navigation/next',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Enable to move forward',
                 'category' => 'navigation',
                 'active' => true,
@@ -191,6 +207,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'nextSection',
                 'name' => 'Next section button',
                 'module' => 'taoQtiTest/runner/plugins/navigation/nextSection',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Enable to move to the next available section',
                 'category' => 'navigation',
                 'active' => true,
@@ -199,6 +216,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'skip',
                 'name' => 'Skip button',
                 'module' => 'taoQtiTest/runner/plugins/navigation/skip',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Skip the current item',
                 'category' => 'navigation',
                 'active' => true,
@@ -210,6 +228,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'comment',
                 'name' => 'Comment tool',
                 'module' => 'taoQtiTest/runner/plugins/tools/comment/comment',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allow test taker to comment an item',
                 'category' => 'tools',
                 'active' => true,
@@ -218,6 +237,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'calculator',
                 'name' => 'Caculator tool',
                 'module' =>'taoQtiTest/runner/plugins/tools/calculator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives the student access to a basic calculator',
                 'category' => 'tools',
                 'active' => true,
@@ -226,6 +246,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'zoom',
                 'name' => 'Zoom',
                 'module' =>'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Zoom in and out the item content',
                 'category' => 'tools',
                 'active' => false,
@@ -234,6 +255,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'itemThemeSwitcher',
                 'name' => 'Item themes switcher',
                 'module' => 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allow to switch between themes',
                 'category' => 'tools',
                 'active' => false,
@@ -242,6 +264,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'documentViewer',
                 'name' => 'Document Viewer',
                 'module' => 'taoQtiTest/runner/plugins/tools/documentViewer/documentViewer',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display a document as requested by an event',
                 'category' => 'tools',
                 'active' => false,
@@ -250,6 +273,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'highlighter',
                 'name' => 'Text Highlighter',
                 'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allows the test taker to highlight text',
                 'category' => 'tools',
                 'active' => false,
@@ -258,6 +282,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'magnifier',
                 'name' => 'Magnifier',
                 'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives student access to a magnification tool',
                 'category' => 'tools',
                 'active' => false,
@@ -266,6 +291,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'lineReader',
                 'name' => 'Line Reader',
                 'module' => 'taoQtiTest/runner/plugins/tools/lineReader/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display a customisable mask with a customisable hole in it!',
                 'category' => 'tools',
                 'active' => true,
@@ -274,6 +300,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'answerMasking',
                 'name' => 'Answer Masking',
                 'module' => 'taoQtiTest/runner/plugins/tools/answerMasking/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Hide all answers of a choice interaction and allow revealing them',
                 'category' => 'tools',
                 'active' => true,
@@ -285,6 +312,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'id' => 'disableRightClick',
                 'name' => 'Disable right click',
                 'module' => 'taoQtiTest/runner/plugins/security/disableRightClick',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Disable right click context menu on items',
                 'category' => 'security',
                 'active' => false,
@@ -295,13 +323,11 @@ class RegisterTestRunnerPlugins extends InstallAction
 
     public function __invoke($params)
     {
-
         $registry = PluginRegistry::getRegistry();
         $count = 0;
 
-        foreach(self::$plugins as $category => $categoryPlugins) {
+        foreach(self::$plugins as $categoryPlugins) {
             foreach($categoryPlugins as $pluginData){
-                $pluginData['bundle'] = self::$bundle;
                 if( $registry->register(TestPlugin::fromArray($pluginData)) ) {
                     $count++;
                 }
