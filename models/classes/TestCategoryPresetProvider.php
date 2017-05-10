@@ -29,10 +29,16 @@ class TestCategoryPresetProvider extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/CategoryPresetProvider';
 
-    private $allCategories  = [];
+    private $allPresets;
 
-    public function getCategories() {
-        $this->allCategories = [
+    public function __construct(array $options = [], $allPresets = []) {
+        $this->allPresets = $allPresets;
+
+        parent::__construct($options);
+    }
+
+    protected function getDefaultPresets() {
+        return [
             'navigation' => [
                 'groupId'    => 'navigation',
                 'groupLabel' => __('Test Navigation'),
@@ -173,11 +179,39 @@ class TestCategoryPresetProvider extends ConfigurableService
                         'description'   => __('Display a movable magnifier tool'),
                         'order'         => 700
                     ]),
-
                 ]
             ],
 
         ];
-        return $this->allCategories;
     }
+
+    public function getPresets() {
+        if (empty($this->allPresets)) {
+            $this->allPresets = $this->getDefaultPresets();
+        }
+        uasort($this->allPresets, function($a, $b) {
+            $aOrder = $a['groupOrder'];
+            $bOrder = $b['groupOrder'];
+            if ($aOrder == $bOrder) {
+                return 0;
+            }
+            return ($aOrder < $bOrder) ? -1 : 1;
+        });
+
+        foreach($this->allPresets as &$presetGroup) {
+            if (!empty($presetGroup)) {
+                usort($presetGroup['presets'], function($a, $b) {
+                    $aOrder = $a->getOrder();
+                    $bOrder = $b->getOrder();
+                    if ($aOrder == $bOrder) {
+                        return 0;
+                    }
+                    return ($aOrder < $bOrder) ? -1 : 1;
+                });
+            }
+        }
+
+        return $this->allPresets;
+    }
+
 }

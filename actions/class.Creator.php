@@ -45,7 +45,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
 
             $categoriesPresetService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
-            $this->setData('categoriesPresets', json_encode($categoriesPresetService->getCategories()));
+            $this->setData('categoriesPresets', json_encode($categoriesPresetService->getPresets()));
 
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
