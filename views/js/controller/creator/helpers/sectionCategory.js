@@ -39,22 +39,35 @@ define([
      * Set an array of categories to the section model (affect the childen itemRef)
      *
      * @param {object} model
-     * @param {array} categories
+     * @param {array} newCategories - all active categories, whether in a checked or indeterminate state
+     * @param {array} indeterminate - only categories in an indeterminate state, in case we work on a section level
      * @returns {undefined}
      */
-    function setCategories(model, categories){
+    function setCategories(model, newCategories, indeterminate){
 
-        var oldCategories = getCategories(model);
+        var toRemove,
+            toAdd,
+            currentCategories = getCategories(model),
+            existingSelectedOrIndeterminate;
+
+        indeterminate = indeterminate || [];
+
+        // if we have some indeterminate categories declared, then we need to do some extra math
+        // before we can determine what are the categories to add
+        // Categories to add are categories which are in the new list and that:
+        // - where not previously checked (propagated)
+        // - are not in the current indeterminate state
+        existingSelectedOrIndeterminate = (indeterminate.length)
+            ? currentCategories.propagated.concat(indeterminate)
+            : currentCategories.all;
+        toAdd = _.difference(newCategories, existingSelectedOrIndeterminate);
 
         //the categories that are no longer in the new list of categories should be removed
-        var removed = _.difference(oldCategories.all, categories);
-
-        //the categories that are not in the old categories collection should be added to the children
-        var propagated = _.difference(categories, oldCategories.all);
+        toRemove = _.difference(currentCategories.all, newCategories);
 
         //process the modification
-        addCategories(model, propagated);
-        removeCategories(model, removed);
+        addCategories(model, toAdd);
+        removeCategories(model, toRemove);
     }
 
     /**
@@ -64,22 +77,27 @@ define([
      * @returns {object}
      */
     function getCategories(model){
+        var categories,
+            arrays,
+            union,
+            propagated,
+            partial;
 
         if(isValidSectionModel(model)){
-            var categories = _.map(model.sectionParts, function (itemRef){
+            categories = _.map(model.sectionParts, function (itemRef){
                 if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
                     return _.compact(itemRef.categories);
                 }
             });
             //array of categories
-            var arrays = _.values(categories);
-            var union = _.union.apply(null, arrays);
+            arrays = _.values(categories);
+            union = _.union.apply(null, arrays);
 
             //categories that are common to all itemRef
-            var propagated = _.intersection.apply(null, arrays);
+            propagated = _.intersection.apply(null, arrays);
 
             //the categories that are only partially covered on the section level : complementary of "propagated"
-            var partial = _.difference(union, propagated);
+            partial = _.difference(union, propagated);
 
             return {
                 all : union.sort(),
