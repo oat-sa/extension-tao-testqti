@@ -50,22 +50,28 @@ define([
                     .map(function(categoryEl) {
                         return categoryEl.value;
                     }),
-                customSelected = $customCategoriesSelect
-                    .val()
-                    .split(',')
-                    .filter(function(val) {
-                        return !!val;
+                customSelected = $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice').not('.partial')
+                    .toArray()
+                    .map(function(categoryEl) {
+                        return categoryEl.textContent && categoryEl.textContent.trim();
+                    }),
+                customIndeterminate = $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice.partial')
+                    .toArray()
+                    .map(function(categoryEl) {
+                        return categoryEl.textContent && categoryEl.textContent.trim();
                     });
 
             allCategories = presetSelected
                 .concat(presetIndeterminate)
-                .concat(customSelected);
+                .concat(customSelected)
+                .concat(customIndeterminate);
 
             /**
              * @event modelOverseer#category-change
              * @param {Array} categories
              */
-            this.trigger('category-change', allCategories, presetIndeterminate);
+            // todo: refactor to only trigger selected categories and reverse the sectionCategory helper process
+            this.trigger('category-change', allCategories, presetIndeterminate.concat(customIndeterminate));
         }
 
         categoryManager = {
@@ -107,17 +113,19 @@ define([
                 });
             },
 
-            updateFormState: function updateFormState(selectedCategories, partiallySelected) {
+            updateFormState: function updateFormState(selectedCategories, indeterminateCategories) {
                 var presetListId = _.pluck(allPresets, 'qtiCategory'),
                     customCategories = _.difference(selectedCategories, presetListId);
 
-                partiallySelected = partiallySelected || [];
+                indeterminateCategories = indeterminateCategories || [];
+
+                // Preset categories
 
                 $presetsCheckboxes = $container.find('.category-preset input');
                 $presetsCheckboxes.each(function() {
                     var category = this.value;
 
-                    if (partiallySelected.indexOf(category) !== -1) {
+                    if (indeterminateCategories.indexOf(category) !== -1) {
                         this.indeterminate = true;
                         this.checked = false;
                     } else if (selectedCategories.indexOf(category) !== -1) {
@@ -129,7 +137,17 @@ define([
                     }
                 });
 
+                // Custom categories
+
                 $customCategoriesSelect.select2('val', customCategories);
+
+                $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice').each(function(){
+                    var $li = $(this);
+                    var content = $li.find('div').text();
+                    if(indeterminateCategories.indexOf(content) !== -1){
+                        $li.addClass('partial');
+                    }
+                });
             }
         };
 
