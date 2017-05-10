@@ -80,10 +80,10 @@
 
         <div class="grid-row">
             <div class="col-5">
-                <label for="itemref-category-custom">{{__ 'Custom categories'}}</label>
+                <label for="category-custom">{{__ 'Custom categories'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="itemref-category-custom"/>
+                <input type="text" name="category-custom"/>
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>

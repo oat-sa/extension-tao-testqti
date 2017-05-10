@@ -29,62 +29,67 @@ define([
 
     var allPresets = [];
 
-    function categoryManagerFactory($container, selectedCategories, partiallySelected) {
+    function categoryManagerFactory($container) {
         var categoryManager,
             allCategories,
 
             $presetsContainer = $container.find('.category-presets'),
             $presetsCheckboxes,
-            $customCategoriesSelect = $container.find('[name=itemref-category-custom]');
-
-        partiallySelected = partiallySelected || [];
+            $customCategoriesSelect = $container.find('[name=category-custom]');
 
         function updateCategories() {
-            var $selectedCheckboxes = $container.find('.category-preset input:checked'),
-                presetCategories = [],
-                customCategories = $customCategoriesSelect
+            var presetSelected = $container
+                    .find('.category-preset input:checked')
+                    .toArray()
+                    .map(function(categoryEl) {
+                        return categoryEl.value;
+                    }),
+                presetIndeterminate = $container
+                    .find('.category-preset input:indeterminate')
+                    .toArray()
+                    .map(function(categoryEl) {
+                        return categoryEl.value;
+                    }),
+                customSelected = $customCategoriesSelect
                     .val()
                     .split(',')
                     .filter(function(val) {
                         return !!val;
                     });
 
-            $selectedCheckboxes.each(function() {
-                presetCategories.push($(this).val());
-            });
-
-            allCategories = presetCategories.concat(customCategories);
+            allCategories = presetSelected
+                .concat(presetIndeterminate)
+                .concat(customSelected);
 
             /**
              * @event modelOverseer#category-change
              * @param {Array} categories
              */
-            this.trigger('category-change', allCategories);
-            console.table(allCategories);
+            this.trigger('category-change', allCategories, presetIndeterminate);
         }
 
         categoryManager = {
             createForm: function createForm() {
                 var self = this,
-                    presetsTpl = templates.properties.categorypresets,
+                    presetsTpl = templates.properties.categorypresets;
 
-                    instancePresets = _.cloneDeep(allPresets); //todo: gnnn
-
-
-                // categories presets
-                instancePresets.forEach(function (preset) {
-                    //todo: refactor this to allow indeterminate
-                    preset.checked = (selectedCategories.indexOf(preset.qtiCategory) !== -1);
-                });
-
+                // add preset checkboxes
                 $presetsContainer.append(
-                    presetsTpl(instancePresets)
+                    presetsTpl(allPresets)
                 );
 
-                $presetsContainer.on('click', function() {
-                    _.defer(function() {
-                        updateCategories.call(self);
-                    });
+                $presetsContainer.on('click', function(e) {
+                    var $preset = $(e.target).closest('.category-preset'),
+                        $checkbox;
+
+                    if ($preset.length) {
+                        $checkbox = $preset.find('input');
+                        $checkbox.prop('indeterminate', false);
+
+                        _.defer(function() {
+                            updateCategories.call(self);
+                        });
+                    }
                 });
 
                 // init custom categories field
@@ -102,21 +107,25 @@ define([
                 });
             },
 
-            initForm: function initForm() {
+            updateFormState: function updateFormState(selectedCategories, partiallySelected) {
                 var presetListId = _.pluck(allPresets, 'qtiCategory'),
                     customCategories = _.difference(selectedCategories, presetListId);
 
-                $presetsCheckboxes = $container.find('.category-preset input:checked');
+                partiallySelected = partiallySelected || [];
 
+                $presetsCheckboxes = $container.find('.category-preset input');
                 $presetsCheckboxes.each(function() {
-                    var $checkbox = $(this),
-                        category = $checkbox.val();
+                    var category = this.value;
 
-                    if (selectedCategories.indexOf(category) !== -1) {
-                        $checkbox.prop('checked', true);
-
-                    } else if (partiallySelected.indexOf(category) !== -1) {
-                        $checkbox.prop('indeterminate', true);
+                    if (partiallySelected.indexOf(category) !== -1) {
+                        this.indeterminate = true;
+                        this.checked = false;
+                    } else if (selectedCategories.indexOf(category) !== -1) {
+                        this.indeterminate = false;
+                        this.checked = true;
+                    } else {
+                        this.indeterminate = false;
+                        this.checked = false;
                     }
                 });
 

@@ -29,10 +29,24 @@ define([
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/categoryManager',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints'
 ],
-function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTestHelper, sectionCategory, sectionBlueprint){
+function(
+    $,
+    _,
+    uri,
+    __,
+    actions,
+    itemRefView,
+    rubricBlockView,
+    templates,
+    qtiTestHelper,
+    categoryManagerFactory,
+    sectionCategory,
+    sectionBlueprint
+){
     'use strict';
 
     /**
@@ -317,60 +331,30 @@ function($, _, uri, __, actions, itemRefView, rubricBlockView, templates, qtiTes
          * @fires modelOverseer#category-change
          */
         function categoriesProperty($view){
-            var $select = $('[name=section-category]', $view);
-            $select.select2({
-                width: '100%',
-                tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
-                multiple : true,
-                tokenSeparators: [",", " ", ";"],
-                formatNoMatches : function(){
-                    return __('Enter a category');
-                },
-                maximumInputLength : 32
-            }).on('change', function(e){
-                setCategories(e.val);
-            });
+            var categoryManager = categoryManagerFactory($view);
 
-            initCategories();
+            categoryManager.createForm();
+            updateFormState(categoryManager);
+
             $view.on('propopen.propview', function(){
-                initCategories();
+                updateFormState(categoryManager);
             });
 
-            /**
-             * Start the categories editing
-             * @private
-             */
-            function initCategories(){
+            categoryManager.on('category-change', function(newCategories, indeterminate) {
+                sectionCategory.setCategories(sectionModel, newCategories, indeterminate);
 
-                var categories = sectionCategory.getCategories(sectionModel);
+                modelOverseer.trigger('category-change', newCategories);
+            });
+        }
 
-                //set categories found in the model in the select2 input
-                $select.select2('val', categories.all);
+        function updateFormState(categoryManager) {
+            var categories = sectionCategory.getCategories(sectionModel);
+            categoryManager.updateFormState(categories.all, categories.partial);
 
-                //color partial categories
-                $select.siblings('.select2-container').find('.select2-search-choice').each(function(){
-                    var $li = $(this);
-                    var content = $li.find('div').text();
-                    if(_.indexOf(categories.partial, content) >= 0){
-                        $li.addClass('partial');
-                    }
-                });
-            }
-
-            /**
-             * save the categories into the model
-             * @private
-             */
-            function setCategories(categories){
-                sectionCategory.setCategories(sectionModel, categories);
-
-                /**
-                 * @event modelOverseer#category-change
-                 * @param {Array} categories
-                 */
-                modelOverseer.trigger('category-change', categories);
-            }
-
+            // console.log('updating section form. All:');
+            // console.table(categories.all);
+            // console.log('Partial:');
+            // console.table(categories.partial);
         }
 
         /**

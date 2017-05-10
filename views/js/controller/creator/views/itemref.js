@@ -94,18 +94,21 @@ function(
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            var categoryManager = categoryManagerFactory($view, refModel.categories),
+            var categoryManager = categoryManagerFactory($view),
                 $categoryField = $view.find('[name="itemref-category"]');
 
             categoryManager.createForm();
-            categoryManager.initForm();
+            categoryManager.updateFormState(refModel.categories);
 
             $view.on('propopen.propview', function(){
-                categoryManager.initForm();
+                console.log('itemref propopen: model categories');
+                console.table(refModel.categories);
+                categoryManager.updateFormState(refModel.categories);
             });
 
             categoryManager.on('category-change', function(categories) {
                 $categoryField.val(categories.join(','));
+                $categoryField.trigger('change');
 
                 modelOverseer.trigger('category-change', categories);
             });
