@@ -23,7 +23,7 @@ use JsonSerializable;
 use common_exception_InconsistentData;
 
 /**
- * A POPO that represents a test category
+ * A POPO that represents a test category preset
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -35,7 +35,7 @@ class TestCategoryPreset implements JsonSerializable
     private $id;
 
     /**
-     * @var string $label - short category name
+     * @var string $label - short preset name
      */
     private $label;
 
@@ -47,36 +47,44 @@ class TestCategoryPreset implements JsonSerializable
     /**
      * @var string $description - what is the category purpose
      */
-    private $description;
+    private $description = '';
+
+    /**
+     * @var string $order - to sort the categories
+     */
+    private $order = 0;
 
 
     /**
-     * Create a test category
+     * Create a test category preset
      * @param string $id
      * @param string $label
-     * @param string $description
-     * @param array $qtiCategory
+     * @param string $qtiCategory
+     * @param array $data - optional parameters
      * @throws common_exception_InconsistentData
      */
-    public function __construct ($id, $label, $qtiCategory, $description)
+    public function __construct ($id, $label, $qtiCategory, $data)
     {
         if(! is_string($id) || empty($id)) {
-            throw new common_exception_InconsistentData('The category needs an id');
+            throw new common_exception_InconsistentData('The category preset needs an id');
         }
         if(! is_string($label) || empty($label)) {
-            throw new common_exception_InconsistentData('The category needs a label');
-        }
-        if(! is_string($description) || empty($description)) {
-            throw new common_exception_InconsistentData('The category needs a description');
+            throw new common_exception_InconsistentData('The category preset needs a label');
         }
         if(! is_string($qtiCategory) || empty($qtiCategory)) {
-            throw new common_exception_InconsistentData('The category needs a qti category');
+            throw new common_exception_InconsistentData('The category preset needs a qti category');
         }
 
         $this->id           = (string) $id;
         $this->label        = (string) $label;
         $this->qtiCategory  = (string) $qtiCategory;
-        $this->description  = (string) $description;
+
+        if(isset($data['description'])) {
+            $this->description = (string) $data['description'];
+        }
+        if(isset($data['order'])) {
+            $this->order = (integer) $data['order'];
+        }
     }
 
     public function getId()
@@ -99,6 +107,11 @@ class TestCategoryPreset implements JsonSerializable
         return $this->description;
     }
 
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
     /**
      * @see JsonSerializable::jsonSerialize
      */
@@ -117,12 +130,13 @@ class TestCategoryPreset implements JsonSerializable
             'id'          => $this->id,
             'label'       => $this->label,
             'qtiCategory' => $this->qtiCategory,
-            'description' => $this->description
+            'description' => $this->description,
+            'order'       => $this->order
         ];
     }
 
     /**
-     * Create a test category from an assoc array
+     * Create a test category preset from an assoc array
      * @param array $data
      * @return TestCategoryPreset the new instance
      * @throws common_exception_InconsistentData
@@ -130,16 +144,14 @@ class TestCategoryPreset implements JsonSerializable
     public static function fromArray( array $data )
     {
         if( !isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory']) ) {
-            throw new common_exception_InconsistentData('The test category requires an id, a label and a qtiCategory');
+            throw new common_exception_InconsistentData('The test category preset requires an id, a label and a qtiCategory');
         }
-        if( !isset($data['description'])) {
-            $data['description'] = '';
-        }
+
         return new self(
             $data['id'],
             $data['label'],
             $data['qtiCategory'],
-            $data['description']
+            $data
         );
     }
 
