@@ -16,7 +16,7 @@
 *
 * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
-use oat\taoQtiTest\models\TestCategoryProvider;
+use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
 
 /**
@@ -44,7 +44,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             }
             $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
 
-            $testCategoriesService = $this->getServiceManager()->get(TestCategoryProvider::SERVICE_ID);
+            $testCategoriesService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
             $this->setData('qtiCategoriesData', json_encode($testCategoriesService->getCategories()));
 
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));

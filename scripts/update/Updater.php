@@ -20,7 +20,7 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\taoQtiTest\models\TestCategoryProvider;
+use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -1211,8 +1211,8 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('8.1.0', '9.0.2');
 
         if ($this->isVersion('9.0.2')) {
-            $this->getServiceManager()->register(TestCategoryProvider::SERVICE_ID, new TestCategoryProvider());
-            $this->setVersion('9.1.0');
+            $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+//            $this->setVersion('9.1.0');
         }
     }
 }

@@ -23,11 +23,11 @@ use JsonSerializable;
 use common_exception_InconsistentData;
 
 /**
- * A POPO that reprensents a test category
+ * A POPO that represents a test category
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
-class TestCategory implements JsonSerializable
+class TestCategoryPreset implements JsonSerializable
 {
     /**
      * @var string $id
@@ -124,7 +124,7 @@ class TestCategory implements JsonSerializable
     /**
      * Create a test category from an assoc array
      * @param array $data
-     * @return TestCategory the new instance
+     * @return TestCategoryPreset the new instance
      * @throws common_exception_InconsistentData
      */
     public static function fromArray( array $data )
