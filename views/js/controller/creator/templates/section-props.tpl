@@ -132,15 +132,10 @@
     </div>
     {{/if}}
 
-    <h4 class="toggler closed" data-toggle="~ .categories">{{__ 'Categories'}}</h4>
-
-    <div class="categories toggled">
-
-        <div class="category-presets"></div>
-
+    <div class="categories">
         <div class="grid-row">
             <div class="col-5">
-                <label for="category-custom">{{__ 'Custom categories'}}</label>
+                <label for="category-custom">{{__ 'Categories'}}</label>
             </div>
             <div class="col-6">
                 <input type="text" name="category-custom"/>
@@ -152,6 +147,8 @@
                 </div>
             </div>
         </div>
+
+        <div class="category-presets"></div>
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .section-selection">{{__ 'Selection'}}</h4>

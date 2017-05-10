@@ -189,7 +189,7 @@ class TestCategoryPresetProvider extends ConfigurableService
         if (empty($this->allPresets)) {
             $this->allPresets = $this->getDefaultPresets();
         }
-        uasort($this->allPresets, function($a, $b) {
+        usort($this->allPresets, function($a, $b) {
             $aOrder = $a['groupOrder'];
             $bOrder = $b['groupOrder'];
             if ($aOrder == $bOrder) {

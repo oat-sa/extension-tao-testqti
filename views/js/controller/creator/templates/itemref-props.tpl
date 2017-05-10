@@ -72,18 +72,13 @@
         </div>
     </div>
 
-    <h4 class="toggler closed" data-toggle="~ .categories">{{__ 'Categories'}}</h4>
-
-    <div class="categories toggled">
-
-        <div class="category-presets"></div>
-
+    <div class="categories">
         <div class="grid-row">
             <div class="col-5">
-                <label for="category-custom">{{__ 'Custom categories'}}</label>
+                <label for="category-custom">{{__ 'Categories'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="category-custom"/>
+                <input type="text" title="custom categories" name="category-custom"/>
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -94,7 +89,10 @@
         </div>
 
         <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
-        <textarea type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
+        <textarea title="categories" class="hidden" type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
+
+        <!-- some user features (Test Navigation, Test Taker Tools, etc.) are in fact implemented as categories. They will appear here: -->
+        <div class="category-presets"></div>
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>

@@ -101,12 +101,11 @@ function(
             categoryManager.updateFormState(refModel.categories);
 
             $view.on('propopen.propview', function(){
-                console.log('itemref propopen: model categories');
-                console.table(refModel.categories);
                 categoryManager.updateFormState(refModel.categories);
             });
 
             categoryManager.on('category-change', function(categories) {
+                // update the model by going through the binder via the category hidden field
                 $categoryField.val(categories.join(','));
                 $categoryField.trigger('change');
 

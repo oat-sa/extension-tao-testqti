@@ -29,6 +29,8 @@ define([
 
     var allPresets = [];
 
+    var allQtiCategories = [];
+
     function categoryManagerFactory($container) {
         var categoryManager,
             allCategories,
@@ -114,8 +116,7 @@ define([
             },
 
             updateFormState: function updateFormState(selectedCategories, indeterminateCategories) {
-                var presetListId = _.pluck(allPresets, 'qtiCategory'),
-                    customCategories = _.difference(selectedCategories, presetListId);
+                var customCategories = _.difference(selectedCategories, allQtiCategories);
 
                 indeterminateCategories = indeterminateCategories || [];
 
@@ -159,8 +160,16 @@ define([
     categoryManagerFactory.setPresets = function setPresets(presets) {
         if (_.isArray(presets)) {
             allPresets = presets;
+            allQtiCategories = extractCategoriesFromPresets();
         }
     };
+
+    function extractCategoriesFromPresets() {
+        return allPresets.reduce(function (prev, current) {
+            var groupIds = _.pluck(current.presets, 'qtiCategory');
+            return prev.concat(groupIds);
+        }, []);
+    }
 
     return categoryManagerFactory;
 });

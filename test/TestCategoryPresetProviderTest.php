@@ -99,7 +99,7 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
             $previousOrder = $group['groupOrder'];
         }
 
-        $allPresets = $sortedCategories['group3']['presets'];
+        $allPresets = $sortedCategories[0]['presets'];
 
         $previousOrder = 0;
         forEach($allPresets as $preset) {
