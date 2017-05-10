@@ -81,7 +81,7 @@ requirejs.config({
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
-            qtiCategories : <?=get_data('qtiCategoriesData')?>,
+            categoriesPresets : <?=get_data('categoriesPresets')?>,
             labels : <?=get_data('labels')?>
        }
     }

@@ -116,6 +116,7 @@ define([
           * @param {Object} options
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
+          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
           */
         start : function(options){
             var self = this;
@@ -128,9 +129,9 @@ define([
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
-            options.qtiCategories = options.qtiCategories || {};
+            options.categoriesPresets = options.categoriesPresets || {};
 
-            categoryManager.setPresets(options.qtiCategories);
+            categoryManager.setPresets(options.categoriesPresets);
 
             //back button
             $('#authoringBack').on('click', function(e){
