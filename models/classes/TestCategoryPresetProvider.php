@@ -178,28 +178,30 @@ class TestCategoryPresetProvider extends ConfigurableService
         ];
     }
 
+    private function compareNum($a, $b) {
+        if ($a == $b) {
+            return 0;
+        }
+        return ($a < $b) ? -1 : 1;
+    }
+
+    /**
+     * @return array - the sorted preset list
+     */
     public function getPresets() {
         if (empty($this->allPresets)) {
             $this->allPresets = $this->getDefaultPresets();
         }
+        // sort groups
         usort($this->allPresets, function($a, $b) {
-            $aOrder = $a['groupOrder'];
-            $bOrder = $b['groupOrder'];
-            if ($aOrder == $bOrder) {
-                return 0;
-            }
-            return ($aOrder < $bOrder) ? -1 : 1;
+            return $this->compareNum($a['groupOrder'], $b['groupOrder']);
         });
 
+        // sort categories
         foreach($this->allPresets as &$presetGroup) {
             if (!empty($presetGroup)) {
                 usort($presetGroup['presets'], function($a, $b) {
-                    $aOrder = $a->getOrder();
-                    $bOrder = $b->getOrder();
-                    if ($aOrder == $bOrder) {
-                        return 0;
-                    }
-                    return ($aOrder < $bOrder) ? -1 : 1;
+                    return $this->compareNum($a->getOrder(), $b->getOrder());
                 });
             }
         }
