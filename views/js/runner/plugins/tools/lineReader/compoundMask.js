@@ -70,6 +70,17 @@ define([
     };
     var constrains;
 
+
+    /**
+     * Round up to the next even number to prevent the need for sub-pixel rendering
+     *
+     * @param value
+     * @returns {number}
+     */
+    function ceilToEvenInt(value) {
+        return Math.ceil(value/2) * 2;
+    }
+
     /**
      * @param {Object} options
      * @param {Number} options.resizeHandleSize - size of the resize handlers on each resizable edge
@@ -115,20 +126,22 @@ define([
         function createMask(maskConfig) {
             var mask,
                 maskAPI = {
-                    place: maskConfig.place,
-                    placeOverlay: maskConfig.placeOverlay,
+                place: maskConfig.place,
+                placeOverlay: maskConfig.placeOverlay,
 
-                    styleResizableEdges: function styleResizableEdges() {
-                        var $element = this.getElement();
-                        _.forOwn(this.config.edges, function (isResizable, edgeId) {
-                            if (isResizable) {
-                                $element.addClass('border-' + edgeId);
-                            }
-                        });
-                    }
-                };
+                styleResizableEdges: function styleResizableEdges() {
+                    var $element = this.getElement();
+                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                        if (isResizable) {
+                            $element.addClass('border-' + edgeId);
+                        }
+                    });
+                }
+            };
+
 
             mask = componentFactory(maskAPI, maskConfig);
+
             makeResizable(mask);
             makeStackable(mask, stackingOptions);
 
@@ -285,6 +298,7 @@ define([
 
                     // apply the new transform model
                     applyTransforms();
+
                 })
                 .init();
         }
@@ -435,6 +449,7 @@ define([
             });
         }
 
+
         /**
          * =================================
          * Transform model related functions
@@ -442,6 +457,16 @@ define([
          */
 
         function applyTransforms() {
+
+            // round dimensions and positions up to the next even integer
+            _.forOwn(dimensions, function(value, key) {
+                dimensions[key] = ceilToEvenInt(value);
+            });
+
+            _.forOwn(position, function(value, key) {
+                position[key] = ceilToEvenInt(value);
+            });
+
             applyTransformsToMasks();
             applyTransformsToOverlays();
             applyTransformsToInnerDrag();
