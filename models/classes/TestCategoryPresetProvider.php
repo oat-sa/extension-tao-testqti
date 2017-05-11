@@ -66,18 +66,11 @@ class TestCategoryPresetProvider extends ConfigurableService
                         'order'         => 300
                     ]),
                     TestCategoryPreset::fromArray([
-                        'id'            => 'exit',
-                        'label'         => __('Exit Button'),
-                        'qtiCategory'   => 'x-tao-option-exit',
-                        'description'   => __('Displays a button to exit the test'),
-                        'order'         => 400
-                    ]),
-                    TestCategoryPreset::fromArray([
                         'id'            => 'nextSection',
                         'label'         => __('Next Section Button'),
                         'qtiCategory'   => 'x-tao-option-nextSection',
                         'description'   => __('Displays a next section button'),
-                        'order'         => 500
+                        'order'         => 400
                     ])
                 ]
             ],
