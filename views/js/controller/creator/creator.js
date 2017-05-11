@@ -133,8 +133,6 @@ define([
 
             categorySelector.setPresets(options.categoriesPresets);
 
-            console.dir(options.categoriesPresets);
-
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();

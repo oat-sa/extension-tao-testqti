@@ -16,6 +16,11 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
+ * This helper manages the category selection UI:
+ * - either via a text entry field that allow to enter any custom categories
+ * - either via displaying grouped checkboxes that allow to select any categories presets
+ * All categories are then grouped and given to this object's listeners, as they will later end up in the same model field.
+ *
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
@@ -34,19 +39,20 @@ define([
 
     function categorySelectorFactory($container) {
         var categorySelector,
-            allCategories,
-            selectedCategories,
-            indeterminatedCategories,
 
             $presetsContainer = $container.find('.category-presets'),
             $presetsCheckboxes,
             $customCategoriesSelect = $container.find('[name=category-custom]');
 
         /**
-         * Read the form state from the DOM and trigger an event with the result so the listener can update the item/section model
+         * Read the form state from the DOM and trigger an event with the result, so the listeners can update the item/section model
+         * @fires categorySelector#category-change
          */
         function updateCategories() {
-            var presetSelected = $container
+            var selectedCategories,
+                indeterminatedCategories,
+
+                presetSelected = $container
                     .find('.category-preset input:checked')
                     .toArray()
                     .map(function(categoryEl) {
@@ -72,17 +78,11 @@ define([
             selectedCategories = presetSelected.concat(customSelected);
             indeterminatedCategories = presetIndeterminate.concat(customIndeterminate);
 
-            allCategories = presetSelected
-                .concat(presetIndeterminate)
-                .concat(customSelected)
-                .concat(customIndeterminate);
-
             /**
              * @event categorySelector#category-change
              * @param {String[]} allCategories
              * @param {String[]} indeterminate
              */
-            // todo: refactor to only trigger selected categories and reverse the sectionCategory helper process
             this.trigger('category-change', selectedCategories, indeterminatedCategories);
         }
 
@@ -137,8 +137,8 @@ define([
 
             /**
              * Check/Uncheck boxes and fill the custom category field to match the new model
-             * @param {String[]} selected - all categories associated with the items or the section items, even if they are indeterminate at the section level
-             * @param {String[]} indeterminate - only categories in an indeterminate state at a section level
+             * @param {String[]} selected - categories associated with an item, or with all the items of the same section
+             * @param {String[]} indeterminate - categories in an indeterminate state at a section level
              */
             updateFormState: function updateFormState(selected, indeterminate) {
                 var customCategories = _.difference(selected, allQtiCategoriesPresets);

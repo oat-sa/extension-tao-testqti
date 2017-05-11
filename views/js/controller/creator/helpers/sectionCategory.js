@@ -54,7 +54,7 @@ define([
         //the categories that are no longer in the new list of categories should be removed
         toRemove = _.difference(currentCategories.all, selected.concat(partial));
 
-        //the categories that are not in the old categories collection should be added to the children
+        //the categories that are not in the current categories collection should be added to the children
         toAdd = _.difference(selected, currentCategories.propagated);
 
         //process the modification

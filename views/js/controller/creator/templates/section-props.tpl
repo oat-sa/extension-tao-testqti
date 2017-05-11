@@ -148,6 +148,7 @@
             </div>
         </div>
 
+        <!-- some user features (Test Navigation, Test Taker Tools, etc.) are in fact implemented as categories. They will appear here: -->
         <div class="category-presets"></div>
     </div>
 
