@@ -23,8 +23,9 @@ define([
     'lodash',
     'i18n',
     'core/eventifier',
+    'ui/tooltip',
     'taoQtiTest/controller/creator/templates/index'
-], function($, _, __, eventifier, templates) {
+], function($, _, __, eventifier, tooltip, templates) {
     'use strict';
 
     var allPresets = [];
@@ -114,6 +115,8 @@ define([
                 }).on('change', function(){
                     updateCategories.call(self);
                 });
+
+                tooltip($container);
             },
 
             updateFormState: function updateFormState(selectedCategories, indeterminateCategories) {
