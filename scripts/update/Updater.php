@@ -1212,5 +1212,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('8.1.0', '9.1.3');
+
+        if($this->isVersion('9.1.3')){
+            $registry = PluginRegistry::getRegistry();
+            foreach($registry->getMap() as $module => $plugin){
+                if(preg_match("/^taoQtiTest/", $module) && is_null($plugin['bundle'])){
+                    $plugin['bundle'] = 'taoQtiTest/loader/testPlugins.min';
+                    $registry->register(TestPlugin::fromArray($plugin));
+                }
+            }
+            $this->setVersion('9.2.0');
+        }
     }
 }
