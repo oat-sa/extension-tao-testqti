@@ -157,6 +157,10 @@ define([
                 description : __('displays a next section button')
             },
             {
+                name : 'x-tao-option-unansweredWarning',
+                description : __('displays a warning before the user finishes the part, only if there are unanswered/marked for review items')
+            },
+            {
                 name : 'x-tao-option-noExitTimedSectionWarning',
                 description : __('disable the warning automatically displayed upon exiting a timed section')
             },
@@ -175,6 +179,10 @@ define([
             {
                 name : 'x-tao-option-calculator',
                 description : __('enable calculator')
+            },
+            {
+                name : 'x-tao-option-answerMasking',
+                description : __('enable answer masking tool')
             },
             {
                 name : 'x-tao-option-areaMasking',

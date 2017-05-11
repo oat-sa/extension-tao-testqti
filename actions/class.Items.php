@@ -19,6 +19,7 @@
 
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoItems\model\CategoryService;
+use qtism\common\utils\Format;
 
 /**
  * Actions about Items in a Test context.
@@ -135,7 +136,17 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
         if (count($items) > 0) {
             $service = $this->getServiceManager()->get(CategoryService::SERVICE_ID);
-            $categories = $service->getItemsCategories($items);
+            $itemsCategories = $service->getItemsCategories($items);
+
+            //filter all values that wouldn't be valid XML identifiers
+            foreach ($itemsCategories as $itemUri => $itemCategories){
+                $filtered = array_filter($itemCategories, function($categorie){
+                    return Format::isIdentifier($categorie);
+                });
+                if(count($filtered) > 0){
+                    $categories[$itemUri] = $filtered;
+                }
+            }
         }
         $this->returnJson($categories);
     }

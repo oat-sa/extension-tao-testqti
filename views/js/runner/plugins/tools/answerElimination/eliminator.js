@@ -98,7 +98,7 @@ define([
              * Checks if the plugin is currently available
              * @returns {Boolean}
              */
-            function isEnabled() {
+            function isPluginEnabled() {
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
                 //to be activated with the special category x-tao-option-eliminator
@@ -108,12 +108,74 @@ define([
             /**
              * Is plugin activated ? if not, then we hide the plugin
              */
-            function togglePlugin() {
-                if (isEnabled()) {
+            function togglePluginButton() {
+                if (isPluginEnabled()) {
                     self.show();
                 } else {
                     self.hide();
                 }
+            }
+
+            function togglePlugin() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                self.$choiceInteractions.toggleClass('eliminable');
+                if (isEliminable()) {
+                    enableEliminator();
+                } else {
+                    disableEliminator();
+                }
+            }
+
+            function isEliminable() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                return self.$choiceInteractions.hasClass('eliminable');
+            }
+
+            function enableEliminator() {
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
+
+                self.button.turnOn();
+                self.trigger('start');
+
+                if(config.restoreEliminationsOnOpen) {
+                    $choices.each(function() {
+                        var input = this.querySelector('.real-label input');
+                        if(this.dataset.wasEliminated) {
+                            this.dataset.wasEliminated = null;
+                            this.classList.add('eliminated');
+                            input.setAttribute('disabled', 'disabled');
+                            input.checked = false;
+                        }
+                    });
+                }
+            }
+
+            function disableEliminator() {
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
+
+                self.$choiceInteractions.removeClass('eliminable');
+                self.button.turnOff();
+                self.trigger('end');
+
+                $choices.each(function() {
+                    if(this.classList.contains('eliminated')) {
+                        this.dataset.wasEliminated = true;
+                        this.classList.remove('eliminated');
+                        this.querySelector('.real-label input').removeAttribute('disabled');
+                    }
+                });
             }
 
             //add a new mask each time the button is pressed
@@ -139,7 +201,7 @@ define([
 
             //update plugin state based on changes
             testRunner
-                .on('loaditem', togglePlugin)
+                .on('loaditem', togglePluginButton)
                 .on('renderitem', function conditionalInit() {
                     // show button only when in the presence of choice interactions
                     self.$choiceInteractions = $container.find('.qti-choiceInteraction');
@@ -147,7 +209,7 @@ define([
                         self.hide();
                         return;
                     }
-                    if (isEnabled()) {
+                    if (isPluginEnabled()) {
                         self.show();
                     }
                 })
@@ -156,39 +218,19 @@ define([
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
+                    disableEliminator();
                 })
+
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
-                    var $choices = self.$choiceInteractions.find('.qti-choice');
-                    if (isEnabled()) {
-                        self.$choiceInteractions.toggleClass('eliminable');
-                        if (self.$choiceInteractions.hasClass('eliminable')) {
-                            self.button.turnOn();
-                            testRunner.trigger('plugin-start.' + pluginName);
-
-                            if(config.restoreEliminationsOnOpen) {
-                                $choices.each(function() {
-                                    var input = this.querySelector('.real-label input');
-                                    if(this.dataset.wasEliminated) {
-                                        this.dataset.wasEliminated = null;
-                                        this.classList.add('eliminated');
-                                        input.setAttribute('disabled', 'disabled');
-                                        input.checked = false;
-                                    }
-                                });
-                            }
-                        } else {
-                            self.button.turnOff();
-                            testRunner.trigger('plugin-end.' + pluginName);
-
-                            $choices.each(function() {
-                                if(this.classList.contains('eliminated')) {
-                                    this.dataset.wasEliminated = true;
-                                    this.classList.remove('eliminated');
-                                    this.querySelector('.real-label input').removeAttribute('disabled');
-                                }
-                            });
-                        }
+                    if (isPluginEnabled()) {
+                        togglePlugin();
+                    }
+                })
+                // Answer-eliminator and Answer-masking are mutually exclusive tools
+                .on('tool-answer-masking-toggle', function () {
+                    if (isEliminable()) {
+                        disableEliminator();
                     }
                 });
         },

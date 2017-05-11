@@ -65,7 +65,8 @@ class QtiRunnerMap implements RunnerMap
         $forceTitles = !empty($reviewConfig['forceTitle']);
         $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
-        
+        $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
 
@@ -90,7 +91,13 @@ class QtiRunnerMap implements RunnerMap
                 // load item infos
                 $testPart = $routeItem->getTestPart();
                 $partId = $testPart->getIdentifier();
-                $section = $routeItem->getAssessmentSection();
+
+                if ($displaySubsectionTitle) {
+                    $section = $routeItem->getAssessmentSection();
+                } else {
+                    $sections = $routeItem->getAssessmentSections()->getArrayCopy();
+                    $section = $sections[0];
+                }
                 $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
                 $itemUri = strstr($itemRef->getHref(), '|', true);
@@ -121,7 +128,7 @@ class QtiRunnerMap implements RunnerMap
                         $label = $item->getLabel();
                     }
                 }
-                
+
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
