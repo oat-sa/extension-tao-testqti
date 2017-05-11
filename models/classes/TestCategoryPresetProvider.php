@@ -46,30 +46,30 @@ class TestCategoryPresetProvider extends ConfigurableService
                 'presets'    => [
                     TestCategoryPreset::fromArray([
                         'id'            => 'reviewScreen',
-                        'label'         => __('Review Screen'),
+                        'label'         => __('Enable Review Screen'),
                         'qtiCategory'   => 'x-tao-option-reviewScreen',
-                        'description'   => __('Displays the review screen / navigator'),
+                        'description'   => __('Enable the item review screen / navigator.'),
                         'order'         => 100
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'markReview',
-                        'label'         => __('Mark For Review Button'),
+                        'label'         => __('Enable Mark for Review'),
                         'qtiCategory'   => 'x-tao-option-markReview',
-                        'description'   => __('Displays a mark for review button. Requires the Review Screen option'),
+                        'description'   => __('Enable mark for review of items. Requires the Review Screen option.'),
                         'order'         => 200
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'informational',
-                        'label'         => __('Informational item'),
+                        'label'         => __('Informational Item Usage'),
                         'qtiCategory'   => 'x-tao-itemusage-informational',
-                        'description'   => __('Force the item to be considered as informational, so it does not increase the unanswered items counter'),
+                        'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
                         'order'         => 300
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'nextSection',
-                        'label'         => __('Next Section Button'),
+                        'label'         => __('Allow Section Skipping'),
                         'qtiCategory'   => 'x-tao-option-nextSection',
-                        'description'   => __('Displays a next section button'),
+                        'description'   => __('Allow skipping of the current section.'),
                         'order'         => 400
                     ])
                 ]
@@ -77,42 +77,42 @@ class TestCategoryPresetProvider extends ConfigurableService
 
             'warnings' => [
                 'groupId'    => 'warnings',
-                'groupLabel' => __('Navigation warnings'),
+                'groupLabel' => __('Navigation Warnings'),
                 'groupOrder' => 200,
                 'presets'    => [
                     TestCategoryPreset::fromArray([
                         'id'            => 'endTestWarning',
-                        'label'         => __('End Test Warning'),
+                        'label'         => __('Display End Test Warning'),
                         'qtiCategory'   => 'x-tao-option-endTestWarning',
-                        'description'   => __('Displays a warning before the user finishes the test'),
+                        'description'   => __('Display a warning before the test-taker ends the test.'),
                         'order'         => 100
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'nextPartWarning',
-                        'label'         => __('Next Part Warning'),
+                        'label'         => __('Display Next Part Warning'),
                         'qtiCategory'   => 'x-tao-option-nextPartWarning',
-                        'description'   => __('Displays a warning before the user finishes a part'),
+                        'description'   => __('Display a warning before the test-taker ends the test part.'),
                         'order'         => 200
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'nextSectionWarning',
-                        'label'         => __('Next Section Warning'),
+                        'label'         => __('Display Next Section Warning'),
                         'qtiCategory'   => 'x-tao-option-nextSectionWarning',
-                        'description'   => __('Displays a warning before changing section. Works only with the next section button.'),
+                        'description'   => __('Display a warning before the test-taker skips the section. Requires the Section Skipping option.'),
                         'order'         => 300
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'noExitTimedSectionWarning',
-                        'label'         => __('noExitTimedSectionWarning'),
+                        'label'         => __('Hide Section Timeout Warning'),
                         'qtiCategory'   => 'x-tao-option-noExitTimedSectionWarning',
-                        'description'   => __('Disable the warning automatically displayed upon exiting a timed section'),
+                        'description'   => __('Hide the warning automatically displayed when a section times out.'),
                         'order'         => 400
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'unansweredWarning',
-                        'label'         => __('Unanswered Warning'),
+                        'label'         => __('Display Unanswered Warning'),
                         'qtiCategory'   => 'x-tao-option-unansweredWarning',
-                        'description'   => __('Displays a warning before the user leaves the part, but only if there are unanswered/marked for review items. To display the warning in any case, use the Next Part Warning option'),
+                        'description'   => __('Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.'),
                         'order'         => 500
                     ]),
                 ]
@@ -120,56 +120,56 @@ class TestCategoryPresetProvider extends ConfigurableService
 
             'tools' => [
                 'groupId'    => 'tools',
-                'groupLabel' => __('Test Taker Tools '),
+                'groupLabel' => __('Test Taker Tools'),
                 'groupOrder' => 300,
                 'presets'    => [
                     TestCategoryPreset::fromArray([
                         'id'            => 'eliminator',
                         'label'         => __('Answer Eliminator'),
                         'qtiCategory'   => 'x-tao-option-eliminator',
-                        'description'   => __('Allow the test taker to eliminate answers in choices interactions'),
+                        'description'   => __('Allow the test-taker to eliminate / strikethrough answers in choice interactions.'),
                         'order'         => 100
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'answerMasking',
                         'label'         => __('Answer Masking'),
                         'qtiCategory'   => 'x-tao-option-answerMasking',
-                        'description'   => __('Allow the test taker to masks and reveal answers in choices interactions'),
+                        'description'   => __('Allow the test-taker to mask and unmask answers in choice interactions.'),
                         'order'         => 200
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'areaMasking',
                         'label'         => __('Area Masking'),
                         'qtiCategory'   => 'x-tao-option-areaMasking',
-                        'description'   => __('Allow the test taker to hide part of the items with a movable mask'),
+                        'description'   => __('Allow the test-taker to mask parts of the item with a movable mask.'),
                         'order'         => 300
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'calculator',
                         'label'         => __('Calculator'),
                         'qtiCategory'   => 'x-tao-option-calculator',
-                        'description'   => __('Display a calculator'),
+                        'description'   => __('Allow the test-taker to use a basic calculator.'),
                         'order'         => 400
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'highlighter',
                         'label'         => __('Highlighter'),
                         'qtiCategory'   => 'x-tao-option-highlighter',
-                        'description'   => __('Allow the test taker to highlight parts of the text'),
+                        'description'   => __('Allow the test-taker to highlight parts of the item text.'),
                         'order'         => 500
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'lineReader',
                         'label'         => __('Line Reader'),
                         'qtiCategory'   => 'x-tao-option-lineReader',
-                        'description'   => __('Display a mask with a hole that allow the test taker to visually isolate a text line'),
+                        'description'   => __('Allow the test-taker to visually isolate a line of text.'),
                         'order'         => 600
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'magnifier',
                         'label'         => __('Magnifier'),
                         'qtiCategory'   => 'x-tao-option-magnifier',
-                        'description'   => __('Display a movable magnifier tool'),
+                        'description'   => __('Allow the test-taker to use a movable magnifier tool.'),
                         'order'         => 700
                     ]),
                 ]
