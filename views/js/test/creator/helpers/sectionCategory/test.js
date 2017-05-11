@@ -122,7 +122,7 @@ define([
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
 
         //remove B, E and F and add G
-        sectionCategory.setCategories(sectionModel, ['A', 'C', 'D', 'G']);
+        sectionCategory.setCategories(sectionModel, ['A', 'G'], ['C', 'D']);
 
         //check result
         categories = sectionCategory.getCategories(sectionModel);
@@ -142,7 +142,7 @@ define([
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
 
         // remove A, propagate C, remove F, add G
-        sectionCategory.setCategories(sectionModel, ['B', 'C', 'D', 'E', 'G'], ['D', 'E']);
+        sectionCategory.setCategories(sectionModel, ['B', 'C', 'G'], ['D', 'E']);
 
         //check result
         categories = sectionCategory.getCategories(sectionModel);

@@ -341,10 +341,10 @@ function(
                 updateFormState(categorySelector);
             });
 
-            categorySelector.on('category-change', function(newCategories, indeterminate) {
-                sectionCategory.setCategories(sectionModel, newCategories, indeterminate);
+            categorySelector.on('category-change', function(selected, indeterminate) {
+                sectionCategory.setCategories(sectionModel, selected, indeterminate);
 
-                modelOverseer.trigger('category-change', newCategories);
+                modelOverseer.trigger('category-change');
             });
         }
 

@@ -104,12 +104,12 @@ function(
                 categorySelector.updateFormState(refModel.categories);
             });
 
-            categorySelector.on('category-change', function(categories) {
-                // update the model by going through the binder via the category hidden field
-                $categoryField.val(categories.join(','));
+            categorySelector.on('category-change', function(selected) {
+                // Let the binder update the model by going through the category hidden field
+                $categoryField.val(selected.join(','));
                 $categoryField.trigger('change');
 
-                modelOverseer.trigger('category-change', categories);
+                modelOverseer.trigger('category-change', selected);
             });
         }
 

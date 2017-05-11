@@ -35,6 +35,8 @@ define([
     function categorySelectorFactory($container) {
         var categorySelector,
             allCategories,
+            selectedCategories,
+            indeterminatedCategories,
 
             $presetsContainer = $container.find('.category-presets'),
             $presetsCheckboxes,
@@ -67,6 +69,9 @@ define([
                         return categoryEl.textContent && categoryEl.textContent.trim();
                     });
 
+            selectedCategories = presetSelected.concat(customSelected);
+            indeterminatedCategories = presetIndeterminate.concat(customIndeterminate);
+
             allCategories = presetSelected
                 .concat(presetIndeterminate)
                 .concat(customSelected)
@@ -78,7 +83,7 @@ define([
              * @param {String[]} indeterminate
              */
             // todo: refactor to only trigger selected categories and reverse the sectionCategory helper process
-            this.trigger('category-change', allCategories, presetIndeterminate.concat(customIndeterminate));
+            this.trigger('category-change', selectedCategories, indeterminatedCategories);
         }
 
         categorySelector = {

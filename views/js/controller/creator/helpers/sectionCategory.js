@@ -39,31 +39,23 @@ define([
      * Set an array of categories to the section model (affect the childen itemRef)
      *
      * @param {object} model
-     * @param {array} allCategories - all active categories, whether in a checked or indeterminate state
-     * @param {array} indeterminate - only categories in an indeterminate state, in case we work on a section level
+     * @param {array} selected - all categories active for the whole section
+     * @param {array} partial - only categories in an indeterminate state
      * @returns {undefined}
      */
-    function setCategories(model, allCategories, indeterminate){
+    function setCategories(model, selected, partial){
 
         var toRemove,
             toAdd,
-            currentCategories = getCategories(model),
-            existingSelectedOrIndeterminate;
+            currentCategories = getCategories(model);
 
-        indeterminate = indeterminate || [];
-
-        // if we have some indeterminate categories declared, then we need to do some extra math
-        // before we can determine what are the categories to add
-        // Categories to add are categories which are in the new list and that:
-        // - where not previously checked (propagated)
-        // - are not in the current indeterminate state
-        existingSelectedOrIndeterminate = (indeterminate.length)
-            ? currentCategories.propagated.concat(indeterminate)
-            : currentCategories.all;
-        toAdd = _.difference(allCategories, existingSelectedOrIndeterminate);
+        partial = partial || [];
 
         //the categories that are no longer in the new list of categories should be removed
-        toRemove = _.difference(currentCategories.all, allCategories);
+        toRemove = _.difference(currentCategories.all, selected.concat(partial));
+
+        //the categories that are not in the old categories collection should be added to the children
+        toAdd = _.difference(selected, currentCategories.propagated);
 
         //process the modification
         addCategories(model, toAdd);
