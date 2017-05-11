@@ -29,7 +29,7 @@ define([
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'taoQtiTest/controller/creator/helpers/categoryManager',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints'
 ],
@@ -43,7 +43,7 @@ function(
     rubricBlockView,
     templates,
     qtiTestHelper,
-    categoryManagerFactory,
+    categorySelectorFactory,
     sectionCategory,
     sectionBlueprint
 ){
@@ -332,25 +332,25 @@ function(
          */
         function categoriesProperty($view){
             var categories = sectionCategory.getCategories(sectionModel),
-                categoryManager = categoryManagerFactory($view);
+                categorySelector = categorySelectorFactory($view);
 
-            categoryManager.createForm(categories.all);
-            updateFormState(categoryManager);
+            categorySelector.createForm(categories.all);
+            updateFormState(categorySelector);
 
             $view.on('propopen.propview', function(){
-                updateFormState(categoryManager);
+                updateFormState(categorySelector);
             });
 
-            categoryManager.on('category-change', function(newCategories, indeterminate) {
+            categorySelector.on('category-change', function(newCategories, indeterminate) {
                 sectionCategory.setCategories(sectionModel, newCategories, indeterminate);
 
                 modelOverseer.trigger('category-change', newCategories);
             });
         }
 
-        function updateFormState(categoryManager) {
+        function updateFormState(categorySelector) {
             var categories = sectionCategory.getCategories(sectionModel);
-            categoryManager.updateFormState(categories.all, categories.partial);
+            categorySelector.updateFormState(categories.all, categories.partial);
         }
 
         /**

@@ -37,7 +37,7 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
-    'taoQtiTest/controller/creator/helpers/categoryManager',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
     'core/validator/validators',
     'core/promise'
 ], function(
@@ -58,7 +58,7 @@ define([
     templates,
     qtiTestHelper,
     scoringHelper,
-    categoryManager,
+    categorySelector,
     validators,
     Promise
     ){
@@ -131,7 +131,7 @@ define([
             options.labels = options.labels || {};
             options.categoriesPresets = options.categoriesPresets || {};
 
-            categoryManager.setPresets(options.categoriesPresets);
+            categorySelector.setPresets(options.categoriesPresets);
 
             console.dir(options.categoriesPresets);
 

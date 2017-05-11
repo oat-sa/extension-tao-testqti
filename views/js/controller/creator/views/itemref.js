@@ -24,7 +24,7 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
-    'taoQtiTest/controller/creator/helpers/categoryManager',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/templates/index'
@@ -34,7 +34,7 @@ function(
     _,
     __,
     actions,
-    categoryManagerFactory,
+    categorySelectorFactory,
     sectionCategory,
     qtiTestHelper,
     templates
@@ -94,17 +94,17 @@ function(
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            var categoryManager = categoryManagerFactory($view),
+            var categorySelector = categorySelectorFactory($view),
                 $categoryField = $view.find('[name="itemref-category"]');
 
-            categoryManager.createForm();
-            categoryManager.updateFormState(refModel.categories);
+            categorySelector.createForm();
+            categorySelector.updateFormState(refModel.categories);
 
             $view.on('propopen.propview', function(){
-                categoryManager.updateFormState(refModel.categories);
+                categorySelector.updateFormState(refModel.categories);
             });
 
-            categoryManager.on('category-change', function(categories) {
+            categorySelector.on('category-change', function(categories) {
                 // update the model by going through the binder via the category hidden field
                 $categoryField.val(categories.join(','));
                 $categoryField.trigger('change');

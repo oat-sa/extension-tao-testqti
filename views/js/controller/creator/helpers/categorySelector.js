@@ -31,8 +31,8 @@ define([
 
     var allQtiCategoriesPresets = [];
 
-    function categoryManagerFactory($container) {
-        var categoryManager,
+    function categorySelectorFactory($container) {
+        var categorySelector,
             allCategories,
 
             $presetsContainer = $container.find('.category-presets'),
@@ -76,7 +76,7 @@ define([
             this.trigger('category-change', allCategories, presetIndeterminate.concat(customIndeterminate));
         }
 
-        categoryManager = {
+        categorySelector = {
             createForm: function createForm(currentCategories) {
                 var self = this,
                     presetsTpl = templates.properties.categorypresets,
@@ -100,8 +100,6 @@ define([
                         });
                     }
                 });
-
-                console.table(customCategories);
 
                 // init custom categories field
                 $customCategoriesSelect.select2({
@@ -155,12 +153,12 @@ define([
             }
         };
 
-        eventifier(categoryManager);
+        eventifier(categorySelector);
 
-        return categoryManager;
+        return categorySelector;
     }
 
-    categoryManagerFactory.setPresets = function setPresets(presets) {
+    categorySelectorFactory.setPresets = function setPresets(presets) {
         if (_.isArray(presets)) {
             allPresets = presets;
             allQtiCategoriesPresets = extractCategoriesFromPresets();
@@ -174,5 +172,5 @@ define([
         }, []);
     }
 
-    return categoryManagerFactory;
+    return categorySelectorFactory;
 });
