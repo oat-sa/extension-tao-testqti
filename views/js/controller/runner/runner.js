@@ -25,6 +25,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'context',
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
@@ -37,7 +38,7 @@ define([
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, Promise, communicator, pollProvider, loggerFactory, loadingBar, feedback,
+], function ($, _, __, context, Promise, communicator, pollProvider, loggerFactory, loadingBar, feedback,
              runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
@@ -128,16 +129,10 @@ define([
              * @returns {Promise} resolves with the list of loaded plugins
              */
             var loadPlugins = function loadPlugins(plugins){
-                var pluginLoader = pluginLoaderFactory();
 
-                _.forEach(plugins, function (plugin, module) {
-                    pluginLoader.add(module, plugin.category);
-                });
-                return pluginLoader
-                        .load()
-                        .then(function(){
-                            return pluginLoader.getPlugins();
-                        });
+                return pluginLoaderFactory()
+                        .addList(plugins)
+                        .load(context.bundle);
             };
 
             /**
