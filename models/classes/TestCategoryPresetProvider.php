@@ -103,9 +103,9 @@ class TestCategoryPresetProvider extends ConfigurableService
                     ]),
                     TestCategoryPreset::fromArray([
                         'id'            => 'noExitTimedSectionWarning',
-                        'label'         => __('Hide Section Timeout Warning'),
+                        'label'         => __('Hide Timed Section Warning'),
                         'qtiCategory'   => 'x-tao-option-noExitTimedSectionWarning',
-                        'description'   => __('Hide the warning automatically displayed when a section times out.'),
+                        'description'   => __('Hide the warning automatically displayed when a test-taker exit a timed section.'),
                         'order'         => 400
                     ]),
                     TestCategoryPreset::fromArray([
