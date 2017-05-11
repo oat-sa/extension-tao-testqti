@@ -350,7 +350,7 @@ function(
 
         function updateFormState(categorySelector) {
             var categories = sectionCategory.getCategories(sectionModel);
-            categorySelector.updateFormState(categories.all, categories.partial);
+            categorySelector.updateFormState(categories.propagated, categories.partial);
         }
 
         /**

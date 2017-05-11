@@ -29,7 +29,8 @@ define([
     'i18n',
     'core/eventifier',
     'ui/tooltip',
-    'taoQtiTest/controller/creator/templates/index'
+    'taoQtiTest/controller/creator/templates/index',
+    'select2'
 ], function($, _, __, eventifier, tooltip, templates) {
     'use strict';
 
@@ -90,7 +91,7 @@ define([
             /**
              * Create the category selection form
              *
-             * @param {Array} currentCategories - all categories currently associated to the item. If applied to a section,
+             * @param {Array} [currentCategories] - all categories currently associated to the item. If applied to a section,
              * contains all the categories applied to at least one item of the section.
              */
             createForm: function createForm(currentCategories) {
@@ -138,12 +139,14 @@ define([
             /**
              * Check/Uncheck boxes and fill the custom category field to match the new model
              * @param {String[]} selected - categories associated with an item, or with all the items of the same section
-             * @param {String[]} indeterminate - categories in an indeterminate state at a section level
+             * @param {String[]} [indeterminate] - categories in an indeterminate state at a section level
              */
             updateFormState: function updateFormState(selected, indeterminate) {
-                var customCategories = _.difference(selected, allQtiCategoriesPresets);
+                var customCategories;
 
                 indeterminate = indeterminate || [];
+
+                customCategories = _.difference(selected.concat(indeterminate), allQtiCategoriesPresets);
 
                 // Preset categories
 
