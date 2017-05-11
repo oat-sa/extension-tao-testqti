@@ -331,9 +331,10 @@ function(
          * @fires modelOverseer#category-change
          */
         function categoriesProperty($view){
-            var categoryManager = categoryManagerFactory($view);
+            var categories = sectionCategory.getCategories(sectionModel),
+                categoryManager = categoryManagerFactory($view);
 
-            categoryManager.createForm();
+            categoryManager.createForm(categories.all);
             updateFormState(categoryManager);
 
             $view.on('propopen.propview', function(){
@@ -350,11 +351,6 @@ function(
         function updateFormState(categoryManager) {
             var categories = sectionCategory.getCategories(sectionModel);
             categoryManager.updateFormState(categories.all, categories.partial);
-
-            // console.log('updating section form. All:');
-            // console.table(categories.all);
-            // console.log('Partial:');
-            // console.table(categories.partial);
         }
 
         /**

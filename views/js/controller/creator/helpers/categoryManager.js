@@ -29,7 +29,7 @@ define([
 
     var allPresets = [];
 
-    var allQtiCategories = [];
+    var allQtiCategoriesPresets = [];
 
     function categoryManagerFactory($container) {
         var categoryManager,
@@ -77,9 +77,10 @@ define([
         }
 
         categoryManager = {
-            createForm: function createForm() {
+            createForm: function createForm(currentCategories) {
                 var self = this,
-                    presetsTpl = templates.properties.categorypresets;
+                    presetsTpl = templates.properties.categorypresets,
+                    customCategories = _.difference(currentCategories, allQtiCategoriesPresets);
 
                 // add preset checkboxes
                 $presetsContainer.append(
@@ -100,10 +101,12 @@ define([
                     }
                 });
 
+                console.table(customCategories);
+
                 // init custom categories field
                 $customCategoriesSelect.select2({
                     width: '100%',
-                    tags : [],
+                    tags : customCategories,
                     multiple : true,
                     tokenSeparators: [",", " ", ";"],
                     formatNoMatches : function(){
@@ -116,7 +119,7 @@ define([
             },
 
             updateFormState: function updateFormState(selectedCategories, indeterminateCategories) {
-                var customCategories = _.difference(selectedCategories, allQtiCategories);
+                var customCategories = _.difference(selectedCategories, allQtiCategoriesPresets);
 
                 indeterminateCategories = indeterminateCategories || [];
 
@@ -160,7 +163,7 @@ define([
     categoryManagerFactory.setPresets = function setPresets(presets) {
         if (_.isArray(presets)) {
             allPresets = presets;
-            allQtiCategories = extractCategoriesFromPresets();
+            allQtiCategoriesPresets = extractCategoriesFromPresets();
         }
     };
 

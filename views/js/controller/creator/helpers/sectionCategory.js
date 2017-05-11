@@ -39,11 +39,11 @@ define([
      * Set an array of categories to the section model (affect the childen itemRef)
      *
      * @param {object} model
-     * @param {array} newCategories - all active categories, whether in a checked or indeterminate state
+     * @param {array} allCategories - all active categories, whether in a checked or indeterminate state
      * @param {array} indeterminate - only categories in an indeterminate state, in case we work on a section level
      * @returns {undefined}
      */
-    function setCategories(model, newCategories, indeterminate){
+    function setCategories(model, allCategories, indeterminate){
 
         var toRemove,
             toAdd,
@@ -60,10 +60,10 @@ define([
         existingSelectedOrIndeterminate = (indeterminate.length)
             ? currentCategories.propagated.concat(indeterminate)
             : currentCategories.all;
-        toAdd = _.difference(newCategories, existingSelectedOrIndeterminate);
+        toAdd = _.difference(allCategories, existingSelectedOrIndeterminate);
 
         //the categories that are no longer in the new list of categories should be removed
-        toRemove = _.difference(currentCategories.all, newCategories);
+        toRemove = _.difference(currentCategories.all, allCategories);
 
         //process the modification
         addCategories(model, toAdd);
