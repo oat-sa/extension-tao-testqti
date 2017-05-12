@@ -120,14 +120,36 @@ define([
         assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'B'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
-        
+
         //remove B, E and F and add G
-        sectionCategory.setCategories(sectionModel, ['A', 'C', 'D', 'G']);
-        
+        sectionCategory.setCategories(sectionModel, ['A', 'G'], ['C', 'D']);
+
         //check result
         categories = sectionCategory.getCategories(sectionModel);
         assert.deepEqual(categories.all, ['A', 'C', 'D', 'G'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'G' ], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D'], 'partial categories found');
     });
+
+
+    QUnit.test('setCategories: handle indeterminated/partial add and removal', function (assert){
+
+        var sectionModel = _.cloneDeep(_sectionModel);
+        var categories = sectionCategory.getCategories(sectionModel);
+
+        assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
+        assert.deepEqual(categories.propagated, ['A', 'B'], 'propagated categories found');
+        assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
+
+        // remove A, propagate C, remove F, add G
+        sectionCategory.setCategories(sectionModel, ['B', 'C', 'G'], ['D', 'E']);
+
+        //check result
+        categories = sectionCategory.getCategories(sectionModel);
+        assert.deepEqual(categories.all, ['B', 'C', 'D', 'E', 'G'], 'all categories found');
+        assert.deepEqual(categories.propagated, ['B', 'C', 'G' ], 'propagated categories found');
+        assert.deepEqual(categories.partial, ['D', 'E'], 'partial categories found');
+    });
+
+
 });
