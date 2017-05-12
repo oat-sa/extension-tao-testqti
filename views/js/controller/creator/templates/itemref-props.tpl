@@ -78,7 +78,7 @@
                 <label for="category-custom">{{__ 'Categories'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" title="custom categories" name="category-custom"/>
+                <input type="text" title="{{__ 'custom categories'}}" name="category-custom"/>
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
