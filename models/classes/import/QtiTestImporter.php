@@ -37,10 +37,10 @@ class QtiTestImporter extends AbstractTestImporter
      * @param File $file
      * @return \common_report_Report
      */
-    public function import(File $file)
+    public function import(File $file, \core_kernel_classes_Class $class = null)
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file);
+        return $service->importQtiTest($file, $class);
     }
 }

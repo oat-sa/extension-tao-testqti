@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models\tasks;
 
+use function FastRoute\TestFixtures\empty_options_cached;
 use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
@@ -54,7 +55,27 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
-        return $importer->import($file);
+
+        $class = null;
+        if (isset($params['class'])) {
+            $class = new \core_kernel_classes_Class($params['class']);
+        }
+
+        /** @var \common_report_Report $report */
+        $report = $importer->import($file, $class);
+
+        if (isset($params['resource']) && !empty($params['resource'])) {
+            $taskResource = self::getTaskClass()->searchInstances([
+                Task::PROPERTY_LINKED_RESOURCE => $params['resource']
+            ]);
+            $testResource = new \core_kernel_classes_Resource($params['resource']);
+            $taskResource->setPropertyValue(
+                new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
+                json_encode($report)
+            );
+        }
+
+        return $report;
     }
 
     /**
@@ -70,15 +91,31 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * @param array $packageFile uploaded file
      * @return Task created task id
      */
-    public static function createTask($packageFile)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class = null)
     {
+        if ($class === null) {
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        }
+        $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
 
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        return $queue->createTask($action, ['file' => $fileUri]);
+        $task =  $queue->createTask($action, [
+            'file' => $fileUri,
+            'class' => $class->getUri(),
+            'resource' => $testResource->getUri()
+        ]);
+        $taskResource = self::getTaskClass()->createInstance('', '', $task->getId());
+
+        $taskResource->setPropertyValue(
+            new \core_kernel_classes_Property(Task::PROPERTY_LINKED_RESOURCE),
+            $testResource->getUri()
+        );
+
+        return $task;
     }
 
 }
