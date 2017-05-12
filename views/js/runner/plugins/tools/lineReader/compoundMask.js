@@ -126,22 +126,20 @@ define([
         function createMask(maskConfig) {
             var mask,
                 maskAPI = {
-                place: maskConfig.place,
-                placeOverlay: maskConfig.placeOverlay,
+                    place: maskConfig.place,
+                    placeOverlay: maskConfig.placeOverlay,
 
-                styleResizableEdges: function styleResizableEdges() {
-                    var $element = this.getElement();
-                    _.forOwn(this.config.edges, function (isResizable, edgeId) {
-                        if (isResizable) {
-                            $element.addClass('border-' + edgeId);
-                        }
-                    });
-                }
-            };
-
+                    styleResizableEdges: function styleResizableEdges() {
+                        var $element = this.getElement();
+                        _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                            if (isResizable) {
+                                $element.addClass('border-' + edgeId);
+                            }
+                        });
+                    }
+                };
 
             mask = componentFactory(maskAPI, maskConfig);
-
             makeResizable(mask);
             makeStackable(mask, stackingOptions);
 
@@ -448,7 +446,6 @@ define([
                 }
             });
         }
-
 
         /**
          * =================================
