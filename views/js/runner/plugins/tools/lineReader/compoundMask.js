@@ -70,6 +70,17 @@ define([
     };
     var constrains;
 
+
+    /**
+     * Round up to the next even number to prevent the need for sub-pixel rendering
+     *
+     * @param value
+     * @returns {number}
+     */
+    function ceilToEvenInt(value) {
+        return Math.ceil(value/2) * 2;
+    }
+
     /**
      * @param {Object} options
      * @param {Number} options.resizeHandleSize - size of the resize handlers on each resizable edge
@@ -285,6 +296,7 @@ define([
 
                     // apply the new transform model
                     applyTransforms();
+
                 })
                 .init();
         }
@@ -442,6 +454,16 @@ define([
          */
 
         function applyTransforms() {
+
+            // round dimensions and positions up to the next even integer
+            _.forOwn(dimensions, function(value, key) {
+                dimensions[key] = ceilToEvenInt(value);
+            });
+
+            _.forOwn(position, function(value, key) {
+                position[key] = ceilToEvenInt(value);
+            });
+
             applyTransformsToMasks();
             applyTransformsToOverlays();
             applyTransformsToInnerDrag();
