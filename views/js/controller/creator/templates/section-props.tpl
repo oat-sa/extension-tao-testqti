@@ -132,20 +132,24 @@
     </div>
     {{/if}}
 
-    <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="section-category">{{__ 'Categories'}}</label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="section-category" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category.'}}
+    <div class="categories">
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="category-custom">{{__ 'Categories'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="category-custom"/>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ 'Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category.'}}
+                </div>
             </div>
         </div>
+
+        <!-- some user features (Test Navigation, Test Taker Tools, etc.) are in fact implemented as categories. They will appear here: -->
+        <div class="category-presets"></div>
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .section-selection">{{__ 'Selection'}}</h4>

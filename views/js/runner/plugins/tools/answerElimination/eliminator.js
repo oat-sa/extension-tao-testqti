@@ -117,6 +117,9 @@ define([
             }
 
             function togglePlugin() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
                 self.$choiceInteractions.toggleClass('eliminable');
                 if (isEliminable()) {
                     enableEliminator();
@@ -126,14 +129,21 @@ define([
             }
 
             function isEliminable() {
+                if (!self.$choiceInteractions) {
+                    return;
+                }
                 return self.$choiceInteractions.hasClass('eliminable');
             }
 
             function enableEliminator() {
-                var $choices = self.$choiceInteractions.find('.qti-choice');
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
 
                 self.button.turnOn();
-                testRunner.trigger('plugin-start.' + pluginName);
+                self.trigger('start');
 
                 if(config.restoreEliminationsOnOpen) {
                     $choices.each(function() {
@@ -149,11 +159,15 @@ define([
             }
 
             function disableEliminator() {
-                var $choices = self.$choiceInteractions.find('.qti-choice');
+                var $choices;
+                if (!self.$choiceInteractions) {
+                    return;
+                }
+                $choices = self.$choiceInteractions.find('.qti-choice');
 
                 self.$choiceInteractions.removeClass('eliminable');
                 self.button.turnOff();
-                testRunner.trigger('plugin-end.' + pluginName);
+                self.trigger('end');
 
                 $choices.each(function() {
                     if(this.classList.contains('eliminated')) {
@@ -204,7 +218,9 @@ define([
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();
+                    disableEliminator();
                 })
+
                 // commands that controls the plugin
                 .on(actionPrefix + 'toggle', function () {
                     if (isPluginEnabled()) {

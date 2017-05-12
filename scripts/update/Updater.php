@@ -20,6 +20,9 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\tao\model\accessControl\func\AccessRule;
+use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -258,9 +261,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->setVersion($currentVersion);
 
         if ($this->isBetween('2.16.0','2.17.0')) {
-            $proctorRole = new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole');
-            $accessService = \funcAcl_models_classes_AccessService::singleton();
-            $accessService->grantModuleAccess($proctorRole, 'taoQtiTest', 'Runner');
+            AclProxy::applyRule(new AccessRule(
+                AccessRule::GRANT,
+                INSTANCE_ROLE_DELIVERY,
+                ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
+            ));
 
             try {
                 $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
@@ -1180,7 +1185,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('7.6.0');
         }
-      
+
         $this->skip('7.6.0', '8.0.0');
 
         if($this->isVersion('8.0.0')){
@@ -1207,6 +1212,26 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('8.1.0');
         }
 
-        $this->skip('8.1.0', '9.0.0');
+        $this->skip('8.1.0', '9.1.3');
+
+        if($this->isVersion('9.1.3')){
+            $registry = PluginRegistry::getRegistry();
+            foreach($registry->getMap() as $module => $plugin){
+                if(preg_match("/^taoQtiTest/", $module) && is_null($plugin['bundle'])){
+                    $plugin['bundle'] = 'taoQtiTest/loader/testPlugins.min';
+                    $registry->register(TestPlugin::fromArray($plugin));
+                }
+            }
+            $this->setVersion('9.2.0');
+        }
+
+        $this->skip('9.2.0', '9.2.1');
+
+        if ($this->isVersion('9.2.1')) {
+            $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+            $this->setVersion('9.3.0');
+        }
+
+        $this->skip('9.3.0', '9.3.2');
     }
 }
