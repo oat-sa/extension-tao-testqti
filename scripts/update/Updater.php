@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -1225,5 +1226,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('9.2.0', '9.2.1');
+
+        if ($this->isVersion('9.2.1')) {
+            $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+            $this->setVersion('9.3.0');
+        }
     }
 }
