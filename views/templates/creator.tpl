@@ -81,6 +81,7 @@ requirejs.config({
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
+            categoriesPresets : <?=get_data('categoriesPresets')?>,
             labels : <?=get_data('labels')?>
        }
     }

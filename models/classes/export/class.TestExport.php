@@ -95,7 +95,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
                         ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
                     ) {
                         $report->setType(common_report_Report::TYPE_ERROR);
-                        $report->setMessage(__('Not all test could be export', $testResource->getLabel()));
+                        $report->setMessage(__('Not all test could be exported'));
                     }
                     $report->add($subReport);
                 }

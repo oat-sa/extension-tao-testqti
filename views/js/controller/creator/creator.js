@@ -37,6 +37,7 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
     'core/validator/validators',
     'core/promise'
 ], function(
@@ -57,6 +58,7 @@ define([
     templates,
     qtiTestHelper,
     scoringHelper,
+    categorySelector,
     validators,
     Promise
     ){
@@ -114,6 +116,7 @@ define([
           * @param {Object} options
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
+          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
           */
         start : function(options){
             var self = this;
@@ -126,7 +129,9 @@ define([
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
+            options.categoriesPresets = options.categoriesPresets || {};
 
+            categorySelector.setPresets(options.categoriesPresets);
 
             //back button
             $('#authoringBack').on('click', function(e){
