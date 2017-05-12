@@ -1225,7 +1225,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.2.0');
         }
 
-        if ($this->isVersion('9.2.0')) {
+        $this->skip('9.2.0', '9.2.1');
+
+        if ($this->isVersion('9.2.1')) {
             $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
             $this->setVersion('9.3.0');
         }
