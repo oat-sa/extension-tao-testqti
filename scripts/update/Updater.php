@@ -469,10 +469,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('3.4.0')) {
             $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
-            $dir = new \core_kernel_file_File($uri);
-
-            $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
+            $fileResource = new \core_kernel_classes_Resource($uri);
+            $fileSystem = (string) $fileResource->getUniquePropertyValue(new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository'));
+            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fileSystem);
 
             $this->setVersion('4.0.0');
         }
