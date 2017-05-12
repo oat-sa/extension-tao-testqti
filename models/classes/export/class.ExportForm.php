@@ -27,8 +27,7 @@
  * @package taoItems
  
  */
-class taoQtiTest_models_classes_export_ExportForm
-    extends tao_helpers_form_FormContainer
+abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_form_FormContainer
 {
     // --- ASSOCIATIONS ---
 
@@ -122,7 +121,13 @@ class taoQtiTest_models_classes_export_ExportForm
 		$this->form->addElement($instanceElt);
 
 
-    	$this->form->createGroup('options', __('Export QTI 2.1 Test Package'), array( 'filename', 'instances'));
+    	$this->form->createGroup('options', '<h3>'.$this->getFormGroupName().'</h3>', array( 'filename', 'instances'));
     }
+
+	/**
+	 * Get the form group name to be display
+	 * @return string
+	 */
+	abstract protected function getFormGroupName();
 
 }
