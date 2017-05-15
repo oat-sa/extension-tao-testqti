@@ -202,10 +202,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     protected function exportItems()
     {
-        $report = common_report_Report::createSuccess();
-        $subReport = common_report_Report::createSuccess();
+        $report = common_report_Report::createSuccess(__('Export successful for the test "%s"', $this->getItem()->getLabel()));
         $identifiers = array();
-
 
         $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
@@ -239,10 +237,12 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             if ($report->getType() !== common_report_Report::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
             ) {
+                //only report erros otherwise the list of report can be very long
                 $report->setType(common_report_Report::TYPE_ERROR);
-                $report->setMessage(__('Export error in test : %s', $this->getItem()->getLabel()));
+                $report->setMessage(__('Export failed for the test "%s"', $this->getItem()->getLabel()));
+                $report->add($subReport);
             }
-            $report->add($subReport);
+
         }
         $report->setData($identifiers);
 
