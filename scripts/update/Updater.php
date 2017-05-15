@@ -1225,13 +1225,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.2.0');
         }
 
-        $this->skip('9.2.0', '9.2.1');
+        $this->skip('9.2.0', '9.3.2');
 
-        if ($this->isVersion('9.2.1')) {
-            $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
-            $this->setVersion('9.3.0');
+        if ($this->isVersion('9.3.2')) {
+            if (!$this->getServiceManager()->has(TestCategoryPresetProvider::SERVICE_ID)) {
+                $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+            }
+            $this->setVersion('9.3.3');
         }
-
-        $this->skip('9.3.0', '9.3.2');
     }
 }
