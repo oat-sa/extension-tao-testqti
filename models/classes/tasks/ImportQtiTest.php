@@ -65,14 +65,20 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $report = $importer->import($file, $class);
 
         if (isset($params['resource']) && !empty($params['resource'])) {
-            $taskResource = self::getTaskClass()->searchInstances([
-                Task::PROPERTY_LINKED_RESOURCE => $params['resource']
-            ]);
-            $testResource = new \core_kernel_classes_Resource($params['resource']);
-            $taskResource->setPropertyValue(
-                new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
-                json_encode($report)
-            );
+            if ($report->getType() === \common_report_Report::TYPE_SUCCESS) {
+                $testResourcePlaceholder = new \core_kernel_classes_Resource($params['resource']);
+                $testResourcePlaceholder->delete(true);
+            } else {
+                $taskResources = self::getTaskClass()->searchInstances([
+                    Task::PROPERTY_LINKED_RESOURCE => $params['resource']
+                ]);
+                foreach ($taskResources as $taskResource) {
+                    $taskResource->setPropertyValue(
+                        new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
+                        json_encode($report)
+                    );
+                }
+            }
         }
 
         return $report;
@@ -103,7 +109,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        $task =  $queue->createTask($action, [
+        $task = $queue->createTask($action, [
             'file' => $fileUri,
             'class' => $class->getUri(),
             'resource' => $testResource->getUri()
