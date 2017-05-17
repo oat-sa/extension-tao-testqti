@@ -12,6 +12,14 @@
     <script  type="text/javascript">
         QUnit.config.autostart = false;
         require(['/tao/ClientConfig/config'], function(){
+            requirejs.config({
+                paths : {
+                    'mathJax' : '../../../taoQtiTest/views/js/test/runner/plugins/content/rubricBlock/mathJaxMock'
+                },
+                shim : {
+                    'mathJax' : {}
+                }
+            });
             require(['taoQtiTest/test/runner/plugins/content/rubricBlock/test'], function(){
                 QUnit.start();
             });

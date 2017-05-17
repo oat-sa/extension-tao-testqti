@@ -17,13 +17,17 @@
  */
 
 /**
+ * Test the test runner plugin rubricBlock
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock'
-], function($, runnerFactory, providerMock, pluginFactory) {
+    'taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock',
+    'mathJax'
+], function($, runnerFactory, providerMock, pluginFactory, mathJaxMock) {
     'use strict';
 
     var pluginApi;
@@ -71,7 +75,11 @@ define([
         });
 
 
-    QUnit.module('load rubric blocks');
+    QUnit.module('load rubric blocks', {
+        setup : function(){
+            mathJaxMock.called = false;
+        }
+    });
 
     QUnit.asyncTest('render a rubric block', function(assert) {
         var runner        = runnerFactory(providerName);
@@ -180,19 +188,21 @@ define([
         var runner        = runnerFactory(providerName);
         var plugin        = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(2);
+        QUnit.expect(4);
 
         runner.on('rubricblock', function(){
             var $container = runner.getAreaBroker().getContainer();
 
             assert.equal($('#qti-rubrics', $container).length, 1, 'The rubric blocks element is created');
 
-            //unfortunately we cannot assert the math content has been rendered correctly since mathjax is probaly not
-            //installed on the test runtime. We just assert the rubric block is loaded
+            //mathjax is mocked, so we don't assert the transformation
             assert.equal($('#qti-rubrics', $container).find('math').length, 1, 'The rubric blocks element contains a math element');
+            assert.ok(mathJaxMock.called, 'The mathJax mock has been called');
 
             QUnit.start();
         });
+
+        assert.ok(mathJaxMock.called === false, 'The mathJax mock has not been called');
 
         plugin
             .init()

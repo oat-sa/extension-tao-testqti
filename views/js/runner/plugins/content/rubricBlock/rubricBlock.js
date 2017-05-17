@@ -43,9 +43,9 @@ define([
      * Apply mathjax
      */
     var mathify = function mathify($container) {
+
         return new Promise(function(resolve){
             if($('math', $container).length > 0){
-
                 //load mathjax only if necessary
                 require(['mathJax'], function(MathJax){
                     if(MathJax){
@@ -107,7 +107,6 @@ define([
          * Called during the runner's render phase
          */
         render : function render(){
-
             //attach the element before the content area
             var $container = this.getAreaBroker().getContentArea();
             $container.before(this.$element);
