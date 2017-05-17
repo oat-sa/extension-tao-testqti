@@ -22,6 +22,7 @@ return new \oat\taoQtiTest\models\TestModelService(array(
         new taoQtiTest_models_classes_export_TestExport22()
     ),
     'importHandlers' => array(
-        new taoQtiTest_models_classes_import_TestImport()
+        new taoQtiTest_models_classes_import_TestImport(),
+        new \oat\taoQtiTest\models\import\DeferredTestImport()
     )
 ));
