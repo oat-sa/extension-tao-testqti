@@ -21,13 +21,13 @@
 
 namespace oat\taoQtiTest\models\tasks;
 
-use function FastRoute\TestFixtures\empty_options_cached;
 use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
 use oat\oatbox\task\Task;
 use oat\tao\model\import\ImportersService;
-use \oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\import\QtiTestImporter;
+
 /**
  * Class ImportQtiTest
  * @package oat\taoQtiTest\models\tasks
@@ -65,19 +65,14 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $report = $importer->import($file, $class);
 
         if (isset($params['resource']) && !empty($params['resource'])) {
-            if ($report->getType() === \common_report_Report::TYPE_SUCCESS) {
-                $testResourcePlaceholder = new \core_kernel_classes_Resource($params['resource']);
-                $testResourcePlaceholder->delete(true);
-            } else {
-                $taskResources = self::getTaskClass()->searchInstances([
-                    Task::PROPERTY_LINKED_RESOURCE => $params['resource']
-                ]);
-                foreach ($taskResources as $taskResource) {
-                    $taskResource->setPropertyValue(
-                        new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
-                        json_encode($report)
-                    );
-                }
+            $taskResources = self::getTaskClass()->searchInstances([
+                Task::PROPERTY_LINKED_RESOURCE => $params['resource']
+            ]);
+            foreach ($taskResources as $taskResource) {
+                $taskResource->setPropertyValue(
+                    new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
+                    json_encode($report)
+                );
             }
         }
 
@@ -95,33 +90,23 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     /**
      * Create task in queue
      * @param array $packageFile uploaded file
+     * @param \core_kernel_classes_Class $class
+     * @param \core_kernel_classes_Resource $testResource
      * @return Task created task id
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class = null)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, \core_kernel_classes_Resource $testResource)
     {
-        if ($class === null) {
-            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
-        }
-        $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
 
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
-
         $task = $queue->createTask($action, [
             'file' => $fileUri,
             'class' => $class->getUri(),
             'resource' => $testResource->getUri()
         ]);
-        $taskResource = self::getTaskClass()->createInstance('', '', $task->getId());
-
-        $taskResource->setPropertyValue(
-            new \core_kernel_classes_Property(Task::PROPERTY_LINKED_RESOURCE),
-            $testResource->getUri()
-        );
-
+        $queue->linkTask($task, $testResource);
         return $task;
     }
-
 }

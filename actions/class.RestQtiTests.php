@@ -107,7 +107,9 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 $this->returnFailure(new common_exception_BadRequest());
             } else {
-                $task = ImportQtiTest::createTask($file);
+                $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+                $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
+                $task = ImportQtiTest::createTask($file, $class, $testResource);
                 $result = [
                     'reference_id' => $task->getId()
                 ];
