@@ -1055,7 +1055,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
 
             $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
-            if (!$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
+            // do fallback in case userlanguage is not default language
+            if ($userDataLang != DEFAULT_LANG && !$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
             return $directory->getPublicAccessUrl().$userDataLang.'/';
