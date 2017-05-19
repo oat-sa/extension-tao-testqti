@@ -380,13 +380,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext();
             $route = $serviceContext->getTestSession()->getRoute();
 
+            $currentItemRef = $route->current()->getAssessmentItemRef();
+
             //verify the parameter
-            if($route->current()->getAssessmentItemRef()->getHref() != $itemRef){
+            if($currentItemRef->getHref() != $itemRef){
                 throw new \common_exception_Unauthorized('Attempt to get another item');
             }
 
             //load item data
-            $response = $this->getItemDataResponse($serviceContext, $itemRef, $this->getStateId());
+            $response = $this->getItemDataResponse($serviceContext, $currentItemRef, $this->getStateId());
 
             //start the timer
             $this->runnerService->startTimer($serviceContext);
