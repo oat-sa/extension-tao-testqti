@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\tao\model\security\xsrf\TokenService;
+use qtism\data\AssessmentItemRef;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -420,12 +421,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if(!$route->isLast()){
 
                 $assessmentItemRef = $route->getNext()->getAssessmentItemRef();
-                $itemRef = $assessmentItemRef->getHref();
                 $stateId = $serviceContext->getTestExecutionUri() . $assessmentItemRef->getIdentifier();
 
-                $response = $this->getItemDataResponse($serviceContext, $itemRef, $stateId);
+                $response = $this->getItemDataResponse($serviceContext, $assessmentItemRef, $stateId);
                 if(is_array($response)){
-                    $response['itemDefinition'] = $itemRef;
+                    $response['itemDefinition'] = $assessmentItemRef->getHref();
                 }
             } else {
                 $response = [
@@ -445,15 +445,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Create the item definition response for a given item
      * @param RunnerServiceContext $context the current test context
-     * @param string $itemRef the item definition
-     * @param sttring $stateId
+     * @param AssessmentItemRef $itemRef the item definition
+     * @param string $stateId
      * @return array the item data
      */
-    protected function getItemDataResponse(RunnerServiceContext $context, $itemRef, $stateId)
+    protected function getItemDataResponse(RunnerServiceContext $context, AssessmentItemRef $itemRef, $stateId)
     {
-        $itemData = $this->runnerService->getItemData($context, $itemRef);
-        $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
-        $rubrics  = $this->runnerService->getRubrics($context, $itemData['data']['identifier']);
+        $itemData = $this->runnerService->getItemData($context, $itemRef->getHref());
+        $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef->getHref());
+        $rubrics  = $this->runnerService->getRubrics($context, $itemRef);
         if(strlen(trim($rubrics)) == 0){
             $rubrics = null;
         }
