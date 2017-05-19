@@ -51,6 +51,7 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use qtism\data\AssessmentItemRef;
 
 /**
  * Class QtiRunnerService
@@ -443,11 +444,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the rubrics related to the current session state.
      * @param RunnerServiceContext $context
-     * @param string $itemRef (optional) otherwise use the current 
+     * @param AssessmentItemRef $itemRef (optional) otherwise use the current
      * @return mixed
      * @throws \common_Exception
      */
-    public function getRubrics(RunnerServiceContext $context, $itemRef = null)
+    public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $rubricHelper = new QtiRunnerRubric();
@@ -1055,7 +1056,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
 
             $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
-            if (!$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
+            // do fallback in case userlanguage is not default language
+            if ($userDataLang != DEFAULT_LANG && !$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
             return $directory->getPublicAccessUrl().$userDataLang.'/';
