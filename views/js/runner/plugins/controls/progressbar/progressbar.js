@@ -168,7 +168,7 @@ define([
             var testData   = testRunner.getTestData();
             var config     = testData.config.progressIndicator || {};
             var progressIndicator = config.type || 'percentage';
-            var progressScope     = config.scope || 'test';
+            var progressScope = config.scope || 'test';
 
             progressShowTotal = !!config.showTotal;
 
