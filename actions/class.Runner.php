@@ -453,7 +453,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $itemData = $this->runnerService->getItemData($context, $itemRef);
         $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
-        $rubrics  = $this->runnerService->getRubrics($context);
+        $rubrics  = $this->runnerService->getRubrics($context, $itemData['data']['identifier']);
         if(strlen(trim($rubrics)) == 0){
             $rubrics = null;
         }

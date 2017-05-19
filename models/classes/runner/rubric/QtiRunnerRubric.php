@@ -51,6 +51,9 @@ class QtiRunnerRubric implements RunnerRubric
         if(!is_null($itemRef)){
             try {
                 $routeItem = $session->getRoute()->getRouteItemsByAssessmentItemRef($itemRef);
+                if ($routeItem) {
+                    $routeItem = $routeItem[0];
+                }
             } catch(OutOfBoundsException $obe){
                 \common_Logger::d("Could not retrieve the route for item '${itemRef}'.");
             }
