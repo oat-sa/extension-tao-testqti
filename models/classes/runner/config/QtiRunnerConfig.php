@@ -60,6 +60,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
                 'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
                 'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
+                'showTotal' => isset($rawConfig['progress-indicator-show-total']) ? $rawConfig['progress-indicator-show-total'] : true,
             ],
             'review' => [
                 'enabled' => !empty($rawConfig['test-taker-review']),

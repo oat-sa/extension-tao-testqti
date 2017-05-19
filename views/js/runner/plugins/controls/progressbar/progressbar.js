@@ -32,6 +32,11 @@ define([
     'use strict';
 
     /**
+     * Display 'item x of y' when true, 'item x' otherwise
+     */
+    var progressShowTotal;
+
+    /**
      * Calculate progression based on the current context
      *
      * @param {Object} testContext - The current test context
@@ -41,6 +46,7 @@ define([
      * @returns {Object} the progression with a label and a ratio
      */
     var progressUpdater = function progressUpdater(testContext, testMap, progressIndicator, progressScope){
+
 
         /**
          * Provide progression calculation based on the type of indicator
@@ -135,7 +141,9 @@ define([
 
                 return {
                     ratio : total > 0 ? Math.floor(currentPosition / total * 100) : 0,
-                    label : __('Item %d of %d', currentPosition, total)
+                    label : progressShowTotal ?
+                        __('Item %d of %d', currentPosition, total) :
+                        __('Item %d', currentPosition)
                 };
             }
         };
@@ -160,10 +168,12 @@ define([
             var testData   = testRunner.getTestData();
             var config     = testData.config.progressIndicator || {};
             var progressIndicator = config.type || 'percentage';
-            var progressScope = config.scope || 'test';
+            var progressScope     = config.scope || 'test';
+
+            progressShowTotal = !!config.showTotal;
 
             /**
-             * Updae the progress bar
+             * Update the progress bar
              */
             var update = function update (){
                 var progressData = progressUpdater(testRunner.getTestContext(), testRunner.getTestMap(), progressIndicator, progressScope);
