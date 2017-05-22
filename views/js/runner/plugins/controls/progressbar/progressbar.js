@@ -32,20 +32,17 @@ define([
     'use strict';
 
     /**
-     * Display 'item x of y' when true, 'item x' otherwise
-     */
-    var progressShowTotal;
-
-    /**
      * Calculate progression based on the current context
      *
      * @param {Object} testContext - The current test context
      * @param {Object} testMap - The items organization map
-     * @param {String} progressIndicator - to select the progression type
-     * @param {String} [progressScope] - the progression scope
+     * @param {Object} progressConfig
+     * @param {String} progressConfig.indicator - to select the progression type
+     * @param {String} [progressConfig.scope] - to select the progression type
+     * @param {Bool} progressConfig.showTotal - display 'item x of y' (true) | 'item x'
      * @returns {Object} the progression with a label and a ratio
      */
-    var progressUpdater = function progressUpdater(testContext, testMap, progressIndicator, progressScope){
+    var progressUpdater = function progressUpdater(testContext, testMap, progressConfig){
 
 
         /**
@@ -135,19 +132,19 @@ define([
                     }
                 };
 
-                var counter = progressScopeCounter[progressScope] || progressScopeCounter.test;
+                var counter = progressScopeCounter[progressConfig.scope] || progressScopeCounter.test;
                 var total = counter.total();
                 var currentPosition = counter.position();
 
                 return {
                     ratio : total > 0 ? Math.floor(currentPosition / total * 100) : 0,
-                    label : progressShowTotal ?
+                    label : progressConfig.showTotal ?
                         __('Item %d of %d', currentPosition, total) :
                         __('Item %d', currentPosition)
                 };
             }
         };
-        return updater[progressIndicator]();
+        return updater[progressConfig.indicator]();
     };
 
 
@@ -167,16 +164,18 @@ define([
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
             var config     = testData.config.progressIndicator || {};
-            var progressIndicator = config.type || 'percentage';
-            var progressScope = config.scope || 'test';
 
-            progressShowTotal = !!config.showTotal;
+            var progressConfig = {
+                indicator: config.type || 'percentage',
+                scope: config.scope || 'test',
+                showTotal: !!config.showTotal
+            };
 
             /**
              * Update the progress bar
              */
             var update = function update (){
-                var progressData = progressUpdater(testRunner.getTestContext(), testRunner.getTestMap(), progressIndicator, progressScope);
+                var progressData = progressUpdater(testRunner.getTestContext(), testRunner.getTestMap(), progressConfig);
                 if(progressData && $progressLabel && $progressControl){
                     $progressLabel.text(progressData.label);
                     $progressControl.progressbar('value', progressData.ratio);
