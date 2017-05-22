@@ -96,6 +96,13 @@
                         "description": "A QTI 2.1 package",
                         "type": "file",
                         "required": true
+                    },
+                    {
+                        "name": "test_class_uri",
+                        "in": "formData",
+                        "description": "Class uri to import test. If not specified root delivery class will be used.",
+                        "type": "file",
+                        "required": false
                     }
                 ],
                 "consumes" : [
