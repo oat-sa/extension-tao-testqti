@@ -32,6 +32,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     }
 
     const TASK_ID_PARAM = 'id';
+    const CLASS_URI_PARAM = 'test_class_uri';
 
     private static $accepted_types = array(
         'application/zip',
@@ -68,7 +69,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 $this->returnFailure(new common_exception_BadRequest());
             } else {
-                $report = $this->service->importQtiTest($file['tmp_name']);
+                $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass());
                 if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
                     $data = array();
                     foreach ($report as $r) {
@@ -107,7 +108,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 $this->returnFailure(new common_exception_BadRequest());
             } else {
-                $task = ImportQtiTest::createTask($file);
+                $task = ImportQtiTest::createTask($file, $this->getTestClass());
                 $result = [
                     'reference_id' => $task->getId()
                 ];
@@ -219,5 +220,21 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             }
         }
         return $result;
+    }
+
+    /**
+     * Get class instance to import test
+     * @return \core_kernel_classes_Class
+     */
+    private function getTestClass()
+    {
+        $class = null;
+        if ($this->hasRequestParameter(self::CLASS_URI_PARAM)) {
+            $class = new \core_kernel_classes_Class($this->getRequestParameter(self::CLASS_URI_PARAM));
+        }
+        if ($class === null || !$class->exists()) {
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        }
+        return $class;
     }
 }
