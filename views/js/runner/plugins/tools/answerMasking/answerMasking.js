@@ -56,6 +56,7 @@ define([
                 reveal: function reveal() {
                     var $container = this.getContainer();
                     $container.removeClass('masked');
+                    $container.find('input').removeAttr('disabled');
 
                     this.setState('masked', false);
 
@@ -69,6 +70,7 @@ define([
                 mask: function mask() {
                     var $container = this.getContainer();
                     $container.addClass('masked');
+                    $container.find('input').attr('disabled', 'disabled');
 
                     this.setState('masked', true);
 
