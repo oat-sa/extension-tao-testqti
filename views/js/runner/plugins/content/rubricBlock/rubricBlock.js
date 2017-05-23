@@ -19,17 +19,16 @@
 /**
  * Test Runner Content Plugin : RubricBlock
  *
- * TODO require mathjax on demand
- *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
     'jquery',
     'i18n',
+    'core/promise',
     'ui/hider',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/content/rubricBlock/rubricBlock'
-], function ($, __, hider, pluginFactory, containerTpl){
+], function ($, __, Promise, hider, pluginFactory, containerTpl){
     'use strict';
 
     /**
@@ -38,6 +37,28 @@ define([
      */
     var blankifyLinks = function blankifyLinks($container){
         $('a', $container).attr('target', '_blank');
+    };
+
+    /**
+     * Apply mathjax
+     */
+    var mathify = function mathify($container) {
+
+        return new Promise(function(resolve){
+            if($('math', $container).length > 0){
+                //load mathjax only if necessary
+                require(['mathJax'], function(MathJax){
+                    if(MathJax){
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub], $container[0]);
+                        MathJax.Hub.Queue(resolve);
+                    } else {
+                        resolve();
+                    }
+                }, resolve);
+            } else {
+                resolve();
+            }
+        });
     };
 
     /**
@@ -62,13 +83,15 @@ define([
                 .on('ready', function(){
                     self.hide();
                 })
-                .on('loadrubricblock', function(rubrics){
-                    if(rubrics){
-                        self.$element.html(rubrics);
-                        blankifyLinks(self.$element);
+                .on('loaditem', function(itemRef, itemData){
+                    if(itemData.rubrics) {
+                        self.$element.html(itemData.rubrics);
 
-                        // notify that the rubric blocks are loaded
-                        testRunner.trigger('rubricblock');
+                        blankifyLinks(self.$element);
+                        mathify(self.$element).then(function(){
+                            // notify that the rubric blocks are loaded
+                            testRunner.trigger('rubricblock');
+                        });
                     }
                 })
                 .on('renderitem', function(){
@@ -84,7 +107,6 @@ define([
          * Called during the runner's render phase
          */
         render : function render(){
-
             //attach the element before the content area
             var $container = this.getAreaBroker().getContentArea();
             $container.before(this.$element);
