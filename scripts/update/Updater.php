@@ -1234,16 +1234,27 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.3.3');
         }
 
-        $this->skip('9.3.3', '9.3.4');
+        $this->skip('9.3.3', '9.5.0');
 
-        if ($this->isVersion('9.3.4')) {
+        // display 'item x' instead of 'item x of y' in the progress bar
+        if ($this->isVersion('9.5.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-indicator-show-total'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('9.6.0');
+        }
+
+        $this->skip('9.6.0', '9.8.0');
+
+        if ($this->isVersion('9.8.0')) {
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $options = $testModelService->getOptions();
             $options['importHandlers'][] = new \oat\taoQtiTest\models\import\DeferredTestImport();
             $testModelService->setOptions($options);
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
-            $this->setVersion('9.4.0');
+            $this->setVersion('9.9.0');
         }
     }
 }

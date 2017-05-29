@@ -65,6 +65,12 @@ return array(
     'progress-indicator-forced' => false,
 
     /**
+     * Display 'item x of y' rather than 'item x'
+     * @type string
+     */
+    'progress-indicator-show-total' => true,
+
+    /**
      * Enables the test taker review screen
      * @type boolean
      */
