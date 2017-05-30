@@ -31,28 +31,32 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'label'         => __('Enable Review Screen'),
                     'qtiCategory'   => 'x-tao-option-reviewScreen',
                     'description'   => __('Enable the item review screen / navigator.'),
-                    'order'         => 100
+                    'order'         => 100,
+                    'pluginId'      => 'review'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'markReview',
                     'label'         => __('Enable Mark for Review'),
                     'qtiCategory'   => 'x-tao-option-markReview',
                     'description'   => __('Enable mark for review of items. Requires the Review Screen option.'),
-                    'order'         => 200
+                    'order'         => 200,
+                    'pluginId'      => 'review'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'informational',
                     'label'         => __('Informational Item Usage'),
                     'qtiCategory'   => 'x-tao-itemusage-informational',
                     'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
-                    'order'         => 300
+                    'order'         => 300,
+                    'pluginId'      => 'review'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'nextSection',
                     'label'         => __('Allow Section Skipping'),
                     'qtiCategory'   => 'x-tao-option-nextSection',
                     'description'   => __('Allow skipping of the current section.'),
-                    'order'         => 400
+                    'order'         => 400,
+                    'pluginId'      => 'nextSection'
                 ])
             ]
         );
@@ -65,35 +69,40 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'label'         => __('Display End Test Warning'),
                     'qtiCategory'   => 'x-tao-option-endTestWarning',
                     'description'   => __('Display a warning before the test-taker ends the test.'),
-                    'order'         => 100
+                    'order'         => 100,
+                    'pluginId'      => 'next'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'nextPartWarning',
                     'label'         => __('Display Next Part Warning'),
                     'qtiCategory'   => 'x-tao-option-nextPartWarning',
                     'description'   => __('Display a warning before the test-taker ends the test part.'),
-                    'order'         => 200
+                    'order'         => 200,
+                    'pluginId'      => 'next'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'nextSectionWarning',
                     'label'         => __('Display Next Section Warning'),
                     'qtiCategory'   => 'x-tao-option-nextSectionWarning',
                     'description'   => __('Display a warning before the test-taker skips the section. Requires the Section Skipping option.'),
-                    'order'         => 300
+                    'order'         => 300,
+                    'pluginId'      => 'nextSection'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'noExitTimedSectionWarning',
                     'label'         => __('Hide Timed Section Warning'),
                     'qtiCategory'   => 'x-tao-option-noExitTimedSectionWarning',
                     'description'   => __('Hide the warning automatically displayed when a test-taker exit a timed section.'),
-                    'order'         => 400
+                    'order'         => 400,
+                    'pluginId'      => 'next'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'unansweredWarning',
                     'label'         => __('Display Unanswered Warning'),
                     'qtiCategory'   => 'x-tao-option-unansweredWarning',
                     'description'   => __('Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.'),
-                    'order'         => 500
+                    'order'         => 500,
+                    'pluginId'      => 'next'
                 ])
             ]
         );
@@ -106,49 +115,56 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'label'         => __('Answer Eliminator'),
                     'qtiCategory'   => 'x-tao-option-eliminator',
                     'description'   => __('Allow the test-taker to eliminate / strikethrough answers in choice interactions.'),
-                    'order'         => 100
+                    'order'         => 100,
+                    'pluginId'      => 'eliminator'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'answerMasking',
                     'label'         => __('Answer Masking'),
                     'qtiCategory'   => 'x-tao-option-answerMasking',
                     'description'   => __('Allow the test-taker to mask and unmask answers in choice interactions.'),
-                    'order'         => 200
+                    'order'         => 200,
+                    'pluginId'      => 'answerMasking'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'areaMasking',
                     'label'         => __('Area Masking'),
                     'qtiCategory'   => 'x-tao-option-areaMasking',
                     'description'   => __('Allow the test-taker to mask parts of the item with a movable mask.'),
-                    'order'         => 300
+                    'order'         => 300,
+                    'pluginId'      => 'area-masking'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'calculator',
                     'label'         => __('Calculator'),
                     'qtiCategory'   => 'x-tao-option-calculator',
                     'description'   => __('Allow the test-taker to use a basic calculator.'),
-                    'order'         => 400
+                    'order'         => 400,
+                    'pluginId'      => 'calculator'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'highlighter',
                     'label'         => __('Highlighter'),
                     'qtiCategory'   => 'x-tao-option-highlighter',
                     'description'   => __('Allow the test-taker to highlight parts of the item text.'),
-                    'order'         => 500
+                    'order'         => 500,
+                    'pluginId'      => 'highlighter'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'lineReader',
                     'label'         => __('Line Reader'),
                     'qtiCategory'   => 'x-tao-option-lineReader',
                     'description'   => __('Allow the test-taker to visually isolate a line of text.'),
-                    'order'         => 600
+                    'order'         => 600,
+                    'pluginId'      => 'lineReader'
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'magnifier',
                     'label'         => __('Magnifier'),
                     'qtiCategory'   => 'x-tao-option-magnifier',
                     'description'   => __('Allow the test-taker to use a movable magnifier tool.'),
-                    'order'         => 700
+                    'order'         => 700,
+                    'pluginId'      => 'magnifier'
                 ])
             ]
         );

@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\models;
 
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\plugins\TestPluginService;
 
 class TestCategoryPresetProvider extends ConfigurableService
 {
@@ -33,6 +33,11 @@ class TestCategoryPresetProvider extends ConfigurableService
 
     private $allPresets;
 
+    /**
+     * TestCategoryPresetProvider constructor.
+     * @param array $options
+     * @param array $allPresets - allow override of preset list
+     */
     public function __construct(array $options = [], $allPresets = []) {
         $this->allPresets = $allPresets;
 
@@ -72,11 +77,7 @@ class TestCategoryPresetProvider extends ConfigurableService
             $this->loadPresetFromProviders();
         }
 
-        // filter presets related to inactive plugins
-        $pluginRegistry = PluginRegistry::getRegistry();
-
-        // $pluginRegistry->isRegistered()
-
+        $this->filterInactivePresets();
         $this->sortPresets();
 
         return $this->allPresets;
@@ -89,12 +90,51 @@ class TestCategoryPresetProvider extends ConfigurableService
 
         $allProviders = $providersRegistry->getMap();
 
-        if (count($allProviders) > 0) {
+        if (! empty($allProviders)) {
             foreach ($allProviders as $providerClass) {
                 if (class_exists($providerClass)) {
                     $providerInstance = new $providerClass();
                     $providerInstance->registerPresets($this);
                 }
+            }
+        }
+    }
+
+    private function filterInactivePresets() {
+        $serviceLocator = $this->getServiceLocator();
+        $pluginService = $serviceLocator->get(TestPluginService::SERVICE_ID);
+
+        $allEmptyGroups = [];
+
+        if (! empty($this->allPresets)) {
+            foreach ($this->allPresets as $groupId => &$presetGroup) {
+
+                if (! empty($presetGroup['presets'])) {
+
+                    $presetGroup['presets'] = array_filter(
+                        $presetGroup['presets'],
+                        function($preset) use ($pluginService) {
+                            $presetPluginId = $preset->getPluginId();
+
+                            if (! empty($presetPluginId)) {
+                                $presetPlugin = $pluginService->getPlugin($presetPluginId);
+                                return ($presetPlugin !== null) ? $presetPlugin->isActive() : false;
+                            }
+                            return true;
+                        }
+                    );
+                }
+
+                if (empty($presetGroup['presets'])) {
+                    $allEmptyGroups[] = $groupId;
+                }
+            }
+        }
+
+        // finally, remove empty groups, if any
+        if (! empty($allEmptyGroups)) {
+            foreach($allEmptyGroups as $emptyGroupId) {
+                unset($this->allPresets[$emptyGroupId]);
             }
         }
     }
