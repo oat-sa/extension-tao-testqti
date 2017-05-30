@@ -56,7 +56,7 @@ define([
             assert.equal(broker.getContainer().find('.' + area).length, 1, "The container must contain an area related to " + area);
         });
 
-        broker = areaBrokerMock([extraArea]);
+        broker = areaBrokerMock({ areas: [extraArea] });
 
         assert.equal(typeof broker, 'object', "The factory creates an object");
         assert.equal(broker.getContainer().length, 1, "The container exists");
@@ -81,7 +81,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas);
+        var broker = areaBrokerMock({ areas: areas });
 
         assert.equal(broker.getContainer().length, 1, "The container exists");
         assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
@@ -101,7 +101,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas);
+        var broker = areaBrokerMock({ areas: areas });
 
         assert.equal(broker.getContainer().length, 1, "The container exists");
         assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
@@ -121,7 +121,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas),
+        var broker = areaBrokerMock({ areas: areas }),
             component;
 
         assert.ok(_.isFunction(broker.getToolbox), 'the broker has a getToolbox() method');
