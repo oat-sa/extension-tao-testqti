@@ -16,6 +16,9 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
+/**
+ * @author Christophe Noël <christophe@taotesting.com>
+ */
 
 namespace oat\taoQtiTest\models;
 
