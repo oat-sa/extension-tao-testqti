@@ -55,6 +55,7 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
             \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
+            \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
