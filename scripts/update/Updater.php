@@ -1251,11 +1251,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('9.8.0')) {
             $registry = TestCategoryPresetRegistry::getRegistry();
             $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
-//            repeat in:
-//            $registry->set('taoTestRunnerPlugins', '\oat\taoQtiTest\models\TestCategoryPresetProvider');
-//            $registry->set('taoAct', '');
-
-//            $this->setVersion('9.9.0');
+            $this->setVersion('9.9.0');
         }
     }
 }
