@@ -31,10 +31,10 @@ return array(
     'version'     => '9.3.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoTests'   => '>=6.0.0',
-        'taoQtiItem' => '>=8.3.1',
-        'tao'        => '>=10.2.0',
-        'generis'    => '>=3.30.0',
+        'taoTests'   => '>=6.2.0',
+        'taoQtiItem' => '>=8.5.0',
+        'tao'        => '>=10.15.0',
+        'generis'    => '>=3.33.0',
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
