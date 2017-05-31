@@ -243,9 +243,9 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "formData",
-                        "description": "A QTI 2.1 package",
-                        "type": "file",
+                        "in": "query",
+                        "description": "job reference",
+                        "type": "string",
                         "required": true
                     }
                 ]
