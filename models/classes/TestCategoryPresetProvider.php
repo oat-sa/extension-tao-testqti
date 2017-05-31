@@ -47,7 +47,7 @@ class TestCategoryPresetProvider extends ConfigurableService
        parent::__construct($options);
     }
 
-    private function getPresetGroups() {
+    protected function getPresetGroups() {
         return [
             self::GROUP_NAVIGATION => [
                 'groupId'    => self::GROUP_NAVIGATION,
