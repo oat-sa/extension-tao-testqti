@@ -28,7 +28,7 @@ use common_ext_Extension;
 use common_ext_ExtensionsManager;
 use oat\oatbox\AbstractRegistry;
 
-class TestCategoryPresetRegistry extends abstractRegistry
+class TestCategoryPresetRegistry extends AbstractRegistry
 {
 
     /**

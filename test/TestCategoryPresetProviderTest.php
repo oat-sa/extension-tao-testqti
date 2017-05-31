@@ -117,7 +117,7 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(4, $sortedPresetGroups, 'sortedPresetGroups have the right number of preset groups');
         $previousOrder = 0;
-        forEach($sortedPresetGroups as $group) {
+        foreach($sortedPresetGroups as $group) {
             $this->assertTrue($group['groupOrder'] > $previousOrder, 'current group is sorted correctly');
             $previousOrder = $group['groupOrder'];
         }
@@ -125,7 +125,7 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
         $sortedPresets = $sortedPresetGroups[0]['presets'];
 
         $previousOrder = 0;
-        forEach($sortedPresets as $preset) {
+        foreach($sortedPresets as $preset) {
             $this->assertTrue($preset->getOrder() > $previousOrder, "preset {$preset->getId()} has a sort order > as previous order {$previousOrder}");
             $previousOrder = $preset->getOrder();
         }
