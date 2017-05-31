@@ -92,6 +92,16 @@ class TestSessionService extends ConfigurableService
     }
 
     /**
+     * Checks if a session has been loaded
+     * @param $sessionId
+     * @return bool
+     */
+    protected function hasTestSession($sessionId)
+    {
+        return (isset(self::$cache[$sessionId]) && isset(self::$cache[$sessionId]['session']));
+    }
+
+    /**
      * Gets the test session for a particular deliveryExecution
      *
      * @param DeliveryExecution $deliveryExecution
@@ -102,7 +112,7 @@ class TestSessionService extends ConfigurableService
     public function getTestSession(DeliveryExecution $deliveryExecution)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-        if (!isset(self::$cache[$sessionId]['session'])) {
+        if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution);
         }
 
@@ -135,7 +145,7 @@ class TestSessionService extends ConfigurableService
     public function getTestSessionStorage(DeliveryExecution $deliveryExecution)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-        if (!isset(self::$cache[$sessionId]['session'])) {
+        if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution);
         }
 
@@ -169,7 +179,7 @@ class TestSessionService extends ConfigurableService
     public function persist(AssessmentTestSession $session)
     {
         $sessionId = $session->getSessionId();
-        if (isset(self::$cache[$sessionId])) {
+        if ($this->hasTestSession($sessionId)) {
             $storage = self::$cache[$sessionId]['storage'];
             $storage->persist($session);
         }
