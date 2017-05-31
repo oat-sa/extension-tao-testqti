@@ -1246,9 +1246,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.6.0');
         }
 
-        $this->skip('9.6.0', '9.8.0');
+        $this->skip('9.6.0', '9.8.1');
 
-        if ($this->isVersion('9.8.0')) {
+        if ($this->isVersion('9.8.1')) {
             $registry = TestCategoryPresetRegistry::getRegistry();
             $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
             $this->setVersion('9.9.0');
