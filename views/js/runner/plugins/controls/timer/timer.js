@@ -323,6 +323,13 @@ define([
                 }
             }
 
+            function toggleZenMode() {
+                if(self.getState('enabled') && _.size(timers) > 0){
+                    self.$element.toggleClass('zen-mode');
+                    self.storage.setItem('zen-mode', self.$element.hasClass('zen-mode'));
+                }
+            }
+
             return store('timer-' + testRunner.getConfig().serviceCallId)
                 .then(function(timeStore) {
                     if (self.shouldClearStorage) {
@@ -338,6 +345,19 @@ define([
 
                     //the element that'll contain the timers
                     self.$element = $(timerBoxTpl());
+
+                    self.storage
+                        .getItem('zen-mode')
+                        .then(function(hasZenMode){
+                            if(hasZenMode && !self.$element.hasClass('zen-mode')){
+                                toggleZenMode();
+                            }
+                        });
+                    self.$element.on('click', function(e){
+                        e.preventDefault();
+                        toggleZenMode();
+                    });
+
 
                     //one stopwatch to count the time
                     self.stopwatch = timerFactory({

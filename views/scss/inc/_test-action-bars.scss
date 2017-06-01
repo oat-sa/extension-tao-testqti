@@ -139,9 +139,21 @@
                     -ms-flex-pack: end;
                     justify-content: flex-end;
 
+                    &:hover {
+                        cursor: pointer;
+                    }
+                    &.zen-mode {
+                        .qti-timer {
+                            display: none;
+                        }
+                        &:before {
+                            @include tao-icon-setup;
+                            @include icon-clock;
+                            padding: 10px 15px;
+                        }
+                    }
 
                     .qti-timer {
-
                         display: inline-block;
                         text-align: center;
                         vertical-align: top;
@@ -149,6 +161,7 @@
                         position: relative;
                         padding: 0 20px;
                         margin-top: -1px;
+                        overflow: hidden;
 
                         .qti-timer_label {
                             max-width: 130px;
