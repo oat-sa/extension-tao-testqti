@@ -13,7 +13,8 @@
                 z-index: 10;
 
                 color: $info;
-                background-color: transparent;
+                border : solid 1px $textColor;
+                background-color: whiten($darkBlueGrey, .4);
                 text-align: right;
                 vertical-align: middle;
 
@@ -26,10 +27,8 @@
                     @include icon-eye-slash;
                 }
             }
-
             &.masked {
                 .answer-mask {
-                    background-color: whiten($darkBlueGrey, .4);
                     width: 100%;
 
                     .answer-mask-toggle:before {

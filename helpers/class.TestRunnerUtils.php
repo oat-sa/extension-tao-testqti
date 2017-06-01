@@ -700,9 +700,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * Checks if an item has been completed
      * @param RouteItem $routeItem
      * @param AssessmentItemSession $itemSession
+     * @param bool $partially (optional) Whether or not consider partially responded sessions as responded.
      * @return bool
      */
-    static public function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession) {
+    static public function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession, $partially = true) {
         $completed = false;
         if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
             // In linear mode, we consider the item completed if it was presented.
@@ -719,7 +720,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
                 $completed = true;
             }
-            else if ($isAdaptive === false && $itemSession->isResponded() === true) {
+            else if ($isAdaptive === false && $itemSession->isResponded($partially) === true) {
                 $completed = true;
             }
         }

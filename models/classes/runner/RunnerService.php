@@ -22,6 +22,7 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use qtism\data\AssessmentItemRef;
 
 /**
  * Interface RunnerService
@@ -74,11 +75,11 @@ interface RunnerService
     /**
      * Gets the rubrics related to the current session state
      * @param RunnerServiceContext $context
-     * @param string $itemRef (optional) otherwise use the current 
+     * @param AssessmentItemRef $itemRef (optional) otherwise use the current
      * @return mixed
      * @throws \common_Exception
      */
-    public function getRubrics(RunnerServiceContext $context, $itemRef = null);
+    public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null);
 
     /**
      * Gets definition data of a particular item

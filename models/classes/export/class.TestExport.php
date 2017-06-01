@@ -53,7 +53,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
         } else {
             $formData = array('instance' => $resource);
         }
-        $form = new taoQtiTest_models_classes_export_ExportForm($formData);
+        $form = new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData);
 
         return $form->getForm();
     }

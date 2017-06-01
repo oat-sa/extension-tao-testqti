@@ -24,18 +24,20 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/views/actions',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight'
+    'taoQtiTest/controller/creator/templates/index'
 ],
 function(
     $,
     _,
     __,
     actions,
+    categorySelectorFactory,
     sectionCategory,
     qtiTestHelper,
-    weightTpl
+    templates
 ){
     'use strict';
 
@@ -92,36 +94,23 @@ function(
          * @param {jQueryElement} $view - the $view object containing the $select
          */
         function categoriesProperty($view){
-            var $select = $view.find('[name=itemref-category]');
-            $select.select2({
-                width: '100%',
-                tags : _.pluck(sectionCategory.getTaoOptionCategories(), 'name'),
-                multiple : true,
-                tokenSeparators: [",", " ", ";"],
-                formatNoMatches : function(){
-                    return __('Enter a category');
-                },
-                maximumInputLength : 32
-            }).on('change', function(e){
-                /**
-                 * @event modelOverseer#category-change
-                 * @param {Array} categories
-                 */
-                modelOverseer.trigger('category-change', e.val);
-            });
+            var categorySelector = categorySelectorFactory($view),
+                $categoryField = $view.find('[name="itemref-category"]');
 
-            initCategories();
+            categorySelector.createForm();
+            categorySelector.updateFormState(refModel.categories);
+
             $view.on('propopen.propview', function(){
-                initCategories();
+                categorySelector.updateFormState(refModel.categories);
             });
 
-            /**
-             * save the categories into the model
-             * @private
-             */
-            function initCategories(){
-                $select.select2('val', refModel.categories);
-            }
+            categorySelector.on('category-change', function(selected) {
+                // Let the binder update the model by going through the category hidden field
+                $categoryField.val(selected.join(','));
+                $categoryField.trigger('change');
+
+                modelOverseer.trigger('category-change', selected);
+            });
         }
 
 
@@ -130,7 +119,8 @@ function(
          */
         function weightsProperty(propView) {
             var $view = propView.getView(),
-                $weightList = $view.find('[data-bind-each="weights"]');
+                $weightList = $view.find('[data-bind-each="weights"]'),
+                weightTpl = templates.properties.itemrefweight;
 
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {

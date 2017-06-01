@@ -34,22 +34,6 @@
         </div>
     </div>
 
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="itemref-category">{{__ 'Categories'}}</label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'Items can optionally be assigned to one or more categories.'}}
-            </div>
-        </div>
-    </div>
-
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/required -->
     <div class="grid-row pseudo-label-box">
         <div class="col-5">
@@ -86,6 +70,29 @@
             {{__ 'Not shuffled, the position remains fixed.'}}
             </div>
         </div>
+    </div>
+
+    <div class="categories">
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="category-custom">{{__ 'Categories'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" title="{{__ 'custom categories'}}" name="category-custom"/>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'Items can optionally be assigned to one or more categories.'}}
+                </div>
+            </div>
+        </div>
+
+        <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
+        <textarea title="categories" class="hidden" type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
+
+        <!-- some user features (Test Navigation, Test Taker Tools, etc.) are in fact implemented as categories. They will appear here: -->
+        <div class="category-presets"></div>
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>

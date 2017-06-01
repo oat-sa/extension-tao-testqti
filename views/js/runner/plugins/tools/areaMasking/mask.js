@@ -71,11 +71,11 @@ define([
                 var $element = this.getElement();
 
                 $element
-                    .on('click', '.view', function(e){
+                    .on('click touchstart', '.view', function(e){
                         e.preventDefault();
                         self.preview();
                     })
-                    .on('click', '.close', function(e){
+                    .on('click touchstart', '.close', function(e){
                         e.preventDefault();
                         self.destroy();
                     });

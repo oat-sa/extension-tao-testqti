@@ -32,6 +32,8 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     }
 
     const TASK_ID_PARAM = 'id';
+    const CLASS_URI_PARAM = 'class-uri';
+    const CLASS_LABEL_PARAM = 'class-label';
 
     private static $accepted_types = array(
         'application/zip',
@@ -58,36 +60,38 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      */
     public function import()
     {
-        $fileUploadName = "qtiPackage";
-        if ($this->getRequestMethod() != Request::HTTP_POST) {
-            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
-        }
-        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+        try {
+            $fileUploadName = "qtiPackage";
+            if ($this->getRequestMethod() != Request::HTTP_POST) {
+                throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+            }
+            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+                throw new common_exception_RestApi(__('Missed test package file'));
+            }
             $file = tao_helpers_Http::getUploadedFile($fileUploadName);
             $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
             if (!in_array($mimeType, self::$accepted_types)) {
-                $this->returnFailure(new common_exception_BadRequest());
-            } else {
-                $report = $this->service->importQtiTest($file['tmp_name']);
-                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
-                    $data = array();
-                    foreach ($report as $r) {
-                        $values = $r->getData();
-                        $testid = $values->rdfsResource->getUri();
-                        foreach ($values->items as $item) {
-                            $itemsid[] = $item->getUri();
-                        }
-                        $data[] = array(
-                            'testId' => $testid,
-                            'testItems' => $itemsid);
-                    }
-                    return $this->returnSuccess($data);
-                } else {
-                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
-                }
+                throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-        } else {
-            return $this->returnFailure(new common_exception_BadRequest());
+            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass());
+            if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
+                $data = array();
+                foreach ($report as $r) {
+                    $values = $r->getData();
+                    $testid = $values->rdfsResource->getUri();
+                    foreach ($values->items as $item) {
+                        $itemsid[] = $item->getUri();
+                    }
+                    $data[] = array(
+                        'testId' => $testid,
+                        'testItems' => $itemsid);
+                }
+                return $this->returnSuccess($data);
+            } else {
+                throw new \common_exception_RestApi($report->getMessage());
+            }
+        } catch (\common_exception_RestApi $e) {
+            return $this->returnFailure($e);
         }
     }
 
@@ -97,33 +101,36 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      */
     public function importDeferred()
     {
-        $fileUploadName = "qtiPackage";
-        if ($this->getRequestMethod() != Request::HTTP_POST) {
-            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
-        }
-        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+        try {
+            $fileUploadName = "qtiPackage";
+            if ($this->getRequestMethod() != Request::HTTP_POST) {
+                throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+            }
+            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+                throw new common_exception_RestApi(__('Missed test package file'));
+            }
+
             $file = tao_helpers_Http::getUploadedFile($fileUploadName);
             $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
             if (!in_array($mimeType, self::$accepted_types)) {
-                $this->returnFailure(new common_exception_BadRequest());
-            } else {
-                $task = ImportQtiTest::createTask($file);
-                $result = [
-                    'reference_id' => $task->getId()
-                ];
-                $report = $task->getReport();
-                if (!empty($report)) {
-                    if ($report instanceof \common_report_Report) {
-                        //serialize report to array
-                        $report = json_encode($report);
-                        $report = json_decode($report);
-                    }
-                    $result['report'] = $report;
-                }
-                return $this->returnSuccess($result);
+                throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-        } else {
-            return $this->returnFailure(new common_exception_BadRequest());
+            $task = ImportQtiTest::createTask($file, $this->getTestClass());
+            $result = [
+                'reference_id' => $task->getId()
+            ];
+            $report = $task->getReport();
+            if (!empty($report)) {
+                if ($report instanceof \common_report_Report) {
+                    //serialize report to array
+                    $report = json_encode($report);
+                    $report = json_decode($report);
+                }
+                $result['report'] = $report;
+            }
+            return $this->returnSuccess($result);
+        } catch (\common_exception_RestApi $e) {
+            return $this->returnFailure($e);
         }
     }
 
@@ -219,5 +226,38 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             }
         }
         return $result;
+    }
+
+    /**
+     * Get class instance to import test
+     * @throws \common_exception_RestApi
+     * @return \core_kernel_classes_Class
+     */
+    private function getTestClass()
+    {
+        $class = null;
+        $rootClass = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        if ($this->hasRequestParameter(self::CLASS_URI_PARAM) && $this->hasRequestParameter(self::CLASS_LABEL_PARAM)) {
+            throw new \common_exception_RestApi(
+                self::CLASS_URI_PARAM . ' and ' . self::CLASS_LABEL_PARAM . ' parameters do not supposed to be used simultaneously.'
+            );
+        }
+
+        if ($this->hasRequestParameter(self::CLASS_URI_PARAM)) {
+            $class = new \core_kernel_classes_Class($this->getRequestParameter(self::CLASS_URI_PARAM));
+        }
+        if ($this->hasRequestParameter(self::CLASS_LABEL_PARAM)) {
+            $label = $this->getRequestParameter(self::CLASS_LABEL_PARAM);
+            foreach ($rootClass->getSubClasses(true) as $subClass) {
+                if ($subClass->getLabel() === $label) {
+                    $class = $subClass;
+                    break;
+                }
+            }
+        }
+        if ($class === null || !$class->exists()) {
+            $class = $rootClass;
+        }
+        return $class;
     }
 }

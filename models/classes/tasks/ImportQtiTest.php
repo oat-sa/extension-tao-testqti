@@ -35,6 +35,8 @@ use \oat\taoQtiTest\models\import\QtiTestImporter;
 class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 {
     const FILE_DIR = 'ImportQtiTestTask';
+    const PARAM_CLASS_URI = 'class_uri';
+    const PARAM_FILE = 'file';
 
     protected $service;
 
@@ -45,16 +47,17 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      */
     public function __invoke($params)
     {
-        if (!isset($params['file'])) {
-            throw new \common_exception_MissingParameter('Missing parameter `file` in ' . self::class);
+        if (!isset($params[self::PARAM_FILE])) {
+            throw new \common_exception_MissingParameter('Missing parameter `' . self::PARAM_FILE . '` in ' . self::class);
         }
+
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
-        return $importer->import($file);
+        return $importer->import($file, $this->getClass($params));
     }
 
     /**
@@ -68,9 +71,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     /**
      * Create task in queue
      * @param array $packageFile uploaded file
+     * @param \core_kernel_classes_Class $class uploaded file
      * @return Task created task id
      */
-    public static function createTask($packageFile)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -78,7 +82,22 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        return $queue->createTask($action, ['file' => $fileUri]);
+        return $queue->createTask($action, [self::PARAM_FILE => $fileUri, self::PARAM_CLASS_URI => $class->getUri()]);
     }
 
+    /**
+     * @param array $taskParams
+     * @return \core_kernel_classes_Class
+     */
+    private function getClass(array $taskParams)
+    {
+        $class = null;
+        if (isset($taskParams[self::PARAM_CLASS_URI])) {
+            $class = new \core_kernel_classes_Class($taskParams[self::PARAM_CLASS_URI]);
+        }
+        if ($class === null || !$class->exists()) {
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        }
+        return $class;
+    }
 }

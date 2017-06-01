@@ -572,7 +572,7 @@ define([
                 $initTarget = null;
 
                 // click on zoom-in or zoom-out controls
-                $component.on('click', '.zoom', function (event) {
+                $component.on('click touchstart', '.zoom', function (event) {
                     var $button = $(event.target).closest('.control');
                     var action = $button.data('control');
 
@@ -583,14 +583,14 @@ define([
                 });
 
                 // click on close controls
-                $component.on('click', '.closeMagnifier', function (event) {
+                $component.on('click touchstart', '.closeMagnifier', function (event) {
                     event.preventDefault();
                     self.hide();
                     self.trigger('close');
                 });
 
                 // interact through the magnifier glass with the zoomed content
-                $component.on('click', '.overlay', function (event) {
+                $component.on('click touchstart', '.overlay', function (event) {
                     if (!self.is('noclick')) {
                         findSourceNode(
                             getElementFromPoint(event.pageX, event.pageY),

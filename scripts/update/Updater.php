@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -29,6 +30,7 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestCategoryPresetRegistry;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
@@ -1223,6 +1225,34 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.2.0');
         }
 
-        $this->skip('9.2.0', '9.3.0');
+        $this->skip('9.2.0', '9.3.2');
+
+        if ($this->isVersion('9.3.2')) {
+            if (!$this->getServiceManager()->has(TestCategoryPresetProvider::SERVICE_ID)) {
+                $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+            }
+            $this->setVersion('9.3.3');
+        }
+
+        $this->skip('9.3.3', '9.5.0');
+
+        // display 'item x' instead of 'item x of y' in the progress bar
+        if ($this->isVersion('9.5.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-indicator-show-total'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('9.6.0');
+        }
+
+        $this->skip('9.6.0', '9.9.1');
+
+        if ($this->isVersion('9.9.1')) {
+            $registry = TestCategoryPresetRegistry::getRegistry();
+            $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
+            $this->setVersion('9.10.0');
+        }
+
+        $this->skip('9.10.0', '9.11.0');
     }
 }
