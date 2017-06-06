@@ -1253,5 +1253,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
             $this->setVersion('9.10.0');
         }
+
+        $this->skip('9.10.0', '9.10.1');
     }
 }
