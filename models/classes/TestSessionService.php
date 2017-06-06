@@ -98,6 +98,9 @@ class TestSessionService extends ConfigurableService
      */
     protected function hasTestSession($sessionId)
     {
+        if ($sessionId instanceof \core_kernel_classes_Resource) {
+            $sessionId = $sessionId->getUri();
+        }
         return (isset(self::$cache[$sessionId]) && isset(self::$cache[$sessionId]['session']));
     }
 
