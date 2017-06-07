@@ -312,7 +312,7 @@ define([
                 var states = self.getTestData().states;
                 var item = mapHelper.getItemAt(testMap, context.itemPosition);
 
-                if(context.state !== states.interacting){
+                if(!item || context.state !== states.interacting){
                     return;
                 }
 
