@@ -41,61 +41,27 @@ define([
         assert.notStrictEqual(timerFactory(runner), timerFactory(runner), "The timerFactory factory provides a different instance on each call");
     });
 
-
-    var pluginApi = [{
-        name: 'init',
-        title: 'init'
-    }, {
-        name: 'render',
-        title: 'render'
-    }, {
-        name: 'finish',
-        title: 'finish'
-    }, {
-        name: 'destroy',
-        title: 'destroy'
-    }, {
-        name: 'trigger',
-        title: 'trigger'
-    }, {
-        name: 'getTestRunner',
-        title: 'getTestRunner'
-    }, {
-        name: 'getAreaBroker',
-        title: 'getAreaBroker'
-    }, {
-        name: 'getConfig',
-        title: 'getConfig'
-    }, {
-        name: 'setConfig',
-        title: 'setConfig'
-    }, {
-        name: 'getState',
-        title: 'getState'
-    }, {
-        name: 'setState',
-        title: 'setState'
-    }, {
-        name: 'show',
-        title: 'show'
-    }, {
-        name: 'hide',
-        title: 'hide'
-    }, {
-        name: 'enable',
-        title: 'enable'
-    }, {
-        name: 'disable',
-        title: 'disable'
-    }];
-
-    QUnit
-        .cases(pluginApi)
-        .test('plugin API ', 1, function(data, assert) {
-            var runner = runnerFactory(providerName);
-            var timer = timerFactory(runner);
-            assert.equal(typeof timer[data.name], 'function', 'The timerFactory instances expose a "' + data.name + '" function');
-        });
+    QUnit.cases([
+        { name : 'init', title : 'init' },
+        { name : 'render', title : 'render' },
+        { name : 'finish', title : 'finish' },
+        { name : 'destroy', title : 'destroy' },
+        { name : 'trigger', title : 'trigger' },
+        { name : 'getTestRunner', title : 'getTestRunner' },
+        { name : 'getAreaBroker', title : 'getAreaBroker' },
+        { name : 'getConfig', title : 'getConfig' },
+        { name : 'setConfig', title : 'setConfig' },
+        { name : 'getState', title : 'getState' },
+        { name : 'setState', title : 'setState' },
+        { name : 'show', title : 'show' },
+        { name : 'hide', title : 'hide' },
+        { name : 'enable', title : 'enable' },
+        { name : 'disable', title : 'disable' }
+    ]).test('plugin API ', 1, function(data, assert) {
+        var runner = runnerFactory(providerName);
+        var timer = timerFactory(runner);
+        assert.equal(typeof timer[data.name], 'function', 'The timerFactory instances expose a "' + data.name + '" function');
+    });
 
 
     QUnit.asyncTest('timer.init', function(assert) {
