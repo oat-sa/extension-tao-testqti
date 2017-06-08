@@ -332,16 +332,14 @@ define([
              * Show/hide the timers akka "zen mode"
              */
             function toggleZenMode() {
-                if(_.size(timers) > 0){
-                    if(self.$element.hasClass('zen-mode')){
-                        self.$element.removeClass('zen-mode');
-                        self.$toggler.attr('title', __('Hide timers'));
-                        self.storage.setItem('zen-mode', false);
-                    } else {
-                        self.$element.addClass('zen-mode');
-                        self.$toggler.attr('title', __('Show timers'));
-                        self.storage.setItem('zen-mode', true);
-                    }
+                if(self.$element.hasClass('zen-mode')){
+                    self.$element.removeClass('zen-mode');
+                    self.$toggler.attr('title', __('Hide timers'));
+                    self.storage.removeItem('zen-mode');
+                } else {
+                    self.$element.addClass('zen-mode');
+                    self.$toggler.attr('title', __('Show timers'));
+                    self.storage.setItem('zen-mode', true);
                 }
             }
 
@@ -350,12 +348,11 @@ define([
              * display it otherwise
              */
             function toggleToggler() {
-                var $toggler = self.$element.find('.timer-toggler');
-                if($toggler.length){
+                if(self.$toggler.length){
                     if(_.size(timers) > 0){
-                        hider.show($toggler);
+                        hider.show(self.$toggler);
                     } else {
-                        hider.hide($toggler);
+                        hider.hide(self.$toggler);
                     }
                 }
             }
@@ -382,8 +379,8 @@ define([
                     //restore the zen mode if set previously
                     self.storage
                         .getItem('zen-mode')
-                        .then(function(hasZenMode){
-                            if(hasZenMode && !self.$element.hasClass('zen-mode')){
+                        .then(function(zenMode){
+                            if(zenMode  && !self.$element.hasClass('zen-mode')){
                                 toggleZenMode();
                             }
                         });
