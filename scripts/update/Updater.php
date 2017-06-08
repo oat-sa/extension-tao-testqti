@@ -1254,6 +1254,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.10.0');
         }
 
-        $this->skip('9.10.0', '9.10.2');
+        $this->skip('9.10.0', '9.10.3');
     }
 }
