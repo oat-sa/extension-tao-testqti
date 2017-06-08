@@ -139,17 +139,31 @@
                     -ms-flex-pack: end;
                     justify-content: flex-end;
 
-                    &:hover {
-                        cursor: pointer;
-                    }
-                    &.zen-mode {
-                        .qti-timer {
-                            display: none;
+                    .timer-toggler {
+                        text-decoration: none;
+                        color: $textHighlight;
+                        line-height: 1.2;
+                        opacity: .6;
+                        padding: 7px 0;
+                        @include transition(opacity);
+
+                        &:hover,&:active,&:focus{
+                            outline: unset;
                         }
-                        &:before {
-                            @include tao-icon-setup;
-                            @include icon-clock;
-                            padding: 10px 15px;
+                        &:hover {
+                            opacity: .9;
+                            @include transition(opacity);
+                        }
+                    }
+
+                    &.zen-mode {
+                        .timer-toggler {
+                            opacity: .9;
+                            @include transition(opacity);
+                        }
+                        .qti-timer_time {
+                            opacity: 0;
+                            @include transition(opacity, 1s, ease-out);
                         }
                     }
 
@@ -210,7 +224,6 @@
                     max-width: 200px;
                     height: 0.6em;
                 }
-
             }
 
             & > .control-box {
