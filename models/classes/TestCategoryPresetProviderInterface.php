@@ -15,33 +15,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
- *
  */
-
-namespace oat\taoQtiTest\models\import;
-
-use oat\oatbox\filesystem\File;
-use oat\taoTests\models\import\AbstractTestImporter;
-
 /**
- * Class QtiTestImport
- * @package oat\taoQtiTest\models\metadata
- * @author Aleh Hutnikau, <hutnikau@1pt.com>
+ * @author Christophe Noël <christophe@taotesting.com>
  */
-class QtiTestImporter extends AbstractTestImporter
+
+namespace oat\taoQtiTest\models;
+
+interface TestCategoryPresetProviderInterface
 {
-
-    const IMPORTER_ID = 'taoQtiTest';
-
-    /**
-     * @param File $file
-     * @param \core_kernel_classes_Class $class
-     * @return \common_report_Report
-     */
-    public function import(File $file, \core_kernel_classes_Class $class = null)
-    {
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class);
-    }
+    public function registerPresets(TestCategoryPresetProvider $presetService);
 }

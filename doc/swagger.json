@@ -96,7 +96,24 @@
                         "description": "A QTI 2.1 package",
                         "type": "file",
                         "required": true
+                    },
+                    {
+                        "name": "class-uri",
+                        "in": "formData",
+                        "description": "Class uri to import test. If not specified root class will be used.",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "class-label",
+                        "in": "formData",
+                        "description": "Label of class to import test. If not specified root class will be used. If label is not unique first match will be used.",
+                        "type": "string",
+                        "required": false
                     }
+                ],
+                "consumes" : [
+                    "multipart/form-data"
                 ]
             }
         },
@@ -176,7 +193,24 @@
                         "description": "A QTI 2.1 package",
                         "type": "file",
                         "required": true
+                    },
+                    {
+                        "name": "class-uri",
+                        "in": "formData",
+                        "description": "Class uri to import test. If not specified root class will be used.",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "class-label",
+                        "in": "formData",
+                        "description": "Label of class to import test. If not specified root class will be used. If label is not unique first match will be used.",
+                        "type": "string",
+                        "required": false
                     }
+                ],
+                "consumes" : [
+                    "multipart/form-data"
                 ]
             }
         },
@@ -243,11 +277,14 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "formData",
-                        "description": "A QTI 2.1 package",
-                        "type": "file",
+                        "in": "query",
+                        "description": "job reference",
+                        "type": "string",
                         "required": true
                     }
+                ],
+                "consumes" : [
+                    "application/x-www-form-urlencoded"
                 ]
             }
         }

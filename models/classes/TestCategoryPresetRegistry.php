@@ -15,33 +15,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
- *
  */
-
-namespace oat\taoQtiTest\models\import;
-
-use oat\oatbox\filesystem\File;
-use oat\taoTests\models\import\AbstractTestImporter;
-
 /**
- * Class QtiTestImport
- * @package oat\taoQtiTest\models\metadata
- * @author Aleh Hutnikau, <hutnikau@1pt.com>
+ * A registry of category presets providers (not of preset themselves)
+ *
+ * @author Christophe Noël <christophe@taotesting.com>
  */
-class QtiTestImporter extends AbstractTestImporter
+
+namespace oat\taoQtiTest\models;
+
+use common_ext_Extension;
+use common_ext_ExtensionsManager;
+use oat\oatbox\AbstractRegistry;
+
+class TestCategoryPresetRegistry extends AbstractRegistry
 {
 
-    const IMPORTER_ID = 'taoQtiTest';
+    /**
+     * Specify in which extensions the config will be stored
+     *
+     * @return common_ext_Extension
+     */
+    protected function getExtension()
+    {
+        return common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    }
 
     /**
-     * @param File $file
-     * @param \core_kernel_classes_Class $class
-     * @return \common_report_Report
+     * config file in which the data will be stored
+     *
+     * @return string
      */
-    public function import(File $file, \core_kernel_classes_Class $class = null)
+    protected function getConfigId()
     {
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class);
+        return 'test_category_preset_registry';
     }
+
+
 }
