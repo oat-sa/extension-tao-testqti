@@ -1255,9 +1255,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.10.0');
         }
 
-        $this->skip('9.10.0', '9.10.2');
+        $this->skip('9.10.0', '9.11.2');
 
-        if ($this->isVersion('9.10.2')) {
+        if ($this->isVersion('9.11.2')) {
 
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $exportHandlers = $testModelService->getOption('exportHandlers');
@@ -1265,7 +1265,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $testModelService->setOption('exportHandlers', $exportHandlers);
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
-            $this->setVersion('9.11.0');
+            $this->setVersion('9.12.0');
         }
     }
 }

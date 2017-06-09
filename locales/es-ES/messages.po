@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint15\n"
-"PO-Revision-Date: 2015-12-23T13:28:56\n"
+"Project-Id-Version: TAO 3.2.0-sprint52\n"
+"PO-Revision-Date: 2017-06-09T15:21:40\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -13,8 +13,8 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%1$s - item %2$s/%3$s"
-msgstr ""
+msgid "%s - item %p/%c"
+msgstr "%s - ítem %p/%c"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado."
@@ -28,11 +28,20 @@ msgstr "Un paquete de pruebas qti"
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Un recurso remoto referencia en prueba '%s' QTI no se pudo recuperar."
 
+msgid "A response to this item is required."
+msgstr ""
+
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sección visible es una que es identificable por el candidato."
 
-msgid "Add a zip file containing QTI tests and items"
-msgstr "Añadir un archivo zip que contiene pruebas QTI y elementos"
+msgid "Activated"
+msgstr ""
+
+msgid "add a new weight"
+msgstr ""
+
+msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr "Añadir un archivo zip que contiene pruebas QTI/APIP y elementos"
 
 msgid "Add selected item(s) here."
 msgstr "Añadir elemento(s) seleccionados aqui."
@@ -52,11 +61,50 @@ msgstr "Permitir Comentario"
 msgid "Allow Review"
 msgstr "Permitir Revisión"
 
+msgid "Allow Section Skipping"
+msgstr ""
+
 msgid "Allow Skipping"
 msgstr "Permitir Saltarse"
 
+msgid "Allow skipping of the current section."
+msgstr ""
+
 msgid "Allow the candidate to review his answers."
 msgstr "Permitir al candidato revisar sus respuestas."
+
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr ""
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr ""
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr ""
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr ""
+
+msgid "Also compute the score per categories"
+msgstr ""
+
+msgid "An error occured during the test iniialization!"
+msgstr ""
+
+msgid "An error occurred during results submission. Please retry."
+msgstr ""
+
+msgid "An error occurred!"
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
 msgstr ""
@@ -76,11 +124,29 @@ msgstr "Ha ocurrido un error desconocido mientras compilaba la prueba '%s' QTI."
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Un error desconocido ocurrió durante la compilación de la prueba '%s' QTI."
 
+msgid "Answer Eliminator"
+msgstr "Eliminador de respuesta"
+
+msgid "Answer Masking"
+msgstr "Ocultamiento de respuesta"
+
 msgid "Answered"
 msgstr "Respondido"
 
 msgid "Are you sure you want to end the test?"
 msgstr "¿Está seguro(a) de que desea finalizar la prueba?"
+
+msgid "Area Masking"
+msgstr "Ocultamiento de área"
+
+msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
+msgstr ""
+
+msgid "Associate Blueprint"
+msgstr ""
+
+msgid "At least one mandatory parameter was required but found missing in your request"
+msgstr ""
 
 msgid "Author"
 msgstr "Autor"
@@ -88,14 +154,41 @@ msgstr "Autor"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Archivo auxiliar no encontrado en la ubicación \"%s\"."
 
+msgid "Calculator"
+msgstr "Calculadora"
+
 msgid "Cancel"
 msgstr "Cancelar"
 
 msgid "Candidate"
 msgstr "Candidato"
 
+msgid "Cardinality"
+msgstr ""
+
 msgid "Categories"
 msgstr "Categorías"
+
+msgid "Category score"
+msgstr ""
+
+msgid "Change the current color preset"
+msgstr "Cambiar el color predeterminado actual"
+
+msgid "Class"
+msgstr ""
+
+msgid "Clear all active highlights"
+msgstr "Borrar todos los resaltados activos"
+
+msgid "Clear Highlights"
+msgstr "Borrar resaltados"
+
+msgid "Close Magnifier"
+msgstr "Cerrar aumento"
+
+msgid "Close the mask"
+msgstr "Cerrar ocultamiento"
 
 msgid "Collapse the review panel"
 msgstr "Contraer el panel de revisión"
@@ -106,20 +199,95 @@ msgstr "Comentario"
 msgid "Completed items"
 msgstr "Ítems completados"
 
+msgid "Contrast"
+msgstr "Contraste"
+
+msgid "Controls the contribution of an individual item score to the overall test score."
+msgstr ""
+
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "Controla el número máximo de intentos permitidos. 0 significa ilimitado."
+
+msgid "Covers parts of the item"
+msgstr "Cubre partes del ítem"
+
+msgid "Custom"
+msgstr "Personalizar"
+
+msgid "custom categories"
+msgstr ""
+
+msgid "Custom outcome processing. No changes will be made to the existing rules."
+msgstr ""
+
+msgid "Cut score"
+msgstr ""
 
 msgid "Disable validation"
 msgstr "Desactivar validación"
 
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr ""
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr ""
+
+msgid "Display End Test Warning"
+msgstr ""
+
+msgid "Display Next Part Warning"
+msgstr ""
+
+msgid "Display Next Section Warning"
+msgstr ""
+
+msgid "Display Unanswered Warning"
+msgstr ""
+
+msgid "Displayed label"
+msgstr ""
+
+msgid "Displays a customisable magnifier"
+msgstr ""
+
+msgid "Do not flag the current item for later review"
+msgstr ""
+
+msgid "Eliminate choices"
+msgstr "Eliminar opciones"
+
+msgid "Enable Mark for Review"
+msgstr "Activar \"marcar para revisión\""
+
+msgid "Enable mark for review of items. Requires the Review Screen option."
+msgstr "Activar \"marcar para revisión de ítems\". Requiere la opción \"Pantalla de revisión\"."
+
+msgid "Enable Review Screen"
+msgstr "Activar la pantalla de revisión"
+
 msgid "Enable selection"
 msgstr "Habilitar selección"
+
+msgid "Enable the item review screen / navigator."
+msgstr "Activar la pantalla de revisión/navegador de ítems."
+
+msgid "End test"
+msgstr "Finalizar prueba"
 
 msgid "End Test"
 msgstr "Finalizar prueba"
 
-msgid "Enter a category"
-msgstr "Ingresar una categoria"
+msgid "Enter a blueprint"
+msgstr ""
+
+msgid "Enter a custom category"
+msgstr ""
 
 msgid "Error"
 msgstr "Error"
@@ -138,20 +306,39 @@ msgstr "Expandir el panel de revisión"
 msgid "Export"
 msgstr "Exportar"
 
-msgid "Export error in test : %s"
+msgid "Export failed for the test \"%s"
+msgstr ""
+
+#, tao-public
+msgid "Export metadata"
 msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exportar Paquete de Prueba QTI 2.1"
 
+msgid "Export QTI 2.2 Test Package"
+msgstr ""
+
+msgid "Export successful for the test \"%s"
+msgstr ""
+
+msgid "Feedback block"
+msgstr ""
+
 msgid "File name"
 msgstr "Nombre de archivo"
+
+msgid "File not found"
+msgstr ""
+
+msgid "File not found!"
+msgstr ""
 
 msgid "Filter"
 msgstr "Filtro"
 
 msgid "finished"
-msgstr ""
+msgstr "finalizada"
 
 msgid "Fixed"
 msgstr "Fijo"
@@ -159,8 +346,44 @@ msgstr "Fijo"
 msgid "Fixed position in a shuffled the selection."
 msgstr "Posición fija en un barajada selección."
 
+msgid "Flag for Review"
+msgstr "Marcar para revisión"
+
+msgid "Flag the current item for later review"
+msgstr "Marcar el ítem actual para revisión posterior"
+
 msgid "Flagged"
 msgstr "Marcado"
+
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Hide Review"
+msgstr "Esconder revisión"
+
+msgid "Hide the review screen"
+msgstr "Esconder la pantalla de revisión"
+
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr ""
+
+msgid "Hide Timed Section Warning"
+msgstr ""
+
+msgid "Hide timers"
+msgstr ""
+
+msgid "Highlight"
+msgstr "Resaltar"
+
+msgid "Highlight Text"
+msgstr "Resaltar texto"
+
+msgid "Highlighter"
+msgstr "Resaltador"
+
+msgid "Html title"
+msgstr ""
 
 msgid "Identifier"
 msgstr "Identificador"
@@ -177,11 +400,17 @@ msgstr "Si se establece, hace que el orden de los elementos secundarios se orden
 msgid "If the candidate can skip the item, without submitting a response."
 msgstr "Si el candidato puede omitir el elemento, sin presentar una respuesta."
 
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
 msgid "Import"
 msgstr "Importar"
 
-msgid "Import a QTI 2.1 Test Package"
-msgstr "Importar Paquete de Prueba a QTI 2.1"
+msgid "Import a QTI/APIP Content Package"
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "Elemento IMS QTI referenciado como \"%s\" en el archivo Manifiesto IMS no podrá ser importado."
@@ -204,6 +433,9 @@ msgstr "Inconsistencia en linea %1d:"
 msgid "Individual"
 msgstr "Individual"
 
+msgid "Informational Item Usage"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "ya se utiliza en la prueba."
 
@@ -212,6 +444,12 @@ msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
+
+msgid "Item \"%s\" is completed."
+msgstr "El ítem \"%s\" está completo."
+
+msgid "Item %d"
+msgstr "Ítem %d"
 
 msgid "Item %d of %d"
 msgstr "Ítem %d de %d"
@@ -240,8 +478,26 @@ msgstr "Mantener junto"
 msgid "Late submission allowed"
 msgstr "Envio tarde permitido"
 
+msgid "Leave a comment"
+msgstr ""
+
+msgid "Line Reader"
+msgstr "Lector de línea"
+
 msgid "Linear"
 msgstr "Lineal"
+
+msgid "Magnifier"
+msgstr "Aumento"
+
+msgid "Magnify less"
+msgstr "Aumentar menos"
+
+msgid "Magnify more"
+msgstr "Aumentar más"
+
+msgid "Magnifying Glass"
+msgstr "Lente de aumento"
 
 msgid "Manage Rubric Blocks"
 msgstr "Administrar Bloques de Rúbrica"
@@ -249,11 +505,21 @@ msgstr "Administrar Bloques de Rúbrica"
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
 
+#, tao-public
+msgid "Manage tests"
+msgstr "Gestionar pruebas"
+
 msgid "Manage Tests"
 msgstr "Gestionar Pruebas"
 
 msgid "Mark for review"
 msgstr "Marcar para revisión"
+
+msgid "Masking"
+msgstr "Ocultamiento"
+
+msgid "Match value"
+msgstr ""
 
 msgid "Max Attempts"
 msgstr "Intentos Máximos"
@@ -288,6 +554,12 @@ msgstr "Minima duración para esta sección."
 msgid "Minimum duration for this test part."
 msgstr "Minima duración para esta parte de la prueba."
 
+msgid "Missed test package file"
+msgstr ""
+
+msgid "Missing required option %s"
+msgstr ""
+
 msgid "Move Down"
 msgstr "Mover hacia abajo"
 
@@ -296,6 +568,9 @@ msgstr "Mover hacia arriba"
 
 msgid "Navigation"
 msgstr "Navegación"
+
+msgid "Navigation Warnings"
+msgstr ""
 
 msgid "New Rubric Block"
 msgstr "Nuevo Bloque de Rúbrica"
@@ -307,7 +582,7 @@ msgid "Next"
 msgstr "Siguiente"
 
 msgid "Next Section"
-msgstr ""
+msgstr "Sección siguiente"
 
 msgid "No"
 msgstr "No"
@@ -318,20 +593,32 @@ msgstr "Archivo no encontrado en ubicación \"%s\"."
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "No se permiten más intentos para el elemento \"%s\"."
 
+msgid "No outcome processing. Erase the existing rules, if any."
+msgstr ""
+
 msgid "No reference to any IMS QTI Item found."
 msgstr "No hay referencia a ningún elemento IMS QTI encontrado."
 
 msgid "Non Linear"
 msgstr "No Lineal"
 
-msgid "Not all test could be export"
+msgid "None"
+msgstr "Ninguno"
+
+msgid "Not all test could be exported"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "No barajada, la posición permanece fija."
 
+msgid "OK"
+msgstr ""
+
 msgid "Ok"
 msgstr "Aceptar"
+
+msgid "OK & End test"
+msgstr "OK y finalizar prueba"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Uno o más Elementos IMS QTI dependientes no podían ser importados."
@@ -342,14 +629,29 @@ msgstr "Mostrar solo los ítems marcados para revisión"
 msgid "Only display the unanswered items"
 msgstr "Mostrar solo los ítems sin respuesta"
 
+msgid "Open Calculator"
+msgstr "Abrir calculadora"
+
 msgid "Ordering"
 msgstr "Ordenamiento"
+
+msgid "Outcome"
+msgstr ""
+
+msgid "Outcome declarations"
+msgstr ""
+
+msgid "Outcome processing"
+msgstr ""
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
 msgstr ""
 
 msgid "Part %d"
 msgstr "Parte %d"
+
+msgid "Preview the covered area"
+msgstr "Vista preliminar del área cubierta"
 
 msgid "Previous"
 msgstr "Anterior"
@@ -372,14 +674,20 @@ msgstr "Publicación de prueba \"%s\" QTI fallida."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Prueba \"%s\" QTI publicada satisfactoriamente."
 
-msgid "QTI Test Package"
-msgstr "Paquete de Prueba QTI"
-
 msgid "QTI Test Package 2.1"
 msgstr "Paquete de Prueba QTI 2.1"
 
+msgid "QTI Test Package 2.2"
+msgstr ""
+
+msgid "QTI/APIP Test Content Package"
+msgstr ""
+
 msgid "Reference"
 msgstr "Referencia"
+
+msgid "Regenerate"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Eliminar Referencia de Elemento"
@@ -417,6 +725,9 @@ msgstr "Guardar"
 msgid "Scorer"
 msgstr "Puntaje"
 
+msgid "Scoring"
+msgstr ""
+
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
@@ -426,8 +737,14 @@ msgstr "Propiedades de sección"
 msgid "Select"
 msgstr "Seleccionar"
 
+msgid "Select a blueprint"
+msgstr ""
+
 msgid "Select Items"
 msgstr "Seleccionar elementos"
+
+msgid "Select the way the responses of your test should be processed"
+msgstr ""
 
 msgid "Selection"
 msgstr "Selección"
@@ -435,14 +752,44 @@ msgstr "Selección"
 msgid "Send"
 msgstr "Enviar"
 
+msgid "Set outcome identifier the feedback block is related to"
+msgstr ""
+
+msgid "Set the cut score associated to the test"
+msgstr ""
+
+msgid "Set the rubric block as a feedback block"
+msgstr ""
+
+msgid "Set the value of the outcome that will activate the feedback block"
+msgstr ""
+
+msgid "Set the weight identifier used to process the score"
+msgstr ""
+
+msgid "Set the XHTML-QTI class of the rubric block."
+msgstr ""
+
+msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
 msgid "Show Feedback"
 msgstr "Mostrar comentarios"
+
+msgid "Show Review"
+msgstr "Mostrar revisión"
 
 msgid "Show Solution"
 msgstr "Mostrar Solución"
 
+msgid "Show the review screen"
+msgstr "Mostrar la pantalla de revisión"
+
 msgid "Show the solution once the answer is submitted."
 msgstr "Mostrar la solución antes de que la respuesta sea enviada."
+
+msgid "Show timers"
+msgstr ""
 
 msgid "Show/Hide the review screen"
 msgstr "Mostrar/esconder la pantalla de revisión"
@@ -456,8 +803,17 @@ msgstr "Simúltanea"
 msgid "Skip"
 msgstr "Omitir"
 
+msgid "Skip  and go to the next item"
+msgstr "Saltar e ir al siguiente ítem"
+
 msgid "Skip &amp; End Test"
 msgstr "Saltar &amp; Fin de Prueba"
+
+msgid "Skip and end test"
+msgstr "Saltar y finalizar prueba"
+
+msgid "Skip and go to the end of the test"
+msgstr "Saltar e ir al final de la prueba"
 
 msgid "Skip to the end of the test"
 msgstr "Omitir hasta el fin de la prueba"
@@ -466,6 +822,9 @@ msgid "Skip to the next item"
 msgstr "Saltar al elemento siguiente"
 
 msgid "Skip to the next section"
+msgstr "Saltar a la siguiente sección"
+
+msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
 msgid "Start Test-part"
@@ -489,14 +848,45 @@ msgstr "Prueba"
 msgid "Test constructor"
 msgstr "Constructor de prueba"
 
+msgid "Test Navigation"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "Prueba Guardada"
 
 msgid "Test status"
 msgstr "Estado de la prueba"
 
+msgid "Test-Taker Tools"
+msgstr ""
+
+#, tao-public
+msgid "Tests"
+msgstr "Pruebas"
+
+msgid "Text content"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido."
+
+msgid "The assessment has been created but is not already running."
+msgstr "Se creó la evaluación pero aún no funciona."
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario."
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr "La evaluación se suspendió. Para retomar su evaluación, vuelva a iniciarla."
+
+msgid "The assessment has been terminated."
+msgstr "La evaluación finalizó."
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr "La evaluación finalizó. Ya no puede interactuar con ella."
+
+msgid "The assessment is still running."
+msgstr "La evaluación sigue ejecutándose."
 
 msgid "The candidate is not allowed to submit wrong responses."
 msgstr "Al candidato no se le permite enviar respuestas equivocadas."
@@ -525,6 +915,12 @@ msgstr "El modo de navegación determina los caminos generales que el candidato 
 msgid "The number of child elements to be selected."
 msgstr "El número de elementos secundarios seran seleccionados."
 
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr ""
+
+msgid "The outcomes have been regenerated!"
+msgstr ""
+
 msgid "The principle identifier of the test."
 msgstr "El identificador principio de la prueba."
 
@@ -550,17 +946,32 @@ msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS
 msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \"%s\\n"
 "\"en el archivo Manifiesto IMS se deshacen."
 
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly."
+msgstr ""
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
+msgstr ""
+
 msgid "The section title."
 msgstr "El título de sección."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "El modo de presentación determina cuando las respuestas de los candidatos se presentan para el procesamiento de la respuesta. Un testPart en modo individual requiere que el candidato presente sus respuestas en una base elemento por elemento. En el modo simultáneo las respuestas de los candidatos están presentadas juntas al final del testPart."
 
+msgid "The test has been closed/suspended!"
+msgstr "¡La evaluación se cerró/se suspendió!"
+
+msgid "The test has not been saved."
+msgstr "No se guardó la prueba."
+
 msgid "The test part identifier."
 msgstr "El identificador de parte de prueba."
 
 msgid "The test title."
 msgstr "El título de prueba."
+
+msgid "There is not outcomes!"
+msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Esta restricción afecta la visibilidad de la retroalimentación después del final del último intento."
@@ -586,14 +997,23 @@ msgstr "Tiempo Límite"
 msgid "Title"
 msgstr "Título"
 
+msgid "Total score"
+msgstr "Puntaje total"
+
 msgid "Tutor"
 msgstr "Tutor"
+
+msgid "Type"
+msgstr "Tipo"
 
 msgid "Unanswered"
 msgstr "Sin respuesta"
 
 msgid "Unanswered items"
 msgstr "Elemento sin respuesta"
+
+msgid "Unflag for Review"
+msgstr "Desmarcar para revisión"
 
 msgid "Unknown error."
 msgstr "Error desconocido."
@@ -606,6 +1026,9 @@ msgstr "Utilice Ctrl/Alt o Lasso para selección múltiple"
 
 msgid "Validate Responses"
 msgstr "Respuestas Validadas"
+
+msgid "Value"
+msgstr "Valor"
 
 msgid "Viewed"
 msgstr "Visto"
@@ -621,6 +1044,21 @@ msgstr "Visible"
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Advertencia – Le quedan %s minutos para completar la prueba."
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr "Advertencia: le quedan %s para completar este ítem."
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr "Advertencia: le quedan %s para completar esta sección."
+
+msgid "Warning – You have %s remaining to complete this test part."
+msgstr "Advertencia: le quedan %s para completar esta parte de la prueba."
+
+msgid "Weight"
+msgstr ""
+
+msgid "Weights"
+msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Cuando seleccione elementos secundarios de cada elemento es normalmente elegible para la selección de una sola vez."
@@ -643,11 +1081,23 @@ msgstr "Quién puede ver el bloque rúbrica durante la entrega."
 msgid "With Replacement"
 msgstr "Con Remplazo"
 
+msgid "Wrong file mime type"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML error en la linea %1$d columna %2$d \"%3$s\"."
 
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
+
+msgid "You are about to go to the next item. Click OK to continue and go to the next item."
+msgstr "Está a punto de pasar al siguiente ítem. Haga clic en \"OK\" para continuar e ir al siguiente ítem."
+
+msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
+msgstr "Está a punto de volver al ítem anterior. Haga clic en \"OK\" para continuar e ir al ítem anterior."
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr "Está a punto de enviar la prueba. No podrá acceder a esta prueba después de enviarla. Haga clic en \"OK\" para continuar y enviar la prueba."
 
 msgid "You have %s item(s) marked for review."
 msgstr "Tiene %s ítem(s) marcado(s) para revisión."
@@ -660,4 +1110,10 @@ msgstr "Tiene %s pregunta(s) sin respuesta."
 
 msgid "Your comment…"
 msgstr "Su comentario…"
+
+msgid "Zoom in"
+msgstr "Acercar"
+
+msgid "Zoom out"
+msgstr "Alejar"
 
