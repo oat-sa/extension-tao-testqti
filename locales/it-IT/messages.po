@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v3.2.0-sprint44\n"
-"PO-Revision-Date: 2017-02-15T16:39:46\n"
+"Project-Id-Version: TAO 3.2.0-sprint52\n"
+"PO-Revision-Date: 2017-06-09T15:21:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -61,13 +61,43 @@ msgstr "Lascia un commento"
 msgid "Allow Review"
 msgstr "Consenti una recensione"
 
+msgid "Allow Section Skipping"
+msgstr ""
+
 msgid "Allow Skipping"
 msgstr "Consenti Skipping"
+
+msgid "Allow skipping of the current section."
+msgstr ""
 
 msgid "Allow the candidate to review his answers."
 msgstr "Consenti al candidato di rivedere le sue risposte."
 
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr ""
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr ""
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr ""
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr ""
+
 msgid "Also compute the score per categories"
+msgstr ""
+
+msgid "An error occured during the test iniialization!"
 msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
@@ -97,11 +127,17 @@ msgstr "Si è verificato un errore sconosciuto durante la compilazione del test 
 msgid "Answer Eliminator"
 msgstr ""
 
+msgid "Answer Masking"
+msgstr ""
+
 msgid "Answered"
 msgstr "Risposto"
 
 msgid "Are you sure you want to end the test?"
 msgstr "Sei sicuro di voler terminare il test?"
+
+msgid "Area Masking"
+msgstr ""
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
 msgstr ""
@@ -148,6 +184,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Close Magnifier"
+msgstr ""
+
 msgid "Close the mask"
 msgstr ""
 
@@ -175,46 +214,46 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
+msgid "custom categories"
+msgstr ""
+
 msgid "Custom outcome processing. No changes will be made to the existing rules."
 msgstr ""
 
 msgid "Cut score"
 msgstr ""
 
-msgid "describe the item as informational"
-msgstr ""
-
-msgid "disable the warning automatically displayed upon exiting a timed section"
-msgstr ""
-
 msgid "Disable validation"
 msgstr "Disabilita convalida"
+
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr ""
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr ""
+
+msgid "Display End Test Warning"
+msgstr ""
+
+msgid "Display Next Part Warning"
+msgstr ""
+
+msgid "Display Next Section Warning"
+msgstr ""
+
+msgid "Display Unanswered Warning"
+msgstr ""
 
 msgid "Displayed label"
 msgstr ""
 
 msgid "Displays a customisable magnifier"
-msgstr ""
-
-msgid "displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option"
-msgstr ""
-
-msgid "displays a next section button"
-msgstr ""
-
-msgid "displays a next section button that warns the user that they will not be able to return to the section"
-msgstr ""
-
-msgid "displays a warning before the user finishes the test"
-msgstr ""
-
-msgid "displays a warning before the user finishes the test, only if there are unanswered/marked for review items"
-msgstr ""
-
-msgid "displays an exit button"
-msgstr ""
-
-msgid "displays the review screen / navigator"
 msgstr ""
 
 msgid "Do not flag the current item for later review"
@@ -223,23 +262,20 @@ msgstr "Non contrassegnare l'item corrente per una revisione successiva"
 msgid "Eliminate choices"
 msgstr ""
 
-msgid "enable answer eliminator tool"
+msgid "Enable Mark for Review"
 msgstr ""
 
-msgid "enable area masking tool"
+msgid "Enable mark for review of items. Requires the Review Screen option."
 msgstr ""
 
-msgid "enable calculator"
-msgstr ""
-
-msgid "enable highlighter tool"
-msgstr ""
-
-msgid "enable magnifier tool"
+msgid "Enable Review Screen"
 msgstr ""
 
 msgid "Enable selection"
 msgstr "Abilita selezione"
+
+msgid "Enable the item review screen / navigator."
+msgstr ""
 
 msgid "End test"
 msgstr "Fine test"
@@ -250,8 +286,8 @@ msgstr "Fine test"
 msgid "Enter a blueprint"
 msgstr ""
 
-msgid "Enter a category"
-msgstr "Inserisci una categoria"
+msgid "Enter a custom category"
+msgstr ""
 
 msgid "Error"
 msgstr "Errore"
@@ -269,8 +305,8 @@ msgstr "Espandi il riquadro recensione"
 msgid "Export"
 msgstr "Esporta"
 
-msgid "Export error in test : %s"
-msgstr "Errore di esportazione nel test:%"
+msgid "Export failed for the test \"%s"
+msgstr ""
 
 #, tao-public
 msgid "Export metadata"
@@ -278,6 +314,12 @@ msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Esporta QTI Package 2.1 Test"
+
+msgid "Export QTI 2.2 Test Package"
+msgstr ""
+
+msgid "Export successful for the test \"%s"
+msgstr ""
 
 msgid "Feedback block"
 msgstr ""
@@ -312,16 +354,31 @@ msgstr "Contrassegna l'item corrente per una revisione successiva"
 msgid "Flagged"
 msgstr "Contrassegnato"
 
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
 msgid "Hide Review"
 msgstr "Nascondi revisione"
 
 msgid "Hide the review screen"
 msgstr "Nascondi pannello revisioni"
 
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr ""
+
+msgid "Hide Timed Section Warning"
+msgstr ""
+
+msgid "Hide timers"
+msgstr ""
+
 msgid "Highlight"
 msgstr ""
 
 msgid "Highlight Text"
+msgstr ""
+
+msgid "Highlighter"
 msgstr ""
 
 msgid "Html title"
@@ -375,6 +432,9 @@ msgstr "Incoerenza alla riga% 1d:"
 msgid "Individual"
 msgstr "Singolo"
 
+msgid "Informational Item Usage"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "é già usato nel test."
 
@@ -385,6 +445,9 @@ msgid "is not a valid identifier (everything except spaces)"
 msgstr "non è un indicatore valido (tutto tranne gli spazi)"
 
 msgid "Item \"%s\" is completed."
+msgstr ""
+
+msgid "Item %d"
 msgstr ""
 
 msgid "Item %d of %d"
@@ -417,8 +480,14 @@ msgstr "Presentazione tardiva concessa"
 msgid "Leave a comment"
 msgstr ""
 
+msgid "Line Reader"
+msgstr ""
+
 msgid "Linear"
 msgstr "Lineare"
+
+msgid "Magnifier"
+msgstr ""
 
 msgid "Magnify less"
 msgstr ""
@@ -484,6 +553,9 @@ msgstr "Durata minima per questa sezione."
 msgid "Minimum duration for this test part."
 msgstr "Durata minima per questa parte di test."
 
+msgid "Missed test package file"
+msgstr ""
+
 msgid "Missing required option %s"
 msgstr ""
 
@@ -495,6 +567,9 @@ msgstr "Muovi su"
 
 msgid "Navigation"
 msgstr "Navigazione"
+
+msgid "Navigation Warnings"
+msgstr ""
 
 msgid "New Rubric Block"
 msgstr "Nuovo Blocco Rubrica"
@@ -529,17 +604,17 @@ msgstr "Non lineare"
 msgid "None"
 msgstr ""
 
-msgid "Not all test could be export"
-msgstr "Non tutti i test potevano essere esportati"
+msgid "Not all test could be exported"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Non mescolate, la posizione rimane fissa."
 
-msgid "Ok"
-msgstr "Sì"
-
 msgid "OK"
 msgstr "SI"
+
+msgid "Ok"
+msgstr "Sì"
 
 msgid "OK & End test"
 msgstr "SI & Fine test"
@@ -573,9 +648,6 @@ msgstr "Il pacchetto è valido, ma non sono stati trovati test. Assicurati che c
 
 msgid "Part %d"
 msgstr "Parte% d"
-
-msgid "Plugin dependency error!"
-msgstr ""
 
 msgid "Preview the covered area"
 msgstr ""
@@ -664,6 +736,9 @@ msgstr "Proprietà della sezione"
 msgid "Select"
 msgstr "Seleziona"
 
+msgid "Select a blueprint"
+msgstr ""
+
 msgid "Select Items"
 msgstr "Seleziona gli item"
 
@@ -711,6 +786,9 @@ msgstr "Mostra pannello revisioni"
 
 msgid "Show the solution once the answer is submitted."
 msgstr "Mostra la soluzione una volta che la risposta è stata inserita."
+
+msgid "Show timers"
+msgstr ""
 
 msgid "Show/Hide the review screen"
 msgstr "Mostra / Nascondi la schermata recensione"
@@ -769,11 +847,17 @@ msgstr "Test"
 msgid "Test constructor"
 msgstr "Test constructor"
 
+msgid "Test Navigation"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "Test salvato"
 
 msgid "Test status"
 msgstr "Stato della prova"
+
+msgid "Test-Taker Tools"
+msgstr ""
 
 #, tao-public
 msgid "Tests"
@@ -784,6 +868,24 @@ msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "Il file 'imsmanifest.xml' trovato nell'archivio non è valido."
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
+msgstr ""
 
 msgid "The candidate is not allowed to submit wrong responses."
 msgstr "Il candidato non è autorizzato a inviare le risposte sbagliate."
@@ -976,6 +1078,9 @@ msgstr "Chi può visualizzare il blocco rubrica durante la somministrazione."
 
 msgid "With Replacement"
 msgstr "Con sostituzione"
+
+msgid "Wrong file mime type"
+msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Errore XML alla riga%1$d colonna %2$d \"%3$s\"."
