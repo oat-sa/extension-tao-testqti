@@ -373,6 +373,9 @@ msgstr ""
 msgid "Hide Review"
 msgstr "Esconder revisión"
 
+msgid "Hide review"
+msgstr "Esconder revisión"
+
 msgid "Hide the review screen"
 msgstr "Esconder la pantalla de revisión"
 
@@ -748,6 +751,15 @@ msgstr "Bloque de Rúbrica"
 
 msgid "Save"
 msgstr "Guardar"
+
+msgid "Scratchpad"
+msgstr "Bloc de notas"
+
+msgid "Scratch pad"
+msgstr "Bloc de notas"
+
+msgid "Scratch Pad"
+msgstr "Bloc de notas"
 
 msgid "Scorer"
 msgstr "Puntaje"
