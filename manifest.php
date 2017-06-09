@@ -28,7 +28,7 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '9.11.1',
+    'version'     => '9.11.2',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.2.0',
