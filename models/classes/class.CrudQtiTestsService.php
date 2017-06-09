@@ -50,7 +50,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService
     /**
      * 
      * @author Rashid Mumtaz & Absar - PCG Team - {absar.gilani6@gmail.com & rashid.mumtaz372@gmail.com}
-     * @param array $propertiesValues
+     * @param string $uploadedFile
+     * @param \core_kernel_classes_Class $class
      * @return common_report_Report
      */
 	public function importQtiTest($uploadedFile, $class = null)

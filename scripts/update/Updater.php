@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestCategoryPresetRegistry;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
@@ -1245,6 +1246,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.6.0');
         }
 
-        $this->skip('9.6.0', '9.8.1');
+        $this->skip('9.6.0', '9.9.1');
+
+        if ($this->isVersion('9.9.1')) {
+            $registry = TestCategoryPresetRegistry::getRegistry();
+            $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
+            $this->setVersion('9.10.0');
+        }
+
+        $this->skip('9.10.0', '9.11.0');
     }
 }

@@ -139,9 +139,35 @@
                     -ms-flex-pack: end;
                     justify-content: flex-end;
 
+                    .timer-toggler {
+                        text-decoration: none;
+                        color: $textHighlight;
+                        line-height: 1.2;
+                        opacity: .6;
+                        padding: 7px 0;
+                        @include transition(opacity);
+
+                        &:hover,&:active,&:focus{
+                            outline: unset;
+                        }
+                        &:hover {
+                            opacity: .9;
+                            @include transition(opacity);
+                        }
+                    }
+
+                    &.zen-mode {
+                        .timer-toggler {
+                            opacity: .9;
+                            @include transition(opacity);
+                        }
+                        .qti-timer_time {
+                            opacity: 0;
+                            @include transition(opacity, 1s, ease-out);
+                        }
+                    }
 
                     .qti-timer {
-
                         display: inline-block;
                         text-align: center;
                         vertical-align: top;
@@ -149,6 +175,7 @@
                         position: relative;
                         padding: 0 20px;
                         margin-top: -1px;
+                        overflow: hidden;
 
                         .qti-timer_label {
                             max-width: 130px;
@@ -197,7 +224,6 @@
                     max-width: 200px;
                     height: 0.6em;
                 }
-
             }
 
             & > .control-box {
