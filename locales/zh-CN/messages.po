@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint15\n"
-"PO-Revision-Date: 2015-12-23T13:29:09\n"
+"Project-Id-Version: TAO 3.2.0-sprint52\n"
+"PO-Revision-Date: 2017-06-09T15:21:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%1$s - item %2$s/%3$s"
+msgid "%s - item %p/%c"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -28,11 +28,20 @@ msgstr "一个QTI的考试包"
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
 
+msgid "A response to this item is required."
+msgstr ""
+
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "一个可见的章节是要让考生能看见的。"
 
-msgid "Add a zip file containing QTI tests and items"
-msgstr "添加一个有包含QTI考试和QTI题目的ZIP文件"
+msgid "Activated"
+msgstr ""
+
+msgid "add a new weight"
+msgstr ""
+
+msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr ""
 
 msgid "Add selected item(s) here."
 msgstr "在此处添加所选的题目。"
@@ -52,11 +61,50 @@ msgstr "允许备注"
 msgid "Allow Review"
 msgstr "允许复审"
 
+msgid "Allow Section Skipping"
+msgstr ""
+
 msgid "Allow Skipping"
 msgstr "允许跳过"
 
+msgid "Allow skipping of the current section."
+msgstr ""
+
 msgid "Allow the candidate to review his answers."
 msgstr "允许考生复审答案。"
+
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr ""
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr ""
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr ""
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr ""
+
+msgid "Also compute the score per categories"
+msgstr ""
+
+msgid "An error occured during the test iniialization!"
+msgstr ""
+
+msgid "An error occurred during results submission. Please retry."
+msgstr ""
+
+msgid "An error occurred!"
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
 msgstr ""
@@ -76,10 +124,28 @@ msgstr "在编译QTI考试'%s'时出现了一个不明错误。"
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "在汇集QTI考试'%s'中时出现了一个不明错误。"
 
+msgid "Answer Eliminator"
+msgstr ""
+
+msgid "Answer Masking"
+msgstr ""
+
 msgid "Answered"
 msgstr ""
 
 msgid "Are you sure you want to end the test?"
+msgstr ""
+
+msgid "Area Masking"
+msgstr ""
+
+msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
+msgstr ""
+
+msgid "Associate Blueprint"
+msgstr ""
+
+msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr ""
 
 msgid "Author"
@@ -88,14 +154,41 @@ msgstr "作者"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
+msgid "Calculator"
+msgstr ""
+
 msgid "Cancel"
 msgstr "取消"
 
 msgid "Candidate"
 msgstr "考生"
 
+msgid "Cardinality"
+msgstr ""
+
 msgid "Categories"
 msgstr "分类"
+
+msgid "Category score"
+msgstr ""
+
+msgid "Change the current color preset"
+msgstr ""
+
+msgid "Class"
+msgstr ""
+
+msgid "Clear all active highlights"
+msgstr ""
+
+msgid "Clear Highlights"
+msgstr ""
+
+msgid "Close Magnifier"
+msgstr ""
+
+msgid "Close the mask"
+msgstr ""
 
 msgid "Collapse the review panel"
 msgstr ""
@@ -106,20 +199,95 @@ msgstr "备注"
 msgid "Completed items"
 msgstr ""
 
+msgid "Contrast"
+msgstr ""
+
+msgid "Controls the contribution of an individual item score to the overall test score."
+msgstr ""
+
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "允许最大的使用次数.输入0为无限制。"
+
+msgid "Covers parts of the item"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "custom categories"
+msgstr ""
+
+msgid "Custom outcome processing. No changes will be made to the existing rules."
+msgstr ""
+
+msgid "Cut score"
+msgstr ""
 
 msgid "Disable validation"
 msgstr "停用验证"
 
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr ""
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr ""
+
+msgid "Display End Test Warning"
+msgstr ""
+
+msgid "Display Next Part Warning"
+msgstr ""
+
+msgid "Display Next Section Warning"
+msgstr ""
+
+msgid "Display Unanswered Warning"
+msgstr ""
+
+msgid "Displayed label"
+msgstr ""
+
+msgid "Displays a customisable magnifier"
+msgstr ""
+
+msgid "Do not flag the current item for later review"
+msgstr ""
+
+msgid "Eliminate choices"
+msgstr ""
+
+msgid "Enable Mark for Review"
+msgstr ""
+
+msgid "Enable mark for review of items. Requires the Review Screen option."
+msgstr ""
+
+msgid "Enable Review Screen"
+msgstr ""
+
 msgid "Enable selection"
 msgstr "启用选择"
+
+msgid "Enable the item review screen / navigator."
+msgstr ""
+
+msgid "End test"
+msgstr ""
 
 msgid "End Test"
 msgstr "结束考试"
 
-msgid "Enter a category"
-msgstr "输入一个类别"
+msgid "Enter a blueprint"
+msgstr ""
+
+msgid "Enter a custom category"
+msgstr ""
 
 msgid "Error"
 msgstr "错误"
@@ -137,14 +305,33 @@ msgstr ""
 msgid "Export"
 msgstr "导出"
 
-msgid "Export error in test : %s"
+msgid "Export failed for the test \"%s"
+msgstr ""
+
+#, tao-public
+msgid "Export metadata"
 msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "导出 QTI 2.1考试包"
 
+msgid "Export QTI 2.2 Test Package"
+msgstr ""
+
+msgid "Export successful for the test \"%s"
+msgstr ""
+
+msgid "Feedback block"
+msgstr ""
+
 msgid "File name"
 msgstr "文件名"
+
+msgid "File not found"
+msgstr ""
+
+msgid "File not found!"
+msgstr ""
 
 msgid "Filter"
 msgstr "过滤条件"
@@ -158,7 +345,43 @@ msgstr "固定"
 msgid "Fixed position in a shuffled the selection."
 msgstr "在随机顺序中固定位置。"
 
+msgid "Flag for Review"
+msgstr ""
+
+msgid "Flag the current item for later review"
+msgstr ""
+
 msgid "Flagged"
+msgstr ""
+
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Hide Review"
+msgstr ""
+
+msgid "Hide the review screen"
+msgstr ""
+
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr ""
+
+msgid "Hide Timed Section Warning"
+msgstr ""
+
+msgid "Hide timers"
+msgstr ""
+
+msgid "Highlight"
+msgstr ""
+
+msgid "Highlight Text"
+msgstr ""
+
+msgid "Highlighter"
+msgstr ""
+
+msgid "Html title"
 msgstr ""
 
 msgid "Identifier"
@@ -176,11 +399,17 @@ msgstr "如果设定，它会使子元素的顺序随机化，否则它会使用
 msgid "If the candidate can skip the item, without submitting a response."
 msgstr "考生是否可以不提交回应而跳过题目。"
 
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
 msgid "Import"
 msgstr "导入"
 
-msgid "Import a QTI 2.1 Test Package"
-msgstr "导入一个QTI 2.1考试包"
+msgid "Import a QTI/APIP Content Package"
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr ""
@@ -203,6 +432,9 @@ msgstr ""
 msgid "Individual"
 msgstr "个别"
 
+msgid "Informational Item Usage"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "已经在考试中被使用。"
 
@@ -210,6 +442,12 @@ msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
+msgstr ""
+
+msgid "Item \"%s\" is completed."
+msgstr ""
+
+msgid "Item %d"
 msgstr ""
 
 msgid "Item %d of %d"
@@ -239,8 +477,26 @@ msgstr "保持在一起"
 msgid "Late submission allowed"
 msgstr "允许迟交"
 
+msgid "Leave a comment"
+msgstr ""
+
+msgid "Line Reader"
+msgstr ""
+
 msgid "Linear"
 msgstr "直线性"
+
+msgid "Magnifier"
+msgstr ""
+
+msgid "Magnify less"
+msgstr ""
+
+msgid "Magnify more"
+msgstr ""
+
+msgid "Magnifying Glass"
+msgstr ""
 
 msgid "Manage Rubric Blocks"
 msgstr "管理指导语区块"
@@ -248,10 +504,20 @@ msgstr "管理指导语区块"
 msgid "Manage test properties"
 msgstr "管理考试属性"
 
+#, tao-public
+msgid "Manage tests"
+msgstr ""
+
 msgid "Manage Tests"
 msgstr "管理考试"
 
 msgid "Mark for review"
+msgstr ""
+
+msgid "Masking"
+msgstr ""
+
+msgid "Match value"
 msgstr ""
 
 msgid "Max Attempts"
@@ -287,6 +553,12 @@ msgstr "这个区域的最短时限。"
 msgid "Minimum duration for this test part."
 msgstr "这个考试部分的最短时限。"
 
+msgid "Missed test package file"
+msgstr ""
+
+msgid "Missing required option %s"
+msgstr ""
+
 msgid "Move Down"
 msgstr "向下移"
 
@@ -295,6 +567,9 @@ msgstr "向上移"
 
 msgid "Navigation"
 msgstr "导览"
+
+msgid "Navigation Warnings"
+msgstr ""
 
 msgid "New Rubric Block"
 msgstr "新指导语区块"
@@ -317,19 +592,31 @@ msgstr ""
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "题目\"%s\"已经无剩余的使用次数。"
 
+msgid "No outcome processing. Erase the existing rules, if any."
+msgstr ""
+
 msgid "No reference to any IMS QTI Item found."
 msgstr "没有找到任何对照IMS QTI的题目。"
 
 msgid "Non Linear"
 msgstr "非线性"
 
-msgid "Not all test could be export"
+msgid "None"
+msgstr ""
+
+msgid "Not all test could be exported"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "不是随机顺序，该位置保持固定。"
 
+msgid "OK"
+msgstr ""
+
 msgid "Ok"
+msgstr ""
+
+msgid "OK & End test"
 msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
@@ -341,13 +628,28 @@ msgstr ""
 msgid "Only display the unanswered items"
 msgstr ""
 
+msgid "Open Calculator"
+msgstr ""
+
 msgid "Ordering"
 msgstr "排序"
+
+msgid "Outcome"
+msgstr ""
+
+msgid "Outcome declarations"
+msgstr ""
+
+msgid "Outcome processing"
+msgstr ""
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
 msgstr ""
 
 msgid "Part %d"
+msgstr ""
+
+msgid "Preview the covered area"
 msgstr ""
 
 msgid "Previous"
@@ -371,14 +673,20 @@ msgstr ""
 msgid "QTI Test \"%s\" successfully published."
 msgstr ""
 
-msgid "QTI Test Package"
-msgstr "QTI考试包"
-
 msgid "QTI Test Package 2.1"
 msgstr "QTI 2.1考试包"
 
+msgid "QTI Test Package 2.2"
+msgstr ""
+
+msgid "QTI/APIP Test Content Package"
+msgstr ""
+
 msgid "Reference"
 msgstr "参照"
+
+msgid "Regenerate"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "参照"
@@ -416,6 +724,9 @@ msgstr "储存"
 msgid "Scorer"
 msgstr "评分人"
 
+msgid "Scoring"
+msgstr ""
+
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
@@ -425,8 +736,14 @@ msgstr "章节属性"
 msgid "Select"
 msgstr "选取"
 
+msgid "Select a blueprint"
+msgstr ""
+
 msgid "Select Items"
 msgstr "选取题目"
+
+msgid "Select the way the responses of your test should be processed"
+msgstr ""
 
 msgid "Selection"
 msgstr "选取区域"
@@ -434,14 +751,44 @@ msgstr "选取区域"
 msgid "Send"
 msgstr "传送"
 
+msgid "Set outcome identifier the feedback block is related to"
+msgstr ""
+
+msgid "Set the cut score associated to the test"
+msgstr ""
+
+msgid "Set the rubric block as a feedback block"
+msgstr ""
+
+msgid "Set the value of the outcome that will activate the feedback block"
+msgstr ""
+
+msgid "Set the weight identifier used to process the score"
+msgstr ""
+
+msgid "Set the XHTML-QTI class of the rubric block."
+msgstr ""
+
+msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
 msgid "Show Feedback"
 msgstr "显示回馈"
+
+msgid "Show Review"
+msgstr ""
 
 msgid "Show Solution"
 msgstr "显示解答"
 
+msgid "Show the review screen"
+msgstr ""
+
 msgid "Show the solution once the answer is submitted."
 msgstr "考生提交答案后就立刻显示解答。"
+
+msgid "Show timers"
+msgstr ""
 
 msgid "Show/Hide the review screen"
 msgstr ""
@@ -455,7 +802,16 @@ msgstr "同时"
 msgid "Skip"
 msgstr "跳过"
 
+msgid "Skip  and go to the next item"
+msgstr ""
+
 msgid "Skip &amp; End Test"
+msgstr ""
+
+msgid "Skip and end test"
+msgstr ""
+
+msgid "Skip and go to the end of the test"
 msgstr ""
 
 msgid "Skip to the end of the test"
@@ -465,6 +821,9 @@ msgid "Skip to the next item"
 msgstr ""
 
 msgid "Skip to the next section"
+msgstr ""
+
+msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
 msgid "Start Test-part"
@@ -488,14 +847,45 @@ msgstr "考试"
 msgid "Test constructor"
 msgstr "考试建造器"
 
+msgid "Test Navigation"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "考试已储存"
 
 msgid "Test status"
 msgstr ""
 
+msgid "Test-Taker Tools"
+msgstr ""
+
+#, tao-public
+msgid "Tests"
+msgstr ""
+
+msgid "Text content"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "发现'imsmanifest.xml'文件未有效存档。"
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
+msgstr ""
 
 msgid "The candidate is not allowed to submit wrong responses."
 msgstr "考生不可提供错误的回应。"
@@ -524,6 +914,12 @@ msgstr "导航模 ​​式决定了报考者可采取的一般途径。 线性
 msgid "The number of child elements to be selected."
 msgstr "要被选的子元素数量。"
 
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr ""
+
+msgid "The outcomes have been regenerated!"
+msgstr ""
+
 msgid "The principle identifier of the test."
 msgstr "考试的主要标识符。"
 
@@ -548,17 +944,32 @@ msgstr "参照"
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
 msgstr ""
 
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly."
+msgstr ""
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
+msgstr ""
+
 msgid "The section title."
 msgstr "区域标题。"
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "考试提交模式决定考生回应什么时候被送回服务器处理。 在个别(individual)模式 ​​中，考生需要各自提交每一个题目，每个回应都会各自被送回服务器处理。 在同时(simultaneous)模式 ​​中，考生只需要考试没提交一次，所有的回应是同时在考试没被送回。"
 
+msgid "The test has been closed/suspended!"
+msgstr ""
+
+msgid "The test has not been saved."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "考试部分的标识符。"
 
 msgid "The test title."
 msgstr "考试标题。"
+
+msgid "There is not outcomes!"
+msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "这个约束影响到考生考完试以后是否可以看得见题目的回馈。"
@@ -584,13 +995,22 @@ msgstr "时间限制"
 msgid "Title"
 msgstr "标题"
 
+msgid "Total score"
+msgstr ""
+
 msgid "Tutor"
 msgstr "导师"
+
+msgid "Type"
+msgstr ""
 
 msgid "Unanswered"
 msgstr ""
 
 msgid "Unanswered items"
+msgstr ""
+
+msgid "Unflag for Review"
 msgstr ""
 
 msgid "Unknown error."
@@ -605,6 +1025,9 @@ msgstr "使用Ctrl/Meta键或套索的多重选择"
 msgid "Validate Responses"
 msgstr "验证回应"
 
+msgid "Value"
+msgstr ""
+
 msgid "Viewed"
 msgstr ""
 
@@ -618,6 +1041,21 @@ msgid "Visible"
 msgstr "可见"
 
 msgid "Warning – You have %s remaining to complete the test."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete this test part."
+msgstr ""
+
+msgid "Weight"
+msgstr ""
+
+msgid "Weights"
 msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
@@ -641,10 +1079,22 @@ msgstr "递送时,谁可以浏览指导语区块。"
 msgid "With Replacement"
 msgstr "跟取代"
 
+msgid "Wrong file mime type"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "You are about to go to the next item. Click OK to continue and go to the next item."
+msgstr ""
+
+msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
+msgstr ""
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
@@ -657,5 +1107,11 @@ msgid "You have %s unanswered question(s)."
 msgstr ""
 
 msgid "Your comment…"
+msgstr ""
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Zoom out"
 msgstr ""
 

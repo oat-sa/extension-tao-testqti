@@ -52,6 +52,7 @@ module.exports = function(grunt) {
                 options: {
                     paths : paths,
                     include: testPlugins,
+                    excludeShallow : ['mathJax'],
                     exclude : ['json!i18ntr/messages.json'].concat(libs),
                     out: out + "/testPlugins.min.js"
                 }

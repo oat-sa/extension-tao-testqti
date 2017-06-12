@@ -18,6 +18,7 @@
  */
 return new \oat\taoQtiTest\models\TestModelService(array(
     'exportHandlers' => array(
+        new \oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler(),
         new taoQtiTest_models_classes_export_TestExport(),
         new taoQtiTest_models_classes_export_TestExport22()
     ),
