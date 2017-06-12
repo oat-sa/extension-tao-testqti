@@ -1265,7 +1265,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $testModelService->setOption('exportHandlers', $exportHandlers);
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
-            $this->setVersion('9.12.0');
+            $this->setVersion('9.12.1');
         }
     }
 }
