@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO v3.2.0-sprint44\n"
-"PO-Revision-Date: 2017-02-15T16:37:39\n"
+"Project-Id-Version: TAO 3.2.0-sprint52\n"
+"PO-Revision-Date: 2017-06-09T15:21:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -61,13 +61,43 @@ msgstr "コメントを許可する"
 msgid "Allow Review"
 msgstr "レビューを許可する"
 
+msgid "Allow Section Skipping"
+msgstr ""
+
 msgid "Allow Skipping"
 msgstr "スキップを許可する"
+
+msgid "Allow skipping of the current section."
+msgstr ""
 
 msgid "Allow the candidate to review his answers."
 msgstr "受験者が回答のレビューすることを許可する"
 
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr ""
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr ""
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr ""
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr ""
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr ""
+
 msgid "Also compute the score per categories"
+msgstr ""
+
+msgid "An error occured during the test iniialization!"
 msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
@@ -97,11 +127,17 @@ msgstr "QTIテスト'%s'のコンパイル中に未知のエラーが発生し�
 msgid "Answer Eliminator"
 msgstr ""
 
+msgid "Answer Masking"
+msgstr ""
+
 msgid "Answered"
 msgstr "回答済み"
 
 msgid "Are you sure you want to end the test?"
 msgstr "テストを本当に終了しますか？"
+
+msgid "Area Masking"
+msgstr ""
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
 msgstr ""
@@ -148,6 +184,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Close Magnifier"
+msgstr ""
+
 msgid "Close the mask"
 msgstr ""
 
@@ -175,46 +214,46 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
+msgid "custom categories"
+msgstr ""
+
 msgid "Custom outcome processing. No changes will be made to the existing rules."
 msgstr ""
 
 msgid "Cut score"
 msgstr ""
 
-msgid "describe the item as informational"
-msgstr ""
-
-msgid "disable the warning automatically displayed upon exiting a timed section"
-msgstr ""
-
 msgid "Disable validation"
 msgstr "バリデーションを無効にする。"
+
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr ""
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr ""
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr ""
+
+msgid "Display End Test Warning"
+msgstr ""
+
+msgid "Display Next Part Warning"
+msgstr ""
+
+msgid "Display Next Section Warning"
+msgstr ""
+
+msgid "Display Unanswered Warning"
+msgstr ""
 
 msgid "Displayed label"
 msgstr ""
 
 msgid "Displays a customisable magnifier"
-msgstr ""
-
-msgid "displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option"
-msgstr ""
-
-msgid "displays a next section button"
-msgstr ""
-
-msgid "displays a next section button that warns the user that they will not be able to return to the section"
-msgstr ""
-
-msgid "displays a warning before the user finishes the test"
-msgstr ""
-
-msgid "displays a warning before the user finishes the test, only if there are unanswered/marked for review items"
-msgstr ""
-
-msgid "displays an exit button"
-msgstr ""
-
-msgid "displays the review screen / navigator"
 msgstr ""
 
 msgid "Do not flag the current item for later review"
@@ -223,23 +262,20 @@ msgstr ""
 msgid "Eliminate choices"
 msgstr ""
 
-msgid "enable answer eliminator tool"
+msgid "Enable Mark for Review"
 msgstr ""
 
-msgid "enable area masking tool"
+msgid "Enable mark for review of items. Requires the Review Screen option."
 msgstr ""
 
-msgid "enable calculator"
-msgstr ""
-
-msgid "enable highlighter tool"
-msgstr ""
-
-msgid "enable magnifier tool"
+msgid "Enable Review Screen"
 msgstr ""
 
 msgid "Enable selection"
 msgstr "選択を可能にする。"
+
+msgid "Enable the item review screen / navigator."
+msgstr ""
 
 msgid "End test"
 msgstr ""
@@ -250,8 +286,8 @@ msgstr "テスト終了"
 msgid "Enter a blueprint"
 msgstr ""
 
-msgid "Enter a category"
-msgstr "カテゴリーを入力してください。"
+msgid "Enter a custom category"
+msgstr ""
 
 msgid "Error"
 msgstr "エラー"
@@ -270,8 +306,8 @@ msgstr "レビューパネルを開く"
 msgid "Export"
 msgstr "エクスポート"
 
-msgid "Export error in test : %s"
-msgstr "テスト%sのエクスポートエラー"
+msgid "Export failed for the test \"%s"
+msgstr ""
 
 #, tao-public
 msgid "Export metadata"
@@ -279,6 +315,12 @@ msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "QTI 2.1のテストパッケージのエクスポート"
+
+msgid "Export QTI 2.2 Test Package"
+msgstr ""
+
+msgid "Export successful for the test \"%s"
+msgstr ""
 
 msgid "Feedback block"
 msgstr ""
@@ -313,16 +355,31 @@ msgstr ""
 msgid "Flagged"
 msgstr "見直し"
 
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
 msgid "Hide Review"
 msgstr "一覧を隠す"
 
 msgid "Hide the review screen"
 msgstr ""
 
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr ""
+
+msgid "Hide Timed Section Warning"
+msgstr ""
+
+msgid "Hide timers"
+msgstr ""
+
 msgid "Highlight"
 msgstr ""
 
 msgid "Highlight Text"
+msgstr ""
+
+msgid "Highlighter"
 msgstr ""
 
 msgid "Html title"
@@ -376,6 +433,9 @@ msgstr "%1d行で矛盾があります:"
 msgid "Individual"
 msgstr "個人"
 
+msgid "Informational Item Usage"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "既にテストで使用されています"
 
@@ -386,6 +446,9 @@ msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）ではありません。"
 
 msgid "Item \"%s\" is completed."
+msgstr ""
+
+msgid "Item %d"
 msgstr ""
 
 msgid "Item %d of %d"
@@ -418,8 +481,14 @@ msgstr "後での送信を許可"
 msgid "Leave a comment"
 msgstr ""
 
+msgid "Line Reader"
+msgstr ""
+
 msgid "Linear"
 msgstr "順次式"
+
+msgid "Magnifier"
+msgstr ""
 
 msgid "Magnify less"
 msgstr ""
@@ -485,6 +554,9 @@ msgstr "このセクション最小時間"
 msgid "Minimum duration for this test part."
 msgstr "このテストパートの最小時間"
 
+msgid "Missed test package file"
+msgstr ""
+
 msgid "Missing required option %s"
 msgstr ""
 
@@ -496,6 +568,9 @@ msgstr "上へ"
 
 msgid "Navigation"
 msgstr "ナビゲーション"
+
+msgid "Navigation Warnings"
+msgstr ""
 
 msgid "New Rubric Block"
 msgstr "新たなルーブリックブロック"
@@ -530,17 +605,17 @@ msgstr "非順次式"
 msgid "None"
 msgstr ""
 
-msgid "Not all test could be export"
-msgstr "テストがすべてエクスポートされませんでした"
+msgid "Not all test could be exported"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "シャッフルされません。位置は固定のままです。"
 
-msgid "Ok"
-msgstr "OK"
-
 msgid "OK"
 msgstr ""
+
+msgid "Ok"
+msgstr "OK"
 
 msgid "OK & End test"
 msgstr ""
@@ -574,9 +649,6 @@ msgstr "パッケージは有効ですがテストがありません。有効な
 
 msgid "Part %d"
 msgstr "パート%d"
-
-msgid "Plugin dependency error!"
-msgstr ""
 
 msgid "Preview the covered area"
 msgstr ""
@@ -665,6 +737,9 @@ msgstr "セッションのプロパティ"
 msgid "Select"
 msgstr "選択"
 
+msgid "Select a blueprint"
+msgstr ""
+
 msgid "Select Items"
 msgstr "アイテムを選択"
 
@@ -712,6 +787,9 @@ msgstr ""
 
 msgid "Show the solution once the answer is submitted."
 msgstr "回答を提出すると答えを表示します"
+
+msgid "Show timers"
+msgstr ""
 
 msgid "Show/Hide the review screen"
 msgstr "レビュー画面の表示／非表示"
@@ -770,11 +848,17 @@ msgstr "テスト"
 msgid "Test constructor"
 msgstr "テスト作成"
 
+msgid "Test Navigation"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "テストを保存"
 
 msgid "Test status"
 msgstr "テスト状況"
+
+msgid "Test-Taker Tools"
+msgstr ""
 
 #, tao-public
 msgid "Tests"
@@ -785,6 +869,24 @@ msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "アーカイブで見つかった 'imsmanifest.xml'ファイルは有効ではありません"
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
+msgstr ""
 
 msgid "The candidate is not allowed to submit wrong responses."
 msgstr "受験者は間違った回答を送信できません。"
@@ -977,6 +1079,9 @@ msgstr "デリバリー中だれがルーブリックブロックを参照でき
 
 msgid "With Replacement"
 msgstr "置換"
+
+msgid "Wrong file mime type"
+msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""

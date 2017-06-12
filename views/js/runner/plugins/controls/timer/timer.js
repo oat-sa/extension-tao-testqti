@@ -238,7 +238,7 @@ define([
                     displayedTimers[type] = timerComponentFactory(config);
                     displayedTimers[type]
                         .init()
-                        .render(self.$element);
+                        .render(self.$element.find('.timer-wrapper'));
 
                     /**
                      * @event timerPlugin#addtimer
@@ -302,7 +302,12 @@ define([
                         })
                     );
                 });
-                return Promise.all(timerUpdatePromises);
+                return Promise
+                        .all(timerUpdatePromises)
+                        .then(function(data){
+                            toggleToggler();
+                            return data;
+                        });
             };
 
             /**
@@ -323,6 +328,35 @@ define([
                 }
             }
 
+            /**
+             * Show/hide the timers akka "zen mode"
+             */
+            function toggleZenMode() {
+                if(self.$element.hasClass('zen-mode')){
+                    self.$element.removeClass('zen-mode');
+                    self.$toggler.attr('title', __('Hide timers'));
+                    self.storage.removeItem('zen-mode');
+                } else {
+                    self.$element.addClass('zen-mode');
+                    self.$toggler.attr('title', __('Show timers'));
+                    self.storage.setItem('zen-mode', true);
+                }
+            }
+
+            /**
+             * Hide the toggler without timers,
+             * display it otherwise
+             */
+            function toggleToggler() {
+                if(self.$toggler.length){
+                    if(_.size(timers) > 0){
+                        hider.show(self.$toggler);
+                    } else {
+                        hider.hide(self.$toggler);
+                    }
+                }
+            }
+
             return store('timer-' + testRunner.getConfig().serviceCallId)
                 .then(function(timeStore) {
                     if (self.shouldClearStorage) {
@@ -338,6 +372,24 @@ define([
 
                     //the element that'll contain the timers
                     self.$element = $(timerBoxTpl());
+
+                    //used to show/hide the timer
+                    self.$toggler =  self.$element.find('.timer-toggler');
+
+                    //restore the zen mode if set previously
+                    self.storage
+                        .getItem('zen-mode')
+                        .then(function(zenMode){
+                            if(zenMode  && !self.$element.hasClass('zen-mode')){
+                                toggleZenMode();
+                            }
+                        });
+
+                    self.$toggler.on('click', function(e){
+                        e.preventDefault();
+                        toggleZenMode();
+                    });
+
 
                     //one stopwatch to count the time
                     self.stopwatch = timerFactory({
