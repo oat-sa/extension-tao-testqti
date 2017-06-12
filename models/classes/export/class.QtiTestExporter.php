@@ -209,8 +209,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
         $extraPath = str_replace('\\', '/', dirname($rootDir->getRelPath($file)));
         $extraPath = trim($extraPath, '/');
-        \common_Logger::w($extraPath . ' ' . $rootDir->getRelPath($file));
-        $extraReversePath = '';
+        $extraReversePath = '../../';
         if (empty($extraPath) === false) {
             $n = count(explode('/', $extraPath));
             $parts = array();
@@ -220,9 +219,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             }
 
             $extraReversePath = implode('/', $parts) . '/';
-            \common_Logger::w($n . ' ' . $extraReversePath);
-        } else {
-            $extraReversePath = '../../';
         }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
