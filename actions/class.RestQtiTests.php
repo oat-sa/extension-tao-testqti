@@ -32,8 +32,6 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     }
 
     const TASK_ID_PARAM = 'id';
-    const CLASS_URI_PARAM = 'class-uri';
-    const CLASS_LABEL_PARAM = 'class-label';
 
     private static $accepted_types = array(
         'application/zip',
@@ -235,29 +233,6 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      */
     private function getTestClass()
     {
-        $class = null;
-        $rootClass = new \core_kernel_classes_Class(TAO_TEST_CLASS);
-        if ($this->hasRequestParameter(self::CLASS_URI_PARAM) && $this->hasRequestParameter(self::CLASS_LABEL_PARAM)) {
-            throw new \common_exception_RestApi(
-                self::CLASS_URI_PARAM . ' and ' . self::CLASS_LABEL_PARAM . ' parameters do not supposed to be used simultaneously.'
-            );
-        }
-
-        if ($this->hasRequestParameter(self::CLASS_URI_PARAM)) {
-            $class = new \core_kernel_classes_Class($this->getRequestParameter(self::CLASS_URI_PARAM));
-        }
-        if ($this->hasRequestParameter(self::CLASS_LABEL_PARAM)) {
-            $label = $this->getRequestParameter(self::CLASS_LABEL_PARAM);
-            foreach ($rootClass->getSubClasses(true) as $subClass) {
-                if ($subClass->getLabel() === $label) {
-                    $class = $subClass;
-                    break;
-                }
-            }
-        }
-        if ($class === null || !$class->exists()) {
-            $class = $rootClass;
-        }
-        return $class;
+        return $this->getClassFromRequest(new \core_kernel_classes_Class(TAO_TEST_CLASS));
     }
 }
