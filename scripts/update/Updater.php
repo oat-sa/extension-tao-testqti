@@ -470,13 +470,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('3.1.0', '3.4.0');
 
         if ($this->isVersion('3.4.0')) {
-            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $ext = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
-            $dir = new \core_kernel_file_File($uri);
-
-            $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
-
+            $fileResource = new \core_kernel_classes_Resource($uri);
+            if ($fileResource->exists()) {
+                $fileSystem = $fileResource->getOnePropertyValue(new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository'));
+                if (!empty($fileSystem) && $fileSystem instanceof \core_kernel_classes_Literal) {
+                    \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem((string) $fileSystem);
+                }
+            }
             $this->setVersion('4.0.0');
         }
 
@@ -1267,7 +1269,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('9.12.0');
         }
-
-        $this->skip('9.12.0', '9.13.0');
+      
+        $this->skip('9.12.0', '9.14.0');
     }
 }
