@@ -277,8 +277,8 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "formData",
-                        "description": "A QTI 2.1 package",
+                        "in": "query",
+                        "description": "job reference",
                         "type": "string",
                         "required": true
                     }
