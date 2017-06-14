@@ -1269,7 +1269,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('9.12.0');
         }
-
-        $this->skip('9.12.0', '9.13.1');
+      
+        $this->skip('9.12.0', '9.14.0');
     }
 }
