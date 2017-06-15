@@ -63,7 +63,7 @@ use qtism\data\AssessmentItemRef;
 class QtiRunnerService extends ConfigurableService implements RunnerService
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerService';
-    
+
     /**
      * @deprecated use SERVICE_ID
      */
@@ -184,7 +184,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->isTimeout() === false) {
                 TestRunnerUtils::beginCandidateInteraction($session);
             }
-            
+
             $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
         } else {
             throw new \common_exception_InvalidArgumentType(
@@ -346,6 +346,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
+
+                // The definition of the current item (HREF)
+                $response['itemDefinition'] = $itemRef->getHref();
+
+                //deprecated key
                 $response['itemUri'] = $itemRef->getHref();
 
                 // The state of the current AssessmentTestSession.
@@ -400,7 +405,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['canMoveBackward'] = $session->canMoveBackward();
 
                 //Number of rubric blocks
-                $response['numberRubrics'] = count($route->current()->getRubricBlockRefs());
+                $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
+
+                //does the item has modal feedbacks ?
+                //$response['hasModalFeedbacks'] = count($itemSession->getAssessmentItem()->getModalFeedbacks()) > 0;
 
                 // append dynamic options
                 $response['options'] = $config->getTestOptions($context);
@@ -579,7 +587,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
             );
 
-            if (is_array($response)) {
+            //if (is_array($response)) {
                 foreach ($response as $id => $responseData) {
                     try {
                         $var = $filler->fill($id, $responseData);
@@ -593,9 +601,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         \common_Logger::d("Could not find variable with identifier '${id}' in current item.");
                     }
                 }
-            } else {
-                \common_Logger::e('Invalid json payload');
-            }
+            //} else {
+                //\common_Logger::e('Invalid json payload');
+            //}
 
             return $responses;
         } else {
@@ -1192,14 +1200,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function buildTimeConstraints(RunnerServiceContext $context) {
         $constraints = array();
-        
+
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
         foreach ($session->getRegularTimeConstraints() as $tc) {
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
-                
+
                 $source = $tc->getSource();
                 $identifier = $source->getIdentifier();
                 $constraints[] = array(
@@ -1224,7 +1232,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
         $timer = $session->getTimer();
-        
+
         return [
             'total' => $timer->getExtraTime(),
             'consumed' => $timer->getConsumedExtraTime(),
@@ -1247,7 +1255,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if (!is_string($variableValue) && !is_numeric($variableValue)) {
                 $variableValue = json_encode($variableValue);
             }
-            
+
             $metaVariable = new \taoResultServer_models_classes_TraceVariable();
             $metaVariable->setIdentifier($variableIdentifier);
             $metaVariable->setBaseType('string');

@@ -181,6 +181,20 @@ define([
         init : function init(){
             var self = this;
 
+
+            function getItemResults() {
+                var results = {};
+                var context = self.getTestContext();
+                if(context && self.itemRunner){
+                    results = {
+                        itemIdentifier : context.itemIdentifier,
+                        itemResponse   : JSON.stringify(self.itemRunner.getResponses()),
+                        itemState      : JSON.stringify(self.itemRunner.getState())
+                    };
+                }
+                return results;
+            }
+
             /**
              * Compute the next item for the given action
              * @param {String} action - item action like move/next, skip, etc.
@@ -208,6 +222,8 @@ define([
                             }
 
                             load();
+                        }).catch(function(err){
+                            self.trigger('error', err);
                         });
                 });
 
@@ -227,6 +243,7 @@ define([
                     self.finish();
                 }
             }
+
 
             /**
              * Store the item state and responses, if needed
@@ -364,30 +381,13 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
-                    //ask to move:
-                    // 1. try to submit state and responses
-                    // 2. update stats on the map
-                    // 3. compute the next item to load
+                    this.trigger('disablenav disabletools');
 
-                    var computeNextMove = _.partial(computeNext, 'move', {
+                    computeNext('move', _.merge(getItemResults(), {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
-                    });
-
-                    this.trigger('disablenav disabletools');
-
-                    // submit the response, but can break if empty
-                    submit()
-                        .then(updateStats)
-                        .then(computeNextMove)
-                        .catch(function (err) {
-                            // do no trigger error if the promise is rejected for an architectural purpose
-                            if (err !== true) {
-                                self.trigger('error', err);
-                            }
-                        });
-
+                    }));
                 })
                 .after('move', function (direction, scope, position) {
                     if (leaveSection(direction, scope, position)) {
@@ -401,7 +401,6 @@ define([
                     computeNext('skip', {
                         scope     : scope || 'item'
                     });
-
                 })
                 .on('exit', function(why){
                     var context = self.getTestContext();
@@ -428,20 +427,12 @@ define([
 
                     self.disableItem(context.itemUri);
 
-                    // submit the response even if empty
-                    submit(true)
-                        .then(updateStats)
-                        .then(function() {
-                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
-                                computeNext('timeout', {
-                                    scope: scope,
-                                    ref: ref
-                                });
-                            });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
+                        computeNext('timeout', _.merge(getItemResults(), {
+                            scope: scope,
+                            ref: ref
+                        }));
+                    });
                 })
                 .after('timeout', function (scope) {
                     if (scope === 'assessmentSection' || scope === 'testPart') {
@@ -455,7 +446,8 @@ define([
 
                     if (!self.getState('disconnected')) {
                         // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {reason: {
+                        pause = self.getProxy().callTestAction('pause', {
+                            reason: {
                                 reasons: data && data.reasons,
                                 comment : data && data.message
                             }
