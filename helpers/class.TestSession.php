@@ -230,7 +230,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
             
-            $this->unsetVariable('LtiOutcome');
         }
         catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -239,6 +238,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             $msg = "An error occured during test-level outcome results transmission.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+        } finally {
+            $this->unsetVariable('LtiOutcome');
         }
         
         $this->triggerEventChange($sessionMemento);
