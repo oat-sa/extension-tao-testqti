@@ -20,9 +20,16 @@
  */
 define([
     'lodash',
+    'jquery',
     'taoTests/runner/plugin'
-], function (_, pluginFactory) {
+], function (_, $, pluginFactory) {
     'use strict';
+
+    /**
+     * Event namespace
+     * @type {String}
+     */
+    var ns = '.collapser';
 
     /**
      * Name of the CSS class used to collapse the buttons
@@ -63,6 +70,8 @@ define([
         collaspeOrder: []
     };
 
+    var $window = $(window);
+
     /**
      * Creates the responsiveness collapser plugin.
      * Reduce the size of the action bar tools when the available space is below the needed one.
@@ -86,6 +95,15 @@ define([
             var $navigation = areaBroker.getNavigationArea();
             var collapseCls = config.hover ? noLabelHoverCls : noLabelCls;
 
+
+            function collapse() {
+                collapseAll(false);
+                if (shouldCollapseInOrder()) {
+                    collapseInOrder();
+                } else {
+                    collapseAll(collapseNeeded());
+                }
+            }
 
             function getAvailableWidth() {
                 return $actionsBar.width();
@@ -122,15 +140,14 @@ define([
                 }
             }
 
+            $window.on('resize' + ns, _.throttle(collapse, 100));
+
             testRunner
-                .on('renderitem loaditem', function() {
-                    collapseAll(false);
-                    if (shouldCollapseInOrder()) {
-                        collapseInOrder();
-                    } else {
-                        collapseAll(collapseNeeded());
-                    }
-                });
+                .on('renderitem loaditem', collapse);
+        },
+
+        destroy: function destroy() {
+            $window.off(ns);
         }
     });
 });
