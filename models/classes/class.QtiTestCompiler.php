@@ -280,7 +280,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * * 6. The resources composing the test that have to be accessed at delivery time are compied into the public compilation directory.
      * * 7. The Service Call definition enabling TAO to run the compiled test is built.
      * 
-     * @param core_kernel_file_File $destinationDirectory The directory where the compiled files must be put.
      * @return tao_models_classes_service_ServiceCall A ServiceCall object that represent the way to call the newly compiled test.
      * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If an error occurs during the compilation.
      */
