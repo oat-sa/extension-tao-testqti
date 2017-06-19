@@ -75,6 +75,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected $testConfig;
 
+    private $dataCache = [];
+
     /**
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
@@ -83,6 +85,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     private function loadItemData($itemRef, $path)
     {
+        $cacheKey = $itemRef . $path;
+        if(! empty($cacheKey) && isset($this->dataCache[$itemRef . $path])) {
+            return $this->dataCache[$itemRef . $path];
+        }
+
         $directoryIds = explode('|', $itemRef);
         if (count($directoryIds) < 3) {
             throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
@@ -106,7 +113,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            return json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+            $this->dataCache[$cacheKey] = json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+            return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
@@ -407,8 +415,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
 
+                if($response['numberRubrics'] > 0){
+                    $response['rubrics'] = $this->getRubrics($context, $itemRef);
+                }
+
                 //does the item has modal feedbacks ?
-                //$response['hasModalFeedbacks'] = count($itemSession->getAssessmentItem()->getModalFeedbacks()) > 0;
+                $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
 
                 // append dynamic options
                 $response['options'] = $config->getTestOptions($context);
@@ -753,6 +765,36 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         return $feedbacks;
     }
 
+    /**
+     * Does the given item has feedbacks
+     *
+     * @param RunnerServiceContext $context
+     * @param string $itemRef  the item reference
+     * @return boolean
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
+     * @throws \common_exception_InvalidArgumentType
+     * @throws \tao_models_classes_FileNotFoundException
+     */
+    public function hasFeedbacks(RunnerServiceContext $context, $itemRef)
+    {
+        $hasFeedbacks     = false;
+        $displayFeedbacks = $this->displayFeedbacks($context);
+        if($displayFeedbacks) {
+            $feedbacks = $this->getFeedbacks($context, $itemRef);
+            foreach ($feedbacks as $entry) {
+                if(isset($entry['feedbackRules'])){
+                    \common_Logger::d('>W>>>>>>>>>>>>>>h feedbackRules  : ' . gettype($entry['feedbackRules']) . ' ' . count($entry['feedbackRules']) );
+                    \common_Logger::d($entry['feedbackRules']);
+                    if(count($entry['feedbackRules']) > 0){
+                        $hasFeedbacks = true;
+                    }
+                    break;
+                }
+            }
+        }
+        return $hasFeedbacks;
+    }
     /**
      * Should we display feedbacks
      * @param RunnerServiceContext $context

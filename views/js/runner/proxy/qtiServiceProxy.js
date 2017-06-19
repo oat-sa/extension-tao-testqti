@@ -222,8 +222,8 @@ define([
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri) {
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'));
+        getItem: function getItem(uri, params) {
+            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'), params);
         },
 
         /**
@@ -235,12 +235,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(uri, state, response, params) {
-            var body = JSON.stringify(_.merge({
-                itemState: state,
-                itemResponse: response
-            }, params || {}));
+            var body = _.merge({
+                itemState: JSON.stringify(state),
+                itemResponse: JSON.stringify(response)
+            }, params || {});
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
+            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body);
         },
 
         /**

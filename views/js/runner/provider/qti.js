@@ -30,6 +30,7 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
@@ -45,6 +46,7 @@ define([
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    currentItemHelper,
     mapHelper,
     toolboxFactory,
     qtiItemRunner,
@@ -204,30 +206,77 @@ define([
 
                 var context = self.getTestContext();
 
-                //to be sure load start after unload...
-                //we add an intermediate ns event on unload
-                self.on('unloaditem.' + action, function(){
-                    self.off('.'+action);
+                var feedbackPromise = new Promise( function(resolve){
+                    if(context.hasFeedbacks){
+                        params = _.omit(params, ['itemState', 'itemResponse']);
 
-                    self.getProxy()
-                        .callItemAction(context.itemUri, action, params)
-                        .then(function(results){
+                        self.getProxy()
+                            .submitItem(context.itemUri, self.itemRunner.getState(), self.itemRunner.getResponses(), params)
+                            .then(function(results){
+                                if (results.itemSession) {
+                                    context.itemAnswered = results.itemSession.itemAnswered;
 
-                            self.setTestContext(results.testContext);
-
-                            if (results.testMap) {
-                                self.setTestMap(results.testMap);
-                            } else {
-                                updateStats();
-                            }
-
-                            load();
-                        }).catch(function(err){
-                            self.trigger('error', err);
-                        });
+                                    if(results.displayFeedbacks === true && results.feedbacks) {
+                                        self.itemRunner.renderFeedbacks(results.feedbacks, results.itemSession, function(queue){
+                                            self.trigger('modalFeedbacks', queue, resolve);
+                                        });
+                                        return;
+                                    }
+                                }
+                                return resolve();
+                            });
+                    } else {
+                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        resolve();
+                    }
                 });
 
-                self.unloadItem(context.itemUri);
+                feedbackPromise.then(function(){
+
+                    updateStats();
+
+                    //to be sure load start after unload...
+                    //we add an intermediate ns event on unload
+                    self.on('unloaditem.' + action, function(){
+                        self.off('.'+action);
+
+
+                        return self.getProxy()
+                            .callItemAction(context.itemUri, action, params)
+                            .then(function(results){
+
+                                if(results.testContext){
+                                    self.setTestContext(results.testContext);
+                                }
+
+                                if (results.testMap) {
+                                    self.setTestMap(results.testMap);
+                                }
+
+                                updateStats();
+
+                                if (results.itemSession) {
+                                    context.itemAnswered = results.itemSession.itemAnswered;
+
+                                    if(results.displayFeedbacks === true && results.feedbacks) {
+                                        self.itemRunner.renderFeedbacks(results.feedbacks, results.itemSession, function(queue){
+                                            self.trigger('modalFeedbacks', queue, function(){
+                                                computeNext(action, _.omit(params, 'itemState', 'itemResponse'));
+                                            });
+                                        });
+                                    }
+
+                                } else {
+                                    load();
+                                }
+                            });
+                    });
+
+                    self.unloadItem(context.itemUri);
+                })
+                .catch(function(err){
+                    self.trigger('error', err);
+                });
             }
 
             /**
@@ -402,18 +451,16 @@ define([
                         scope     : scope || 'item'
                     });
                 })
-                .on('exit', function(why){
+                .on('exit', function(reason){
                     var context = self.getTestContext();
                     self.disableItem(context.itemUri);
 
-                    // submit the response even if empty
-                    submit(true)
-                        .then(function() {
-                            return self.getProxy()
-                                .callTestAction('exitTest', {reason: why})
-                                .then(function(){
-                                    return self.finish();
-                                });
+                    self.getProxy()
+                        .callTestAction('exitTest', _.merge(getItemResults(), {
+                            reason: reason
+                        }))
+                        .then(function(){
+                            return self.finish();
                         })
                         .catch(function(err){
                             self.trigger('error', err);
@@ -582,15 +629,15 @@ define([
          */
         loadItem : function loadItem(itemRef){
             var self = this;
+            var context = self.getTestContext();
 
-            return self.getProxy().getItem(itemRef)
+            return self.getProxy().getItem(itemRef, { itemIdentifier : context.itemIdentifier })
                 .then(function(data){
                     //aggregate the results
                     return {
                         content : data.itemData,
                         baseUrl : data.baseUrl,
-                        state : data.itemState,
-                        rubrics : data.rubrics
+                        state : data.itemState
                     };
                 });
         },
