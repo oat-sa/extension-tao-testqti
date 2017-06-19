@@ -271,12 +271,19 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         /**
          * @var oat\oatbox\filesystem\File $f
          */
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        // revert backslashes introduced by dirname on windows
+        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
+        $basePath = $testRootDir->getPrefix();
+
         foreach ($iterator as $f) {
+
             // Only add dependency files...
             if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
 
+                $data = $f->getMetadata();
                 // Add the file to the archive.
-                $fileHref = $newTestDir . ltrim($f->getBasename(), '/');
+                $fileHref = $newTestDir . ltrim(str_replace($basePath , '' , $data['path']), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFromString($fileHref, $f->read());
                 $this->referenceAuxiliaryFile($fileHref);
