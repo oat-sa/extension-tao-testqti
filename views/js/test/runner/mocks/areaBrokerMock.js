@@ -54,31 +54,42 @@ define([
     /**
      * Builds and returns a new areaBroker with dedicated areas.
      * @param config.$brokerContainer - where to create the area broker - default to #qunit-fixture
-     * @param config.areas - A list of areas to create
+     * @param {String[]} config.areas - A list of areas to create, or...
+     * @param {Object} config.mapping - ... a list of already created areas
      * @returns {areaBroker} - Returns the new areaBroker
      */
     function areaBrokerMock(config) {
-        var mapping = {};
         var $areaBrokerDom = $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner');
 
         config = config || {};
 
-        if (!config.areas) {
-            config.areas = defaultAreas;
-        } else {
-            config.areas = _.keys(_.merge(_.object(config.areas), _.object(defaultAreas)));
-        }
+        if (!config.mapping) {
+            config.mapping = {};
+            if (!config.areas) {
+                config.areas = defaultAreas;
+            } else {
+                config.areas = _.keys(_.merge(_.object(config.areas), _.object(defaultAreas)));
+            }
 
-        _.forEach(config.areas, function (areaId) {
-            mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
-        });
+            _.forEach(config.areas, function (areaId) {
+                config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
+            });
+
+        } else {
+            defaultAreas.forEach(function(areaId) {
+                // create missing areas
+                if (!config.mapping[areaId]) {
+                    config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
+                }
+            });
+        }
 
         if (! config.$brokerContainer) {
             config.$brokerContainer = $('#qunit-fixture');
         }
         config.$brokerContainer.append($areaBrokerDom);
 
-        areaBroker = areaBrokerFactory($areaBrokerDom, mapping);
+        areaBroker = areaBrokerFactory($areaBrokerDom, config.mapping);
 
         areaBroker.setComponent('toolbox', toolboxFactory().init());
 

@@ -112,6 +112,26 @@ define([
     });
 
 
+    QUnit.test('custom mapping', function (assert) {
+        var $brokerContainer = $('#custom-areas'),
+            mapping = {
+                'content':      $brokerContainer.find('.custom-content'),
+                'actionsbar':   $brokerContainer.find('.custom-actionbars'),
+                'toolbox':      $brokerContainer.find('.custom-toolbox'),
+                'navigation':   $brokerContainer.find('.custom-nav')
+            };
+
+        var broker = areaBrokerMock({
+            $brokerContainer: $brokerContainer,
+            mapping: mapping
+        });
+
+        _.forOwn(mapping, function (area, areaId) {
+            assert.equal(broker.getArea(areaId), mapping[areaId], "The area broker contains the right dom element for " + areaId);
+        });
+    });
+
+
     QUnit.test('toolbox component', 5, function (assert) {
         var areas = [
             'content',
