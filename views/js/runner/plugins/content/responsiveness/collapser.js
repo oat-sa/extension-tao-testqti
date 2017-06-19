@@ -115,7 +115,7 @@ define([
             function buildCollapsiblesList() {
                 if (shouldCollapseInOrder()) {
                     allCollapsibles = config.collapseOrder.map(function(selector) {
-                        var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
+                        var $elements = $(selector).not('.no-tool-label'/* + labelHiddenCls*/); // some buttons are collapsed by configuration: we should leave them alone
                         var extraWidth = 0;
 
                         if ($elements.length) {
@@ -149,6 +149,8 @@ define([
                     total += collapsible.extraWidth;
                     return total;
                 }, 0);
+
+                console.dir(allCollapsibles);
             }
 
             /**
@@ -218,12 +220,13 @@ define([
             }
 
             function collapseInOrder() {
-                var collapseOrderCopy = _.clone(config.collapseOrder),
+                var collapsiblesCopy = _.clone(allCollapsibles),
                     toCollapse;
 
-                while (collapseNeeded() && collapseOrderCopy.length) {
-                    toCollapse = collapseOrderCopy.shift();
-                    $actionsBar.find(toCollapse).addClass(collapseCls);
+                while (collapseNeeded() && collapsiblesCopy.length) {
+                    console.log('collapsign element');
+                    toCollapse = collapsiblesCopy.shift();
+                    toCollapse.$elements.addClass(collapseCls);
                 }
             }
 
@@ -245,6 +248,7 @@ define([
                 while (collapsiblesCopy.length) {
                     toExpand = collapsiblesCopy.shift();
                     if (expandPossible(toExpand.extraWidth)) {
+                        console.log('expanding collapsible');
                         toExpand.$elements.removeClass(collapseCls);
                     } else {
                         break;

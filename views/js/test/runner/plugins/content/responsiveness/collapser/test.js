@@ -35,11 +35,12 @@ define([
 
     var ICON_WIDTH = 20,
         TEXT_WIDTH = 80,
+        BUTTON_WIDTH = ICON_WIDTH + TEXT_WIDTH,
 
         ALL_EXPANDED =
-            6 * (ICON_WIDTH + TEXT_WIDTH)   // 4 toolbox buttons + 2 nav buttons
-            + ICON_WIDTH                    // 1 toolbox button always collapsed
-            + 20;                           // nav padding
+            6 * BUTTON_WIDTH   // 4 toolbox buttons + 2 nav buttons
+            + ICON_WIDTH       // 1 toolbox button always collapsed
+            + 20;              // nav padding
 
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
@@ -146,56 +147,101 @@ define([
             });
     });
 
-/*
     QUnit.asyncTest('collapse/expand all tools in order', function(assert) {
-        var visualProviderName = 'visual',
-            $container = $(fixtureId),
+        var $container = $(fixtureId),
             areaBroker = getAreaBroker($container),
             runner,
             plugin;
 
+        var collapseOrder = [
+            '.button1',
+            '.button2,.button3,.button4',
+            '.button5',
+            '.prev,.next'
+        ];
+
         var $actionsBar,
-            $nav,
-            $toolbox,
+            $collapsed,
+            newWidth,
             resizeCount = 0;
 
-        QUnit.expect(6);
+        // QUnit.expect(6);
 
-        runnerFactory.registerProvider(visualProviderName, providerMock({ areaBroker: areaBroker }));
-        runner = runnerFactory(visualProviderName);
+        runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
+        runner = runnerFactory(providerName);
         plugin = pluginFactory(runner, areaBroker);
 
         setPluginConfig(runner, {
             collapseTools: false,
             collapseInOrder: true,
-            collapseOrder: [
-                '.button1',
-                '.button2 .button3 .button4',
-                '.button5',
-                '.prev',
-                '.next'
-            ]
+            collapseOrder: collapseOrder
         });
 
-        runner.after('resize', function() {
+        runner.after('collapseTools', function() {
             resizeCount++;
 
             switch (resizeCount) {
+                case 1: {
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  0, 'nothing is collapsed');
+
+                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
                 case 2: {
-                    assert.ok($nav.hasClass(noLabelCls), 'nav has been collapsed');
-                    assert.ok($toolbox.hasClass(noLabelCls), 'toolbox has been collapsed');
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  1, '1 button is collapsed');
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
 
-                    $actionsBar.width(ALL_EXPANDED);
-                    runner.trigger('resize');
-
+                    newWidth = $actionsBar.width() - (TEXT_WIDTH * 2);
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
                     break;
                 }
                 case 3: {
-                    _.defer(function() {
-                        assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
-                        assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
-                        QUnit.start();
-                    });
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  3, '3 buttons are collapsed');
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
+                    assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 has been collapsed');
+
+                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
+                case 4: {
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  4, '4 buttons are collapsed');
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
+                    assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 has been collapsed');
+                    assert.ok($container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been collapsed');
+
+                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
+                case 5: {
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  6, '6 buttons are collapsed');
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
+                    assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 has been collapsed');
+                    assert.ok($container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been collapsed');
+                    assert.ok($container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been collapsed');
+
+                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+
+                    QUnit.start();
                     break;
                 }
             }
@@ -204,29 +250,18 @@ define([
         plugin.init()
             .then(function() {
                 $actionsBar  = areaBroker.getArea('actionsBar');
-                $nav         = areaBroker.getArea('navigation');
-                $toolbox     = areaBroker.getArea('toolbox');
 
                 $actionsBar.width(ALL_EXPANDED);
-
                 runner.trigger('loaditem');
-
-                assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
-                assert.ok(! $nav.hasClass(noLabelHoverCls), 'nav is expanded');
-
-                $actionsBar.width(300);
-                runner.trigger('resize');
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
                 QUnit.start();
             });
     });
-*/
 
 
     QUnit.module('Visual test');
-
 
     QUnit.asyncTest('Display and play', function(assert) {
         var visualProviderName = 'visual',
