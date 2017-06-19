@@ -120,6 +120,7 @@ define([
 
     QUnit.module('Visual test');
 
+
     QUnit.asyncTest('Display and play', function(assert) {
         var visualProviderName = 'visual',
             $brokerContainer = $('.control-box'),
@@ -160,6 +161,8 @@ define([
                 toolboxComponent.enable();
                 _.forOwn(btns, function(btn) { btn.enable(); });
 
+                btns.btn3.getElement().addClass('no-tool-label');
+
                 runner.trigger('loaditem');
 
                 assert.ok(true);
@@ -170,4 +173,59 @@ define([
                 QUnit.start();
             });
     });
+
+    /*
+    QUnit.asyncTest('Display and play', function(assert) {
+        var visualProviderName = 'visual',
+            $brokerContainer = $('.control-box'),
+            areaBroker = areaBrokerMock({
+                $brokerContainer: $brokerContainer,
+                mapping: {
+                    actionsBar:   $brokerContainer.find('.bottom-action-bar .control-box'),
+                    toolbox:      $brokerContainer.find('.tools-box'),
+                    navigation:   $brokerContainer.find('.navi-box-list')
+                }
+            }),
+            runner,
+            plugin;
+
+        var $nav = areaBroker.getNavigationArea(),
+            $toolbox = areaBroker.getToolboxArea(),
+            toolboxComponent = areaBroker.getToolbox(),
+            btns = {};
+
+        QUnit.expect(1);
+
+        btns.btn1 = toolboxComponent.createEntry({ control: 'button1', title: 'button1', text: 'button1', icon: 'add' });
+        btns.btn2 = toolboxComponent.createEntry({ control: 'button2', title: 'button2', text: 'button2', icon: 'add' });
+        btns.btn3 = toolboxComponent.createEntry({ control: 'button3', title: 'button3', text: 'button3', icon: 'remove' });
+        btns.btn4 = toolboxComponent.createEntry({ control: 'button4', title: 'button4', text: 'button4', icon: 'add' });
+        btns.btn5 = toolboxComponent.createEntry({ control: 'button5', title: 'button5', text: 'button5', icon: 'add' });
+
+        $nav.append(buttonTpl({ control: 'prev', title: 'prev', text: 'prev', icon: 'left' }));
+        $nav.append(buttonTpl({ control: 'next', title: 'next', text: 'next', icon: 'right' }));
+
+        runnerFactory.registerProvider(visualProviderName, providerMock({ areaBroker: areaBroker }));
+        runner = runnerFactory(visualProviderName);
+        plugin = pluginFactory(runner, areaBroker);
+
+        plugin.init()
+            .then(function() {
+                toolboxComponent.render($toolbox);
+                toolboxComponent.enable();
+                _.forOwn(btns, function(btn) { btn.enable(); });
+
+                btns.btn3.getElement().addClass('no-tool-label');
+
+                runner.trigger('loaditem');
+
+                assert.ok(true);
+                QUnit.start();
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in init method: ' + err);
+                QUnit.start();
+            });
+    });
+    */
 });

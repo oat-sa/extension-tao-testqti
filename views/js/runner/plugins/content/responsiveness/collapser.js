@@ -17,6 +17,7 @@
  */
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
     'lodash',
@@ -35,13 +36,19 @@ define([
      * Name of the CSS class used to collapse the buttons
      * @type {String}
      */
-    var noLabelCls = 'no-tool-label';
+    var noLabelCls = 'tool-label-collapsed';
 
     /**
      * Name of the CSS class used to collapse the buttons and allow to expand on mouse over
      * @type {String}
      */
-    var noLabelHoverCls = 'no-tool-label-hover';
+    var noLabelHoverCls = 'tool-label-collapsed-hover';
+
+    /**
+     * Name of the  CSS class used to hide the label of the button independently of responsiveness
+     * @type {string}
+     */
+    var labelHiddenCls = 'no-tool-label';
 
     /**
      * Default plugin options
@@ -84,33 +91,94 @@ define([
          * Installs the plugin (called when the runner bind the plugin)
          */
         init: function init() {
-            var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
-            var pluginsConfig = testConfig.plugins || {};
-            var config = _.defaults(pluginsConfig.collapser || {}, defaults);
+            var testRunner = this.getTestRunner(),
+                testData = testRunner.getTestData() || {},
+                testConfig = testData.config || {},
+                pluginsConfig = testConfig.plugins || {},
+                config = _.defaults(pluginsConfig.collapser || {}, defaults);
+
             var areaBroker = testRunner.getAreaBroker();
-            var $actionsBar = areaBroker.getArea('actionsBar');
-            var $toolbox = areaBroker.getToolboxArea();
-            var $navigation = areaBroker.getNavigationArea();
-            var collapseCls = config.hover ? noLabelHoverCls : noLabelCls;
 
+            var $actionsBar = areaBroker.getArea('actionsBar'),
+                $toolbox = areaBroker.getToolboxArea(),
+                $navigation = areaBroker.getNavigationArea();
 
-            function collapse() {
-                collapseAll(false);
+            var allCollapsibles,
+                collapseCls = config.hover ? noLabelHoverCls : noLabelCls,
+                availableWidth,
+                previousAvailableWidth,
+                totalExtraWidth;
+
+            function buildCollapsiblesModel() {
                 if (shouldCollapseInOrder()) {
-                    collapseInOrder();
+                    allCollapsibles = config.collapseOrder.map(function(selector) {
+                        var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
+                        var extraWidth = 0;
+
+                        if ($elements.length) {
+                            $elements.each(function() {
+                                extraWidth += getExtraWidth($(this));
+                            });
+                        }
+                        return {
+                            $elements: $elements,
+                            extraWidth: extraWidth
+                        };
+                    });
+
                 } else {
-                    collapseAll(collapseNeeded());
+                    allCollapsibles = [];
+                    if (config.collapseTools) {
+                        allCollapsibles.push({
+                            $elements: $toolbox,
+                            extraWidth: getExtraWidth($toolbox)
+                        });
+                    }
+                    if (config.collapseNavigation) {
+                        allCollapsibles.push({
+                            $elements: $navigation,
+                            extraWidth: getExtraWidth($navigation)
+                        });
+                    }
                 }
+
+                totalExtraWidth = allCollapsibles.reduce(function(total, collapsible) {
+                    total += collapsible.extraWidth;
+                    return total;
+                }, 0);
             }
 
-            function getAvailableWidth() {
-                return $actionsBar.width();
+            function getExtraWidth($element) {
+                var expandedWidth,
+                    collapsedWidth;
+
+                expandedWidth = $element.outerWidth(true);
+                $element.addClass(collapseCls);
+                collapsedWidth = $element.outerWidth(true);
+                $element.removeClass(collapseCls);
+
+                return expandedWidth - collapsedWidth;
             }
 
-            function getToolbarWidth() {
-                return $toolbox.width() + $navigation.width();
+            function toggleCollapsibles() {
+                availableWidth = getAvailableWidth();
+
+                if (availableWidth < previousAvailableWidth) {
+                    collapseAll(false);
+                    if (shouldCollapseInOrder()) {
+                        collapseInOrder();
+                    } else {
+                        collapseAll(collapseNeeded());
+                    }
+                } else {
+                    if (shouldCollapseInOrder()) {
+                        expandInOrder();
+                    } else {
+                        expandAll();
+                    }
+                }
+
+                previousAvailableWidth = availableWidth;
             }
 
             function collapseNeeded() {
@@ -136,14 +204,55 @@ define([
 
                 while (collapseNeeded() && collapseOrderCopy.length) {
                     toCollapse = collapseOrderCopy.shift();
-                    $actionsBar.find(toCollapse).toggleClass(collapseCls, true);
+                    $actionsBar.find(toCollapse).addClass(collapseCls);
                 }
             }
 
-            $window.on('resize' + ns, _.throttle(collapse, 100));
+            function expandAll() {
+                if (expandPossible(totalExtraWidth)) {
+                    allCollapsibles.forEach(function(collapsible) {
+                        collapsible.$elements.removeClass(collapseCls);
+                    });
+                }
+            }
+
+            function expandInOrder() {
+                var collapsiblesCopy = _.clone(allCollapsibles),
+                    toExpand;
+
+                collapsiblesCopy.reverse();
+
+                while (collapsiblesCopy.length) {
+                    toExpand = collapsiblesCopy.shift();
+                    if (expandPossible(toExpand.extraWidth)) {
+                        toExpand.$elements.removeClass(collapseCls);
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            function expandPossible(extraWidth) {
+                return (getToolbarWidth() + extraWidth) <= getAvailableWidth();
+            }
+
+            function getAvailableWidth() {
+                return $actionsBar.width();
+            }
+
+            function getToolbarWidth() {
+                return $toolbox.outerWidth(true) + $navigation.outerWidth(true);
+            }
+
+            $window.on('resize' + ns, _.throttle(toggleCollapsibles, 100));
 
             testRunner
-                .on('renderitem loaditem', collapse);
+                .after('renderitem loaditem', function() {
+                    previousAvailableWidth = Infinity;
+
+                    buildCollapsiblesModel();
+                    toggleCollapsibles();
+                });
         },
 
         destroy: function destroy() {
