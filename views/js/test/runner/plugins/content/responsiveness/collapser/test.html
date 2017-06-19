@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test runner plugin - collapser</title>
+    <link rel="stylesheet" type="text/css" href="/tao/views/js/lib/qunit/qunit.css">
+    <link rel="stylesheet" type="text/css" href="/tao/views/css/tao-main-style.css">
+    <link rel="stylesheet" type="text/css" href="/taoQtiTest/views/css/new-test-runner.css">
+    <script type="text/javascript" src="/tao/views/js/lib/require.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit-parameterize.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking"
+            data-cover-only="/taoQtiTest/views/js/runner/plugins/content/responsiveness/collapser.js"></script>
+    <script type="text/javascript">
+        QUnit.config.autostart = false;
+        require(['/tao/ClientConfig/config'], function () {
+            require(['taoQtiTest/test/runner/plugins/content/responsiveness/collapser/test'], function () {
+                QUnit.start();
+            });
+        });
+    </script>
+    <style>
+
+        .content, .control, .header, .panel {
+            display: none;
+        }
+/*
+        #outside-container {
+            width: 100%;
+        }
+
+        .test-runner {
+            display: flex;
+            width: 100%;
+        }
+
+        .toolbox, .navigation {
+            display: flex;
+        }
+
+        .toolbox {
+            background-color: red;
+            flex: 2;
+        }
+
+        .navigation {
+            background-color: green;
+            flex: 1;
+        }
+
+        [data-control^="button"] .icon {
+            width: 50px;
+        }
+        [data-control^="button"] .text {
+            width: 150px;
+        }
+*/
+    </style>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div id="outside-container">
+    <div class="test-runner-scope">
+        <nav class="action-bar content-action-bar horizontal-action-bar bottom-action-bars">
+            <div class="control-box">
+                <div class="tools-box lft"></div>
+                <div class="navi-container rgt">
+                    <ul class="plain navi-box-list"></ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+</body>
+</html>
