@@ -109,7 +109,10 @@ define([
                 previousAvailableWidth,
                 totalExtraWidth;
 
-            function buildCollapsiblesModel() {
+            /**
+             * Get a reference of all collapsibles
+             */
+            function buildCollapsiblesList() {
                 if (shouldCollapseInOrder()) {
                     allCollapsibles = config.collapseOrder.map(function(selector) {
                         var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
@@ -148,6 +151,10 @@ define([
                 }, 0);
             }
 
+            /**
+             * @param {jQuery} $element
+             * @returns {number} Size difference, in pixels, between collapsed and expanded state of $element
+             */
             function getExtraWidth($element) {
                 var expandedWidth,
                     collapsedWidth;
@@ -160,20 +167,32 @@ define([
                 return expandedWidth - collapsedWidth;
             }
 
+            /**
+             * Expand or collapse elements
+             */
             function toggleCollapsibles() {
                 availableWidth = getAvailableWidth();
 
+                console.log('availableWidth = ' + availableWidth);
+                console.log('toolbarWidth = ' + getToolbarWidth());
+
                 if (availableWidth < previousAvailableWidth) {
+
                     collapseAll(false);
                     if (shouldCollapseInOrder()) {
+                        console.log('collapsing in order');
                         collapseInOrder();
                     } else {
+                        console.log('collapsing all');
+
                         collapseAll(collapseNeeded());
                     }
                 } else {
                     if (shouldCollapseInOrder()) {
+                        console.log('expanding in order');
                         expandInOrder();
                     } else {
+                        console.log('expanding all');
                         expandAll();
                     }
                 }
@@ -210,6 +229,7 @@ define([
 
             function expandAll() {
                 if (expandPossible(totalExtraWidth)) {
+                    console.log('expanding all');
                     allCollapsibles.forEach(function(collapsible) {
                         collapsible.$elements.removeClass(collapseCls);
                     });
@@ -244,13 +264,19 @@ define([
                 return $toolbox.outerWidth(true) + $navigation.outerWidth(true);
             }
 
-            $window.on('resize' + ns, _.throttle(toggleCollapsibles, 100));
+            $window.on('resize' + ns, _.throttle(function() {
+                testRunner.trigger('collapseTools');
+            }, 100));
 
             testRunner
                 .after('renderitem loaditem', function() {
                     previousAvailableWidth = Infinity;
 
-                    buildCollapsiblesModel();
+                    buildCollapsiblesList();
+                    testRunner.trigger('collapseTools');
+                })
+                .on('collapseTools' + ns, function() {
+                    console.log('======= collapseTools ===========');
                     toggleCollapsibles();
                 });
         },
