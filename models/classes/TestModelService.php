@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  *
  */
@@ -122,7 +122,7 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     public function getImportHandlers() {
-        if($this->hasOption('importHandlers')){
+        if ($this->hasOption('importHandlers')){
             return $this->getOption('importHandlers');
         } else {
             return array();
@@ -130,7 +130,7 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     public function getExportHandlers() {
-        if($this->hasOption('exportHandlers')){
+        if ($this->hasOption('exportHandlers')){
             return $this->getOption('exportHandlers');
         } else {
             return array();
@@ -138,7 +138,7 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     public function getCompilerClass() {
-        return 'taoQtiTest_models_classes_QtiTestCompiler';
+        return $this->getOption('testCompilerClass');
     }
 
 
