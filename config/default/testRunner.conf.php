@@ -166,6 +166,12 @@ return array(
     'next-section' => false,
 
     /**
+     * Turn the pause on when a section changed
+     * @type boolean
+     */
+    'next-section-paused' => false,
+
+    /**
      * After resuming test session timers will be reset to the time when the last item has been submitted.
      * @type boolean
      */

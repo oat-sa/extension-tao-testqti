@@ -21,11 +21,12 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
+use oat\taoProctoring\helpers\DeliveryHelper;
+use oat\taoQtiTest\models\event\QtiMoveEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class QtiTestListenerService
@@ -34,6 +35,22 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 class QtiTestListenerService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
+
+    public function catchMove(QtiMoveEvent $event)
+    {
+        if ($event->getContext() === QtiMoveEvent::CONTEXT_AFTER) {
+            $runnerConfig = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            if (isset($runnerConfig['next-section-paused']) && $runnerConfig['next-section-paused']) {
+                if ($event->getTo()
+                    && $event->getFrom()
+                    && $event->getFrom()->getAssessmentSection()->getIdentifier() != $event->getTo()->getAssessmentSection()->getIdentifier()) {
+
+                        $deliveryExecution = $event->getSession()->getSessionId();
+                        DeliveryHelper::pauseExecutions([$deliveryExecution], __('Paused due to section change'));
+                }
+            }
+        }
+    }
 
     /**
      *

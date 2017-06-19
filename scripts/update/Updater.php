@@ -19,9 +19,11 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\event\QtiMoveEvent;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
@@ -1271,5 +1273,19 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
       
         $this->skip('9.12.0', '9.14.1');
+
+        if ($this->isVersion('9.14.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $extension->setConfig('testRunner', array_merge($config, [
+                'next-section-paused' => false,
+            ]));
+
+            $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
+            $eventManager->attach(QtiMoveEvent::class, [QtiTestListenerService::SERVICE_ID, 'catchMove']);
+            $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
+
+            $this->setVersion('9.15.0');
+        }
     }
 }
