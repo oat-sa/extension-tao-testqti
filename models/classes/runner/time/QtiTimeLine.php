@@ -22,7 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoTests\models\runner\time\ArraySerialize;
+use oat\taoTests\models\runner\time\ArraySerializable;
 use oat\taoTests\models\runner\time\IncompleteRangeException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -35,7 +35,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  * Class QtiTimeLine
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimeLine implements ArraySerialize, \Serializable, \JsonSerializable, TimeLine
+class QtiTimeLine implements ArraySerializable, \Serializable, \JsonSerializable, TimeLine
 {
     /**
      * The list of TimePoint representing the TimeLine
