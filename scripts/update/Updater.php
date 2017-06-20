@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
@@ -1269,7 +1269,15 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('9.12.0');
         }
-
-        $this->skip('9.12.0', '9.13.0');
+      
+        $this->skip('9.12.0', '9.14.1');
+        
+        if ($this->isVersion('9.14.1')) {
+            $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $testModelService->setOption('testCompilerClass', 'taoQtiTest_models_classes_QtiTestCompiler');
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+            
+            $this->setVersion('9.15.0');
+        }
     }
 }
