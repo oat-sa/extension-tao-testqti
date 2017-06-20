@@ -165,6 +165,7 @@ define([
                 var expandedWidth,
                     collapsedWidth;
 
+                $element.removeClass(collapseCls);
                 expandedWidth = $element.outerWidth(true);
                 $element.addClass(collapseCls);
                 collapsedWidth = $element.outerWidth(true);
@@ -180,7 +181,6 @@ define([
                 availableWidth = getAvailableWidth();
 
                 if (availableWidth < previousAvailableWidth) {
-                    collapseAll(false);
                     if (shouldCollapseInOrder()) {
                         collapseInOrder();
                     } else {
