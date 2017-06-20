@@ -190,6 +190,7 @@ define([
                         collapseAll(collapseNeeded());
                     }
                 } else {
+
                     if (shouldCollapseInOrder()) {
                         console.log('expanding in order');
                         expandInOrder();
@@ -241,19 +242,19 @@ define([
 
             function expandInOrder() {
                 var collapsiblesCopy = _.clone(allCollapsibles),
-                    toExpand;
+                    shouldStop = false;
 
                 collapsiblesCopy.reverse();
 
-                while (collapsiblesCopy.length) {
-                    toExpand = collapsiblesCopy.shift();
-                    if (expandPossible(toExpand.extraWidth)) {
-                        console.log('expanding collapsible');
-                        toExpand.$elements.removeClass(collapseCls);
-                    } else {
-                        break;
+                collapsiblesCopy.forEach(function (toExpand) {
+                    if (toExpand.$elements.hasClass(collapseCls) && ! shouldStop) {
+                        if (expandPossible(toExpand.extraWidth)) {
+                            toExpand.$elements.removeClass(collapseCls);
+                        } else {
+                            shouldStop = true;
+                        }
                     }
-                }
+                });
             }
 
             function expandPossible(extraWidth) {

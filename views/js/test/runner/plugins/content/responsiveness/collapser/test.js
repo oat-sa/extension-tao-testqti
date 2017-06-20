@@ -30,17 +30,16 @@ define([
 
     var fixtureId = '#qunit-fixture';
 
-    var noLabelCls = 'tool-label-collapsed',
-        noLabelHoverCls = 'tool-label-collapsed-hover';
+    var noLabelCls = 'tool-label-collapsed';
 
     var ICON_WIDTH = 20,
         TEXT_WIDTH = 80,
-        BUTTON_WIDTH = ICON_WIDTH + TEXT_WIDTH,
+        NAV_PADDING = 20,
 
         ALL_EXPANDED =
-            6 * BUTTON_WIDTH   // 4 toolbox buttons + 2 nav buttons
-            + ICON_WIDTH       // 1 toolbox button always collapsed
-            + 20;              // nav padding
+            7 * ICON_WIDTH +  // 5 toolbox buttons + 2 nav buttons
+            6 * TEXT_WIDTH +  // 1 toolbox button is always collapsed, see test.html
+            NAV_PADDING;
 
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
@@ -110,7 +109,7 @@ define([
                     assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
                     assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
 
-                    $actionsBar.width(300);
+                    $actionsBar.width(ALL_EXPANDED - 1);
                     runner.trigger('collapseTools');
                     break;
                 }
@@ -147,6 +146,7 @@ define([
             });
     });
 
+
     QUnit.asyncTest('collapse/expand all tools in order', function(assert) {
         var $container = $(fixtureId),
             areaBroker = getAreaBroker($container),
@@ -163,9 +163,10 @@ define([
         var $actionsBar,
             $collapsed,
             newWidth,
+            collapsedBtns,
             resizeCount = 0;
 
-        // QUnit.expect(6);
+        QUnit.expect(49);
 
         runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
         runner = runnerFactory(providerName);
@@ -182,54 +183,67 @@ define([
 
             switch (resizeCount) {
                 case 1: {
-                    $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  0, 'nothing is collapsed');
+                    collapsedBtns = 0;
 
-                    newWidth = $actionsBar.width() - TEXT_WIDTH;
-                    $actionsBar.width(newWidth);
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
+                    $actionsBar.width(ALL_EXPANDED - 1);
                     runner.trigger('collapseTools');
                     break;
                 }
                 case 2: {
+                    collapsedBtns = 1;
+
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  1, '1 button is collapsed');
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
 
-                    newWidth = $actionsBar.width() - (TEXT_WIDTH * 2);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) - 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
                 }
                 case 3: {
+                    collapsedBtns = 3;
+
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  3, '3 buttons are collapsed');
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
                     assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
                     assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 has been collapsed');
 
-                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) - 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
                 }
                 case 4: {
+                    collapsedBtns = 4;
+
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  4, '4 buttons are collapsed');
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
                     assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
                     assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 has been collapsed');
                     assert.ok($container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been collapsed');
 
-                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) - 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
                 }
                 case 5: {
+                    collapsedBtns = 6;
+
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  6, '6 buttons are collapsed');
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 has been collapsed');
                     assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
@@ -237,9 +251,80 @@ define([
                     assert.ok($container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been collapsed');
                     assert.ok($container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been collapsed');
 
-                    newWidth = $actionsBar.width() - TEXT_WIDTH;
+                    collapsedBtns = 4;
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
+                    break;
+                }
+                case 6: {
+                    collapsedBtns = 4;
+
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
+                    assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 remain collapsed');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 remain collapsed');
+                    assert.ok($container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 remain collapsed');
+                    assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been expanded');
+
+                    collapsedBtns = 3;
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
+                case 7: {
+                    collapsedBtns = 3;
+
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
+                    assert.ok($container.find('.button2').hasClass(noLabelCls), 'button2 remain collapsed');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok($container.find('.button4').hasClass(noLabelCls), 'button4 remain collapsed');
+                    assert.ok(! $container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been expanded');
+                    assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been expanded');
+
+                    collapsedBtns = 1;
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
+                case 8: {
+                    collapsedBtns = 1;
+
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
+                    assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
+                    assert.ok(! $container.find('.button2').hasClass(noLabelCls), 'button2 has been expanded');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok(! $container.find('.button4').hasClass(noLabelCls), 'button4 has been expanded');
+                    assert.ok(! $container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been expanded');
+                    assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been expanded');
+
+                    newWidth = ALL_EXPANDED;
+                    $actionsBar.width(newWidth);
+                    runner.trigger('collapseTools');
+                    break;
+                }
+                case 9: {
+                    collapsedBtns = 0;
+
+                    $collapsed = $container.find('.' + noLabelCls);
+                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+
+                    assert.ok(! $container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been expanded');
+                    assert.ok(! $container.find('.button2').hasClass(noLabelCls), 'button2 has been expanded');
+                    assert.ok(! $container.find('.button3').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                    assert.ok(! $container.find('.button4').hasClass(noLabelCls), 'button4 has been expanded');
+                    assert.ok(! $container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been expanded');
+                    assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next has been expanded');
 
                     QUnit.start();
                     break;
@@ -260,96 +345,4 @@ define([
             });
     });
 
-
-    QUnit.module('Visual test');
-
-    QUnit.asyncTest('Display and play', function(assert) {
-        var visualProviderName = 'visual',
-            $brokerContainer = $('#outside-container'),
-            areaBroker = areaBrokerMock({
-                $brokerContainer: $brokerContainer,
-                mapping: {
-                    actionsBar:   $brokerContainer.find('.bottom-action-bar .control-box'),
-                    toolbox:      $brokerContainer.find('.tools-box'),
-                    navigation:   $brokerContainer.find('.navi-box-list')
-                }
-            }),
-            runner,
-            plugin;
-
-        QUnit.expect(1);
-
-        $brokerContainer.append($(fixtureId).html());
-
-        runnerFactory.registerProvider(visualProviderName, providerMock({ areaBroker: areaBroker }));
-        runner = runnerFactory(visualProviderName);
-        plugin = pluginFactory(runner, areaBroker);
-
-        plugin.init()
-            .then(function() {
-                runner.trigger('loaditem');
-
-                assert.ok(true);
-                QUnit.start();
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
-            });
-    });
-
-    /*
-    QUnit.asyncTest('Display and play', function(assert) {
-        var visualProviderName = 'visual',
-            $brokerContainer = $('.control-box'),
-            areaBroker = areaBrokerMock({
-                $brokerContainer: $brokerContainer,
-                mapping: {
-                    actionsBar:   $brokerContainer.find('.bottom-action-bar .control-box'),
-                    toolbox:      $brokerContainer.find('.tools-box'),
-                    navigation:   $brokerContainer.find('.navi-box-list')
-                }
-            }),
-            runner,
-            plugin;
-
-        var $nav = areaBroker.getNavigationArea(),
-            $toolbox = areaBroker.getToolboxArea(),
-            toolboxComponent = areaBroker.getToolbox(),
-            btns = {};
-
-        QUnit.expect(1);
-
-        btns.btn1 = toolboxComponent.createEntry({ control: 'button1', title: 'button1', text: 'button1', icon: 'add' });
-        btns.btn2 = toolboxComponent.createEntry({ control: 'button2', title: 'button2', text: 'button2', icon: 'add' });
-        btns.btn3 = toolboxComponent.createEntry({ control: 'button3', title: 'button3', text: 'button3', icon: 'remove' });
-        btns.btn4 = toolboxComponent.createEntry({ control: 'button4', title: 'button4', text: 'button4', icon: 'add' });
-        btns.btn5 = toolboxComponent.createEntry({ control: 'button5', title: 'button5', text: 'button5', icon: 'add' });
-
-        $nav.append(buttonTpl({ control: 'prev', title: 'prev', text: 'prev', icon: 'left' }));
-        $nav.append(buttonTpl({ control: 'next', title: 'next', text: 'next', icon: 'right' }));
-
-        runnerFactory.registerProvider(visualProviderName, providerMock({ areaBroker: areaBroker }));
-        runner = runnerFactory(visualProviderName);
-        plugin = pluginFactory(runner, areaBroker);
-
-        plugin.init()
-            .then(function() {
-                toolboxComponent.render($toolbox);
-                toolboxComponent.enable();
-                _.forOwn(btns, function(btn) { btn.enable(); });
-
-                btns.btn3.getElement().addClass('no-tool-label');
-
-                runner.trigger('loaditem');
-
-                assert.ok(true);
-                QUnit.start();
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
-            });
-    });
-    */
 });
