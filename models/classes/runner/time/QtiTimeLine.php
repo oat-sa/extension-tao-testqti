@@ -35,7 +35,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  * Class QtiTimeLine
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimeLine implements ArraySerializable, \Serializable, \JsonSerializable, TimeLine
+class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSerializable
 {
     /**
      * The list of TimePoint representing the TimeLine

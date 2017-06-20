@@ -362,13 +362,18 @@ class QtiTimer implements Timer, ExtraTime
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
      * @return QtiTimeLine
      */
     protected function unserializeTimeLine($data)
     {
-        $timeLine = new QtiTimeLine();
-        $timeLine->fromArray($data);
+        if (is_array($data)) {
+            $timeLine = new QtiTimeLine();
+            $timeLine->fromArray($data);
+        } else {
+            $timeLine = $data;
+        }
+        
         return $timeLine;
     }
 
@@ -391,40 +396,36 @@ class QtiTimer implements Timer, ExtraTime
             $refined = json_decode($data, true);
             if (is_null($refined) && $data) {
                 $refined = unserialize($data);
-            } else {
-                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
-                    $refined[self::STORAGE_KEY_TIME_LINE] = $this->unserializeTimeLine($refined[self::STORAGE_KEY_TIME_LINE]);
-                }
-                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
-                    $refined[self::STORAGE_KEY_EXTRA_TIME_LINE] = $this->unserializeTimeLine($refined[self::STORAGE_KEY_EXTRA_TIME_LINE]);
+
+                if (!is_array($refined)) {
+                    $refined = [
+                        self::STORAGE_KEY_TIME_LINE => $refined,
+                    ];
                 }
             }
 
-            $this->extraTime = 0;
-            $this->consumedExtraTime = 0;
-
-            if (is_array($refined)) {
-                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
-                    $this->timeLine = $refined[self::STORAGE_KEY_TIME_LINE];
-                } else {
-                    $this->timeLine = new QtiTimeLine();
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
-                    $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
-                    $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
-                    $this->extraTimeLine = $refined[self::STORAGE_KEY_EXTRA_TIME_LINE];
-                } else {
-                    $this->extraTimeLine = new QtiTimeLine();
-                }
+            if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
+                $this->timeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_TIME_LINE]);
             } else {
-                $this->timeLine = $refined;
+                $this->timeLine = new QtiTimeLine();
+            }
+
+            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
+                $this->extraTimeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_EXTRA_TIME_LINE]);
+            } else {
+                $this->extraTimeLine = new QtiTimeLine();
+            }
+            
+            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
+                $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
+            } else {
+                $this->extraTime = 0;    
+            }
+            
+            if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+            } else {
+                $this->consumedExtraTime = 0;
             }
 
             if (!$this->timeLine instanceof TimeLine || !$this->extraTimeLine instanceof TimeLine) {
