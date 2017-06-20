@@ -187,6 +187,7 @@ define([
                         collapseAll(collapseNeeded());
                     }
                 } else {
+
                     if (shouldCollapseInOrder()) {
                         expandInOrder();
                     } else {
