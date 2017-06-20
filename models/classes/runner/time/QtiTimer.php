@@ -351,7 +351,7 @@ class QtiTimer implements Timer, ExtraTime
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(serialize([
+        $this->storage->store(json_encode([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
             self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
@@ -359,6 +359,17 @@ class QtiTimer implements Timer, ExtraTime
         ]));
         
         return $this;
+    }
+
+    /**
+     * @param array $data
+     * @return QtiTimeLine
+     */
+    protected function unserializeTimeLine($data)
+    {
+        $timeLine = new QtiTimeLine();
+        $timeLine->fromArray($data);
+        return $timeLine;
     }
 
     /**
@@ -377,7 +388,17 @@ class QtiTimer implements Timer, ExtraTime
         $data = $this->storage->load();
         
         if (isset($data)) {
-            $refined = unserialize($data);
+            $refined = json_decode($data, true);
+            if (is_null($refined) && $data) {
+                $refined = unserialize($data);
+            } else {
+                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
+                    $refined[self::STORAGE_KEY_TIME_LINE] = $this->unserializeTimeLine($refined[self::STORAGE_KEY_TIME_LINE]);
+                }
+                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
+                    $refined[self::STORAGE_KEY_EXTRA_TIME_LINE] = $this->unserializeTimeLine($refined[self::STORAGE_KEY_EXTRA_TIME_LINE]);
+                }
+            }
 
             $this->extraTime = 0;
             $this->consumedExtraTime = 0;
