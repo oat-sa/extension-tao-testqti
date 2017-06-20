@@ -81,75 +81,81 @@ define([
 
     QUnit.module('Collapser');
 
-    QUnit.asyncTest('collapse/expand all tools and nav on resize', function(assert) {
-        var $container = $(fixtureId),
-            areaBroker = getAreaBroker($container),
-            runner,
-            plugin;
+    QUnit
+        .cases([
+            { title: 'Tools and nav',   collapseTools: true,    collapseNavigation: true },
+            { title: 'Tools',           collapseTools: true,    collapseNavigation: false },
+            { title: 'Nav',             collapseTools: false,   collapseNavigation: true }
+        ])
+        .asyncTest('collapse/expand all', function(data, assert) {
+            var $container = $(fixtureId),
+                areaBroker = getAreaBroker($container),
+                runner,
+                plugin;
 
-        var $actionsBar,
-            $nav,
-            $toolbox,
-            resizeCount = 0;
+            var $actionsBar,
+                $nav,
+                $toolbox,
+                resizeCount = 0;
 
-        QUnit.expect(6);
+            QUnit.expect(6);
 
-        runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
-        runner = runnerFactory(providerName);
-        plugin = pluginFactory(runner, areaBroker);
+            runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
+            runner = runnerFactory(providerName);
+            plugin = pluginFactory(runner, areaBroker);
 
-        setPluginConfig(runner, {
-            collapseTools: true,
-            collapseNavigation: true
-        });
+            setPluginConfig(runner, {
+                collapseTools: data.collapseTools,
+                collapseNavigation: data.collapseNavigation
+            });
 
-        runner.after('collapseTools', function() {
-            resizeCount++;
+            runner.after('collapseTools', function() {
+                resizeCount++;
 
-            switch (resizeCount) {
-                case 1: {
-                    assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
-                    assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
+                switch (resizeCount) {
+                    case 1: {
+                        assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
+                        assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
 
-                    $actionsBar.width(ALL_EXPANDED - 1);
-                    runner.trigger('collapseTools');
-                    break;
+                        $actionsBar.width(ALL_EXPANDED - 1);
+                        runner.trigger('collapseTools');
+                        break;
+                    }
+                    case 2: {
+                        assert.equal($nav.hasClass(noLabelCls), data.collapseNavigation, 'nav has the correct state');
+                        assert.equal($toolbox.hasClass(noLabelCls), data.collapseTools, 'toolbox has the correct state');
+
+                        $actionsBar.width(ALL_EXPANDED);
+                        runner.trigger('collapseTools');
+                        break;
+                    }
+                    case 3: {
+                        assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
+                        assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
+
+                        QUnit.start();
+                        break;
+                    }
                 }
-                case 2: {
-                    assert.ok($nav.hasClass(noLabelCls), 'nav has been collapsed');
-                    assert.ok($toolbox.hasClass(noLabelCls), 'toolbox has been collapsed');
+            });
+
+            plugin.init()
+                .then(function() {
+                    $actionsBar  = areaBroker.getArea('actionsBar');
+                    $nav         = areaBroker.getArea('navigation');
+                    $toolbox     = areaBroker.getArea('toolbox');
 
                     $actionsBar.width(ALL_EXPANDED);
-                    runner.trigger('collapseTools');
-                    break;
-                }
-                case 3: {
-                    assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
-                    assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
-
+                    runner.trigger('loaditem');
+                })
+                .catch(function(err) {
+                    assert.ok(false, 'Error in init method: ' + err);
                     QUnit.start();
-                    break;
-                }
-            }
+                });
         });
 
-        plugin.init()
-            .then(function() {
-                $actionsBar  = areaBroker.getArea('actionsBar');
-                $nav         = areaBroker.getArea('navigation');
-                $toolbox     = areaBroker.getArea('toolbox');
 
-                $actionsBar.width(ALL_EXPANDED);
-                runner.trigger('loaditem');
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
-            });
-    });
-
-
-    QUnit.asyncTest('collapse/expand all tools in order', function(assert) {
+    QUnit.asyncTest('collapse/expand in order', function(assert) {
         var $container = $(fixtureId),
             areaBroker = getAreaBroker($container),
             runner,

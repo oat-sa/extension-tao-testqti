@@ -95,7 +95,8 @@ define([
                 testData = testRunner.getTestData() || {},
                 testConfig = testData.config || {},
                 pluginsConfig = testConfig.plugins || {},
-                config = _.defaults(pluginsConfig.collapser || {}, defaults);
+                config = _.defaults(pluginsConfig.collapser || {}, defaults),
+                collapseCls = config.hover ? noLabelHoverCls : noLabelCls;
 
             var areaBroker = testRunner.getAreaBroker();
 
@@ -104,7 +105,6 @@ define([
                 $navigation = areaBroker.getNavigationArea();
 
             var allCollapsibles,
-                collapseCls = config.hover ? noLabelHoverCls : noLabelCls,
                 availableWidth,
                 previousAvailableWidth,
                 totalExtraWidth;
@@ -113,22 +113,28 @@ define([
              * Get a reference of all collapsibles
              */
             function buildCollapsiblesList() {
+                // use the given order to build the collapsibles list
                 if (shouldCollapseInOrder()) {
-                    allCollapsibles = config.collapseOrder.map(function(selector) {
-                        var $elements = $(selector).not('.no-tool-label'/* + labelHiddenCls*/); // some buttons are collapsed by configuration: we should leave them alone
-                        var extraWidth = 0;
+                    allCollapsibles = config.collapseOrder
+                        .map(function(selector) {
+                            var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
+                            var extraWidth = 0;
 
-                        if ($elements.length) {
-                            $elements.each(function() {
-                                extraWidth += getExtraWidth($(this));
-                            });
-                        }
-                        return {
-                            $elements: $elements,
-                            extraWidth: extraWidth
-                        };
-                    });
+                            if ($elements.length) {
+                                $elements.each(function() {
+                                    extraWidth += getExtraWidth($(this));
+                                });
+                                return {
+                                    $elements: $elements,
+                                    extraWidth: extraWidth
+                                };
+                            }
+                            return false;
+                        }).filter(function (collapsible) {
+                            return collapsible !== false;
+                        });
 
+                // collapsibles will be either tools and/or nav whole blocks depending on configuration
                 } else {
                     allCollapsibles = [];
                     if (config.collapseTools) {
@@ -143,14 +149,12 @@ define([
                             extraWidth: getExtraWidth($navigation)
                         });
                     }
+
+                    totalExtraWidth = allCollapsibles.reduce(function(total, collapsible) {
+                        total += collapsible.extraWidth;
+                        return total;
+                    }, 0);
                 }
-
-                totalExtraWidth = allCollapsibles.reduce(function(total, collapsible) {
-                    total += collapsible.extraWidth;
-                    return total;
-                }, 0);
-
-                console.dir(allCollapsibles);
             }
 
             /**
@@ -175,27 +179,17 @@ define([
             function toggleCollapsibles() {
                 availableWidth = getAvailableWidth();
 
-                console.log('availableWidth = ' + availableWidth);
-                console.log('toolbarWidth = ' + getToolbarWidth());
-
                 if (availableWidth < previousAvailableWidth) {
-
                     collapseAll(false);
                     if (shouldCollapseInOrder()) {
-                        console.log('collapsing in order');
                         collapseInOrder();
                     } else {
-                        console.log('collapsing all');
-
                         collapseAll(collapseNeeded());
                     }
                 } else {
-
                     if (shouldCollapseInOrder()) {
-                        console.log('expanding in order');
                         expandInOrder();
                     } else {
-                        console.log('expanding all');
                         expandAll();
                     }
                 }
@@ -203,8 +197,8 @@ define([
                 previousAvailableWidth = availableWidth;
             }
 
-            function collapseNeeded() {
-                return getToolbarWidth() > getAvailableWidth();
+            function shouldCollapseInOrder() {
+                return config.collapseInOrder && _.isArray(config.collapseOrder) && config.collapseOrder.length;
             }
 
             function collapseAll(yes) {
@@ -216,24 +210,23 @@ define([
                 }
             }
 
-            function shouldCollapseInOrder() {
-                return config.collapseInOrder && _.isArray(config.collapseOrder) && config.collapseOrder.length;
-            }
-
             function collapseInOrder() {
                 var collapsiblesCopy = _.clone(allCollapsibles),
                     toCollapse;
 
                 while (collapseNeeded() && collapsiblesCopy.length) {
-                    console.log('collapsign element');
                     toCollapse = collapsiblesCopy.shift();
                     toCollapse.$elements.addClass(collapseCls);
                 }
             }
 
+            function collapseNeeded() {
+                return getToolbarWidth() > getAvailableWidth();
+            }
+
+
             function expandAll() {
                 if (expandPossible(totalExtraWidth)) {
-                    console.log('expanding all');
                     allCollapsibles.forEach(function(collapsible) {
                         collapsible.$elements.removeClass(collapseCls);
                     });
@@ -269,6 +262,8 @@ define([
                 return $toolbox.outerWidth(true) + $navigation.outerWidth(true);
             }
 
+
+
             $window.on('resize' + ns, _.throttle(function() {
                 testRunner.trigger('collapseTools');
             }, 100));
@@ -281,7 +276,6 @@ define([
                     testRunner.trigger('collapseTools');
                 })
                 .on('collapseTools' + ns, function() {
-                    console.log('======= collapseTools ===========');
                     toggleCollapsibles();
                 });
         },
