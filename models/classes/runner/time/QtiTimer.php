@@ -119,7 +119,7 @@ class QtiTimer implements Timer, ExtraTime
         if ($this->isRangeOpen($range)) {
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
-            \common_Logger::i('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
+            \common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
             $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
             $this->timeLine->add($point);
             $range[] = $point;
@@ -159,7 +159,7 @@ class QtiTimer implements Timer, ExtraTime
             $this->timeLine->add($point);    
         } else {
             // already closed range found, just log the info
-            \common_Logger::i('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
+            \common_Logger::t('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
         }
 
         return $this;
@@ -239,22 +239,22 @@ class QtiTimer implements Timer, ExtraTime
             try {
                 $clientDuration = $clientTimeLine->compute();
             } catch(TimeException $e) {
-                \common_Logger::i('Handled client range error');
+                \common_Logger::t('Handled client range error');
             }
 
             if (is_null($duration)) {
                 if ($clientDuration) {
                     $duration = $clientDuration;
-                    \common_Logger::i("No client duration provided to adjust the timer, but a range already exist: ${duration}");
+                    \common_Logger::t("No client duration provided to adjust the timer, but a range already exist: ${duration}");
                 } else {
                     $duration = $serverDuration;
-                    \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+                    \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
                 }
             }
 
             $removed = $this->timeLine->remove($tags, TimePoint::TARGET_CLIENT);
             if ($removed == $clientRangeLength) {
-                \common_Logger::i("Replace client duration in timer: ${clientDuration} to ${duration}");
+                \common_Logger::t("Replace client duration in timer: ${clientDuration} to ${duration}");
             } else {
                 \common_Logger::w("Unable to replace client duration in timer: ${clientDuration} to ${duration}");
             }
@@ -263,7 +263,7 @@ class QtiTimer implements Timer, ExtraTime
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
-            \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+            \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
         } else if ($duration > $serverDuration) {
             \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
             $duration = $serverDuration;
