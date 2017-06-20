@@ -54,31 +54,6 @@ define([
         assert.ok(typeof pluginFactory === 'function', 'The module expose a function');
     });
 
-    function getAreaBroker($brokerContainer) {
-        var $actionsBar = $brokerContainer.find('.bottom-action-bar .control-box'),
-            $nav        = $brokerContainer.find('.navi-container'),
-            $toolbox    = $brokerContainer.find('.tools-box');
-
-        return areaBrokerMock({
-            $brokerContainer: $brokerContainer,
-            mapping: {
-                actionsBar: $actionsBar,
-                toolbox:    $toolbox,
-                navigation: $nav
-            }
-        });
-    }
-
-    function setPluginConfig(runner, config) {
-        runner.setTestData({
-            config: {
-                plugins: {
-                    collapser: config
-                }
-            }
-        });
-    }
-
     QUnit.module('Collapser');
 
     QUnit
@@ -89,7 +64,7 @@ define([
         ])
         .asyncTest('collapse/expand all', function(data, assert) {
             var $container = $(fixtureId),
-                areaBroker = getAreaBroker($container),
+                areaBroker,
                 runner,
                 plugin;
 
@@ -100,13 +75,28 @@ define([
 
             QUnit.expect(6);
 
+            areaBroker = areaBrokerMock({
+                $brokerContainer: $container,
+                mapping: {
+                    actionsBar: $container.find('.bottom-action-bar .control-box'),
+                    toolbox:    $container.find('.navi-container'),
+                    navigation: $container.find('.tools-box')
+                }
+            });
+
             runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
             runner = runnerFactory(providerName);
             plugin = pluginFactory(runner, areaBroker);
 
-            setPluginConfig(runner, {
-                collapseTools: data.collapseTools,
-                collapseNavigation: data.collapseNavigation
+            runner.setTestData({
+                config: {
+                    plugins: {
+                        collapser: {
+                            collapseTools: data.collapseTools,
+                            collapseNavigation: data.collapseNavigation
+                        }
+                    }
+                }
             });
 
             runner.after('collapseTools', function() {
@@ -157,7 +147,7 @@ define([
 
     QUnit.asyncTest('collapse/expand in order', function(assert) {
         var $container = $(fixtureId),
-            areaBroker = getAreaBroker($container),
+            areaBroker,
             runner,
             plugin;
 
@@ -176,14 +166,29 @@ define([
 
         QUnit.expect(49);
 
+        areaBroker = areaBrokerMock({
+            $brokerContainer: $container,
+            mapping: {
+                actionsBar: $container.find('.bottom-action-bar .control-box'),
+                toolbox:    $container.find('.navi-container'),
+                navigation: $container.find('.tools-box')
+            }
+        });
+
         runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
         runner = runnerFactory(providerName);
         plugin = pluginFactory(runner, areaBroker);
 
-        setPluginConfig(runner, {
-            collapseTools: false,
-            collapseInOrder: true,
-            collapseOrder: collapseOrder
+        runner.setTestData({
+            config: {
+                plugins: {
+                    collapser: {
+                        collapseTools: false,
+                        collapseInOrder: true,
+                        collapseOrder: collapseOrder
+                    }
+                }
+            }
         });
 
         runner.after('collapseTools', function() {
