@@ -436,7 +436,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
         } catch (common_Exception $e) {
-            \common_Logger::e($e);
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
