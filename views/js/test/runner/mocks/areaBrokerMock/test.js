@@ -123,12 +123,14 @@ define([
 
         var broker = areaBrokerMock({
             $brokerContainer: $brokerContainer,
-            mapping: mapping
+            mapping: mapping,
+            areas: ['customArea']
         });
 
         _.forOwn(mapping, function (area, areaId) {
             assert.equal(broker.getArea(areaId), mapping[areaId], "The area broker contains the right dom element for " + areaId);
         });
+        assert.equal(broker.getArea('customArea').length, 1, "The container can retrieve the area customArea");
     });
 
 

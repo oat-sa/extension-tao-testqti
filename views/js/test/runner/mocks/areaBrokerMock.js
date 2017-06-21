@@ -76,7 +76,7 @@ define([
             });
 
         } else {
-            defaultAreas.forEach(function(areaId) {
+            _.union(defaultAreas, (config.areas || [])).forEach(function(areaId) {
                 // create missing areas
                 if (!config.mapping[areaId]) {
                     config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);

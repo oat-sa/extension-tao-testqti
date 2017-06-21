@@ -115,24 +115,23 @@ define([
             function buildCollapsiblesList() {
                 // use the given order to build the collapsibles list
                 if (shouldCollapseInOrder()) {
-                    allCollapsibles = config.collapseOrder
-                        .map(function(selector) {
-                            var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
-                            var extraWidth = 0;
+                    allCollapsibles = config.collapseOrder.map(function(selector) {
+                        var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
+                        var extraWidth = 0;
 
-                            if ($elements.length) {
-                                $elements.each(function() {
-                                    extraWidth += getExtraWidth($(this));
-                                });
-                                return {
-                                    $elements: $elements,
-                                    extraWidth: extraWidth
-                                };
-                            }
-                            return false;
-                        }).filter(function (collapsible) {
-                            return collapsible !== false;
-                        });
+                        if ($elements.length) {
+                            $elements.each(function() {
+                                extraWidth += getExtraWidth($(this));
+                            });
+                            return {
+                                $elements: $elements,
+                                extraWidth: extraWidth
+                            };
+                        }
+                        return false;
+                    });
+
+                    _.compact(allCollapsibles);
 
                 // collapsibles will be either tools and/or nav whole blocks depending on configuration
                 } else {
@@ -235,17 +234,12 @@ define([
             }
 
             function expandInOrder() {
-                var collapsiblesCopy = _.clone(allCollapsibles),
-                    shouldStop = false;
-
-                collapsiblesCopy.reverse();
-
-                collapsiblesCopy.forEach(function (toExpand) {
-                    if (toExpand.$elements.hasClass(collapseCls) && ! shouldStop) {
+                _.forEachRight(allCollapsibles, function(toExpand) {
+                    if (toExpand.$elements.hasClass(collapseCls)) {
                         if (expandPossible(toExpand.extraWidth)) {
                             toExpand.$elements.removeClass(collapseCls);
                         } else {
-                            shouldStop = true;
+                            return false;
                         }
                     }
                 });
