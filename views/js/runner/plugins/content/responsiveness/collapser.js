@@ -131,7 +131,7 @@ define([
                         return false;
                     });
 
-                    _.compact(allCollapsibles);
+                    allCollapsibles = _.compact(allCollapsibles);
 
                 // collapsibles will be either tools and/or nav whole blocks depending on configuration
                 } else {
