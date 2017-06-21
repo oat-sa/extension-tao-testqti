@@ -19,11 +19,16 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\state\StateMigration;
+use oat\tao\model\state\StateStorage;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
+use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
@@ -79,4 +84,38 @@ class QtiTestListenerService extends ConfigurableService
             $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
         }
     }
+
+    public function archiveState(DeliveryExecutionState $event)
+    {
+        if ($event->getState() == DeliveryExecution::STATE_FINISHIED) {
+            /** @var TestSessionService $testSessionService */
+            $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+            $session = $testSessionService->getTestSession($event->getDeliveryExecution());
+            $userId = $event->getDeliveryExecution()->getUserIdentifier();
+
+            //get all callIds linked to that session
+            $sessionId = $session->getSessionId();
+
+            $itemRefs = $session->getRoute()->getAssessmentItemRefs();
+
+
+            /** @var StateMigration $finishedService */
+            $finishedService = $this->getServiceManager()->get(StateMigration::SERVICE_ID);
+            //remove all callIds
+            foreach ($itemRefs as $itemRef){
+                $callId = $sessionId.$itemRef->getIdentifier();
+                if($finishedService->archive($userId, $callId)){
+                    $finishedService->removeState($userId, $callId);
+                    \common_Logger::i('State archived for user : '.$userId.' and callId : '.$callId);
+                }
+            }
+
+            if($finishedService->archive($userId, $sessionId)){
+                $finishedService->removeState($userId, $sessionId);
+                \common_Logger::i('State archived for user : '.$userId.' and callId : '.$sessionId);
+            }
+
+        }
+    }
+
 }
