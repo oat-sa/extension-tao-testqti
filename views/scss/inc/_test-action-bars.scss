@@ -338,11 +338,12 @@
                 }
 
                 // label masking at toolbar level
-                .no-tool-label .btn-info,
-                .no-tool-label-hover .btn-info:not(:hover),
+                .tool-label-collapsed .btn-info,
+                .tool-label-collapsed-hover .btn-info:not(:hover),
                 // label masking at tool level
                 .btn-info.no-tool-label,
-                .btn-info.no-tool-label-hover:not(:hover) {
+                .btn-info.tool-label-collapsed,
+                .btn-info.tool-label-collapsed-over:not(:hover) {
                     .text {
                         display: none;
                     }
