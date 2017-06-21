@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoTests\models\runner\time\ArraySerializable;
 use oat\taoTests\models\runner\time\IncompleteRangeException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -34,7 +35,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  * Class QtiTimeLine
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimeLine implements TimeLine
+class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSerializable
 {
     /**
      * The list of TimePoint representing the TimeLine
@@ -53,6 +54,47 @@ class QtiTimeLine implements TimeLine
                 $this->add($point);
             }
         }
+    }
+
+    /**
+     * Exports the internal state to an array
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = [];
+        foreach ($this->points as $point) {
+            $data[] = $point->toArray();
+        }
+        return $data;
+    }
+
+    /**
+     * Imports the internal state from an array
+     * @param array $data
+     */
+    public function fromArray($data)
+    {
+        $this->points = [];
+        if (is_array($data)) {
+            foreach ($data as $dataPoint) {
+                $point = new TimePoint();
+                $point->fromArray($dataPoint);
+                $this->points[] = $point;
+            }
+        }
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
