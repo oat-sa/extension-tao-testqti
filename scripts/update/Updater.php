@@ -1280,7 +1280,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.15.0');
         }
 
-        if( $this->isVersion('9.15.0') ){
+        $this->skip('9.15.0', '9.17.0');
+
+        if( $this->isVersion('9.17.0') ){
           
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
@@ -1294,7 +1296,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags'        => [ 'core', 'qti' ]
             ]));
 
-            $this->setVersion('9.16.0');
+            $this->setVersion('9.18.0');
         }
     }
 }
