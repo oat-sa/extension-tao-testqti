@@ -380,6 +380,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // Current Section title.
                 $response['sectionId'] = $currentSection->getIdentifier();
                 $response['sectionTitle'] = $currentSection->getTitle();
+                $response['sectionPause'] = $itemRef->getCategories()->contains('x-tao-paused');
 
                 // Number of items composing the test session.
                 $response['numberItems'] = $route->count();
