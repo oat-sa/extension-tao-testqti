@@ -1,0 +1,90 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ */
+
+/**
+ * Prevent suhmiting an item without a response,
+ * if the test has the option "enableAllowSkipping" and the
+ * item doesn't have the 'allow skipping' option selected.
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ */
+define([
+    'lodash',
+    'i18n',
+    'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/currentItem'
+], function (_, __, pluginFactory, currentItemHelper){
+    'use strict';
+
+
+    /**
+     * Returns the configured plugin
+     */
+    return pluginFactory({
+
+        name : 'preventSkipping',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
+        init : function init(){
+            var self = this;
+            var testRunner = this.getTestRunner();
+
+            function toggle(){
+                var context = testRunner.getTestContext();
+                if(context.preventEmptyResponses === true){
+                    self.enable();
+                } else {
+                    self.disable();
+                }
+            }
+
+            testRunner
+                .before('move', function(){
+                    if(!self.getState('disabled')){
+
+                        this.trigger('disablenav disabletools');
+
+                        return new Promise(function(resolve, reject){
+                            if(currentItemHelper.isAnswered(testRunner)){
+                                return resolve();
+                            }
+
+                            testRunner.trigger('alert.notallowed',
+                                __('A response to this item is required.'),
+                                function() {
+                                    testRunner.trigger('resumeitem');
+                                    reject();
+                                }
+                            );
+                        });
+                    }
+                })
+                .after('move', function(){
+                    toggle();
+                });
+        },
+
+        /**
+         * Called during the runner's destroy phase
+         */
+        destroy : function destroy (){
+        },
+    });
+});

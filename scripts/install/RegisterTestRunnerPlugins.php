@@ -221,6 +221,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'navigation',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
+            ], [
+                'id' => 'preventSkipping',
+                'name' => 'Prevent Skipping',
+                'module' => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent to submit empty responses',
+                'category' => 'navigation',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
             ]
         ],
         'tools' => [

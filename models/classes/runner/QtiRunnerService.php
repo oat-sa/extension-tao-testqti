@@ -333,6 +333,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $currentSection = $sections[0];
                 }
 
+                $testOptions = $config->getTestOptions($context);
+
                 // The navigation mode.
                 $response['navigationMode'] = $session->getCurrentNavigationMode();
                 $response['isLinear'] = $response['navigationMode'] == NavigationMode::LINEAR;
@@ -415,6 +417,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
 
+                //preven the user to submit empty responses
+                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
+
                 if($response['numberRubrics'] > 0){
                     $response['rubrics'] = $this->getRubrics($context, $itemRef);
                 }
@@ -423,7 +428,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
 
                 // append dynamic options
-                $response['options'] = $config->getTestOptions($context);
+                $response['options'] = $testOptions;
             }
 
         } else {
