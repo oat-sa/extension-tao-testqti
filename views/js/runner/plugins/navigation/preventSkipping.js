@@ -54,10 +54,11 @@ define([
                     self.disable();
                 }
             }
+            toggle();
 
             testRunner
                 .before('move', function(){
-                    if(!self.getState('disabled')){
+                    if(self.getState('enabled') === true){
 
                         this.trigger('disablenav disabletools');
 
@@ -76,7 +77,7 @@ define([
                         });
                     }
                 })
-                .after('move', function(){
+                .after('move skip', function(){
                     toggle();
                 });
         },
