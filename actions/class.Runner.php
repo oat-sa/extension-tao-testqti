@@ -406,11 +406,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if(!$route->isLast()){
 
                 $assessmentItemRef = $route->getNext()->getAssessmentItemRef();
-                $stateId = $serviceContext->getTestExecutionUri() . $assessmentItemRef->getIdentifier();
+                $itemDefinition    = $assessmentItemRef->getHref();
+                $itemIdentifier    = $assessmentItemRef->getIdentifier();
 
-                $response = $this->getItemDataResponse($serviceContext, $assessmentItemRef, $stateId);
+                $response = $this->getItemDataResponse( $serviceContext, $itemDefinition, $itemIdentifier);
+
                 if(is_array($response)){
-                    $response['itemDefinition'] = $assessmentItemRef->getHref();
+                    $response['itemDefinition'] = $itemIdentifier;
                 }
             } else {
                 $response = [
