@@ -122,10 +122,11 @@ define([
         /**
          * Gets an item definition by its URI, also gets its current state
          * @param {String} uri - The URI of the item to get
+         * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri) {
+        getItem: function getItem(uri, params) {
             var self = this;
 
             /**
@@ -167,7 +168,7 @@ define([
                 return Promise.resolve(this.itemStore.get(uri));
             }
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'))
+            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'), params)
                     .then(function(response){
                         if(response && response.success){
                             self.itemStore.set(uri, response);
