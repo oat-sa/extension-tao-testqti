@@ -791,8 +791,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $feedbacks = $this->getFeedbacks($context, $itemRef);
             foreach ($feedbacks as $entry) {
                 if(isset($entry['feedbackRules'])){
-                    \common_Logger::d('>W>>>>>>>>>>>>>>h feedbackRules  : ' . gettype($entry['feedbackRules']) . ' ' . count($entry['feedbackRules']) );
-                    \common_Logger::d($entry['feedbackRules']);
                     if(count($entry['feedbackRules']) > 0){
                         $hasFeedbacks = true;
                     }
