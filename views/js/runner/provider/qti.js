@@ -283,13 +283,15 @@ define([
                             });
                         });
 
-                    submitItem.catch(function() {
-                        self.trigger('alert.submitError',
-                            __('An error occurred during results submission. Please retry.'),
-                            function () {
-                                self.trigger('resumeitem');
-                            }
-                        );
+                    submitItem.catch(function(err) {
+                        if (err !== true) {
+                            self.trigger('alert.submitError',
+                                __('An error occurred during results submission. Please retry.'),
+                                function () {
+                                    self.trigger('resumeitem');
+                                }
+                            );
+                        }
                     });
 
                     return submitItem;

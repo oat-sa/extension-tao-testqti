@@ -684,11 +684,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     }
 
     /**
-     * Get the core_kernel_file_File object corresponding to the location
+     * Get the File object corresponding to the location
      * of the test content (a directory!) on the file system.
      *
      * @param core_kernel_classes_Resource $test
-     * @return core_kernel_file_File
+     * @return null|File
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     public function getTestFile(core_kernel_classes_Resource $test)

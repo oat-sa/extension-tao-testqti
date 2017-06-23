@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\test\runner\time;
 
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
+use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
 use oat\tao\test\TaoPhpUnitTestRunner;
 
@@ -45,9 +46,47 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
             new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
             new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
         ]);
-        $this->assertInstanceOf('oat\taoTests\models\runner\time\TimeLine', $timeLine);
+        $this->assertInstanceOf(TimeLine::class, $timeLine);
     }
 
+    /**
+     * @dataProvider linearTestPointsProvider
+     * @param TimePoint[] $points
+     */
+    public function testToArray($points)
+    {
+        $timeLine = new QtiTimeLine($points);
+        $timeLineUnserialized = new QtiTimeLine();
+        $data = $timeLine->toArray();
+        $timeLineUnserialized->fromArray($data);
+        $this->assertEquals($timeLine->getPoints(), $timeLineUnserialized->getPoints());
+    }
+
+    /**
+     * @dataProvider linearTestPointsProvider
+     * @param TimePoint[] $points
+     */
+    public function testFromArray($points)
+    {
+        $timeLine = new QtiTimeLine($points);
+        $timeLineUnserialized = new QtiTimeLine();
+        $data = $timeLine->toArray();
+        $timeLineUnserialized->fromArray($data);
+        $this->assertEquals($timeLineUnserialized->getPoints(), $timeLine->getPoints());
+    }
+
+    /**
+     * @dataProvider linearTestPointsProvider
+     * @param TimePoint[] $points
+     */
+    public function testJson($points)
+    {
+        $timeLine = new QtiTimeLine($points);
+        $json = json_encode($timeLine);
+        $data = $timeLine->toArray();
+        $this->assertEquals($data, json_decode($json, true));
+    }
+    
     /**
      * @dataProvider linearTestPointsProvider
      * @param TimePoint[] $points
