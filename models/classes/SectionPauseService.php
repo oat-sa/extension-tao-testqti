@@ -34,7 +34,7 @@ class SectionPauseService extends ConfigurableService
      * @param $session
      * @return bool
      */
-    public function isPaused(TestSession $session = null)
+    public function isPausable(TestSession $session = null)
     {
         return false;
     }

@@ -19,7 +19,7 @@
  * @author Alexander Zagovorychev <zagovorichev@1pt.com>
  */
 
-namespace oat\taoDelivery\scripts\install;
+namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\SectionPauseService;
