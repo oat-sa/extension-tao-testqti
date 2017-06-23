@@ -219,6 +219,7 @@ define([
         /**
          * Gets an item definition by its URI, also gets its current state
          * @param {String} uri - The URI of the item to get
+         * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */

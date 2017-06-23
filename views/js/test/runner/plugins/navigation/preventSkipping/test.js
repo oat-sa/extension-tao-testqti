@@ -34,7 +34,7 @@ define([
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
-
+    //mock the isAnswered helper, using testRunner property
     currentItemHelper.isAnswered = function(testRunner){
         return !testRunner.prevent;
     };

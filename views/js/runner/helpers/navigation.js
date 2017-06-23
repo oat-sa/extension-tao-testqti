@@ -33,7 +33,7 @@ define([
 
         /**
          * Check whether the test taker is leaving a section
-         A
+         *
          * @param {Object} testContext - the actual test context
          * @param {Object} testMap - the actual test map
          * @param {String} direction - the move direction (next, previous or jump)

@@ -76,6 +76,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected $testConfig;
 
+    /**
+     * Use to store retrieved item data, inside the same request
+     * @var array
+     */
     private $dataCache = [];
 
     /**
@@ -419,12 +423,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
 
-                //preven the user to submit empty responses
-                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
-
+                //add rubic blocks
                 if($response['numberRubrics'] > 0){
                     $response['rubrics'] = $this->getRubrics($context, $itemRef);
                 }
+
+                //preven the user to submit empty responses
+                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
 
                 //does the item has modal feedbacks ?
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
@@ -606,7 +611,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
             );
 
-            //if (is_array($response)) {
+            if (is_array($response)) {
                 foreach ($response as $id => $responseData) {
                     try {
                         $var = $filler->fill($id, $responseData);
@@ -620,9 +625,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         \common_Logger::d("Could not find variable with identifier '${id}' in current item.");
                     }
                 }
-            //} else {
-                //\common_Logger::e('Invalid json payload');
-            //}
+            } else {
+                \common_Logger::e('Invalid json payload');
+            }
 
             return $responses;
         } else {

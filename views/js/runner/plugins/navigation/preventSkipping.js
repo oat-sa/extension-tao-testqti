@@ -46,6 +46,9 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
+            /**
+             * Toggle the plugin based on the context's configuration
+             */
             function toggle(){
                 var context = testRunner.getTestContext();
                 if(context.preventEmptyResponses === true){
