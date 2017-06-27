@@ -30,7 +30,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\tao\model\security\xsrf\TokenService;
-use qtism\data\AssessmentItemRef;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 /**
@@ -152,6 +151,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return $this->serviceContext;
     }
 
+
+    /**
+     * Initialize and verify the current service context
+     * useful when the context was opened but not checked.
+     * @return boolean true if initialized
+     * @throws \common_Exception
+     */
+    protected function initServiceContext()
+    {
+        $serviceContext = $this->getServiceContext(false, false);
+        $this->runnerService->check($serviceContext);
+        return $serviceContext->init();
+    }
+
     /**
      * Gets an error response object
      * @param Exception [$e] Optional exception from which extract the error context
@@ -232,9 +245,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Gets the state identifier for the current itemRef
+     * @param string $itemIdentifier the item id
+     * @return string the state id
      */
-    protected function getStateId($serviceContext, $itemIdentifier)
+    protected function getStateId($itemIdentifier)
     {
+        $serviceContext = $this->getServiceContext(false, false);
         return  $serviceContext->getTestExecutionUri() . $itemIdentifier;
     }
 
@@ -371,7 +387,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, true);
 
             //load item data
-            $response = $this->getItemDataResponse($serviceContext, $itemRef, $itemIdentifier);
+            $response = $this->getItemDataResponse($itemRef, $itemIdentifier);
 
             //start the timer
             $this->runnerService->startTimer($serviceContext);
@@ -409,7 +425,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $itemDefinition    = $assessmentItemRef->getHref();
                 $itemIdentifier    = $assessmentItemRef->getIdentifier();
 
-                $response = $this->getItemDataResponse( $serviceContext, $itemDefinition, $itemIdentifier);
+                $response = $this->getItemDataResponse($itemDefinition, $itemIdentifier);
 
                 if(is_array($response)){
                     $response['itemDefinition'] = $itemIdentifier;
@@ -430,17 +446,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Create the item definition response for a given item
-     * @param RunnerServiceContext $context the current test context
      * @param string $itemRef the item definition
-     * @param string $itemIdentigier the item id
+     * @param string $itemIdentifier the item id
      * @return array the item data
      */
-    protected function getItemDataResponse(RunnerServiceContext $context, $itemRef, $itemIdentifier)
+    protected function getItemDataResponse($itemRef, $itemIdentifier)
     {
-        $itemData = $this->runnerService->getItemData($context, $itemRef);
-        $baseUrl  = $this->runnerService->getItemPublicUrl($context, $itemRef);
+        $serviceContext = $this->getServiceContext(false, false);
+        $itemData       = $this->runnerService->getItemData($serviceContext, $itemRef);
+        $baseUrl        = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
 
-        $itemState = $this->runnerService->getItemState($context, $this->getStateId($context, $itemIdentifier));
+        $itemState = $this->runnerService->getItemState($serviceContext, $this->getStateId($itemIdentifier));
         if ( is_null($itemState) || !count($itemState)) {
             $itemState = new stdClass();
         }
@@ -456,20 +472,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Save the actual item state.
      * Requires params itemIdentifier and itemState
-     * @param RunnerServiceContext $context the current test context
      * @return boolean true if saved
      * @throws \common_Exception
      */
-    protected function saveItemState(RunnerServiceContext $serviceContext)
+    protected function saveItemState()
     {
-        if($this->hasRequestParameter('itemIdentifier') && $this->hasRequestParameter('itemState')){
-            $itemIdentifier  = $this->getRequestParameter('itemIdentifier');
+        if($this->hasRequestParameter('itemIdentifier') && $this->hasRequestParameter('itemState')) {
+            $serviceContext = $this->getServiceContext(false, false);
+            $itemIdentifier = $this->getRequestParameter('itemIdentifier');
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
             $itemState  = isset($params['itemState']) ? $params['itemState'] : new stdClass();
 
-            $stateId =  $this->getStateId($serviceContext, $itemIdentifier);
+            $stateId =  $this->getStateId($itemIdentifier);
             $state   =  json_decode($itemState, true);
 
             return $this->runnerService->setItemState($serviceContext, $stateId, $state);
@@ -480,13 +496,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * End the item timer and save the duration
      * Requires params itemDuration and optionaly consumedExtraTime
-     * @param RunnerServiceContext $context the current test context
      * @return boolean true if saved
      * @throws \common_Exception
      */
-    protected function endItemTimer($serviceContext)
+    protected function endItemTimer()
     {
         if($this->hasRequestParameter('itemDuration')){
+            $serviceContext    = $this->getServiceContext(false, false);
             $itemDuration      = $this->getRequestParameter('itemDuration');
             $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
             return $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
@@ -497,17 +513,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Save the item responses
      * Requires params itemDuration and optionaly consumedExtraTime
-     * @param RunnerServiceContext $context the current test context
      * @param boolean $emptyAllowed if we allow empty responses
      * @return boolean true if saved
      * @throws \common_Exception
      * @throws QtiRunnerEmptyResponsesException if responses are empty, emptyAllowed is false and no allowSkipping
      */
-    protected function saveItemResponses($serviceContext, $emptyAllowed = true)
+    protected function saveItemResponses($emptyAllowed = true)
     {
         if($this->hasRequestParameter('itemDefinition') && $this->hasRequestParameter('itemResponse')){
 
             $itemDefinition = $this->getRequestParameter('itemDefinition');
+            $serviceContext = $this->getServiceContext(false, false);
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
@@ -540,7 +556,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
         $successState = false;
-        $successResponse = false;
 
         $itemRef = $this->getRequestParameter('itemDefinition');
 
@@ -550,14 +565,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, true);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
-                $this->endItemTimer($serviceContext);
-                $successState =$this->saveItemState($serviceContext);
+                $this->endItemTimer();
+                $successState = $this->saveItemState();
             }
-            $this->runnerService->check($serviceContext);
+            $this->initServiceContext();
 
-             $this->serviceContext->init();
-
-            $successResponse = $this->saveItemResponses($serviceContext, false);
+            $successResponse = $this->saveItemResponses(false);
             $displayFeedback = $this->runnerService->displayFeedbacks($serviceContext);
 
             $response = [
@@ -596,14 +609,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, true);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
-                $this->endItemTimer($serviceContext);
-                $this->saveItemState($serviceContext);
+                $this->endItemTimer();
+                $this->saveItemState();
             }
+            $this->initServiceContext();
 
-            $this->runnerService->check($serviceContext);
-            $this->serviceContext->init();
-
-            $this->saveItemResponses($serviceContext, false);
+            $this->saveItemResponses(false);
 
             $serviceContext->getTestSession()->initItemTimer();
             $result = $this->runnerService->move($serviceContext, $direction, $scope, $ref);
@@ -648,7 +659,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $serviceContext = $this->getServiceContext();
 
-            $this->endItemTimer($serviceContext);
+            $this->endItemTimer();
 
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 
@@ -691,14 +702,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, true);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
-                $this->endItemTimer($serviceContext);
-                $this->saveItemState($serviceContext);
+                $this->endItemTimer();
+                $this->saveItemState();
             }
 
-            $this->runnerService->check($serviceContext);
-            $this->serviceContext->init();
+            $this->initServiceContext();
 
-            $this->saveItemResponses($serviceContext);
+            $this->saveItemResponses();
 
             $result = $this->runnerService->timeout($serviceContext, $scope, $ref);
 
@@ -738,14 +748,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext(false, true);
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
-                $this->endItemTimer($serviceContext);
-                $this->saveItemState($serviceContext);
+                $this->endItemTimer();
+                $this->saveItemState();
             }
+            $this->initServiceContext();
 
-            $this->runnerService->check($serviceContext);
-            $this->serviceContext->init();
-
-            $this->saveItemResponses($serviceContext);
+            $this->saveItemResponses();
 
             $response = [
                 'success' => $this->runnerService->exitTest($serviceContext),
