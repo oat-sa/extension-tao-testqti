@@ -203,8 +203,9 @@ define([
              * Compute the next item for the given action
              * @param {String} action - item action like move/next, skip, etc.
              * @param {Object} [params] - the item action additional params
+             * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
-            function computeNext(action, params){
+            function computeNext(action, params, loadPromise){
 
                 var context = self.getTestContext();
 
@@ -240,12 +241,15 @@ define([
                                     }
                                 }
                                 return resolve();
-                            });
+                            })
+                            .catch(submitError);
                     } else {
                         context.itemAnswered = currentItemHelper.isAnswered(self);
                         resolve();
                     }
                 });
+
+
 
                 feedbackPromise.then(function(){
 
@@ -260,7 +264,13 @@ define([
                         self.getProxy()
                             .callItemAction(context.itemUri, action, params)
                             .then(function(results){
+                                loadPromise = loadPromise || Promise.resolve();
 
+                                return loadPromise.then(function(){
+                                    return results;
+                                });
+                            })
+                            .then(function(results){
                                 if(results.testContext){
                                     self.setTestContext(results.testContext);
                                 }
@@ -271,19 +281,7 @@ define([
 
                                 updateStats();
 
-                                if (results.itemSession) {
-                                    context.itemAnswered = results.itemSession.itemAnswered;
-
-                                    if(results.displayFeedbacks === true && results.feedbacks) {
-                                        self.itemRunner.renderFeedbacks(results.feedbacks, results.itemSession, function(queue){
-                                            self.trigger('modalFeedbacks', queue, function(){
-                                                computeNext(action, _.omit(params, 'itemState', 'itemResponse'));
-                                            });
-                                        });
-                                    }
-                                } else {
-                                    load();
-                                }
+                                load();
                             })
                             .catch(submitError);
                     });
@@ -390,12 +388,16 @@ define([
 
                     self.disableItem(context.itemUri);
 
-                    self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
-                        computeNext('timeout', _.merge(getItemResults(), {
+                    computeNext(
+                        'timeout',
+                        _.merge(getItemResults(), {
                             scope: scope,
                             ref: ref
-                        }));
-                    });
+                        }),
+                        new Promise(function(resolve){
+                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                        })
+                    );
                 })
                 .after('timeout', function (scope) {
                     if (scope === 'assessmentSection' || scope === 'testPart') {
