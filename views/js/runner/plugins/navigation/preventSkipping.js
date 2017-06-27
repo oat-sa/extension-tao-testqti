@@ -83,12 +83,6 @@ define([
                 .after('move skip', function(){
                     toggle();
                 });
-        },
-
-        /**
-         * Called during the runner's destroy phase
-         */
-        destroy : function destroy (){
-        },
+        }
     });
 });
