@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
@@ -470,13 +471,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('3.1.0', '3.4.0');
 
         if ($this->isVersion('3.4.0')) {
-            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $ext = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
-            $dir = new \core_kernel_file_File($uri);
-
-            $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
-
+            $fileResource = new \core_kernel_classes_Resource($uri);
+            if ($fileResource->exists()) {
+                $fileSystem = $fileResource->getOnePropertyValue(new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository'));
+                if (!empty($fileSystem) && $fileSystem instanceof \core_kernel_classes_Literal) {
+                    \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem((string) $fileSystem);
+                }
+            }
             $this->setVersion('4.0.0');
         }
 
@@ -1268,6 +1271,21 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.12.0');
         }
 
-        $this->skip('9.12.0', '9.12.1');
+        $this->skip('9.12.0', '9.14.1');
+
+        if ($this->isVersion('9.14.1')) {
+            $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $testModelService->setOption('testCompilerClass', 'taoQtiTest_models_classes_QtiTestCompiler');
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+
+            $this->setVersion('9.15.0');
+        }
+
+        $this->skip('9.15.0', '9.17.0');
+
+        if ($this->isVersion('9.17.0')) {
+            $this->getServiceManager()->register(SectionPauseService::SERVICE_ID, new SectionPauseService());
+            $this->setVersion('9.18.0');
+        }
     }
 }
