@@ -72,6 +72,9 @@ define([
              */
             this.request = function request(url, reqParams, contentType, noToken) {
 
+                //some parameters need to be JSON.stringified, we do it at the lowest level
+                var stringifyParams = ['itemState', 'itemResponse'];
+
                 //run the request, just a function wrapper
                 var runRequest = function runRequest() {
                     return new Promise(function(resolve, reject) {
@@ -86,6 +89,14 @@ define([
                             if (token) {
                                 headers['X-Auth-Token'] = token;
                             }
+                        }
+                        if(_.isPlainObject(reqParams)){
+                            reqParams = _.mapValues(reqParams, function(value, key){
+                                if(_.contains(stringifyParams, key)){
+                                    return JSON.stringify(value);
+                                }
+                                return value;
+                            });
                         }
 
                         $.ajax({
@@ -237,8 +248,8 @@ define([
          */
         submitItem: function submitItem(uri, state, response, params) {
             var body = _.merge({
-                itemState: JSON.stringify(state),
-                itemResponse: JSON.stringify(response)
+                itemState: state,
+                itemResponse: response
             }, params || {});
 
             return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body);

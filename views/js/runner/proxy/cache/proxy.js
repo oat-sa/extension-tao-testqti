@@ -78,6 +78,21 @@ define([
             this.loadNextPromise = Promise.resolve();
 
             /**
+             * Update the item state in the store
+             * @param {String} uri - the item identifier
+             * @param {Objetc} state - the state of the item
+             * @returns {Boolean}
+             */
+            this.updateState = function updateState(uri, state){
+                var itemData;
+                if (this.itemStore.has(uri)) {
+                    itemData = this.itemStore.get(uri);
+                    itemData.itemState = state;
+                    this.itemStore.set(uri, itemData);
+                }
+            };
+
+            /**
              * Check whether we have the next item in the store
              * @param {String} uri - the CURRENT item identifier
              * @returns {Boolean}
@@ -180,13 +195,16 @@ define([
                     });
         },
 
+        /**
+         * Submits the state and the response of a particular item
+         * @param {String} uri - The URI of the item to update
+         * @param {Object} state - The state to submit
+         * @param {Object} response - The response object to submit
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         */
         submitItem: function submitItem(uri, state, response, params) {
-            var itemData;
-            if (this.itemStore.has(uri)) {
-                itemData = this.itemStore.get(uri);
-                itemData.itemState = state;
-                this.itemStore.set(uri, itemData);
-            }
+            this.updateState(uri, state);
             return qtiServiceProxy.submitItem.call(this, uri, state, response, params);
         },
 
@@ -204,10 +222,13 @@ define([
             return this.loadNextPromise
                 .then(function(){
 
-                    self.getItemFromStore = false;
+                    //update the item state
+                    if(params.itemState){
+                        self.updateState(uri, params.itemState);
+                    }
 
                     //check if we have already the item for the action we are going to perform
-
+                    self.getItemFromStore = false;
                     if( (action === 'timeout' || action === 'skip' ||
                         (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
                         self.hasNextItem(uri) ){

@@ -426,7 +426,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response = $this->getItemDataResponse($itemDefinition, $itemIdentifier);
 
                 if(is_array($response)){
-                    $response['itemDefinition'] = $itemIdentifier;
+                    $response['itemDefinition'] = $itemDefinition;
                 }
             } else {
                 $response = [
