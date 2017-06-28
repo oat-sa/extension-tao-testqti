@@ -1302,7 +1302,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags'        => [ 'core', 'qti' ]
             ]));
 
-            $this->setVersion('9.19.0');
+            $this->setVersion('10.0.0');
         }
     }
 }
