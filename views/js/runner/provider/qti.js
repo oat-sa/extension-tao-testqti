@@ -185,15 +185,18 @@ define([
         init : function init(){
             var self = this;
 
-
+            /**
+             * Retrieve the item results
+             * @returns {Object} the results
+             */
             function getItemResults() {
                 var results = {};
                 var context = self.getTestContext();
                 if(context && self.itemRunner){
                     results = {
                         itemIdentifier : context.itemIdentifier,
-                        itemResponse   : JSON.stringify(self.itemRunner.getResponses()),
-                        itemState      : JSON.stringify(self.itemRunner.getState())
+                        itemResponse   : self.itemRunner.getResponses(),
+                        itemState      : self.itemRunner.getState()
                     };
                 }
                 return results;
