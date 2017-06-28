@@ -53,7 +53,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
      */
     protected function buildConfig() {
         if ($this->hasOption(self::OPTION_CONFIG)) {
-            // load the confguration from service
+            // load the configuration from service
             $config = $this->getOption(self::OPTION_CONFIG);
         } else {
             // fallback to get the raw server config, using the old notation
@@ -115,17 +115,25 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     }
 
     /**
-     * Returns the value of a config entry
+     * Returns the value of a config entry.
+     * The name can be a namespace, each name being separated by a dot, like: 'itemCaching.enabled'
      * @param string $name
      * @return mixed
      */
     public function getConfigValue($name)
     {
         $config = $this->getConfig();
-        if (isset($config[$name])) {
-            return $config[$name];
+        
+        $path = explode('.', (string)$name);
+        foreach ($path as $entry) {
+            if (isset($config[$entry])) {
+                $config =& $config[$entry];
+            } else {
+                return null;
+            }   
         }
-        return null;
+        
+        return $config;
     }
 
     /**
