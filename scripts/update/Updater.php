@@ -1288,7 +1288,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.18.0');
         }
 
-        if( $this->isVersion('9.18.0') ){
+        $this->skip('9.18.0', '9.18.1');
+
+        if( $this->isVersion('9.18.1') ){
           
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
