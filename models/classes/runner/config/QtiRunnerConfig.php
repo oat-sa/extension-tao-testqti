@@ -95,7 +95,10 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
                 'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
                 'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
-                'allowBrowseNextItem' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false
+                'itemCaching' => [
+                    'enabled' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
+                    'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
+                ],
             ];
         }
         return $config;

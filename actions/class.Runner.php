@@ -27,7 +27,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
@@ -409,10 +408,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-
-            $allowed = $this->runnerService->getTestConfig()->getConfigValue('allowBrowseNextItem');
+            $allowed = $this->runnerService->getTestConfig()->getConfigValue('itemCaching.enabled');
             if(!$allowed){
-                \common_Logger::w("Attempt to disclose the next item whitout the configuration");
+                \common_Logger::w("Attempt to disclose the next item without the configuration");
                 throw new \common_exception_Unauthorized();
             }
             $serviceContext = $this->getServiceContext();
