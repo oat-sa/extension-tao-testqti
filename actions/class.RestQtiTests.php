@@ -152,7 +152,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      * Create a Test Class
      *
      * Label parameter is mandatory
-     * If parent class parameter is an uri of valid delivery class, new class will be created under it
+     * If parent class parameter is an uri of valid test class, new class will be created under it
      * If not parent class parameter is provided, class will be created under root class
      * Comment parameter is not mandatory, used to describe new created class
      *
