@@ -230,4 +230,35 @@ class ExtendedStateService extends ConfigurableService
 
         $this->saveExtra($testSessionId, $extra);
     }
+
+    /**
+     * Stores the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @param array $table
+     */
+    public function storeItemsTable($testSessionId, $table)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra['items_table'] = $table;
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Loads the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @return array
+     */
+    public function loadItemsTable($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra['items_table'])) {
+            $table = $extra['items_table'];
+        } else {
+            $table = [];
+        }
+        return $table;
+    }
 }
