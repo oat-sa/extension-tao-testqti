@@ -34,18 +34,19 @@ define([
         assert.equal(typeof navigationHelper, 'object', "The  helper module exposes an object");
     });
 
-    QUnit
-        .cases([{
-            title: 'isLeavingSection'
-        }])
-        .test('Method ', function (data, assert) {
-            QUnit.expect(1);
+    QUnit.cases([
+        { title: 'isLeavingSection' },
+        { title: 'isLeavingTestPart' },
+        { title: 'isLast' }
+    ])
+    .test('Method ', function (data, assert) {
+        QUnit.expect(1);
 
-            assert.equal(typeof navigationHelper[data.title], 'function', 'The helper exposes a "' + data.title + '" method');
-        });
+        assert.equal(typeof navigationHelper[data.title], 'function', 'The helper exposes a "' + data.title + '" method');
+    });
 
 
-    QUnit.module('isLeavingSection');
+    QUnit.module('navigation.isLeavingSection');
 
     QUnit.test('Bad paramerters', function(assert){
         var result;
@@ -99,6 +100,15 @@ define([
         direction : 'next',
         scope : 'item',
     },{
+        title: 'move next item at the end of a testPart',
+        expectResult : true,
+        context : {
+            sectionId : 'assessmentSection-5',
+            itemIdentifier : 'item-14'
+        },
+        direction : 'next',
+        scope : 'item',
+    },{
         title: 'move next section',
         expectResult : true,
         context : {
@@ -146,7 +156,7 @@ define([
         scope : 'item',
         position: 7
     }])
-    .test('isLeavingSection ', function (data, assert) {
+    .test('is leaving a section if ', function (data, assert) {
         var result;
 
         QUnit.expect(1);
@@ -157,4 +167,132 @@ define([
     });
 
 
+    QUnit.module('navigation.isLeavingTestPart');
+
+    QUnit.cases([{
+        title: 'move next item inside a section',
+        expectResult : false,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-1',
+            itemIdentifier : 'item-2'
+        },
+        direction : 'next',
+        scope : 'item'
+    },{
+        title: 'move next item at the end of a section inside the same testpart',
+        expectResult : false,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-1',
+            itemIdentifier : 'item-3'
+        },
+        direction : 'next',
+        scope : 'item',
+    },{
+        title: 'move next part',
+        expectResult : true,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-1',
+            itemIdentifier : 'item-2'
+        },
+        direction : 'next',
+        scope : 'testPart'
+    },{
+        title: 'move next item at the end of last testpart\'s section',
+        expectResult : true,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-5',
+            itemIdentifier : 'item-14'
+        },
+        direction : 'next',
+        scope : 'item',
+    },{
+        title: 'move previous item at the beginning of the 2nd testpart\'s section',
+        expectResult : true,
+        context : {
+            testPartId : 'testPart-2',
+            sectionId : 'assessmentSection-6',
+            itemIdentifier : 'item-15'
+        },
+        direction : 'previous',
+        scope : 'item',
+    },{
+        title: 'move next section to the next test part',
+        expectResult : true,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-5',
+            itemIdentifier : 'item-13'
+        },
+        direction : 'next',
+        scope : 'section',
+    },{
+        title: 'jump items outside a section in the same testPart',
+        expectResult : false,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-2',
+            itemIdentifier : 'item-4'
+        },
+        direction : 'jump',
+        scope : 'item',
+        position: 7
+    },{
+        title: 'jump over testParts',
+        expectResult : true,
+        context : {
+            testPartId : 'testPart-1',
+            sectionId : 'assessmentSection-3',
+            itemIdentifier : 'item-7'
+        },
+        direction : 'jump',
+        scope : 'item',
+        position: 15
+    }])
+    .test('is leaving a TestPart if ', function (data, assert) {
+        var result;
+
+        QUnit.expect(1);
+
+        result = navigationHelper.isLeavingTestPart(data.context, testMap, data.direction, data.scope, data.position);
+
+        assert.equal(result, data.expectResult, 'The helper gives the correct result');
+    });
+
+
+    QUnit.module('navigation.isLast');
+
+    QUnit.cases([{
+        title: '1st item',
+        expectResult : false,
+        itemIdentifier : 'item-1'
+    }, {
+        title: '2nd item',
+        expectResult : false,
+        itemIdentifier : 'item-2'
+    }, {
+        title: 'last of a section',
+        expectResult : false,
+        itemIdentifier : 'item-11'
+    }, {
+        title: 'last of a testPart',
+        expectResult : false,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'last item',
+        expectResult : true,
+        itemIdentifier : 'item-17'
+    }])
+    .test('is the last test item if ', function (data, assert) {
+        var result;
+
+        QUnit.expect(1);
+
+        result = navigationHelper.isLast(testMap, data.itemIdentifier);
+
+        assert.equal(result, data.expectResult, 'The helper gives the correct result');
+    });
 });

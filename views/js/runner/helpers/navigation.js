@@ -35,6 +35,8 @@ define([
          * Check whether the test taker is leaving a section
          *
          * @param {Object} testContext - the actual test context
+         * @param {String} testContext.itemIdentifier - the id of the current item
+         * @param {String} testContext.sectionId - the id of the current section
          * @param {Object} testMap - the actual test map
          * @param {String} direction - the move direction (next, previous or jump)
          * @param {String} scope - the move scope (item, section, testPart)
@@ -47,17 +49,87 @@ define([
             var sectionStats;
             var nbItems;
             var item;
-            if(_.isPlainObject(testContext) && !_.isEmpty(testContext.sectionId) && !_.isEmpty(testContext.itemIdentifier) && _.isPlainObject(testMap)){
-                section = mapHelper.getSection(testMap, testContext.sectionId);
-                sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
-                nbItems = sectionStats && sectionStats.total;
-                item = mapHelper.getItem(testMap, testContext.itemIdentifier);
+            if( _.isPlainObject(testContext) && _.isPlainObject(testMap) &&
+                !_.isEmpty(testContext.sectionId) && !_.isEmpty(testContext.itemIdentifier) ){
 
-                return (direction === 'next' && (scope === 'section' || item.positionInSection + 1 === nbItems)) ||
-                    (direction === 'previous' && item.positionInSection === 0) ||
-                    (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
+                section      = mapHelper.getSection(testMap, testContext.sectionId);
+                sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
+                nbItems      = sectionStats && sectionStats.total;
+                item         = mapHelper.getItem(testMap, testContext.itemIdentifier);
+
+                return  scope === 'section' ||
+                        scope === 'testPart'||
+                        (direction === 'next' && item.positionInSection + 1 === nbItems) ||
+                        (direction === 'previous' && item.positionInSection === 0) ||
+                        (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
             throw new TypeError('Invalid test context and test map');
+        },
+
+        /**
+         * Check whether the test taker is leaving a test part
+         *
+         * @param {Object} testContext - the actual test context
+         * @param {String} testContext.itemIdentifier - the id of the current item
+         * @param {String} testContext.sectionId - the id of the current section
+         * @param {String} testContext.testPartId - the id of the current testPart
+         * @param {Object} testMap - the actual test map
+         * @param {String} direction - the move direction (next, previous or jump)
+         * @param {String} scope - the move scope (item, section, testPart)
+         * @param {Number} [position] - the position in case of jump
+         * @returns {Boolean} true if the action leads to a section leave
+         * @throws {TypeError} if the context or the map are incorrects
+         */
+        isLeavingTestPart : function isLeavingTestPart(testContext, testMap, direction, scope, position){
+            var testPart;
+            var testPartStats;
+            var nbItems;
+            var item;
+            var section;
+            var sectionStats;
+            if( _.isPlainObject(testContext) && _.isPlainObject(testMap) &&
+               !_.isEmpty(testContext.testPartId) && !_.isEmpty(testContext.sectionId) && !_.isEmpty(testContext.itemIdentifier) ){
+
+                testPart      = mapHelper.getPart(testMap, testContext.testPartId);
+                testPartStats = mapHelper.getPartStats(testMap, testContext.testPartId);
+                nbItems       = testPartStats && testPartStats.total;
+                item          = mapHelper.getItem(testMap, testContext.itemIdentifier);
+
+                if(scope === 'section'){
+                    section = mapHelper.getSection(testMap, testContext.sectionId);
+                    sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
+                }
+
+                return  scope === 'testPart'||
+                        (direction === 'next' && scope === 'item' && item.positionInPart + 1 === nbItems) ||
+                        (direction === 'next' && scope === 'section' && section.position + sectionStats.total >= nbItems) ||
+                        (direction === 'previous' && scope === 'item' && item.positionInPart === 0) ||
+                        (direction === 'previous' && scope === 'section' && section.position === testPart.position) ||
+                        (direction === 'jump' && position > 0 && (position < testPart.position || position >=  testPart.position + nbItems));
+            }
+            throw new TypeError('Invalid test context and test map');
+        },
+
+        /**
+         * Check if the given  item is the last of the test
+         * @param {Object} testMap - the test map
+         * @param {String} itemIdentifier - the identifier of the item
+         * @returns {Boolean} true if the item is the last one
+         */
+        isLast : function isLast(testMap, itemIdentifier){
+            var item;
+            var stats;
+            if( ! _.isPlainObject(testMap) ){
+                throw new TypeError('Invalid test map');
+            }
+            if(_.isEmpty(itemIdentifier)){
+                throw new TypeError('Invalid item identifier');
+            }
+
+            item  = mapHelper.getItem(testMap, itemIdentifier);
+            stats = mapHelper.getTestStats(testMap);
+
+            return item.position + 1 === stats.total;
         }
 
 
