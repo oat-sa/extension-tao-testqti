@@ -189,7 +189,7 @@ define([
                         .init();
                 })
                 .catch(function(err){
-                    onError(err, __('An error occured during the test iniialization!'));
+                    onError(err, __('An error occured during the test initialization!'));
                 });
         }
     };
