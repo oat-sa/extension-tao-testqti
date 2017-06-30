@@ -169,6 +169,12 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             ];
 
             $this->returnSuccess($result);
+        } catch (\common_exception_ClassAlreadyExists $e) {
+            $result = [
+                'message' => $e->getMessage(),
+                'class-uri' => $e->getClass()->getUri(),
+            ];
+            $this->returnSuccess($result);
         } catch (\Exception $e) {
             $this->returnFailure($e);
         }
