@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -1305,6 +1306,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
 
             $this->setVersion('10.0.0');
+        }
+
+        if ($this->isVersion('10.0.0')) {
+            $service = new QtiRunnerMap();
+            $this->getServiceManager()->propagate($service);
+            $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
+
+            $this->setVersion('10.1.0');
         }
     }
 }
