@@ -1313,6 +1313,11 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->propagate($service);
             $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
 
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['item-cache-size'] = 3;
+            $extension->setConfig('testRunner', $config);
+
             $this->setVersion('10.1.0');
         }
     }
