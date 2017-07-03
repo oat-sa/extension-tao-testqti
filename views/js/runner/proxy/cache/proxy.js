@@ -77,11 +77,13 @@ define([
             //maintain a map of the items chain: for each item, a link to its neighbors
             this.itemChain = {};
             this.on('receive', function (data) {
-                if (data.testData && data.testData.config && data.testData.config.itemCaching) {
-                    self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || 1;
-                }
-                if (data.testMap) {
-                    self.buildKeyMap(data.testMap);
+                if (data) {
+                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
+                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || 1;
+                    }
+                    if (data.testMap) {
+                        self.buildKeyMap(data.testMap);
+                    }
                 }
             });
 
