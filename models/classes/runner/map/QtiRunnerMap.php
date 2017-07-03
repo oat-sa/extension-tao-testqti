@@ -145,7 +145,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 }
 
                 if ($forceTitles) {
-                    $label = sprintf($uniqueTitle, $offsetSection + 1);
+                    $label = __($uniqueTitle, $offsetSection + 1);
                 } else {
                     if ($useTitle) {
                         $label = $context->getItemIndexValue($itemUri, 'title');
