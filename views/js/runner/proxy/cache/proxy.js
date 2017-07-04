@@ -24,10 +24,11 @@
 define([
     'lodash',
     'core/promise',
+    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
+], function(_, Promise, navigationHelper, qtiServiceProxy, itemStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -74,15 +75,15 @@ define([
             //preload at least this number of items
             this.cacheAmount = 1;
 
-            //maintain a map of the items chain: for each item, a link to its neighbors
-            this.itemChain = {};
+            //keep reference on the test map as we don't have access to the test runner
+            this.testMap = null;
             this.on('receive', function (data) {
                 if (data) {
                     if (data.testData && data.testData.config && data.testData.config.itemCaching) {
-                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || 1;
+                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
                     }
                     if (data.testMap) {
-                        self.buildKeyMap(data.testMap);
+                        self.testMap = data.testMap;
                     }
                 }
             });
@@ -103,64 +104,6 @@ define([
             };
 
             /**
-             * Builds the map of the items chain: for each item, a link to its neighbors
-             * @param {Object} testMap - the test map that list of available items
-             */
-            this.buildKeyMap = function buildKeyMap(testMap) {
-                var previous;
-                self.itemChain = _.reduce(testMap.jumps, function (map, jump) {
-                    var ref = jump.identifier;
-                    if (previous) {
-                        map[previous].next = ref;
-                    }
-                    map[ref] = {
-                        identifier: ref,
-                        previous: previous,
-                        next: null
-                    };
-                    previous = ref;
-                    return map;
-                }, {});
-            };
-
-            /**
-             * Gets the list of immediate X neighbors from the current item following the provided direction
-             * @param {String} uri - the CURRENT item identifier
-             * @param {String} direction - The direction in which search for neighbors ('next' | 'previous')
-             * @returns {Array}
-             */
-            this.getNeighbors = function getNeighbors(uri, direction) {
-                var list = [];
-                _.times(self.cacheAmount || 1, function getNeighbor() {
-                    uri = self.itemChain[uri] && self.itemChain[uri][direction];
-                    if (uri) {
-                        list.push(uri);
-                    } else {
-                        return false;
-                    }
-                });
-                return list;
-            };
-
-            /**
-             * Gets the identifier of the next item
-             * @param {String} uri - the CURRENT item identifier
-             * @returns {String}
-             */
-            this.getNextKey = function getNextKey(uri) {
-                return self.itemChain[uri] && self.itemChain[uri].next;
-            };
-
-            /**
-             * Gets the identifier of the previous item
-             * @param {String} uri - the CURRENT item identifier
-             * @returns {String}
-             */
-            this.getPreviousKey = function getPreviousKey(uri) {
-                return self.itemChain[uri] && self.itemChain[uri].previous;
-            };
-
-            /**
              * Check whether we have the item in the store
              * @param {String} uri - the item identifier
              * @returns {Boolean}
@@ -175,7 +118,8 @@ define([
              * @returns {Boolean}
              */
             this.hasNextItem = function hasNextItem(uri) {
-                return self.hasItem(self.getNextKey(uri));
+                var sibling = navigationHelper.getNextItem(self.testMap, uri);
+                return sibling && self.hasItem(sibling.id);
             };
 
             /**
@@ -184,7 +128,8 @@ define([
              * @returns {Boolean}
              */
             this.hasPreviousItem = function hasPreviousItem(uri) {
-                return self.hasItem(self.getPreviousKey(uri));
+                var sibling = navigationHelper.getPreviousItem(self.testMap, uri);
+                return sibling && self.hasItem(sibling.id);
             };
 
             //run the init
@@ -200,7 +145,7 @@ define([
 
             this.itemStore.clear();
 
-            this.itemChain        = {};
+            this.testMap          = null;
             this.getItemFromStore = false;
 
             return qtiServiceProxy.destroy.call(this);
@@ -223,8 +168,13 @@ define([
              */
             function loadNextItem() {
                 return new Promise(function (resolve) {
-                    var neighbors = self.getNeighbors(uri, 'next').concat(self.getNeighbors(uri, 'previous'));
-                    var missing = _.reject(neighbors, self.hasItem, self);
+                    var siblings = navigationHelper.getSiblingItems(self.testMap, uri, 'both', self.cacheAmount);
+                    var missing = _.reduce(siblings, function (list, sibling) {
+                        if (!self.hasItem(sibling.id)) {
+                            list.push(sibling.id);
+                        }
+                        return list;
+                    }, []);
 
                     //don't run a request if not needed
                     if (missing.length) {
