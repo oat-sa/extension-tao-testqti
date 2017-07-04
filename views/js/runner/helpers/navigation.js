@@ -58,8 +58,92 @@ define([
                     (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
             throw new TypeError('Invalid test context and test map');
-        }
+        },
 
+        /**
+         * Gets the map descriptors of the sibling items
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @param {String} [direction='both'] - previous/next/both
+         * @param {Number} [size=3] - will be 2xsize if direction is both
+         * @returns {Object[]} the collections of items
+         */
+        getSiblingItems: function getSiblingItems(testMap, itemPosition, direction, size) {
+            var item, itemId, directions;
+            var previous = null;
+            var siblings = [];
+
+            var itemChain = _.reduce(testMap && testMap.jumps, function (map, jump) {
+                var ref = jump.identifier;
+                if (previous) {
+                    map[previous].next = ref;
+                }
+                map[ref] = {
+                    identifier: ref,
+                    previous: previous,
+                    next: null
+                };
+                previous = ref;
+                return map;
+            }, {});
+
+            if (_.isFinite(itemPosition)) {
+                item = mapHelper.getItemAt(testMap,  itemPosition);
+                itemId = item && item.id;
+            } else {
+                itemId = itemPosition;
+            }
+
+            size = _.isFinite(size) ? parseInt(size, 10) : 3;
+            if (!direction || direction === 'both') {
+                directions = ['previous', 'next'];
+            } else {
+                directions = [direction];
+            }
+
+            _.forEach(directions, function walkDirection(link) {
+                var id = itemId;
+                _.times(size, function getNeighbor() {
+                    id = itemChain[id] && itemChain[id][link];
+                    if (id) {
+                        siblings.push(mapHelper.getItem(testMap, id));
+                    } else {
+                        return false;
+                    }
+                });
+            });
+
+            return siblings;
+        },
+
+
+        /**
+         * Gets the map descriptor of the next item
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @returns {Object}
+         */
+        getNextItem : function getNextItem(testMap, itemPosition) {
+            var siblings = navigationHelper.getSiblingItems(testMap, itemPosition, 'next', 1);
+            if (siblings.length) {
+                return siblings[0];
+            }
+            return null;
+        },
+
+        /**
+         * Gets the map descriptor of the previous item
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @returns {Object}
+         */
+        getPreviousItem : function getPreviousItem(testMap, itemPosition) {
+            var siblings = navigationHelper.getSiblingItems(testMap, itemPosition, 'previous', 1);
+            if (siblings.length) {
+                return siblings[0];
+            }
+            return null;
+        }
 
     };
 
