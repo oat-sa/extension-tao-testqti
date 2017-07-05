@@ -24,11 +24,12 @@
 define([
     'lodash',
     'core/promise',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, Promise, navigationHelper, qtiServiceProxy, itemStoreFactory, assetLoader) {
+], function(_, Promise, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -261,17 +262,14 @@ define([
                     }
 
                     //check if we have already the item for the action we are going to perform
-                    self.getItemFromStore = false;
-                    if( (action === 'timeout' || action === 'skip' ||
-                        (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
-                        self.hasNextItem(itemIdentifier) ){
+                    self.getItemFromStore = (
+                        (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
+                        (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
+                        (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
+                    );
 
-                        self.getItemFromStore = true;
-                        params.start = true;
-
-                    } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(itemIdentifier)){
-
-                        self.getItemFromStore = true;
+                    //as we will pick the next item from the store ensure the next request will start the timer
+                    if (self.getItemFromStore) {
                         params.start = true;
                     }
                 })
