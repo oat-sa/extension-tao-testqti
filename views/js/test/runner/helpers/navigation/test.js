@@ -39,7 +39,10 @@ define([
             { title: 'isLeavingSection' },
             { title: 'getSiblingItems' },
             { title: 'getNextItem' },
-            { title: 'getPreviousItem' }
+            { title: 'getPreviousItem' },
+            { title: 'isMovingToNextItem' },
+            { title: 'isMovingToPreviousItem' },
+            { title: 'isJumpingToItem' }
         ])
         .test('Method ', function (data, assert) {
             QUnit.expect(1);
@@ -313,5 +316,188 @@ define([
             result = navigationHelper.getPreviousItem(testMap, data.position);
 
             assert.deepEqual(result, data.expectResult, 'The helper gives the correct result');
+        });
+
+
+    QUnit.module('Navigation checks');
+
+    QUnit.cases([{
+        title: 'moving next item',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'item'
+        },
+        expectResult : true
+    }, {
+        title: 'moving next section',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'moving previous item',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'item'
+        },
+        expectResult : false
+    }, {
+        title: 'moving previous section',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'jumping',
+        action: 'move',
+        params: {
+            direction: 'jump',
+            scope: 'item',
+            ref: 8
+        },
+        expectResult : false
+    }, {
+        title: 'skipping item',
+        action: 'skip',
+        expectResult : true
+    }, {
+        title: 'timeout',
+        action: 'timeout',
+        expectResult : true
+    }])
+        .test('isMovingToNextItem ', function (data, assert) {
+            var result;
+
+            QUnit.expect(1);
+
+            result = navigationHelper.isMovingToNextItem(data.action, data.params);
+
+            assert.equal(result, data.expectResult, 'The helper gives the correct result');
+        });
+
+    QUnit.cases([{
+        title: 'moving next item',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'item'
+        },
+        expectResult : false
+    }, {
+        title: 'moving next section',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'moving previous item',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'item'
+        },
+        expectResult : true
+    }, {
+        title: 'moving previous section',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'jumping',
+        action: 'move',
+        params: {
+            direction: 'jump',
+            scope: 'item',
+            ref: 8
+        },
+        expectResult : false
+    }, {
+        title: 'skipping item',
+        action: 'skip',
+        expectResult : false
+    }, {
+        title: 'timeout',
+        action: 'timeout',
+        expectResult : false
+    }])
+        .test('isMovingToPreviousItem ', function (data, assert) {
+            var result;
+
+            QUnit.expect(1);
+
+            result = navigationHelper.isMovingToPreviousItem(data.action, data.params);
+
+            assert.equal(result, data.expectResult, 'The helper gives the correct result');
+        });
+
+    QUnit.cases([{
+        title: 'moving next item',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'item'
+        },
+        expectResult : false
+    }, {
+        title: 'moving next section',
+        action: 'move',
+        params: {
+            direction: 'next',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'moving previous item',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'item'
+        },
+        expectResult : false
+    }, {
+        title: 'moving previous section',
+        action: 'move',
+        params: {
+            direction: 'previous',
+            scope: 'section'
+        },
+        expectResult : false
+    }, {
+        title: 'jumping',
+        action: 'move',
+        params: {
+            direction: 'jump',
+            scope: 'item',
+            ref: 8
+        },
+        expectResult : true
+    }, {
+        title: 'skipping item',
+        action: 'skip',
+        expectResult : false
+    }, {
+        title: 'timeout',
+        action: 'timeout',
+        expectResult : false
+    }])
+        .test('isJumpingToItem ', function (data, assert) {
+            var result;
+
+            QUnit.expect(1);
+
+            result = navigationHelper.isJumpingToItem(data.action, data.params);
+
+            assert.equal(result, data.expectResult, 'The helper gives the correct result');
         });
 });

@@ -69,9 +69,10 @@ define([
          * @returns {Object[]} the collections of items
          */
         getSiblingItems: function getSiblingItems(testMap, itemPosition, direction, size) {
-            var item, itemId, directions;
+            var itemId = mapHelper.getItemIdentifier(testMap,  itemPosition);
             var previous = null;
             var siblings = [];
+            var directions;
 
             var itemChain = _.reduce(testMap && testMap.jumps, function (map, jump) {
                 var ref = jump.identifier;
@@ -86,13 +87,6 @@ define([
                 previous = ref;
                 return map;
             }, {});
-
-            if (_.isFinite(itemPosition)) {
-                item = mapHelper.getItemAt(testMap,  itemPosition);
-                itemId = item && item.id;
-            } else {
-                itemId = itemPosition;
-            }
 
             size = _.isFinite(size) ? parseInt(size, 10) : 3;
             if (!direction || direction === 'both') {
@@ -143,6 +137,47 @@ define([
                 return siblings[0];
             }
             return null;
+        },
+
+        /**
+         * Checks if an action will move forward.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isMovingToNextItem : function isMovingToNextItem(action, params) {
+            params = params || {};
+            return (
+                action === 'timeout' ||
+                action === 'skip' ||
+                (action === 'move' && params.direction === 'next' && params.scope === 'item')
+            );
+        },
+
+        /**
+         * Checks if an action will move backward.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isMovingToPreviousItem : function isMovingToPreviousItem(action, params) {
+            params = params || {};
+            return (
+                action === 'move' && params.direction === 'previous' && params.scope === 'item'
+            );
+        },
+
+        /**
+         * Checks if an action will jump on another item.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isJumpingToItem : function isJumpingToItem(action, params) {
+            params = params || {};
+            return (
+                action === 'move' && params.direction === 'jump' && params.scope === 'item'
+            );
         }
 
     };
