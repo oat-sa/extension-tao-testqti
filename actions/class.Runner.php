@@ -394,6 +394,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemIdentifier = $this->getRequestParameter('itemDefinition');
+        $start          = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext(false, true);
@@ -418,8 +419,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['success'] = true;
             }
 
-            //start the timer
-            $this->runnerService->startTimer($serviceContext);
+            if ($start == true) {
+                // start the timer only when getItem starts the item session
+                // and after the action has been processed to avoid timing error
+                $this->runnerService->startTimer($serviceContext);
+            }
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);

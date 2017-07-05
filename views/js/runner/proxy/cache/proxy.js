@@ -210,6 +210,9 @@ define([
                 self.loadNextPromise = loadNextItem();
 
                 return Promise.resolve(this.itemStore.get(itemIdentifier));
+            } else {
+                params = params || {};
+                params.start = true;
             }
 
             return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
