@@ -545,10 +545,11 @@ define([
          * We call the proxy in order to get the item data
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
          * @returns {Promise} that calls in parallel the state and the item data
          */
-        loadItem : function loadItem(itemRef){
-            return this.getProxy().getItem(itemRef)
+        loadItem : function loadItem(itemIdentifier){
+            return this.getProxy().getItem(itemIdentifier)
                 .then(function(data){
                     //aggregate the results
                     return {
@@ -565,13 +566,15 @@ define([
          * Here we initialize the item runner and wrap it's call to the test runner
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
+         * @param {Object} itemData - The definition data of the item
          * @returns {Promise} resolves when the item is ready
          */
-        renderItem : function renderItem(itemRef, itemData){
+        renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
 
             var changeState = function changeState(){
-                self.setItemState(itemRef, 'changed', true);
+                self.setItemState(itemIdentifier, 'changed', true);
             };
 
             return new Promise(function(resolve, reject){
