@@ -93,7 +93,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
     * @return string
     */
    public function getUserUri() {
-       return $this->userUri;
+       return 'http://tao.dev/tao_instance.rdf#i1499168149748964';//$this->userUri;
    }
    
    /**

@@ -74,6 +74,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getUserUri()
     {
+        $this->userUri = 'http://tao.dev/tao_instance.rdf#i1499168149748964';
         if (is_null($this->userUri)) {
             return \common_session_SessionManager::getSession()->getUserUri();
         }
@@ -189,22 +190,28 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Initializes the timer for the current item in the TestSession
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function initItemTimer()
+    public function initItemTimer($microtime=false)
     {
+        if(!$microtime) {
+            $microtime = microtime(true);
+        }
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
         // if the range is already closed, a message will be added to the log
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->end($tags, microtime(true))->save();
+        $this->getTimer()->end($tags, $microtime)->save();
     }
 
     /**
      * Starts the timer for the current item in the TestSession
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function startItemTimer()
+    public function startItemTimer($microtime=false)
     {
+        if(!$microtime) {
+            $microtime = microtime(true);
+        }
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->start($tags, microtime(true))->save();
+        $this->getTimer()->start($tags, $microtime)->save();
     }
 
     /**
@@ -215,11 +222,14 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function endItemTimer($duration = null, $consumedExtraTime = null)
+    public function endItemTimer($duration = null, $consumedExtraTime = null, $microtime=false)
     {
+        if(!$microtime) {
+            $microtime = microtime(true);
+        }
         $timer = $this->getTimer();
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $timer->end($tags, microtime(true));
+        $timer->end($tags, $microtime);
 
         if (is_numeric($duration) || is_null($duration)) {
             if (!is_null($duration)) {
