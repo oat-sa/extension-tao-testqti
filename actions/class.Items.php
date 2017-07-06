@@ -19,6 +19,8 @@
 
 use oat\taoItems\model\CategoryService;
 use qtism\common\utils\Format;
+use oat\tao\model\search\Search;
+use oat\generis\model\OntologyAwareTrait;
 
 /**
  * Actions about Items in a Test context.
@@ -28,6 +30,7 @@ use qtism\common\utils\Format;
  */
 class taoQtiTest_actions_Items extends tao_actions_CommonModule
 {
+    use OntologyAwareTrait;
     /**
      * Get ALL QTI items within the platform.
      *
@@ -40,28 +43,29 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function get()
     {
         $items = array();
-        $propertyFilters = array(TAO_ITEM_MODEL_PROPERTY => TAO_ITEM_MODEL_QTI);
-        $options = array('recursive' => true, 'like' => true, 'limit' => 50);
+        $searchService = $this->getServiceManager()->get(Search::SERVICE_ID);
+        $itemsService = taoItems_models_classes_ItemsService::singleton();
         $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 
-        if (($pattern = $this->getRequestParameter('pattern')) !== null && $pattern !== '') {
-            $propertyFilters[RDFS_LABEL] = $pattern;
-        }
-
-        $itemsService = taoItems_models_classes_ItemsService::singleton();
-        $itemClass = $itemsService->getRootClass();
-
-        $result = $itemClass->searchInstances($propertyFilters, $options);
-
-        foreach ($result as $qtiItem) {
-            if (!$notEmpty || $itemsService->hasItemContent($qtiItem)) {
-                $items[] = array(
-                    'uri' => $qtiItem->getUri(),
-                    'label' => $qtiItem->getLabel()
-                );
+        $pattern = $this->getRequestParameter('pattern');
+        $result = $searchService->query($pattern, $itemsService->getRootClass(), 0, 20);
+        foreach ($result as $itemUri) {
+            $qtiItem = $this->getResource($itemUri);
+            $data = $qtiItem->getPropertiesValues([
+                taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL,
+                RDFS_LABEL,
+                taoItems_models_classes_ItemsService::PROPERTY_ITEM_CONTENT
+            ]);
+            if (!$notEmpty || !empty($data[taoItems_models_classes_ItemsService::PROPERTY_ITEM_CONTENT])) {
+                $model = reset($data[taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL]);
+                if ($model instanceof core_kernel_classes_Resource && $model->getUri() == TAO_ITEM_MODEL_QTI) {
+                    $items[] = array(
+                        'uri' => $qtiItem->getUri(),
+                        'label' => (string)reset($data[RDFS_LABEL])
+                    );
+                }
             }
         }
-
         $this->returnJson($items);
     }
 
