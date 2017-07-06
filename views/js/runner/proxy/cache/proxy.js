@@ -180,7 +180,7 @@ define([
                     //don't run a request if not needed
                     if (missing.length) {
                         _.delay(function () {
-                            self.request(self.configStorage.getTestActionUrl('getItem'), {itemDefinition: missing})
+                            self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
                                 .then(function (response) {
                                     if (response && response.items) {
                                         _.forEach(response.items, function (item) {
@@ -211,9 +211,6 @@ define([
                 self.loadNextPromise = loadNextItem();
 
                 return Promise.resolve(this.itemStore.get(itemIdentifier));
-            } else {
-                params = params || {};
-                params.start = true;
             }
 
             return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)

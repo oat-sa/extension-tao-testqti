@@ -394,35 +394,54 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemIdentifier = $this->getRequestParameter('itemDefinition');
-        $start          = $this->hasRequestParameter('start');
 
         try {
             $serviceContext = $this->getServiceContext(false, true);
 
-            if (is_array($itemIdentifier)) {
-                if (!$this->runnerService->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                    \common_Logger::w("Attempt to disclose the next items without the configuration");
-                    throw new \common_exception_Unauthorized();
-                }
-                
-                $response = [];
-                foreach ($itemIdentifier as $itemId) {
-                    //load item data
-                    $response['items'][] = $this->getItemData($itemId);
-                }
-            } else {
-                //load item data
-                $response = $this->getItemData($itemIdentifier);
-            }
+            //load item data
+            $response = $this->getItemData($itemIdentifier);
 
             if (is_array($response)) {
                 $response['success'] = true;
             }
 
-            if ($start == true) {
-                // start the timer only when getItem starts the item session
-                // and after the action has been processed to avoid timing error
-                $this->runnerService->startTimer($serviceContext);
+            $this->runnerService->startTimer($serviceContext);
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+    
+    /**
+     * Provides the definition data and the state for a list of items
+     */
+    public function getNextItemData()
+    {
+        $code = 200;
+
+        $itemIdentifier = $this->getRequestParameter('itemDefinition');
+        if (!is_array($itemIdentifier)) {
+            $itemIdentifier = [$itemIdentifier];
+        }
+        
+        try {
+
+            if (!$this->runnerService->getTestConfig()->getConfigValue('itemCaching.enabled')) {
+                \common_Logger::w("Attempt to disclose the next items without the configuration");
+                throw new \common_exception_Unauthorized();
+            }
+            
+            $response = [];
+            foreach ($itemIdentifier as $itemId) {
+                //load item data
+                $response['items'][] = $this->getItemData($itemId);
+            }
+
+            if (isset($response['items'])) {
+                $response['success'] = true;
             }
 
         } catch (common_Exception $e) {
