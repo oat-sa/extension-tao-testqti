@@ -111,6 +111,9 @@ define([
                             timeout: self.configStorage.getTimeout()
                         })
                         .done(function(data) {
+
+                            self.trigger('reconnect');
+
                             if (data && data.token) {
                                 tokenHandler.setToken(data.token);
                             }
@@ -123,10 +126,19 @@ define([
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
                             var data;
+
                             try {
                                 data = JSON.parse(jqXHR.responseText);
                             } catch(err) {
                                 data = {};
+                            }
+
+                            //a network error ?
+                            //we disconnect
+                            if(jqXHR.status === 0 && jqXHR.readyState === 0){
+                                self.trigger('disconnect', 'request');
+                            } else if(data && data.code){
+                                self.trigger('reconnect');
                             }
 
                             data = _.defaults(data, {

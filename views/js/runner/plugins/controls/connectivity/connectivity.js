@@ -48,58 +48,33 @@ define([
 
             var testRunner = this.getTestRunner();
 
-            function disconnect() {
-                if (!testRunner.getState('disconnected')) {
-                    testRunner.trigger('disconnect');
-                }
-            }
-
-            function reconnect() {
-                if (testRunner.getState('disconnected')) {
-                    testRunner.trigger('reconnect');
-                }
-            }
-
-            // immediate detection of connectivity loss using Offline API
-            $(window).on('offline.connectivity', function() {
-                disconnect();
-            });
-
-            // immediate detection of connectivity back using Offline API
-            $(window).on('online.connectivity', function() {
-                reconnect();
-            });
-
-            testRunner
-                .on('disconnect', function() {
-                    testRunner.setState('disconnected', true);
+            //the Proxy is the only one to know something about connectivity
+            testRunner.getProxy()
+                .on('disconnect', function disconnect(source) {
+                    if (!testRunner.getState('disconnected')) {
+                        testRunner.setState('disconnected', true);
+                        testRunner.trigger('disconnect', source);
+                        testRunner.trigger('warning', 'disconnect from ' + source);
+                    }
                 })
-                .on('reconnect', function() {
-                    testRunner.setState('disconnected', false);
-                })
-                .before('error', function(e, error) {
-                    // detect connectivity errors as network error without error code
-                    if (_.isObject(error) && error.source === 'network' && typeof error.code === 'undefined') {
-                        disconnect();
-
-                        // prevent default error handling
-                        return false;
+                .on('reconnect', function reconnect() {
+                    if (testRunner.getState('disconnected')) {
+                        testRunner.setState('disconnected', false);
+                        testRunner.trigger('reconnect');
+                        testRunner.trigger('warning', 'reconnect');
                     }
                 });
 
-            testRunner.getProxy()
-                .on('receive', function() {
-                    // any message received, state the runner is connected
-                    reconnect();
-                });
-        },
+            testRunner.before('error', function(e, error) {
+                // detect connectivity errors as network error without error code
+                if (_.isObject(error) && error.source === 'network' && typeof error.code === 'undefined' || error.code === 0) {
+                    // prevent default error handling
+                    return false;
+                }
+            });
 
-        /**
-         * Called during the runner's destroy phase
-         */
-        destroy : function destroy (){
-            $(window).off('offline.connectivity');
-            $(window).off('online.connectivity');
+
         }
+
     });
 });

@@ -26,8 +26,10 @@ define([
     'core/promise',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
+    'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/cache/assetLoader',
-], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
+    'taoQtiTest/runner/navigator/navigator',
+], function(_, Promise, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader, testNavigator) {
     'use strict';
 
     /**
@@ -65,6 +67,8 @@ define([
             //we keep items here
             this.itemStore    = itemStoreFactory(cacheSize);
 
+            this.actiontStore  = actionStoreFactory(config.serviceCallId);
+
             //keep track of the calls to prevent doing it again on navigating back and forward
             this.nextCalledBy = {};
 
@@ -76,6 +80,25 @@ define([
 
             //keep a ref to the promise of the loadNextItem in case the call is not done when moving
             this.loadNextPromise = Promise.resolve();
+
+            //keep reference on the test map as we don't have access to the test runner
+            this.testMap = null;
+            this.testData = null;
+            this.testContext = null;
+
+            this.on('receive', function (data) {
+                if (data) {
+                    if(data.testData){
+                        self.testData = data.testData;
+                    }
+                    if (data.testMap) {
+                        self.testMap = data.testMap;
+                    }
+                    if(data.testContext){
+                        self.testContext = data.testContext;
+                    }
+                }
+            });
 
             /**
              * Update the item state in the store
@@ -112,6 +135,18 @@ define([
                 });
                 return key && self.itemStore.has(key);
             };
+
+            this.online = true;
+            this.on('disconnect', function(){
+                if(self.online ){
+                    self.online = false;
+                }
+            })
+            .on('reconnect', function(){
+                if(!self.online ){
+                    self.online = true;
+                }
+            });
 
             //run the init
             return qtiServiceProxy.init.call(this, config, params);
@@ -219,37 +254,49 @@ define([
         callItemAction: function callItemAction(uri, action, params) {
             var self = this;
 
-            return this.loadNextPromise
-                .then(function(){
 
-                    //update the item state
-                    if(params.itemState){
-                        self.updateState(uri, params.itemState);
-                    }
-
-                    //check if we have already the item for the action we are going to perform
-                    self.getItemFromStore = false;
-                    if( (action === 'timeout' || action === 'skip' ||
-                        (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
-                        self.hasNextItem(uri) ){
-
-                        self.getItemFromStore = true;
-                        params.start = true;
-
-                    } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(uri)){
-
-                        self.getItemFromStore = true;
-                        params.start = true;
-                    }
-                })
-                .then(function(){
-                    return self.request(self.configStorage.getItemActionUrl(uri, action), params);
-                })
-                .then(function(response){
-
-                    self.isLast = response && response.testContext && response.testContext.isLast;
-                    return response;
+            return this.loadNextPromise.then(function(){
+                return self.actiontStore.push({
+                    action : action,
+                    timestamp : Date.now(),
+                    params : params
                 });
+            })
+            .then(function(){
+                //update the item state
+                if(params.itemState){
+                    self.updateState(uri, params.itemState);
+                }
+                //check if we have already the item for the action we are going to perform
+                self.getItemFromStore = false;
+                if( (action === 'timeout' || action === 'skip' ||
+                    (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
+                    self.hasNextItem(uri) ){
+
+                    self.getItemFromStore = true;
+                    params.start = true;
+
+                } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(uri)){
+
+                    self.getItemFromStore = true;
+                    params.start = true;
+                }
+            })
+            .then(function(){
+                if(self.online){
+                    return self.request(self.configStorage.getItemActionUrl(uri, action), params);
+                } else {
+                    return {
+                        success : true,
+                        testContext : testNavigator(self.testData, self.testContext, self.testMap).navigate(params.direction, params.scope, params.position)
+                    };
+                }
+            })
+            .then(function(response){
+
+                self.isLast = response && response.testContext && response.testContext.isLast;
+                return response;
+            });
         }
     }, qtiServiceProxy);
 

@@ -21,8 +21,9 @@
 define([
     'taoQtiTest/runner/navigator/navigator',
     'json!taoQtiTest/test/runner/navigator/testData.json',
-    'json!taoQtiTest/test/runner/navigator/testMap.json'
-], function(testNavigator, testData, testMap) {
+    'json!taoQtiTest/test/runner/navigator/testMap.json',
+    'json!taoQtiTest/test/runner/navigator/testContexts.json'
+], function(testNavigator, testData, testMap, testContexts) {
     'use strict';
 
 
@@ -55,82 +56,86 @@ define([
     });
 
     QUnit.cases([{
-            title: 'nextItem'
-        }, {
-            title: 'previousItem'
-        }, {
-            title: 'nextSection'
-        }, {
-            title: 'jump'
-        }])
-        .test('Method ', function(data, assert) {
-            QUnit.expect(1);
+        title: 'navigate'
+    }, {
+        title: 'nextItem'
+    }, {
+        title: 'previousItem'
+    }, {
+        title: 'nextSection'
+    }, {
+        title: 'jumpItem'
+    }])
+    .test('Method ', function(data, assert) {
+        QUnit.expect(1);
 
-            assert.equal(typeof testNavigator(testData, {}, testMap)[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
-        });
+        assert.equal(typeof testNavigator(testData, {}, testMap)[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
+    });
 
 
     QUnit.module('navigator.nextItem');
 
+    QUnit.test('is moving to the next item inside a section', function(assert) {
+        var updatedContext;
 
-    QUnit.cases([{
-        title: 'move next item inside a section',
-        testContext: {
-            state: 1,
-            navigationMode: 1,
-            submissionMode: 0,
-            remainingAttempts: -1,
-            isAdaptive: false,
-            isLinear: false,
-            attempt: 1,
-            attemptDuration: 12.237921,
-            isTimeout: false,
-            itemIdentifier: "item-1",
-            itemDefinition: "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178181251158+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182781159-",
-            itemUri: "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178181251158+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182781159-",
-            itemSessionState: 1,
-            needMapUpdate: false,
-            isLast: false,
-            itemPosition: 0,
-            itemFlagged: false,
-            itemAnswered: false,
-            timeConstraints: [],
-            extraTime: {
-                total: 0,
-                consumed: 0,
-                remaining: 0
-            },
-            testPartId: "testPart-1",
-            sectionId: "assessmentSection-1",
-            sectionTitle: "Basic section",
-            sectionPause: false,
-            numberItems: 17,
-            numberCompleted: 0,
-            numberPresented: 1,
-            considerProgress: true,
-            isDeepestSectionVisible: true,
-            canMoveBackward: false,
-            numberRubrics: 0,
-            preventEmptyResponses: false,
-            hasFeedbacks: false,
-            options: {
-                allowComment: false,
-                allowSkipping: true,
-                exitButton: false,
-                logoutButton: false
-            }
-        },
-        expecContext: false,
-    }])
-    .test('is leaving a section if ', function(data, assert) {
-        var result;
+        QUnit.expect(6);
 
-        QUnit.expect(1);
+        updatedContext = testNavigator(testData, testContexts.context1, testMap).nextItem();
 
-        result = testNavigator(testData, data.testContext, testMap).nextItem();
-
-        assert.deepEqual(result, data.expectedContext, 'The helper gives the correct result');
+        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
+        assert.equal(updatedContext.itemIdentifier, 'item-2', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178170141160+|https:\/\/act.krampstud.io\/tao.rdf#i14988117812381161-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-1', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
     });
 
+    QUnit.test('is moving to the next item over a section', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(6);
+
+        updatedContext = testNavigator(testData, testContexts.context2, testMap).nextItem();
+
+        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
+        assert.equal(updatedContext.itemIdentifier, 'item-4', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178196711164+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182901165-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 3, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+    });
+
+    QUnit.test('is moving to the next item over a testPart', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(7);
+
+        updatedContext = testNavigator(testData, testContexts.context3, testMap).nextItem();
+
+        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
+        assert.equal(updatedContext.itemIdentifier, 'item-15', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881143336021129|https:\/\/act.krampstud.io\/tao.rdf#i149881178297961186+|https:\/\/act.krampstud.io\/tao.rdf#i149881178278141187-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 14, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-6', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-2', 'The updated context contains the correct test part id');
+        assert.equal(updatedContext.isLinear, true, 'The updated context contains the correct isLinear option');
+    });
+
+    QUnit.module('navigator.previousItem');
+
+    QUnit.test('is moving to the previous item inside a section', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(6);
+
+        updatedContext = testNavigator(testData, testContexts.context2, testMap).previousItem();
+
+        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
+        assert.equal(updatedContext.itemIdentifier, 'item-2', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178170141160+|https:\/\/act.krampstud.io\/tao.rdf#i14988117812381161-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-1', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+    });
 
 });

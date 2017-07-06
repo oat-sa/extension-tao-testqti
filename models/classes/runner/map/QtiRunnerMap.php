@@ -53,18 +53,18 @@ class QtiRunnerMap implements RunnerMap
                 $context
             );
         }
-        
+
         $map = [
             'parts' => [],
             'jumps' => []
         ];
 
         // get config for the sequence number option
-        $reviewConfig = $config->getConfigValue('review');
-        $checkInformational = $config->getConfigValue('checkInformational');
-        $forceTitles = !empty($reviewConfig['forceTitle']);
-        $useTitle = !empty($reviewConfig['useTitle']);
-        $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
+        $reviewConfig           = $config->getConfigValue('review');
+        $checkInformational     = $config->getConfigValue('checkInformational');
+        $forceTitles            = !empty($reviewConfig['forceTitle']);
+        $useTitle               = !empty($reviewConfig['useTitle']);
+        $uniqueTitle            = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
 
         /* @var AssessmentTestSession $session */
@@ -100,7 +100,8 @@ class QtiRunnerMap implements RunnerMap
                 }
                 $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
-                $itemUri = strstr($itemRef->getHref(), '|', true);
+                $itemDefinition = $itemRef->getHref();
+                $itemUri = strstr($itemDefinition, '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
@@ -119,11 +120,11 @@ class QtiRunnerMap implements RunnerMap
                     } else {
                         $label = '';
                     }
-                    
+
                     if (!$label) {
                         $label = $context->getItemIndexValue($itemUri, 'label');
                     }
-                    
+
                     if (!$label) {
                         $label = $item->getLabel();
                     }
@@ -132,6 +133,7 @@ class QtiRunnerMap implements RunnerMap
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
+                    'definition' => $itemDefinition,
                     'label' => $label,
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
@@ -143,11 +145,11 @@ class QtiRunnerMap implements RunnerMap
                     'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
-                
+
                 if ($checkInformational) {
                     $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
                 }
-                
+
                 // update the map
                 $map['jumps'][] = [
                     'identifier' => $itemId,
@@ -168,18 +170,18 @@ class QtiRunnerMap implements RunnerMap
                     $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
                 }
                 $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
-                
+
                 // update the stats
                 $this->updateStats($map, $itemInfos);
                 $this->updateStats($map['parts'][$partId], $itemInfos);
                 $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
-                
+
                 $offset ++;
                 $offsetPart ++;
                 $offsetSection ++;
             }
         }
-        
+
         return $map;
     }
 
@@ -203,19 +205,19 @@ class QtiRunnerMap implements RunnerMap
         if (empty($itemInfos['informational'])) {
             $target['stats']['questions'] ++;
         }
-        
+
         if (!empty($itemInfos['answered'])) {
             $target['stats']['answered'] ++;
         }
-        
+
         if (!empty($itemInfos['flagged'])) {
             $target['stats']['flagged'] ++;
         }
-        
+
         if (!empty($itemInfos['viewed'])) {
             $target['stats']['viewed'] ++;
         }
-        
+
         $target['stats']['total'] ++;
     }
 }
