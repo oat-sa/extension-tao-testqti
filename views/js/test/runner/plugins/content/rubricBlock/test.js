@@ -99,10 +99,10 @@ define([
             .init()
             .then(plugin.render())
             .then(function() {
-
-                runner.trigger('loaditem', 'foo', {
+                runner.setTestContext({
                     rubrics : '<p>foo</p>'
                 });
+                runner.trigger('loaditem', 'foo');
                 runner.trigger('renderitem');
             })
             .catch(function(err){
@@ -137,10 +137,10 @@ define([
             .init()
             .then(plugin.render())
             .then(function() {
-                runner.trigger('loaditem', 'foo', {
+                runner.setTestContext({
                     rubrics : '<p>foo</p>'
                 });
-
+                runner.trigger('loaditem', 'foo');
                 runner.trigger('renderitem');
 
                 setTimeout(function(){
@@ -172,10 +172,10 @@ define([
             .init()
             .then(plugin.render())
             .then(function() {
-
-                runner.trigger('loaditem', 'foo', {
+                runner.setTestContext({
                     rubrics : '<p><a href="http//taotesting.com">foo</a></p>'
                 });
+                runner.trigger('loaditem', 'foo');
                 runner.trigger('renderitem');
             })
             .catch(function(err){
@@ -208,9 +208,10 @@ define([
             .init()
             .then(plugin.render())
             .then(function() {
-                runner.trigger('loaditem', 'foo', {
+                runner.setTestContext({
                     rubrics : '<div><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Δ</mi><mo>=</mo><msup><mi>b</mi><mn>2</mn></msup><mo>-</mo><mrow><mn>4</mn><mo>⁢</mo<mi>a</mi<mo>⁢</mo<mi>c</mi></mrow></mro</math></div>'
                 });
+                runner.trigger('loaditem', 'foo');
                 runner.trigger('renderitem');
             })
             .catch(function(err){

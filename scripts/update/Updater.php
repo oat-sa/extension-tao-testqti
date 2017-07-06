@@ -1289,5 +1289,22 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('9.18.0', '9.19.0');
+
+        if( $this->isVersion('9.18.1') ){
+          
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'preventSkipping',
+                'name'        => 'Prevent Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent to submit empty responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('10.0.0');
+        }
     }
 }
