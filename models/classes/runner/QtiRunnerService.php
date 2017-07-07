@@ -460,7 +460,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestMap(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $map = new QtiRunnerMap();
+            $map = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
             return $map->getMap($context, $this->getTestConfig());
         } else {
             throw new \common_exception_InvalidArgumentType(
