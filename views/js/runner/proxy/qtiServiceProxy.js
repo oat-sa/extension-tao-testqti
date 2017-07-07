@@ -72,6 +72,9 @@ define([
              */
             this.request = function request(url, reqParams, contentType, noToken) {
 
+                //some parameters need to be JSON.stringified, we do it at the lowest level
+                var stringifyParams = ['itemState', 'itemResponse'];
+
                 //run the request, just a function wrapper
                 var runRequest = function runRequest() {
                     return new Promise(function(resolve, reject) {
@@ -86,6 +89,14 @@ define([
                             if (token) {
                                 headers['X-Auth-Token'] = token;
                             }
+                        }
+                        if(_.isPlainObject(reqParams)){
+                            reqParams = _.mapValues(reqParams, function(value, key){
+                                if(_.contains(stringifyParams, key)){
+                                    return JSON.stringify(value);
+                                }
+                                return value;
+                            });
                         }
 
                         $.ajax({
@@ -219,11 +230,12 @@ define([
         /**
          * Gets an item definition by its URI, also gets its current state
          * @param {String} uri - The URI of the item to get
+         * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri) {
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'));
+        getItem: function getItem(uri, params) {
+            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'), params);
         },
 
         /**
@@ -235,12 +247,12 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(uri, state, response, params) {
-            var body = JSON.stringify(_.merge({
+            var body = _.merge({
                 itemState: state,
                 itemResponse: response
-            }, params || {}));
+            }, params || {});
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
+            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body);
         },
 
         /**
