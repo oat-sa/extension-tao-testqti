@@ -22,6 +22,8 @@
 
 namespace oat\taoQtiTest\models\runner\map;
 
+use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
@@ -33,8 +35,35 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
  * Class QtiRunnerMap
  * @package oat\taoQtiTest\models\runner\map
  */
-class QtiRunnerMap implements RunnerMap
+class QtiRunnerMap extends ConfigurableService implements RunnerMap
 {
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
+
+    /**
+     * @todo TAO-4605 remove this temporary workaround
+     * @var array
+     */
+    protected $itemsTable;
+
+    /**
+     * Gets the Item Reference ("itemUri|publicUri|privateUri") from an identifier
+     * @todo TAO-4605 remove this temporary workaround
+     * @param RunnerServiceContext $context
+     * @param string $itemIdentifier
+     * @return string|null
+     */
+    public function getItemHref(RunnerServiceContext $context, $itemIdentifier)
+    {
+        if (!isset($this->itemsTable)) {
+            $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+            $this->itemsTable = $storage->loadItemsTable($context->getTestExecutionUri());
+        }
+        if (isset($this->itemsTable[$itemIdentifier])) {
+            return $this->itemsTable[$itemIdentifier];
+        }
+        return null;
+    }
+    
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context The test context
@@ -53,6 +82,10 @@ class QtiRunnerMap implements RunnerMap
                 $context
             );
         }
+
+        /** @todo TAO-4605 remove this temporary workaround */
+        $this->itemsTable = [];
+        /***/
         
         $map = [
             'parts' => [],
@@ -112,7 +145,7 @@ class QtiRunnerMap implements RunnerMap
                 }
 
                 if ($forceTitles) {
-                    $label = sprintf($uniqueTitle, $offsetSection + 1);
+                    $label = __($uniqueTitle, $offsetSection + 1);
                 } else {
                     if ($useTitle) {
                         $label = $context->getItemIndexValue($itemUri, 'title');
@@ -128,6 +161,10 @@ class QtiRunnerMap implements RunnerMap
                         $label = $item->getLabel();
                     }
                 }
+
+                /** @todo TAO-4605 remove this temporary workaround */
+                $this->itemsTable[$itemId] = $itemRef->getHref();
+                /***/
 
                 $itemInfos = [
                     'id' => $itemId,
@@ -179,6 +216,11 @@ class QtiRunnerMap implements RunnerMap
                 $offsetSection ++;
             }
         }
+        
+        /** @todo TAO-4605 remove this temporary workaround */
+        $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+        $storage->storeItemsTable($context->getTestExecutionUri(), $this->itemsTable);
+        /***/
         
         return $map;
     }

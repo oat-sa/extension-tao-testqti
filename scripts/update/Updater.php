@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -1286,6 +1287,38 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('9.17.0')) {
             $this->getServiceManager()->register(SectionPauseService::SERVICE_ID, new SectionPauseService());
             $this->setVersion('9.18.0');
+        }
+
+        $this->skip('9.18.0', '9.19.0');
+
+        if( $this->isVersion('9.19.0') ){
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'preventSkipping',
+                'name'        => 'Prevent Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent to submit empty responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('10.0.0');
+        }
+
+        if ($this->isVersion('10.0.0')) {
+            $service = new QtiRunnerMap();
+            $this->getServiceManager()->propagate($service);
+            $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['item-cache-size'] = 3;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('10.1.0');
         }
     }
 }

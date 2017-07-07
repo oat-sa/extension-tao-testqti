@@ -156,6 +156,15 @@ interface RunnerService
     public function getFeedbacks(RunnerServiceContext $context, $itemRef);
 
     /**
+     * Does the given item has feedbacks
+     * @param RunnerServiceContext $context
+     * @param string $itemRef  the item reference
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function hasFeedbacks(RunnerServiceContext $context, $itemRef);
+
+    /**
      * Get the current item session
      * @param RunnerServiceContext $context
      * @throws \common_Exception
