@@ -486,9 +486,16 @@ return array(
 
     /**
      * Allows to browse the next item (before it is displayed).
-     * The is required for caching scenarios
+     * This is required for caching scenarios
      * @type boolean
      */
-    'allow-browse-next-item' => false
+    'allow-browse-next-item' => false,
+    
+    /**
+     * Defines the number of items to cache, when the feature is allowed (allow-browse-next-item).
+     * This is required for caching scenarios
+     * @type integer
+     */
+    'item-cache-size' => 3
 
 );

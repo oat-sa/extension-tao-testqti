@@ -52,16 +52,16 @@ define([
             if( _.isPlainObject(testContext) && _.isPlainObject(testMap) &&
                 !_.isEmpty(testContext.sectionId) && !_.isEmpty(testContext.itemIdentifier) ){
 
-                section      = mapHelper.getSection(testMap, testContext.sectionId);
+                section = mapHelper.getSection(testMap, testContext.sectionId);
                 sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
-                nbItems      = sectionStats && sectionStats.total;
-                item         = mapHelper.getItem(testMap, testContext.itemIdentifier);
+                nbItems = sectionStats && sectionStats.total;
+                item = mapHelper.getItem(testMap, testContext.itemIdentifier);
 
                 return  scope === 'section' ||
                         scope === 'testPart'||
                         (direction === 'next' && item.positionInSection + 1 === nbItems) ||
-                        (direction === 'previous' && item.positionInSection === 0) ||
-                        (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
+                    (direction === 'previous' && item.positionInSection === 0) ||
+                    (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
             }
             throw new TypeError('Invalid test context and test map');
         },
@@ -130,8 +130,127 @@ define([
             stats = mapHelper.getTestStats(testMap);
 
             return item.position + 1 === stats.total;
-        }
+        },
 
+        /**
+         * Gets the map descriptors of the sibling items
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @param {String} [direction='both'] - previous/next/both
+         * @param {Number} [size=3] - will be 2xsize if direction is both
+         * @returns {Object[]} the collections of items
+         */
+        getSiblingItems: function getSiblingItems(testMap, itemPosition, direction, size) {
+            var itemId = mapHelper.getItemIdentifier(testMap,  itemPosition);
+            var previous = null;
+            var siblings = [];
+            var directions;
+
+            var itemChain = _.reduce(testMap && testMap.jumps, function (map, jump) {
+                var ref = jump.identifier;
+                if (previous) {
+                    map[previous].next = ref;
+        }
+                map[ref] = {
+                    identifier: ref,
+                    previous: previous,
+                    next: null
+                };
+                previous = ref;
+                return map;
+            }, {});
+
+            size = _.isFinite(size) ? parseInt(size, 10) : 3;
+            if (!direction || direction === 'both') {
+                directions = ['previous', 'next'];
+            } else {
+                directions = [direction];
+            }
+
+            _.forEach(directions, function walkDirection(link) {
+                var id = itemId;
+                _.times(size, function getNeighbor() {
+                    id = itemChain[id] && itemChain[id][link];
+                    if (id) {
+                        siblings.push(mapHelper.getItem(testMap, id));
+                    } else {
+                        return false;
+                    }
+                });
+            });
+
+            return siblings;
+        },
+
+
+        /**
+         * Gets the map descriptor of the next item
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @returns {Object}
+         */
+        getNextItem : function getNextItem(testMap, itemPosition) {
+            var siblings = navigationHelper.getSiblingItems(testMap, itemPosition, 'next', 1);
+            if (siblings.length) {
+                return siblings[0];
+            }
+            return null;
+        },
+
+        /**
+         * Gets the map descriptor of the previous item
+         * @param {Object} testMap
+         * @param {Number|String} itemPosition - (could be also the item id)
+         * @returns {Object}
+         */
+        getPreviousItem : function getPreviousItem(testMap, itemPosition) {
+            var siblings = navigationHelper.getSiblingItems(testMap, itemPosition, 'previous', 1);
+            if (siblings.length) {
+                return siblings[0];
+            }
+            return null;
+        },
+
+        /**
+         * Checks if an action will move forward.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isMovingToNextItem : function isMovingToNextItem(action, params) {
+            params = params || {};
+            return (
+                action === 'timeout' ||
+                action === 'skip' ||
+                (action === 'move' && params.direction === 'next' && params.scope === 'item')
+            );
+        },
+
+        /**
+         * Checks if an action will move backward.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isMovingToPreviousItem : function isMovingToPreviousItem(action, params) {
+            params = params || {};
+            return (
+                action === 'move' && params.direction === 'previous' && params.scope === 'item'
+            );
+        },
+
+        /**
+         * Checks if an action will jump on another item.
+         * @param {String} action - the name of the action that will be performed
+         * @param {Object} [params] - some optional parameters that apply to the action
+         * @returns {Boolean}
+         */
+        isJumpingToItem : function isJumpingToItem(action, params) {
+            params = params || {};
+            return (
+                action === 'move' && params.direction === 'jump' && params.scope === 'item'
+            );
+        }
 
     };
 
