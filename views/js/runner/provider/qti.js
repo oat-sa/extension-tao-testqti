@@ -631,10 +631,7 @@ define([
                     reject(err);
                 })
                 .on('init', function(){
-                    if(itemData.state){
-                        this.setState(itemData.state);
-                    }
-                    this.render(self.getAreaBroker().getContentArea());
+                    this.render(self.getAreaBroker().getContentArea(), {state: itemData.state || {}});
                 })
                 .on('render', function(){
 
