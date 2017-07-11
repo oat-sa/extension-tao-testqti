@@ -112,8 +112,6 @@ define([
                         })
                         .done(function(data) {
 
-                            self.trigger('reconnect');
-
                             if (data && data.token) {
                                 tokenHandler.setToken(data.token);
                             }
@@ -133,14 +131,6 @@ define([
                                 data = {};
                             }
 
-                            //a network error ?
-                            //we disconnect
-                            if(jqXHR.status === 0 && jqXHR.readyState === 0){
-                                self.trigger('disconnect', 'request');
-                            } else if(data && data.code){
-                                self.trigger('reconnect');
-                            }
-
                             data = _.defaults(data, {
                                 success: false,
                                 source: 'network',
@@ -148,6 +138,7 @@ define([
                                 purpose: 'proxy',
                                 context: this,
                                 code: jqXHR.status,
+                                sent: jqXHR.readyState > 0,
                                 type: textStatus || 'error',
                                 message: errorThrown || __('An error occurred!')
                             });
