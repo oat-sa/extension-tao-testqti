@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  * 
  */
 
@@ -27,6 +27,7 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
+use qtism\data\AssessmentItemRef;
 use qtism\data\content\RubricBlock;
 use qtism\data\content\StylesheetCollection;
 use qtism\common\utils\Url;
@@ -339,7 +340,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
-        catch(XmlStorageException $e){
+        catch (XmlStorageException $e){
 
             $details[] = $e->getMessage();
             while (($previous = $e->getPrevious()) != null) {
@@ -412,6 +413,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $itemService = $subReport->getdata(); 
                 $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
                 $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
+                
+                // Ask for item ref information compilation for fast later usage.
+                $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
+                
             } else {
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
@@ -744,6 +749,19 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         if ($index) {
             $compiledDocDir->write(TAOQTITEST_COMPILED_INDEX, $index->serialize());
         }
+    }
+    
+    /**
+     * Compile AssessmentItemRef Href Indexes
+     * 
+     * This method indexes the value of $assessmentItemRef->href by $assessmentItemRef->identifier for later
+     * usage at delivery time (for fast access).
+     */
+    protected function compileAssessmentItemRefHrefIndex(AssessmentItemRef $assessmentItemRef)
+    {
+        $compiledDocDir = $this->getPrivateDirectory();
+        $indexPath = TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($assessmentItemRef->getIdentifier()) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
+        $compiledDocDir->write($indexPath, $assessmentItemRef->getHref());
     }
     
     /**
