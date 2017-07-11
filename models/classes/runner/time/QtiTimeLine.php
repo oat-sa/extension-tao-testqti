@@ -270,9 +270,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             $range = $this->fixRange($range, $lastTimestamp);
             
             // compute the duration of the range, an exception may be thrown if the range is malformed
-            // possible errors are:
-            // - unclosed range, but this should be fixed by the fixRange() method
-            // - unsorted points or nested/blended ranges, this could be due to concurrency or connection issues, no fix for now
+            // possible errors are (but should be avoided by the `fixRange()` method):
+            // - unclosed range: should be autoclosed by fixRange
+            // - unsorted points or nested/blended ranges: should be corrected by fixRange
             $duration += $this->computeRange($range);
         }
         
