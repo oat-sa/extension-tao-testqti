@@ -325,4 +325,15 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
+    
+    public function getAssessmentItemRefHrefById($identifier)
+    {
+        $indexPath = TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($identifier) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
+        try {
+            return $this->getCompilationDirectory()['private']->read($indexPath);
+        } catch (\Exception $e) {
+            // @bertrand Please feel free to put your fallback here!
+            return false;
+        }
+    }
 }
