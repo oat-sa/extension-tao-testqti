@@ -15,15 +15,13 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
-    'lodash',
-    'i18n',
     'taoTests/runner/plugin'
-], function ($, _, __, pluginFactory) {
+], function (pluginFactory) {
     'use strict';
 
     /**
@@ -47,34 +45,30 @@ define([
         install: function install() {
 
             var testRunner = this.getTestRunner();
+            var proxy      = testRunner.getProxy();
 
             //the Proxy is the only one to know something about connectivity
-            testRunner.getProxy()
-                .on('disconnect', function disconnect(source) {
-                    if (!testRunner.getState('disconnected')) {
-                        testRunner.setState('disconnected', true);
-                        testRunner.trigger('disconnect', source);
-                        testRunner.trigger('warning', 'disconnect from ' + source);
-                    }
-                })
-                .on('reconnect', function reconnect() {
-                    if (testRunner.getState('disconnected')) {
-                        testRunner.setState('disconnected', false);
-                        testRunner.trigger('reconnect');
-                        testRunner.trigger('warning', 'reconnect');
-                    }
-                });
-
-            testRunner.before('error', function(e, error) {
-                // detect connectivity errors as network error without error code
-                if (_.isObject(error) && error.source === 'network' && typeof error.code === 'undefined' || error.code === 0) {
-                    // prevent default error handling
-                    return false;
+            proxy.on('disconnect', function disconnect(source) {
+                if (!testRunner.getState('disconnected')) {
+                    testRunner.setState('disconnected', true);
+                    testRunner.trigger('disconnect', source);
+                    testRunner.trigger('warning', 'disconnect from ' + source);
+                }
+            })
+            .on('reconnect', function reconnect() {
+                if (testRunner.getState('disconnected')) {
+                    testRunner.setState('disconnected', false);
+                    testRunner.trigger('reconnect');
+                    testRunner.trigger('warning', 'reconnect');
                 }
             });
 
-
+            // detect and prevent connectivity errors
+            testRunner.before('error', function(e, err) {
+                if (proxy.isConnectivityError(err)){
+                    return false;
+                }
+            });
         }
-
     });
 });

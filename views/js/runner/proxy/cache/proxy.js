@@ -80,6 +80,9 @@ define([
             //keep a ref to the promise of the loadNextItem in case the call is not done when moving
             this.loadNextPromise = Promise.resolve();
 
+            //sync promise
+            this.syncPromise = Promise.resolve();
+
             //preload at least this number of items
             this.cacheAmount = 1;
 
@@ -148,16 +151,23 @@ define([
                 return sibling && self.hasItem(sibling.id);
             };
 
-            this.online = true;
-            this.on('disconnect', function(){
-                if(self.online ){
-                    self.online = false;
-                }
-            })
-            .on('reconnect', function(){
-                if(!self.online ){
-                    self.online = true;
-                }
+            this.on('reconnect', function(){
+                self.syncPromise = new Promise(function(resolve){
+                    console.log('reconnect so consider flushing');
+                    self.actiontStore.flush().then(function(data){
+                        console.log('start sync data', data);
+                        return  new Promise(function(resolve){
+                            setTimeout(function(){
+                                console.log('finished sync data', data);
+                                resolve();
+                            }, 2000);
+                        });
+                        //return self.send('sync', data);
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+                });
             });
 
             //run the init
@@ -218,8 +228,8 @@ define([
 
                                                 if (item.baseUrl && item.itemData && item.itemData.assets) {
                                                     assetLoader(item.baseUrl, item.itemData.assets);
-                                        }
-                                    }
+                                                }
+                                            }
                                         });
                                     }
 
@@ -243,7 +253,7 @@ define([
             return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
                     .then(function(response){
                         if(response && response.success){
-                        self.itemStore.set(itemIdentifier, response);
+                            self.itemStore.set(itemIdentifier, response);
                         }
 
                         self.loadNextPromise = loadNextItem();
@@ -277,40 +287,54 @@ define([
         callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this;
 
-            return this.loadNextPromise.then(function(){
+            return Promise.all([
+                this.loadNextPromise,
+                this.syncPromise
+            ]).then(function(){
                 return self.actiontStore.push({
                     action : action,
                     timestamp : Date.now(),
                     params : params
                 });
             })
-                .then(function(){
+            .then(function(){
 
-                    //update the item state
-                    if(params.itemState){
-                        self.updateState(itemIdentifier, params.itemState);
-                    }
+                //update the item state
+                if(params.itemState){
+                    self.updateState(itemIdentifier, params.itemState);
+                }
 
-                    //check if we have already the item for the action we are going to perform
-                    self.getItemFromStore = (
-                        (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
-                        (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
-                        (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
-                    );
+                //check if we have already the item for the action we are going to perform
+                self.getItemFromStore = (
+                    (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
+                    (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
+                    (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
+                );
 
-                    //as we will pick the next item from the store ensure the next request will start the timer
-                    if (self.getItemFromStore) {
-                        params.start = true;
-                    }
-                })
-                .then(function(){
-                if(self.online){
+                //as we will pick the next item from the store ensure the next request will start the timer
+                if (self.getItemFromStore) {
+                    params.start = true;
+                }
+            })
+            .then(function(){
+                var newContext;
+                if(self.isOnline()){
                     return self.request(self.configStorage.getItemActionUrl(itemIdentifier, action), params);
                 } else {
-                    return {
-                        success : true,
-                        testContext : testNavigator(self.testData, self.testContext, self.testMap).navigate(params.direction, params.scope, params.position)
-                    };
+                    newContext = testNavigator(self.testData, self.testContext, self.testMap).navigate(params.direction, params.scope, params.position);
+                    if(newContext){
+                        return {
+                            success : true,
+                            testContext : newContext
+                        };
+                    } else {
+                        return {
+                            success : false,
+                            source: 'network',
+                            type: 'error',
+                            message: 'Unable to select the next item due to connectivity issues'
+                        };
+                    }
                 }
             });
         }
