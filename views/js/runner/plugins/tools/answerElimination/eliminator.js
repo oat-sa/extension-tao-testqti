@@ -142,7 +142,6 @@ define([
                 }
                 $choices = self.$choiceInteractions.find('.qti-choice');
 
-                self.$choiceInteractions.addClass('eliminable');
                 self.button.turnOn();
                 self.trigger('start');
 
@@ -216,7 +215,6 @@ define([
                 })
                 .on('enabletools renderitem', function (){
                     self.enable();
-                    enableEliminator();
                 })
                 .on('disabletools unloaditem', function (){
                     self.disable();

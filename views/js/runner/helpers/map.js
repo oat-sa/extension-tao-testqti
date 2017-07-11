@@ -251,6 +251,22 @@ define([
         },
 
         /**
+         * Gets the identifier of an existing item
+         * @param {Object} map - The assessment test map
+         * @param {Number|String} position - The position of the item, can already be the identifier
+         * @returns {String}
+         */
+        getItemIdentifier: function getItemIdentifier(map, position) {
+            var item;
+            if (_.isFinite(position)) {
+                item = this.getItemAt(map, position);
+            } else {
+                item = this.getItem(map, position);
+            }
+            return item && item.id;
+        },
+
+        /**
          * Applies a callback on each item of the provided map
          * @param {Object} map - The assessment test map
          * @param {Function} callback(item, section, part, map) - A callback to apply on each item

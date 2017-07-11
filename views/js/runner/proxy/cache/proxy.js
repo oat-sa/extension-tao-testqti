@@ -24,10 +24,12 @@
 define([
     'lodash',
     'core/promise',
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
-    'taoQtiTest/runner/proxy/cache/assetLoader',
-], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
+    'taoQtiTest/runner/proxy/cache/assetLoader'
+], function(_, Promise, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -63,54 +65,72 @@ define([
             var self = this;
 
             //we keep items here
-            this.itemStore    = itemStoreFactory(cacheSize);
-
-            //keep track of the calls to prevent doing it again on navigating back and forward
-            this.nextCalledBy = {};
+            this.itemStore = itemStoreFactory(cacheSize);
 
             //can we load the next item from the cache/store ?
-            this.getItemFromStore  = false;
-
-            //check whether we're on the last item
-            this.isLastItem   = false;
+            this.getItemFromStore = false;
 
             //keep a ref to the promise of the loadNextItem in case the call is not done when moving
             this.loadNextPromise = Promise.resolve();
 
+            //preload at least this number of items
+            this.cacheAmount = 1;
+
+            //keep reference on the test map as we don't have access to the test runner
+            this.testMap = null;
+            this.on('receive', function (data) {
+                if (data) {
+                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
+                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
+                    }
+                    if (data.testMap) {
+                        self.testMap = data.testMap;
+                    }
+                }
+            });
+
             /**
              * Update the item state in the store
-             * @param {String} uri - the item identifier
-             * @param {Objetc} state - the state of the item
+             * @param {String} itemIdentifier - the item identifier
+             * @param {Object} state - the state of the item
              * @returns {Boolean}
              */
-            this.updateState = function updateState(uri, state){
+            this.updateState = function updateState(itemIdentifier, state) {
                 var itemData;
-                if (this.itemStore.has(uri)) {
-                    itemData = this.itemStore.get(uri);
+                if (this.itemStore.has(itemIdentifier)) {
+                    itemData = this.itemStore.get(itemIdentifier);
                     itemData.itemState = state;
-                    this.itemStore.set(uri, itemData);
+                    this.itemStore.set(itemIdentifier, itemData);
                 }
             };
 
             /**
-             * Check whether we have the next item in the store
-             * @param {String} uri - the CURRENT item identifier
+             * Check whether we have the item in the store
+             * @param {String} itemIdentifier - the item identifier
              * @returns {Boolean}
              */
-            this.hasNextItem = function hasNextItem (uri){
-                return self.nextCalledBy[uri] && self.itemStore.has(self.nextCalledBy[uri]);
+            this.hasItem = function hasItem(itemIdentifier) {
+                return itemIdentifier && self.itemStore.has(itemIdentifier);
+            };
+
+            /**
+             * Check whether we have the next item in the store
+             * @param {String} itemIdentifier - the CURRENT item identifier
+             * @returns {Boolean}
+             */
+            this.hasNextItem = function hasNextItem(itemIdentifier) {
+                var sibling = navigationHelper.getNextItem(self.testMap, itemIdentifier);
+                return sibling && self.hasItem(sibling.id);
             };
 
             /**
              * Check whether we have the previous item in the store
-             * @param {String} uri - the CURRENT item identifier
+             * @param {String} itemIdentifier - the CURRENT item identifier
              * @returns {Boolean}
              */
-            this.hasPreviousItem = function hasPreviousItem(uri){
-                var key = _.findKey(self.nextCalledBy, function(itemUri){
-                    return itemUri === uri;
-                });
-                return key && self.itemStore.has(key);
+            this.hasPreviousItem = function hasPreviousItem(itemIdentifier) {
+                var sibling = navigationHelper.getPreviousItem(self.testMap, itemIdentifier);
+                return sibling && self.hasItem(sibling.id);
             };
 
             //run the init
@@ -126,46 +146,56 @@ define([
 
             this.itemStore.clear();
 
-            this.nextCalledBy     = {};
+            this.testMap          = null;
             this.getItemFromStore = false;
-            this.isLastItem       = false;
 
             return qtiServiceProxy.destroy.call(this);
         },
 
 
         /**
-         * Gets an item definition by its URI, also gets its current state
-         * @param {String} uri - The URI of the item to get
+         * Gets an item definition by its identifier, also gets its current state
+         * @param {String} itemIdentifier - The identifier of the item to get
          * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri, params) {
+        getItem: function getItem(itemIdentifier, params) {
             var self = this;
 
             /**
-             * try to load the next item
+             * try to load the next items
              * @returns {Promise} that always resolves
              */
-            var loadNextItem = function loadNextItem(){
-                return new Promise(function(resolve){
+            function loadNextItem() {
+                return new Promise(function (resolve) {
+                    var siblings = navigationHelper.getSiblingItems(self.testMap, itemIdentifier, 'both', self.cacheAmount);
+                    var missing = _.reduce(siblings, function (list, sibling) {
+                        if (!self.hasItem(sibling.id)) {
+                            list.push(sibling.id);
+                        }
+                        return list;
+                    }, []);
+
                     //don't run a request if not needed
-                    if(!self.isLastItem && !self.hasNextItem(uri)){
+                    if (missing.length) {
+                        _.delay(function () {
+                            self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
+                                .then(function (response) {
+                                    if (response && response.items) {
+                                        _.forEach(response.items, function (item) {
+                                            if (item && item.itemIdentifier) {
 
-                        _.delay(function(){
-                            self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
-                                .then(function(response){
-                                    if(response && response.itemDefinition){
+                                                //store the response and start caching assets
+                                                self.itemStore.set(item.itemIdentifier, item);
 
-                                        //store the response and start caching assets
-                                        self.itemStore.set(response.itemDefinition, response);
-                                        self.nextCalledBy[uri] = response.itemDefinition;
-
-                                        if(response.baseUrl && response.itemData && response.itemData.assets){
-                                            assetLoader(response.baseUrl, response.itemData.assets);
-                                        }
+                                                if (item.baseUrl && item.itemData && item.itemData.assets) {
+                                                    assetLoader(item.baseUrl, item.itemData.assets);
+                                                }
+                                            }
+                                        });
                                     }
+
                                     resolve();
                                 })
                                 .catch(resolve);
@@ -174,49 +204,50 @@ define([
                         resolve();
                     }
                 });
-            };
-
-            //resolve from the store
-            if(this.getItemFromStore && this.itemStore.has(uri)){
-                self.loadNextPromise = loadNextItem();
-
-                return Promise.resolve(this.itemStore.get(uri));
             }
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'), params)
-                    .then(function(response){
-                        if(response && response.success){
-                            self.itemStore.set(uri, response);
-                        }
+            //resolve from the store
+            if (this.getItemFromStore && this.itemStore.has(itemIdentifier)) {
+                self.loadNextPromise = loadNextItem();
 
-                        self.loadNextPromise = loadNextItem();
+                return Promise.resolve(this.itemStore.get(itemIdentifier));
+            }
 
-                        return response;
-                    });
+            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
+                .then(function (response) {
+                    if (response && response.success) {
+                        self.itemStore.set(itemIdentifier, response);
+                    }
+
+                    self.loadNextPromise = loadNextItem();
+
+                    return response;
+                });
         },
 
         /**
          * Submits the state and the response of a particular item
-         * @param {String} uri - The URI of the item to update
+         * @param {String} itemIdentifier - The identifier of the item to update
          * @param {Object} state - The state to submit
          * @param {Object} response - The response object to submit
+         * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        submitItem: function submitItem(uri, state, response, params) {
-            this.updateState(uri, state);
-            return qtiServiceProxy.submitItem.call(this, uri, state, response, params);
+        submitItem: function submitItem(itemIdentifier, state, response, params) {
+            this.updateState(itemIdentifier, state);
+            return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
         },
 
         /**
          * Calls an action related to a particular item
-         * @param {String} uri - The URI of the item for which call the action
+         * @param {String} itemIdentifier - The identifier of the item for which call the action
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callItemAction: function callItemAction(uri, action, params) {
+        callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this;
 
             return this.loadNextPromise
@@ -224,31 +255,23 @@ define([
 
                     //update the item state
                     if(params.itemState){
-                        self.updateState(uri, params.itemState);
+                        self.updateState(itemIdentifier, params.itemState);
                     }
 
                     //check if we have already the item for the action we are going to perform
-                    self.getItemFromStore = false;
-                    if( (action === 'timeout' || action === 'skip' ||
-                        (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
-                        self.hasNextItem(uri) ){
+                    self.getItemFromStore = (
+                        (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
+                        (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
+                        (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
+                    );
 
-                        self.getItemFromStore = true;
-                        params.start = true;
-
-                    } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(uri)){
-
-                        self.getItemFromStore = true;
+                    //as we will pick the next item from the store ensure the next request will start the timer
+                    if (self.getItemFromStore) {
                         params.start = true;
                     }
                 })
                 .then(function(){
-                    return self.request(self.configStorage.getItemActionUrl(uri, action), params);
-                })
-                .then(function(response){
-
-                    self.isLast = response && response.testContext && response.testContext.isLast;
-                    return response;
+                    return self.request(self.configStorage.getItemActionUrl(itemIdentifier, action), params);
                 });
         }
     }, qtiServiceProxy);

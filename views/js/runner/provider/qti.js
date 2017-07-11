@@ -194,7 +194,6 @@ define([
                 var context = self.getTestContext();
                 if(context && self.itemRunner){
                     results = {
-                        itemIdentifier : context.itemIdentifier,
                         itemResponse   : self.itemRunner.getResponses(),
                         itemState      : self.itemRunner.getState()
                     };
@@ -231,7 +230,7 @@ define([
                         params = _.omit(params, ['itemState', 'itemResponse']);
 
                         self.getProxy()
-                            .submitItem(context.itemUri, self.itemRunner.getState(), self.itemRunner.getResponses(), params)
+                            .submitItem(context.itemIdentifier, self.itemRunner.getState(), self.itemRunner.getResponses(), params)
                             .then(function(results){
                                 if (results.itemSession) {
                                     context.itemAnswered = results.itemSession.itemAnswered;
@@ -265,7 +264,7 @@ define([
 
 
                         self.getProxy()
-                            .callItemAction(context.itemUri, action, params)
+                            .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
                                 loadPromise = loadPromise || Promise.resolve();
 
@@ -289,7 +288,7 @@ define([
                             .catch(submitError);
                     });
 
-                    self.unloadItem(context.itemUri);
+                    self.unloadItem(context.itemIdentifier);
                 })
                 .catch(submitError);
             }
@@ -302,7 +301,7 @@ define([
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
-                    self.loadItem(context.itemUri);
+                    self.loadItem(context.itemIdentifier);
                 } else if (context.state === states.closed){
                     self.finish();
                 }
@@ -370,10 +369,11 @@ define([
                 })
                 .on('exit', function(reason){
                     var context = self.getTestContext();
-                    self.disableItem(context.itemUri);
+                    self.disableItem(context.itemIdentifier);
 
                     self.getProxy()
                         .callTestAction('exitTest', _.merge(getItemResults(), {
+                            itemDefinition : context.itemIdentifier,
                             reason: reason
                         }))
                         .then(function(){
@@ -389,7 +389,7 @@ define([
 
                     context.isTimeout = true;
 
-                    self.disableItem(context.itemUri);
+                    self.disableItem(context.itemIdentifier);
 
                     computeNext(
                         'timeout',
@@ -468,7 +468,7 @@ define([
 
                     //we disable the item and warn the user
                     if (warning) {
-                        self.disableItem(context.itemUri);
+                        self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
                 })
@@ -546,13 +546,11 @@ define([
          * We call the proxy in order to get the item data
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
          * @returns {Promise} that calls in parallel the state and the item data
          */
-        loadItem : function loadItem(itemRef){
-            var self = this;
-            var context = self.getTestContext();
-
-            return self.getProxy().getItem(itemRef, { itemIdentifier : context.itemIdentifier })
+        loadItem : function loadItem(itemIdentifier){
+            return this.getProxy().getItem(itemIdentifier)
                 .then(function(data){
                     //aggregate the results
                     return {
@@ -569,13 +567,15 @@ define([
          * Here we initialize the item runner and wrap it's call to the test runner
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
+         * @param {Object} itemData - The definition data of the item
          * @returns {Promise} resolves when the item is ready
          */
-        renderItem : function renderItem(itemRef, itemData){
+        renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
 
             var changeState = function changeState(){
-                self.setItemState(itemRef, 'changed', true);
+                self.setItemState(itemIdentifier, 'changed', true);
             };
 
             return new Promise(function(resolve, reject){
