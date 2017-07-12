@@ -449,7 +449,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
         $itemDurationVar = $itemSession->getVariable('duration');
         $sessionDuration = $itemDurationVar->getValue();
-        \common_Logger::i("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
+        \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
         $itemSession->getVariable('duration')->setValue($duration);
 
         parent::submitItemResults($itemSession, $occurrence);

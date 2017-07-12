@@ -177,14 +177,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionId = $this->getTestExecutionUri();
 
         if ($storage->exists($sessionId) === false) {
-            \common_Logger::i("Instantiating QTI Assessment Test Session");
+            \common_Logger::t("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
             $testTaker = \common_session_SessionManager::getSession()->getUser();
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
-            \common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
+            \common_Logger::t("Retrieving QTI Assessment Test Session '${sessionId}'...");
             $this->setTestSession($storage->retrieve($this->getTestDefinition(), $sessionId));
         }
 
@@ -216,7 +216,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $this->itemIndex->unserialize($data);
             }
         } catch(\Exception $e) {
-            \common_Logger::i('Ignoring file not found exception for Items Index');
+            \common_Logger::d('Ignoring file not found exception for Items Index');
         }
     }
 
