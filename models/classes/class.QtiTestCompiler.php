@@ -756,12 +756,17 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * This method indexes the value of $assessmentItemRef->href by $assessmentItemRef->identifier for later
      * usage at delivery time (for fast access).
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
      */
     protected function compileAssessmentItemRefHrefIndex(AssessmentItemRef $assessmentItemRef)
     {
         $compiledDocDir = $this->getPrivateDirectory();
-        $indexPath = TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($assessmentItemRef->getIdentifier()) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
-        $compiledDocDir->write($indexPath, $assessmentItemRef->getHref());
+        
+        $compiledDocDir->write(
+            self::buildHrefIndexPath($assessmentItemRef->getIdentifier()), 
+            $assessmentItemRef->getHref()
+        );
     }
     
     /**
@@ -770,7 +775,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @return array
      */
-    static protected function getPublicMimeTypes() {
+    static protected function getPublicMimeTypes()
+    {
         return self::$publicMimeTypes;
+    }
+    
+    /**
+     * Build Href Index Path
+     * 
+     * Builds the Href Index Path from given $identifier.
+     * 
+     * @param string $identifier
+     * @return string
+     */
+    static public function buildHrefIndexPath($identifier)
+    {
+        return TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($identifier) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
     }
 }

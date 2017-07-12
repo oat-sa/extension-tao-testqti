@@ -326,11 +326,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
     
+    /**
+     * Get AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * 
+     * Returns the AssessmentItemRef href attribute value from a given $identifier.
+     * 
+     * @param string $identifier
+     * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
+     */
     public function getAssessmentItemRefHrefById($identifier)
     {
-        $indexPath = TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($identifier) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
         try {
-            return $this->getCompilationDirectory()['private']->read($indexPath);
+            $compilationDirectory = $this->getCompilationDirectory()['private'];
+            
+            return $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($identifier));
         } catch (\Exception $e) {
             // @bertrand Please feel free to put your fallback here!
             return false;
