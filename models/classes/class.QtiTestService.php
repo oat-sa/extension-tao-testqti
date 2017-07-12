@@ -311,7 +311,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                 // Delete all imported items.
                 foreach ($data->items as $item) {
-                    common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
+                    common_Logger::t("Rollbacking item '" . $item->getLabel() . "'...");
                     @$itemService->deleteItem($item);
                 }
                 
@@ -321,11 +321,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 }
 
                 // Delete the target Item RDFS class.
-                common_Logger::i("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
+                common_Logger::t("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
                 @$data->itemClass->delete();
 
                 // Delete test definition.
-                common_Logger::i("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
+                common_Logger::t("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
                 @$this->deleteTest($data->rdfsResource);
 
                 if (count($data->items) > 0) {
@@ -431,7 +431,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 $guardian = $this->getMetadataImporter()->guard($resourceIdentifier);
                                 if ($guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
-                                    \common_Logger::i($message);
+                                    \common_Logger::d($message);
                                     $report->add(common_report_Report::createInfo($message, $guardian));
                                     $reportCtx->items[$assessmentItemRefId] = $guardian;
                                     // Simply do not import again.
@@ -958,7 +958,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
 
-            common_Logger::i("Created QTI Test content for test '" . $test->getUri() . "'.");
+            common_Logger::t("Created QTI Test content for test '" . $test->getUri() . "'.");
         } else if ($file->exists()) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($file->read());

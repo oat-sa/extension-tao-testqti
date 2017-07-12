@@ -108,7 +108,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         {
             $lang = $userDataLang;
         } elseif ($directory->has(DEFAULT_LANG)) {
-            \common_Logger::i(
+            \common_Logger::d(
                 $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
             );
             $lang = DEFAULT_LANG;
@@ -168,7 +168,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $testSession = $context->getTestSession();
         $sessionId = $testSession->getSessionId();
 
-        \common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
+        \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
         $context->getStorage()->persist($testSession);
     }
 
@@ -697,7 +697,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
 
             try {
-                \common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
+                \common_Logger::t('Responses sent from the client-side. The Response Processing will take place.');
                 $session->endAttempt($responses, true);
 
                 return true;

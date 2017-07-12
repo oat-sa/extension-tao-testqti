@@ -106,13 +106,13 @@ class QtiTestListenerService extends ConfigurableService
                 $callId = $sessionId.$itemRef->getIdentifier();
                 if($finishedService->archive($userId, $callId)){
                     $finishedService->removeState($userId, $callId);
-                    \common_Logger::i('State archived for user : '.$userId.' and callId : '.$callId);
+                    \common_Logger::t('State archived for user : '.$userId.' and callId : '.$callId);
                 }
             }
 
             if($finishedService->archive($userId, $sessionId)){
                 $finishedService->removeState($userId, $sessionId);
-                \common_Logger::i('State archived for user : '.$userId.' and callId : '.$sessionId);
+                \common_Logger::t('State archived for user : '.$userId.' and callId : '.$sessionId);
             }
 
         }
