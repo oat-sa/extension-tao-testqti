@@ -168,7 +168,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $testSession = $context->getTestSession();
         $sessionId = $testSession->getSessionId();
 
-        \common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
+        \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
         $context->getStorage()->persist($testSession);
     }
 
