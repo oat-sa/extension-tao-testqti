@@ -43,7 +43,6 @@ class SyncChannelTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess($data, $exception)
     {
-        $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
         $service = new OfflineService();
         ServiceManager::getServiceManager()->propagate($service);
 
@@ -56,9 +55,49 @@ class SyncChannelTest extends \PHPUnit_Framework_TestCase
 
     public function providerTestProcess()
     {
-        $testDefinition = 'http://tao.dev/tao_instance.rdf#i1497624097689534';
-        $testCompilation = 'http://tao.dev/tao_instance.rdf#i14992630687797217-|http://tao.dev/tao_instance.rdf#i14992630682221218+';
-        $testServiceCallId = 'http://tao.dev/tao_instance.rdf#i14993297328677242';
+        $testDefinition = 'http://www.taotesting.com/ontologies/tao.rdf#i1499419048770834';
+        $testServiceCallId = 'http://www.taotesting.com/ontologies/tao.rdf#i14998770095883221';
+        $testCompilation = 'http://www.taotesting.com/ontologies/tao.rdf#i14997769047031200-|http://www.taotesting.com/ontologies/tao.rdf#i14997769043634201+';
+
+        $item2 = array(
+            'itemState' => '{"RESPONSE":{"response":{"base":{"integer":0}}},"RESPONSE_3":{"response":{"base":{"integer":526000}}},"RESPONSE_1":{"response":{"list":{"identifier":["choice_1","choice_2","choice_3","choice_4"]}}}}',
+
+            'itemResponse' => '{"RESPONSE":{"base":{"integer":0}},"RESPONSE_3":{"base":{"integer":526000}},"RESPONSE_1":{"list":{"identifier":["choice_1","choice_2","choice_3","choice_4"]}}}',
+            'itemDefinition' => 'item-2',
+
+            //'itemDuration' => '12.036030000000002',
+            //'consumedExtraTime' => '0',
+        );
+
+        $item3 = array(
+            'itemStdate' => '{"RESPONSE":{"response":{"list":{"identifier":["choice_1","choice_3","choice_2"]}}},"RESPONSE_1":{"response":{"list":{"pair":[]}}}}',
+
+            'itemResponse' => '{"RESPONSE":{"list":{"identifier":["choice_1","choice_3","choice_2"]}},"RESPONSE_1":{"list":{"pair":[]}}}',
+            'itemDefinition' => 'item-3',
+
+            //'itemDuration' => '59.41480000000005'
+            //'consumedExtraTim' => '0',
+        );
+
+        $item4 = array(
+            'itemStdate' => '{"RESPONSE":{"response":{"list":{"pair":[["associablehotspot_2","associablehotspot_1"],["associablehotspot_3","associablehotspot_2"]]}}}}',
+
+            'itemResponse' => '{"RESPONSE":{"list":{"pair":[["associablehotspot_2","associablehotspot_1"],["associablehotspot_3","associablehotspot_2"]]}}}',
+            'itemDefinition' => 'item-9',
+
+            //'itemDuration' => '16.084064999999946'
+            //'consumedExtraTime' => '0',
+        );
+
+        $item5 = array(
+            'itemStdate' => 'http://www.taotesting.com/ontologies/tao.rdf#i1499419054689561|http://www.taotesting.com/ontologies/tao.rdf#i14994315211214184+|http://www.taotesting.com/ontologies/tao.rdf#i14994315218706185-',
+
+            'itemResponse' => '{"RESPONSE":{"list":{"directedPair":[["C","M"],["D","T"],["P","T"],["L","R"]]}}}',
+            'itemDefinition' => 'item-10',
+
+            //'consumedExtraTim' => '0',
+            //'itemDuration' => '12.897464999999967',
+        );
 
         $action = [
             "action" => "move",
@@ -91,79 +130,30 @@ class SyncChannelTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $action['direction'] = 'next';
+        $action['parameters']['direction'] = 'next';
         $actionNext = $action;
 
-        $action['direction'] = 'previous';
+        $action['parameters']['direction'] = 'previous';
         $actionBack = $action;
 
-        $actions = [
-            [
-                "action" => "move",
-                "timestamp" => 123456789,
-                "parameters" => [
+        $action1 = $action2 = $action5 = $actionNext;
+        $action3 = $action4 = $action6 = $actionBack;
 
-                    'testDefinition' => $testDefinition,
-                    'testCompilation' => $testCompilation,
-                    'testServiceCallId' => $testServiceCallId,
-                    "direction" => "next",
-                    "scope" => "item",
-                    "start" => true,
-                    //"ref" => "",
+        $action1['parameters'] = array_merge($action1['parameters'], $item2);
+        $action2['parameters'] = array_merge($action2['parameters'], $item3);
+        $action3['parameters'] = array_merge($action3['parameters'], $item4);
+        $action4['parameters'] = array_merge($action4['parameters'], $item3);
+        $action5['parameters'] = array_merge($action5['parameters'], $item2);
+        $action6['parameters'] = array_merge($action6['parameters'], $item3);
 
-                    //"itemDefinition" => "",
-                    //"itemDuration" => 3.2758199999999977,
-                    //"itemState" => "{\"RESPONSE\":{\"response\":{\"base\":{\"integer\":0}}}}",
-                    //"itemResponse" => "{\"RESPONSE\":{\"base\":{\"integer\":0}}}",
-
-                    //"itemIdentifier" => "item-2",
-                    //"consumedExtraTime" => 0,
-                ]
-            ],
-            [
-                "action" => "skip",
-                "timestamp" => 1234567895,
-                "parameters" => [
-                    'testDefinition' => $testDefinition,
-                    'testCompilation' => $testCompilation,
-                    'testServiceCallId' => $testServiceCallId,
-
-
-                    //"itemDefinition" => "",
-                    //"itemIdentifier" => "item-3",
-                    //"consumedExtraTime" => 0
-                    //"direction" => "skip",
-                    "scope" => "item",
-                ]
-            ], [
-                "action" => "move",
-                "timestamp" => 123456799,
-                "parameters" => [
-                    'testDefinition' => $testDefinition,
-                    'testCompilation' => $testCompilation,
-                    'testServiceCallId' => $testServiceCallId,
-                   // "itemDefinition" => "",
-                   // "itemIdentifier" => "item-3",
-                   // "itemResponse" => "{\"RESPONSE\":{\"base\":{\"integer\":0}}}",
-                   // "itemState" => "{\"RESPONSE\":{\"response\":{\"base\":{\"integer\":0}}}}",
-                    "direction" => "previous",
-                    "scope" => "item",
-                   // "consumedExtraTime" => 0,
-                   // "itemDuration" => 3.2758199999999977,
-                    "start" => true
-                ]
-            ],
-        ];
-
-        //$chainMoveAction = array($actionNext, $actionBack, $actionNext, $actionBack, $actionNext, $actionBack);
-        $chainMoveAction = $actions;
-        $chainMoveAction = [$actionNext];
+        $chainMoveAction = [$action1,$action2, $action3, $action4, $action5, $action6];
+        $chainMoveAction = [$action1];
 
         return [
-            [
+            /*[
                 // Empty data
                 [], \common_exception_InconsistentData::class,
-            ],
+            ],*/
             [
                 // Chain of action
                 $chainMoveAction, null

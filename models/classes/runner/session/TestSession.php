@@ -74,7 +74,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getUserUri()
     {
-        $this->userUri = 'http://tao.dev/tao_instance.rdf#i1499168149748964';
+        return 'http://www.taotesting.com/ontologies/tao.rdf#i1499419139709264';
+
         if (is_null($this->userUri)) {
             return \common_session_SessionManager::getSession()->getUserUri();
         }
