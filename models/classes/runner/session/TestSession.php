@@ -74,8 +74,6 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getUserUri()
     {
-        return 'http://www.taotesting.com/ontologies/tao.rdf#i1499419139709264';
-
         if (is_null($this->userUri)) {
             return \common_session_SessionManager::getSession()->getUserUri();
         }
@@ -189,11 +187,13 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
     /**
      * Initializes the timer for the current item in the TestSession
+     *
+     * @param bool $microtime
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function initItemTimer($microtime=false)
     {
-        if(!$microtime) {
+        if (!$microtime) {
             $microtime = microtime(true);
         }
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
@@ -204,11 +204,12 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
     /**
      * Starts the timer for the current item in the TestSession
+     * @param bool $microtime
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function startItemTimer($microtime=false)
     {
-        if(!$microtime) {
+        if (!$microtime) {
             $microtime = microtime(true);
         }
         $tags = $this->getItemTags($this->getCurrentRouteItem());
@@ -220,12 +221,13 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Sets the client duration for the current item in the TestSession.
      * @param float $duration The client duration, or null to force server duration to be used as client duration
      * @param float $consumedExtraTime The extra time consumed by the client
+     * @param bool $microtime
      * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function endItemTimer($duration = null, $consumedExtraTime = null, $microtime=false)
     {
-        if(!$microtime) {
+        if (!$microtime) {
             $microtime = microtime(true);
         }
         $timer = $this->getTimer();

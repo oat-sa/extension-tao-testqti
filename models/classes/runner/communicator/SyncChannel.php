@@ -21,13 +21,9 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\taoQtiTest\models\runner\offline\OfflineService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-class SyncChannel implements CommunicationChannel, ServiceLocatorAwareInterface
+class SyncChannel implements CommunicationChannel
 {
-    use ServiceLocatorAwareTrait;
-
     const CHANNEL_NAME = 'sync';
 
     /**

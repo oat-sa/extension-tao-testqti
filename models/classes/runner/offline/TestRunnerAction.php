@@ -125,7 +125,6 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             $serviceContext = $this->getServiceContext(false);
             $itemIdentifier = $this->getParameter('itemIdentifier');
 
-            \common_Logger::i(print_r(json_decode($this->getParameter('itemState'), true), true));
             $stateId =  $serviceContext->getTestExecutionUri() . $itemIdentifier;
             //to read JSON encoded params
             //$params = $this->getRequest()->getRawParameters();
@@ -162,9 +161,6 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     protected function saveItemResponses($emptyAllowed = true)
     {
         if($this->hasParameter('itemDefinition') && $this->hasParameter('itemResponse')){
-
-            \common_Logger::i('RESPONSE :: ' . print_r($this->getParameter('itemDefinition'),true));
-            \common_Logger::i('RESPONSE :: ' . print_r(json_decode($this->getParameter('itemResponse'), true),true));
 
             $itemDefinition = $this->getParameter('itemDefinition');
             $serviceContext = $this->getServiceContext(false);

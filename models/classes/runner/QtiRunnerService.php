@@ -858,7 +858,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
-        \common_Logger::i('test');
         $result = true;
 
         if ($context instanceof QtiRunnerServiceContext) {
