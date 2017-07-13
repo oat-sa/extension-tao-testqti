@@ -133,6 +133,28 @@ define([
         },
 
         /**
+         * Check if the given  item is the first of a test
+         * @param {Object} testMap - the test map
+         * @param {String} itemIdentifier - the identifier of the item
+         * @returns {Boolean} true if the item is the first one
+         */
+        isFirst : function isFirst(testMap, itemIdentifier){
+            var item;
+            if( ! _.isPlainObject(testMap) ){
+                throw new TypeError('Invalid test map');
+            }
+            if(_.isEmpty(itemIdentifier)){
+                throw new TypeError('Invalid item identifier');
+            }
+
+            item  = mapHelper.getItem(testMap, itemIdentifier);
+
+            return item.position  === 0;
+
+        },
+
+
+        /**
          * Gets the map descriptors of the sibling items
          * @param {Object} testMap
          * @param {Number|String} itemPosition - (could be also the item id)
@@ -150,7 +172,7 @@ define([
                 var ref = jump.identifier;
                 if (previous) {
                     map[previous].next = ref;
-        }
+                }
                 map[ref] = {
                     identifier: ref,
                     previous: previous,

@@ -38,6 +38,7 @@ define([
         { title: 'isLeavingSection' },
         { title: 'isLeavingTestPart' },
         { title: 'isLast' },
+        { title: 'isFirst' },
         { title: 'getSiblingItems' },
         { title: 'getNextItem' },
         { title: 'getPreviousItem' },
@@ -175,6 +176,39 @@ define([
 
     QUnit.module('navigation.isLeavingTestPart');
 
+    QUnit.test('Bad paramerters', function(assert){
+        var result;
+
+        QUnit.expect(5);
+
+        assert.throws(function(){
+            navigationHelper.isLeavingTestPart();
+        }, TypeError, 'The test context is required');
+
+        assert.throws(function(){
+            navigationHelper.isLeavingTestPart(null, testMap, 'next', 'item');
+        }, TypeError, 'The test context is required');
+
+        assert.throws(function(){
+            navigationHelper.isLeavingTestPart({}, testMap, 'next', 'item');
+        }, TypeError, 'The test context needs to contains a sectionId and an itemIdentifier');
+
+        assert.throws(function(){
+            navigationHelper.isLeavingTestPart({
+                sectionId : 'assessmentSection-1',
+                itemIdentifier : 'item-2'
+            });
+        }, TypeError, 'The test map is required');
+
+
+        result = navigationHelper.isLeavingSection({
+            sectionId : 'assessmentSection-1',
+            itemIdentifier : 'item-2'
+        }, testMap, 'next', 'item');
+
+        assert.equal(typeof result, 'boolean', 'The helper does not throw with correct parameters');
+    });
+
     QUnit.cases([{
         title: 'move next item inside a section',
         expectResult : false,
@@ -271,6 +305,27 @@ define([
 
     QUnit.module('navigation.isLast');
 
+    QUnit.test('Bad paramerters', function(assert){
+        var result;
+
+        QUnit.expect(4);
+
+        assert.throws(function(){
+            navigationHelper.isLast();
+        }, TypeError, 'The test map is required');
+
+        assert.throws(function(){
+            navigationHelper.isLast('foo');
+        }, TypeError, 'The test map needs to be an object');
+
+        assert.throws(function(){
+            navigationHelper.isLast(testMap);
+        }, TypeError, 'An itemIdentifier is required');
+
+        result = navigationHelper.isLast(testMap, 'item-17');
+        assert.equal(typeof result, 'boolean', 'The helper does not throw with correct parameters');
+    });
+
     QUnit.cases([{
         title: '1st item',
         expectResult : false,
@@ -302,7 +357,61 @@ define([
         assert.equal(result, data.expectResult, 'The helper gives the correct result');
     });
 
-    
+
+    QUnit.module('navigation.isFirst');
+
+    QUnit.test('Bad paramerters', function(assert){
+        var result;
+
+        QUnit.expect(4);
+
+        assert.throws(function(){
+            navigationHelper.isFirst();
+        }, TypeError, 'The test map is required');
+
+        assert.throws(function(){
+            navigationHelper.isFirst('foo');
+        }, TypeError, 'The test map needs to be an object');
+
+        assert.throws(function(){
+            navigationHelper.isFirst(testMap);
+        }, TypeError, 'An itemIdentifier is required');
+
+        result = navigationHelper.isFirst(testMap, 'item-1');
+        assert.equal(typeof result, 'boolean', 'The helper does not throw with correct parameters');
+    });
+
+    QUnit.cases([{
+        title: '1st item',
+        expectResult : true,
+        itemIdentifier : 'item-1'
+    }, {
+        title: '2nd item',
+        expectResult : false,
+        itemIdentifier : 'item-2'
+    }, {
+        title: 'last of a section',
+        expectResult : false,
+        itemIdentifier : 'item-11'
+    }, {
+        title: 'last of a testPart',
+        expectResult : false,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'last item',
+        expectResult : false,
+        itemIdentifier : 'item-17'
+    }])
+    .test('is the first test item if ', function (data, assert) {
+        var result;
+
+        QUnit.expect(1);
+
+        result = navigationHelper.isFirst(testMap, data.itemIdentifier);
+
+        assert.equal(result, data.expectResult, 'The helper gives the correct result');
+    });
+
     QUnit.module('Sibling Items');
 
     QUnit.cases([{
@@ -346,13 +455,13 @@ define([
             testMap.parts['testPart-1'].sections['assessmentSection-3'].items['item-7']
         ]
     }, {
-        title: 'previous 3 items from the last item',
+        title: 'previous 3 items over a test part',
         direction : 'previous',
         position: 16,
         amount: 3,
         expectResult : [
-            testMap.parts['testPart-1'].sections['assessmentSection-6'].items['item-16'],
-            testMap.parts['testPart-1'].sections['assessmentSection-6'].items['item-15'],
+            testMap.parts['testPart-2'].sections['assessmentSection-6'].items['item-16'],
+            testMap.parts['testPart-2'].sections['assessmentSection-6'].items['item-15'],
             testMap.parts['testPart-1'].sections['assessmentSection-5'].items['item-14']
         ]
     }, {
@@ -434,7 +543,7 @@ define([
     }, {
         title: 'previous item before the position 16',
         position: 16,
-        expectResult : testMap.parts['testPart-1'].sections['assessmentSection-6'].items['item-16']
+        expectResult : testMap.parts['testPart-2'].sections['assessmentSection-6'].items['item-16']
     }, {
         title: 'previous item before the item item-4',
         position: 'item-4',
