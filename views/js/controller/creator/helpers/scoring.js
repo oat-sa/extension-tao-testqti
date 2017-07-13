@@ -89,7 +89,7 @@ define([
         },
         total: {
             key: 'total',
-            signature: /^SCORE_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
+            signature: /^(SCORE)_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
             outcomes: [{
                 writer: 'total',
                 identifier: 'SCORE_TOTAL',
@@ -102,6 +102,18 @@ define([
                 weighted: 'SCORE_TOTAL_MAX_WEIGHTED',
                 categoryIdentifier: 'SCORE_CATEGORY_MAX_%s',
                 categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_MAX_%s'
+            }, {
+                writer: 'ratio',
+                identifier: 'SCORE_RATIO',
+                weighted: 'SCORE_RATIO_WEIGHTED',
+                scoreIdentifier: {
+                    total : 'SCORE_TOTAL',
+                    max : 'SCORE_TOTAL_MAX'
+                },
+                scoreWeighted : {
+                    total : 'SCORE_TOTAL_WEIGHTED',
+                    max : 'SCORE_TOTAL_MAX_WEIGHTED',
+                },
             }],
             clean: true
         },
@@ -127,6 +139,12 @@ define([
      * @type {Object}
      */
     var outcomesWriters = {
+
+        ratio : function writerRatio(descriptor, scoring, outcomes){
+            addRatioOutcomes(outcomes, descriptor.identifier, descriptor.scoreIdentifier.total, descriptor.scoreIdentifier.max);
+            addRatioOutcomes(outcomes, descriptor.weighted, descriptor.scoreWeighted.total, descriptor.scoreWeighted.max);
+        },
+
         /**
          * Generates the outcomes that compute the "Total score"
          * @param {Object} descriptor
@@ -189,12 +207,12 @@ define([
             var totalModeOutcomes = outcomesRecipes.total.outcomes;
             var total = _.find(totalModeOutcomes, {writer: 'total'});
             var max = _.find(totalModeOutcomes, {writer: 'max'});
+            var ratio = _.find(totalModeOutcomes, {writer: 'ratio'});
             var whichOutcome = scoring.weightIdentifier ? 'weighted' : 'identifier';
-            var scoreIdentifier = total[whichOutcome];
-            var countIdentifier = max[whichOutcome];
+            var ratioIdentifier = ratio[whichOutcome];
 
             // create the outcome and the rule that process the overall score
-            addCutScoreOutcomes(outcomes, descriptor.identifier, scoreIdentifier, countIdentifier, cutScore);
+            addGlobalCutScoreOutcomes(outcomes, descriptor.identifier, ratioIdentifier, cutScore);
 
             // create the outcome and the rule that process the score feedback
             if (descriptor.feedback) {
@@ -372,23 +390,44 @@ define([
                 processingRuleHelper.outcomeMaximum(scoring.scoreIdentifier, weight && scoring.weightIdentifier, category)
             )
         );
+        outcomeHelper.addOutcome(model, outcome, processingRule);
+    }
+
+    /**
+     * Create an outcome and the rule that process the score ratio
+     *
+     * @param model
+     * @param identifier
+     * @param identifierTotal
+     * @param identifierMax
+     */
+    function addRatioOutcomes(model, identifier, identifierTotal, identifierMax) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var outcomeCondition = processingRuleHelper.outcomeCondition(
             processingRuleHelper.outcomeIf(
                 processingRuleHelper.isNull(
-                    processingRuleHelper.variable(identifier)
+                    processingRuleHelper.variable(identifierMax)
                 ),
                 processingRuleHelper.setOutcomeValue(identifier,
-                    processingRuleHelper.numberPresented(category)
+                    processingRuleHelper.baseValue(0, baseTypeHelper.FLOAT)
+                )
+            ),
+            processingRuleHelper.outcomeElse(
+                processingRuleHelper.setOutcomeValue(identifier,
+                    processingRuleHelper.divide(
+                        processingRuleHelper.variable(identifierTotal),
+                        processingRuleHelper.variable(identifierMax)
+                    )
                 )
             )
         );
 
-        outcomeHelper.addOutcome(model, outcome, processingRule);
+        outcomeHelper.addOutcome(model, outcome);
         outcomeHelper.addOutcomeProcessing(model, outcomeCondition);
     }
 
     /**
-     * Creates an outcome and the rule that process the cut score
+     * Creates an outcome and the rule that process the cut score by category
      *
      * @param {Object} model
      * @param {String} identifier
@@ -404,6 +443,27 @@ define([
                     processingRuleHelper.variable(scoreIdentifier),
                     processingRuleHelper.variable(countIdentifier)
                 ),
+                processingRuleHelper.baseValue(cutScore, baseTypeHelper.FLOAT)
+            )
+        );
+
+        outcomeHelper.addOutcome(model, outcome, processingRule);
+    }
+
+    /**
+     * Creates an outcome and the rule that process the global cut score
+     *
+     * @param {Object} model
+     * @param {String} identifier
+     * @param {String} scoreIdentifier
+     * @param {String} countIdentifier
+     * @param {String|Number} cutScore
+     */
+    function addGlobalCutScoreOutcomes(model, identifier, ratioIdentifier, cutScore) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
+        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+            processingRuleHelper.gte(
+                processingRuleHelper.variable(ratioIdentifier),
                 processingRuleHelper.baseValue(cutScore, baseTypeHelper.FLOAT)
             )
         );
