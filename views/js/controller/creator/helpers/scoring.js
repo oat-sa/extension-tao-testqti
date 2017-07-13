@@ -142,7 +142,10 @@ define([
 
         ratio : function writerRatio(descriptor, scoring, outcomes){
             addRatioOutcomes(outcomes, descriptor.identifier, descriptor.scoreIdentifier.total, descriptor.scoreIdentifier.max);
-            addRatioOutcomes(outcomes, descriptor.weighted, descriptor.scoreWeighted.total, descriptor.scoreWeighted.max);
+            if(scoring.weightIdentifier){
+                //add weighted ratio outcome only when the scoring outcome processing rule uses a weight
+                addRatioOutcomes(outcomes, descriptor.weighted, descriptor.scoreWeighted.total, descriptor.scoreWeighted.max);
+            }
         },
 
         /**
