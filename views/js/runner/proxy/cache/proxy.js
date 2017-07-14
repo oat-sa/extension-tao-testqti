@@ -66,8 +66,12 @@ define([
         init: function init(config, params) {
             var self = this;
 
+            //the base configuration for any request
+            var requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
+
             //we keep items here
             this.itemStore    = itemStoreFactory(cacheSize);
+
 
             this.actiontStore  = actionStoreFactory(config.serviceCallId);
 
@@ -155,11 +159,11 @@ define([
              */
             this.offlineAction = function offlineAction(action, actionParams){
 
-                return  this.actiontStore.push({
-                    action : action,
-                    timestamp : Date.now(),
-                    params : this.prepareParams(_.merge(_.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']), actionParams))
-                }).then(function(){
+                return this.actiontStore.push(
+                    action,
+                    this.prepareParams(_.defaults(actionParams || {}, requestConfig))
+                )
+                .then(function(){
                     var testNavigator;
                     var testContext;
 

@@ -46,8 +46,12 @@ define([
         storeId = storeName + '-' + id;
 
         return {
-            push: function push(action) {
-                actionQueue.push(action);
+            push: function push(action, params) {
+                actionQueue.push({
+                    action : action,
+                    timestamp : Date.now(),
+                    parameters : params
+                });
                 return store(storeId).then(function(actionStore) {
                     return actionStore.setItem(storeKey, actionQueue);
                 });
