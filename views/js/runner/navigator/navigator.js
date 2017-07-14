@@ -70,11 +70,12 @@ define([
                 //FIXME attempts can be incorrects (based on last known value)
                 remainingAttempts : (newItem.remainingAttempts > -1) ? newItem.remainingAttempts - 1 : -1,
 
-                sectionId    : newSection.id,
-                sectionTitle : newSection.label,
-                testPartId   : newTestPart.id,
-                isLinear     : newTestPart.isLinear,
-                isLast       : navigationHelper.isLast(testMap, newItem.id)
+                sectionId:       newSection.id,
+                sectionTitle:    newSection.label,
+                testPartId:      newTestPart.id,
+                isLinear:        newTestPart.isLinear,
+                isLast:          navigationHelper.isLast(testMap, newItem.id),
+                canMoveBackward: !newTestPart.isLinear && !navigationHelper.isFirst(testMap, newItem.id)
             };
         };
 
@@ -107,7 +108,7 @@ define([
              * @returns {Object} the new test context
              */
             nextItem : function nextItem(){
-                return _.merge({}, testContext, buildContextFromPosition(testContext.itemPosition + 1));
+                return  _.merge({}, testContext, buildContextFromPosition(testContext.itemPosition + 1));
             },
 
             /**
@@ -126,8 +127,6 @@ define([
 
             }
         };
-
-        return navigator;
     };
 
     return navigatorFactory;
