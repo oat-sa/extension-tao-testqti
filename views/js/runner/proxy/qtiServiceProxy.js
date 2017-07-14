@@ -62,6 +62,28 @@ define([
             this.queue = promiseQueue();
 
             /**
+             * Some parameters needs special handling...
+             * @param {Object} actionParams - the input parameters
+             * @returns {Object} output parameters
+             */
+            this.prepareParams = function prepareParams(actionParams){
+
+                //some parameters need to be JSON.stringified
+                var stringifyParams = ['itemState', 'itemResponse'];
+
+                if(_.isPlainObject(actionParams)){
+                    return _.mapValues(actionParams, function(value, key){
+                        if(_.contains(stringifyParams, key)){
+                            return JSON.stringify(value);
+                        }
+                        return value;
+                    });
+                }
+
+                return actionParams;
+            };
+
+            /**
              * Proxy request function. Returns a promise
              * Applied options: asynchronous call, JSON data, no cache
              * @param {String} url
@@ -72,17 +94,15 @@ define([
              */
             this.request = function request(url, reqParams, contentType, noToken) {
 
-                //some parameters need to be JSON.stringified, we do it at the lowest level
-                var stringifyParams = ['itemState', 'itemResponse'];
-
                 //run the request, just a function wrapper
                 var runRequest = function runRequest() {
                     return new Promise(function(resolve, reject) {
-
-                        var headers = {};
-                        var tokenHandler = self.getTokenHandler();
                         var token;
                         var noop;
+                        var headers        = {};
+                        var action         = reqParams ? 'POST' : 'GET';
+                        var preparedParams = self.prepareParams(reqParams);
+                        var tokenHandler   = self.getTokenHandler();
 
                         if (!noToken) {
                             token = tokenHandler.getToken();
@@ -90,31 +110,25 @@ define([
                                 headers['X-Auth-Token'] = token;
                             }
                         }
-                        if(_.isPlainObject(reqParams)){
-                            reqParams = _.mapValues(reqParams, function(value, key){
-                                if(_.contains(stringifyParams, key)){
-                                    return JSON.stringify(value);
-                                }
-                                return value;
-                            });
-                        }
 
                         $.ajax({
-                            url: url,
-                            type: reqParams ? 'POST' : 'GET',
-                            cache: false,
-                            data: reqParams,
-                            headers: headers,
-                            async: true,
-                            dataType: 'json',
-                            contentType: contentType || noop,
-                            timeout: self.configStorage.getTimeout()
+                            url : url,
+                            type : action,
+                            cache : false,
+                            data : preparedParams,
+                            headers : headers,
+                            async : true,
+                            dataType : 'json',
+                            contentType : contentType || noop,
+                            timeout : self.configStorage.getTimeout()
                         })
                         .done(function(data) {
 
                             if (data && data.token) {
                                 tokenHandler.setToken(data.token);
                             }
+
+                            self.setOnline();
 
                             if (data && data.success) {
                                 resolve(data);
@@ -146,6 +160,11 @@ define([
                                 tokenHandler.setToken(data.token);
                             } else if (!noToken) {
                                 tokenHandler.setToken(token);
+                            }
+
+                            if(self.isConnectivityError(data)){
+                                self.setOffline('request');
+                                return resolve(data);
                             }
 
                             reject(data);
