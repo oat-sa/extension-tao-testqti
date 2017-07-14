@@ -393,9 +393,10 @@ define([
      */
     function addMaxScoreOutcomes(model, scoring, identifier, weight, category) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
+        console.log('scoring.weightIdentifier', scoring.weightIdentifier);
         var processingRule = processingRuleHelper.setOutcomeValue(identifier,
             processingRuleHelper.sum(
-                processingRuleHelper.outcomeMaximum(scoring.scoreIdentifier, weight && scoring.weightIdentifier, category)
+                processingRuleHelper.testVariables('MAXSCORE', -1, weight && scoring.weightIdentifier, category)
             )
         );
         outcomeHelper.addOutcome(model, outcome, processingRule);
