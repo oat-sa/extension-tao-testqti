@@ -82,12 +82,13 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
-                            "weightIdentifier": ""
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier":  ""
                         }
                     ],
                     "maxOperands": -1,

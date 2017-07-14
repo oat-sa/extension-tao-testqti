@@ -367,11 +367,12 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": ""
                         }
                     ],
@@ -395,11 +396,12 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": "WEIGHT"
                         }
                     ],
@@ -423,13 +425,14 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [
                                 "history"
                             ],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": ""
                         }
                     ],
@@ -453,13 +456,14 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [
                                 "history"
                             ],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": "WEIGHT"
                         }
                     ],
@@ -483,13 +487,14 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [
                                 "math"
                             ],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": ""
                         }
                     ],
@@ -513,13 +518,14 @@
                     ],
                     "expressions": [
                         {
+                            "baseType": -1,
                             "excludeCategories": [],
                             "includeCategories": [
                                 "math"
                             ],
-                            "outcomeIdentifier": "SCORE",
-                            "qti-type": "outcomeMaximum",
+                            "qti-type": "testVariables",
                             "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
                             "weightIdentifier": "WEIGHT"
                         }
                     ],
