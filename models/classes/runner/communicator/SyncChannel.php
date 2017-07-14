@@ -19,11 +19,15 @@
 
 namespace oat\taoQtiTest\models\runner\communicator;
 
+use oat\oatbox\service\ServiceManagerAwareInterface;
+use oat\oatbox\service\ServiceManagerAwareTrait;
 use oat\taoQtiTest\models\runner\offline\OfflineService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
-class SyncChannel implements CommunicationChannel
+class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
 {
+    use ServiceManagerAwareTrait;
+
     const CHANNEL_NAME = 'sync';
 
     /**
@@ -45,7 +49,9 @@ class SyncChannel implements CommunicationChannel
      */
     public function process(QtiRunnerServiceContext $context, array $data = [])
     {
-        return (new OfflineService())->process($data);
+        $offlineService = new OfflineService();
+        $this->getServiceManager()->propagate($offlineService);
+        return $offlineService->process($data);
     }
 
 }

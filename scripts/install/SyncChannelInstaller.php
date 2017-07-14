@@ -36,9 +36,10 @@ use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 class SyncChannelInstaller extends InstallAction
 {
     /**
-     * Attach channels to Qti Communication Service
+     * Attach Sync channel to Qti Communication Service
      *
      * @param $params
+     * @return \common_report_Report
      */
     public function __invoke($params)
     {
@@ -53,5 +54,7 @@ class SyncChannelInstaller extends InstallAction
 
         $service->attachChannel(new SyncChannel(), QtiCommunicationService::CHANNEL_TYPE_INPUT);
         $this->registerService(QtiCommunicationService::SERVICE_ID, $service);
+
+        return \common_report_Report::createSuccess('Channel "' . (new SyncChannel())->getName() . '" successfully installed.');
     }
 }
