@@ -13,6 +13,6 @@
     {{/each}}
 {{else}}
     <div class="grid-row">
-        <div class="col-12 line">{{__ 'There is not outcomes!'}}</div>
+        <div class="col-12 line">{{__ 'no outcome declaration found'}}</div>
     </div>
 {{/if}}
