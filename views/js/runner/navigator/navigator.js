@@ -119,12 +119,22 @@ define([
                 return _.merge({}, testContext, buildContextFromPosition(testContext.itemPosition - 1));
             },
 
+            /**
+             * Navigate to the next item
+             * @returns {Object} the new test context
+             */
             nextSection : function nextSection(){
-
+                var sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
+                return _.merge({}, testContext, buildContextFromPosition(sectionStats.total));
             },
 
+            /**
+             * Navigate to the given position
+             * @param {Number} position - the position
+             * @returns {Object} the new test context
+             */
             jumpItem : function jumpItem(position){
-
+                return _.merge({}, testContext, buildContextFromPosition(position));
             }
         };
     };

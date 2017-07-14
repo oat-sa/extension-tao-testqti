@@ -153,7 +153,7 @@ define([
                         testContext = testNavigator.navigate(
                                 actionParams.direction,
                                 actionParams.scope,
-                                actionParams.position
+                                actionParams.ref
                             );
                         if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
                             //we are really unable to
