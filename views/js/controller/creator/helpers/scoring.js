@@ -89,7 +89,7 @@ define([
         },
         total: {
             key: 'total',
-            signature: /^(SCORE)_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
+            signature: /^SCORE_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
             outcomes: [{
                 writer: 'total',
                 identifier: 'SCORE_TOTAL',
@@ -139,7 +139,12 @@ define([
      * @type {Object}
      */
     var outcomesWriters = {
-
+        /**
+         * Generates the outcomes that compute the "Score ratio"
+         * @param {Object} descriptor
+         * @param {Object} scoring
+         * @param {Object} outcomes
+         */
         ratio : function writerRatio(descriptor, scoring, outcomes){
             addRatioOutcomes(outcomes, descriptor.identifier, descriptor.scoreIdentifier.total, descriptor.scoreIdentifier.max);
             if(scoring.weightIdentifier){
