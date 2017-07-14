@@ -20,7 +20,6 @@
 namespace oat\taoQtiTest\test\runner\communicator;
 
 use oat\oatbox\service\ServiceManager;
-use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\offline\OfflineService;
 use Prophecy\Prophet;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -107,7 +106,7 @@ class SyncChannelTest extends \PHPUnit_Framework_TestCase
                 /* CONTEXT SERVICE */
                 'testDefinition' => $testDefinition,
                 'testCompilation' => $testCompilation,
-                'testServiceCallId' => $testServiceCallId,
+                'serviceCallId' => $testServiceCallId,
 
                 /* MOVE ACTION */
                 "direction" => "next",

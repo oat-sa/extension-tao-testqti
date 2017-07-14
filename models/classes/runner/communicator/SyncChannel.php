@@ -45,7 +45,7 @@ class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
      *
      * @param QtiRunnerServiceContext $context
      * @param array $data
-     * @return array
+     * @return string
      */
     public function process(QtiRunnerServiceContext $context, array $data = [])
     {

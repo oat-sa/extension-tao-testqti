@@ -74,7 +74,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
     public function getRequiredFields()
     {
-        return ['testDefinition', 'testCompilation', 'testServiceCallId'];
+        return ['testDefinition', 'testCompilation', 'serviceCallId'];
     }
 
     public function validate()
@@ -90,7 +90,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     {
         if (!$this->serviceContext) {
 
-            $testExecution = $this->getParameter('testServiceCallId');
+            $testExecution = $this->getParameter('serviceCallId');
             $testDefinition  = $this->getParameter('testDefinition');
             $testCompilation = $this->getParameter('testCompilation');
 
@@ -115,31 +115,33 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
     /**
      * Save the actual item state.
-     * Requires params itemIdentifier and itemState
+     * Requires params itemDefinition and itemState
+     *
      * @return boolean true if saved
      * @throws \common_Exception
      */
     protected function saveItemState()
     {
-        if($this->hasParameter('itemIdentifier') && $this->hasParameter('itemState')) {
+        if ($this->hasParameter('itemDefinition') && $this->hasParameter('itemState')) {
             $serviceContext = $this->getServiceContext(false);
-            $itemIdentifier = $this->getParameter('itemIdentifier');
-
+            $itemIdentifier = $this->getParameter('itemDefinition');
             $stateId =  $serviceContext->getTestExecutionUri() . $itemIdentifier;
+
             //to read JSON encoded params
             //$params = $this->getRequest()->getRawParameters();
-            //$itemResponse = isset($params['itemState']) ? json_decode($this->getParameter('itemState'), true) : new \stdClass();
+            //$itemState  = isset($params['itemState']) ? $params['itemState'] : new stdClass();
             $state = $this->hasParameter('itemState') ? json_decode($this->getParameter('itemState'), true) : new \stdClass();
-
 
             return $this->getRunnerService()->setItemState($serviceContext, $stateId, $state);
         }
+
         return false;
     }
 
     /**
      * Initialize and verify the current service context
      * useful when the context was opened but not checked.
+     *
      * @return boolean true if initialized
      * @throws \common_Exception
      */
@@ -153,6 +155,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     /**
      * Save the item responses
      * Requires params itemDuration and optionaly consumedExtraTime
+     * 
      * @param boolean $emptyAllowed if we allow empty responses
      * @return boolean true if saved
      * @throws \common_Exception
