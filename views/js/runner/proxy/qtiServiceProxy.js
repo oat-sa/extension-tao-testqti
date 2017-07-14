@@ -38,23 +38,10 @@ define([
     var qtiServiceProxy = {
 
         /**
-         * Initializes the proxy
-         * @param {Object} config - The config provided to the proxy factory
-         * @param {String} config.testDefinition - The URI of the test
-         * @param {String} config.testCompilation - The URI of the compiled delivery
-         * @param {String} config.serviceCallId - The URI of the service call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
-         *                      Any error will be provided if rejected.
+         * Installs the proxy
          */
-        init: function init(config, params) {
-
+        install : function install(){
             var self = this;
-
-            var initConfig = config || {};
-
-            // store config in a dedicated configStorage
-            this.configStorage = configFactory(initConfig);
 
             /**
              * A promise queue to ensure requests run in serie
@@ -179,6 +166,21 @@ define([
 
                 return this.queue.serie(runRequest);
             };
+        },
+
+        /**
+         * Initializes the proxy
+         * @param {Object} config - The config provided to the proxy factory
+         * @param {String} config.testDefinition - The URI of the test
+         * @param {String} config.testCompilation - The URI of the compiled delivery
+         * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        init: function init(config, params) {
+            // store config in a dedicated configStorage
+            this.configStorage = configFactory(config || {});
 
             // request for initialization
             return this.request(this.configStorage.getTestActionUrl('init'), params);

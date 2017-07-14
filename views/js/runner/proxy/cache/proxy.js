@@ -23,6 +23,7 @@
  */
 define([
     'lodash',
+    'i18n',
     'core/promise',
     'taoQtiTest/runner/navigator/navigator',
     'taoQtiTest/runner/helpers/map',
@@ -31,7 +32,7 @@ define([
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, Promise, testNavigatorFactory, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -50,59 +51,38 @@ define([
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
+     * @extends taoQtiTest/runner/proxy/qtiServiceProxy
      */
     var cacheProxy = _.defaults({
 
         /**
-         * Initializes the proxy
-         * @param {Object} config - The config provided to the proxy factory
-         * @param {String} config.testDefinition - The URI of the test
-         * @param {String} config.testCompilation - The URI of the compiled delivery
-         * @param {String} config.serviceCallId - The URI of the service call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
-         *                      Any error will be provided if rejected.
+         * Installs the proxy
          */
-        init: function init(config, params) {
+        install : function install(){
             var self = this;
 
-            //the base configuration for any request
-            var requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
+            //install the parent proxy
+            qtiServiceProxy.install.call(this);
 
             //we keep items here
-            this.itemStore    = itemStoreFactory(cacheSize);
+            this.itemStore = itemStoreFactory(cacheSize);
 
-
-            this.actiontStore  = actionStoreFactory(config.serviceCallId);
+            //where we keep actions
+            this.actiontStore = null;
 
             //can we load the next item from the cache/store ?
-            this.getItemFromStore  = false;
+            this.getItemFromStore = false;
+
+            //configuration params, that comes on every request/params
+            this.requestConfig = {};
 
             //preload at least this number of items
             this.cacheAmount = 1;
 
             //keep reference on the test map as we don't have access to the test runner
-            this.testMap = null;
-            this.testData = null;
+            this.testMap     = null;
+            this.testData    = null;
             this.testContext = null;
-
-            //keep some received data
-            this.on('receive', function (data) {
-                if (data) {
-                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
-                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
-                    }
-                    if(data.testData){
-                        self.testData = data.testData;
-                    }
-                    if (data.testMap) {
-                        self.testMap = data.testMap;
-                    }
-                    if(data.testContext){
-                        self.testContext = data.testContext;
-                    }
-                }
-            });
 
             /**
              * Update the item state in the store
@@ -161,7 +141,7 @@ define([
 
                 return this.actiontStore.push(
                     action,
-                    this.prepareParams(_.defaults(actionParams || {}, requestConfig))
+                    this.prepareParams(_.defaults(actionParams || {}, this.requestConfig))
                 )
                 .then(function(){
                     var testNavigator;
@@ -175,20 +155,19 @@ define([
                                 actionParams.scope,
                                 actionParams.position
                             );
-                        if(testContext){
-                            return {
-                                success : true,
-                                testContext : testContext
-                            };
-                        } else {
+                        if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
                             //we are really unable to
                             return {
                                 success : false,
                                 source: 'network',
                                 type: 'error',
-                                message: 'Unable to select the next item due to connectivity issues'
+                                message: __('Unable to select the next item due to connectivity issues')
                             };
                         }
+                        return {
+                            success : true,
+                            testContext : testContext
+                        };
                     }
 
                     //at worst, we have saved the action and just want to continue
@@ -258,7 +237,7 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.syncOfflineData = function syncOfflineData(){
-                return self.queue.serie(function(){
+                return this.queue.serie(function(){
                     return self.actiontStore.flush().then(function(data){
                         if(data && data.length){
                             return self.send('sync', data);
@@ -269,14 +248,52 @@ define([
                     });
                 }, 'sync');
             };
+        },
+
+        /**
+         * Initializes the proxy
+         * @param {Object} config - The config provided to the proxy factory
+         * @param {String} config.testDefinition - The URI of the test
+         * @param {String} config.testCompilation - The URI of the compiled delivery
+         * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        init: function init(config, params) {
+            var self = this;
+
+            //those needs to be in each request params.
+            this.requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
+
+            //set up the action store for the current service call
+            this.actiontStore  = actionStoreFactory(config.serviceCallId);
+
+            //proxy some received data
+            this.on('receive', function (data) {
+                if (data) {
+                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
+                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
+                    }
+                    if(data.testData){
+                        self.testData = data.testData;
+                    }
+                    if (data.testMap) {
+                        self.testMap = data.testMap;
+                    }
+                    if(data.testContext){
+                        self.testContext = data.testContext;
+                    }
+                }
+            });
 
             //we resync as soon as the conection is back
             this.on('reconnect', function(){
                 this.syncOfflineData();
             });
 
-           //TODO requires to add install step to the proxy
-           //this.syncOfflineData();
+            //if some actions remains unsynced
+            this.syncOfflineData();
 
             //run the init
             return qtiServiceProxy.init.call(this, config, params);
@@ -296,7 +313,6 @@ define([
 
             return qtiServiceProxy.destroy.call(this);
         },
-
 
         /**
          * Gets an item definition by its identifier, also gets its current state
