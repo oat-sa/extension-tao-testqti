@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\AssessmentTest;
@@ -341,8 +342,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             
             return $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($identifier));
         } catch (\Exception $e) {
-            // @bertrand Please feel free to put your fallback here!
-            return false;
+            /** @todo TAO-4605 remove/adapt this temporary workaround */
+            $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+            return $mapService->getItemHref($this, $identifier);
         }
     }
 }

@@ -28,7 +28,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -256,15 +255,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     
     /**
      * Gets the item reference for the current itemRef
-     * @todo TAO-4605 remove/adapt this temporary workaround
      * @param string $itemIdentifier the item id
      * @return string the state id
      */
     protected function getItemRef($itemIdentifier)
     {
         $serviceContext = $this->getServiceContext(false, false);
-        $mapService     = $this->getServiceManager()->get(QtiRunnerMap::SERVICE_ID);
-        return $mapService->getItemHref($serviceContext, $itemIdentifier);
+        return $serviceContext->getAssessmentItemRefHrefById($itemIdentifier);
     }
 
     /**
