@@ -461,7 +461,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         // Call TestCategoryRulesService to generate additional rules if enabled.
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
         if (isset($config['enable-category-rules-generation']) && $config['enable-category-rules-generation'] === true) {
-            common_Logger::i('Automatic Category Rules Generation will occur...');
+            common_Logger::t('Automatic Category Rules Generation will occur...');
             $serviceManager = ServiceManager::getServiceManager();
             $testCategoryRulesService = $serviceManager->get(TestCategoryRulesService::SERVICE_ID);
             $testCategoryRulesService->apply($assessmentTest);
