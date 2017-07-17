@@ -142,7 +142,7 @@
 <!-- assessmentTest/scoring/cutScore -->
         <div class="grid-row test-cut-score">
             <div class="col-5">
-                <label for="test-cut-score">{{__ 'Cut score'}}</label>
+                <label for="test-cut-score">{{__ 'Cut score (pass ratio)'}}</label>
             </div>
             <div class="col-6">
                 <input type="text" name="test-cut-score" value="0" data-bind="scoring.cutScore" data-bind-encoder="float" data-validate="$numeric;" />
@@ -150,7 +150,7 @@
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
-                    {{__ "Set the cut score associated to the test"}}
+                    {{__ "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."}}
                 </div>
             </div>
         </div>
