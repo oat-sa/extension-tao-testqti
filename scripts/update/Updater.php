@@ -1321,6 +1321,28 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.1.0');
         }
 
-        $this->skip('10.1.0', '10.2.0');
+        $this->skip('10.1.0', '10.1.2');
+        
+        if ($this->isVersion('10.1.2')) {
+            $compiledDeliveryClass = new \core_kernel_classes_Class('http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery');
+            
+            if ($compiledDeliveryClass->exists() === true) {
+                $compiledDirectoryProperty = new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDeliveryCompilationDirectory');
+                
+                foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
+                    $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);
+                    
+                    foreach ($directories as $directoryId) {
+                        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryId);
+                        
+                        foreach ($directory->getIterator() as $file) {
+                            \common_Logger::i(var_export($file, true));
+                        }
+                    }
+                }
+            }
+            
+            $this->setVersion('10.2.0');
+        }
     }
 }
