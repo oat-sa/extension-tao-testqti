@@ -1322,5 +1322,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.1.0', '11.0.0');
+
     }
 }
