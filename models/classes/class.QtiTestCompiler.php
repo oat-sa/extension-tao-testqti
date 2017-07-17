@@ -349,7 +349,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     break;
                 }
 
-                $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __($previous->getMessage()));
+                $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, $previous->getMessage());
                 $report->add($subReport);
 
                 $previous = $previous->getPrevious();
