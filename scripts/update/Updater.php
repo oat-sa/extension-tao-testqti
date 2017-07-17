@@ -1322,9 +1322,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.1.0');
         }
 
-        $this->skip('10.1.0', '10.1.2');
+        $this->skip('10.1.0', '10.2.1');
         
-        if ($this->isVersion('10.1.2')) {
+        if ($this->isVersion('10.2.1')) {
             
             $extManager = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
             
@@ -1365,7 +1365,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 }
             } 
             
-            $this->setVersion('10.2.0');
+            $this->setVersion('10.3.0');
         }
     }
 }
