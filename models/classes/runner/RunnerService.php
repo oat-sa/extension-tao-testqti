@@ -22,12 +22,13 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use qtism\data\AssessmentItemRef;
 
 /**
  * Interface RunnerService
- * 
+ *
  * Describes a test runner dedicated service
- * 
+ *
  * @package oat\taoQtiTest\models
  */
 interface RunnerService
@@ -62,7 +63,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function getTestContext(RunnerServiceContext $context);
-    
+
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
@@ -74,10 +75,11 @@ interface RunnerService
     /**
      * Gets the rubrics related to the current session state
      * @param RunnerServiceContext $context
+     * @param AssessmentItemRef $itemRef (optional) otherwise use the current
      * @return mixed
      * @throws \common_Exception
      */
-    public function getRubrics(RunnerServiceContext $context);
+    public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null);
 
     /**
      * Gets definition data of a particular item
@@ -108,14 +110,33 @@ interface RunnerService
     public function setItemState(RunnerServiceContext $context, $itemRef, $state);
 
     /**
-     * Stores the response of a particular item
+     * Parses the responses provided for a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
      * @param $response
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function parsesItemResponse(RunnerServiceContext $context, $itemRef, $response);
+
+    /**
+     * Checks if the provided responses are empty
+     * @param RunnerServiceContext $context
+     * @param $responses
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function emptyResponse(RunnerServiceContext $context, $responses);
+
+    /**
+     * Stores the responses of a particular item
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @param $responses
      * @return boolean
      * @throws \common_Exception
      */
-    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $response);
+    public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses);
 
     /**
      * Should we display feedbacks
@@ -133,6 +154,15 @@ interface RunnerService
      * @throws \common_exception_InvalidArgumentType
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef);
+
+    /**
+     * Does the given item has feedbacks
+     * @param RunnerServiceContext $context
+     * @param string $itemRef  the item reference
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function hasFeedbacks(RunnerServiceContext $context, $itemRef);
 
     /**
      * Get the current item session
@@ -171,7 +201,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function timeout(RunnerServiceContext $context, $scope, $ref);
-    
+
     /**
      * Exits the test before its end
      * @param RunnerServiceContext $context
@@ -179,7 +209,7 @@ interface RunnerService
      * @throws \common_Exception
      */
     public function exitTest(RunnerServiceContext $context);
-    
+
     /**
      * Finishes the test
      * @param RunnerServiceContext $context
@@ -212,14 +242,18 @@ interface RunnerService
      */
     public function check(RunnerServiceContext $context);
 
+    /**
+     * Checks if the test is in paused state
+     * @param RunnerServiceContext $context
+     * @return boolean
+     */
+    public function isPaused(RunnerServiceContext $context);
 
     /**
-     * Update the test timers duration
+     * Checks if the test is in terminated state
      * @param RunnerServiceContext $context
-     * @param int|float $duration
      * @return boolean
-     * @throws \common_Exception
      */
-    public function updateTimers(RunnerServiceContext $context, $duration);
+    public function isTerminated(RunnerServiceContext $context);
 
 }

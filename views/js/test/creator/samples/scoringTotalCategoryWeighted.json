@@ -1,0 +1,989 @@
+{
+    "identifier": "Test-1",
+    "outcomeDeclarations": [
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_TOTAL",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_TOTAL_WEIGHTED",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_HISTORY",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_WEIGHTED_HISTORY",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_MATH",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MATH",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_TOTAL_MAX",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_MAX_MATH",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_RATIO",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        },
+        {
+            "baseType": 3,
+            "cardinality": 0,
+            "identifier": "SCORE_RATIO_WEIGHTED",
+            "interpretation": "",
+            "longInterpretation": "",
+            "masteryValue": false,
+            "normalMaximum": false,
+            "normalMinimum": false,
+            "qti-type": "outcomeDeclaration",
+            "views": []
+        }
+    ],
+    "outcomeProcessing": {
+        "outcomeRules": [
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_TOTAL",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_TOTAL_WEIGHTED",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "history"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_HISTORY",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "history"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_WEIGHTED_HISTORY",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "math"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_MATH",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "math"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "SCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_WEIGHTED_MATH",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_TOTAL_MAX",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "history"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_MAX_HISTORY",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "history"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "math"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": ""
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_MAX_MATH",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "expression": {
+                    "acceptedBaseTypes": [
+                        2,
+                        3
+                    ],
+                    "acceptedCardinalities": [
+                        0,
+                        1,
+                        2
+                    ],
+                    "expressions": [
+                        {
+                            "baseType": -1,
+                            "excludeCategories": [],
+                            "includeCategories": [
+                                "math"
+                            ],
+                            "qti-type": "testVariables",
+                            "sectionIdentifier": "",
+                            "variableIdentifier": "MAXSCORE",
+                            "weightIdentifier": "WEIGHT"
+                        }
+                    ],
+                    "maxOperands": -1,
+                    "minOperands": 1,
+                    "qti-type": "sum"
+                },
+                "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
+                "qti-type": "setOutcomeValue"
+            },
+            {
+                "outcomeElse": {
+                    "outcomeRules": [
+                        {
+                            "expression": {
+                                "acceptedBaseTypes": [
+                                    2,
+                                    3
+                                ],
+                                "acceptedCardinalities": [
+                                    0
+                                ],
+                                "expressions": [
+                                    {
+                                        "identifier": "SCORE_TOTAL",
+                                        "qti-type": "variable",
+                                        "weightIdentifier": ""
+                                    },
+                                    {
+                                        "identifier": "SCORE_TOTAL_MAX",
+                                        "qti-type": "variable",
+                                        "weightIdentifier": ""
+                                    }
+                                ],
+                                "maxOperands": 2,
+                                "minOperands": 2,
+                                "qti-type": "divide"
+                            },
+                            "identifier": "SCORE_RATIO",
+                            "qti-type": "setOutcomeValue"
+                        }
+                    ],
+                    "qti-type": "outcomeElse"
+                },
+                "outcomeElseIfs": [],
+                "outcomeIf": {
+                    "expression": {
+                        "acceptedBaseTypes": [
+                            12
+                        ],
+                        "acceptedCardinalities": [
+                            5
+                        ],
+                        "expressions": [
+                            {
+                                "identifier": "SCORE_TOTAL_MAX",
+                                "qti-type": "variable",
+                                "weightIdentifier": ""
+                            }
+                        ],
+                        "maxOperands": 1,
+                        "minOperands": 1,
+                        "qti-type": "isNull"
+                    },
+                    "outcomeRules": [
+                        {
+                            "expression": {
+                                "baseType": 3,
+                                "qti-type": "baseValue",
+                                "value": 0
+                            },
+                            "identifier": "SCORE_RATIO",
+                            "qti-type": "setOutcomeValue"
+                        }
+                    ],
+                    "qti-type": "outcomeIf"
+                },
+                "qti-type": "outcomeCondition"
+            },
+            {
+                "outcomeElse": {
+                    "outcomeRules": [
+                        {
+                            "expression": {
+                                "acceptedBaseTypes": [
+                                    2,
+                                    3
+                                ],
+                                "acceptedCardinalities": [
+                                    0
+                                ],
+                                "expressions": [
+                                    {
+                                        "identifier": "SCORE_TOTAL_WEIGHTED",
+                                        "qti-type": "variable",
+                                        "weightIdentifier": ""
+                                    },
+                                    {
+                                        "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+                                        "qti-type": "variable",
+                                        "weightIdentifier": ""
+                                    }
+                                ],
+                                "maxOperands": 2,
+                                "minOperands": 2,
+                                "qti-type": "divide"
+                            },
+                            "identifier": "SCORE_RATIO_WEIGHTED",
+                            "qti-type": "setOutcomeValue"
+                        }
+                    ],
+                    "qti-type": "outcomeElse"
+                },
+                "outcomeElseIfs": [],
+                "outcomeIf": {
+                    "expression": {
+                        "acceptedBaseTypes": [
+                            12
+                        ],
+                        "acceptedCardinalities": [
+                            5
+                        ],
+                        "expressions": [
+                            {
+                                "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
+                                "qti-type": "variable",
+                                "weightIdentifier": ""
+                            }
+                        ],
+                        "maxOperands": 1,
+                        "minOperands": 1,
+                        "qti-type": "isNull"
+                    },
+                    "outcomeRules": [
+                        {
+                            "expression": {
+                                "baseType": 3,
+                                "qti-type": "baseValue",
+                                "value": 0
+                            },
+                            "identifier": "SCORE_RATIO_WEIGHTED",
+                            "qti-type": "setOutcomeValue"
+                        }
+                    ],
+                    "qti-type": "outcomeIf"
+                },
+                "qti-type": "outcomeCondition"
+            }
+        ],
+        "qti-type": "outcomeProcessing"
+    },
+    "qti-type": "assessmentTest",
+    "testFeedbacks": [],
+    "testParts": [
+        {
+            "assessmentSections": [
+                {
+                    "branchRules": [],
+                    "fixed": false,
+                    "identifier": "assessmentSection-1",
+                    "index": 0,
+                    "itemSessionControl": {
+                        "allowComment": false,
+                        "allowReview": true,
+                        "allowSkipping": true,
+                        "maxAttempts": 1,
+                        "qti-type": "itemSessionControl",
+                        "showFeedback": false,
+                        "showSolution": false,
+                        "validateResponses": false
+                    },
+                    "keepTogether": true,
+                    "preConditions": [],
+                    "qti-type": "assessmentSection",
+                    "required": true,
+                    "rubricBlocks": [],
+                    "sectionParts": [
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "history"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i1483090611690885",
+                            "identifier": "item-1",
+                            "index": 0,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "math"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i1483090613110988",
+                            "identifier": "item-3",
+                            "index": 1,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "math"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i1483090616225291",
+                            "identifier": "item-2",
+                            "index": 2,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "timeLimits": {
+                        "allowLateSubmission": false,
+                        "qti-type": "timeLimits"
+                    },
+                    "title": "Section 1",
+                    "visible": true
+                },
+                {
+                    "branchRules": [],
+                    "fixed": false,
+                    "identifier": "assessmentSection-2",
+                    "index": 1,
+                    "itemSessionControl": {
+                        "allowComment": false,
+                        "allowReview": true,
+                        "allowSkipping": true,
+                        "maxAttempts": 1,
+                        "qti-type": "itemSessionControl",
+                        "showFeedback": false,
+                        "showSolution": false,
+                        "validateResponses": false
+                    },
+                    "keepTogether": true,
+                    "preConditions": [],
+                    "qti-type": "assessmentSection",
+                    "required": false,
+                    "rubricBlocks": [],
+                    "sectionParts": [
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "history"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i148309061819894",
+                            "identifier": "item-4",
+                            "index": 0,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "history"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i1483090620510297",
+                            "identifier": "item-5",
+                            "index": 1,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        {
+                            "branchRules": [],
+                            "categories": [
+                                "math"
+                            ],
+                            "fixed": false,
+                            "href": "http://tao.dev/tao.rdf#i14830906232870100",
+                            "identifier": "item-6",
+                            "index": 2,
+                            "itemSessionControl": {
+                                "allowComment": false,
+                                "allowReview": true,
+                                "allowSkipping": true,
+                                "maxAttempts": 1,
+                                "qti-type": "itemSessionControl",
+                                "showFeedback": false,
+                                "showSolution": false,
+                                "validateResponses": false
+                            },
+                            "preConditions": [],
+                            "qti-type": "assessmentItemRef",
+                            "required": false,
+                            "templateDefaults": {},
+                            "timeLimits": {
+                                "allowLateSubmission": false,
+                                "qti-type": "timeLimits"
+                            },
+                            "variableMappings": {},
+                            "weights": [
+                                {
+                                    "identifier": "WEIGHT",
+                                    "qti-type": "weight",
+                                    "value": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "timeLimits": {
+                        "allowLateSubmission": false,
+                        "qti-type": "timeLimits"
+                    },
+                    "title": "Section 2",
+                    "visible": true
+                }
+            ],
+            "branchRules": [],
+            "identifier": "testPart-1",
+            "index": 0,
+            "itemSessionControl": {
+                "allowComment": false,
+                "allowReview": true,
+                "allowSkipping": false,
+                "maxAttempts": 0,
+                "qti-type": "itemSessionControl",
+                "showFeedback": false,
+                "showSolution": false,
+                "validateResponses": false
+            },
+            "navigationMode": 0,
+            "preConditions": [],
+            "qti-type": "testPart",
+            "submissionMode": 0,
+            "testFeedbacks": [],
+            "timeLimits": {
+                "allowLateSubmission": false,
+                "qti-type": "timeLimits"
+            }
+        }
+    ],
+    "timeLimits": {
+        "allowLateSubmission": false,
+        "qti-type": "timeLimits"
+    },
+    "title": "Test 1"
+}

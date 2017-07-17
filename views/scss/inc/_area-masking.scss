@@ -1,0 +1,65 @@
+.mask {
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    min-width: 50px;
+    min-height: 25px;
+    top: 0;
+    left: 0;
+    border: solid 1px $pluginBorder;
+    @include border-radius(5);
+    background: transparent;
+    opacity: 1;
+    @include vendor-prefix(property, transform, translateZ(0));
+
+    .inner {
+        @include border-radius(5);
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: $uiGeneralContentBg;
+        opacity: 1;
+    }
+    &.moving .inner {
+        border-color: $pluginBorderTransparent;
+        opacity: .55;
+    }
+    &.moving {
+        .controls {
+            display: none;
+        }
+    }
+    &.sizing {
+        border-color: $pluginBorderTransparent;
+        .inner{
+            opacity: .55;
+        }
+        .controls {
+            display: none;
+        }
+    }
+    &.previewing .inner {
+        opacity: .15;
+        @include transition(opacity, 600ms, ease);
+    }
+    .controls {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        a {
+            color: $pluginLink;
+            text-decoration: none;
+            margin-right: 5px;
+            vertical-align: middle;
+            &:hover {
+                color: $pluginLinkHover;
+            }
+        }
+        .view {
+            @include font-size(14);
+        }
+        .close {
+            @include font-size(12);
+        }
+    }
+}

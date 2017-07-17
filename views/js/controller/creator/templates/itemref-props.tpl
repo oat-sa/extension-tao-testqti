@@ -11,7 +11,7 @@
             <input type="text" name="itemref-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable(original={{identifier}});" />
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'The identifier of the item reference.'}}
             </div>
@@ -27,25 +27,9 @@
             <input type="text" name="itemref-href" data-bind="href" readonly="readonly" />
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'The reference.'}}
-            </div>
-        </div>
-    </div>
-    
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="itemref-category">{{__ 'Categories'}}</label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
-            <div class="tooltip-content">
-            {{__ 'Items can optionally be assigned to one or more categories.'}}
             </div>
         </div>
     </div>
@@ -62,7 +46,7 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'If required it must appear (at least once) in the selection.'}}
             </div>
@@ -81,9 +65,58 @@
             </label>
         </div>
         <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'Not shuffled, the position remains fixed.'}}
+            </div>
+        </div>
+    </div>
+
+    <div class="categories">
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="category-custom">{{__ 'Categories'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" title="{{__ 'custom categories'}}" name="category-custom"/>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'Items can optionally be assigned to one or more categories.'}}
+                </div>
+            </div>
+        </div>
+
+        <!-- assessmentTest/testPart/assessmentSection/sectionPart/category -->
+        <textarea title="categories" class="hidden" type="text" name="itemref-category" data-bind="categories" data-bind-encoder="str2array"></textarea>
+
+        <!-- some user features (Test Navigation, Test Taker Tools, etc.) are in fact implemented as categories. They will appear here: -->
+        <div class="category-presets"></div>
+    </div>
+
+    <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
+
+    <div class="itemref-weights toggled">
+        <div class="grid-row ">
+            <div class="col-9">
+                <strong>{{__ 'Identifier'}}</strong>
+            </div>
+            <div class="col-2">
+                <strong>{{__ 'Value'}}</strong>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ 'Controls the contribution of an individual item score to the overall test score.'}}
+                </div>
+            </div>
+        </div>
+<!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
+        <div data-bind-each="weights" data-bind-tmpl="itemrefweight"></div>
+        <div class="grid-row">
+            <div class="col-12">
+                <a class="itemref-weight-add"><span class="icon-add"></span> {{__ 'add a new weight'}}</a>
             </div>
         </div>
     </div>
@@ -102,7 +135,7 @@
                 <input name="itemref-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Controls the maximum number of attempts allowed. 0 means unlimited.'}}
                 </div>
@@ -121,7 +154,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
                 </div>
@@ -141,7 +174,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Allow the candidate to review his answers.'}}
                 </div>
@@ -162,7 +195,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Show the solution once the answer is submitted.'}}
                 </div>
@@ -182,7 +215,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
                 </div>
@@ -201,7 +234,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'If the candidate can skip the item, without submitting a response.'}}
                 </div>
@@ -221,7 +254,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "The candidate is not allowed to submit wrong responses."}}
                 </div>
@@ -246,7 +279,7 @@
                 <input type="text" name="itemref-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
             </div>
                 <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                     {{__ 'Minimum duration for this item.'}}
                     </div>
@@ -263,7 +296,7 @@
                 <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Maximum duration for this item.'}}
                 </div>
@@ -282,7 +315,7 @@
                 </label>
             </div>
             <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span> 
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."}}
                 </div>

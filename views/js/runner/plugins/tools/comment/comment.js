@@ -26,9 +26,11 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'ui/hider',
-    'tpl!taoQtiTest/runner/plugins/navigation/button',
+    'ui/stacker',
+    'util/shortcut',
+    'util/namespace',
     'tpl!taoQtiTest/runner/plugins/tools/comment/comment'
-], function ($, __, pluginFactory, hider, buttonTpl, commentTpl) {
+], function ($, __, pluginFactory, hider, stackerFactory, shortcut, namespaceHelper, commentTpl) {
     'use strict';
 
     /**
@@ -45,79 +47,118 @@ define([
             var self = this;
 
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var stacker = stackerFactory('test-runner');
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isEnabled() {
+                var context = testRunner.getTestContext();
+                return !!context.options.allowComment;
+            }
 
             /**
              * Can we comment ? if not, then we hide the plugin
              */
             function togglePlugin() {
-                var context = testRunner.getTestContext();
-                if (context.options.allowComment) {
+                if (isEnabled()) {
                     self.show();
                 } else {
                     self.hide();
                 }
             }
 
-            //build element (detached)
-            this.$button = $(buttonTpl({
-                control: 'comment',
-                title: __('Leave a comment'),
-                icon: 'tag',
-                text: __('Comment')
-            }));
-
-            //get access to controls
-            this.$form = $(commentTpl()).appendTo(this.$button);
-            this.$input = this.$button.find('[data-control="qti-comment-text"]');
-            this.$cancel = this.$button.find('[data-control="qti-comment-cancel"]');
-            this.$submit = this.$button.find('[data-control="qti-comment-send"]');
-
-            //attach behavior
-            this.$button.on('click', function (e) {
-                //prevent action if the click is made inside the form which is a sub part of the button
-                if ($(e.target).closest('[data-control="qti-comment"]').length) {
-                    return;
-                }
-
-                e.preventDefault();
-
+            /**
+             * Show/hide the comment panel
+             */
+            function toggleComment() {
                 if (self.getState('enabled') !== false) {
                     //just show/hide the form
                     hider.toggle(self.$form);
                     if (!hider.isHidden(self.$form)) {
                         //reset the form on each display
                         self.$input.val('').focus();
+                        self.button.turnOn();
+                        stacker.bringToFront(self.$form);
+                    } else {
+                        self.button.turnOff();
                     }
                 }
+            }
+
+            // register button in toolbox
+            this.button = this.getAreaBroker().getToolbox().createEntry({
+                control: 'comment',
+                title: __('Leave a comment'),
+                icon: 'tag',
+                text: __('Comment')
             });
 
-            //hide the form without submit
-            this.$cancel.on('click', function () {
-                hider.hide(self.$form);
+            //get access to controls
+            this.button.on('render', function() {
+                self.$button = self.button.getElement();
+                self.$form = $(commentTpl()).appendTo(self.$button);
+                self.$input = self.$button.find('[data-control="qti-comment-text"]');
+                self.$cancel = self.$button.find('[data-control="qti-comment-cancel"]');
+                self.$submit = self.$button.find('[data-control="qti-comment-send"]');
+
+                stacker.autoBringToFront(self.$form);
+
+                //hide the form without submit
+                self.$cancel.on('click', function () {
+                    hider.hide(self.$form);
+                    self.button.turnOff();
+                });
+
+                //submit the comment, then hide the form
+                self.$submit.on('click', function () {
+                    var comment = self.$input.val();
+
+                    if (comment) {
+                        self.disable();
+                        self.button.turnOff();
+
+                        testRunner.getProxy()
+                            .callTestAction('comment', {
+                                comment: comment
+                            })
+                            .then(function () {
+                                hider.hide(self.$form);
+                                self.enable();
+                            })
+                            .catch(function () {
+                                hider.hide(self.$form);
+                                self.enable();
+                            });
+                    }
+                });
             });
 
-            //submit the comment, then hide the form
-            this.$submit.on('click', function () {
-                var comment = self.$input.val();
 
-                if (comment) {
-                    self.disable();
-
-                    testRunner.getProxy()
-                        .callTestAction('comment', {
-                            comment: comment
-                        })
-                        .then(function () {
-                            hider.hide(self.$form);
-                            self.enable();
-                        })
-                        .catch(function (err) {
-                            testRunner.trigger('error', err);
-                            hider.hide(self.$form);
-                            self.enable();
-                        });
+            //attach behavior
+            this.button.on('click', function (e) {
+                //prevent action if the click is made inside the form which is a sub part of the button
+                if ($(e.target).closest('[data-control="qti-comment"]').length) {
+                    return;
                 }
+
+                e.preventDefault();
+                testRunner.trigger('tool-comment');
             });
+
+            if (testConfig.allowShortcuts) {
+                if (pluginShortcuts.toggle) {
+                    shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
+                        testRunner.trigger('tool-comment');
+                    }, {
+                        avoidInput: true
+                    });
+                }
+            }
 
             //start disabled
             togglePlugin();
@@ -126,59 +167,59 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', togglePlugin)
-                .on('renderitem', function () {
+                .on('renderitem enabletools', function () {
                     self.enable();
                 })
-                .on('unloaditem', function () {
+                .on('unloaditem disabletools', function () {
                     self.disable();
+                })
+                .on('tool-comment', function () {
+                    if (isEnabled()) {
+                        toggleComment();
+                    }
                 });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render: function render() {
-            var $container = this.getAreaBroker().getToolboxArea();
-            $container.append(this.$button);
         },
 
         /**
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
-            this.$button.remove();
+            shortcut.remove('.' + this.getName());
         },
 
         /**
          * Enable the button
          */
         enable: function enable() {
-            this.$button.removeProp('disabled')
-                .removeClass('disabled');
+            this.button.enable();
         },
 
         /**
          * Disable the button
          */
         disable: function disable() {
-            hider.hide(this.$form);
-            this.$button.prop('disabled', true)
-                .addClass('disabled');
+            if (this.$form) {
+                hider.hide(this.$form);
+            }
+            this.button.disable();
+            this.button.turnOff();
         },
 
         /**
          * Show the button
          */
         show: function show() {
-            hider.show(this.$button);
+            this.button.show();
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$form);
-            hider.hide(this.$button);
+            if (this.$form) {
+                hider.hide(this.$form);
+            }
+            this.button.hide();
         }
     });
 });

@@ -126,7 +126,7 @@ class taoQtiTest_models_classes_ManifestParser
             foreach ($resourceNode->file as $fileNode) {
                 $fileHref = (string) $fileNode['href'];
                 
-                if (preg_match("/\.xml$/", $fileHref)){
+                if (preg_match("/\.xml$|\.css$/", $fileHref)){
                     
                     if (empty($href) || $href === $fileHref) {
                         $xmlFiles[] = $fileHref;

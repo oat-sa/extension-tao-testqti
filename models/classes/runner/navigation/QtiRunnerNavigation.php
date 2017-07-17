@@ -41,7 +41,7 @@ class QtiRunnerNavigation
      * @param string $direction
      * @param string $scope
      * @return RunnerNavigation
-     * @throws \common_exception_InvalidArgumentType
+     * @throws \common_exception_InconsistentData
      * @throws \common_exception_NotImplemented
      */
     public static function getNavigator($direction, $scope)
@@ -52,7 +52,7 @@ class QtiRunnerNavigation
             if ($navigator instanceof RunnerNavigation) {
                 return $navigator;
             } else {
-                throw new \common_exception_InvalidArgumentType('Navigator must be an instance of RunnerNavigation');
+                throw new \common_exception_InconsistentData('Navigator must be an instance of RunnerNavigation');
             }
         } else {
             throw new \common_exception_NotImplemented('The action is invalid!');
@@ -75,7 +75,7 @@ class QtiRunnerNavigation
         if ($context instanceof QtiRunnerServiceContext) {
             $from = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
             $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_BEFORE, $context->getTestSession(), $from);
-            ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+            ServiceManager::getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
         }
 
         $result = $navigator->move($context, $ref);
@@ -83,7 +83,7 @@ class QtiRunnerNavigation
         if ($context instanceof QtiRunnerServiceContext) {
             $to = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
             $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_AFTER, $context->getTestSession(), $from, $to);
-            ServiceManager::getServiceManager()->get(EventManager::CONFIG_ID)->trigger($event);
+            ServiceManager::getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
         }
 
         return $result;
@@ -96,29 +96,33 @@ class QtiRunnerNavigation
      */
     public static function checkTimedSectionExit(RunnerServiceContext $context, $nextPosition)
     {
-        /* @var AssessmentTestSession $session */
-        $session = $context->getTestSession();
-        $route = $session->getRoute();
-        $section = $session->getCurrentAssessmentSection();
-        $limits = $section->getTimeLimits();
+        $timerConfig = $context->getTestConfig()->getConfigValue('timer');
+        
+        if (empty($timerConfig['keepUpToTimeout'])) {
+            /* @var AssessmentTestSession $session */
+            $session = $context->getTestSession();
+            $route = $session->getRoute();
+            $section = $session->getCurrentAssessmentSection();
+            $limits = $section->getTimeLimits();
 
-        $isJumpOutOfSection = false;
-        if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
-            $nextSection = $route->getRouteItemAt($nextPosition);
+            $isJumpOutOfSection = false;
+            if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+                $nextSection = $route->getRouteItemAt($nextPosition);
 
-            $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
-        }
+                $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+            }
 
-        if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
-            $components = $section->getComponents();
+            if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
+                $components = $section->getComponents();
 
-            foreach ($components as $object) {
-                if ($object instanceof ExtendedAssessmentItemRef) {
-                    $items = $session->getAssessmentItemSessions($object->getIdentifier());
+                foreach ($components as $object) {
+                    if ($object instanceof ExtendedAssessmentItemRef) {
+                        $items = $session->getAssessmentItemSessions($object->getIdentifier());
 
-                    foreach ($items as $item) {
-                        if ($item instanceof AssessmentItemSession) {
-                            $item->endItemSession();
+                        foreach ($items as $item) {
+                            if ($item instanceof AssessmentItemSession) {
+                                $item->endItemSession();
+                            }
                         }
                     }
                 }

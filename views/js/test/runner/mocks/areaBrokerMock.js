@@ -21,9 +21,16 @@
 define([
     'jquery',
     'lodash',
-    'taoTests/runner/areaBroker'
-], function ($, _, areaBroker) {
+    'taoTests/runner/areaBroker',
+    'taoQtiTest/runner/ui/toolbox/toolbox'
+], function ($, _, areaBrokerFactory, toolboxFactory) {
     'use strict';
+
+    /**
+     * The mock
+     * @type {Object}
+     */
+    var areaBroker;
 
     /**
      * The list of default areas
@@ -46,26 +53,47 @@ define([
 
     /**
      * Builds and returns a new areaBroker with dedicated areas.
-     * @param areas - A list of areas to create
+     * @param config.$brokerContainer - where to create the area broker - default to #qunit-fixture
+     * @param {String[]} config.areas - A list of areas to create, or...
+     * @param {Object} config.mapping - ... a list of already created areas
      * @returns {areaBroker} - Returns the new areaBroker
      */
-    function areaBrokerMock(areas) {
-        var mapping = {};
-        var $container = $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner');
+    function areaBrokerMock(config) {
+        var $areaBrokerDom = $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner');
 
-        if (!areas) {
-            areas = defaultAreas;
+        config = config || {};
+
+        if (!config.mapping) {
+            config.mapping = {};
+            if (!config.areas) {
+                config.areas = defaultAreas;
+            } else {
+                config.areas = _.keys(_.merge(_.object(config.areas), _.object(defaultAreas)));
+            }
+
+            _.forEach(config.areas, function (areaId) {
+                config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
+            });
+
         } else {
-            areas = _.keys(_.merge(_.object(areas), _.object(defaultAreas)));
+            _.union(defaultAreas, (config.areas || [])).forEach(function(areaId) {
+                // create missing areas
+                if (!config.mapping[areaId]) {
+                    config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
+                }
+            });
         }
 
-        _.forEach(areas, function (areaId) {
-            mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($container);
-        });
+        if (! config.$brokerContainer) {
+            config.$brokerContainer = $('#qunit-fixture');
+        }
+        config.$brokerContainer.append($areaBrokerDom);
 
-        $('#qunit-fixture').append($container);
+        areaBroker = areaBrokerFactory($areaBrokerDom, config.mapping);
 
-        return areaBroker($container, mapping);
+        areaBroker.setComponent('toolbox', toolboxFactory().init());
+
+        return areaBroker;
     }
 
     return areaBrokerMock;

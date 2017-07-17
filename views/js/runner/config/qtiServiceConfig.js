@@ -30,8 +30,10 @@ define([
      * @private
      */
     var _defaults = {
-        serviceController : 'Runner',
-        serviceExtension : 'taoQtiTest'
+        bootstrap : {
+            serviceController : 'Runner',
+            serviceExtension : 'taoQtiTest'
+        }
     };
 
     /**
@@ -43,8 +45,8 @@ define([
         testDefinition : true,
         testCompilation : true,
         serviceCallId : true,
-        serviceController : false,
-        serviceExtension : false
+        bootstrap : false,
+        timeout : false
     };
 
     /**
@@ -56,11 +58,11 @@ define([
     function getConfig(config) {
         var storage = {};
         _.forEach(_entries, function(value, name) {
-           if ('undefined' !== typeof config[name]) {
-               storage[name] = config[name];
-           } else if (value) {
-               throw new Error('The config entry "' + name + '" is required!');
-           }
+            if ('undefined' !== typeof config[name]) {
+                storage[name] = config[name];
+            } else if (value) {
+                throw new Error('The config entry "' + name + '" is required!');
+            }
         });
         return _.defaults(storage, _defaults);
     }
@@ -78,6 +80,14 @@ define([
     function configFactory(config) {
         // protected storage
         var storage = getConfig(config);
+        var noop;
+
+        // convert some values from seconds to milliseconds
+        if (storage.timeout) {
+            storage.timeout *= 1000;
+        } else {
+            storage.timeout = noop;
+        }
 
         // returns only a proxy storage object : no direct access to data is provided
         return {
@@ -110,7 +120,7 @@ define([
              * @returns {String}
              */
             getServiceController : function getServiceController() {
-                return storage.serviceController;
+                return storage.bootstrap.serviceController || _defaults.bootstrap.serviceController;
             },
 
             /**
@@ -118,7 +128,7 @@ define([
              * @returns {String}
              */
             getServiceExtension : function getServiceExtension() {
-                return storage.serviceExtension;
+                return storage.bootstrap.serviceExtension || _defaults.bootstrap.serviceExtension;
             },
 
             /**
@@ -162,6 +172,54 @@ define([
                     testServiceCallId : this.getServiceCallId(),
                     itemDefinition : uri
                 });
+            },
+
+            /**
+             * Gets the request timeout
+             * @returns {Number}
+             */
+            getTimeout : function getTimeout() {
+                return storage.timeout;
+            },
+
+            /**
+             * Gets the config for the communication channel
+             * @returns {Object}
+             */
+            getCommunicationConfig : function getCommunicationConfig() {
+                var communication = storage.bootstrap.communication || {};
+                var extension = communication.extension || this.getServiceExtension();
+                var controller = communication.controller || this.getServiceController();
+                var action = communication.action;
+
+                // build the service address from the provided config
+                // it can be overwritten by a full url from the config
+                var service = helpers._url(action, controller, extension, {
+                    testDefinition : this.getTestDefinition(),
+                    testCompilation : this.getTestCompilation(),
+                    serviceCallId : this.getServiceCallId()
+                });
+
+                // append the address of the remote service to target
+                var params = _.merge(communication.params || {}, {
+                    service: communication.service || service
+                });
+
+                // convert some values from seconds to milliseconds
+                if (params.timeout) {
+                    params.timeout *= 1000;
+                } else {
+                    params.timeout = storage.timeout;
+                }
+                if (params.interval) {
+                    params.interval *= 1000;
+                }
+
+                return {
+                    enabled: communication.enabled,
+                    type: communication.type,
+                    params: params
+                };
             }
         };
     }

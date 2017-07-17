@@ -19,7 +19,7 @@
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 use qtism\common\collections\IntegerCollection;
 use qtism\common\collections\StringCollection;
 use qtism\data\ViewCollection;
@@ -139,8 +139,8 @@ class taoQtiTest_models_classes_QtiTestConverter
                         if ($value instanceof QtiComponent) {
                             $array[$property->getName()] = $this->componentToArray($value);
                         } else
-                            if ($value instanceof Duration) {
-                                $array[$property->getName()] = $value->getSeconds(true);
+                            if ($value instanceof QtiDuration) {
+                                $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds($value);
                             } else
                                 if ($value instanceof IntegerCollection || $value instanceof StringCollection) {
                                     $array[$property->getName()] = array();
@@ -310,7 +310,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param mixed $value
      * @param object $class
-     * @return \qtism\common\datatypes\Duration
+     * @return \qtism\common\datatypes\QtiDuration
      */
     private function componentValue($value, $class)
     {
@@ -318,8 +318,8 @@ class taoQtiTest_models_classes_QtiTestConverter
             if (is_array($value)) {
                 return $this->createComponentCollection(new ReflectionClass($class->name), $value);
             } else
-                if ($class->name === 'qtism\common\datatypes\Duration') {
-                    return new qtism\common\datatypes\Duration('PT' . $value . 'S');
+                if ($class->name === 'qtism\common\datatypes\QtiDuration') {
+                    return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
                 }
         }
         return $value;

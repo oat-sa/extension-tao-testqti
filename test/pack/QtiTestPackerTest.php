@@ -21,8 +21,6 @@ namespace oat\taoQtiTest\test\pack;
 
 use \core_kernel_classes_Resource;
 use oat\taoQtiTest\models\pack\QtiTestPacker;
-use oat\taoTests\model\pack\Packable;
-use oat\taoTests\model\pack\TestPack;
 use oat\tao\test\TaoPhpUnitTestRunner;
 
 
@@ -57,6 +55,11 @@ class QtiTestPackerTest extends TaoPhpUnitTestRunner
     public function testWrongContentToPack(){
 
         $testPacker = new QtiTestPacker();
-        $testPacker->packTest(new core_kernel_classes_Resource('foo'));
+
+        $directory = $this->getMockBuilder(\tao_models_classes_service_StorageDirectory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $testPacker->packTest(new core_kernel_classes_Resource('foo'), $directory);
     }
 }

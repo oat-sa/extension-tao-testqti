@@ -23,11 +23,13 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, buttonTpl){
+    'taoQtiTest/runner/helpers/messages',
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function ($, _, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 
     /**
@@ -69,7 +71,7 @@ define([
 
             $element.data('control', buttonData[dataType].control)
                     .attr('title', buttonData[dataType].title)
-                    .find('.text').text(buttonData[dataType].title);
+                    .find('.text').text(buttonData[dataType].text);
         }
     };
 
@@ -98,15 +100,32 @@ define([
                 return false;
             };
 
+            function doSkip() {
+                testRunner.skip();
+            }
+
             this.$element = createElement(testRunner.getTestContext());
 
             this.$element.on('click', function(e){
+                var enable = _.bind(self.enable, self);
+                var context = testRunner.getTestContext();
+
                 e.preventDefault();
 
                 if(self.getState('enabled') !== false){
                     self.disable();
-
-                    testRunner.skip();
+                    if(context.options.endTestWarning && context.isLast){
+                        testRunner.trigger(
+                            'confirm.endTest',
+                            messages.getExitMessage(
+                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                                'test', testRunner),
+                            doSkip, // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+                    } else {
+                        doSkip();
+                    }
                 }
             });
 
@@ -119,10 +138,10 @@ define([
                         updateElement(self.$element, testRunner.getTestContext());
                     }
                 })
-                .on('renderitem', function(){
+                .on('enablenav', function(){
                     self.enable();
                 })
-                .on('unloaditem', function(){
+                .on('disablenav', function(){
                     self.disable();
                 });
         },

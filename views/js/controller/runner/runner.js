@@ -18,110 +18,29 @@
 
 /**
  * Test runner controller entry
+ *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
     'jquery',
     'lodash',
     'i18n',
-    'module',
+    'context',
     'core/promise',
+    'core/communicator',
+    'core/communicator/poll',
+    'core/logger',
     'layout/loading-bar',
-
+    'ui/feedback',
     'taoTests/runner/runner',
     'taoQtiTest/runner/provider/qti',
-    'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/qtiServiceProxy',
-    'taoQtiTest/runner/plugins/loader',
-
+    'taoQtiTest/runner/proxy/loader',
+    'core/pluginLoader',
+    'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, module, Promise, loadingBar,
-             runner, qtiProvider, proxy, qtiServiceProxy, pluginLoader) {
+], function ($, _, __, context, Promise, communicator, pollProvider, loggerFactory, loadingBar, feedback,
+             runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
-
-
-    /*
-     *TODO plugins list, provider registration should be loaded dynamically
-     */
-
-    runner.registerProvider('qti', qtiProvider);
-    proxy.registerProxy('qtiServiceProxy', qtiServiceProxy);
-
-    /**
-     * Catches errors
-     * @param {Object} err
-     */
-    function onError(err) {
-        loadingBar.stop();
-
-        //TODO to be replaced by the logger
-        window.console.error(err);
-    }
-
-    /**
-     * Call the destroy action of the test runner
-     * Must be applied on a test runner instance: destroyRunner.call(runner);
-     */
-    function destroyRunner() {
-        var self = this;
-        //FIXME this should be handled by the eventifier instead of doing a delay
-        _.delay(function(){
-            self.destroy();
-        }, 300); //let deferred exec a chance to finish
-    }
-
-
-    /**
-     * Initializes and launches the test runner
-     * @param {Object} config
-     */
-    function initRunner(config) {
-        var plugins = pluginLoader.getPlugins();
-
-        _.defaults(config, {
-            renderTo: $('.runner')
-        });
-
-        //instantiate the QtiTestRunner
-        runner('qti', plugins, config)
-            .before('error', function (e, err) {
-                var self = this;
-
-                onError(err);
-
-                if (err && err.type && err.type === 'TestState') {
-                    // test has been closed/suspended => redirect to the index page after message acknowledge
-                    this.trigger('alert', err.message, function() {
-                        self.trigger('endsession', 'teststate', err.code);
-                        destroyRunner.call(self);
-                    });
-
-                    // prevent other messages/warnings
-                    return false;
-                }
-            })
-            .on('ready', function () {
-                _.defer(function () {
-                    $('.runner').removeClass('hidden');
-                });
-            })
-            .on('unloaditem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.start();
-            })
-            .on('renderitem', function () {
-                //TODO move the loading bar into a plugin
-                loadingBar.stop();
-            })
-            .after('finish', function () {
-                destroyRunner.call(this);
-            })
-            .on('destroy', function () {
-                //at the end, we are redirected to the exit URL
-                window.location = config.exitUrl;
-            })
-            .init();
-    }
 
     /**
      * List of options required by the controller
@@ -131,68 +50,147 @@ define([
         'testDefinition',
         'testCompilation',
         'serviceCallId',
-        'exitUrl'
+        'bootstrap',
+        'exitUrl',
+        'plugins'
     ];
+
+    /**
+     * TODO provider registration should be loaded dynamically
+     * the same way the proxy and the plugins are loaded
+     */
+    runner.registerProvider('qti', qtiProvider);
+    communicator.registerProvider('poll', pollProvider);
 
     /**
      * The runner controller
      */
-    var runnerController = {
+    return {
 
         /**
          * Controller entry point
          *
-         * @param {Object} options - the testRunner options
-         * @param {String} options.testDefinition
-         * @param {String} options.testCompilation
-         * @param {String} options.serviceCallId
-         * @param {String} options.serviceController
-         * @param {String} options.serviceExtension
-         * @param {String} options.exitUrl - the full URL where to return at the final end of the test
+         * @param {Object}   options - the testRunner options
+         * @param {String}   options.testDefinition - the test definition id
+         * @param {String}   options.testCompilation - the test compilation id
+         * @param {String}   options.serviceCallId - the service call id
+         * @param {Object}   options.bootstrap - contains the extension and the controller to call
+         * @param {String}   options.exitUrl - the full URL where to return at the final end of the test
+         * @param {Object[]} options.plugins - the collection of plugins to load
          */
         start: function start(options) {
-            var startOptions = options || {};
-            var config = module.config();
-            var missingOption = false;
+
+            var exitReason;
+            var $container = $('.runner');
+            var logger     = loggerFactory('controller/runner', { runnerOptions : options });
+
+            /**
+             * Does the option exists ?
+             * @param {String} name - the option key
+             * @returns {Boolean}
+             */
+            var hasOption = function hasOption(name){
+                return typeof options[name] !== 'undefined';
+            };
+
+            /**
+             * Exit the test runner using the configured exitUrl
+             * @param {String} [reason] - to add a warning once left
+             */
+            var exit = function exit(reason){
+                var url = options.exitUrl;
+                if (reason) {
+                    url = urlUtil.build(url, {
+                        warning: reason
+                    });
+                }
+                window.location = url;
+            };
+
+            /**
+             * Handles errors
+             * @param {Error} err - the thrown error
+             * @param {String} [displayMessage] - an alternate message to display
+             */
+            var onError = function onError(err, displayMessage) {
+                loadingBar.stop();
+                logger.error({ displayMessage : displayMessage }, err);
+
+                if(err.code === 403) {
+                    //we just leave if any 403 occurs
+                    return exit();
+                }
+                feedback().error(displayMessage || err.message, { timeout : -1 });
+            };
+
+            /**
+             * Load the plugins dynamically
+             * @param {Object[]} plugins - the collection of plugins to load
+             * @returns {Promise} resolves with the list of loaded plugins
+             */
+            var loadPlugins = function loadPlugins(plugins){
+
+                return pluginLoaderFactory()
+                        .addList(plugins)
+                        .load(context.bundle);
+            };
+
+            /**
+             * Load the configured proxy provider
+             * @returns {Promise} resolves with the name of the proxy provider
+             */
+            var loadProxy = function loadProxy(){
+                return proxyLoader();
+            };
+
+            loadingBar.start();
 
             // verify required options
-            _.forEach(requiredOptions, function(name) {
-                if (!startOptions[name]) {
-                    onError({
-                        success: false,
-                        code: 0,
-                        type: 'error',
-                        message: __('Missing required option %s', name)
-                    });
-                    missingOption = true;
-                    return false;
-                }
-            });
-
-            if (!missingOption) {
-                loadingBar.start();
-
-                if (config) {
-                    _.forEach(config.plugins, function (plugin) {
-                        pluginLoader.add(plugin.module, plugin.category, plugin.position);
-                    });
-                }
-
-                pluginLoader.load()
-                    .then(function () {
-                        initRunner(_.omit(startOptions, 'plugins'));
-                    })
-                    .catch(function () {
-                        onError({
-                            success: false,
-                            code: 0,
-                            type: 'error',
-                            message: __('Plugin dependency error!')
-                        });
-                    });
+            if( ! _.every(requiredOptions, hasOption)) {
+                return onError(new TypeError(__('Missing required option %s', name)));
             }
+
+            //load the plugins and the proxy provider
+            Promise
+                .all([
+                    loadPlugins(options.plugins),
+                    loadProxy()
+                ])
+                .then(function (results) {
+
+                    var plugins = results[0];
+                    var proxyProviderName = results[1];
+
+                    var config = _.omit(options, 'plugins');
+                    config.proxyProvider = proxyProviderName;
+                    config.renderTo      = $container;
+
+                    logger.debug({ config: config, plugins: plugins}, 'Start test runner');
+
+                    //instantiate the QtiTestRunner
+                    runner('qti', plugins, config)
+                        .on('error', onError)
+                        .on('ready', function () {
+                            _.defer(function () {
+                                $container.removeClass('hidden');
+                            });
+                        })
+                        .on('pause', function(data) {
+                            if (data && data.reason) {
+                                exitReason = data.reason;
+                            }
+                        })
+                        .after('destroy', function () {
+                            this.removeAllListeners();
+
+                            // at the end, we are redirected to the exit URL
+                            exit(exitReason);
+                        })
+                        .init();
+                })
+                .catch(function(err){
+                    onError(err, __('An error occurred during the test initialization!'));
+                });
         }
     };
-
-    return runnerController;
 });

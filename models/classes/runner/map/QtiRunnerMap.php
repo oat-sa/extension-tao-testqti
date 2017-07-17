@@ -22,27 +22,71 @@
 
 namespace oat\taoQtiTest\models\runner\map;
 
+use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
-use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\RouteItem;
+use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 /**
  * Class QtiRunnerMap
  * @package oat\taoQtiTest\models\runner\map
  */
-class QtiRunnerMap implements RunnerMap
+class QtiRunnerMap extends ConfigurableService implements RunnerMap
 {
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
+
+    /**
+     * @todo TAO-4605 remove this temporary workaround
+     * @var array
+     */
+    protected $itemsTable;
+
+    /**
+     * Gets the Item Reference ("itemUri|publicUri|privateUri") from an identifier
+     * @todo TAO-4605 remove this temporary workaround
+     * @param RunnerServiceContext $context
+     * @param string $itemIdentifier
+     * @return string|null
+     */
+    public function getItemHref(RunnerServiceContext $context, $itemIdentifier)
+    {
+        if (!isset($this->itemsTable)) {
+            $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+            $this->itemsTable = $storage->loadItemsTable($context->getTestExecutionUri());
+        }
+        if (isset($this->itemsTable[$itemIdentifier])) {
+            return $this->itemsTable[$itemIdentifier];
+        }
+        return null;
+    }
+    
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context The test context
      * @param RunnerConfig $config The runner config
      * @return mixed
+     * @throws \common_exception_InvalidArgumentType
      */
     public function getMap(RunnerServiceContext $context, RunnerConfig $config)
     {
+        if (!($context instanceof QtiRunnerServiceContext)) {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerMap',
+                'getMap',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
+
+        /** @todo TAO-4605 remove this temporary workaround */
+        $this->itemsTable = [];
+        /***/
+        
         $map = [
             'parts' => [],
             'jumps' => []
@@ -50,9 +94,12 @@ class QtiRunnerMap implements RunnerMap
 
         // get config for the sequence number option
         $reviewConfig = $config->getConfigValue('review');
+        $checkInformational = $config->getConfigValue('checkInformational');
         $forceTitles = !empty($reviewConfig['forceTitle']);
+        $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
-        
+        $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
 
@@ -65,6 +112,7 @@ class QtiRunnerMap implements RunnerMap
             $offsetSection = 0;
             $lastPart = null;
             $lastSection = null;
+            /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 // access the item reference
                 $itemRef = $routeItem->getAssessmentItemRef();
@@ -76,9 +124,14 @@ class QtiRunnerMap implements RunnerMap
                 // load item infos
                 $testPart = $routeItem->getTestPart();
                 $partId = $testPart->getIdentifier();
-                $sections = $routeItem->getAssessmentSections();
-                $sectionId = key(current($sections));
-                $section = $sections[$sectionId];
+
+                if ($displaySubsectionTitle) {
+                    $section = $routeItem->getAssessmentSection();
+                } else {
+                    $sections = $routeItem->getAssessmentSections()->getArrayCopy();
+                    $section = $sections[0];
+                }
+                $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
                 $itemUri = strstr($itemRef->getHref(), '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
@@ -92,11 +145,27 @@ class QtiRunnerMap implements RunnerMap
                 }
 
                 if ($forceTitles) {
-                    $label = sprintf($uniqueTitle, $offsetSection + 1);
+                    $label = __($uniqueTitle, $offsetSection + 1);
                 } else {
-                    $label = $item->getLabel();
+                    if ($useTitle) {
+                        $label = $context->getItemIndexValue($itemUri, 'title');
+                    } else {
+                        $label = '';
+                    }
+                    
+                    if (!$label) {
+                        $label = $context->getItemIndexValue($itemUri, 'label');
+                    }
+                    
+                    if (!$label) {
+                        $label = $item->getLabel();
+                    }
                 }
-                
+
+                /** @todo TAO-4605 remove this temporary workaround */
+                $this->itemsTable[$itemId] = $itemRef->getHref();
+                /***/
+
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
@@ -104,12 +173,17 @@ class QtiRunnerMap implements RunnerMap
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
                     'positionInSection' => $offsetSection,
+                    'index' => $offsetSection + 1,
                     'occurrence' => $occurrence,
                     'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                    'answered' => \taoQtiTest_helpers_TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
-                    'flagged' => \taoQtiTest_helpers_TestRunnerUtils::getItemFlag($session, $routeItem),
+                    'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
+                    'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
                     'viewed' => $itemSession->isPresented(),
                 ];
+                
+                if ($checkInformational) {
+                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
+                }
                 
                 // update the map
                 $map['jumps'][] = [
@@ -143,6 +217,11 @@ class QtiRunnerMap implements RunnerMap
             }
         }
         
+        /** @todo TAO-4605 remove this temporary workaround */
+        $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+        $storage->storeItemsTable($context->getTestExecutionUri(), $this->itemsTable);
+        /***/
+        
         return $map;
     }
 
@@ -155,11 +234,16 @@ class QtiRunnerMap implements RunnerMap
     {
         if (!isset($target['stats'])) {
             $target['stats'] = [
+                'questions' => 0,
                 'answered' => 0,
                 'flagged' => 0,
                 'viewed' => 0,
                 'total' => 0,
             ];
+        }
+
+        if (empty($itemInfos['informational'])) {
+            $target['stats']['questions'] ++;
         }
         
         if (!empty($itemInfos['answered'])) {

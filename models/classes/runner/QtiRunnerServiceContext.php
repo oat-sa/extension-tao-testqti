@@ -22,10 +22,13 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+
 
 /**
  * Class QtiRunnerServiceContext
@@ -61,6 +64,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var array
      */
     private $testMeta;
+    
+    /**
+     * The index of compiled items.
+     *
+     * @var QtiTestCompilerIndex
+     */
+    private $itemIndex;
 
     /**
      * The URI of the assessment test
@@ -110,9 +120,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
-
-
+        
         $this->retrieveTestMeta();
+        $this->retrieveItemIndex();
     }
 
     /**
@@ -147,11 +157,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
-        
+
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
 
-        $this->storage = new \taoQtiTest_helpers_TestSessionStorage($sessionManager, $seeker, $userUri);
+
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $storageClassName = $config['test-session-storage'];
+        $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
     }
 
     /**
@@ -164,14 +177,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionId = $this->getTestExecutionUri();
 
         if ($storage->exists($sessionId) === false) {
-            \common_Logger::i("Instantiating QTI Assessment Test Session");
+            \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
             $testTaker = \common_session_SessionManager::getSession()->getUser();
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
-            \common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
+            \common_Logger::d("Retrieving QTI Assessment Test Session '${sessionId}'...");
             $this->setTestSession($storage->retrieve($this->getTestDefinition(), $sessionId));
         }
 
@@ -181,11 +194,50 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
      */
-    protected function retrieveTestMeta() {
+    protected function retrieveTestMeta() 
+    {
         $directories = $this->getCompilationDirectory();
-        $privateDirectoryPath = $directories['private']->getPath();
-        $meta = include($privateDirectoryPath . TAOQTITEST_COMPILED_META_FILENAME);
-        $this->testMeta = $meta;
+        $data = $directories['private']->read(TAOQTITEST_COMPILED_META_FILENAME);
+        $data = str_replace('<?php', '', $data);
+        $data = str_replace('?>', '', $data);
+        $this->testMeta = eval($data);
+    }
+    
+    /**
+     * Retrieves the index of compiled items.
+     */
+    protected function retrieveItemIndex() 
+    {
+        $this->itemIndex = new QtiTestCompilerIndex();
+        try {
+            $directories = $this->getCompilationDirectory();
+            $data = $directories['private']->read(TAOQTITEST_COMPILED_INDEX);
+            if ($data) {
+                $this->itemIndex->unserialize($data);
+            }
+        } catch(\Exception $e) {
+            \common_Logger::d('Ignoring file not found exception for Items Index');
+        }
+    }
+
+    /**
+     * Sets the test session
+     * @param mixed $testSession
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function setTestSession($testSession)
+    {
+        if ($testSession instanceof TestSession) {
+            parent::setTestSession($testSession);
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerServiceContext',
+                'setTestSession',
+                0,
+                'oat\taoQtiTest\models\runner\session\TestSession',
+                $testSession
+            );
+        }
     }
 
     /**
@@ -249,5 +301,28 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getTestExecutionUri()
     {
         return $this->testExecutionUri;
+    }
+
+    /**
+     * Gets info from item index
+     * @param string $id
+     * @return mixed
+     * @throws \common_exception_Error
+     */
+    public function getItemIndex($id) 
+    {
+        return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
+    }
+
+    /**
+     * Gets a particular value from item index
+     * @param string $id
+     * @param string $name
+     * @return mixed
+     * @throws \common_exception_Error
+     */
+    public function getItemIndexValue($id, $name) 
+    {
+        return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
 }

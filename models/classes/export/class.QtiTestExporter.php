@@ -19,6 +19,10 @@
  */
 
 use qtism\data\storage\xml\XmlDocument;
+use oat\oatbox\filesystem\Directory;
+use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
+use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * A specialization of QTI ItemExporter aiming at exporting IMS QTI Test definitions from the TAO
@@ -60,6 +64,11 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      * @var DOMDocument
      */
     private $manifest = null;
+
+    /**
+     * @var MetadataExporter Service to export metadata to IMSManifest
+     */
+    protected $metadataExporter;
 
     /**
      * Create a new instance of QtiTestExport.
@@ -177,7 +186,10 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // 2. Export the test definition itself.
         $this->exportTest($itemIdentifiers);
 
-        // 3. Persist manifest in archive.
+        // 3. Export test metadata to manifest
+        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
+
+        // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
 
         return $report;
@@ -190,13 +202,13 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     protected function exportItems()
     {
-        $report = common_report_Report::createSuccess();
-        $subReport = common_report_Report::createSuccess();
+        $report = common_report_Report::createSuccess(__('Export successful for the test "%s"', $this->getItem()->getLabel()));
         $identifiers = array();
-        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
-        $extraPath = str_replace(DIRECTORY_SEPARATOR, '/', $extraPath);
+
+        $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        $extraPath = str_replace('\\', '/', dirname($rootDir->getRelPath($file)));
+        $extraPath = trim($extraPath, '/');
 
         $extraReversePath = '';
         if (empty($extraPath) === false) {
@@ -207,11 +219,11 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
                 $parts[] = '..';
             }
 
-            $extraReversePath = implode('/', $parts) . DIRECTORY_SEPARATOR;
+            $extraReversePath = implode('/', $parts) . '/';
         }
 
         foreach ($this->getItems() as $refIdentifier => $item) {
-            $itemExporter = new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+            $itemExporter = $this->createItemExporter($item);
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
                 $identifiers[] = $itemExporter->buildIdentifier();
                 $subReport = $itemExporter->export();
@@ -225,10 +237,12 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             if ($report->getType() !== common_report_Report::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
             ) {
+                //only report erros otherwise the list of report can be very long
                 $report->setType(common_report_Report::TYPE_ERROR);
-                $report->setMessage(__('Export error in test : %s', $this->getItem()->getLabel()));
+                $report->setMessage(__('Export failed for the test "%s"', $this->getItem()->getLabel()));
+                $report->add($subReport);
             }
-            $report->add($subReport);
+
         }
         $report->setData($identifiers);
 
@@ -242,32 +256,29 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     protected function exportTest(array $itemIdentifiers)
     {
-        // Serialize the test definition somewhere and add
-        // it to the archive.
-        $tmpPath = tempnam('/tmp', 'tao');
-        $this->getTestDocument()->save($tmpPath);
-        $testPath = $this->getTestService()->getTestContent($this->getItem())->getAbsolutePath();
+        $testXmlDocument = $this->postProcessing($this->getTestDocument()->saveToString());
 
-        // Add the test definition in the archive.
-        $testBasePath = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
-        $extraPath = trim(str_replace(array($testPath, TAOQTITEST_FILENAME), '',
-            $this->getTestService()->getDocPath($this->getItem())), DIRECTORY_SEPARATOR);
-
-        $testHref = $testBasePath . ((empty($extraPath) === false) ? $extraPath . '/' : '') . 'test.xml';
+        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()).'/';
+        $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        // revert backslashes introduced by dirname on windows
+        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
+        $testHref = $newTestDir . (empty($relPath) ? '' : $relPath.'/') . 'test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
-        $this->addFile($tmpPath, $testHref);
+        $this->getZip()->addFromString($testHref, $testXmlDocument);
         $this->referenceTest($testHref, $itemIdentifiers);
 
-
-        $files = tao_helpers_File::scandir($testPath, array('recursive' => true, 'absolute' => true));
-        foreach ($files as $f) {
+        $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
+        $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
+        foreach ($iterator as $f) {
             // Only add dependency files...
-            if (is_dir($f) === false && strpos($f, TAOQTITEST_FILENAME) === false) {
+            if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
+
                 // Add the file to the archive.
-                $fileHref = $testBasePath . ltrim(str_replace($testPath, '', $f), '/');
+                $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
-                $this->getZip()->addFile($f, $fileHref);
+                $this->getZip()->addFromString($fileHref, $f->read());
                 $this->referenceAuxiliaryFile($fileHref);
             }
         }
@@ -291,7 +302,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         // Create the IMS Manifest <resource> element.
         $resourceElt = $manifest->createElement('resource');
         $resourceElt->setAttribute('identifier', $identifier);
-        $resourceElt->setAttribute('type', 'imsqti_test_xmlv2p1');
+        $resourceElt->setAttribute('type', $this->getTestResourceType());
         $resourceElt->setAttribute('href', $href);
         $targetElt->appendChild($resourceElt);
 
@@ -345,5 +356,34 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $fileElt->setAttribute('href', ltrim($href, '/'));
 
         $firstDependencyElt->parentNode->insertBefore($fileElt, $firstDependencyElt);
+    }
+    
+    protected function createItemExporter(core_kernel_classes_Resource $item)
+    {
+        return new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
+    }
+    
+    protected function getTestResourceType()
+    {
+        return 'imsqti_test_xmlv2p1';
+    }
+    
+    protected function postProcessing($testXmlDocument)
+    {
+        return $testXmlDocument;
+    }
+
+    /**
+     * Get the service to export Metadata
+     *
+     * @return MetadataExporter
+     */
+    protected function getMetadataExporter()
+    {
+        if (! $this->metadataExporter) {
+            $this->metadataExporter = ServiceManager::getServiceManager()->get(MetadataService::SERVICE_ID)->getExporter();
+        }
+        return $this->metadataExporter;
+
     }
 }

@@ -25,7 +25,7 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\data\AssessmentTest;
 use qtism\data\IAssessmentItem;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 
 /**
  * A TAO specific implementation of QTISM's AbstractSessionManager.
@@ -34,7 +34,12 @@ use qtism\common\datatypes\Duration;
  *
  */
 class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
-   
+
+    /**
+     * The class name of the default TestSession
+     */
+    const DEFAULT_TEST_SESSION = '\\taoQtiTest_helpers_TestSession';
+
     /**
      * The result server to be used by tao_helpers_TestSession created by the factory.
      * 
@@ -57,7 +62,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      */
     public function __construct(taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
         parent::__construct();
-        $this->setAcceptableLatency(new Duration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
+        $this->setAcceptableLatency(new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
         $this->setResultServer($resultServer);
         $this->setTest($test);
     }
@@ -100,11 +105,34 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     
     /**
      * Instantiates an AssessmentTestSession with the default implementation provided by QTISM.
-     *
+     * @param AssessmentTest $test
+     * @param Route $route
      * @return AssessmentTestSession
      */
     protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
-        return new taoQtiTest_helpers_TestSession($test, $this, $route, $this->getResultServer(), $this->getTest());
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        
+        // Test Session class instantiation, depending on configuration.
+        if (!isset($config) || !isset($config['test-session'])) {
+            $className = self::DEFAULT_TEST_SESSION;
+            \common_Logger::w("Missing configuration for TestRunner session class, using '${className}' by default!");
+        } else {
+            $className = $config['test-session'];
+        }
+        
+        $assessmentTestSession = new $className($test, $this, $route, $this->getResultServer(), $this->getTest());
+        
+        $forceBranchrules = (isset($config['force-branchrules'])) ? $config['force-branchrules'] : false;
+        $forcePreconditions = (isset($config['force-preconditions'])) ? $config['force-preconditions'] : false;
+        $pathTracking = (isset($config['path-tracking'])) ? $config['path-tracking'] : false;
+        $alwaysAllowJumps = (isset($config['always-allow-jumps'])) ? $config['always-allow-jumps'] : false;
+        
+        $assessmentTestSession->setForceBranching($forceBranchrules);
+        $assessmentTestSession->setForcePreconditions($forcePreconditions);
+        $assessmentTestSession->setAlwaysAllowJumps($alwaysAllowJumps);
+        $assessmentTestSession->setPathTracking($pathTracking);
+        
+        return $assessmentTestSession;
     }
     
     /**

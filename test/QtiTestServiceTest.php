@@ -22,9 +22,7 @@ namespace oat\taoQtiTest\test;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
-use \core_kernel_classes_Property;
 use \common_ext_ExtensionsManager;
-use \taoQtiTest_models_classes_TestModel;
 use \common_report_Report;
 
 
@@ -112,14 +110,14 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testCloneContent($qtiTest, $clone)
     {
-        $origPath = $this->testService->getTestFile($qtiTest)->getAbsolutePath();
-        $clonePath = $this->testService->getTestFile($clone)->getAbsolutePath();
-        
-        $this->assertFileExists($origPath);
-        $this->assertFileExists($clonePath);
-    
+        $origFile = $this->testService->getQtiTestFile($qtiTest);
+        $cloneFile = $this->testService->getQtiTestFile($clone);
+
+        $origPath = $origFile->getPrefix();
+        $clonePath = $cloneFile->getPrefix();
+
         $this->assertNotEquals($origPath, $clonePath);
-        $this->assertFileEquals($origPath, $clonePath);
+        $this->assertEquals($origFile->read(), $cloneFile->read());
     }
         
     /**
@@ -189,15 +187,13 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     {
         $attrValue = '"A & B < C"';
         
-        $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
-        $qtiTest->setLabel($attrValue);
-        $this->testService->createContent($qtiTest);
-        $xmlFilePath = $this->testService->getDocPath($qtiTest);
-        $this->assertTrue(file_exists($xmlFilePath));
+        $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), $attrValue);
+        $xmlFile = $this->testService->getQtiTestFile($qtiTest);
+        $this->assertTrue($xmlFile->exists());
         
         $doc = new \DOMDocument();
         
-        $this->assertTrue($doc->load($xmlFilePath));
+        $this->assertTrue($doc->loadXML($xmlFile->read()));
         $this->assertEquals($attrValue, $doc->documentElement->getAttribute('title'));
         
         $this->testService->deleteTest($qtiTest);

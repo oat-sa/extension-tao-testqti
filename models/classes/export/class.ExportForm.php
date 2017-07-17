@@ -27,8 +27,7 @@
  * @package taoItems
  
  */
-class taoQtiTest_models_classes_export_ExportForm
-    extends tao_helpers_form_FormContainer
+abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_form_FormContainer
 {
     // --- ASSOCIATIONS ---
 
@@ -75,7 +74,7 @@ class taoQtiTest_models_classes_export_ExportForm
     {
 
     	$testService = taoTests_models_classes_TestsService::singleton();
-    	$testModel = new core_kernel_classes_Resource(INSTANCE_TEST_MODEL_QTI);
+    	$testModel = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI);
 
 		$fileName = '';
     	$options = array();
@@ -93,7 +92,7 @@ class taoQtiTest_models_classes_export_ExportForm
 	    		$class = $this->data['class'];
 	    	}
 	    	else{
-	    		$class = $itemService->getRootClass();
+	    		$class = $testService->getRootClass();
 	    	}
     		if($class instanceof core_kernel_classes_Class){
 					$fileName =  strtolower(tao_helpers_Display::textCleaner($class->getLabel(), '*'));
@@ -122,7 +121,13 @@ class taoQtiTest_models_classes_export_ExportForm
 		$this->form->addElement($instanceElt);
 
 
-    	$this->form->createGroup('options', __('Export QTI 2.1 Test Package'), array( 'filename', 'instances'));
+    	$this->form->createGroup('options', '<h3>'.$this->getFormGroupName().'</h3>', array( 'filename', 'instances'));
     }
+
+	/**
+	 * Get the form group name to be display
+	 * @return string
+	 */
+	abstract protected function getFormGroupName();
 
 }

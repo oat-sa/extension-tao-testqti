@@ -28,7 +28,7 @@ define([
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/messages',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
+    'tpl!taoQtiTest/runner/plugins/templates/button'
 ], function ($, _, __, hider, pluginFactory, messages, buttonTpl){
     'use strict';
 
@@ -68,7 +68,7 @@ define([
 
                     if(context.options.nextSectionWarning){
                         testRunner.trigger(
-                            'confirm',
+                            'confirm.nextsection',
                             messages.getExitMessage(
                                 __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
                                 'section', testRunner),
@@ -85,12 +85,12 @@ define([
             toggle();
 
             testRunner
-                .on('move', function(){
-                    self.disable();
-                })
-                .on('renderitem', function(){
+                .on('loaditem', toggle)
+                .on('enablenav', function(){
                     self.enable();
-                    toggle();
+                })
+                .on('disablenav', function(){
+                    self.disable();
                 });
         },
 

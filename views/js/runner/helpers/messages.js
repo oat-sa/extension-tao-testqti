@@ -19,79 +19,43 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
-    'lodash',
     'i18n',
-    'taoQtiTest/runner/helpers/map'
-], function ($, _, __, mapHelper) {
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/stats'
+], function (__, mapHelper, statsHelper) {
     'use strict';
 
     /**
-     * Tells is the current item has been answered or not
-     * The item is considered answered when at least one response has been set to not empty {base : null}
-     *
-     * @returns {Boolean}
-     */
-    function isCurrentItemAnswered(runner) {
-        var answered = false;
-        _.forEach(runner.itemRunner && runner.itemRunner.getState(), function (state) {
-            var response = state && state.response;
-            if (_.isObject(response)) {
-                // base or record defined: the interaction has a response, so the item is responded
-                if (_.isObject(response.base) || _.isObject(response.record) || _.isArray(response.record)) {
-                    answered = true;
-                }
-                else if (_.isObject(response.list)) {
-                    _.forEach(response.list, function(entry) {
-                        // list defined, and something is listed: the interaction has a response, so the item is responded
-                        if (_.isArray(entry) && entry.length) {
-                            answered = true;
-                            return false;
-                        }
-                    });
-                }
-
-                if (answered) {
-                    return false;
-                }
-            }
-        });
-        return answered;
-    }
-
-    /**
      * Completes an exit message
-     * @param {String} message
-     * @param {Object} runner
+     * @param {String} message - custom message that will be appended to the unanswered stats count
+     * @param {String} scope - scope to consider for calculating the stats
+     * @param {Object} runner - testRunner instance
      * @returns {String} Returns the message text
      */
     function getExitMessage(message, scope, runner) {
-        var map = runner.getTestMap();
-        var context = runner.getTestContext();
-        var stats = mapHelper.getScopeStats(map, context.itemPosition, scope);
-        var unansweredCount = stats && (stats.total - stats.answered);
-        var flaggedCount = stats && stats.flagged;
-        var itemsCountMessage = '';
+        var stats = statsHelper.getInstantStats(scope, runner),
+            unansweredCount = stats && (stats.questions - stats.answered),
+            flaggedCount = stats && stats.flagged,
+            itemsCountMessage = '';
 
-        if (unansweredCount && isCurrentItemAnswered(runner)) {
-            unansweredCount--;
-        }
+        var testData = runner.getTestData(),
+            testConfig = testData && testData.config,
+            messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
-        if (flaggedCount && unansweredCount) {
-            itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                unansweredCount.toString(),
-                flaggedCount.toString()
-            );
-        } else {
-            if (flaggedCount) {
+        if (messageEnabled) {
+            if (flaggedCount && unansweredCount) {
+                itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
+                    unansweredCount.toString(),
+                    flaggedCount.toString()
+                );
+
+            } else if (flaggedCount) {
                 itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
-            }
 
-            if (unansweredCount) {
+            } else if (unansweredCount) {
                 itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
             }
         }
-
         return (itemsCountMessage + ' ' + message).trim();
     }
 

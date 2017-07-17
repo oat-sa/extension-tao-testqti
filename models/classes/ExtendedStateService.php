@@ -20,27 +20,51 @@
 
 namespace oat\taoQtiTest\models;
 
+use oat\oatbox\service\ConfigurableService;
+
 /**
  * Manage the flagged items
  */
-class ExtendedStateService
+class ExtendedStateService extends ConfigurableService
 {
-    const STORAGE_PREFIX = 'extra_';
+    const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
     
-    private $cache = null;
+    const STORAGE_PREFIX = 'extra_';
+
+    const VAR_REVIEW = 'review';
+    const VAR_STORE_ID = 'client_store_id';
+    const VAR_EVENTS_QUEUE = 'events_queue';
+
+    private static $cache = null;
+    private static $deliveryExecutions = null;
 
     /**
-     * Retrieve extended state informations
+     * @param string $testSessionId
+     * @return string
+     */
+    protected function getSessionUserUri($testSessionId)
+    {
+        if (!isset(self::$deliveryExecutions[$testSessionId])) {
+            self::$deliveryExecutions[$testSessionId] = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
+        }
+        if (self::$deliveryExecutions[$testSessionId]) {
+            return self::$deliveryExecutions[$testSessionId]->getUserIdentifier();
+        }
+        return \common_session_SessionManager::getSession()->getUserUri();
+    }
+
+    /**
+     * Retrieves extended state information
      * @param string $testSessionId
      * @throws \common_Exception
      * @return array
      */
     protected function getExtra($testSessionId)
     {
-        if (!isset($this->cache[$testSessionId])) {
+        if (!isset(self::$cache[$testSessionId])) {
             $storageService = \tao_models_classes_service_StateStorage::singleton();
-            $userUri = \common_session_SessionManager::getSession()->getUserUri();
-        
+            $userUri = $this->getSessionUserUri($testSessionId);
+
             $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
             if ($data) {
                 $data = json_decode($data, true);
@@ -49,51 +73,192 @@ class ExtendedStateService
                 }
             } else {
                 $data = array(
-                	'review' => array()
+                    self::VAR_REVIEW => array()
                 );
             }
-            $this->cache[$testSessionId] = $data;
+            self::$cache[$testSessionId] = $data;
         }
-        return $this->cache[$testSessionId];
+        return self::$cache[$testSessionId];
     }
-    
+
     /**
-     * Store extended state informations
+     * Stores extended state information
      * @param string $testSessionId
      * @param array $extra
      */
     protected function saveExtra($testSessionId, $extra)
     {
-        $this->cache[$testSessionId] = $extra;
+
+        self::$cache[$testSessionId] = $extra;
+
         $storageService = \tao_models_classes_service_StateStorage::singleton();
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
-    
+        $userUri = $this->getSessionUserUri($testSessionId);
+
         $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
     }
-    
+
+    /**
+     * Gets a value from the storage
+     * @param string $testSessionId
+     * @param string $name
+     * @param null $default
+     * @return mixed|null
+     * @throws \common_exception_InconsistentData
+     */
+    protected function getValue($testSessionId, $name, $default = null)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra[$name])
+            ? $extra[$name]
+            : $default;
+    }
+
     /**
      * Set the marked for review state of an item
-     * @param string $sessionId
+     * @param string $testSessionId
      * @param string $itemRef
      * @param boolean $flag
      */
-    public function setItemFlag($sessionId, $itemRef, $flag) {
-        $extra = $this->getExtra($sessionId);
-        $extra['review'][$itemRef] = $flag;
-        $this->saveExtra($sessionId, $extra);
+    public function setItemFlag($testSessionId, $itemRef, $flag)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_REVIEW][$itemRef] = $flag;
+
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Gets the marked for review state of an item
+     * @param string $testSessionId
+     * @param string $itemRef
+     * @return bool
+     * @throws \common_exception_InconsistentData
+     */
+    public function getItemFlag($testSessionId, $itemRef)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra[self::VAR_REVIEW][$itemRef])
+            ? $extra[self::VAR_REVIEW][$itemRef]
+            : false;
+    }
+
+    public function setStoreId($testSessionId, $storeId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_STORE_ID] = $storeId;
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    public function getStoreId($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return isset($extra[self::VAR_STORE_ID]) ? $extra[self::VAR_STORE_ID] : false;
+    }
+
+    /**
+     * Add an event on top of the queue
+     * @param string $testSessionId
+     * @param string $eventName
+     * @param mixed $data
+     * @return string
+     */
+    public function addEvent($testSessionId, $eventName, $data = null)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        $eventId = uniqid('event', true);
+
+        $extra[self::VAR_EVENTS_QUEUE][$eventId] = [
+            'id' => $eventId,
+            'timestamp' => microtime(true),
+            'user' => \common_session_SessionManager::getSession()->getUserUri(),
+            'type' => $eventName,
+            'data' => $data,
+        ];
+        
+        $this->saveExtra($testSessionId, $extra);
+        
+        return $eventId;
+    }
+
+    /**
+     * Gets all events from the queue
+     * @param $testSessionId
+     * @return array|mixed
+     */
+    public function getEvents($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+        
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            $events = $extra[self::VAR_EVENTS_QUEUE];
+        } else {
+            $events = [];
+        }
+        return $events;
+    }
+
+    /**
+     * Removes particular events from the queue
+     * @param $testSessionId
+     * @param array $ids
+     */
+    public function removeEvents($testSessionId, $ids = [])
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
+            foreach ($ids as $id) {
+                if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
+                    unset($extra[self::VAR_EVENTS_QUEUE][$id]);
+                }
+            }
+        }
+
+        $this->saveExtra($testSessionId, $extra);
     }
     
     /**
-     * Gets the marked for review state of an item
-     * @param string $session
-     * @param string $itemRef
-     * @return bool
-     * @throws common_exception_InconsistentData
+     * Removes all events from the queue
+     * @param $testSessionId
      */
-    public function getItemFlag($testSessionId, $itemRef) {
+    public function clearEvents($testSessionId)
+    {
         $extra = $this->getExtra($testSessionId);
-        return isset($extra['review'][$itemRef])
-            ? $extra['review'][$itemRef]
-            : false;
+
+        $extra[self::VAR_EVENTS_QUEUE] = [];
+
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Stores the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @param array $table
+     */
+    public function storeItemsTable($testSessionId, $table)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra['items_table'] = $table;
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Loads the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @return array
+     */
+    public function loadItemsTable($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra['items_table'])) {
+            $table = $extra['items_table'];
+        } else {
+            $table = [];
+        }
+        return $table;
     }
 }

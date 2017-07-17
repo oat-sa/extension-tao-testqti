@@ -1,0 +1,106 @@
+$lrBorderWidth: 1px; // this mirrors the visualGuides.borderWidth JS variable
+$lrMaskBg: whiten($pluginBorder, .95);
+$lrMaskBgTransparent: rgba($lrMaskBg, 0.8);
+
+.line-reader-mask {
+    box-sizing: border-box;
+    border: 0 solid $pluginBorder;
+    background-color: $lrMaskBg;
+
+    &.hidden {
+        display: none;
+    }
+
+    &.resizing {
+        background-color: $lrMaskBgTransparent;
+        border-color: $pluginBorderTransparent;
+    }
+
+    &.border-top     { border-top-width: $lrBorderWidth; }
+    &.border-right   { border-right-width: $lrBorderWidth; }
+    &.border-bottom  { border-bottom-width: $lrBorderWidth; }
+    &.border-left    { border-left-width: $lrBorderWidth; }
+
+    &.ne { @include border-radius-top-right(5); }
+    &.se { @include border-radius-bottom-right(5); }
+    &.sw { @include border-radius-bottom-left(5); }
+    &.nw { @include border-radius-top-left(5); }
+}
+
+// When moving the compound mask, this is the actual element being dragged (and only this one)
+// It has some visual guides inside to simulate the actual inner window
+.line-reader-overlay {
+    box-sizing: border-box;
+    opacity: 0;
+
+    &.hidden {
+        display: none;
+    }
+
+    &.moving {
+        @include border-radius(5);
+    }
+
+    &.moving, .inner-window {
+        overflow: hidden;
+        position: absolute;
+        opacity: 1;
+        background-color: transparent;
+        border: $lrBorderWidth solid $pluginBorderTransparent;
+    }
+
+    .inner-window {
+        box-sizing: content-box;
+    }
+
+    // the mask transparent background is actually the border of this element
+    .mask-bg {
+        box-sizing: border-box;
+        border: 0 solid $lrMaskBgTransparent;
+        background-color: transparent;
+        position: absolute;
+    }
+}
+
+// This drag handle allows to move the inner window
+.line-reader-inner-drag {
+    @include border-radius(3);
+    text-align: center;
+    padding-top: 3px;
+    color: $pluginLink;
+
+    &.hidden {
+        display: none;
+    }
+
+    &:hover {
+        background-color: whiten($pluginLink, .5);
+        color: $pluginLinkHover;
+    }
+
+    &.moving {
+        background-color: transparent;
+        color: whiten($pluginLink, 0.6);
+    }
+
+    .icon {
+        text-shadow: none !important;
+    }
+}
+
+// The button to close the line reader
+.line-reader-closer {
+    @include font-size(12);
+    cursor: pointer;
+    color: $pluginLink;
+    width: 12px;
+    height: 12px;
+
+    &:hover {
+        color: $pluginLinkHover;
+    }
+
+    .icon {
+        text-shadow: none !important;
+    }
+}

@@ -19,7 +19,12 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['lodash', 'i18n'], function(_, __){
+define([
+    'lodash',
+    'i18n',
+    'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/qtiElement'
+], function(_, __, outcomeHelper, qtiElementHelper){
     'use strict';
 
     /**
@@ -123,7 +128,7 @@ define(['lodash', 'i18n'], function(_, __){
          * @returns {boolean}
          */
         filterQtiType : function filterQtiType (value, type){
-             return value['qti-type'] && value['qti-type'] === type;
+            return value['qti-type'] && value['qti-type'] === type;
         },
 
         /**
@@ -132,8 +137,8 @@ define(['lodash', 'i18n'], function(_, __){
          * @param {string} parentType
          */
         addMissingQtiType : function addMissingQtiType(collection, parentType) {
-              var self = this;
-              _.forEach(collection, function(value, key) {
+            var self = this;
+            _.forEach(collection, function(value, key) {
                 if (_.isObject(value) && !_.isArray(value) && !_.has(value, 'qti-type')) {
                     if (_.isNumber(key)) {
                         if (parentType) {
@@ -146,7 +151,7 @@ define(['lodash', 'i18n'], function(_, __){
                 if (_.isArray(value)) {
                     self.addMissingQtiType(value, key.replace(/s$/, ''));
                 } else if (_.isObject(value)) {
-                   self.addMissingQtiType(value);
+                    self.addMissingQtiType(value);
                 }
             });
         },
@@ -157,40 +162,73 @@ define(['lodash', 'i18n'], function(_, __){
          * @returns {Object}
          */
         consolidateModel : function consolidateModel(model){
-            if(model && model.testParts && _.isArray(model.testParts) && model.testParts[0]){
-                var testPart = model.testParts[0];
-                if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
-                     _.forEach(testPart.assessmentSections, function(assessmentSection, key) {
+            if(model && model.testParts && _.isArray(model.testParts)){
 
-                         //remove ordering is shuffle is false
-                         if(assessmentSection.ordering &&
-                                 assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
-                             delete assessmentSection.ordering;
-                         }
+                _.forEach(model.testParts, function(testPart) {
 
-                          if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
+                    if(testPart.assessmentSections && _.isArray(testPart.assessmentSections)){
 
-                              //remove rubrick blocks if empty
-                              if (assessmentSection.rubricBlocks.length === 0 ||
-                                      (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
+                        _.forEach(testPart.assessmentSections, function(assessmentSection) {
 
-                                  delete assessmentSection.rubricBlocks;
-                              }
-                              //ensure the view attribute is present
-                              else if(assessmentSection.rubricBlocks.length > 0){
-                                _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
+                            //remove ordering is shuffle is false
+                            if(assessmentSection.ordering &&
+                                assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
+                                delete assessmentSection.ordering;
+                            }
+
+                            // clean categories (QTI identifier can't be empty string)
+                            if(assessmentSection.sectionParts && _.isArray(assessmentSection.sectionParts)) {
+                                _.forEach(assessmentSection.sectionParts, function(part) {
+                                    if(part.categories && _.isArray(part.categories) && (part.categories.length === 0 || part.categories[0].length === 0)) {
+                                        part.categories = [];
+                                    }
+                                });
+                            }
+
+                            if(assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
+
+                                //remove rubrick blocks if empty
+                                if (assessmentSection.rubricBlocks.length === 0 ||
+                                    (assessmentSection.rubricBlocks.length === 1 && assessmentSection.rubricBlocks[0].content.length === 0) ) {
+
+                                    delete assessmentSection.rubricBlocks;
+                                }
+                                //ensure the view attribute is present
+                                else if(assessmentSection.rubricBlocks.length > 0){
+                                    _.forEach(assessmentSection.rubricBlocks, function(rubricBlock){
                                         rubricBlock.views = ['candidate'];
                                         //change once views are supported
                                         //if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
-                                            //rubricBlock.views = ['candidate'];
+                                        //rubricBlock.views = ['candidate'];
                                         //}
-                                  });
-                              }
-                        }
-                     });
-                }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
             }
             return model;
+        },
+
+        /**
+         * Validates the provided model
+         * @param {Object} model
+         * @throws {Error} if the model is not valid
+         */
+        validateModel: function validateModel(model) {
+            var outcomes = _.indexBy(outcomeHelper.listOutcomes(model));
+
+            _.forEach(model.testParts, function (testPart) {
+                _.forEach(testPart.assessmentSections, function (assessmentSection) {
+                    _.forEach(assessmentSection.rubricBlocks, function (rubricBlock) {
+                        var feedbackBlock = qtiElementHelper.lookupElement(rubricBlock, 'rubricBlock.div.feedbackBlock', 'content');
+                        if (feedbackBlock && !outcomes[feedbackBlock.outcomeIdentifier]) {
+                            throw new Error(__('The outcome "%s" does not exist, but it is referenced by a feedback block!', feedbackBlock.outcomeIdentifier));
+                        }
+                    });
+                });
+            });
         }
     };
 

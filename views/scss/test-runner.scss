@@ -196,6 +196,7 @@
     .content-panel {
         height: auto !important;
         #qti-content{
+            -webkit-overflow-scrolling: touch; // enable scrolling in iFrame on iOS devices
             overflow-y:auto;
             font-size: 0; //avoid white spaces to screw the height
             #qti-rubrics {
@@ -269,11 +270,6 @@
         .qti-timer_label {
             max-width: 130px;
             @include font-size(12);
-        }
-        &.qti-timer__warning {
-            .qti-timer_time {
-                color: $warning;
-            }
         }
         &::before {
             content: ' ';

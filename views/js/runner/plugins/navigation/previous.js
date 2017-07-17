@@ -23,11 +23,14 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, buttonTpl){
+    'util/shortcut',
+    'util/namespace',
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -44,13 +47,23 @@ define([
             var self = this;
 
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData();
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
             /**
-             * Can we move backward ? if not, then we hide the plugin
+             * Check if the "Previous" functionality should be available or not
+             */
+            var canDoPrevious = function canDoPrevious() {
+                var context = testRunner.getTestContext();
+                return context.isLinear === false && context.canMoveBackward === true;
+            };
+
+            /**
+             * Hide the plugin if the Previous functionality shouldn't be available
              */
             var toggle = function toggle(){
-                var context = testRunner.getTestContext();
-                if(context.navigationMode === 1 && context.canMoveBackward){
+                if(canDoPrevious()){
                     self.show();
                 } else {
                     self.hide();
@@ -66,14 +79,45 @@ define([
             }));
 
             //attach behavior
+            function doPrevious(previousItemWarning) {
+                var context = testRunner.getTestContext();
+
+                function enable() {
+                    testRunner.trigger('enablenav enabletools');
+                }
+
+                if(self.getState('enabled') !== false){
+                    testRunner.trigger('disablenav disabletools');
+
+                    if (previousItemWarning && context.remainingAttempts !== -1) {
+                        testRunner.trigger(
+                            'confirm.previous',
+                            __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
+                            testRunner.previous, // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else {
+                        testRunner.previous();
+                    }
+                }
+            }
+
             this.$element.on('click', function(e){
                 e.preventDefault();
-                if(self.getState('enabled') !== false){
-                    self.disable();
-
-                    testRunner.previous();
-                }
+                testRunner.trigger('nav-previous');
             });
+
+            if(testConfig.allowShortcuts && pluginShortcuts.trigger){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                    if (canDoPrevious() && self.getState('enabled') === true) {
+                        testRunner.trigger('nav-previous', [true]);
+                    }
+                }, {
+                    avoidInput: true,
+                    prevent: true
+                });
+            }
 
             //start disabled
             toggle();
@@ -82,13 +126,17 @@ define([
             //update plugin state based on changes
             testRunner
                 .on('loaditem', toggle)
-                .on('renderitem', function(){
+                .on('enablenav', function(){
                     self.enable();
                 })
-                .on('unloaditem', function(){
+                .on('disablenav', function(){
                     self.disable();
+                })
+                .on('nav-previous', function(previousItemWarning){
+                    doPrevious(previousItemWarning);
                 });
         },
+
 
         /**
          * Called during the runner's render phase
@@ -102,6 +150,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
+            shortcut.remove('.' + this.getName());
             this.$element.remove();
         },
 

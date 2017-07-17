@@ -24,9 +24,10 @@ define([
     'lodash',
     'helpers',
     'i18n',
-    'history',
+    'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
+    'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
     'taoQtiTest/controller/creator/views/testpart',
@@ -35,7 +36,10 @@ define([
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
-    'core/validator/validators'
+    'taoQtiTest/controller/creator/helpers/scoring',
+    'taoQtiTest/controller/creator/helpers/categorySelector',
+    'core/validator/validators',
+    'core/promise'
 ], function(
     module,
     $,
@@ -45,6 +49,7 @@ define([
     history,
     feedback,
     DataBindController,
+    modelOverseerFactory,
     itemView, testView,
     testPartView,
     sectionView,
@@ -52,31 +57,47 @@ define([
     Dom2QtiEncoder,
     templates,
     qtiTestHelper,
-    validators
+    scoringHelper,
+    categorySelector,
+    validators,
+    Promise
     ){
 
     'use strict';
 
     /**
-     * Generic callback used when retrieving data from the server
-     * @callback DataCallback
-     * @param {Object} data - the received data
-     */
-
-    /**
      * Call the server to get the list of items
      * @param {string} url
      * @param {string} search - a posix pattern to filter items
-     * @param {DataCallback} cb - with items
+     * @returns {Promise}
      */
-    function loadItems(url, search, cb){
-        $.getJSON(url, {pattern : search, notempty : 'true'}, function(data){
-            if(data && typeof cb === 'function'){
-                cb(data);
+    var loadItems = function loadItems(url, search){
+        return new Promise( function(resolve, reject){
+            $.getJSON(url, {pattern : search, notempty : 'true'})
+                .done(resolve)
+                .fail(function(xhr){
+                    return reject(new Error(xhr.status + ' : ' + xhr.statusText));
+                });
+        });
+    };
+
+    /**
+     * Call the server to get the items categories
+     * @param {String} url - the endpoint
+     * @param {String[]} items - the list of items URIs
+     * @returns {Promise}
+     */
+    var getCategories = function getCategories(url, items){
+        return new Promise( function(resolve, reject){
+            if(items && items.length){
+                $.getJSON(url, { uris : items })
+                    .done(resolve)
+                    .fail(function(xhr){
+                        return reject(new Error(xhr.status + ' : ' + xhr.statusText));
+                    });
             }
         });
-    }
-
+    };
 
     /**
      * The test creator controller is the main entry point
@@ -85,9 +106,9 @@ define([
      */
     var Controller = {
 
-         routes : {},
+        routes : {},
 
-         identifiers: [],
+        identifiers: [],
 
          /**
           * Start the controller, main entry method.
@@ -95,18 +116,22 @@ define([
           * @param {Object} options
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
+          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
           */
-         start : function(options){
+        start : function(options){
             var self = this;
             var $container = $('#test-creator');
             var $saver = $('#saver');
+            var binder, binderOptions, modelOverseer;
 
             self.identifiers = [];
 
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
+            options.categoriesPresets = options.categoriesPresets || {};
 
+            categorySelector.setPresets(options.categoriesPresets);
 
             //back button
             $('#authoringBack').on('click', function(e){
@@ -118,17 +143,20 @@ define([
             });
 
             //set up the ItemView, give it a configured loadItems ref
-            itemView( _.partial(loadItems, options.routes.items) );
+            itemView(
+                _.partial(loadItems, options.routes.items),
+                _.partial(getCategories, options.routes.categories)
+            );
 
-            //Print data binder chandes for DEBUGGING ONLY
-            //$container.on('change.binder', function(e, model){
-                //if(e.namespace === 'binder'){
-                    //console.log(model);
-                //}
-            //});
+            // forwards some binder events to the model overseer
+            $container.on('change.binder delete.binder', function (e, model) {
+                if (e.namespace === 'binder' && model) {
+                    modelOverseer.trigger(e.type, model);
+                }
+            });
 
             //Data Binding options
-            var binderOptions = _.merge(options.routes, {
+            binderOptions = _.merge(options.routes, {
                 filters : {
                     'isItemRef' : function(value){
                         return qtiTestHelper.filterQtiType(value, 'assessmentItemRef');
@@ -138,7 +166,7 @@ define([
                     }
                 },
                 encoders : {
-                  'dom2qti' : Dom2QtiEncoder
+                    'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
                 beforeSave : function(model){
@@ -147,17 +175,36 @@ define([
 
                     //apply consolidation rules
                     qtiTestHelper.consolidateModel(model);
+
+                    //validate the model
+                    try {
+                        qtiTestHelper.validateModel(model);
+                    } catch(err) {
+                        $saver.attr('disabled', false).removeClass('disabled');
+                        feedback().error(__('The test has not been saved.') + ' ' + err);
+                        return false;
+                    }
                     return true;
                 }
             });
 
             //set up the databinder
-            var binder = DataBindController
+            binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
-
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
+
+                    // the model must be wrapped in order to share more (events, internal states, and more)
+                    modelOverseer = modelOverseerFactory(model, {
+                        uri : options.uri,
+                        identifiers : self.identifiers,
+                        labels : options.labels,
+                        routes : options.routes
+                    });
+
+                    //detect the scoring mode
+                    scoringHelper.init(modelOverseer);
 
                     //register validators
                     validators.register('idFormat', qtiTestHelper.idFormatValidator());
@@ -165,11 +212,7 @@ define([
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
-                    testView(model, {
-                        uri : options.uri,
-                        identifiers : self.identifiers,
-                        labels : options.labels
-                    });
+                    testView(modelOverseer);
 
                     //listen for changes to update available actions
                     testPartView.listenActionState();
@@ -178,10 +221,10 @@ define([
                     itemrefView.resize();
 
                     $(window)
-                      .off('resize.qti-test-creator')
-                      .on('resize.qti-test-creator', function(){
+                        .off('resize.qti-test-creator')
+                        .on('resize.qti-test-creator', function(){
                             itemrefView.resize();
-                    });
+                        });
                 });
 
             //the save button triggers binder's save action.

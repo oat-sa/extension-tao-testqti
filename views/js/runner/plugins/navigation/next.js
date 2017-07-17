@@ -23,11 +23,18 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'ui/hider',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/navigation/button'
-], function ($, __, hider, pluginFactory, buttonTpl){
+    'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
+    'taoQtiTest/runner/helpers/messages',
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/stats',
+    'util/shortcut',
+    'util/namespace',
+    'tpl!taoQtiTest/runner/plugins/templates/button'
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -54,7 +61,7 @@ define([
      * @returns {jQueryElement} the button
      */
     var createElement = function createElement(context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         return $(buttonTpl(buttonData[dataType]));
     };
 
@@ -64,7 +71,7 @@ define([
      * @param {Object} context - the test context
      */
     var updateElement = function updateElement($element, context){
-        var dataType = !!context.isLast ? 'end' : 'next';
+        var dataType = context.isLast ? 'end' : 'next';
         if($element.data('control') !== buttonData[dataType].control){
 
             $element.data('control', buttonData[dataType].control)
@@ -95,22 +102,103 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData();
+            var testConfig = testData.config || {};
+            var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+
+            //plugin behavior
+            /**
+             * @param {Boolean} nextItemWarning - enable the display of a warning when going to the next item.
+             * Note: the actual display of the warning depends on other conditions (see nextWarningHelper)
+             */
+            function doNext(nextItemWarning) {
+                var context = testRunner.getTestContext(),
+                    testOptions = context.options || {};
+
+                var map = testRunner.getTestMap();
+                var nextItemPosition = context.itemPosition + 1;
+
+                // x-tao-option-unansweredWarning is a deprecated option whose behavior now matches the one of
+                // x-tao-option-nextPartWarning with the unansweredOnly option
+                var nextPartWarning = testOptions.nextPartWarning || testOptions.unansweredWarning;
+                var unansweredOnly =
+                    !testOptions.endTestWarning // this check to avoid an edge case where having both endTestWarning
+                                                // and unansweredWarning options would prevent endTestWarning to behave normally
+                    && testOptions.unansweredWarning;
+
+                var warningScope = (nextPartWarning) ? 'part' : 'test';
+
+                var warningHelper = nextWarningHelper({
+                    endTestWarning:     testOptions.endTestWarning,
+                    isLast:             context.isLast,
+                    isLinear:           context.isLinear,
+                    nextItemWarning:    nextItemWarning,
+                    nextPartWarning:    nextPartWarning,
+                    nextPart:           mapHelper.getItemPart(map, nextItemPosition),
+                    remainingAttempts:  context.remainingAttempts,
+                    testPartId:         context.testPartId,
+                    unansweredWarning:  testOptions.unansweredWarning,
+                    stats:              statsHelper.getInstantStats(warningScope, testRunner),
+                    unansweredOnly:     unansweredOnly
+                });
+
+                function enable() {
+                    testRunner.trigger('enablenav enabletools');
+                }
+
+                if(self.getState('enabled') !== false) {
+                    testRunner.trigger('disablenav disabletools');
+
+                    if (warningHelper.shouldWarnBeforeEnd()) {
+                        testRunner.trigger(
+                            'confirm.endTest',
+                            messages.getExitMessage(
+                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                                warningScope, testRunner),
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else if (warningHelper.shouldWarnBeforeNext()) {
+                        testRunner.trigger(
+                            'confirm.next',
+                            __('You are about to go to the next item. Click OK to continue and go to the next item.'),
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enable  // if the test taker refuse
+                        );
+
+                    } else {
+                        triggerNextAction(context);
+                    }
+                }
+            }
+
+            function triggerNextAction(context) {
+                if(context.isLast){
+                    self.trigger('end');
+                }
+                testRunner.next();
+            }
 
             //create the button (detached)
             this.$element = createElement(testRunner.getTestContext());
 
-            //plugin behavior
+            //attach behavior
             this.$element.on('click', function(e){
                 e.preventDefault();
-
-                if(self.getState('enabled') !== false){
-                    self.disable();
-                    if($(this).data('control') === 'move-end'){
-                        self.trigger('end');
-                    }
-                    testRunner.next();
-                }
+                testRunner.trigger('nav-next');
             });
+
+            if(testConfig.allowShortcuts && pluginShortcuts.trigger){
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                    if (self.getState('enabled') === true) {
+                        testRunner.trigger('nav-next', true);
+                    }
+                }, {
+                    avoidInput: true,
+                    prevent: true
+                });
+            }
 
             //disabled by default
             this.disable();
@@ -120,11 +208,14 @@ define([
                 .on('loaditem', function(){
                     updateElement(self.$element, testRunner.getTestContext());
                 })
-                .on('renderitem', function(){
+                .on('enablenav', function(){
                     self.enable();
                 })
-                .on('unloaditem', function(){
+                .on('disablenav', function(){
                     self.disable();
+                })
+                .on('nav-next', function(nextItemWarning) {
+                    doNext(nextItemWarning);
                 });
         },
 
@@ -142,6 +233,7 @@ define([
          * Called during the runner's destroy phase
          */
         destroy : function destroy (){
+            shortcut.remove('.' + this.getName());
             this.$element.remove();
         },
 
