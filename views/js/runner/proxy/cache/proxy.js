@@ -146,6 +146,7 @@ define([
                 .then(function(){
                     var testNavigator;
                     var testContext;
+                    var offlineNavError;
 
                     // try the navigation if the actionParams context meaningfull data
                     if( actionParams.direction && actionParams.scope){
@@ -155,14 +156,18 @@ define([
                                 actionParams.scope,
                                 actionParams.ref
                             );
+
+                        //we are really not able to navigate
                         if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
-                            //we are really unable to
-                            return {
+                            offlineNavError = new Error(__('Unable to select the next item due to connectivity issues'));
+                            _.assign(offlineNavError, {
                                 success : false,
-                                source: 'network',
-                                type: 'error',
-                                message: __('Unable to select the next item due to connectivity issues')
-                            };
+                                source: 'navigator',
+                                purpose: 'proxy',
+                                type: 'Item not found',
+                                code : 404
+                            });
+                            throw offlineNavError;
                         }
                         return {
                             success : true,

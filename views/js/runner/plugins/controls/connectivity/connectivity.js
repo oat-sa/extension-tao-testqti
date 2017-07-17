@@ -20,8 +20,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'i18n',
     'taoTests/runner/plugin'
-], function (pluginFactory) {
+], function (__, pluginFactory) {
     'use strict';
 
     /**
@@ -52,20 +53,34 @@ define([
                 if (!testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', true);
                     testRunner.trigger('disconnect', source);
-                    testRunner.trigger('warning', 'disconnect from ' + source);
                 }
             })
             .on('reconnect', function reconnect() {
                 if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
                     testRunner.trigger('reconnect');
-                    testRunner.trigger('warning', 'reconnect');
                 }
             });
 
-            // detect and prevent connectivity errors
             testRunner.before('error', function(e, err) {
+
+                // detect and prevent connectivity errors
                 if (proxy.isConnectivityError(err)){
+                    return false;
+                }
+
+                //offline navigation error, we pause the test
+                if(err.source === 'navigator' && err.purpose === 'proxy' && err.code === 404){
+                    testRunner
+                        .trigger('disconnectpause')
+                        .trigger('pause', {
+                            reasons : {
+                                category : __('technical'),
+                                subCategory : __('network')
+                            },
+                            message : err.message
+                        });
+
                     return false;
                 }
             });
