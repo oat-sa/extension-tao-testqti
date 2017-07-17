@@ -51,6 +51,8 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 
 /**
  *
@@ -1321,6 +1323,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.1.0');
         }
 
-        $this->skip('10.1.0', '10.3.0');
+        $this->skip('10.1.0', '10.2.1');
+
+        if ($this->isVersion('10.2.1')) {
+            $registry = DeliveryContainerRegistry::getRegistry();
+            $registry->setServiceLocator($this->getServiceManager());
+            $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
+            $this->setVersion('10.3.0');
+        }
     }
 }
