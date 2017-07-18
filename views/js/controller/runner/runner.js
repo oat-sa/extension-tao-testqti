@@ -113,14 +113,21 @@ define([
              * @param {String} [displayMessage] - an alternate message to display
              */
             var onError = function onError(err, displayMessage) {
+                displayMessage = displayMessage || err.message;
+
+                if(!_.isString(displayMessage)){
+                    displayMessage = JSON.stringify(displayMessage);
+                }
                 loadingBar.stop();
+
+
                 logger.error({ displayMessage : displayMessage }, err);
 
                 if(err.code === 403) {
                     //we just leave if any 403 occurs
                     return exit();
                 }
-                feedback().error(displayMessage || err.message, { timeout : -1 });
+                feedback().error(displayMessage, { timeout : -1 });
             };
 
             /**

@@ -82,7 +82,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $context
             );
         }
-
+        
         /** @todo TAO-4605 remove this temporary workaround */
         $this->itemsTable = [];
         /***/
@@ -133,7 +133,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 }
                 $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
-                $itemUri = strstr($itemRef->getHref(), '|', true);
+                $itemDefinition = $itemRef->getHref();
+                $itemUri = strstr($itemDefinition, '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
@@ -169,6 +170,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
+                    'definition' => $itemDefinition,
                     'label' => $label,
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
