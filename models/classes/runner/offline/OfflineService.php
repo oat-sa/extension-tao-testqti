@@ -27,23 +27,8 @@ use oat\taoQtiTest\models\runner\offline\action\Timeout;
 
 class OfflineService extends ConfigurableService
 {
-    /**
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array &$actions)
-    {
-        $last = microtime(true);
-        /** @var TestRunnerAction $action */
-        foreach (array_reverse($actions) as &$action) {
-
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
-                $last = $start;
-                $action->setStart($start+1);
-            }
-
-        }
-    }
+    const SERVICE_ID = 'taoQtiTest/QtiOfflineService';
+    const ACTIONS_OPTION = 'actions';
 
     /**
      * Wrap the process to appropriate action and aggregate results
@@ -89,6 +74,36 @@ class OfflineService extends ConfigurableService
     }
 
     /**
+     * Get available actions from config
+     *
+     * @return array
+     */
+    public function getAvailableActions()
+    {
+        return is_array($this->getOption(self::ACTIONS_OPTION))
+            ? $this->getOption(self::ACTIONS_OPTION)
+            //: [];
+
+            : [
+                'move' => Move::class,
+                'skip' => Skip::class,
+                'storeTraceData' => StoreTraceData::class,
+                'timeout' => Timeout::class
+            ];
+    }
+
+    /**
+     * Set available actions to config
+     *
+     * @return array
+     */
+    public function setAvailableActions(array $actions = [])
+    {
+        $this->setOption(self::ACTIONS_OPTION, $actions);
+    }
+
+
+    /**
      * Resolve an offline runner action
      *
      * @param $data
@@ -120,13 +135,27 @@ class OfflineService extends ConfigurableService
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
     }
 
-    protected function getAvailableActions()
+    /**
+     * Set the action start timers:
+     *
+     * $start = snow - sitemDuration
+     * Start by the last action to have a consistent QtiTimeLine
+     * Add 1 ms to start to avoid collision
+     *
+     * @param TestRunnerAction[] $actions
+     */
+    protected function initTimers(array &$actions)
     {
-        return [
-            'move' => Move::class,
-            'skip' => Skip::class,
-            'storeTraceData' => StoreTraceData::class,
-            'timeout' => Timeout::class
-        ];
+        $last = microtime(true);
+        /** @var TestRunnerAction $action */
+        foreach (array_reverse($actions) as &$action) {
+
+            if ($duration = $action->hasRequestParameter('itemDuration')) {
+                $start = $last - $duration;
+                $last = $start;
+                $action->setStart($start+1);
+            }
+
+        }
     }
 }

@@ -32,16 +32,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 class Move extends TestRunnerAction
 {
     /**
-     * Direction and scope are required for move action.
-     *
-     * @return array
-     */
-    public function getRequiredFields()
-    {
-        return array_merge(parent::getRequiredFields(), ['direction', 'scope']);
-    }
-
-    /**
      * Process the move action.
      *
      * Validate required fields.
@@ -102,5 +92,15 @@ class Move extends TestRunnerAction
         }
 
         return $response;
+    }
+
+    /**
+     * Direction and scope are required for move action.
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return array_merge(parent::getRequiredFields(), ['direction', 'scope']);
     }
 }

@@ -31,16 +31,6 @@ use oat\taoQtiTest\models\runner\offline\TestRunnerAction;
 class Skip extends TestRunnerAction
 {
     /**
-     * Scope parameter is required.
-     *
-     * @return array
-     */
-    public function getRequiredFields()
-    {
-        return array_merge(parent::getRequiredFields(), ['scope']);
-    }
-
-    /**
      * Process the skip action.
      *
      * Validate required fields.
@@ -88,5 +78,15 @@ class Skip extends TestRunnerAction
         }
 
         return $response;
+    }
+
+    /**
+     * Scope parameter is required.
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return array_merge(parent::getRequiredFields(), ['scope']);
     }
 }

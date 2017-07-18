@@ -31,16 +31,6 @@ use oat\taoQtiTest\models\runner\offline\TestRunnerAction;
 class StoreTraceData extends TestRunnerAction
 {
     /**
-     * traceData field is required.
-     *
-     * @return array
-     */
-    public function getRequiredFields()
-    {
-        return array_merge(parent::getRequiredFields(), ['traceData']);
-    }
-
-    /**
      * Process the storeTraceData action.
      *
      * Validate required fields.
@@ -85,6 +75,16 @@ class StoreTraceData extends TestRunnerAction
         }
 
         return $response;
+    }
+
+    /**
+     * traceData field is required.
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return array_merge(parent::getRequiredFields(), ['traceData']);
     }
 
 }

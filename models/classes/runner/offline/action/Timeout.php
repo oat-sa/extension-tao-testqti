@@ -92,7 +92,7 @@ class Timeout extends TestRunnerAction
      *
      * @return array
      */
-    public function getRequiredFields()
+    protected function getRequiredFields()
     {
         return array_merge(parent::getRequiredFields(), ['scope']);
     }
