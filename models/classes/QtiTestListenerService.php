@@ -98,23 +98,28 @@ class QtiTestListenerService extends ConfigurableService
 
             $itemRefs = $session->getRoute()->getAssessmentItemRefs();
 
-
             /** @var StateMigration $finishedService */
             $finishedService = $this->getServiceManager()->get(StateMigration::SERVICE_ID);
             //remove all callIds
-            foreach ($itemRefs as $itemRef){
+            foreach ($itemRefs as $itemRef) {
                 $callId = $sessionId.$itemRef->getIdentifier();
-                if($finishedService->archive($userId, $callId)){
+                if ($finishedService->archive($userId, $callId)) {
                     $finishedService->removeState($userId, $callId);
-                    \common_Logger::t('State archived for user : '.$userId.' and callId : '.$callId);
+                    \common_Logger::t('Item State archived for user : '.$userId.' and callId : '. $callId);
                 }
             }
 
-            if($finishedService->archive($userId, $sessionId)){
+            if ($finishedService->archive($userId, $sessionId)) {
                 $finishedService->removeState($userId, $sessionId);
-                \common_Logger::t('State archived for user : '.$userId.' and callId : '.$sessionId);
+                \common_Logger::t('Test State archived for user : '.$userId.' and callId : '. $sessionId);
             }
-
+            
+            // Only relevant for new QTI Test Runner (QtiTimeLine storage).
+            $timeLineStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
+            if ($finishedService->archive($userId, $timeLineStorageId)) {
+                $finishedService->removeState($userId, $timeLineStorageId);
+                \common_Logger::t('Test Timeline State archived for user : '.$userId.' and storageId : '. $timeLineStorageId);
+            }
         }
     }
 
