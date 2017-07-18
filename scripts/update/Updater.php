@@ -51,7 +51,6 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
-use qtism\data\storage\php\PhpDocument;
 
 /**
  *
@@ -1322,50 +1321,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.1.0');
         }
 
-        $this->skip('10.1.0', '10.2.1');
-        
-        if ($this->isVersion('10.2.1')) {
-            
-            $extManager = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
-            
-            if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
-                
-                $extManager->getExtensionById('taoDeliveryRdf');
-                
-                $compiledDeliveryClass = new \core_kernel_classes_Class(CLASS_COMPILEDDELIVERY);
-                $phpDocument = new PhpDocument();
-                
-                if ($compiledDeliveryClass->exists() === true) {
-                    $compiledDirectoryProperty = new \core_kernel_classes_Property(PROPERTY_COMPILEDDELIVERY_DIRECTORY);
-                    
-                    foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
-                        $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);
-                        
-                        foreach ($directories as $directoryId) {
-                            $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryId);
-                            
-                            foreach ($directory->getIterator() as $filePrefix) {
-                                $file = $directory->getFile($filePrefix);
-                                $fileBasename = $file->getBasename();
-                                
-                                if ($fileBasename === 'compact-test.php') {
-                                    $phpDocument->loadFromString($file->read());
-                                    
-                                    foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
-                                        $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRef->getIdentifier());
-                                        $newFile = $directory->getFile($indexPath);
-                                        $newFile->put($assessmentItemRef->getHref());
-                                    }
-                                    
-                                    break 2;
-                                }
-                            }
-                        }
-                    }
-                }
-            } 
-            
-            $this->setVersion('10.3.0');
-        }
+        $this->skip('10.1.0', '10.3.0');
     }
 }
