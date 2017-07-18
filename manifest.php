@@ -35,6 +35,7 @@ return array(
         'taoQtiItem' => '>=8.5.0',
         'tao'        => '>=10.26.0',
         'generis'    => '>=3.36.0',
+        'taoDelivery'=> '>=6.6.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
