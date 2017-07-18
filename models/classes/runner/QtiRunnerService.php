@@ -1301,7 +1301,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return boolean
      * @throws \common_Exception
      */
-    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue, $timestamp = null)
+    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             if (!is_string($variableValue) && !is_numeric($variableValue)) {
@@ -1313,10 +1313,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $metaVariable->setBaseType('string');
             $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
             $metaVariable->setTrace($variableValue);
-
-            if (! is_null($timestamp)) {
-                $metaVariable->setEpoch($timestamp);
-            }
 
             $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
 

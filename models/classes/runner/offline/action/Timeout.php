@@ -53,7 +53,7 @@ class Timeout extends TestRunnerAction
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getTimestamp());
+                $this->endItemTimer($this->getStart());
                 $this->saveItemState();
             }
 
@@ -77,7 +77,7 @@ class Timeout extends TestRunnerAction
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getTimestamp());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
             }
 
         } catch (\Exception $e) {

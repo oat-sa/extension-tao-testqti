@@ -65,14 +65,7 @@ class StoreTraceData extends TestRunnerAction
             $size   = count($traceData);
 
             foreach ($traceData  as $variableIdentifier => $variableValue){
-                if ($this->getRunnerService()->storeTraceVariable(
-                        $serviceContext,
-                        $itemRef,
-                        $variableIdentifier,
-                        $variableValue,
-                        $this->getTimestamp()
-                    )
-                ) {
+                if ($this->getRunnerService()->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)) {
                     $stored++;
                 }
             }

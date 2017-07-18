@@ -194,8 +194,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function initItemTimer($timestamp = null)
     {
         if (is_null($timestamp)) {
-            $timestamp = microtime(true);            \common_Logger::e(__METHOD__);
-
+            $timestamp = microtime(true);
         }
 
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.

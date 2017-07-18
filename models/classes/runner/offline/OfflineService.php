@@ -27,12 +27,21 @@ use oat\taoQtiTest\models\runner\offline\action\Timeout;
 
 class OfflineService extends ConfigurableService
 {
-    protected function formatTimestamp(array $actions)
+    /**
+     * @param TestRunnerAction[] $actions
+     */
+    protected function initTimers(array &$actions)
     {
         $last = microtime(true);
-        foreach (array_reverse($actions) as $action) {
-            $last = $last - $action->getTimestamp();
-            $action['start'] = $last;
+        /** @var TestRunnerAction $action */
+        foreach (array_reverse($actions) as &$action) {
+
+            if ($duration = $action->hasRequestParameter('itemDuration')) {
+                $start = $last - $duration;
+                $last = $start;
+                $action->setStart($start+1);
+            }
+
         }
     }
 
@@ -49,11 +58,16 @@ class OfflineService extends ConfigurableService
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
 
-        $response = [];
+        $actions = [];
         foreach ($data as $entry) {
+            $actions[] = $this->resolve($entry);
+        }
 
-            $action = $this->resolve($entry);
-            $action->setStart($action->getTimestamp());
+        $this->initTimers($actions);
+
+        $response = [];
+        foreach( $actions as $action) {
+
             try {
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
