@@ -1301,7 +1301,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return boolean
      * @throws \common_Exception
      */
-    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
+    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             if (!is_string($variableValue) && !is_numeric($variableValue)) {
@@ -1313,6 +1313,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $metaVariable->setBaseType('string');
             $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
             $metaVariable->setTrace($variableValue);
+
+            if (! is_null($timestamp)) {
+                $metaVariable->setEpoch($timestamp);
+            }
 
             $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
 
@@ -1343,18 +1347,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Starts the timer for the current item in the TestSession
+     *
      * @param RunnerServiceContext $context
+     * @param $timestamp
      * @return bool
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
      * @throws \common_exception_InvalidArgumentType
      */
-    public function startTimer(RunnerServiceContext $context)
+    public function startTimer(RunnerServiceContext $context, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
             if($session->getState() === AssessmentTestSessionState::INTERACTING) {
-                $session->startItemTimer();
+                $session->startItemTimer($timestamp);
             }
         } else {
             throw new \common_exception_InvalidArgumentType(
@@ -1370,19 +1375,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Ends the timer for the current item in the TestSession
+     *
      * @param RunnerServiceContext $context
      * @param float $duration The client side duration to adjust the timer
      * @param float $consumedExtraTime The extra time consumed by the client
+     * @param $timestamp
      * @return bool
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
      * @throws \common_exception_InvalidArgumentType
      */
-    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null)
+    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            $session->endItemTimer($duration, $consumedExtraTime);
+            $session->endItemTimer($duration, $consumedExtraTime, $timestamp);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',

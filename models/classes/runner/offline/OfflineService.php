@@ -20,11 +20,22 @@
 namespace oat\taoQtiTest\models\runner\offline;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\runner\offline\action\MoveAction;
-use oat\taoQtiTest\models\runner\offline\action\SkipAction;
+use oat\taoQtiTest\models\runner\offline\action\Move;
+use oat\taoQtiTest\models\runner\offline\action\Skip;
+use oat\taoQtiTest\models\runner\offline\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\offline\action\Timeout;
 
 class OfflineService extends ConfigurableService
 {
+    protected function formatTimestamp(array $actions)
+    {
+        $last = microtime(true);
+        foreach (array_reverse($actions) as $action) {
+            $last = $last - $action->getTimestamp();
+            $action['start'] = $last;
+        }
+    }
+
     /**
      * Wrap the process to appropriate action and aggregate results
      *
@@ -42,15 +53,22 @@ class OfflineService extends ConfigurableService
         foreach ($data as $entry) {
 
             $action = $this->resolve($entry);
-
+            $action->setStart($action->getTimestamp());
             try {
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
+                $responseAction['success'] = false;
             }
 
             $responseAction['name'] = $action->getName();
             $responseAction['timestamp'] = $action->getTimeStamp();
+
+            $response[] = $responseAction;
+
+            if ($responseAction['success'] === false) {
+                break;
+            }
         }
 
         return json_encode($response, JSON_PRETTY_PRINT);
@@ -91,8 +109,10 @@ class OfflineService extends ConfigurableService
     protected function getAvailableActions()
     {
         return [
-            'move' => MoveAction::class,
-            'skip' => SkipAction::class
+            'move' => Move::class,
+            'skip' => Skip::class,
+            'storeTraceData' => StoreTraceData::class,
+            'timeout' => Timeout::class
         ];
     }
 }
