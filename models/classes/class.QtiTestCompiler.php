@@ -37,6 +37,10 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiItem\model\ItemModel;
+use oat\taoQtiItem\model\QtiJsonItemCompiler;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoDelivery\model\container\delivery\ContainerProvider;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -45,7 +49,7 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
  * @package taoQtiTest
  
  */
-class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler
+class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
     
     /**
@@ -371,6 +375,28 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
     
     /**
+     * (non-PHPdoc)
+     * @see \oat\taoDelivery\model\container\delivery\ContainerProvider::getContainer()
+     */
+    public function getContainer() {
+        $itemModel = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
+        $registry = DeliveryContainerRegistry::getRegistry();
+        $registry->setServiceLocator($this->getServiceLocator());
+        if ($itemModel->getCompilerClass() == QtiJsonItemCompiler::class) {
+            // client container
+            $container = $registry->getDeliveryContainer('qtiTest',array(
+                'source' => $this->getResource()->getUri(),
+                'private' => $this->getPrivateDirectory()->getId(),
+                'public' => $this->getPublicDirectory()->getId()
+            ));
+        } else {
+            $serviceCall = $this->buildServiceCall();
+            $container = $registry->getDeliveryContainer('service',$serviceCall);
+        }
+        return $container;
+    }
+
+    /**
      * Compact the test and items in a single QTI-XML Compact Document.
      * 
      * @return XmlCompactDocument.
@@ -467,8 +493,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
         if (isset($config['enable-category-rules-generation']) && $config['enable-category-rules-generation'] === true) {
             common_Logger::t('Automatic Category Rules Generation will occur...');
-            $serviceManager = ServiceManager::getServiceManager();
-            $testCategoryRulesService = $serviceManager->get(TestCategoryRulesService::SERVICE_ID);
+            $testCategoryRulesService = $this->getServiceLocator()->get(TestCategoryRulesService::SERVICE_ID);
             $testCategoryRulesService->apply($assessmentTest);
         }
     }
@@ -751,6 +776,11 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
     }
     
+    private function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
+    }
+
     /**
      * Compile AssessmentItemRef Href Indexes
      * 

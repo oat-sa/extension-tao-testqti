@@ -22,10 +22,11 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use \oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\event\TestExitEvent;
 use oat\taoQtiTest\models\event\TestInitEvent;
@@ -982,7 +983,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $executionUri = $context->getTestExecutionUri();
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
 
-            $executionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
+            $executionService = ServiceProxy::singleton();
             $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
 
             if ($deliveryExecution->getUserIdentifier() == $userUri) {
