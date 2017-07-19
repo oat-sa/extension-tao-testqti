@@ -17,13 +17,12 @@
  */
 
 /**
- * Navigate inside a test based on the informations we have (testData, testMap and testContext),
- * we can't guess some of the informations, so we're back to the default values :
+ * Navigate inside a test based on the information we have (testData, testMap and testContext),
+ * we can't guess some of the information, so we're back to the default values :
  *  - rubric blocks (we just leave it, except if we change the section)
  *  - timers (we remove them if we change the scope)
  *  - attempts (we calculated the remaining attempts based on the last known value)
- *  - feedbaks are not supported
- *   -
+ *  - feedback is not supported
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -33,8 +32,6 @@ define([
     'taoQtiTest/runner/helpers/navigation'
 ], function(_, mapHelper, navigationHelper){
     'use strict';
-
-    var noop;
 
     /**
      * Gives you a navigator
@@ -86,7 +83,7 @@ define([
                 hasFeedbacks : false,
 
                 //FIXME maintain attempts
-                //FIXME attempts can be incorrects (based on last known value)
+                //FIXME attempts can be incorrect (based on last known value)
                 remainingAttempts : (newItem.remainingAttempts > -1) ? newItem.remainingAttempts - 1 : -1,
                 attemptDuration   : 0,
 
@@ -101,7 +98,7 @@ define([
             //if the section is different, we don't keep the rubric blocks
             if(isLeavingSection){
                 newContext.numberRubrics = 0;
-                newContext.rubrics = noop;
+                newContext.rubrics = '';
             }
 
             //remove timers if they're not on the same scope

@@ -31,9 +31,10 @@ define([
     var storeKey  = 'queue';
 
     /**
-     * Create an item store
-     * @param {Number} [maxSize = 10] - the store limit
-     * @returns {itemStore}
+     * Create an action store
+     *
+     * @param {String} id - the store id, to identify a test
+     * @returns {actionStore}
      */
     return function actionStoreFatory(id) {
 
@@ -45,7 +46,17 @@ define([
         }
         storeId = storeName + '-' + id;
 
+        /**
+         * @typedef {actionStore}
+         */
         return {
+
+            /**
+             * Push an action to the store
+             * @param {String} action - the action name
+             * @param {Object} params - the action parameters
+             * @returns {Promise} resolves when the action is stored
+             */
             push: function push(action, params) {
                 actionQueue.push({
                     action : action,
@@ -57,6 +68,10 @@ define([
                 });
             },
 
+            /**
+             * Flush the action store and retrieve the data
+             * @returns {Promise} resolves with the flushed data
+             */
             flush : function flush(){
                 actionQueue = [];
                 return store(storeId).then(function(actionStore) {

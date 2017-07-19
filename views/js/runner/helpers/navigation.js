@@ -42,7 +42,7 @@ define([
          * @param {String} scope - the move scope (item, section, testPart)
          * @param {Number} [position] - the position in case of jump
          * @returns {Boolean} true if the action leads to a section leave
-         * @throws {TypeError} if the context or the map are incorrects
+         * @throws {TypeError} if the context or the map are incorrect
          */
         isLeavingSection : function isLeavingSection(testContext, testMap, direction, scope, position){
             var section;
@@ -78,7 +78,7 @@ define([
          * @param {String} scope - the move scope (item, section, testPart)
          * @param {Number} [position] - the position in case of jump
          * @returns {Boolean} true if the action leads to a section leave
-         * @throws {TypeError} if the context or the map are incorrects
+         * @throws {TypeError} if the context or the map are incorrect
          */
         isLeavingTestPart : function isLeavingTestPart(testContext, testMap, direction, scope, position){
             var testPart;

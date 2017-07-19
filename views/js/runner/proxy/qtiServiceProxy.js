@@ -44,7 +44,7 @@ define([
             var self = this;
 
             /**
-             * A promise queue to ensure requests run in serie
+             * A promise queue to ensure requests run sequentially
              */
             this.queue = promiseQueue();
 

@@ -129,7 +129,7 @@ define([
             };
 
             /**
-             * Offline ? we try to do the action anyway :
+             * Offline ? We try to do the action anyway :
              *  1. Save the data to the actionStore
              *  2. Try to navigate offline, or just say 'ok'
              *
@@ -148,7 +148,7 @@ define([
                     var testContext;
                     var offlineNavError;
 
-                    // try the navigation if the actionParams context meaningfull data
+                    // try the navigation if the actionParams context meaningful data
                     if( actionParams.direction && actionParams.scope){
                         testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
                         testContext = testNavigator.navigate(
@@ -183,7 +183,7 @@ define([
             };
 
             /**
-             * Request/Offlin strategy :
+             * Request/Offline strategy :
              *
              * ├─ Online
              * │  └─ run the request
@@ -202,10 +202,10 @@ define([
              * @param {Object} actionParams - the parameters sent along the action
              * @returns {Promise} resolves with the action result
              */
-            this.requestNetworThenOffline = function requestNetworThenOffline(url, action, actionParams){
+            this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams){
 
                 //perform the request, but fallback on offline if the request itself fails
-                var runRequetThenOffline = function runRequetThenOffline(){
+                var runRequestThenOffline = function runRequestThenOffline(){
                     return self.request(url, actionParams).then(function(result){
                         //if the request fails, we should be offline
                         if(self.isOffline()){
@@ -224,7 +224,7 @@ define([
                             // we ask for action sync, and we run the request
                             if(self.isOnline()){
                                 self.syncOfflineData();
-                                return runRequetThenOffline();
+                                return runRequestThenOffline();
                             }
                             return self.offlineAction(action, actionParams);
                         })
@@ -234,7 +234,7 @@ define([
                 }
 
                 //by default we try to run the request first
-                return runRequetThenOffline();
+                return runRequestThenOffline();
             };
 
             /**
@@ -251,7 +251,7 @@ define([
                     .catch(function(err){
                         self.trigger('error', err);
                     });
-                }, 'sync');
+                });
             };
         },
 
@@ -292,7 +292,7 @@ define([
                 }
             });
 
-            //we resync as soon as the conection is back
+            //we resync as soon as the connection is back
             this.on('reconnect', function(){
                 this.syncOfflineData();
             });
@@ -413,7 +413,7 @@ define([
                 traceData: JSON.stringify(variables)
             };
 
-            return this.requestNetworThenOffline(
+            return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
                 actionParams
@@ -428,7 +428,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            return this.requestNetworThenOffline(
+            return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
                 params
