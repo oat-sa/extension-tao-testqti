@@ -1322,14 +1322,15 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('10.1.0');
         }
-
-        $this->skip('10.1.0', '10.2.1');
-
-        if ($this->isVersion('10.2.1')) {
+      
+        $this->skip('10.1.0', '10.3.0');
+      
+        if ($this->isVersion('10.3.0')) {
             $registry = DeliveryContainerRegistry::getRegistry();
             $registry->setServiceLocator($this->getServiceManager());
             $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
-            $this->setVersion('10.3.0');
+            $this->setVersion('10.4.0');
         }
+      
     }
 }
