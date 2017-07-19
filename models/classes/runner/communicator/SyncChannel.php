@@ -49,9 +49,7 @@ class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
      */
     public function process(QtiRunnerServiceContext $context, array $data = [])
     {
-        $synchronisationService = new SynchronisationService();
-        $this->getServiceManager()->propagate($synchronisationService);
-        return $synchronisationService->process($data);
+        return $this->getServiceManager()->get(SynchronisationService::SERVICE_ID)->process($data);
     }
 
 }
