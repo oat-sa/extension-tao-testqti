@@ -1362,8 +1362,11 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $service = new QtiCommunicationService();
             }
 
-            $service->attachChannel(new SyncChannel(), QtiCommunicationService::CHANNEL_TYPE_INPUT);
-            $this->getServiceManager()->register(QtiCommunicationService::SERVICE_ID, $service);
+            $channels = $service->getOption(QtiCommunicationService::OPTION_CHANNELS);
+            if (! isset($channels[QtiCommunicationService::CHANNEL_TYPE_INPUT][SyncChannel::CHANNEL_NAME])) {
+                $service->attachChannel(new SyncChannel(), QtiCommunicationService::CHANNEL_TYPE_INPUT);
+                $this->getServiceManager()->register(QtiCommunicationService::SERVICE_ID, $service);
+            }
 
             $this->setVersion('10.4.0');
         }
