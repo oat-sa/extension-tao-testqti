@@ -20,10 +20,6 @@
 namespace oat\taoQtiTest\models\runner\offline;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\runner\offline\action\Move;
-use oat\taoQtiTest\models\runner\offline\action\Skip;
-use oat\taoQtiTest\models\runner\offline\action\StoreTraceData;
-use oat\taoQtiTest\models\runner\offline\action\Timeout;
 
 class OfflineService extends ConfigurableService
 {
@@ -82,14 +78,7 @@ class OfflineService extends ConfigurableService
     {
         return is_array($this->getOption(self::ACTIONS_OPTION))
             ? $this->getOption(self::ACTIONS_OPTION)
-            //: [];
-
-            : [
-                'move' => Move::class,
-                'skip' => Skip::class,
-                'storeTraceData' => StoreTraceData::class,
-                'timeout' => Timeout::class
-            ];
+            : [];
     }
 
     /**

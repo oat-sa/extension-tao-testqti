@@ -24,12 +24,32 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 trait RunnerParamParserTrait
 {
+    /**
+     * @var QtiRunnerServiceContext
+     */
     protected $serviceContext;
 
+    /**
+     * Check if the parameter associated to $name exists
+     *
+     * @param $name
+     * @return mixed
+     */
     abstract public function hasRequestParameter($name);
 
+    /**
+     * Get the parameter associated to $name
+     *
+     * @param $name
+     * @return mixed
+     */
     abstract public function getRequestParameter($name);
 
+    /**
+     * Get the Service Locator
+     *
+     * @return mixed
+     */
     abstract public function getServiceLocator();
 
     /**
@@ -54,6 +74,13 @@ trait RunnerParamParserTrait
         return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
     }
 
+    /**
+     * Get the Service Context
+     * WARNING, there is not CSRF token check
+     *
+     * @param bool $check
+     * @return QtiRunnerServiceContext
+     */
     protected function getServiceContext($check = true)
     {
         if (!$this->serviceContext) {
@@ -70,6 +97,12 @@ trait RunnerParamParserTrait
         return $this->serviceContext;
     }
 
+    /**
+     * End the item timer to QtiTimeLine
+
+     * @param null $timestamp The start of action, optional
+     * @return bool
+     */
     protected function endItemTimer($timestamp = null)
     {
         if($this->getRequestParameter('itemDuration')){

@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\runner\communicator\SyncChannel;
  *
  * Tool to setup a sync channel for taoQtiTest extension.
  * QtiCommunicationService is set to QtiCommunicationService class to be able to manage channel
+ * php index.php '\oat\taoQtiTest\scripts\install\SyncChannelInstaller'
  *
  * @package oat\taoQtiTest\scripts\install
  */
