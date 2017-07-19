@@ -376,6 +376,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $domManifest->load($folder . 'imsmanifest.xml');
 
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+        
+        // Note: without this fix, metadata guardians do not work.
+        $this->getMetadataImporter()->setMetadataValues($metadataValues);
 
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
