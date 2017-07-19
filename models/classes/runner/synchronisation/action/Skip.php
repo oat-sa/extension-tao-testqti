@@ -17,25 +17,25 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline\action;
+namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
-use oat\taoQtiTest\models\runner\offline\TestRunnerAction;
+use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
- * Class Timeout
+ * Class Skip
  *
- * Timeout item into the test context.
+ * Skip item into the test context.
  *
- * @package oat\taoQtiTest\models\runner\offline\action
+ * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
-class Timeout extends TestRunnerAction
+class Skip extends TestRunnerAction
 {
     /**
-     * Process the timeout action.
+     * Process the skip action.
      *
      * Validate required fields.
-     * Stop/Start timer and save item state.
-     * Save item responses and wrap the timeout to runner service.
+     * Stop timer.
+     * Wrap the skip to runner service.
      * Persist service context.
      * Start next timer.
      *
@@ -45,23 +45,18 @@ class Timeout extends TestRunnerAction
     {
         $this->validate();
 
-        $ref   = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $ref       = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $itemDuration = null;
+        $consumedExtraTime = null;
+
         $scope = $this->getRequestParameter('scope');
         $start = ($this->getRequestParameter('start') !== false);
 
         try {
-            $serviceContext = $this->getServiceContext(false);
+            $serviceContext = $this->getServiceContext();
+            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getStart());
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getStart());
-                $this->saveItemState();
-            }
-
-            $this->initServiceContext();
-
-            $this->saveItemResponses();
-
-            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
+            $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
 
             $response = [
                 'success' => $result,
@@ -73,13 +68,11 @@ class Timeout extends TestRunnerAction
 
             $this->getRunnerService()->persist($serviceContext);
 
-            if($start == true){
-
+            if ($start == true) {
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
                 $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
             }
-
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);
         }
@@ -88,7 +81,7 @@ class Timeout extends TestRunnerAction
     }
 
     /**
-     * Scope is a required fields.
+     * Scope parameter is required.
      *
      * @return array
      */
@@ -96,5 +89,4 @@ class Timeout extends TestRunnerAction
     {
         return array_merge(parent::getRequiredFields(), ['scope']);
     }
-
 }

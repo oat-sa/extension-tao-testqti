@@ -17,7 +17,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline;
+namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -29,7 +29,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 /**
  * Class TestRunnerAction
  *
- * @package oat\taoQtiTest\models\runner\offline
+ * @package oat\taoQtiTest\models\runner\synchronisation
  */
 abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 {

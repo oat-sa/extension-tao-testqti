@@ -17,13 +17,13 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline;
+namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\oatbox\service\ConfigurableService;
 
-class OfflineService extends ConfigurableService
+class SynchronisationService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiOfflineService';
+    const SERVICE_ID = 'taoQtiTest/synchronisationService';
     const ACTIONS_OPTION = 'actions';
 
     /**
@@ -84,7 +84,7 @@ class OfflineService extends ConfigurableService
     /**
      * Set available actions to config
      *
-     * @return array
+     * @param array $actions
      */
     public function setAvailableActions(array $actions = [])
     {
@@ -93,7 +93,7 @@ class OfflineService extends ConfigurableService
 
 
     /**
-     * Resolve an offline runner action
+     * Resolve a runner action to synchronize
      *
      * @param $data
      * @return TestRunnerAction

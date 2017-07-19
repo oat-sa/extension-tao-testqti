@@ -127,10 +127,6 @@ trait RunnerParamParserTrait
             $serviceContext = $this->getServiceContext(false);
             $itemIdentifier = $this->getRequestParameter('itemDefinition');
             $stateId =  $serviceContext->getTestExecutionUri() . $itemIdentifier;
-
-            //to read JSON encoded params
-            //$params = $this->getRequest()->getRawParameters();
-            //$itemState  = isset($params['itemState']) ? $params['itemState'] : new stdClass();
             $state = $this->getRequestParameter('itemState') ? json_decode($this->getRequestParameter('itemState'), true) : new \stdClass();
 
             return $this->getRunnerService()->setItemState($serviceContext, $stateId, $state);
@@ -154,11 +150,7 @@ trait RunnerParamParserTrait
 
             $itemDefinition = $this->getRequestParameter('itemDefinition');
             $serviceContext = $this->getServiceContext(false);
-
             $itemResponse = $this->getRequestParameter('itemResponse') ? json_decode($this->getRequestParameter('itemResponse'), true) : null;
-            //to read JSON encoded params
-            //$params = $this->getRequest()->getRawParameters();
-            //$itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
 
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
 
@@ -183,7 +175,6 @@ trait RunnerParamParserTrait
     /**
      * Gets the item reference for the current itemRef
      *
-     * @todo TAO-4605 remove/adapt this temporary workaround
      * @param string $itemIdentifier the item id
      * @return string the state id
      */

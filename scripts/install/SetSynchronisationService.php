@@ -20,36 +20,36 @@
 namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
-use oat\taoQtiTest\models\runner\offline\action\Move;
-use oat\taoQtiTest\models\runner\offline\action\Skip;
-use oat\taoQtiTest\models\runner\offline\action\StoreTraceData;
-use oat\taoQtiTest\models\runner\offline\action\Timeout;
-use oat\taoQtiTest\models\runner\offline\OfflineService;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 
 /**
- * Class SetOfflineRunner
+ * Class SetSynchronisationService
  *
- * To install offlineRunner:
- * - php index.php '\oat\taoQtiTest\scripts\install\SetOfflineRunner'
+ * To install synchronisationService:
+ * - php index.php '\oat\taoQtiTest\scripts\install\SetSynchronisationService'
  *
  * @package oat\taoQtiTest\scripts\install
  */
-class SetOfflineRunner extends InstallAction
+class SetSynchronisationService extends InstallAction
 {
     /**
-     * Register 4 actions as available for offline test runner
+     * Register 4 actions as available for SynchronisationService
      *
      * @param $params
      * @return \common_report_Report
      */
     public function __invoke($params)
     {
-        if ($this->getServiceLocator()->has(OfflineService::SERVICE_ID)) {
-            /** @var OfflineService $service */
-            $service = $this->getServiceLocator()->get(OfflineService::SERVICE_ID);
+        if ($this->getServiceLocator()->has(SynchronisationService::SERVICE_ID)) {
+            /** @var SynchronisationService $service */
+            $service = $this->getServiceLocator()->get(SynchronisationService::SERVICE_ID);
             $actions = $service->getAvailableActions();
         } else {
-            $service = new OfflineService();
+            $service = new SynchronisationService();
             $actions = [];
         }
 
@@ -61,9 +61,9 @@ class SetOfflineRunner extends InstallAction
         ];
 
         $service->setAvailableActions(array_merge($actions, $newActions));
-        $this->getServiceManager()->register(OfflineService::SERVICE_ID, $service);
+        $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $service);
 
-        return \common_report_Report::createSuccess(__('Offline runner successfully configured.'));
+        return \common_report_Report::createSuccess(__('SetSynchronisationService successfully configured.'));
     }
 
 }
