@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -57,6 +57,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
 
     const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
+    
+    const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -431,7 +433,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
 
                                 // Check if the item is already stored in the bank.
-                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier);
+                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
                                 if ($guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
                                     \common_Logger::d($message);
