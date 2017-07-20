@@ -71,8 +71,6 @@ class Timeout extends TestRunnerAction
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
             }
 
-            $this->getRunnerService()->persist($serviceContext);
-
             if($start == true){
 
                 // start the timer only when move starts the item session

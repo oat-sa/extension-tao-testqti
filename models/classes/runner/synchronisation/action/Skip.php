@@ -36,7 +36,6 @@ class Skip extends TestRunnerAction
      * Validate required fields.
      * Stop timer.
      * Wrap the skip to runner service.
-     * Persist service context.
      * Start next timer.
      *
      * @return array
@@ -65,8 +64,6 @@ class Skip extends TestRunnerAction
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
             }
-
-            $this->getRunnerService()->persist($serviceContext);
 
             if ($start == true) {
                 // start the timer only when move starts the item session

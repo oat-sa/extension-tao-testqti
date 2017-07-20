@@ -37,7 +37,6 @@ class Move extends TestRunnerAction
      * Validate required fields.
      * Stop/Start timer and save item state.
      * Save item response and wrap the move to runner service.
-     * Persist service context.
      * Start next timer.
      *
      * @return array
@@ -76,8 +75,6 @@ class Move extends TestRunnerAction
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
-
-            $this->getRunnerService()->persist($serviceContext);
 
             if ($start === true) {
 
