@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\cat\CatService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
@@ -324,5 +325,17 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getItemIndexValue($id, $name) 
     {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
+    }
+    
+    /**
+     * Get Cat Engine Implementation
+     * 
+     * Get the currently configured Cat Engine implementation.
+     * 
+     * @return \oat\libCat\CatEngine
+     */
+    public function getCatEngine()
+    {
+        return $this->getServiceManager()->get(CatService::SERVICE_ID);
     }
 }
