@@ -17,42 +17,27 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline;
+namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\runner\offline\action\Move;
-use oat\taoQtiTest\models\runner\offline\action\Skip;
-use oat\taoQtiTest\models\runner\offline\action\StoreTraceData;
-use oat\taoQtiTest\models\runner\offline\action\Timeout;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
-class OfflineService extends ConfigurableService
+class SynchronisationService extends ConfigurableService
 {
-    /**
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array &$actions)
-    {
-        $last = microtime(true);
-        /** @var TestRunnerAction $action */
-        foreach (array_reverse($actions) as &$action) {
 
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
-                $last = $start;
-                $action->setStart($start+1);
-            }
-
-        }
-    }
+    const SERVICE_ID = 'taoQtiTest/synchronisationService';
+    const ACTIONS_OPTION = 'actions';
 
     /**
      * Wrap the process to appropriate action and aggregate results
      *
      * @param $data
+     * @param $serviceContext QtiRunnerServiceContext
      * @return string
      * @throws \common_exception_InconsistentData
      */
-    public function process($data)
+    public function process($data, $serviceContext)
     {
         if (empty($data)) {
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
@@ -66,9 +51,12 @@ class OfflineService extends ConfigurableService
         $this->initTimers($actions);
 
         $response = [];
+
+        /** @var TestRunnerAction $action */
         foreach( $actions as $action) {
 
             try {
+                $action->setServiceContext($serviceContext);
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
@@ -85,11 +73,36 @@ class OfflineService extends ConfigurableService
             }
         }
 
+        $this->getRunnerService()->persist($serviceContext);
+
         return json_encode($response, JSON_PRETTY_PRINT);
     }
 
     /**
-     * Resolve an offline runner action
+     * Get available actions from config
+     *
+     * @return array
+     */
+    public function getAvailableActions()
+    {
+        return is_array($this->getOption(self::ACTIONS_OPTION))
+            ? $this->getOption(self::ACTIONS_OPTION)
+            : [];
+    }
+
+    /**
+     * Set available actions to config
+     *
+     * @param array $actions
+     */
+    public function setAvailableActions(array $actions = [])
+    {
+        $this->setOption(self::ACTIONS_OPTION, $actions);
+    }
+
+
+    /**
+     * Resolve a runner action to synchronize
      *
      * @param $data
      * @return TestRunnerAction
@@ -120,13 +133,35 @@ class OfflineService extends ConfigurableService
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
     }
 
-    protected function getAvailableActions()
+    /**
+     * Set the action start timers:
+     *
+     * $start = snow - sitemDuration
+     * Start by the last action to have a consistent QtiTimeLine
+     * Add 1 ms to start to avoid collision
+     *
+     * @param TestRunnerAction[] $actions
+     */
+    protected function initTimers(array &$actions)
     {
-        return [
-            'move' => Move::class,
-            'skip' => Skip::class,
-            'storeTraceData' => StoreTraceData::class,
-            'timeout' => Timeout::class
-        ];
+        $last = microtime(true);
+        /** @var TestRunnerAction $action */
+        foreach (array_reverse($actions) as &$action) {
+
+            if ($duration = $action->hasRequestParameter('itemDuration')) {
+                $start = $last - $duration;
+                $last = $start;
+                $action->setStart($start+1);
+            }
+
+        }
+    }
+
+    /**
+     * @return QtiRunnerService
+     */
+    protected function getRunnerService()
+    {
+        return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
     }
 }

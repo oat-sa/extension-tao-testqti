@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\oatbox\service\ServiceManagerAwareInterface;
 use oat\oatbox\service\ServiceManagerAwareTrait;
-use oat\taoQtiTest\models\runner\offline\OfflineService;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
@@ -41,7 +41,7 @@ class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
     }
 
     /**
-     * Forward the data processing to the offline service
+     * Forward the data processing to the SynchronisationService
      *
      * @param QtiRunnerServiceContext $context
      * @param array $data
@@ -49,9 +49,7 @@ class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
      */
     public function process(QtiRunnerServiceContext $context, array $data = [])
     {
-        $offlineService = new OfflineService();
-        $this->getServiceManager()->propagate($offlineService);
-        return $offlineService->process($data);
+        return $this->getServiceManager()->get(SynchronisationService::SERVICE_ID)->process($data, $context);
     }
 
 }

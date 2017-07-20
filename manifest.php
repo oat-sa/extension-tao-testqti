@@ -59,6 +59,8 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
             \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
+            \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
+            \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
 		    RegisterTestContainer::class
         )
 	),

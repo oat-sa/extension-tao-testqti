@@ -17,7 +17,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline;
+namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -26,19 +26,44 @@ use oat\taoQtiTest\models\runner\RunnerParamParserTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
+/**
+ * Class TestRunnerAction
+ *
+ * @package oat\taoQtiTest\models\runner\synchronisation
+ */
 abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
     use RunnerParamParserTrait;
 
-    protected $name;
-    protected $timestamp;
     protected $start;
 
+    /** @var integer The timestamp of action */
+    protected $timestamp;
+
+    /** @var string The name of action */
+    protected $name;
+
+    /** @var array Parameters of the current action */
     protected $parameters;
 
+    /**
+     * Main method to process the action
+     *
+     * @return mixed
+     */
     abstract public function process();
 
+    /**
+     * TestRunnerAction constructor.
+     *
+     * Construct the action with required $name and $timestamp
+     * Parameters is optional
+     *
+     * @param $name
+     * @param $timestamp
+     * @param array $parameters
+     */
     public function __construct($name, $timestamp, array $parameters = [])
     {
         $this->name = $name;
@@ -46,17 +71,31 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
         $this->parameters = $parameters;
     }
 
+    /**
+     * Check if $name exists in parameters array
+     *
+     * @param $name
+     * @return bool
+     */
     public function hasRequestParameter($name)
     {
         return isset($this->parameters[$name]);
     }
 
+    /**
+     * Check get the $name from parameters array, false if does not exist
+     *
+     * @param $name
+     * @return bool|mixed
+     */
     public function getRequestParameter($name)
     {
         return $this->hasRequestParameter($name) ? $this->parameters[$name] : false;
     }
 
     /**
+     * Get the timestamp of current action start
+     *
      * @return mixed
      */
     public function getStart()
@@ -65,6 +104,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Set the timestamp of current action start
+     *
      * @param mixed $start
      */
     public function setStart($start)
@@ -73,6 +114,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Get the name of current action
+     *
      * @return mixed
      */
     public function getName()
@@ -81,18 +124,30 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
-     * @return mixed
+     * Get the timestamp of current action
+     *
+     * @return integer
      */
     public function getTimestamp()
     {
         return $this->timestamp;
     }
 
-    public function getRequiredFields()
+    /**
+     * Provide the required fields for current action
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
     {
         return ['testDefinition', 'testCompilation', 'serviceCallId'];
     }
 
+    /**
+     * Validate the class parameters against the getRequiredFields method
+     *
+     * @throws \common_exception_InconsistentData
+     */
     public function validate()
     {
         $requiredFields = array_unique($this->getRequiredFields());

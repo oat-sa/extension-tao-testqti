@@ -17,29 +17,19 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline\action;
+namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TraceVariableStored;
-use oat\taoQtiTest\models\runner\offline\TestRunnerAction;
+use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
  * Class StoreTraceData
  *
- * @package oat\taoQtiTest\models\runner\offline\action
+ * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
 class StoreTraceData extends TestRunnerAction
 {
-    /**
-     * traceData field is required.
-     *
-     * @return array
-     */
-    public function getRequiredFields()
-    {
-        return array_merge(parent::getRequiredFields(), ['traceData']);
-    }
-
     /**
      * Process the storeTraceData action.
      *
@@ -85,6 +75,16 @@ class StoreTraceData extends TestRunnerAction
         }
 
         return $response;
+    }
+
+    /**
+     * traceData field is required.
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return array_merge(parent::getRequiredFields(), ['traceData']);
     }
 
 }

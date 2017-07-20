@@ -17,36 +17,25 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-namespace oat\taoQtiTest\models\runner\offline\action;
+namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
-use oat\taoQtiTest\models\runner\offline\TestRunnerAction;
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
- * Class Move
+ * Class Timeout
  *
- * Move forward or back item into the test context.
+ * Timeout item into the test context.
  *
- * @package oat\taoQtiTest\models\runner\offline\action
+ * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
-class Move extends TestRunnerAction
+class Timeout extends TestRunnerAction
 {
     /**
-     * Direction and scope are required for move action.
-     *
-     * @return array
-     */
-    public function getRequiredFields()
-    {
-        return array_merge(parent::getRequiredFields(), ['direction', 'scope']);
-    }
-
-    /**
-     * Process the move action.
+     * Process the timeout action.
      *
      * Validate required fields.
      * Stop/Start timer and save item state.
-     * Save item response and wrap the move to runner service.
+     * Save item responses and wrap the timeout to runner service.
      * Persist service context.
      * Start next timer.
      *
@@ -56,26 +45,23 @@ class Move extends TestRunnerAction
     {
         $this->validate();
 
-        $ref       = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
-        $direction = $this->getRequestParameter('direction');
-        $scope     = $this->getRequestParameter('scope');
-        $start     = ($this->getRequestParameter('start') !== false);
+        $ref   = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $scope = $this->getRequestParameter('scope');
+        $start = ($this->getRequestParameter('start') !== false);
 
         try {
-
-            /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getStart());
                 $this->saveItemState();
             }
+
             $this->initServiceContext();
 
-            $this->saveItemResponses(false);
+            $this->saveItemResponses();
 
-            $serviceContext->getTestSession()->initItemTimer($this->getStart());
-            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
+            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
 
             $response = [
                 'success' => $result,
@@ -85,11 +71,7 @@ class Move extends TestRunnerAction
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
             }
 
-            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start === true) {
+            if($start == true){
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
@@ -97,10 +79,20 @@ class Move extends TestRunnerAction
             }
 
         } catch (\Exception $e) {
-            \common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
         }
 
         return $response;
     }
+
+    /**
+     * Scope is a required fields.
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return array_merge(parent::getRequiredFields(), ['scope']);
+    }
+
 }

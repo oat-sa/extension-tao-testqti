@@ -22,7 +22,14 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -1332,6 +1339,46 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.4.0');
         }
       
-        $this->skip('10.4.0', '10.6.0');
+        $this->skip('10.4.0', '10.5.1');
+
+        if ($this->isVersion('10.5.1')) {
+            // Install the synchronisation service
+            if ($this->getServiceManager()->has(SynchronisationService::SERVICE_ID)) {
+                /** @var SynchronisationService $service */
+                $service = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+                $actions = $service->getAvailableActions();
+            } else {
+                $service = new SynchronisationService();
+                $actions = [];
+            }
+
+            $newActions = [
+                'move' => Move::class,
+                'skip' => Skip::class,
+                'storeTraceData' => StoreTraceData::class,
+                'timeout' => Timeout::class
+            ];
+
+            $service->setAvailableActions(array_merge($actions, $newActions));
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $service);
+
+            // Install the Sync Channel
+            if ($this->getServiceManager()->has(QtiCommunicationService::SERVICE_ID)) {
+                $service = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+                if (!$service instanceof CommunicationService) {
+                    $service = new QtiCommunicationService($service->getOptions());
+                }
+            } else {
+                $service = new QtiCommunicationService();
+            }
+
+            $channels = $service->getOption(QtiCommunicationService::OPTION_CHANNELS);
+            if (! isset($channels[QtiCommunicationService::CHANNEL_TYPE_INPUT][SyncChannel::CHANNEL_NAME])) {
+                $service->attachChannel(new SyncChannel(), QtiCommunicationService::CHANNEL_TYPE_INPUT);
+                $this->getServiceManager()->register(QtiCommunicationService::SERVICE_ID, $service);
+            }
+
+            $this->setVersion('10.6.0');
+        }
     }
 }
