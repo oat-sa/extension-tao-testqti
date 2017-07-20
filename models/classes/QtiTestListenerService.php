@@ -80,7 +80,15 @@ class QtiTestListenerService extends ConfigurableService
             $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
         }
     }
-
+    
+    /**
+     * Archive Test States
+     * 
+     * This method archives the Test States (Test + Items) related to the DeliveryExecution throwing $event.
+     * Please note that it is only relevant for the new QTI Test Runner.
+     *
+     * @param \oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState $event
+     */
     public function archiveState(DeliveryExecutionState $event)
     {
         if ($event->getState() == DeliveryExecution::STATE_FINISHIED) {
@@ -89,14 +97,15 @@ class QtiTestListenerService extends ConfigurableService
             $session = $testSessionService->getTestSession($event->getDeliveryExecution());
             $userId = $event->getDeliveryExecution()->getUserIdentifier();
 
-            //get all callIds linked to that session
+            // Retrieve the Test Session Id (Item State Identifiers are based on it).
             $sessionId = $session->getSessionId();
-
-            $itemRefs = $session->getRoute()->getAssessmentItemRefs();
 
             /** @var StateMigration $finishedService */
             $finishedService = $this->getServiceManager()->get(StateMigration::SERVICE_ID);
-            //remove all callIds
+            
+            // Remove all Item States that belong to the Test.
+            $itemRefs = $session->getRoute()->getAssessmentItemRefs();
+            
             foreach ($itemRefs as $itemRef) {
                 $callId = $sessionId.$itemRef->getIdentifier();
                 if ($finishedService->archive($userId, $callId)) {
@@ -105,12 +114,13 @@ class QtiTestListenerService extends ConfigurableService
                 }
             }
 
+            // Remove the Test State.
             if ($finishedService->archive($userId, $sessionId)) {
                 $finishedService->removeState($userId, $sessionId);
                 \common_Logger::t('Test State archived for user : '.$userId.' and callId : '. $sessionId);
             }
             
-            // Only relevant for new QTI Test Runner (QtiTimeLine storage).
+            // Remove QtiTimeLine State (Only relevant for new QTI Test Runner).
             $timeLineStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
             if ($finishedService->archive($userId, $timeLineStorageId)) {
                 $finishedService->removeState($userId, $timeLineStorageId);
@@ -118,5 +128,4 @@ class QtiTestListenerService extends ConfigurableService
             }
         }
     }
-
 }
