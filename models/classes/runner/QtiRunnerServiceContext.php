@@ -23,7 +23,6 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
-use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use qtism\data\AssessmentTest;
@@ -325,26 +324,5 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getItemIndexValue($id, $name) 
     {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
-    }
-    
-    /**
-     * Get AssessmentItemRef's Href by AssessmentItemRef Identifier.
-     * 
-     * Returns the AssessmentItemRef href attribute value from a given $identifier.
-     * 
-     * @param string $identifier
-     * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
-     */
-    public function getAssessmentItemRefHrefById($identifier)
-    {
-        try {
-            $compilationDirectory = $this->getCompilationDirectory()['private'];
-            
-            return $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($identifier));
-        } catch (\Exception $e) {
-            /** @todo TAO-4605 remove/adapt this temporary workaround */
-            $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
-            return $mapService->getItemHref($this, $identifier);
-        }
     }
 }

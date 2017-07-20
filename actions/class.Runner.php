@@ -252,17 +252,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $serviceContext = $this->getServiceContext(false, false);
         return  $serviceContext->getTestExecutionUri() . $itemIdentifier;
     }
-    
-    /**
-     * Gets the item reference for the current itemRef
-     * @param string $itemIdentifier the item id
-     * @return string the state id
-     */
-    protected function getItemRef($itemIdentifier)
-    {
-        $serviceContext = $this->getServiceContext(false, false);
-        return $serviceContext->getAssessmentItemRefHrefById($itemIdentifier);
-    }
 
     /**
      * Initializes the delivery session
@@ -457,7 +446,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getItemData($itemIdentifier)
     {
         $serviceContext = $this->getServiceContext(false, false);
-        $itemRef        = $this->getItemRef($itemIdentifier);
+        $itemRef        = $this->runnerService->getItemHref($serviceContext, $itemIdentifier);
         $itemData       = $this->runnerService->getItemData($serviceContext, $itemRef);
         $baseUrl        = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
 
@@ -527,8 +516,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         if($this->hasRequestParameter('itemDefinition') && $this->hasRequestParameter('itemResponse')){
 
-            $itemDefinition = $this->getItemRef($this->getRequestParameter('itemDefinition'));
             $serviceContext = $this->getServiceContext(false, false);
+            $itemDefinition = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
@@ -562,12 +551,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
         $successState = false;
 
-        $itemRef = $this->getItemRef($this->getRequestParameter('itemDefinition'));
-
         try {
             // get the service context, but do not perform the test state check,
             // as we need to store the item state whatever the test state is
             $serviceContext = $this->getServiceContext(false, true);
+            $itemRef        = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
 
             if (!$this->runnerService->isTerminated($serviceContext)) {
                 $this->endItemTimer();
@@ -900,12 +888,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function storeTraceData(){
         $code = 200;
 
-        $itemRef = ($this->hasRequestParameter('itemDefinition'))?$this->getItemRef($this->getRequestParameter('itemDefinition')): null;
-
         $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
 
         try {
             $serviceContext = $this->getServiceContext(false);
+            if ($this->hasRequestParameter('itemDefinition')) {
+                $itemRef = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
+            } else {
+                $itemRef = null;
+            }
+            
             $stored = 0;
             $size   = count($traceData);
 
