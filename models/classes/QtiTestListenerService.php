@@ -20,17 +20,12 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\state\StateMigration;
-use oat\tao\model\state\StateStorage;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
-use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
-use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class QtiTestListenerService
