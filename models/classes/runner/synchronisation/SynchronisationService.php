@@ -20,9 +20,12 @@
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 class SynchronisationService extends ConfigurableService
 {
+
     const SERVICE_ID = 'taoQtiTest/synchronisationService';
     const ACTIONS_OPTION = 'actions';
 
@@ -30,10 +33,11 @@ class SynchronisationService extends ConfigurableService
      * Wrap the process to appropriate action and aggregate results
      *
      * @param $data
+     * @param $serviceContext QtiRunnerServiceContext
      * @return string
      * @throws \common_exception_InconsistentData
      */
-    public function process($data)
+    public function process($data, $serviceContext)
     {
         if (empty($data)) {
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
@@ -47,9 +51,12 @@ class SynchronisationService extends ConfigurableService
         $this->initTimers($actions);
 
         $response = [];
+
+        /** @var TestRunnerAction $action */
         foreach( $actions as $action) {
 
             try {
+                $action->setServiceContext($serviceContext);
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
@@ -65,6 +72,8 @@ class SynchronisationService extends ConfigurableService
                 break;
             }
         }
+
+        $this->getRunnerService()->persist($serviceContext);
 
         return json_encode($response, JSON_PRETTY_PRINT);
     }
@@ -146,5 +155,13 @@ class SynchronisationService extends ConfigurableService
             }
 
         }
+    }
+
+    /**
+     * @return QtiRunnerService
+     */
+    protected function getRunnerService()
+    {
+        return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
     }
 }

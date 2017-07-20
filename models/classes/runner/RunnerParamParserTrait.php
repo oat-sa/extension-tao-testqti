@@ -98,6 +98,15 @@ trait RunnerParamParserTrait
     }
 
     /**
+     * @param QtiRunnerServiceContext $serviceContext
+     */
+    public function setServiceContext($serviceContext)
+    {
+        $this->serviceContext = $serviceContext;
+    }
+
+
+    /**
      * End the item timer to QtiTimeLine
 
      * @param null $timestamp The start of action, optional
