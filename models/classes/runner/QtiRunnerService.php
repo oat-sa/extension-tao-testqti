@@ -1345,7 +1345,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Starts the timer for the current item in the TestSession
      *
      * @param RunnerServiceContext $context
-     * @param $timestamp
+     * @param float $timestamp allow to start the timer at a specific time, or use current when it's null
      * @return bool
      * @throws \common_exception_InvalidArgumentType
      */
@@ -1375,7 +1375,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @param float $duration The client side duration to adjust the timer
      * @param float $consumedExtraTime The extra time consumed by the client
-     * @param $timestamp
+     * @param float $timestamp allow to end the timer at a specific time, or use current when it's null
      * @return bool
      * @throws \common_exception_InvalidArgumentType
      */
