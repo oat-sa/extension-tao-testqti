@@ -19,6 +19,7 @@
  */
 
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -28,13 +29,14 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '10.3.0',
+    'version'     => '10.6.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.4.0',
-        'taoQtiItem' => '>=8.5.0',
+        'taoQtiItem' => '>=9.3.0',
         'tao'        => '>=11.2.0',
         'generis'    => '>=3.36.0',
+        'taoDelivery' => '>=7.0.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -57,6 +59,7 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
             \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
+		    RegisterTestContainer::class
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
