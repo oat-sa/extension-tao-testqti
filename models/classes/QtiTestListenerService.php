@@ -25,6 +25,7 @@ use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use qtism\runtime\tests\AssessmentTestSession;
 
 /**
