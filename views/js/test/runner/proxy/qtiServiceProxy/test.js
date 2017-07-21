@@ -28,11 +28,12 @@ define([
 ], function($, _, helpers, communicatorFactory, proxyFactory, qtiServiceProxy) {
     'use strict';
 
+    var ajaxBackup;
+
     QUnit.module('qtiServiceProxy');
 
-
     // backup/restore ajax method between each test
-    var ajaxBackup;
+
     QUnit.testStart(function() {
         ajaxBackup = $.ajax;
     });
@@ -90,6 +91,7 @@ define([
 
 
     var proxyApi = [
+        { name : 'install', title : 'install' },
         { name : 'init', title : 'init' },
         { name : 'destroy', title : 'destroy' },
         { name : 'getTestData', title : 'getTestData' },
@@ -167,6 +169,8 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+            proxy.install();
+
             proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.on('init', function(promise, config) {
@@ -223,6 +227,8 @@ define([
         $.ajax = ajaxMockSuccess({success: true});
 
         var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+        proxy.install();
 
         proxy.init().then(function () {
             $.ajax = ajaxMockError(false, function() {
@@ -317,6 +323,8 @@ define([
             $.ajax = ajaxMockSuccess({success: true});
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.install();
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -422,6 +430,8 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+            proxy.install();
+
             proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getTestContext()
@@ -524,6 +534,8 @@ define([
             $.ajax = ajaxMockSuccess({success: true});
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.install();
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -638,6 +650,8 @@ define([
             $.ajax = ajaxMockSuccess({success: true});
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.install();
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -754,6 +768,8 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+            proxy.install();
+
             proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.callTestAction(caseData.action, caseData.params)
@@ -868,6 +884,8 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+            proxy.install();
+
             proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getItem(caseData.uri)
@@ -980,6 +998,8 @@ define([
             $.ajax = ajaxMockSuccess({success: true});
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.install();
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -1102,6 +1122,8 @@ define([
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+            proxy.install();
+
             proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.callItemAction(caseData.uri, caseData.action, caseData.params)
@@ -1152,8 +1174,8 @@ define([
                 });
             });
         });
-    
-    
+
+
     var qtiServiceProxyTelemetryChecks = [{
         title: 'success',
         ajaxMock: ajaxMockSuccess,
@@ -1220,6 +1242,8 @@ define([
             $.ajax = ajaxMockSuccess({success: true});
 
             var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+            proxy.install();
 
             proxy.telemetry(caseData.uri, caseData.signal, caseData.params)
                 .then(function() {
@@ -1325,6 +1349,8 @@ define([
 
         var proxy = proxyFactory('qtiServiceProxy', initConfig);
 
+        proxy.install();
+
         proxy.getCommunicator()
             .then(function() {
                 assert.ok(false, 'The proxy must be initialized');
@@ -1382,6 +1408,8 @@ define([
         $.ajax = ajaxMockSuccess({success: true});
 
         var proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+        proxy.install();
 
         proxy.getCommunicator()
             .then(function() {
