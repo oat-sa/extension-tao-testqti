@@ -1344,18 +1344,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Starts the timer for the current item in the TestSession
+     *
      * @param RunnerServiceContext $context
+     * @param float $timestamp allow to start the timer at a specific time, or use current when it's null
      * @return bool
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
      * @throws \common_exception_InvalidArgumentType
      */
-    public function startTimer(RunnerServiceContext $context)
+    public function startTimer(RunnerServiceContext $context, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
             if($session->getState() === AssessmentTestSessionState::INTERACTING) {
-                $session->startItemTimer();
+                $session->startItemTimer($timestamp);
             }
         } else {
             throw new \common_exception_InvalidArgumentType(
@@ -1371,19 +1372,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Ends the timer for the current item in the TestSession
+     *
      * @param RunnerServiceContext $context
      * @param float $duration The client side duration to adjust the timer
      * @param float $consumedExtraTime The extra time consumed by the client
+     * @param float $timestamp allow to end the timer at a specific time, or use current when it's null
      * @return bool
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
      * @throws \common_exception_InvalidArgumentType
      */
-    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null)
+    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            $session->endItemTimer($duration, $consumedExtraTime);
+            $session->endItemTimer($duration, $consumedExtraTime, $timestamp);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',

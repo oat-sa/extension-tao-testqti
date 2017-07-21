@@ -14,6 +14,7 @@
             "item-1": {
               "id": "item-1",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178181251158+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182781159-",
               "label": "Item 1",
               "position": 0,
               "positionInPart": 0,
@@ -29,6 +30,7 @@
             "item-2": {
               "id": "item-2",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178170141160+|https:\/\/act.krampstud.io\/tao.rdf#i14988117812381161-",
               "label": "Item 2",
               "position": 1,
               "positionInPart": 1,
@@ -44,6 +46,7 @@
             "item-3": {
               "id": "item-3",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150|https:\/\/act.krampstud.io\/tao.rdf#i14988117811471162+|https:\/\/act.krampstud.io\/tao.rdf#i1498811781221163-",
               "label": "Item 3",
               "position": 2,
               "positionInPart": 2,
@@ -73,6 +76,7 @@
             "item-4": {
               "id": "item-4",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178196711164+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182901165-",
               "label": "Item 1",
               "position": 3,
               "positionInPart": 3,
@@ -88,6 +92,7 @@
             "item-5": {
               "id": "item-5",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178124371166+|https:\/\/act.krampstud.io\/tao.rdf#i149881178173161167-",
               "label": "Item 2",
               "position": 4,
               "positionInPart": 4,
@@ -103,6 +108,7 @@
             "item-6": {
               "id": "item-6",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150|https:\/\/act.krampstud.io\/tao.rdf#i149881178192711168+|https:\/\/act.krampstud.io\/tao.rdf#i149881178144041169-",
               "label": "Item 3",
               "position": 5,
               "positionInPart": 5,
@@ -132,6 +138,7 @@
             "item-7": {
               "id": "item-7",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178142091170+|https:\/\/act.krampstud.io\/tao.rdf#i149881178178341171-",
               "label": "Item 1",
               "position": 6,
               "positionInPart": 6,
@@ -147,6 +154,7 @@
             "item-8": {
               "id": "item-8",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178165431172+|https:\/\/act.krampstud.io\/tao.rdf#i149881178192151173-",
               "label": "Item 2",
               "position": 7,
               "positionInPart": 7,
@@ -162,6 +170,7 @@
             "item-9": {
               "id": "item-9",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150|https:\/\/act.krampstud.io\/tao.rdf#i149881178164471174+|https:\/\/act.krampstud.io\/tao.rdf#i149881178145891175-",
               "label": "Item 3",
               "position": 8,
               "positionInPart": 8,
@@ -191,6 +200,7 @@
             "item-10": {
               "id": "item-10",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168918681153",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168918681153|https:\/\/act.krampstud.io\/tao.rdf#i149881178136051176+|https:\/\/act.krampstud.io\/tao.rdf#i149881178142601177-",
               "label": "Item 1",
               "position": 9,
               "positionInPart": 9,
@@ -206,6 +216,7 @@
             "item-11": {
               "id": "item-11",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i14988117814831178+|https:\/\/act.krampstud.io\/tao.rdf#i149881178196381179-",
               "label": "Item 2",
               "position": 10,
               "positionInPart": 10,
@@ -235,6 +246,7 @@
             "item-12": {
               "id": "item-12",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178167421180+|https:\/\/act.krampstud.io\/tao.rdf#i149881178147971181-",
               "label": "Item 1",
               "position": 11,
               "positionInPart": 11,
@@ -250,6 +262,7 @@
             "item-13": {
               "id": "item-13",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178137581182+|https:\/\/act.krampstud.io\/tao.rdf#i149881178143981183-",
               "label": "Item 2",
               "position": 12,
               "positionInPart": 12,
@@ -265,6 +278,7 @@
             "item-14": {
               "id": "item-14",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881168780441150|https:\/\/act.krampstud.io\/tao.rdf#i14988117827161184+|https:\/\/act.krampstud.io\/tao.rdf#i14988117823891185-",
               "label": "Item 3",
               "position": 13,
               "positionInPart": 13,
@@ -309,6 +323,7 @@
             "item-15": {
               "id": "item-15",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881143336021129",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881143336021129|https:\/\/act.krampstud.io\/tao.rdf#i149881178297961186+|https:\/\/act.krampstud.io\/tao.rdf#i149881178278141187-",
               "label": "Item 1",
               "position": 14,
               "positionInPart": 0,
@@ -324,6 +339,7 @@
             "item-16": {
               "id": "item-16",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i149881143513421132",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i149881143513421132|https:\/\/act.krampstud.io\/tao.rdf#i149881178296801188+|https:\/\/act.krampstud.io\/tao.rdf#i149881178249621189-",
               "label": "Item 2",
               "position": 15,
               "positionInPart": 1,
@@ -339,6 +355,7 @@
             "item-17": {
               "id": "item-17",
               "uri": "https:\/\/act.krampstud.io\/tao.rdf#i14988114371121135",
+              "definition": "https:\/\/act.krampstud.io\/tao.rdf#i14988114371121135|https:\/\/act.krampstud.io\/tao.rdf#i149881178257701190+|https:\/\/act.krampstud.io\/tao.rdf#i149881178239651191-",
               "label": "Item 3",
               "position": 16,
               "positionInPart": 2,

@@ -1,0 +1,73 @@
+{
+  "title": "Test 12",
+  "identifier": "Test-12",
+  "className": "assessmentTest",
+  "toolName": "tao",
+  "exclusivelyLinear": false,
+  "hasTimeLimits": false,
+  "states": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4
+  },
+  "itemStates": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4,
+    "solution": 5,
+    "review": 6,
+    "notSelected": 255
+  },
+  "config": {
+    "timerWarning": {
+      "assessmentItemRef": {
+        "300": "warning"
+      },
+      "assessmentSection": {
+        "300": "warning"
+      },
+      "testPart": {
+        "300": "warning"
+      }
+    },
+    "progressIndicator": {
+      "type": "position",
+      "scope": "testSection",
+      "forced": true,
+      "showTotal": true
+    },
+    "review": {
+      "enabled": true,
+      "scope": "testSection",
+      "useTitle": true,
+      "forceTitle": true,
+      "showLegend": true,
+      "defaultOpen": true,
+      "itemTitle": "Item %d",
+      "preventsUnseen": true,
+      "canCollapse": false,
+      "displaySubsectionTitle": true
+    },
+    "exitButton": true,
+    "nextSection": true,
+    "plugins": {},
+    "security": {
+      "csrfToken": true
+    },
+    "timer": {
+      "target": "client",
+      "resetAfterResume": true,
+      "keepUpToTimeout": false
+    },
+    "enableAllowSkipping": false,
+    "checkInformational": true,
+    "enableUnansweredItemsWarning": true,
+    "allowShortcuts": true,
+    "shortcuts": {},
+    "allowBrowseNextItem": true
+  }
+}

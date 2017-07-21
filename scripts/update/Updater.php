@@ -22,7 +22,14 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -43,7 +50,9 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -1322,7 +1331,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('10.1.0');
         }
-      
+
         $this->skip('10.1.0', '10.3.0');
       
         if ($this->isVersion('10.3.0')) {
@@ -1380,6 +1389,16 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags'        => [  ]
             ]));
             $this->setVersion('10.6.0');
+        }
+
+        if ($this->isVersion('10.6.0')) {
+            // Install the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            // Install the Sync Channel
+            $this->runExtensionScript(SyncChannelInstaller::class);
+
+            $this->setVersion('10.7.0');
         }
     }
 }
