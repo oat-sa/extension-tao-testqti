@@ -20,6 +20,8 @@ class CatService extends ConfigurableService
     
     const OPTION_ENGINE_ARGS = 'args';
     
+    const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
+    
     private $engine = null;
     
     /**
@@ -36,5 +38,23 @@ class CatService extends ConfigurableService
             $this->engine = new $class(...$args);
         }
         return $this->engine;
-    }    
+    }
+    
+    public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
+    {
+        return $privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php");
+    }
+    
+    public function getAdaptiveAssessmentSectionIdentifiers(\DOMDocument $assessmentTest)
+    {
+        $xpath = new \DOMXPath($assessmentTest);
+        $xpath->registerNamespace('ais', QTI_2X_ADAPTIVE_XML_NAMESPACE);
+        
+        $sectionIdentifiers = [];
+        foreach ($xpath->query('//ais:adaptiveItemSelection/../../') as $assessmentSectionNode) {
+            $sectionIdentifiers[] = $assessmentSectionNode->getAttribute('identifier');
+        }
+        
+        return $sectionIdentifiers;
+    }
 }
