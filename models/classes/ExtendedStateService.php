@@ -21,6 +21,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoDelivery\model\execution\ServiceProxy;
 
 /**
  * Manage the flagged items
@@ -45,7 +46,7 @@ class ExtendedStateService extends ConfigurableService
     protected function getSessionUserUri($testSessionId)
     {
         if (!isset(self::$deliveryExecutions[$testSessionId])) {
-            self::$deliveryExecutions[$testSessionId] = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
+            self::$deliveryExecutions[$testSessionId] = ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
         }
         if (self::$deliveryExecutions[$testSessionId]) {
             return self::$deliveryExecutions[$testSessionId]->getUserIdentifier();
