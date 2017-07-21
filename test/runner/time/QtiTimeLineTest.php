@@ -311,13 +311,14 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
     /**
      * Test the QtiTimeLine::compute()
      * @dataProvider malformedRangeExceptionProvider
-     * @expectedException \oat\taoTests\models\runner\time\MalformedRangeException
      * @param TimePoint[] $points
+     * @param int $expectedDuration
      */
-    public function testComputeMalformedRangeException($points)
+    public function testComputeMalformedRangeException($points, $expectedDuration)
     {
         $timeLine = new QtiTimeLine($points);
-        $timeLine->compute(['test-a', 'item-a']);
+        $duration = $timeLine->compute(['test-a', 'item-a']);
+        $this->assertEquals($duration, $expectedDuration);
     }
 
     /**
@@ -393,13 +394,40 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
                 [
                     new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
                     new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                 ],
-            ],
-            [
+                2
+            ], [
                 [
+                    new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
                     new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                     new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                 ],
+                2
+            ], [
+                [
+                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519520.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519530.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                ],
+                28
+            ], [
+                [
+                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519520.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519530.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                ],
+                20
+            ], [
+                [
+                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519530.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519520.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                ],
+                28
             ],
         ];
     }
@@ -413,12 +441,6 @@ class QtiTimeLineTest extends TaoPhpUnitTestRunner
             [
                 [
                     new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
-                    new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
-                ]
-            ],
-            [
-                [
-                    new TimePoint(['test-a', 'item-a'], 1459519522.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
                     new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                 ]
             ],

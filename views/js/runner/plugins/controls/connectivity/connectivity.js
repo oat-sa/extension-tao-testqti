@@ -79,7 +79,7 @@ define([
                 })
                 .before('error', function(e, error) {
                     // detect connectivity errors as network error without error code
-                    if (_.isObject(error) && error.source === 'network' && !error.code) {
+                    if (_.isObject(error) && error.source === 'network' && typeof error.code === 'undefined') {
                         disconnect();
 
                         // prevent default error handling

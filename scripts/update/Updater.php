@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -50,6 +51,8 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 
 /**
  *
@@ -1290,7 +1293,48 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('9.18.0', '9.19.0');
 
-        if ($this->isVersion('9.19.0')) {
+        if( $this->isVersion('9.19.0') ){
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'preventSkipping',
+                'name'        => 'Prevent Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent to submit empty responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('10.0.0');
+        }
+
+        if ($this->isVersion('10.0.0')) {
+            $service = new QtiRunnerMap();
+            $this->getServiceManager()->propagate($service);
+            $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['item-cache-size'] = 3;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('10.1.0');
+        }
+      
+        $this->skip('10.1.0', '10.3.0');
+      
+        if ($this->isVersion('10.3.0')) {
+            $registry = DeliveryContainerRegistry::getRegistry();
+            $registry->setServiceLocator($this->getServiceManager());
+            $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
+            $this->setVersion('10.4.0');
+        }
+      
+        $this->skip('10.4.0', '10.5.1');
+
+        if ($this->isVersion('10.5.1')) {
 
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/tools/highlighter/plugin');
@@ -1335,7 +1379,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active'      => true,
                 'tags'        => [  ]
             ]));
-            $this->setVersion('9.20.0');
+            $this->setVersion('10.6.0');
         }
     }
 }

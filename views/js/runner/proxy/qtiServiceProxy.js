@@ -65,12 +65,15 @@ define([
              * Proxy request function. Returns a promise
              * Applied options: asynchronous call, JSON data, no cache
              * @param {String} url
-             * @param {Object} [params]
+             * @param {Object} [reqParams]
              * @param {String} [contentType] - to force the content type
              * @param {Boolean} [noToken] - to disable the token
              * @returns {Promise}
              */
             this.request = function request(url, reqParams, contentType, noToken) {
+
+                //some parameters need to be JSON.stringified, we do it at the lowest level
+                var stringifyParams = ['itemState', 'itemResponse'];
 
                 //run the request, just a function wrapper
                 var runRequest = function runRequest() {
@@ -86,6 +89,14 @@ define([
                             if (token) {
                                 headers['X-Auth-Token'] = token;
                             }
+                        }
+                        if(_.isPlainObject(reqParams)){
+                            reqParams = _.mapValues(reqParams, function(value, key){
+                                if(_.contains(stringifyParams, key)){
+                                    return JSON.stringify(value);
+                                }
+                                return value;
+                            });
                         }
 
                         $.ajax({
@@ -217,55 +228,57 @@ define([
         },
 
         /**
-         * Gets an item definition by its URI, also gets its current state
-         * @param {String} uri - The URI of the item to get
+         * Gets an item definition by its identifier, also gets its current state
+         * @param {String} itemIdentifier - The identifier of the item to get
+         * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri) {
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'));
+        getItem: function getItem(itemIdentifier, params) {
+            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params);
         },
 
         /**
          * Submits the state and the response of a particular item
-         * @param {String} uri - The URI of the item to update
+         * @param {String} itemIdentifier - The identifier of the item to update
          * @param {Object} state - The state to submit
          * @param {Object} response - The response object to submit
+         * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        submitItem: function submitItem(uri, state, response, params) {
-            var body = JSON.stringify(_.merge({
+        submitItem: function submitItem(itemIdentifier, state, response, params) {
+            var body = _.merge({
                 itemState: state,
                 itemResponse: response
-            }, params || {}));
+            }, params || {});
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'submitItem'), body, 'application/json');
+            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'submitItem'), body);
         },
 
         /**
          * Calls an action related to a particular item
-         * @param {String} uri - The URI of the item for which call the action
+         * @param {String} itemIdentifier - The identifier of the item for which call the action
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callItemAction: function callItemAction(uri, action, params) {
-            return this.request(this.configStorage.getItemActionUrl(uri, action), params);
+        callItemAction: function callItemAction(itemIdentifier, action, params) {
+            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, action), params);
         },
 
         /**
          * Sends a telemetry signal
-         * @param {String} uri - The URI of the item for which sends the telemetry signal
+         * @param {String} itemIdentifier - The identifier of the item for which sends the telemetry signal
          * @param {String} signal - The name of the signal to send
          * @param {Object} [params] - Some optional parameters to join to the signal
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          * @fires telemetry
          */
-        telemetry: function telemetry(uri, signal, params) {
-            return this.request(this.configStorage.getTelemetryUrl(uri, signal), params, null, true);
+        telemetry: function telemetry(itemIdentifier, signal, params) {
+            return this.request(this.configStorage.getTelemetryUrl(itemIdentifier, signal), params, null, true);
         },
 
         /**
