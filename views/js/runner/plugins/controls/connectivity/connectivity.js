@@ -15,15 +15,14 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-    'jquery',
-    'lodash',
     'i18n',
     'taoTests/runner/plugin'
-], function ($, _, __, pluginFactory) {
+], function (__, pluginFactory) {
     'use strict';
 
     /**
@@ -47,59 +46,44 @@ define([
         install: function install() {
 
             var testRunner = this.getTestRunner();
+            var proxy      = testRunner.getProxy();
 
-            function disconnect() {
+            //the Proxy is the only one to know something about connectivity
+            proxy.on('disconnect', function disconnect(source) {
                 if (!testRunner.getState('disconnected')) {
-                    testRunner.trigger('disconnect');
+                    testRunner.setState('disconnected', true);
+                    testRunner.trigger('disconnect', source);
                 }
-            }
-
-            function reconnect() {
+            })
+            .on('reconnect', function reconnect() {
                 if (testRunner.getState('disconnected')) {
+                    testRunner.setState('disconnected', false);
                     testRunner.trigger('reconnect');
                 }
-            }
-
-            // immediate detection of connectivity loss using Offline API
-            $(window).on('offline.connectivity', function() {
-                disconnect();
             });
 
-            // immediate detection of connectivity back using Offline API
-            $(window).on('online.connectivity', function() {
-                reconnect();
+            testRunner.before('error', function(e, err) {
+
+                // detect and prevent connectivity errors
+                if (proxy.isConnectivityError(err)){
+                    return false;
+                }
+
+                //offline navigation error, we pause the test
+                if(err.source === 'navigator' && err.purpose === 'proxy' && err.code === 404){
+                    testRunner
+                        .trigger('disconnectpause')
+                        .trigger('pause', {
+                            reasons : {
+                                category : __('technical'),
+                                subCategory : __('network')
+                            },
+                            message : err.message
+                        });
+
+                    return false;
+                }
             });
-
-            testRunner
-                .on('disconnect', function() {
-                    testRunner.setState('disconnected', true);
-                })
-                .on('reconnect', function() {
-                    testRunner.setState('disconnected', false);
-                })
-                .before('error', function(e, error) {
-                    // detect connectivity errors as network error without error code
-                    if (_.isObject(error) && error.source === 'network' && typeof error.code === 'undefined') {
-                        disconnect();
-
-                        // prevent default error handling
-                        return false;
-                    }
-                });
-
-            testRunner.getProxy()
-                .on('receive', function() {
-                    // any message received, state the runner is connected
-                    reconnect();
-                });
-        },
-
-        /**
-         * Called during the runner's destroy phase
-         */
-        destroy : function destroy (){
-            $(window).off('offline.connectivity');
-            $(window).off('online.connectivity');
         }
     });
 });

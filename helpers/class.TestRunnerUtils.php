@@ -1181,6 +1181,31 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function getCategories(AssessmentTestSession $session){
         return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
+
+
+    /**
+     * Get the array of available categories for the test
+     *
+     * @param \qtism\runtime\tests\AssessmentTestSession $session
+     * @return array
+     */
+    static public function getAllCategories(AssessmentTestSession $session)
+    {
+        $prevCategories = null;
+        $assessmentItemRefs = $session->getAssessmentTest()->getComponentsByClassName('assessmentItemRef');
+
+        /** @var \qtism\data\AssessmentItemRef $assessmentItemRef */
+        foreach ($assessmentItemRefs as $assessmentItemRef){
+            $categories = $assessmentItemRef->getCategories();
+            if(!is_null($prevCategories)){
+                $prevCategories->merge($categories);
+            } else {
+                $prevCategories = $categories;
+            }
+        }
+
+        return (!is_null($prevCategories))? array_unique($prevCategories->getArrayCopy()):[];
+    }
     
     /**
      * Whether or not $value is considered as a null QTI value.

@@ -49,6 +49,8 @@ class QtiTimer implements Timer, ExtraTime
      */
     const STORAGE_KEY_EXTRA_TIME = 'extraTime';
 
+    const STORAGE_KEY_EXTENDED_TIME = 'extendedTime';
+
     /**
      * The name of the storage key for the consumed extra time
      */
@@ -82,6 +84,12 @@ class QtiTimer implements Timer, ExtraTime
      * @var float
      */
     protected $extraTime = 0.0;
+
+    /**
+     * The extended time
+     * @var float
+     */
+    protected $extendedTime = 0.0;
 
     /**
      * The already consumed extra time
@@ -354,6 +362,7 @@ class QtiTimer implements Timer, ExtraTime
         $this->storage->store(json_encode([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
             self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
             self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
         ]));
@@ -419,7 +428,13 @@ class QtiTimer implements Timer, ExtraTime
             if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
                 $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
             } else {
-                $this->extraTime = 0;    
+                $this->extraTime = 0;
+            }
+
+            if (isset($refined[self::STORAGE_KEY_EXTENDED_TIME])) {
+                $this->extendedTime = $refined[self::STORAGE_KEY_EXTENDED_TIME];
+            } else {
+                $this->extendedTime = 0;
             }
             
             if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
@@ -438,17 +453,42 @@ class QtiTimer implements Timer, ExtraTime
 
     /**
      * Gets the added extra time
+     * @param int $maxTime
      * @return float
      */
-    public function getExtraTime()
+    public function getExtraTime($maxTime = 0)
     {
+        if ($maxTime && $this->getExtendedTime()) {
+            $secondsNew = $maxTime * $this->getExtendedTime();
+            $extraTime = floor(($secondsNew - $maxTime) / 60) * 60;
+            $this->setExtraTime($extraTime);
+            return $extraTime;
+        }
         return $this->extraTime;
+    }
+
+    /**
+     * @return float
+     */
+    public function getExtendedTime()
+    {
+        return $this->extendedTime;
+    }
+
+    /**
+     * @param $extendedTime
+     * @return $this
+     */
+    public function setExtendedTime($extendedTime)
+    {
+        $this->extendedTime = $extendedTime;
+        return $this;
     }
 
     /**
      * Sets the added extra time
      * @param float $time
-     * @return ExtraTime
+     * @return $this
      */
     public function setExtraTime($time)
     {

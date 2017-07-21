@@ -116,7 +116,7 @@ class QtiTimeConstraint extends TimeConstraint
                 // and append the full remaining extra time
                 // the total must correspond to the already elapsed time plus the remaining time
                 $currentExtraTime = $this->timer->getRemainingExtraTime() + $this->timer->getConsumedExtraTime($this->getSource()->getIdentifier());
-                $extraTime = min($this->timer->getExtraTime(), $currentExtraTime);
+                $extraTime = min($this->timer->getExtraTime($maxTime->getSeconds(true)), $currentExtraTime);
                 $remaining->add(new QtiDuration('PT' . $extraTime . 'S'));
             }
             $remaining->sub($this->getDuration());

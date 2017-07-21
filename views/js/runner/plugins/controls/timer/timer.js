@@ -117,7 +117,10 @@ define([
              * Gets the remaining extra time, if any
              * @returns {Number} the remaining extra time in milliseconds
              */
-            var getRemainingExtraTime = function getRemainingExtraTime() {
+            var getRemainingExtraTime = function getRemainingExtraTime(extra) {
+                if (extra) {
+                    extraTime = extra;
+                }
                 return Math.max(0, extraTime - consumedExtraTime) * precision;
             };
 
@@ -129,7 +132,7 @@ define([
              */
             var setRemainingTime = function setRemainingTime(timerConfig, remaining) {
                 // will display the timer with extra time, if any
-                timerConfig.remaining = remaining + getRemainingExtraTime();
+                timerConfig.remaining = remaining + getRemainingExtraTime(timerConfig.extra);
 
                 // keep track of the regular timer, without extra time
                 timerConfig.regular = remaining;
@@ -156,6 +159,7 @@ define([
                     if (timeConstraint) {
                         timer = setRemainingTime({
                             label: timeConstraint.label,
+                            extra: timeConstraint.extraTime,
                             type: timeConstraint.qtiClassName,
                             id: timeConstraint.source,
                             running: true,
