@@ -463,7 +463,7 @@ define([
                 params.start = true;
             }
 
-            return this.requestNetworThenOffline(
+            return this.requestNetworkThenOffline(
                 this.configStorage.getItemActionUrl(itemIdentifier, action),
                 action,
                 _.merge({ itemDefinition : itemIdentifier }, params)
