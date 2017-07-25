@@ -21,6 +21,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoDelivery\model\execution\ServiceProxy;
 
 /**
  * Manage the flagged items
@@ -45,7 +46,7 @@ class ExtendedStateService extends ConfigurableService
     protected function getSessionUserUri($testSessionId)
     {
         if (!isset(self::$deliveryExecutions[$testSessionId])) {
-            self::$deliveryExecutions[$testSessionId] = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
+            self::$deliveryExecutions[$testSessionId] = ServiceProxy::singleton()->getDeliveryExecution($testSessionId);
         }
         if (self::$deliveryExecutions[$testSessionId]) {
             return self::$deliveryExecutions[$testSessionId]->getUserIdentifier();
@@ -229,5 +230,36 @@ class ExtendedStateService extends ConfigurableService
         $extra[self::VAR_EVENTS_QUEUE] = [];
 
         $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Stores the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @param array $table
+     */
+    public function storeItemsTable($testSessionId, $table)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra['items_table'] = $table;
+        $this->saveExtra($testSessionId, $extra);
+    }
+
+    /**
+     * Loads the table that maps the items identifiers to item reference
+     * @todo TAO-4605 remove this temporary workaround
+     * @param $testSessionId
+     * @return array
+     */
+    public function loadItemsTable($testSessionId)
+    {
+        $extra = $this->getExtra($testSessionId);
+
+        if (isset($extra['items_table'])) {
+            $table = $extra['items_table'];
+        } else {
+            $table = [];
+        }
+        return $table;
     }
 }

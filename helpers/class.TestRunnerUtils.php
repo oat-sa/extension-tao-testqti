@@ -586,7 +586,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                         $compilationDirs
                     );
                 } else {
-                    common_Logger::i('Try to use an extra context builder class that is not an instance of \\oat\\taoQtiTest\\models\\TestContextBuilder!');
+                    common_Logger::d('Try to use an extra context builder class that is not an instance of \\oat\\taoQtiTest\\models\\TestContextBuilder!');
                 }
             }
         }
@@ -700,9 +700,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * Checks if an item has been completed
      * @param RouteItem $routeItem
      * @param AssessmentItemSession $itemSession
+     * @param bool $partially (optional) Whether or not consider partially responded sessions as responded.
      * @return bool
      */
-    static public function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession) {
+    static public function isItemCompleted(RouteItem $routeItem, AssessmentItemSession $itemSession, $partially = true) {
         $completed = false;
         if ($routeItem->getTestPart()->getNavigationMode() === NavigationMode::LINEAR) {
             // In linear mode, we consider the item completed if it was presented.
@@ -719,7 +720,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
             if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
                 $completed = true;
             }
-            else if ($isAdaptive === false && $itemSession->isResponded() === true) {
+            else if ($isAdaptive === false && $itemSession->isResponded($partially) === true) {
                 $completed = true;
             }
         }
@@ -1179,6 +1180,31 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function getCategories(AssessmentTestSession $session){
         return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+    }
+
+
+    /**
+     * Get the array of available categories for the test
+     *
+     * @param \qtism\runtime\tests\AssessmentTestSession $session
+     * @return array
+     */
+    static public function getAllCategories(AssessmentTestSession $session)
+    {
+        $prevCategories = null;
+        $assessmentItemRefs = $session->getAssessmentTest()->getComponentsByClassName('assessmentItemRef');
+
+        /** @var \qtism\data\AssessmentItemRef $assessmentItemRef */
+        foreach ($assessmentItemRefs as $assessmentItemRef){
+            $categories = $assessmentItemRef->getCategories();
+            if(!is_null($prevCategories)){
+                $prevCategories->merge($categories);
+            } else {
+                $prevCategories = $categories;
+            }
+        }
+
+        return (!is_null($prevCategories))? array_unique($prevCategories->getArrayCopy()):[];
     }
     
     /**

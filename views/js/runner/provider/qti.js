@@ -30,7 +30,9 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
@@ -45,7 +47,9 @@ define([
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    currentItemHelper,
     mapHelper,
+    navigationHelper,
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
@@ -182,36 +186,109 @@ define([
             var self = this;
 
             /**
+             * Retrieve the item results
+             * @returns {Object} the results
+             */
+            function getItemResults() {
+                var results = {};
+                var context = self.getTestContext();
+                if(context && self.itemRunner){
+                    results = {
+                        itemResponse   : self.itemRunner.getResponses(),
+                        itemState      : self.itemRunner.getState()
+                    };
+                }
+                return results;
+            }
+
+            /**
              * Compute the next item for the given action
              * @param {String} action - item action like move/next, skip, etc.
              * @param {Object} [params] - the item action additional params
+             * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
-            function computeNext(action, params){
+            function computeNext(action, params, loadPromise){
 
                 var context = self.getTestContext();
 
-                //to be sure load start after unload...
-                //we add an intermediate ns event on unload
-                self.on('unloaditem.' + action, function(){
-                    self.off('.'+action);
+                //catch server errors
+                var submitError = function submitError(err){
+                    //some server errors are valid, so we don't fail (prevent empty responses)
+                    if(err.code === 200){
+                        self.trigger('alert.submitError',
+                            err.message || __('An error occurred during results submission. Please retry.'),
+                            load
+                        );
+                    } else {
+                        self.trigger('error', err);
+                    }
+                };
 
-                    self.getProxy()
-                        .callItemAction(context.itemUri, action, params)
-                        .then(function(results){
+                //if we have to display modal feedbacks, we submit the responses before the move
+                var feedbackPromise = new Promise( function(resolve){
+                    if(context.hasFeedbacks){
+                        params = _.omit(params, ['itemState', 'itemResponse']);
 
-                            self.setTestContext(results.testContext);
+                        self.getProxy()
+                            .submitItem(context.itemIdentifier, self.itemRunner.getState(), self.itemRunner.getResponses(), params)
+                            .then(function(results){
+                                if (results.itemSession) {
+                                    context.itemAnswered = results.itemSession.itemAnswered;
 
-                            if (results.testMap) {
-                                self.setTestMap(results.testMap);
-                            } else {
-                                updateStats();
-                            }
-
-                            load();
-                        });
+                                    if(results.displayFeedbacks === true && results.feedbacks) {
+                                        self.itemRunner.renderFeedbacks(results.feedbacks, results.itemSession, function(queue){
+                                            self.trigger('modalFeedbacks', queue, resolve);
+                                        });
+                                        return;
+                                    }
+                                }
+                                return resolve();
+                            })
+                            .catch(submitError);
+                    } else {
+                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        resolve();
+                    }
                 });
 
-                self.unloadItem(context.itemUri);
+                feedbackPromise.then(function(){
+
+                    updateStats();
+
+                    //to be sure load start after unload...
+                    //we add an intermediate ns event on unload
+                    self.on('unloaditem.' + action, function(){
+                        self.off('.'+action);
+
+
+                        self.getProxy()
+                            .callItemAction(context.itemIdentifier, action, params)
+                            .then(function(results){
+                                loadPromise = loadPromise || Promise.resolve();
+
+                                return loadPromise.then(function(){
+                                    return results;
+                                });
+                            })
+                            .then(function(results){
+                                if(results.testContext){
+                                    self.setTestContext(results.testContext);
+                                }
+
+                                if (results.testMap) {
+                                    self.setTestMap(results.testMap);
+                                }
+
+                                updateStats();
+
+                                load();
+                            })
+                            .catch(submitError);
+                    });
+
+                    self.unloadItem(context.itemIdentifier);
+                })
+                .catch(submitError);
             }
 
             /**
@@ -222,84 +299,10 @@ define([
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
-                    self.loadItem(context.itemUri);
+                    self.loadItem(context.itemIdentifier);
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            }
-
-            /**
-             * Store the item state and responses, if needed
-             * @param {Boolean} [force=false] - Forces the submit even if responses are empty
-             * @returns {Promise} - resolve with a boolean at true if the response is submitted
-             */
-            function submit(force){
-
-                var context = self.getTestContext();
-                var states = self.getTestData().itemStates;
-                var itemRunner = self.itemRunner;
-                var params = {
-                    emptyAllowed: context.isTimeout || !!force
-                };
-
-                var performSubmit = function performSubmit(){
-                    //we submit the responses
-                    var submitItem = self.getProxy().submitItem(context.itemUri, itemRunner.getState(), itemRunner.getResponses(), params)
-                        .then(function(result){
-                            return new Promise(function(resolve, reject){
-
-                                if (result.notAllowed) {
-                                    // the context might be updated
-                                    if (result.testContext) {
-                                        self.setTestContext(result.testContext);
-                                        context = self.getTestContext();
-                                    }
-
-                                    if (result.message) {
-                                        self.trigger('alert.notallowed',
-                                            result.message,
-                                            function() {
-                                                self.trigger('resumeitem');
-                                            }
-                                        );
-                                    }
-
-                                    return reject(true);
-                                }
-
-                                if (result.itemSession) {
-                                    context.itemAnswered = result.itemSession.itemAnswered;
-                                }
-
-                                if(result.displayFeedbacks === true && result.feedbacks && result.itemSession){
-
-                                    itemRunner.renderFeedbacks(result.feedbacks, result.itemSession, function(queue){
-                                        self.trigger('modalFeedbacks', queue, resolve);
-                                    });
-
-                                } else {
-                                    return resolve();
-                                }
-                            });
-                        });
-
-                    submitItem.catch(function() {
-                        self.trigger('alert.submitError',
-                            __('An error occurred during results submission. Please retry.'),
-                            function () {
-                                self.trigger('resumeitem');
-                            }
-                        );
-                    });
-
-                    return submitItem;
-                };
-
-                if(context.itemSessionState >= states.closed) {
-                    return Promise.resolve(false);
-                }
-
-                return performSubmit();
             }
 
             /**
@@ -312,7 +315,7 @@ define([
                 var states = self.getTestData().states;
                 var item = mapHelper.getItemAt(testMap, context.itemPosition);
 
-                if(context.state !== states.interacting){
+                if(!item || context.state !== states.interacting){
                     return;
                 }
 
@@ -328,29 +331,6 @@ define([
                 self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
-            /**
-             * Check whether test taker leaving section
-             *
-             * @param {string} direction
-             * @param {string} scope
-             * @param {integer} position
-             * @todo this kind of function is generic enough to be moved to a util/helper
-             * @returns {boolean}
-             */
-            function leaveSection(direction, scope, position)
-            {
-                var context = self.getTestContext();
-                var map     = self.getTestMap();
-                var section = mapHelper.getSection(map, context.sectionId);
-                var sectionStats = mapHelper.getSectionStats(map, context.sectionId);
-                var nbItems = sectionStats && sectionStats.total;
-                var item = mapHelper.getItem(map, context.itemIdentifier);
-
-                return (direction === 'next' && (scope === 'section' || item.positionInSection + 1 === nbItems)) ||
-                    (direction === 'previous' && item.positionInSection === 0) ||
-                    (direction === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems));
-            }
-
             areaBroker.setComponent('toolbox', toolboxFactory());
             areaBroker.getToolbox().init();
 
@@ -364,34 +344,17 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
-                    //ask to move:
-                    // 1. try to submit state and responses
-                    // 2. update stats on the map
-                    // 3. compute the next item to load
+                    this.trigger('disablenav disabletools');
 
-                    var computeNextMove = _.partial(computeNext, 'move', {
+                    computeNext('move', _.merge(getItemResults(), {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
-                    });
-
-                    this.trigger('disablenav disabletools');
-
-                    // submit the response, but can break if empty
-                    submit()
-                        .then(updateStats)
-                        .then(computeNextMove)
-                        .catch(function (err) {
-                            // do no trigger error if the promise is rejected for an architectural purpose
-                            if (err !== true) {
-                                self.trigger('error', err);
-                            }
-                        });
-
+                    }));
                 })
                 .after('move', function (direction, scope, position) {
-                    if (leaveSection(direction, scope, position)) {
-                        self.trigger('endsession');
+                    if (navigationHelper.isLeavingSection(this.getTestContext(), this.getTestMap(), direction, scope, position)) {
+                        this.trigger('endsession');
                     }
                 })
                 .on('skip', function(scope){
@@ -401,20 +364,18 @@ define([
                     computeNext('skip', {
                         scope     : scope || 'item'
                     });
-
                 })
-                .on('exit', function(why){
+                .on('exit', function(reason){
                     var context = self.getTestContext();
-                    self.disableItem(context.itemUri);
+                    self.disableItem(context.itemIdentifier);
 
-                    // submit the response even if empty
-                    submit(true)
-                        .then(function() {
-                            return self.getProxy()
-                                .callTestAction('exitTest', {reason: why})
-                                .then(function(){
-                                    return self.finish();
-                                });
+                    self.getProxy()
+                        .callTestAction('exitTest', _.merge(getItemResults(), {
+                            itemDefinition : context.itemIdentifier,
+                            reason: reason
+                        }))
+                        .then(function(){
+                            return self.finish();
                         })
                         .catch(function(err){
                             self.trigger('error', err);
@@ -426,22 +387,18 @@ define([
 
                     context.isTimeout = true;
 
-                    self.disableItem(context.itemUri);
+                    self.disableItem(context.itemIdentifier);
 
-                    // submit the response even if empty
-                    submit(true)
-                        .then(updateStats)
-                        .then(function() {
-                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), function() {
-                                computeNext('timeout', {
-                                    scope: scope,
-                                    ref: ref
-                                });
-                            });
+                    computeNext(
+                        'timeout',
+                        _.merge(getItemResults(), {
+                            scope: scope,
+                            ref: ref
+                        }),
+                        new Promise(function(resolve){
+                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
                         })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    );
                 })
                 .after('timeout', function (scope) {
                     if (scope === 'assessmentSection' || scope === 'testPart') {
@@ -455,7 +412,8 @@ define([
 
                     if (!self.getState('disconnected')) {
                         // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {reason: {
+                        pause = self.getProxy().callTestAction('pause', {
+                            reason: {
                                 reasons: data && data.reasons,
                                 comment : data && data.message
                             }
@@ -508,7 +466,7 @@ define([
 
                     //we disable the item and warn the user
                     if (warning) {
-                        self.disableItem(context.itemUri);
+                        self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
                 })
@@ -586,19 +544,17 @@ define([
          * We call the proxy in order to get the item data
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
          * @returns {Promise} that calls in parallel the state and the item data
          */
-        loadItem : function loadItem(itemRef){
-            var self = this;
-
-            return self.getProxy().getItem(itemRef)
+        loadItem : function loadItem(itemIdentifier){
+            return this.getProxy().getItem(itemIdentifier)
                 .then(function(data){
                     //aggregate the results
                     return {
                         content : data.itemData,
                         baseUrl : data.baseUrl,
-                        state : data.itemState,
-                        rubrics : data.rubrics
+                        state : data.itemState
                     };
                 });
         },
@@ -609,18 +565,16 @@ define([
          * Here we initialize the item runner and wrap it's call to the test runner
          *
          * @this {runner} the runner context, not the provider
+         * @param {String} itemIdentifier - The identifier of the item to update
+         * @param {Object} itemData - The definition data of the item
          * @returns {Promise} resolves when the item is ready
          */
-        renderItem : function renderItem(itemRef, itemData){
+        renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
 
             var changeState = function changeState(){
-                self.setItemState(itemRef, 'changed', true);
+                self.setItemState(itemIdentifier, 'changed', true);
             };
-
-            if (itemData.rubrics) {
-                this.trigger('loadrubricblock', itemData.rubrics);
-            }
 
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);

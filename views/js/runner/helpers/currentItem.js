@@ -143,9 +143,10 @@ define([
          * Tells is the current item has been answered or not
          * The item is considered answered when at least one response has been set to not empty {base : null}
          * @param {Object} runner - testRunner instance
+         * @param {Boolean} [partially = true] - if false all questions must have been answered
          * @returns {Boolean}
          */
-        isAnswered: function isAnswered(runner) {
+        isAnswered: function isAnswered(runner, partially) {
             var itemRunner = runner.itemRunner;
             var responses = itemRunner && itemRunner.getResponses();
             var count = 0;
@@ -164,8 +165,10 @@ define([
                     }
                 });
             }
-
-            return count !== 0 && empty !== count;
+            if( partially === false ){
+                return count > 0 && empty === 0;
+            }
+            return count > 0 && empty < count;
         }
     };
 

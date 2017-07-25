@@ -33,6 +33,8 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
     
+    const OPTION_CONFIG = 'config';
+
     /**
      * The test runner config
      * @var array
@@ -50,47 +52,56 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
      * @return mixed
      */
     protected function buildConfig() {
-        // get the raw server config, using the old notation
-        $rawConfig = $this->getServiceManager()->get('taoQtiTest/testRunner');
-
-        // build the test config using the new notation
-        return [
-            'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
-            'progressIndicator' => [
-                'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
-                'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
-                'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
-            ],
-            'review' => [
-                'enabled' => !empty($rawConfig['test-taker-review']),
-                'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
-                'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
-                'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
-                'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
-                'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
-                'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
-                'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
-                'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
-                'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
-            ],
-            'exitButton' => !empty($rawConfig['exitButton']),
-            'nextSection' => !empty($rawConfig['next-section']),
-            'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
-            'security' => [
-                'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
-            ],
-            'timer' => [
-                'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
-                'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
-                'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
-            ],
-            'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
-            'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
-            'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
-            'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
-            'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
-            'allowBrowseNextItem' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false
-        ];
+        if ($this->hasOption(self::OPTION_CONFIG)) {
+            // load the configuration from service
+            $config = $this->getOption(self::OPTION_CONFIG);
+        } else {
+            // fallback to get the raw server config, using the old notation
+            $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            // build the test config using the new notation
+            $config = [
+                'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+                'progressIndicator' => [
+                    'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
+                    'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
+                    'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
+                    'showTotal' => !empty($rawConfig['progress-indicator-show-total']),
+                ],
+                'review' => [
+                    'enabled' => !empty($rawConfig['test-taker-review']),
+                    'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
+                    'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
+                    'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
+                    'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
+                    'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
+                    'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
+                    'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
+                    'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
+                    'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
+                ],
+                'exitButton' => !empty($rawConfig['exitButton']),
+                'nextSection' => !empty($rawConfig['next-section']),
+                'plugins' => isset($rawConfig['plugins']) ? $rawConfig['plugins'] : null,
+                'security' => [
+                    'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
+                ],
+                'timer' => [
+                    'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
+                    'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
+                    'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
+                ],
+                'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
+                'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
+                'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
+                'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
+                'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
+                'itemCaching' => [
+                    'enabled' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
+                    'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
+                ],
+            ];
+        }
+        return $config;
     }
 
     /**
@@ -107,17 +118,25 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     }
 
     /**
-     * Returns the value of a config entry
+     * Returns the value of a config entry.
+     * The name can be a namespace, each name being separated by a dot, like: 'itemCaching.enabled'
      * @param string $name
      * @return mixed
      */
     public function getConfigValue($name)
     {
         $config = $this->getConfig();
-        if (isset($config[$name])) {
-            return $config[$name];
+        
+        $path = explode('.', (string)$name);
+        foreach ($path as $entry) {
+            if (isset($config[$entry])) {
+                $config =& $config[$entry];
+            } else {
+                return null;
+            }   
         }
-        return null;
+        
+        return $config;
     }
 
     /**

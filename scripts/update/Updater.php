@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
@@ -22,6 +22,16 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\SyncChannel;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\SectionPauseService;
+use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
@@ -30,6 +40,7 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\TestCategoryPresetRegistry;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
@@ -38,9 +49,10 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -48,6 +60,8 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 
 /**
  *
@@ -469,13 +483,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('3.1.0', '3.4.0');
 
         if ($this->isVersion('3.4.0')) {
-            $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $ext = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
-            $dir = new \core_kernel_file_File($uri);
-
-            $fs = $dir->getFileSystem();
-            \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem($fs->getUri());
-
+            $fileResource = new \core_kernel_classes_Resource($uri);
+            if ($fileResource->exists()) {
+                $fileSystem = $fileResource->getOnePropertyValue(new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository'));
+                if (!empty($fileSystem) && $fileSystem instanceof \core_kernel_classes_Literal) {
+                    \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem((string) $fileSystem);
+                }
+            }
             $this->setVersion('4.0.0');
         }
 
@@ -1235,11 +1251,163 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('9.3.3');
         }
 
-        if ($this->isVersion('9.3.3')) {
+        $this->skip('9.3.3', '9.5.0');
+
+        // display 'item x' instead of 'item x of y' in the progress bar
+        if ($this->isVersion('9.5.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-indicator-show-total'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('9.6.0');
+        }
+
+        $this->skip('9.6.0', '9.9.1');
+
+        if ($this->isVersion('9.9.1')) {
+            $registry = TestCategoryPresetRegistry::getRegistry();
+            $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
+            $this->setVersion('9.10.0');
+        }
+
+        $this->skip('9.10.0', '9.11.2');
+
+        if ($this->isVersion('9.11.2')) {
+
+            $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $exportHandlers = $testModelService->getOption('exportHandlers');
+            array_unshift($exportHandlers, new TestMetadataByClassExportHandler());
+            $testModelService->setOption('exportHandlers', $exportHandlers);
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+
+            $this->setVersion('9.12.0');
+        }
+
+        $this->skip('9.12.0', '9.14.1');
+
+        if ($this->isVersion('9.14.1')) {
+            $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $testModelService->setOption('testCompilerClass', 'taoQtiTest_models_classes_QtiTestCompiler');
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+
+            $this->setVersion('9.15.0');
+        }
+
+        $this->skip('9.15.0', '9.17.0');
+
+        if ($this->isVersion('9.17.0')) {
+            $this->getServiceManager()->register(SectionPauseService::SERVICE_ID, new SectionPauseService());
+            $this->setVersion('9.18.0');
+        }
+
+        $this->skip('9.18.0', '9.19.0');
+
+        if( $this->isVersion('9.19.0') ){
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'preventSkipping',
+                'name'        => 'Prevent Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent to submit empty responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('10.0.0');
+        }
+
+        if ($this->isVersion('10.0.0')) {
+            $service = new QtiRunnerMap();
+            $this->getServiceManager()->propagate($service);
+            $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['item-cache-size'] = 3;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('10.1.0');
+        }
+
+        $this->skip('10.1.0', '10.3.0');
+      
+        if ($this->isVersion('10.3.0')) {
+            $registry = DeliveryContainerRegistry::getRegistry();
+            $registry->setServiceLocator($this->getServiceManager());
+            $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
+            $this->setVersion('10.4.0');
+        }
+      
+        $this->skip('10.4.0', '10.5.1');
+
+        if ($this->isVersion('10.5.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/highlighter/plugin');
+            $registry->remove('taoQtiTest/runner/plugins/tools/magnifier/magnifier');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'area-masking',
+                'name'        => 'Area Masking',
+                'module'      => 'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Mask areas of the item',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
+            ]));
+            $this->setVersion('10.6.0');
+        }
+
+        if ($this->isVersion('10.6.0')) {
+            // Install the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            // Install the Sync Channel
+            $this->runExtensionScript(SyncChannelInstaller::class);
+
+            $this->setVersion('10.7.0');
+        }
+        
+        $this->skip('10.7.0', '10.10.0');
+
+        if ($this->isVersion('10.10.0')) {
             $registerCreatorService = new RegisterCreatorServices();
             $registerCreatorService->setServiceLocator($registerCreatorService);
             $registerCreatorService([]);
-            $this->setVersion('9.4.0');
+            $this->setVersion('10.11.0');
         }
     }
 }

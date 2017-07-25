@@ -31,7 +31,6 @@ define([
 
     /**
      * Build a runner mock
-     * @param {Object} [plugins]
      * @param {Object} [config]
      * @param {String} [config.name]
      * @param {Object} [config.areaBroker]
@@ -41,9 +40,11 @@ define([
      * @returns {*}
      */
     function provider(config) {
+        var providerApi;
+
         config = config || {};
 
-        var providerApi = {
+        providerApi = {
             //provider name
             name : config.name || defaultName,
 
@@ -52,7 +53,7 @@ define([
              * @returns {areaBroker}
              */
             loadAreaBroker : function loadAreaBroker(){
-                return config.areaBroker || areaBroker(config.areas);
+                return config.areaBroker || areaBroker({ areas: config.areas });
             },
 
             /**
@@ -74,12 +75,12 @@ define([
              */
             init : function init(){
                 var self = this;
-                var config = this.getConfig();
+                var providerConfig = this.getConfig();
 
                 //install event based behavior
                 this.on('ready', function(){
-                        this.loadItem('item-0');
-                    })
+                    this.loadItem('item-0');
+                })
                     .on('move', function(type){
 
                         var test = this.getTestContext();
@@ -107,9 +108,9 @@ define([
 
 
                 //load test data
-                return new Promise(function(resolve, reject){
+                return new Promise(function(resolve){
 
-                    $.getJSON(config.url).success(function(test){
+                    $.getJSON(providerConfig.url).success(function(test){
                         self.setTestContext(_.defaults(test || {}, {
                             items : {},
                             current: 0
@@ -129,13 +130,14 @@ define([
              */
             render : function(){
 
-                var config = this.getConfig();
+                var providerConfig = this.getConfig();
                 var context = this.getTestContext();
                 var broker = this.getAreaBroker();
+                var $renderTo;
 
                 broker.getContainer().find('.title').html('Running Test ' + context.id);
 
-                var $renderTo = config.renderTo || $('body');
+                $renderTo = providerConfig.renderTo || $('body');
 
                 $renderTo.append(broker.getContainer());
             },
@@ -157,7 +159,7 @@ define([
 
                 $content.html('loading');
 
-                return new Promise(function(resolve, reject){
+                return new Promise(function(resolve){
 
                     setTimeout(function(){
 

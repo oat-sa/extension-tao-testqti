@@ -23,6 +23,7 @@ use qtism\runtime\processing\OutcomeProcessingEngine;
 use qtism\data\rules\OutcomeRuleCollection;
 use qtism\data\processing\OutcomeProcessing;
 use qtism\data\rules\SetOutcomeValue;
+use qtism\data\expressions\Variable;
 use qtism\data\expressions\ExpressionCollection;
 use qtism\data\expressions\operators\Divide;
 use qtism\data\expressions\NumberPresented;
@@ -230,7 +231,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
             
-            $this->unsetVariable('LtiOutcome');
         }
         catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
@@ -239,6 +239,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             $msg = "An error occured during test-level outcome results transmission.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+        } finally {
+            $this->unsetVariable('LtiOutcome');
         }
         
         $this->triggerEventChange($sessionMemento);
@@ -325,12 +327,26 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * 
      * @return OutcomeProcessing A QTI Data Model OutcomeProcessing object.
      */
-    protected static function buildLtiOutcomeProcessing() {
-        $numberCorrect = new NumberCorrect();
-        $numberPresented = new NumberPresented();
-        $divide = new Divide(new ExpressionCollection(array($numberCorrect, $numberPresented)));
-        $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
-        return new OutcomeProcessing(new OutcomeRuleCollection(array($outcomeRule)));
+    protected function buildLtiOutcomeProcessing() {
+
+        //ltiOutcome is calculated based on the SCORE_RATIO_WEIGHTED outcome for weighted items or SCORE_RATIO for not rated items
+        $ratioVariable = $this->getVariable('SCORE_RATIO_WEIGHTED');
+        if(is_null($ratioVariable)){
+            $ratioVariable = $this->getVariable('SCORE_RATIO');
+        }
+
+        if(is_null($ratioVariable)){
+            //if no SCORE_RATIO outcome has been found, we keep support legacy ltiOutcome calculation algorithm
+            //it is based on number of presented item for backwards compatibility
+            $numberCorrect = new NumberCorrect();
+            $numberPresented = new NumberPresented();
+            $divide = new Divide(new ExpressionCollection([$numberCorrect, $numberPresented]));
+            $outcomeRule = new SetOutcomeValue('LtiOutcome', $divide);
+        }else{
+            $outcomeRule = new SetOutcomeValue('LtiOutcome', new Variable($ratioVariable->getIdentifier()));
+        }
+
+        return new OutcomeProcessing(new OutcomeRuleCollection([$outcomeRule]));
     }
 
     /**

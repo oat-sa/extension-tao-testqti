@@ -56,7 +56,7 @@ define([
             assert.equal(broker.getContainer().find('.' + area).length, 1, "The container must contain an area related to " + area);
         });
 
-        broker = areaBrokerMock([extraArea]);
+        broker = areaBrokerMock({ areas: [extraArea] });
 
         assert.equal(typeof broker, 'object', "The factory creates an object");
         assert.equal(broker.getContainer().length, 1, "The container exists");
@@ -81,7 +81,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas);
+        var broker = areaBrokerMock({ areas: areas });
 
         assert.equal(broker.getContainer().length, 1, "The container exists");
         assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
@@ -101,7 +101,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas);
+        var broker = areaBrokerMock({ areas: areas });
 
         assert.equal(broker.getContainer().length, 1, "The container exists");
         assert.equal(broker.getContainer().children().length, areas.length, "The container contains the exact number of areas");
@@ -109,6 +109,28 @@ define([
         _.forEach(areas, function (area) {
             assert.equal(broker.getArea(area).length, 1, "The container can retrieve the area " + area);
         });
+    });
+
+
+    QUnit.test('custom mapping', function (assert) {
+        var $brokerContainer = $('#custom-areas'),
+            mapping = {
+                'content':      $brokerContainer.find('.custom-content'),
+                'actionsbar':   $brokerContainer.find('.custom-actionbars'),
+                'toolbox':      $brokerContainer.find('.custom-toolbox'),
+                'navigation':   $brokerContainer.find('.custom-nav')
+            };
+
+        var broker = areaBrokerMock({
+            $brokerContainer: $brokerContainer,
+            mapping: mapping,
+            areas: ['customArea']
+        });
+
+        _.forOwn(mapping, function (area, areaId) {
+            assert.equal(broker.getArea(areaId), mapping[areaId], "The area broker contains the right dom element for " + areaId);
+        });
+        assert.equal(broker.getArea('customArea').length, 1, "The container can retrieve the area customArea");
     });
 
 
@@ -121,7 +143,7 @@ define([
             'header',
             'panel'
         ];
-        var broker = areaBrokerMock(areas),
+        var broker = areaBrokerMock({ areas: areas }),
             component;
 
         assert.ok(_.isFunction(broker.getToolbox), 'the broker has a getToolbox() method');
