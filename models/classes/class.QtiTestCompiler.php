@@ -38,6 +38,7 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiItem\model\ItemModel;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
@@ -52,6 +53,7 @@ use oat\taoDelivery\model\container\delivery\ContainerProvider;
  */
 class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
+    const ADAPTIVE_INFO_MAP_FILENAME = 'adaptive-info-map.json';
     
     /**
      * The list of mime types of files that are accepted to be put
@@ -748,6 +750,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileAdaptive(AssessmentTest $test)
     {
         $phpDocument = new PhpDocument('2.1');
+        $catInfoMap = [];
 
         $trail = [];
         foreach ($test->getTestParts() as $testPart) {
@@ -757,7 +760,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
 
         $traversed = [];
-        $placeholderCount = 0;
 
         while (count($trail) > 0) {
             $current = array_pop($trail);
@@ -776,35 +778,54 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             } else {
                 // 2nd pass.
                 $sectionParts = $current->getSectionParts();
+                $sectionIdentifier = $current->getIdentifier();
                 
-                foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
-                    $sectionPart =  $sectionParts[$sectionPartIdentifier];
+                $catInfo = $this->getServiceLocator()->get(CatService::SERVICE_ID)->getAdaptiveAssessmentSectionInfo(
+                    $test,
+                    $this->getPrivateDirectory(),
+                    $this->getExtraPath(),
+                    $sectionIdentifier
+                );
+                
+                if ($catInfo !== false) {
                     
-                    if ($sectionPart instanceof ExtendedAssessmentItemRef && $sectionPart->getCategories()->contains('x-tao-qti-adaptive')) {
-                        $sectionPartHref = $sectionPart->getHref();
+                    // QTI Adaptive Section detected.
+                    \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
+                    
+                    // Register information in main adaptive information map.
+                    $catInfoMap[$catInfo['qtiSectionIdentifier']][] = $catInfo;
+                    
+                    foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
+                        $sectionPart =  $sectionParts[$sectionPartIdentifier];
                         
-                        // Deal with AssessmentItemRef Compiling.
-                        $phpDocument->setDocumentComponent($sectionPart);
-                        $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", $phpDocument->saveToString());
-                        
-                        unset($sectionParts[$sectionPartIdentifier]);
+                        if ($sectionPart instanceof ExtendedAssessmentItemRef) {
+                            $sectionPartHref = $sectionPart->getHref();
+                            
+                            // Deal with AssessmentItemRef Compiling.
+                            $phpDocument->setDocumentComponent($sectionPart);
+                            $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", $phpDocument->saveToString());
+                            
+                            unset($sectionParts[$sectionPartIdentifier]);
+                        }
                     }
-                }
-                
-                if (count($sectionParts) === 0) {
-                    $placeholderIdentifier = "adaptive-placeholder-${placeholderCount}";
-                    // Make the placeholder's href something predictable for later use...
-                    $placeholderHref = "x-tao-qti-adaptive://section-${placeholderCount}/$";
                     
-                    $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
-                    $placeholder->getCategories()[] = 'x-tao-qti-adaptive-placeholder';
-                    $sectionParts[] = $placeholder;
-                    $placeholderCount++;
-                    
-                    \common_Logger::d("Adaptive AssessmentItemRef Placeholder '$placeholderIdentifier' injected in AssessmentSection '" . $current->getIdentifier() . "'.");
+                    if (count($sectionParts) === 0) {
+                        $placeholderIdentifier = "adaptive-placeholder-${sectionIdentifier}";
+                        // Make the placeholder's href something predictable for later use...
+                        $placeholderHref = "x-tao-qti-adaptive://section/${sectionIdentifier}";
+                        
+                        $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
+                        $placeholder->getCategories()[] = 'x-tao-qti-adaptive-placeholder';
+                        $sectionParts[] = $placeholder;
+                        
+                        \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
+                    }
                 }
             }
         }
+        
+        // Write Adaptive Information Map for runtime usage.
+        $this->getPrivateDirectory()->write(self::ADAPTIVE_INFO_MAP_FILENAME, json_encode($catInfoMap));
     }
     
     /**

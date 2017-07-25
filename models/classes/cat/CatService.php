@@ -4,6 +4,7 @@ namespace oat\taoQtiTest\models\cat;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\libCat\CatEngine;
+use qtism\data\AssessmentTest;
 
 /**
  * Wrap a Cat Engine in a service.
@@ -27,7 +28,7 @@ class CatService extends ConfigurableService
     /**
      * Returns the Adaptive Engine
      * 
-     * Returns an CateEngine implementation object.
+     * Returns an CatEngine implementation object.
      * 
      * @return oat\libCat\CatEngine
      */
@@ -45,16 +46,25 @@ class CatService extends ConfigurableService
         return $privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php");
     }
     
-    public function getAdaptiveAssessmentSectionIdentifiers(\DOMDocument $assessmentTest)
+    public function getAdaptiveAssessmentSectionInfo(AssessmentTest $test, \tao_models_classes_service_StorageDirectory $compilationDirectory, $basePath, $qtiAssessmentSectionIdentifier)
     {
-        $xpath = new \DOMXPath($assessmentTest);
-        $xpath->registerNamespace('ais', QTI_2X_ADAPTIVE_XML_NAMESPACE);
+        $info = CatUtils::getCatInfo($test);
+        $adaptiveInfo = [
+            'qtiSectionIdentifier' => $qtiAssessmentSectionIdentifier,
+            'adaptiveSectionIdentifier' => false,
+            'adaptiveEngineRef' => false
+        ];
         
-        $sectionIdentifiers = [];
-        foreach ($xpath->query('//ais:adaptiveItemSelection/../../') as $assessmentSectionNode) {
-            $sectionIdentifiers[] = $assessmentSectionNode->getAttribute('identifier');
+        if (isset($info[$qtiAssessmentSectionIdentifier])) {
+            if (isset($info[$qtiAssessmentSectionIdentifier]['adaptiveEngineRef'])) {
+                $adaptiveInfo['adaptiveEngineRef'] = $info[$qtiAssessmentSectionIdentifier]['adaptiveEngineRef'];
+            }
+            
+            if (isset($info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef'])) {
+                 $adaptiveInfo['adaptiveSectionIdentifier'] = trim($compilationDirectory->read("./${basePath}/" . $info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef']));
+            }
         }
         
-        return $sectionIdentifiers;
+        return (!isset($info[$qtiAssessmentSectionIdentifier]['adaptiveEngineRef']) || !isset($info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef'])) ? false : $adaptiveInfo;
     }
 }
