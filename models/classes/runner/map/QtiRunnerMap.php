@@ -64,7 +64,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * @param string $itemIdentifier
      * @return boolean
      */
-    public function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
+    protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
         $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
         return $indexFile->exists();
