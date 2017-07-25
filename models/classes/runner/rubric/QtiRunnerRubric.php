@@ -65,7 +65,7 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
             $routeItem = $session->getRoute()->current();
         }
 
-        return $this->getRubricBlock($routeItem, $session, $context->getCompilationDirectory());
+        return implode('', $this->getRubricBlock($routeItem, $session, $context->getCompilationDirectory()));
     }
 
 
@@ -79,7 +79,7 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
     {
         // TODO: make a better implementation for rubrics loading.
 
-        $rubrics = '';
+        $rubrics = [];
 
         if ($routeItem) {
 
@@ -109,7 +109,7 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
                     include($tmpFile);
                     unlink($tmpFile);
                 }
-                $rubrics = ob_get_contents();
+                $rubrics[] = ob_get_contents();
                 ob_end_clean();
                 rmdir($tmpDir);
             }
