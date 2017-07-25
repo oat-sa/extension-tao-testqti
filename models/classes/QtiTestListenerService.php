@@ -126,6 +126,14 @@ class QtiTestListenerService extends ConfigurableService
                 $finishedService->removeState($userId, $timeLineStorageId);
                 \common_Logger::t('Test Timeline State archived for user : '.$userId.' and storageId : '. $timeLineStorageId);
             }
+
+            // Remove Extended State
+            $extendedStorageId = ExtendedStateService::getStorageKeyFromTestSessionId($sessionId);
+            if ($finishedService->archive($userId, $extendedStorageId)) {
+                $finishedService->removeState($userId, $extendedStorageId);
+                \common_Logger::t('Extended State archived for user : '.$userId.' and storageId : '. $extendedStorageId);
+            }
+
         }
     }
 }
