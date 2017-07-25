@@ -1251,7 +1251,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @return array
      */
-    protected function buildTimeConstraints(RunnerServiceContext $context) {
+    protected function buildTimeConstraints(RunnerServiceContext $context)
+    {
         $constraints = array();
 
         /* @var TestSession $session */
@@ -1260,13 +1261,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         foreach ($session->getRegularTimeConstraints() as $tc) {
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
-
                 $source = $tc->getSource();
                 $identifier = $source->getIdentifier();
+                $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
                 $constraints[] = array(
                     'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
                     'source' => $identifier,
-                    'seconds' => TestRunnerUtils::getDurationWithMicroseconds($timeRemaining),
+                    'seconds' => $seconds,
+                    'extraTime' => $tc->getTimer()->getExtraTime($seconds),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $source->getQtiClassName()
                 );
@@ -1281,13 +1283,21 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @return array
      */
-    protected function buildExtraTime(RunnerServiceContext $context) {
+    protected function buildExtraTime(RunnerServiceContext $context)
+    {
         /* @var TestSession $session */
         $session = $context->getTestSession();
         $timer = $session->getTimer();
+        $sessionMaxTime = null;
+        $sessionTimeLimits = $session->getCurrentTestPart()->getTimeLimits();
+        if ($sessionTimeLimits) {
+            $sessionMaxTime = $sessionTimeLimits->hasMaxTime()
+                 ? $sessionTimeLimits->getMaxTime()->getSeconds(true)
+                 : null;
+        }
 
         return [
-            'total' => $timer->getExtraTime(),
+            'total' => $timer->getExtraTime($sessionMaxTime),
             'consumed' => $timer->getConsumedExtraTime(),
             'remaining' => $timer->getRemainingExtraTime(),
         ];
