@@ -1402,5 +1402,22 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('10.7.0', '10.10.0');
+
+        if ($this->isVersion('10.10.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'zoom',
+                'name' => 'Zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows Test-taker to zoom in and out the item content',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $this->setVersion('10.10.1');
+        }
     }
 }
