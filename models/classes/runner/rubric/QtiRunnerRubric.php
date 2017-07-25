@@ -16,23 +16,29 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
 namespace oat\taoQtiTest\models\runner\rubric;
 
+use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use qtism\data\View;
-use \OutOfBoundsException;
+use OutOfBoundsException;
 use qtism\data\AssessmentItemRef;
+use qtism\data\View;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\RouteItem;
 
 /**
  * Class QtiRunnerRubric
  * @package oat\taoQtiTest\models\runner\rubric
  */
-class QtiRunnerRubric implements RunnerRubric
+class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
 {
+    const SERVICE_ID = 'taoQtiTest/QtiRunnerRubric';
+
     /**
      * Gets the rubrics according to the current session state
      * The content is directly rendered into the page
@@ -42,33 +48,44 @@ class QtiRunnerRubric implements RunnerRubric
      */
     public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null)
     {
-        // TODO: make a better implementation for rubrics loading.
-
-        $rubrics = '';
-
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
 
-        if(!is_null($itemRef)){
+        $routeItem = null;
+        if (!is_null($itemRef)) {
             try {
                 $routeItem = $session->getRoute()->getRouteItemsByAssessmentItemRef($itemRef);
                 if ($routeItem) {
                     $routeItem = $routeItem[0];
                 }
-            } catch(OutOfBoundsException $obe){
+            } catch (OutOfBoundsException $obe) {
                 \common_Logger::d("Could not retrieve the route for item '${itemRef}'.");
             }
         } else {
             $routeItem = $session->getRoute()->current();
         }
 
-        if($routeItem){
+        return $this->getRubricBlock($routeItem, $session, $context->getCompilationDirectory());
+    }
+
+
+    /**
+     * @param RouteItem $routeItem
+     * @param AssessmentTestSession $session
+     * @param array $compilationDirs
+     * @return array
+     */
+    public function getRubricBlock($routeItem, $session, $compilationDirs)
+    {
+        // TODO: make a better implementation for rubrics loading.
+
+        $rubrics = '';
+
+        if ($routeItem) {
 
             $rubricRefs = $routeItem->getRubricBlockRefs();
 
-            if(count($rubricRefs) > 0 ){
-
-                $compilationDirs = $context->getCompilationDirectory();
+            if (count($rubricRefs) > 0) {
 
                 // -- variables used in the included rubric block templates.
                 // base path (base URI to be used for resource inclusion).
@@ -83,19 +100,21 @@ class QtiRunnerRubric implements RunnerRubric
                 $viewsName = TAOQTITEST_VIEWS_NAME;
                 $$viewsName = array(View::CANDIDATE);
 
+                $tmpDir = \tao_helpers_File::createTempDir();
                 ob_start();
-                foreach ($routeItem->getRubricBlockRefs() as $rubric) {
+                foreach ($rubricRefs as $rubric) {
                     $data = $compilationDirs['private']->read($rubric->getHref());
-                    $tmpFile = \tao_helpers_File::createTempDir().basename($rubric->getHref());
+                    $tmpFile = $tmpDir . basename($rubric->getHref());
                     file_put_contents($tmpFile, $data);
                     include($tmpFile);
                     unlink($tmpFile);
                 }
                 $rubrics = ob_get_contents();
                 ob_end_clean();
+                rmdir($tmpDir);
             }
         }
+
         return $rubrics;
     }
-
 }
