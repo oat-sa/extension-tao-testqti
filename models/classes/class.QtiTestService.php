@@ -36,6 +36,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\cat\CatService;
 
 /**
  * the QTI TestModel service.
@@ -421,7 +422,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 // Build a DOM version of the fully resolved AssessmentTest for later usage.
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
-                
+
+                try {
+                    /** @var CatService $service */
+                    $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+                    $service->importRdfTest($testResource, $testDefinition);
+                } catch (common_Exception $e) {
+                    common_Logger::w($e->getMessage());
+                }
+
                 if (count($dependencies['items']) > 0) {
 
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {

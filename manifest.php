@@ -62,7 +62,8 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
             \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
             \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
-		    RegisterTestContainer::class
+		    RegisterTestContainer::class,
+            \oat\taoQtiTest\scripts\install\RegisterCatService::class,
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

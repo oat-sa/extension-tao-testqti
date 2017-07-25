@@ -3,18 +3,13 @@
         xml:base="http://www.tao.lu/Ontologies/TAOTest.rdf#"
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-        xmlns:generis="http://www.tao.lu/Ontologies/generis.rdf#"
-        xmlns:widget="http://www.tao.lu/datatypes/WidgetDefinitions.rdf#"
-        xmlns:tao="http://www.tao.lu/Ontologies/TAO.rdf#"
 >
 
     <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSection">
         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        <rdfs:label xml:lang="en-US"><![CDATA[aaaa]]></rdfs:label>
-        <rdfs:comment xml:lang="en-US"><![CDATA[aaaaa.]]></rdfs:comment>
+        <rdfs:label xml:lang="en-US"><![CDATA[Qti Adaptive Sections]]></rdfs:label>
+        <rdfs:comment xml:lang="en-US"><![CDATA[Qti Adaptive Sections identifier]]></rdfs:comment>
         <rdfs:domain rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#Test"/>
-        <widget:widget rdf:resource="http://www.tao.lu/datatypes/WidgetDefinitions.rdf#JsonObject"/>
-        <tao:TAOGUIOrder><![CDATA[4000]]></tao:TAOGUIOrder>
     </rdf:Description>
 
 </rdf:RDF>
