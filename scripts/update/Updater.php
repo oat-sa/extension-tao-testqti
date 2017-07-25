@@ -1407,7 +1407,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('10.10.0')) {
             OntologyUpdater::syncModels();
             $this->runExtensionScript(RegisterCatService::class);
-            //$this->setVersion('10.11.0');
+            $this->setVersion('10.11.0');
         }
     }
 }

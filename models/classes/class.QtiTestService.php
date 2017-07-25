@@ -426,7 +426,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 try {
                     /** @var CatService $service */
                     $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
-                    $service->importRdfTest($testResource, $testDefinition);
+                    $service->importCatSectionsIdToRdfTest($testResource, $testDefinition);
                 } catch (common_Exception $e) {
                     common_Logger::w($e->getMessage());
                 }

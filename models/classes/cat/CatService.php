@@ -38,7 +38,7 @@ class CatService extends ConfigurableService
 
     const SERVICE_ID = 'taoQtiTest/catService';
 
-    const CAT_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSection';
+    const CAT_PROPERTY_SECTIONS = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
 
     /**
      * Import XML data to QTI test RDF properties
@@ -48,7 +48,7 @@ class CatService extends ConfigurableService
      * @return bool
      * @throws \common_Exception
      */
-    public function importRdfTest(\core_kernel_classes_Resource $test, XmlDocument $xml)
+    public function importCatSectionsIdToRdfTest(\core_kernel_classes_Resource $test, XmlDocument $xml)
     {
         $catProperties = [];
         $assessmentSections = $xml->getDocumentComponent()->getComponentsByClassName('assessmentSection', true);
@@ -63,7 +63,7 @@ class CatService extends ConfigurableService
             return true;
         }
 
-        if ($test->setPropertyValue($this->getProperty(self::CAT_PROPERTY), json_encode($catProperties))) {
+        if ($test->setPropertyValue($this->getProperty(self::CAT_PROPERTY_SECTIONS), json_encode($catProperties))) {
             return true;
         } else {
             throw new \common_Exception('Unable to store CAT property to test ' . $test->getUri());

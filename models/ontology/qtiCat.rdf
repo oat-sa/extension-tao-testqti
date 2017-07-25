@@ -5,7 +5,7 @@
         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
 
-    <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSection">
+    <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections">
         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
         <rdfs:label xml:lang="en-US"><![CDATA[Qti Adaptive Sections]]></rdfs:label>
         <rdfs:comment xml:lang="en-US"><![CDATA[Qti Adaptive Sections identifier]]></rdfs:comment>
