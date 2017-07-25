@@ -22,7 +22,14 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -43,7 +50,9 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -1331,7 +1340,67 @@ class Updater extends \common_ext_ExtensionUpdater {
             $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
             $this->setVersion('10.4.0');
         }
+      
+        $this->skip('10.4.0', '10.5.1');
 
-        $this->skip('10.4.0', '10.5.0');
+        if ($this->isVersion('10.5.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/highlighter/plugin');
+            $registry->remove('taoQtiTest/runner/plugins/tools/magnifier/magnifier');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'area-masking',
+                'name'        => 'Area Masking',
+                'module'      => 'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Mask areas of the item',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
+            ]));
+            $this->setVersion('10.6.0');
+        }
+
+        if ($this->isVersion('10.6.0')) {
+            // Install the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            // Install the Sync Channel
+            $this->runExtensionScript(SyncChannelInstaller::class);
+
+            $this->setVersion('10.7.0');
+        }
+        
+        $this->skip('10.7.0', '10.11.0');
     }
 }

@@ -88,12 +88,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $href = $indexFile->read();
         } else {
             if (!isset($this->itemHrefIndex)) {
-                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+            $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
                 $this->itemHrefIndex = $storage->loadItemHrefIndex($context->getTestExecutionUri());
-            }
+        }
             if (isset($this->itemHrefIndex[$itemIdentifier])) {
                 $href = $this->itemHrefIndex[$itemIdentifier];
-            }
+        }
         }
         
         return $href;
@@ -133,7 +133,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-        
+
         if ($session->isRunning() !== false) {
             $route = $session->getRoute();
             $store = $session->getAssessmentItemSessionStore();
@@ -170,7 +170,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 }
                 $sectionId = $section->getIdentifier();
                 $itemId = $itemRef->getIdentifier();
-                $itemUri = strstr($itemRef->getHref(), '|', true);
+                $itemDefinition = $itemRef->getHref();
+                $itemUri = strstr($itemDefinition, '|', true);
                 $item = new \core_kernel_classes_Resource($itemUri);
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
@@ -207,6 +208,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemInfos = [
                     'id' => $itemId,
                     'uri' => $itemUri,
+                    'definition' => $itemDefinition,
                     'label' => $label,
                     'position' => $offset,
                     'positionInPart' => $offsetPart,
@@ -261,8 +263,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
             }
         }
-
-
+        
         return $map;
     }
 

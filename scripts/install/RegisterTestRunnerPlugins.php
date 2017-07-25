@@ -285,7 +285,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allows the test taker to highlight text',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [ ]
             ], [
                 'id' => 'magnifier',
@@ -294,7 +294,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives student access to a magnification tool',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [  ]
             ], [
                 'id' => 'lineReader',
@@ -314,6 +314,24 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => true,
                 'tags' => [  ]
+            ], [
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ], [
+                'id'          => 'area-masking',
+                'name'        => 'Area Masking',
+                'module'      => 'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Mask areas of the item',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
             ]
         ],
         'security' => [

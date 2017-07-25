@@ -251,8 +251,6 @@ define([
                     }
                 });
 
-
-
                 feedbackPromise.then(function(){
 
                     updateStats();
