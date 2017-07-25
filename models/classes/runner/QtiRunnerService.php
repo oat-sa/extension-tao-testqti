@@ -484,7 +484,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $rubricHelper = new QtiRunnerRubric();
+            $rubricHelper = $this->getServiceLocator()->get(QtiRunnerRubric::SERVICE_ID);
             return $rubricHelper->getRubrics($context, $itemRef);
         } else {
             throw new \common_exception_InvalidArgumentType(
