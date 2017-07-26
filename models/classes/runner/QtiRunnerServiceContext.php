@@ -90,6 +90,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var string
      */
     protected $testExecutionUri;
+    
+    private $catSection;
+    
+    private $catSession;
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -336,6 +340,99 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCatEngine()
     {
-        return $this->getServiceManager()->get(CatService::SERVICE_ID);
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine();
+    }
+    
+    public function initCatSession()
+    {
+        $catEngine = $this->getCatEngine();
+        $catContext = $this->retrieveCatContext();
+        
+        $catSection = $this->getCatSection();
+        $catSession = $this->getCatSession();
+        
+        // Deal with the CAT Section.
+        if (!empty($catSection) {
+            $catSection = $this->getCatEngine()->restoreSection($catSection);
+        } else {
+            $catSection = $this->getCatEngine()->setUpSection($this->getCurrentCatSectionIdentifier());
+        }
+        
+        // Deal with the CAT Session.
+        if(!empty($catSession)){
+            $catSession = $catSection->restoreSession($catSession);
+        } else {
+            $catSession = $catSection->initSession();
+        }
+        
+        $this->persistCatSection(json_encode($catSection));
+        $this->persistCatSession(json_encode($catSession));
+    }
+    
+    public function getCatSection()
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-section');
+    }
+    
+    public function persistCatSection($catSection)
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-section', $catSection);
+    }
+    
+    public function getCatSession()
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-session');
+    }
+    
+    public function persistCatSession($catSession)
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-session', $catSession);
+    }
+    
+    public function getCurrentCatSectionIdentifier()
+    {
+        $adaptiveInfoMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveInfoMap($this->getCompilationDirectory());
+        $assessmentSectionIdentifier = $this->getTestSession()->getRoute()->current()->getAssessmentSection()->getIdentifier();
+        
+        return (isset($adaptiveInfoMap[$assessmentSectionIdentifier])) ? $adaptiveInfoMap[$assessmentSectionIdentifier] : false;
+    }
+    
+    public function isAdaptive()
+    {
+        return $this->getCurrentCatSectionIdentifier() !== false;
+    }
+    
+    public function getLastCatItemId()
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-id');
+        
+        if (!empty($id)) {
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-id');
+        }
+        
+        return $id;
+    }
+    
+    public function persistLastCatItemId($lastCatItemId)
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $catSession);
+    }
+    
+    public function getLastCaItemOutput()
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $output = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-output');
+        
+        if (!empty($output)) {
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-output');
+        }
+        
+        return $output;
     }
 }

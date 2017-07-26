@@ -131,6 +131,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the test session for a particular delivery execution
+     * 
+     * This method is called before each action (moveNext, moveBack, pause, ...) call.
+     * 
      * @param string $testDefinitionUri The URI of the test
      * @param string $testCompilationUri The URI of the compiled delivery
      * @param string $testExecutionUri The URI of the delivery execution
@@ -141,6 +144,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $check = true)
     {
+        \common_Logger::i('QtiRunnerService::GETSERVICECONTEXT');
+        
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
@@ -181,12 +186,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Initializes the delivery execution session
+     * 
+     * This method is called whenever a candidate enters the test. This includes
+     * 
+     * * Newly launched/instantiated test session.
+     * * The candidate refreshes the client (F5).
+     * * Resumed test sessions.
+     * 
      * @param RunnerServiceContext $context
      * @return boolean
      * @throws \common_Exception
      */
     public function init(RunnerServiceContext $context)
     {
+        \common_Logger::i('QtiRunnerService::INIT');
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
@@ -333,7 +346,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $route = $session->getRoute();
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
-                $itemRef = $session->getCurrentAssessmentItemRef();
+                $itemRef = $this->getCurrentAssessmentItemRef();
 
                 $reviewConfig = $config->getConfigValue('review');
                 $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
@@ -1446,5 +1459,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $context
             );
         }
+    }
+    
+    public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
+    {
+        $session = $context->getTestSession();
+        return $session->getCurrentAssessmentItemRef();
     }
 }

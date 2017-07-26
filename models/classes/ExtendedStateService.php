@@ -35,6 +35,7 @@ class ExtendedStateService extends ConfigurableService
     const VAR_REVIEW = 'review';
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
+    const VAR_CUSTOM = 'custom';
 
     private static $cache = null;
     private static $deliveryExecutions = null;
@@ -280,5 +281,28 @@ class ExtendedStateService extends ConfigurableService
     public static function getStorageKeyFromTestSessionId($testSessionId)
     {
         return self::STORAGE_PREFIX . $testSessionId;
+    }
+    
+    public function setCustomValue($testSessionId, $key, $value)
+    {
+        $extra = $this->getExtra();
+        $extra[self::VAR_CUSTOM][$key] = $value;
+        $this->saveExtra($testSessionId, $extra);
+    }
+    
+    public function getCustomValue($testSessionId, $key)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) ? extra[self::VAR_CUSTOM][$key] : null;
+    }
+    
+    public function removeCustomValue($testSessionId, $key)
+    {
+        $extra = $this->getExtra($testSessionId);
+        if (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) {
+            unset($extra[self::VAR_CUSTOM][$key]); 
+        }
+        
+        $this->saveExtra($testSessionId, $extra);
     }
 }
