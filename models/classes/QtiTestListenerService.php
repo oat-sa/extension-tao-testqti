@@ -35,6 +35,34 @@ use qtism\runtime\tests\AssessmentTestSession;
 class QtiTestListenerService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
+    
+    const OPTION_ARCHIVE_EXCLUDE = 'archive-exclude';
+    
+    /**
+     * @var string Constant to turn off test state archiving.
+     */
+    const ARCHIVE_EXCLUDE_TEST = 'archive-exclude-test';
+    
+    /**
+     * @var string Constant to turn off item state archiving.
+     */
+    const ARCHIVE_EXCLUDE_ITEMS = 'archive-exclude-items';
+    
+    /**
+     * @var string Constant to turn off extended test state archiving.
+     */
+    const ARCHIVE_EXCLUDE_EXTRA = 'archive-exclude-extra';
+
+    public function __construct($options = array())
+    {
+        parent::__construct($options);
+        
+        $archiveExcludeOption = $this->getOption(self::OPTION_ARCHIVE_EXCLUDE);
+        
+        if (is_null($archiveExcludeOption) || !is_array($archiveExcludeOption)) {
+            $this->setOption(self::OPTION_ARCHIVE_EXCLUDE, []);
+        }
+    }
 
     /**
      *
@@ -92,6 +120,8 @@ class QtiTestListenerService extends ConfigurableService
     public function archiveState(DeliveryExecutionState $event)
     {
         if ($event->getState() == DeliveryExecution::STATE_FINISHIED) {
+            $archivingExclusions = $this->getOption(SELF::OPTION_ARCHIVE_EXCLUDE);
+            
             /** @var TestSessionService $testSessionService */
             $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
             $session = $testSessionService->getTestSession($event->getDeliveryExecution());
@@ -103,37 +133,42 @@ class QtiTestListenerService extends ConfigurableService
             /** @var StateMigration $finishedService */
             $finishedService = $this->getServiceManager()->get(StateMigration::SERVICE_ID);
             
-            // Remove all Item States that belong to the Test.
-            $itemRefs = $session->getRoute()->getAssessmentItemRefs();
+            if (!in_array(self::ARCHIVE_EXCLUDE_ITEMS, $archivingExclusions)) {
+                // Remove all Item States that belong to the Test.
+                $itemRefs = $session->getRoute()->getAssessmentItemRefs();
             
-            foreach ($itemRefs as $itemRef) {
-                $callId = $sessionId.$itemRef->getIdentifier();
-                if ($finishedService->archive($userId, $callId)) {
-                    $finishedService->removeState($userId, $callId);
-                    \common_Logger::t('Item State archived for user : '.$userId.' and callId : '. $callId);
+                foreach ($itemRefs as $itemRef) {
+                    $callId = $sessionId.$itemRef->getIdentifier();
+                    if ($finishedService->archive($userId, $callId)) {
+                        $finishedService->removeState($userId, $callId);
+                        \common_Logger::t('Item State archived for user : '.$userId.' and callId : '. $callId);
+                    }
+                }
+            }
+            
+            if (!in_array(self::ARCHIVE_EXCLUDE_TEST, $archivingExclusions)) {
+                // Remove the Test State.
+                if ($finishedService->archive($userId, $sessionId)) {
+                    $finishedService->removeState($userId, $sessionId);
+                    \common_Logger::t('Test State archived for user : '.$userId.' and callId : '. $sessionId);
+                }
+                
+                // Remove QtiTimeLine State (Only relevant for new QTI Test Runner).
+                $timeLineStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
+                if ($finishedService->archive($userId, $timeLineStorageId)) {
+                    $finishedService->removeState($userId, $timeLineStorageId);
+                    \common_Logger::t('Test Timeline State archived for user : '.$userId.' and storageId : '. $timeLineStorageId);
                 }
             }
 
-            // Remove the Test State.
-            if ($finishedService->archive($userId, $sessionId)) {
-                $finishedService->removeState($userId, $sessionId);
-                \common_Logger::t('Test State archived for user : '.$userId.' and callId : '. $sessionId);
+            if (!in_array(self::ARCHIVE_EXCLUDE_EXTRA, $archivingExclusions)) {
+                // Remove Extended State
+                $extendedStorageId = ExtendedStateService::getStorageKeyFromTestSessionId($sessionId);
+                if ($finishedService->archive($userId, $extendedStorageId)) {
+                    $finishedService->removeState($userId, $extendedStorageId);
+                    \common_Logger::t('Extended State archived for user : '.$userId.' and storageId : '. $extendedStorageId);
+                }
             }
-            
-            // Remove QtiTimeLine State (Only relevant for new QTI Test Runner).
-            $timeLineStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
-            if ($finishedService->archive($userId, $timeLineStorageId)) {
-                $finishedService->removeState($userId, $timeLineStorageId);
-                \common_Logger::t('Test Timeline State archived for user : '.$userId.' and storageId : '. $timeLineStorageId);
-            }
-
-            // Remove Extended State
-            $extendedStorageId = ExtendedStateService::getStorageKeyFromTestSessionId($sessionId);
-            if ($finishedService->archive($userId, $extendedStorageId)) {
-                $finishedService->removeState($userId, $extendedStorageId);
-                \common_Logger::t('Extended State archived for user : '.$userId.' and storageId : '. $extendedStorageId);
-            }
-
         }
     }
 }

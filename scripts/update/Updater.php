@@ -1401,6 +1401,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.7.0');
         }
         
-        $this->skip('10.7.0', '10.11.0');
+        $this->skip('10.7.0', '10.10.0');
+        
+        if ($this->isVersion('10.10.0')) {
+            $qtiListenerService = $this->getServiceManager()->get(QtiTestListenerService::SERVICE_ID);
+            $qtiListenerService->setOption(QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE, []);
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, $qtiListenerService);
+            
+            $this->setVersion('10.11.0');
+        }
     }
 }
