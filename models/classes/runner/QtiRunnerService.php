@@ -445,7 +445,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 //add rubic blocks
                 if($response['numberRubrics'] > 0){
-                    $response['rubrics'] = $this->getRubrics($context, $itemRef);
+                    $response['rubrics'] = $this->getRubrics($context, $session->getCurrentAssessmentItemRef());
                 }
 
                 //preven the user to submit empty responses
@@ -1463,7 +1463,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     
     public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
     {
-        $session = $context->getTestSession();
-        return $session->getCurrentAssessmentItemRef();
+        $currentAssessmentItemRef = $context->getTestSession()->getCurrentAssessmentItemRef();
+        
+        if ($context->isAdaptive()) {
+            return $context->getAssessmentItemRefByIdentifier($currentAssessmentItemRef->getIdentifier());
+        } else {
+            return $currentAssessmentIemRef;
+        }
     }
 }
