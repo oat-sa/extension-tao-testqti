@@ -21,9 +21,11 @@
  */
 define([
     'i18n',
-    'taoTests/runner/plugin'
-], function (__, pluginFactory) {
+    'taoTests/runner/plugin',
+    'tpl!taoQtiTest/runner/plugins/controls/connectivity/connectivity'
+], function (__, pluginFactory, connectivityTpl) {
     'use strict';
+
 
     /**
      * Creates the connectivity plugin.
@@ -53,14 +55,21 @@ define([
                 if (!testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', true);
                     testRunner.trigger('disconnect', source);
+                    this.$element.removeClass('connected').addClass('disconnected');
                 }
             })
             .on('reconnect', function reconnect() {
                 if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
                     testRunner.trigger('reconnect');
+                    this.$element.removeClass('disconnected').addClass('connected');
                 }
             });
+
+            //create the progressbar
+            this.$element = $(connectivityTpl({
+                state: proxy.isOnline ? 'connected' : 'disconnected'
+            }));
 
             testRunner.before('error', function(e, err) {
 
@@ -84,6 +93,15 @@ define([
                     return false;
                 }
             });
+        },
+
+
+        /**
+         * Called during the runner's render phase
+         */
+        render : function render(){
+            var $container = this.getAreaBroker().getControlArea();
+            $container.append(this.$element);
         }
     });
 });

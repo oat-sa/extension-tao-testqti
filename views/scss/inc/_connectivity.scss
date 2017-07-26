@@ -1,0 +1,19 @@
+.connectivity-box {
+    display: none;
+    .icon-connected, .icon-disconnected {
+        display: none;
+    }
+    &.connected, &.disconnected {
+        display: inline-block;
+    }
+    &.connected {
+        .icon-connected {
+            display: inline-block;
+        }
+    }
+    &.disconnected {
+        .icon-disconnected {
+            display: inline-block;
+        }
+    }
+}
