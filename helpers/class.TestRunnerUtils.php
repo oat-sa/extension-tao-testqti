@@ -31,6 +31,7 @@ use qtism\runtime\tests\Jump;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\common\datatypes\QtiString;
 use oat\oatbox\service\ServiceManager;
 
@@ -514,36 +515,11 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
             $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
-             
+
             // Rubric Blocks.
-            $rubrics = array();
-             
-            // -- variables used in the included rubric block templates.
-            // base path (base URI to be used for resource inclusion).
-            $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
-            $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
-             
-            // state name (the variable to access to get the state of the assessmentTestSession).
-            $stateName = TAOQTITEST_RENDERING_STATE_NAME;
-            $$stateName = $session;
-             
-            // views name (the variable to be accessed for the visibility of rubric blocks).
-            $viewsName = TAOQTITEST_VIEWS_NAME;
-            $$viewsName = array(View::CANDIDATE);
-             
-            foreach ($session->getRoute()->current()->getRubricBlockRefs() as $rubric) {
-                $data = $compilationDirs['private']->read($rubric->getHref());
-                $tmpDir = \tao_helpers_File::createTempDir();
-                $tmpFile = $tmpDir.basename($rubric->getHref());
-                file_put_contents($tmpFile, $data);
-                ob_start();
-                include($tmpFile);
-                $rubrics[] = ob_get_clean();
-                unlink($tmpFile);
-                rmdir($tmpDir);
-            }
-             
-            $context['rubrics'] = $rubrics;
+            /** @var QtiRunnerRubric $rubricBlockHelper */
+            $rubricBlockHelper = ServiceManager::getServiceManager()->get(QtiRunnerRubric::SERVICE_ID);
+            $context['rubrics'] = $rubricBlockHelper->getRubricBlock($session->getRoute()->current(), $session, $compilationDirs);
              
             // Comment allowed? Skipping allowed? Logout or Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
