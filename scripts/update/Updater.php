@@ -1331,7 +1331,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('10.1.0');
         }
-      
+
         $this->skip('10.1.0', '10.3.0');
       
         if ($this->isVersion('10.3.0')) {
@@ -1401,6 +1401,33 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.7.0');
         }
         
-        $this->skip('10.7.0', '10.11.0');
+        $this->skip('10.7.0', '10.10.0');
+        
+        if ($this->isVersion('10.10.0')) {
+            $qtiListenerService = $this->getServiceManager()->get(QtiTestListenerService::SERVICE_ID);
+            $qtiListenerService->setOption(QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE, []);
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, $qtiListenerService);
+            
+            $this->setVersion('10.11.0');
+        }
+
+        if ($this->isVersion('10.11.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'zoom',
+                'name' => 'Zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows Test-taker to zoom in and out the item content',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $this->setVersion('10.11.1');
+        }
+
+        $this->skip('10.11.1', '10.12.0');
     }
 }

@@ -67,7 +67,7 @@ class ExtendedStateService extends ConfigurableService
             $storageService = \tao_models_classes_service_StateStorage::singleton();
             $userUri = $this->getSessionUserUri($testSessionId);
 
-            $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
+            $data = $storageService->get($userUri, self::getStorageKeyFromTestSessionId($testSessionId));
             if ($data) {
                 $data = json_decode($data, true);
                 if (is_null($data)) {
@@ -96,7 +96,7 @@ class ExtendedStateService extends ConfigurableService
         $storageService = \tao_models_classes_service_StateStorage::singleton();
         $userUri = $this->getSessionUserUri($testSessionId);
 
-        $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
+        $storageService->set($userUri, self::getStorageKeyFromTestSessionId($testSessionId), json_encode($extra));
     }
 
     /**
@@ -208,16 +208,19 @@ class ExtendedStateService extends ConfigurableService
     public function removeEvents($testSessionId, $ids = [])
     {
         $extra = $this->getExtra($testSessionId);
-
+        $toSave = false;
         if (isset($extra[self::VAR_EVENTS_QUEUE])) {
             foreach ($ids as $id) {
                 if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
                     unset($extra[self::VAR_EVENTS_QUEUE][$id]);
+                    $toSave = true;
                 }
             }
         }
 
-        $this->saveExtra($testSessionId, $extra);
+        if($toSave){
+            $this->saveExtra($testSessionId, $extra);
+        }
     }
     
     /**
@@ -228,9 +231,11 @@ class ExtendedStateService extends ConfigurableService
     {
         $extra = $this->getExtra($testSessionId);
 
-        $extra[self::VAR_EVENTS_QUEUE] = [];
+        if(isset($extra[self::VAR_EVENTS_QUEUE]) && !empty($extra[self::VAR_EVENTS_QUEUE])){
+            $extra[self::VAR_EVENTS_QUEUE] = [];
+            $this->saveExtra($testSessionId, $extra);
+        }
 
-        $this->saveExtra($testSessionId, $extra);
     }
 
     /**
@@ -262,5 +267,19 @@ class ExtendedStateService extends ConfigurableService
             $table = [];
         }
         return $table;
+    }
+
+
+    /**
+     * Storage Key from Test Session Id
+     *
+     * Returns the Storage Key corresponding to a given $testSessionId
+     *
+     * @param string $testSessionId
+     * @return string
+     */
+    public static function getStorageKeyFromTestSessionId($testSessionId)
+    {
+        return self::STORAGE_PREFIX . $testSessionId;
     }
 }
