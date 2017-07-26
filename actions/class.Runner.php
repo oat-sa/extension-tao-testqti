@@ -122,6 +122,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getServiceContext()
     {
         if (!$this->serviceContext) {
+
             $testDefinition = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
 
@@ -913,6 +914,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         $this->returnJson($response, $code);
+    }
+
+    /**
+     * The smallest telemetry signal,
+     * just to know the server is up.
+     */
+    public function up()
+    {
+        $this->returnJson([
+            'success' => true
+        ], 200);
     }
 
     /**

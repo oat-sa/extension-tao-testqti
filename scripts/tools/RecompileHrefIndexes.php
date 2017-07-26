@@ -23,6 +23,15 @@ use oat\oatbox\extension\AbstractAction;
 use \common_report_Report as Report;
 use qtism\data\storage\php\PhpDocument;
 
+/**
+ * Class RecompileHrefIndexes
+ * 
+ * Update every deliveries in order to add the index of AssessmentItemRef's Href by AssessmentItemRef Identifier.
+ * 
+ * php index.php 'oat\taoQtiTest\scripts\tools\RecompileHrefIndexes'
+ * 
+ * @package oat\taoQtiTest\scripts\tools
+ */
 class RecompileHrefIndexes extends AbstractAction
 {
     public function __invoke($params)
