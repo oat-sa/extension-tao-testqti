@@ -504,6 +504,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * @param RunnerServiceContext $context
+     * @param string $itemIdentifier
+     * @return string
+     */
+    public function getItemHref(RunnerServiceContext $context, $itemIdentifier)
+    {
+        $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+        return $mapService->getItemHref($context, $itemIdentifier);
+    }
+    
+    /**
      * Gets definition data of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
