@@ -346,7 +346,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $route = $session->getRoute();
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
-                $itemRef = $this->getCurrentAssessmentItemRef();
+                $itemRef = $this->getCurrentAssessmentItemRef($context);
 
                 $reviewConfig = $config->getConfigValue('review');
                 $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
@@ -1468,7 +1468,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context->isAdaptive()) {
             return $context->getAssessmentItemRefByIdentifier($currentAssessmentItemRef->getIdentifier());
         } else {
-            return $currentAssessmentIemRef;
+            return $currentAssessmentItemRef;
         }
     }
 }
