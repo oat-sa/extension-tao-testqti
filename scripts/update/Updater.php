@@ -1427,5 +1427,8 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('10.11.1');
         }
+
+
+        $this->skip('10.11.1', '10.11.2');
     }
 }
