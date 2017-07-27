@@ -70,6 +70,6 @@ class CatService extends ConfigurableService
     
     public function getAdaptiveInfoMap(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory)
     {
-        return json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_INFO_MAP_FILENAME));
+        return json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_INFO_MAP_FILENAME), true);
     }
 }

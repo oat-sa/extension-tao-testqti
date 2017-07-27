@@ -29,6 +29,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use oat\libCat\result\ItemResult;
 
 
 /**
@@ -424,7 +425,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $catSession);
     }
     
-    public function getLastCaItemOutput()
+    public function getLastCatItemOutput()
     {
         $sessionId = $this->getTestSession()->getSessionId();
         $output = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-output');
@@ -434,5 +435,39 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
         
         return $output;
+    }
+    
+    public function getAdaptiveNextItem()
+    {
+        $lastItemId = $this->getLastCatItemId();
+        $lastOutput = $this->getLastCatItemOutput();
+        $catSession = $this->getCatSession();
+        
+        if (!is_null($lastItemId)) {
+            $results = [];
+            foreach ($lastOutput as $var) {
+                //can be removed
+                if ($var->getIdentifier() == 'SCORE') {
+                    $results[] = new ItemResult($lastItemId, new ResultVariable(
+                        $var->getIdentifier(),
+                        BaseType::getNameByConstant($var->getBaseType()),
+                        $var->getValue()->getValue())
+                    );
+                }
+            }
+            $selection = $catSession->getTestMap($results);
+        } else {
+            $selection = $catSession->getTestMap([]);
+        }
+        
+        if (is_array($selection) && count($selection) == 0) {
+            
+            return null;
+        } else {
+            $this->persistLastCatItemId($selection[0]);
+            $this->persistCatSession(json_encode($catSession));
+            
+            return $context->getAssessmentItemRefById($selection[0]);
+        }
     }
 }

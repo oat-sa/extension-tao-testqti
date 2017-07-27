@@ -211,6 +211,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $event = new TestInitEvent($session);
                 $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
                 \common_Logger::i("Assessment Test Session begun.");
+                
+                if ($context->isAdaptive()) {
+                    $context->initCatSession();
+                }
             }
 
             $session->initItemTimer();
@@ -1463,12 +1467,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     
     public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
     {
-        $currentAssessmentItemRef = $context->getTestSession()->getCurrentAssessmentItemRef();
-        
         if ($context->isAdaptive()) {
-            return $context->getAssessmentItemRefByIdentifier($currentAssessmentItemRef->getIdentifier());
+            return $context->getAssessmentItemRefByIdentifier($context->getLastCatItemId());
         } else {
-            return $currentAssessmentItemRef;
+            $context->getTestSession()->getCurrentAssessmentItemRef();
         }
     }
 }
