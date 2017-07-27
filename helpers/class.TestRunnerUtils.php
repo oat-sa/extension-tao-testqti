@@ -44,12 +44,21 @@ use oat\oatbox\service\ServiceManager;
 class taoQtiTest_helpers_TestRunnerUtils {
     
     /**
-     * temporary helper until proper servicemanager integration
+     * Temporary helper until proper ServiceManager integration
+     * @return ServiceManager
+     */
+    static protected function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
+    }
+    
+    /**
+     * Temporary helper until proper ServiceManager integration
      * @return ExtendedStateService
      */
     static public function getExtendedStateService()
     {
-        return ServiceManager::getServiceManager()->get(ExtendedStateService::SERVICE_ID);
+        return self::getServiceManager()->get(ExtendedStateService::SERVICE_ID);
     }
     
     /**
@@ -518,7 +527,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
             // Rubric Blocks.
             /** @var QtiRunnerRubric $rubricBlockHelper */
-            $rubricBlockHelper = ServiceManager::getServiceManager()->get(QtiRunnerRubric::SERVICE_ID);
+            $rubricBlockHelper = self::getServiceManager()->get(QtiRunnerRubric::SERVICE_ID);
             $context['rubrics'] = $rubricBlockHelper->getRubricBlock($session->getRoute()->current(), $session, $compilationDirs);
              
             // Comment allowed? Skipping allowed? Logout or Exit allowed ?
