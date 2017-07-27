@@ -390,7 +390,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
      * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
      * @param string $standalone
-     * @param string $compilationDirs An array containing respectively the private and public compilation directories.
+     * @param array $compilationDirs An array containing respectively the private and public compilation directories.
      * @return array The context of the candidate session.
      */
     static public function buildAssessmentTestContext(AssessmentTestSession $session, array $testMeta, $itemIndex, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs) {
