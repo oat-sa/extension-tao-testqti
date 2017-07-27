@@ -285,7 +285,7 @@ class ExtendedStateService extends ConfigurableService
     
     public function setCustomValue($testSessionId, $key, $value)
     {
-        $extra = $this->getExtra();
+        $extra = $this->getExtra($testSessionId);
         $extra[self::VAR_CUSTOM][$key] = $value;
         $this->saveExtra($testSessionId, $extra);
     }
@@ -293,7 +293,7 @@ class ExtendedStateService extends ConfigurableService
     public function getCustomValue($testSessionId, $key)
     {
         $extra = $this->getExtra($testSessionId);
-        return (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) ? extra[self::VAR_CUSTOM][$key] : null;
+        return (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) ? $extra[self::VAR_CUSTOM][$key] : null;
     }
     
     public function removeCustomValue($testSessionId, $key)

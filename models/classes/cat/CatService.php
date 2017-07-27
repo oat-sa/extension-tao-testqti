@@ -5,6 +5,7 @@ namespace oat\taoQtiTest\models\cat;
 use oat\oatbox\service\ConfigurableService;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
+use qtism\data\storage\php\PhpDocument;
 
 /**
  * Wrap a Cat Engine in a service.
@@ -43,7 +44,10 @@ class CatService extends ConfigurableService
     
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        return $privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php");
+        $doc = new PhpDocument();
+        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
+        
+        return $doc->getDocumentComponent();
     }
     
     public function getAdaptiveAssessmentSectionInfo(AssessmentTest $test, \tao_models_classes_service_StorageDirectory $compilationDirectory, $basePath, $qtiAssessmentSectionIdentifier)

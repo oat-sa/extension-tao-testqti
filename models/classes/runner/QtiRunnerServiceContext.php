@@ -26,6 +26,7 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\ExtendedStateService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
@@ -347,7 +348,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function initCatSession()
     {
         $catEngine = $this->getCatEngine();
-        $catContext = $this->retrieveCatContext();
         
         $catSection = $this->getCatSection();
         $catSession = $this->getCatSession();
@@ -373,7 +373,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getCatSection()
     {
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-section');
+        return $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-section');
     }
     
     public function persistCatSection($catSection)
@@ -385,7 +385,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getCatSession()
     {
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-session');
+        return $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-session');
     }
     
     public function persistCatSession($catSession)
@@ -399,7 +399,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $adaptiveInfoMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveInfoMap($this->getCompilationDirectory()['private']);
         $assessmentSectionIdentifier = $this->getTestSession()->getRoute()->current()->getAssessmentSection()->getIdentifier();
         
-        return (isset($adaptiveInfoMap[$assessmentSectionIdentifier])) ? $adaptiveInfoMap[$assessmentSectionIdentifier] : false;
+        return (isset($adaptiveInfoMap[$assessmentSectionIdentifier])) ? $adaptiveInfoMap[$assessmentSectionIdentifier]['adaptiveSectionIdentifier'] : false;
     }
     
     public function isAdaptive()
@@ -407,7 +407,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->getCurrentCatSectionIdentifier() !== false;
     }
     
-    public function getLastCatItemId()
+    public function consumeLastCatItemId()
     {
         $sessionId = $this->getTestSession()->getSessionId();
         $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-id');
@@ -419,10 +419,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $id;
     }
     
+    public function getLastCatItemId()
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-id');
+        
+        return $id;
+    }
+    
     public function persistLastCatItemId($lastCatItemId)
     {
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $catSession);
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $lastCatItemId);
     }
     
     public function getLastCatItemOutput()
@@ -437,12 +445,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $output;
     }
     
-    public function getAdaptiveNextItem()
+    public function selectAdaptiveNextItem()
     {
-        $lastItemId = $this->getLastCatItemId();
+        $lastItemId = $this->consumeLastCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
-        $catSession = $this->getCatSession();
-        
+        $catSection = $this->getCatEngine()->restoreSection($this->getCatSection());
+        $catSession = $catSection->restoreSession($this->getCatSession());
+        \common_Logger::i(var_export($lastOutput, true));
         if (!is_null($lastItemId)) {
             $results = [];
             foreach ($lastOutput as $var) {
@@ -466,8 +475,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             $this->persistLastCatItemId($selection[0]);
             $this->persistCatSession(json_encode($catSession));
-            
-            return $context->getAssessmentItemRefById($selection[0]);
         }
     }
 }

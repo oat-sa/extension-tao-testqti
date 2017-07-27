@@ -793,7 +793,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
                     
                     // Register information in main adaptive information map.
-                    $catInfoMap[$catInfo['qtiSectionIdentifier']][] = $catInfo;
+                    $catInfoMap[$catInfo['qtiSectionIdentifier']] = $catInfo;
                     
                     foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
                         $sectionPart =  $sectionParts[$sectionPartIdentifier];

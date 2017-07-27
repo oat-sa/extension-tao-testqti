@@ -135,87 +135,91 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemId = $itemRef->getIdentifier();
                 $itemDefinition = $itemRef->getHref();
                 $itemUri = strstr($itemDefinition, '|', true);
-                $item = new \core_kernel_classes_Resource($itemUri);
-                if ($lastPart != $partId) {
-                    $offsetPart = 0;
-                    $lastPart = $partId;
-                }
-                if ($lastSection != $sectionId) {
-                    $offsetSection = 0;
-                    $lastSection = $sectionId;
-                }
+                
+                if ($itemUri) {
+                    $item = new \core_kernel_classes_Resource($itemUri);
+                    if ($lastPart != $partId) {
+                        $offsetPart = 0;
+                        $lastPart = $partId;
+                    }
+                    if ($lastSection != $sectionId) {
+                        $offsetSection = 0;
+                        $lastSection = $sectionId;
+                    }
 
-                if ($forceTitles) {
-                    $label = __($uniqueTitle, $offsetSection + 1);
-                } else {
-                    if ($useTitle) {
-                        $label = $context->getItemIndexValue($itemUri, 'title');
+                    if ($forceTitles) {
+                        $label = __($uniqueTitle, $offsetSection + 1);
                     } else {
-                        $label = '';
+                        if ($useTitle) {
+                            $label = $context->getItemIndexValue($itemUri, 'title');
+                        } else {
+                            $label = '';
+                        }
+                        
+                        if (!$label) {
+                            $label = $context->getItemIndexValue($itemUri, 'label');
+                        }
+                        
+                        if (!$label) {
+                            $label = $item->getLabel();
+                        }
+                    }
+
+                    /** @todo TAO-4605 remove this temporary workaround */
+                    $this->itemsTable[$itemId] = $itemRef->getHref();
+                    /***/
+
+                    $itemInfos = [
+                        'id' => $itemId,
+                        'uri' => $itemUri,
+                        'definition' => $itemDefinition,
+                        'label' => $label,
+                        'position' => $offset,
+                        'positionInPart' => $offsetPart,
+                        'positionInSection' => $offsetSection,
+                        'index' => $offsetSection + 1,
+                        'occurrence' => $occurrence,
+                        'remainingAttempts' => $itemSession->getRemainingAttempts(),
+                        'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
+                        'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
+                        'viewed' => $itemSession->isPresented(),
+                    ];
+                    
+                    if ($checkInformational) {
+                        $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
                     }
                     
-                    if (!$label) {
-                        $label = $context->getItemIndexValue($itemUri, 'label');
+                    // update the map
+                    $map['jumps'][] = [
+                        'identifier' => $itemId,
+                        'section' => $sectionId,
+                        'part' => $partId,
+                        'position' => $offset,
+                        'uri' => $itemUri,
+                    ];
+                    if (!isset($map['parts'][$partId])) {
+                        $map['parts'][$partId]['id'] = $partId;
+                        $map['parts'][$partId]['label'] = $partId;
+                        $map['parts'][$partId]['position'] = $offset;
+                        $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
                     }
+                    if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
+                        $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
+                        $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                        $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
+                    }
+                    $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
                     
-                    if (!$label) {
-                        $label = $item->getLabel();
-                    }
-                }
-
-                /** @todo TAO-4605 remove this temporary workaround */
-                $this->itemsTable[$itemId] = $itemRef->getHref();
-                /***/
-
-                $itemInfos = [
-                    'id' => $itemId,
-                    'uri' => $itemUri,
-                    'definition' => $itemDefinition,
-                    'label' => $label,
-                    'position' => $offset,
-                    'positionInPart' => $offsetPart,
-                    'positionInSection' => $offsetSection,
-                    'index' => $offsetSection + 1,
-                    'occurrence' => $occurrence,
-                    'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                    'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
-                    'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
-                    'viewed' => $itemSession->isPresented(),
-                ];
-                
-                if ($checkInformational) {
-                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
+                    // update the stats
+                    $this->updateStats($map, $itemInfos);
+                    $this->updateStats($map['parts'][$partId], $itemInfos);
+                    $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    
+                    $offset ++;
+                    $offsetPart ++;
+                    $offsetSection ++;
                 }
                 
-                // update the map
-                $map['jumps'][] = [
-                    'identifier' => $itemId,
-                    'section' => $sectionId,
-                    'part' => $partId,
-                    'position' => $offset,
-                    'uri' => $itemUri,
-                ];
-                if (!isset($map['parts'][$partId])) {
-                    $map['parts'][$partId]['id'] = $partId;
-                    $map['parts'][$partId]['label'] = $partId;
-                    $map['parts'][$partId]['position'] = $offset;
-                    $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
-                }
-                if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
-                    $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
-                    $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
-                    $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
-                }
-                $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
-                
-                // update the stats
-                $this->updateStats($map, $itemInfos);
-                $this->updateStats($map['parts'][$partId], $itemInfos);
-                $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
-                
-                $offset ++;
-                $offsetPart ++;
-                $offsetSection ++;
             }
         }
         

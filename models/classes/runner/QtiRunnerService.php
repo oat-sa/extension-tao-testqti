@@ -55,6 +55,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
+use oat\taoQtiTest\models\cat\CatService;
 
 /**
  * Class QtiRunnerService
@@ -213,7 +214,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
                 
                 if ($context->isAdaptive()) {
+                    \common_Logger::i("First item is adaptive.");
                     $context->initCatSession();
+                    $context->selectAdaptiveNextItem();
                 }
             }
 
@@ -1468,7 +1471,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
     {
         if ($context->isAdaptive()) {
-            return $context->getAssessmentItemRefByIdentifier($context->getLastCatItemId());
+            return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
+                $context->getCompilationDirectory()['private'],
+                $context->getLastCatItemId()
+            );
         } else {
             $context->getTestSession()->getCurrentAssessmentItemRef();
         }
