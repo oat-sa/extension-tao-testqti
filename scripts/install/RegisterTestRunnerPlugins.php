@@ -285,7 +285,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives student access to a magnification tool',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [  ]
             ], [
                 'id' => 'lineReader',
