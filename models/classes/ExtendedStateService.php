@@ -35,6 +35,7 @@ class ExtendedStateService extends ConfigurableService
     const VAR_REVIEW = 'review';
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
+    const VAR_HREF_INDEX = 'item_href_index';
 
     private static $cache = null;
     private static $deliveryExecutions = null;
@@ -66,7 +67,7 @@ class ExtendedStateService extends ConfigurableService
             $storageService = \tao_models_classes_service_StateStorage::singleton();
             $userUri = $this->getSessionUserUri($testSessionId);
 
-            $data = $storageService->get($userUri, self::STORAGE_PREFIX.$testSessionId);
+            $data = $storageService->get($userUri, self::getStorageKeyFromTestSessionId($testSessionId));
             if ($data) {
                 $data = json_decode($data, true);
                 if (is_null($data)) {
@@ -95,7 +96,7 @@ class ExtendedStateService extends ConfigurableService
         $storageService = \tao_models_classes_service_StateStorage::singleton();
         $userUri = $this->getSessionUserUri($testSessionId);
 
-        $storageService->set($userUri, self::STORAGE_PREFIX.$testSessionId, json_encode($extra));
+        $storageService->set($userUri, self::getStorageKeyFromTestSessionId($testSessionId), json_encode($extra));
     }
 
     /**
@@ -207,16 +208,19 @@ class ExtendedStateService extends ConfigurableService
     public function removeEvents($testSessionId, $ids = [])
     {
         $extra = $this->getExtra($testSessionId);
-
+        $toSave = false;
         if (isset($extra[self::VAR_EVENTS_QUEUE])) {
             foreach ($ids as $id) {
                 if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
                     unset($extra[self::VAR_EVENTS_QUEUE][$id]);
+                    $toSave = true;
                 }
             }
         }
 
-        $this->saveExtra($testSessionId, $extra);
+        if($toSave){
+            $this->saveExtra($testSessionId, $extra);
+        }
     }
     
     /**
@@ -227,39 +231,55 @@ class ExtendedStateService extends ConfigurableService
     {
         $extra = $this->getExtra($testSessionId);
 
-        $extra[self::VAR_EVENTS_QUEUE] = [];
+        if(isset($extra[self::VAR_EVENTS_QUEUE]) && !empty($extra[self::VAR_EVENTS_QUEUE])){
+            $extra[self::VAR_EVENTS_QUEUE] = [];
+            $this->saveExtra($testSessionId, $extra);
+        }
 
-        $this->saveExtra($testSessionId, $extra);
     }
 
     /**
      * Stores the table that maps the items identifiers to item reference
-     * @todo TAO-4605 remove this temporary workaround
+     * Fallback index in case of the delivery was compiled without the index of item href
      * @param $testSessionId
      * @param array $table
      */
-    public function storeItemsTable($testSessionId, $table)
+    public function storeItemHrefIndex($testSessionId, $table)
     {
         $extra = $this->getExtra($testSessionId);
-        $extra['items_table'] = $table;
+        $extra[self::VAR_HREF_INDEX] = $table;
         $this->saveExtra($testSessionId, $extra);
     }
 
     /**
      * Loads the table that maps the items identifiers to item reference
-     * @todo TAO-4605 remove this temporary workaround
+     * Fallback index in case of the delivery was compiled without the index of item href
      * @param $testSessionId
      * @return array
      */
-    public function loadItemsTable($testSessionId)
+    public function loadItemHrefIndex($testSessionId)
     {
         $extra = $this->getExtra($testSessionId);
 
-        if (isset($extra['items_table'])) {
-            $table = $extra['items_table'];
+        if (isset($extra[self::VAR_HREF_INDEX])) {
+            $table = $extra[self::VAR_HREF_INDEX];
         } else {
             $table = [];
         }
         return $table;
+    }
+
+
+    /**
+     * Storage Key from Test Session Id
+     *
+     * Returns the Storage Key corresponding to a given $testSessionId
+     *
+     * @param string $testSessionId
+     * @return string
+     */
+    public static function getStorageKeyFromTestSessionId($testSessionId)
+    {
+        return self::STORAGE_PREFIX . $testSessionId;
     }
 }

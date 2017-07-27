@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  * 
  */
 
@@ -27,6 +27,7 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
+use qtism\data\AssessmentItemRef;
 use qtism\data\content\RubricBlock;
 use qtism\data\content\StylesheetCollection;
 use qtism\common\utils\Url;
@@ -343,7 +344,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
-        catch(XmlStorageException $e){
+        catch (XmlStorageException $e){
 
             $details[] = $e->getMessage();
             while (($previous = $e->getPrevious()) != null) {
@@ -438,6 +439,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $itemService = $subReport->getdata(); 
                 $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
                 $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
+                
+                // Ask for item ref information compilation for fast later usage.
+                $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
+                
             } else {
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
@@ -777,12 +782,44 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
 
     /**
+     * Compile AssessmentItemRef Href Indexes
+     * 
+     * This method indexes the value of $assessmentItemRef->href by $assessmentItemRef->identifier for later
+     * usage at delivery time (for fast access).
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
+     */
+    protected function compileAssessmentItemRefHrefIndex(AssessmentItemRef $assessmentItemRef)
+    {
+        $compiledDocDir = $this->getPrivateDirectory();
+        
+        $compiledDocDir->write(
+            self::buildHrefIndexPath($assessmentItemRef->getIdentifier()), 
+            $assessmentItemRef->getHref()
+        );
+    }
+    
+    /**
      * Get the list of mime types of files that are accepted to be put
      * into the public compilation directory.
      * 
      * @return array
      */
-    static protected function getPublicMimeTypes() {
+    static protected function getPublicMimeTypes()
+    {
         return self::$publicMimeTypes;
+    }
+    
+    /**
+     * Build Href Index Path
+     * 
+     * Builds the Href Index Path from given $identifier.
+     * 
+     * @param string $identifier
+     * @return string
+     */
+    static public function buildHrefIndexPath($identifier)
+    {
+        return TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($identifier) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
     }
 }
