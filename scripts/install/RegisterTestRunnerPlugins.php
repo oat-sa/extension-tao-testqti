@@ -276,7 +276,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allows the test taker to highlight text',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [ ]
             ], [
                 'id' => 'magnifier',
