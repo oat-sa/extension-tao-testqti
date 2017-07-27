@@ -451,7 +451,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $lastOutput = $this->getLastCatItemOutput();
         $catSection = $this->getCatEngine()->restoreSection($this->getCatSection());
         $catSession = $catSection->restoreSession($this->getCatSession());
-        \common_Logger::i(var_export($lastOutput, true));
+        
         if (!is_null($lastItemId)) {
             $results = [];
             foreach ($lastOutput as $var) {

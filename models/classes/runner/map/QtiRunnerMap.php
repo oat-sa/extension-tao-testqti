@@ -40,28 +40,63 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
     const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
 
     /**
-     * @todo TAO-4605 remove this temporary workaround
+     * Fallback index in case of the delivery was compiled without the index of item href
      * @var array
      */
-    protected $itemsTable;
+    protected $itemHrefIndex;
 
     /**
-     * Gets the Item Reference ("itemUri|publicUri|privateUri") from an identifier
-     * @todo TAO-4605 remove this temporary workaround
-     * @param RunnerServiceContext $context
+     * Gets the file that contains the href for the AssessmentItemRef Identifier
+     * @param QtiRunnerServiceContext $context
      * @param string $itemIdentifier
-     * @return string|null
+     * @return \oat\oatbox\filesystem\File
      */
-    public function getItemHref(RunnerServiceContext $context, $itemIdentifier)
+    protected function getItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
-        if (!isset($this->itemsTable)) {
+        $compilationDirectory = $context->getCompilationDirectory()['private'];
+        return $compilationDirectory->getFile(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($itemIdentifier));
+    }
+
+    /**
+     * Checks if the AssessmentItemRef Identifier is in the index.
+     *
+     * @param QtiRunnerServiceContext $context
+     * @param string $itemIdentifier
+     * @return boolean
+     */
+    protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
+    {
+        $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+        return $indexFile->exists();
+    }
+
+    /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * 
+     * Returns the AssessmentItemRef href attribute value from a given $identifier.
+     * 
+     * @param QtiRunnerServiceContext $context
+     * @param string $itemIdentifier
+     * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
+     */
+    public function getItemHref(QtiRunnerServiceContext $context, $itemIdentifier)
+    {
+        $href = false;
+
+        $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+        if ($indexFile->exists()) {
+            $href = $indexFile->read();
+        } else {
+            if (!isset($this->itemHrefIndex)) {
             $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-            $this->itemsTable = $storage->loadItemsTable($context->getTestExecutionUri());
+                $this->itemHrefIndex = $storage->loadItemHrefIndex($context->getTestExecutionUri());
         }
-        if (isset($this->itemsTable[$itemIdentifier])) {
-            return $this->itemsTable[$itemIdentifier];
+            if (isset($this->itemHrefIndex[$itemIdentifier])) {
+                $href = $this->itemHrefIndex[$itemIdentifier];
         }
-        return null;
+        }
+        
+        return $href;
     }
     
     /**
@@ -82,10 +117,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $context
             );
         }
-        
-        /** @todo TAO-4605 remove this temporary workaround */
-        $this->itemsTable = [];
-        /***/
         
         $map = [
             'parts' => [],
@@ -112,6 +143,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $offsetSection = 0;
             $lastPart = null;
             $lastSection = null;
+
+            // fallback index in case of the delivery was compiled without the index of item href
+            $this->itemHrefIndex = [];
+            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
+            \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
+            
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 // access the item reference
@@ -135,7 +172,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemId = $itemRef->getIdentifier();
                 $itemDefinition = $itemRef->getHref();
                 $itemUri = strstr($itemDefinition, '|', true);
-                
                 if ($itemUri) {
                     $item = new \core_kernel_classes_Resource($itemUri);
                     if ($lastPart != $partId) {
@@ -165,9 +201,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         }
                     }
 
-                    /** @todo TAO-4605 remove this temporary workaround */
-                    $this->itemsTable[$itemId] = $itemRef->getHref();
-                    /***/
+                    // fallback in case of the delivery was compiled without the index of item href
+                    if ($shouldBuildItemHrefIndex) {
+                        $this->itemHrefIndex[$itemId] = $itemRef->getHref();
+                    }
 
                     $itemInfos = [
                         'id' => $itemId,
@@ -219,14 +256,15 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $offsetPart ++;
                     $offsetSection ++;
                 }
-                
+            }
+            
+            // fallback in case of the delivery was compiled without the index of item href
+            if ($shouldBuildItemHrefIndex) {
+                \common_Logger::t('Store index of item href into the test state storage');
+                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
             }
         }
-        
-        /** @todo TAO-4605 remove this temporary workaround */
-        $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-        $storage->storeItemsTable($context->getTestExecutionUri(), $this->itemsTable);
-        /***/
         
         return $map;
     }

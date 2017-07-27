@@ -138,12 +138,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $testDefinitionUri The URI of the test
      * @param string $testCompilationUri The URI of the compiled delivery
      * @param string $testExecutionUri The URI of the delivery execution
-     * @param bool [$check] Checks the created context, then initializes it,
-     *                      otherwise just returns the context without check and init. Default to true.
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $check = true)
+    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
         \common_Logger::i('QtiRunnerService::GETSERVICECONTEXT');
         
@@ -156,15 +154,24 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
         $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage());
 
-        if ($check) {
-            // will throw exception if the test session is not valid
-            $this->check($serviceContext);
-
-            // starts the context
-            $serviceContext->init();
-        }
-
         return $serviceContext;
+    }
+
+    /**
+     * Checks the created context, then initializes it.
+     * @param RunnerServiceContext $context
+     * @return RunnerServiceContext
+     * @throws \common_Exception
+     */
+    public function initServiceContext(RunnerServiceContext $context)
+    {
+        // will throw exception if the test session is not valid
+        $this->check($context);
+
+        // starts the context
+        $context->init();
+        
+        return $context;
     }
 
     /**
@@ -406,7 +413,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['needMapUpdate'] = false;
 
                 // Whether the current item is the very last one of the test.
-                $response['isLast'] = $route->isLast();
+                $response['isLast'] = (!$context->isAdaptive()) ? $route->isLast() : false;
 
                 // The current position in the route.
                 $response['itemPosition'] = $route->getPosition();
@@ -524,6 +531,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemHref(RunnerServiceContext $context, $itemRef)
+    {
+        $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+        return $mapService->getItemHref($context, $itemRef);
+    }
+    
+    /**
      * Gets definition data of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
@@ -548,6 +567,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Gets the state identifier for a particular item
+     * @param QtiRunnerServiceContext $context
+     * @param string $itemRef The item identifier
+     * @return string The state identifier
+     */
+    protected function getStateId(QtiRunnerServiceContext $context, $itemRef)
+    {
+        return  $context->getTestExecutionUri() . $itemRef;
+    }
+
+    /**
      * Gets the state of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
@@ -559,7 +589,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             $serviceService = $this->getServiceManager()->get('tao/stateStorage');
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
-            $state = is_null($userUri) ? null : $serviceService->get($userUri, $itemRef);
+            $stateId = $this->getStateId($context, $itemRef);
+            $state = is_null($userUri) ? null : $serviceService->get($userUri, $stateId);
 
             if ($state) {
                 $state = json_decode($state, true);
@@ -593,10 +624,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             $serviceService = $this->getServiceManager()->get('tao/stateStorage');
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
+            $stateId = $this->getStateId($context, $itemRef);
             if(!isset($state)){
                 $state = '';
             }
-            return is_null($userUri) ? false : $serviceService->set($userUri, $itemRef, json_encode($state));
+            return is_null($userUri) ? false : $serviceService->set($userUri, $stateId, json_encode($state));
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1476,7 +1508,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $context->getLastCatItemId()
             );
         } else {
-            $context->getTestSession()->getCurrentAssessmentItemRef();
+            return $context->getTestSession()->getCurrentAssessmentItemRef();
         }
     }
 }
