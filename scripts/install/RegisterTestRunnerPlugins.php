@@ -305,6 +305,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => true,
                 'tags' => [  ]
+            ], [
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
             ]
         ],
         'security' => [
