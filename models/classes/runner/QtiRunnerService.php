@@ -56,6 +56,9 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use oat\taoQtiTest\models\cat\CatService;
+use qtism\runtime\tests\SessionManager;
+use oat\libCat\result\ItemResult;
+use oat\libCat\result\ResultVariable;
 
 /**
  * Class QtiRunnerService
@@ -143,8 +146,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
-        \common_Logger::i('QtiRunnerService::GETSERVICECONTEXT');
-        
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
@@ -207,7 +208,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function init(RunnerServiceContext $context)
     {
-        \common_Logger::i('QtiRunnerService::INIT');
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
@@ -654,7 +654,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             /** @var TestSession $session */
             $session = $context->getTestSession();
-            $currentItem  = $session->getCurrentAssessmentItemRef();
+            $currentItem  = $this->getCurrentAssessmentItemRef($context);
             $responses = new State();
 
             if ($currentItem === false) {
@@ -752,12 +752,33 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext) {
 
-            /** @var TestSession $session */
-            $session = $context->getTestSession();
+            $session = $this->getCurrentAssessmentSession($context);
 
             try {
                 \common_Logger::t('Responses sent from the client-side. The Response Processing will take place.');
-                $session->endAttempt($responses, true);
+                
+                if ($context->isAdaptive()) {
+                    $session->beginItemSession();
+                    $session->beginAttempt();
+                    $session->endAttempt($responses);
+                    $score = $session->getVariable('SCORE');
+                    
+                    $output = new ItemResult(
+                        $session->getAssessmentItem()->getIdentifier(),
+                            new ResultVariable(
+                                $score->getIdentifier(),
+                                BaseType::getNameByConstant($score->getBaseType()),
+                                $score->getValue()->getValue()
+                            )
+                        );
+                        
+                    $context->persistLastCatItemOutput($output);
+                    
+                } else {
+                    $session->endAttempt($responses, true);
+                }
+                
+                
 
                 return true;
             } catch (AssessmentTestSessionException $e) {
@@ -1509,6 +1530,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         } else {
             return $context->getTestSession()->getCurrentAssessmentItemRef();
+        }
+    }
+    
+    public function getCurrentAssessmentSession($context)
+    {
+        if ($context->isAdaptive()) {
+            return new AssessmentItemSession($this->getCurrentAssessmentItemRef($context), new SessionManager());
+        } else {
+            return $context->getTestSession();
         }
     }
 }

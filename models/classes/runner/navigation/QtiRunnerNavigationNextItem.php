@@ -43,7 +43,15 @@ class QtiRunnerNavigationNextItem implements RunnerNavigation
         $session = $context->getTestSession();
         $nextPosition = $session->getRoute()->getPosition() + 1;
         QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
-        $session->moveNext();
+        
+        if ($context->isAdaptive()) {
+            if ($context->selectAdaptiveNextItem() === null) {
+                $session->moveNext();
+            }
+        } else {
+            $session->moveNext();
+        }
+        
         return true;
     }
 }

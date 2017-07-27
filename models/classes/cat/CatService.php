@@ -26,6 +26,8 @@ class CatService extends ConfigurableService
     
     private $engine = null;
     
+    private $infoMapCache = [];
+    
     /**
      * Returns the Adaptive Engine
      * 
@@ -74,6 +76,13 @@ class CatService extends ConfigurableService
     
     public function getAdaptiveInfoMap(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory)
     {
-        return json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_INFO_MAP_FILENAME), true);
+        $dirId = $privateCompilationDirectory->getId();
+        
+        if (!isset($this->infoMapCache[$dirId])) {
+            $infoMap = json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_INFO_MAP_FILENAME), true);
+            $this->infoMapCache[$dirId] = $infoMap;
+        }
+        
+        return $this->infoMapCache[$dirId];
     }
 }

@@ -172,20 +172,20 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemId = $itemRef->getIdentifier();
                 $itemDefinition = $itemRef->getHref();
                 $itemUri = strstr($itemDefinition, '|', true);
-                if ($itemUri) {
-                    $item = new \core_kernel_classes_Resource($itemUri);
-                    if ($lastPart != $partId) {
-                        $offsetPart = 0;
-                        $lastPart = $partId;
-                    }
-                    if ($lastSection != $sectionId) {
-                        $offsetSection = 0;
-                        $lastSection = $sectionId;
-                    }
+                
+                if ($lastPart != $partId) {
+                    $offsetPart = 0;
+                    $lastPart = $partId;
+                }
+                if ($lastSection != $sectionId) {
+                    $offsetSection = 0;
+                    $lastSection = $sectionId;
+                }
 
-                    if ($forceTitles) {
-                        $label = __($uniqueTitle, $offsetSection + 1);
-                    } else {
+                if ($forceTitles) {
+                    $label = __($uniqueTitle, $offsetSection + 1);
+                } else {
+                    if ($itemUri) {
                         if ($useTitle) {
                             $label = $context->getItemIndexValue($itemUri, 'title');
                         } else {
@@ -197,65 +197,68 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         }
                         
                         if (!$label) {
+                            $item = new \core_kernel_classes_Resource($itemUri);
                             $label = $item->getLabel();
                         }
+                    } else {
+                        $label = 'Adaptive Placeholder';
                     }
-
-                    // fallback in case of the delivery was compiled without the index of item href
-                    if ($shouldBuildItemHrefIndex) {
-                        $this->itemHrefIndex[$itemId] = $itemRef->getHref();
-                    }
-
-                    $itemInfos = [
-                        'id' => $itemId,
-                        'uri' => $itemUri,
-                        'definition' => $itemDefinition,
-                        'label' => $label,
-                        'position' => $offset,
-                        'positionInPart' => $offsetPart,
-                        'positionInSection' => $offsetSection,
-                        'index' => $offsetSection + 1,
-                        'occurrence' => $occurrence,
-                        'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                        'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
-                        'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
-                        'viewed' => $itemSession->isPresented(),
-                    ];
-                    
-                    if ($checkInformational) {
-                        $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
-                    }
-                    
-                    // update the map
-                    $map['jumps'][] = [
-                        'identifier' => $itemId,
-                        'section' => $sectionId,
-                        'part' => $partId,
-                        'position' => $offset,
-                        'uri' => $itemUri,
-                    ];
-                    if (!isset($map['parts'][$partId])) {
-                        $map['parts'][$partId]['id'] = $partId;
-                        $map['parts'][$partId]['label'] = $partId;
-                        $map['parts'][$partId]['position'] = $offset;
-                        $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
-                    }
-                    if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
-                        $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
-                        $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
-                        $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
-                    }
-                    $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
-                    
-                    // update the stats
-                    $this->updateStats($map, $itemInfos);
-                    $this->updateStats($map['parts'][$partId], $itemInfos);
-                    $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
-                    
-                    $offset ++;
-                    $offsetPart ++;
-                    $offsetSection ++;
                 }
+
+                // fallback in case of the delivery was compiled without the index of item href
+                if ($shouldBuildItemHrefIndex) {
+                    $this->itemHrefIndex[$itemId] = $itemRef->getHref();
+                }
+
+                $itemInfos = [
+                    'id' => $itemId,
+                    'uri' => $itemUri,
+                    'definition' => $itemDefinition,
+                    'label' => $label,
+                    'position' => $offset,
+                    'positionInPart' => $offsetPart,
+                    'positionInSection' => $offsetSection,
+                    'index' => $offsetSection + 1,
+                    'occurrence' => $occurrence,
+                    'remainingAttempts' => $itemSession->getRemainingAttempts(),
+                    'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
+                    'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
+                    'viewed' => $itemSession->isPresented(),
+                ];
+                
+                if ($checkInformational) {
+                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
+                }
+                
+                // update the map
+                $map['jumps'][] = [
+                    'identifier' => $itemId,
+                    'section' => $sectionId,
+                    'part' => $partId,
+                    'position' => $offset,
+                    'uri' => $itemUri,
+                ];
+                if (!isset($map['parts'][$partId])) {
+                    $map['parts'][$partId]['id'] = $partId;
+                    $map['parts'][$partId]['label'] = $partId;
+                    $map['parts'][$partId]['position'] = $offset;
+                    $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
+                }
+                if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
+                    $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
+                    $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                    $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
+                }
+                $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
+                
+                // update the stats
+                $this->updateStats($map, $itemInfos);
+                $this->updateStats($map['parts'][$partId], $itemInfos);
+                $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                
+                $offset ++;
+                $offsetPart ++;
+                $offsetSection ++;
             }
             
             // fallback in case of the delivery was compiled without the index of item href

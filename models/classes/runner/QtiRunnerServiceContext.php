@@ -96,6 +96,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $catSection;
     
     private $catSession;
+    
+    private $lastCatItemOutput;
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -407,18 +409,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->getCurrentCatSectionIdentifier() !== false;
     }
     
-    public function consumeLastCatItemId()
-    {
-        $sessionId = $this->getTestSession()->getSessionId();
-        $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-id');
-        
-        if (!empty($id)) {
-            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-id');
-        }
-        
-        return $id;
-    }
-    
     public function getLastCatItemId()
     {
         $sessionId = $this->getTestSession()->getSessionId();
@@ -435,36 +425,23 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     public function getLastCatItemOutput()
     {
-        $sessionId = $this->getTestSession()->getSessionId();
-        $output = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-output');
-        
-        if (!empty($output)) {
-            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-output');
-        }
-        
-        return $output;
+        return $this->lastCatItemOutput;
+    }
+    
+    public function persistLastCatItemOutput($lastCatItemOutput)
+    {
+        $this->lastCatItemOutput = $lastCatItemOutput;
     }
     
     public function selectAdaptiveNextItem()
     {
-        $lastItemId = $this->consumeLastCatItemId();
+        $lastItemId = $this->getLastCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
         $catSection = $this->getCatEngine()->restoreSection($this->getCatSection());
         $catSession = $catSection->restoreSession($this->getCatSession());
         
         if (!is_null($lastItemId)) {
-            $results = [];
-            foreach ($lastOutput as $var) {
-                //can be removed
-                if ($var->getIdentifier() == 'SCORE') {
-                    $results[] = new ItemResult($lastItemId, new ResultVariable(
-                        $var->getIdentifier(),
-                        BaseType::getNameByConstant($var->getBaseType()),
-                        $var->getValue()->getValue())
-                    );
-                }
-            }
-            $selection = $catSession->getTestMap($results);
+            $selection = $catSession->getTestMap([$lastOutput]);
         } else {
             $selection = $catSession->getTestMap([]);
         }
@@ -475,6 +452,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             $this->persistLastCatItemId($selection[0]);
             $this->persistCatSession(json_encode($catSession));
+            return $selection[0];
         }
     }
 }
