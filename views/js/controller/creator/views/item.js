@@ -43,6 +43,7 @@ define([
         var $itemBox   = $('.item-box', $panel);
 
         var getItems = function getItems(pattern){
+
             return loadItems(pattern).then(function(items){
                 if(!items || !items.length){
                     return update();
@@ -64,15 +65,23 @@ define([
          * @private
          */
         function setUpLiveSearch (){
-            var timeout;
+            var launched = false;
 
             var liveSearch = function(){
                 var pattern = $search.val();
                 if(pattern.length > 1 || pattern.length === 0){
-                    clearTimeout(timeout);
-                    timeout = setTimeout(function(){
-                        getItems(pattern);
-                    }, 300);
+                    if(!launched){
+                        launched = true;
+                        _.delay(function(){
+                            getItems($search.val())
+                                .then(function(){
+                                    launched = false;
+                                })
+                                .catch(function(){
+                                    launched = false;
+                                });
+                        }, 300);
+                    }
                 }
             };
 
