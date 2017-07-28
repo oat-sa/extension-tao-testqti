@@ -50,7 +50,7 @@ define([
                 }
                 return getCategories(_.pluck(items, 'uri')).then(function(categories){
                     update(_.map(items, function(item){
-                        item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
+                        item.categories = categories[item.uri] ? _.values(categories[item.uri]) : [];
                         return item;
                     }));
                 });
@@ -65,20 +65,20 @@ define([
          * @private
          */
         function setUpLiveSearch (){
-            var launched = false;
+            var running = false;
 
             var liveSearch = function(){
                 var pattern = $search.val();
                 if(pattern.length > 1 || pattern.length === 0){
-                    if(!launched){
-                        launched = true;
+                    if(!running){
+                        running = true;
                         _.delay(function(){
                             getItems($search.val())
                                 .then(function(){
-                                    launched = false;
+                                    running = false;
                                 })
                                 .catch(function(){
-                                    launched = false;
+                                    running = false;
                                 });
                         }, 300);
                     }
@@ -86,8 +86,7 @@ define([
             };
 
             //trigger the search on keyp and on the magnifer button click
-            $search.keyup(liveSearch)
-                     .siblings('.ctrl').click(liveSearch);
+            $search.keyup(liveSearch).siblings('.ctrl').click(liveSearch);
         }
 
         /**
