@@ -62,6 +62,8 @@ use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\libCat\custom\EchoAdaptEngine;
 
 /**
  *
@@ -1429,5 +1431,18 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.11.1', '10.13.0');
+        
+        if ($this->isVersion('10.13.0')) {
+            
+            // Default is now EchoAdapt. This might be changed in the futre.
+            $catService = new CatService(
+                CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                CatService::OPTION_ENGINE_ARGS => ['http://URL_SERVER/cat/api/']
+            );
+            
+            $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            
+            $this->setVersion('10.14.0');
+        }
     }
 }
