@@ -47,6 +47,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var AbstractQtiBinaryStorage
      */
     protected $storage;
+    
+    protected $sessionManager;
 
     /**
      * The assessment test definition
@@ -174,6 +176,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
         $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
+        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -256,6 +259,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getStorage()
     {
         return $this->storage;
+    }
+    
+    public function getSessionManager()
+    {
+        return $this->sessionManager;
     }
 
     /**

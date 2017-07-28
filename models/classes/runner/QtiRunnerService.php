@@ -762,9 +762,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->beginAttempt();
                     $session->endAttempt($responses);
                     $score = $session->getVariable('SCORE');
+                    $assessmentItem = $session->getAssessmentItem();
                     
                     $output = new ItemResult(
-                        $session->getAssessmentItem()->getIdentifier(),
+                        $assessmentItem->getIdentifier(),
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
@@ -774,12 +775,25 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         
                     $context->persistLastCatItemOutput($output);
                     
+                    // Send results to TAO Results.
+                    $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter($context->getSessionManager()->getResultServer());
+                    $outcomeVariables = [];
+                    
+                    $hrefParts = explode('|', $assessmentItem->getHref());
+                    $sessionId = $context->getTestSession()->getSessionId();
+                    $itemIdentifier = $assessmentItem->getIdentifier();
+                    $transmissionId = "${sessionId}.${itemIdentifier}";
+                    
+                    foreach ($session->getAllVariables() as $var) {
+                        $variables[] = $var;
+                    }
+                    
+                    $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    
                 } else {
                     $session->endAttempt($responses, true);
                 }
                 
-                
-
                 return true;
             } catch (AssessmentTestSessionException $e) {
                 \common_Logger::w($e->getMessage());
