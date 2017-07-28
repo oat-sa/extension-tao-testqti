@@ -1429,6 +1429,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
 
-        $this->skip('10.11.1', '10.11.2');
+        $this->skip('10.11.1', '10.12.0');
     }
 }
