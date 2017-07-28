@@ -284,6 +284,15 @@ class ExtendedStateService extends ConfigurableService
         return self::STORAGE_PREFIX . $testSessionId;
     }
     
+    /**
+     * Set a Custom Value
+     * 
+     * Set a custom value in the Extended State.
+     * 
+     * @param string $testSessionId
+     * @param string $key
+     * @param string $value
+     */
     public function setCustomValue($testSessionId, $key, $value)
     {
         $extra = $this->getExtra($testSessionId);
@@ -291,12 +300,20 @@ class ExtendedStateService extends ConfigurableService
         $this->saveExtra($testSessionId, $extra);
     }
     
+    /**
+     * Get a Custom Value
+     * 
+     * Get a custom value from the Extended State.
+     */
     public function getCustomValue($testSessionId, $key)
     {
         $extra = $this->getExtra($testSessionId);
         return (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) ? $extra[self::VAR_CUSTOM][$key] : null;
     }
     
+    /**
+     * Remove a custom value from the ExtendedState.
+     */
     public function removeCustomValue($testSessionId, $key)
     {
         $extra = $this->getExtra($testSessionId);
