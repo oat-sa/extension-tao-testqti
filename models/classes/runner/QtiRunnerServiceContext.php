@@ -372,6 +372,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->persistCatSession(json_encode($catSession));
     }
     
+    public function closeCatSession()
+    {
+        $this->persistCatSection(null);
+        $this->persistCatSession(null);
+    }
+    
     public function getCatSection()
     {
         $sessionId = $this->getTestSession()->getSessionId();
@@ -398,10 +404,17 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     public function getCurrentCatSectionIdentifier()
     {
-        $adaptiveInfoMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveInfoMap($this->getCompilationDirectory()['private']);
-        $assessmentSectionIdentifier = $this->getTestSession()->getRoute()->current()->getAssessmentSection()->getIdentifier();
+        $compiledDirectory = $this->getCompilationDirectory()['private'];
+        $adaptiveInfoMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveInfoMap($compiledDirectory);
+        $section = $this->getTestSession()->getCurrentAssessmentSection();
         
-        return (isset($adaptiveInfoMap[$assessmentSectionIdentifier])) ? $adaptiveInfoMap[$assessmentSectionIdentifier]['adaptiveSectionIdentifier'] : false;
+        if (!$section) {
+            return false;
+        }
+        
+        $identifier = $section->getIdentifier();
+        
+        return (isset($adaptiveInfoMap[$identifier])) ? $adaptiveInfoMap[$identifier]['adaptiveSectionIdentifier'] : false;
     }
     
     public function isAdaptive()

@@ -47,9 +47,19 @@ class QtiRunnerNavigationNextItem implements RunnerNavigation
         if ($context->isAdaptive()) {
             if ($context->selectAdaptiveNextItem() === null) {
                 $session->moveNext();
+                
+                // We are now outside of the adaptive context. Let's close the CAT session.
+                $context->closeCatSession();
             }
         } else {
             $session->moveNext();
+            
+            // In case of we are now in an adaptive context, let's initialize the CAT session
+            // and ask for a new item dynamically.
+            if ($context->isAdaptive()) {
+                $context->initCatSession();
+                $context->selectAdaptiveNextItem();
+            }
         }
         
         return true;
