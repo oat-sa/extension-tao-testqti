@@ -5,8 +5,31 @@ namespace oat\taoQtiTest\models\cat;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
 
+/**
+ * Computerized Assessment Test Utilities.
+ * 
+ * This class provide utility methods for CAT support in TAO.
+ */
 class CatUtils
 {
+    /**
+     * Extract CAT Information from Test Definition.
+     * 
+     * This method extracts CAT Information from a given $test defintion. Please find below an example
+     * of return value with an adaptive section with QTI Assessment Section Identifier 'S01'.
+     * 
+     * [
+     *      'S01' =>
+     *      [
+     *          'adaptiveEngineRef' => 'http://somewhere.com/api',
+     *          'adaptiveSettingsRef' => 'file.xml'
+     *      ]
+     * ]
+     * 
+     * @param \qtism\data\AssessmentTest $test
+     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
+     * @return array
+     */
     public static function getCatInfo(AssessmentTest $test, $namespace = '')
     {
         if ($namespace === '') {
@@ -39,6 +62,16 @@ class CatUtils
         return $info;
     }
     
+    /**
+     * Is a Given Section Adaptive
+     * 
+     * This method checks whether or not a given AssessmentSection object $section is adaptive.
+     * 
+     * @param \qtism\data\AssessmentSection $section
+     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
+     * 
+     * @return boolean
+     */
     public static function isAssessmentSectionAdaptive(AssessmentSection $section, $namespace = '')
     {
         if ($namespace === '') {
