@@ -400,6 +400,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->clearLastCatItemId();
     }
     
+    /**
+     * Get Current CAT Section Data.
+     * 
+     * Get the current CAT section data from storage (data is cached).
+     * 
+     * @return string JSON encoded CAT Section data.
+     */
     public function getCatSection()
     {
         if (!isset($this->catSection)) {
@@ -411,6 +418,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->catSection;
     }
     
+    /**
+     * Persist CAT Section Data
+     * 
+     * Persist the current CAT Section Data in storage.
+     * 
+     * @param string $catSection JSON encoded CAT Section data.
+     */
     public function persistCatSection($catSection)
     {
         $this->catSection = $catSection;
@@ -419,6 +433,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-section', $catSection);
     }
     
+    /**
+     * Clear CAT Section Data
+     * 
+     * Remove the current CAT Section Data from storage and current memory scope.
+     */
     public function clearCatSection()
     {
         $this->catSection = false;
@@ -427,6 +446,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-section');
     }
     
+    /**
+     * Get the current CAT Session Data.
+     * 
+     * Get the current CAT Session Data (data is cached).
+     * 
+     * @return string JSON encoded CAT Session data.
+     */
     public function getCatSession()
     {
         if (!isset($this->catSession)) {
@@ -438,6 +464,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->catSession;
     }
     
+    /**
+     * Persist the CAT Session Data.
+     * 
+     * Persist the current CAT Session Data in storage.
+     * 
+     * @param string $catSession JSON encoded CAT Session data.
+     */
     public function persistCatSession($catSession)
     {
         $this->catSession = $catSession;
@@ -446,6 +479,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-session', $catSession);
     }
     
+    /**
+     * Clear CAT Session Data.
+     * 
+     * Remove the CAT Session Data from persistent storage.
+     */
     public function clearCatSession()
     {
         $this->catSession = false;
@@ -454,6 +492,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-session');
     }
     
+    /**
+     * Get the CAT Item ID.
+     * 
+     * Returns the last CAT Item Identifier provided by the CAT Engine.
+     * 
+     * @return string
+     */
     public function getLastCatItemId()
     {
         if (!isset($this->lastCatItemId)) {
@@ -465,6 +510,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->lastCatItemId;
     }
     
+    /**
+     * Persist the CAT Item ID.
+     * 
+     * Persists the last CAT Item Identifier provided by the CAT Engine.
+     * 
+     * @param string $lastCatItemId
+     */
     public function persistLastCatItemId($lastCatItemId)
     {
         $this->lastCatItemId = $lastCatItemId;
@@ -473,6 +525,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $lastCatItemId);
     }
     
+    /**
+     * Clear the CAT Item ID.
+     * 
+     * Remove the last CAT Item Identifier provided by the CAT Engine from persistent storage.
+     */
     public function clearLastCatItemId()
     {
         $this->lastCatItemId = false;
@@ -481,16 +538,34 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-id');
     }
     
+    /**
+     * Get Last CAT Item Output.
+     * 
+     * Get the last CAT Item Result from memory.
+     */
     public function getLastCatItemOutput()
     {
         return $this->lastCatItemOutput;
     }
     
+    /**
+     * Persist CAT Item Output.
+     * 
+     * Persist the last CAT Item Result in memory.
+     */
     public function persistLastCatItemOutput($lastCatItemOutput)
     {
         $this->lastCatItemOutput = $lastCatItemOutput;
     }
     
+    /**
+     * Get Current CAT Section ID.
+     * 
+     * Returns the current CAT Section Identifier. In case of the current Assessment Section is not adaptive, the method
+     * returns the boolean false value.
+     * 
+     * @return string|boolean
+     */
     public function getCurrentCatSectionIdentifier()
     {
         $compiledDirectory = $this->getCompilationDirectory()['private'];
@@ -506,11 +581,29 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return (isset($adaptiveInfoMap[$identifier])) ? $adaptiveInfoMap[$identifier]['adaptiveSectionIdentifier'] : false;
     }
     
+    /**
+     * Is the Assessment Test Session Context Adaptive.
+     * 
+     * Determines whether or not the current Assessment Test Session is in an adaptive context.
+     * 
+     * @return boolean
+     */
     public function isAdaptive()
     {
         return $this->getCurrentCatSectionIdentifier() !== false;
     }
     
+    /**
+     * Select the next Adaptive Item.
+     * 
+     * Ask the CAT Engine for the Next Item to be presented to the candidate, depending on the last
+     * CAT Item ID and last CAT Item Output currently stored.
+     * 
+     * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
+     * null meaning that there is no CAT Item to be presented.
+     * 
+     * @return string|null
+     */
     public function selectAdaptiveNextItem()
     {
         $lastItemId = $this->getLastCatItemId();
