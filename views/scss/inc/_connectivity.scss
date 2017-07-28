@@ -5,7 +5,7 @@
     .icon-connect, .icon-disconnect {
         display: none;
         line-height: 1.6;
-        font-size: 2.3rem;
+        @include font-size(23);
     }
     &.connected, &.disconnected {
         display: inline-block;
