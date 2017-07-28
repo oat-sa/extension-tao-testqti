@@ -35,6 +35,7 @@ class ExtendedStateService extends ConfigurableService
     const VAR_REVIEW = 'review';
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
+    const VAR_HREF_INDEX = 'item_href_index';
 
     private static $cache = null;
     private static $deliveryExecutions = null;
@@ -239,29 +240,29 @@ class ExtendedStateService extends ConfigurableService
 
     /**
      * Stores the table that maps the items identifiers to item reference
-     * @todo TAO-4605 remove this temporary workaround
+     * Fallback index in case of the delivery was compiled without the index of item href
      * @param $testSessionId
      * @param array $table
      */
-    public function storeItemsTable($testSessionId, $table)
+    public function storeItemHrefIndex($testSessionId, $table)
     {
         $extra = $this->getExtra($testSessionId);
-        $extra['items_table'] = $table;
+        $extra[self::VAR_HREF_INDEX] = $table;
         $this->saveExtra($testSessionId, $extra);
     }
 
     /**
      * Loads the table that maps the items identifiers to item reference
-     * @todo TAO-4605 remove this temporary workaround
+     * Fallback index in case of the delivery was compiled without the index of item href
      * @param $testSessionId
      * @return array
      */
-    public function loadItemsTable($testSessionId)
+    public function loadItemHrefIndex($testSessionId)
     {
         $extra = $this->getExtra($testSessionId);
 
-        if (isset($extra['items_table'])) {
-            $table = $extra['items_table'];
+        if (isset($extra[self::VAR_HREF_INDEX])) {
+            $table = $extra[self::VAR_HREF_INDEX];
         } else {
             $table = [];
         }
