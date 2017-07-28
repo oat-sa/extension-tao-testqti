@@ -752,6 +752,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
     
+    /**
+     * Compile Adaptive Test Information.
+     * 
+     * This method compiles all information required at runtime in terms of Adaptive Testing.
+     * 
+     * @param \qtism\data\AssessmentTest $test
+     */
     protected function compileAdaptive(AssessmentTest $test)
     {
         $phpDocument = new PhpDocument('2.1');
