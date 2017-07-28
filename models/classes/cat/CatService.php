@@ -8,7 +8,10 @@ use qtism\data\AssessmentTest;
 use qtism\data\storage\php\PhpDocument;
 
 /**
- * Wrap a Cat Engine in a service.
+ * Computerized Adaptive Testing Service
+ * 
+ * This Service gives you access to a CatEngine object in addition
+ * with relevant services to deal with CAT in TAO.
  *
  * @access public
  * @author Joel Bout, <joel@taotesting.com>
@@ -44,6 +47,14 @@ class CatService extends ConfigurableService
         return $this->engine;
     }
     
+    /**
+     * Get AssessmentItemRef by Identifier
+     * 
+     * This method enables you to access to a pre-compiled version of a stand alone AssessmentItemRef, that can be run
+     * with a stand alone AssessmentItemSession.
+     * 
+     * @return \qtism\data\ExtendedAssessmentItemRef
+     */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
         $doc = new PhpDocument();
@@ -52,6 +63,23 @@ class CatService extends ConfigurableService
         return $doc->getDocumentComponent();
     }
     
+    /**
+     * Get Information about a given Adaptive Section.
+     * 
+     * This method returns Information about the "adaptivity" of a given QTI AssessmentSection.
+     * The method returns an associative array containing the following information:
+     * 
+     * * 'qtiSectionIdentifier' => The original QTI Identifier of the section.
+     * * 'adaptiveSectionIdentifier' => The identifier of the adaptive section as known by the Adaptive Engine.
+     * * 'adaptiveEngineRef' => The URL to the Adaptive Engine End Point to be used for that Adaptive Section.
+     * 
+     * In case of the Assessment Section is not adaptive, the method returns false.
+     * 
+     * @param \qtism\data\AssessmentTest $test A given AssessmentTest object.
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory The compilation directory where the test is compiled as a TAO Delivery.
+     * @param string $qtiAssessmentSectionIdentifier The QTI identifier of the AssessmentSection you would like to get "adaptivity" information.
+     * @return array|boolean Some "adaptivity" information or false in case of the given $qtiAssessmentSectionIdentifier does not correspond to an adaptive Assessment Section.
+     */
     public function getAdaptiveAssessmentSectionInfo(AssessmentTest $test, \tao_models_classes_service_StorageDirectory $compilationDirectory, $basePath, $qtiAssessmentSectionIdentifier)
     {
         $info = CatUtils::getCatInfo($test);
@@ -74,6 +102,24 @@ class CatService extends ConfigurableService
         return (!isset($info[$qtiAssessmentSectionIdentifier]['adaptiveEngineRef']) || !isset($info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef'])) ? false : $adaptiveInfo;
     }
     
+    /**
+     * Get Adaptive Information Map
+     * 
+     * Returns a compiled information map giving information about "adaptivity" of Assessment Section for a TAO Delivery.
+     * 
+     * Below, an example of returned map for a test containing a single adaptive section with a QTI identifier have the "S01" value.
+     * 
+     * [
+     *      'S01' =>
+     *      [
+     *          'adaptiveEngineRef' => 'http://somewhere.com/api',
+     *          'adaptiveSettingsRef' => 'file.xml'
+     *      ]
+     * ]
+     * 
+     * @params \tao_models_classes_service_StorageDirectory $privateCompilationDirectory The private compilation directory corresponding to the TAO Delivery you would like to get information about.
+     * @return array
+     */
     public function getAdaptiveInfoMap(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory)
     {
         $dirId = $privateCompilationDirectory->getId();
