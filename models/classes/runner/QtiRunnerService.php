@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
@@ -1535,6 +1535,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
     }
     
+    /**
+     * Get Current AssessmentItemRef object.
+     * 
+     * This method returns the current AssessmentItemRef object depending on the test $context.
+     * 
+     * @return \qtism\data\ExtendedAssessmentItemRef
+     */
     public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
     {
         if ($context->isAdaptive()) {
@@ -1547,7 +1554,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
     }
     
-    public function getCurrentAssessmentSession($context)
+    /**
+     * Get Current Assessment Session.
+     * 
+     * Depending on the context (adaptive or not), it will return an appropriate Assessment Object to deal with.
+     * 
+     * In case of the context is not adaptive, an AssessmentTestSession corresponding to the current test $context is returned.
+     * 
+     * Otherwise, an AssessmentItemSession to deal with is returned.
+     * 
+     * @param \oat\taoQtiTest\models\runner\RunnerServiceContext $context
+     * @return \qtism\runtime\tests\AssessmentTestSession|\qtism\runtime\tests\AssessmentItemSession
+     */
+    public function getCurrentAssessmentSession(RunnerServiceContext $context)
     {
         if ($context->isAdaptive()) {
             return new AssessmentItemSession($this->getCurrentAssessmentItemRef($context), new SessionManager());
