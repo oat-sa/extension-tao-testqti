@@ -201,7 +201,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                             $label = $item->getLabel();
                         }
                     } else {
-                        $label = 'Adaptive Placeholder';
+                        // The item URI could not be parsed as expected. Maybe it's an adaptive placeholder?
+                        $adaptivePlaceholderCategory = \taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY;
+                        if (in_array($adaptivePlaceholderCategory, $itemRef->getCategories()->getArrayCopy())) {
+                            // Use the section label as the label of this "position" in the test.
+                            $label = $section->getTitle();
+                        }
                     }
                 }
 

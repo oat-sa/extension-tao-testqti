@@ -56,6 +56,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 {
     const ADAPTIVE_INFO_MAP_FILENAME = 'adaptive-info-map.json';
     
+    const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
+    
     /**
      * The list of mime types of files that are accepted to be put
      * into the public compilation directory.
@@ -827,7 +829,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                         $placeholderHref = "x-tao-qti-adaptive://section/${sectionIdentifier}";
                         
                         $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
-                        $placeholder->getCategories()[] = 'x-tao-qti-adaptive-placeholder';
+                        
+                        // Tag the item ref in order to make it recognizable as an adaptive placeholder.
+                        $placeholder->getCategories()[] = self::ADAPTIVE_PLACEHOLDER_CATEGORY;
                         $sectionParts[] = $placeholder;
                         
                         \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
