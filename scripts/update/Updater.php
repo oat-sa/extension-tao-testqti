@@ -62,6 +62,8 @@ use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\libCat\custom\EchoAdaptEngine;
 
 /**
  *
@@ -1401,6 +1403,50 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.7.0');
         }
         
-        $this->skip('10.7.0', '10.9.0');
+        $this->skip('10.7.0', '10.10.0');
+        
+        if ($this->isVersion('10.10.0')) {
+            $qtiListenerService = $this->getServiceManager()->get(QtiTestListenerService::SERVICE_ID);
+            $qtiListenerService->setOption(QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE, []);
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, $qtiListenerService);
+            
+            $this->setVersion('10.11.0');
+        }
+
+        if ($this->isVersion('10.11.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'zoom',
+                'name' => 'Zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows Test-taker to zoom in and out the item content',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $this->setVersion('10.11.1');
+        }
+
+        $this->skip('10.11.1', '10.14.1');
+        
+        if ($this->isVersion('10.14.1')) {
+            
+            // Default is now EchoAdapt. This should change in the futre.
+            $catService = new CatService([
+                CatService::OPTION_ENGINE_ENDPOINTS => [
+                    'http://URL_SERVER/cat/api/' => [
+                        CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                        CatService::OPTION_ENGINE_ARGS => []
+                    ]
+                ]
+            ]);
+            
+            $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            
+            $this->setVersion('10.15.0');
+        }
     }
 }
