@@ -590,7 +590,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function isAdaptive()
     {
-        return $this->getCurrentCatSectionIdentifier() !== false;
+        $currentAssessmentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
+        if ($currentAssessmentItemRef) {
+            $categories = $currentAssessmentItemRef->getCategories()->getArrayCopy();
+            return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $categories);
+        } else {
+            return false;
+        }
     }
     
     /**
