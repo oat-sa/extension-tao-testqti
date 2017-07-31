@@ -35,7 +35,7 @@ class ExtendedStateService extends ConfigurableService
     const VAR_REVIEW = 'review';
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
-    const VAR_CUSTOM = 'custom';
+    const VAR_CAT = 'cat';
     const VAR_HREF_INDEX = 'item_href_index';
 
     private static $cache = null;
@@ -285,40 +285,40 @@ class ExtendedStateService extends ConfigurableService
     }
     
     /**
-     * Set a Custom Value
+     * Set a CAT Value
      * 
-     * Set a custom value in the Extended State.
+     * Set a CAT value in the Extended State.
      * 
      * @param string $testSessionId
      * @param string $key
      * @param string $value
      */
-    public function setCustomValue($testSessionId, $key, $value)
+    public function setCatValue($testSessionId, $key, $value)
     {
         $extra = $this->getExtra($testSessionId);
-        $extra[self::VAR_CUSTOM][$key] = $value;
+        $extra[self::VAR_CAT][$key] = $value;
         $this->saveExtra($testSessionId, $extra);
     }
     
     /**
-     * Get a Custom Value
+     * Get a CAT Value
      * 
-     * Get a custom value from the Extended State.
+     * Get a CAT value from the Extended State.
      */
-    public function getCustomValue($testSessionId, $key)
+    public function getCatValue($testSessionId, $key)
     {
         $extra = $this->getExtra($testSessionId);
-        return (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) ? $extra[self::VAR_CUSTOM][$key] : null;
+        return (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$key])) ? $extra[self::VAR_CAT][$key] : null;
     }
     
     /**
-     * Remove a custom value from the ExtendedState.
+     * Remove a CAT value from the ExtendedState.
      */
-    public function removeCustomValue($testSessionId, $key)
+    public function removeCatValue($testSessionId, $key)
     {
         $extra = $this->getExtra($testSessionId);
-        if (isset($extra[self::VAR_CUSTOM]) && isset($extra[self::VAR_CUSTOM][$key])) {
-            unset($extra[self::VAR_CUSTOM][$key]); 
+        if (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$key])) {
+            unset($extra[self::VAR_CAT][$key]); 
         }
         
         $this->saveExtra($testSessionId, $extra);

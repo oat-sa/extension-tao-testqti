@@ -403,7 +403,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         if (!isset($this->catSession)) {
             $sessionId = $this->getTestSession()->getSessionId();
-            $catSession = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-session');
+            $catSession = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue($sessionId, 'cat-session');
             $this->catSession = (is_null($catSession)) ? false : $catSession; 
         }
         
@@ -422,7 +422,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->catSession = $catSession;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-session', $catSession);
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue($sessionId, 'cat-session', $catSession);
     }
     
     /**
@@ -435,7 +435,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->catSession = false;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-session');
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue($sessionId, 'cat-session');
     }
     
     /**
@@ -449,7 +449,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         if (!isset($this->lastCatItemId)) {
             $sessionId = $this->getTestSession()->getSessionId();
-            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-ids');
+            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue($sessionId, 'cat-last-item-ids');
             $this->lastCatItemId = (is_null($id)) ? false : $id;
         }
         
@@ -468,7 +468,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->lastCatItemId = $lastCatItemIds;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-ids', $lastCatItemIds);
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue($sessionId, 'cat-last-item-ids', $lastCatItemIds);
     }
     
     /**
@@ -481,7 +481,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->lastCatItemId = false;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-ids');
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue($sessionId, 'cat-last-item-ids');
     }
     
     /**
