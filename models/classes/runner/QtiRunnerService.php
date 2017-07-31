@@ -443,7 +443,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
 
                 //preven the user to submit empty responses
-                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
+                $response['allowSkipping'] = $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
 
                 //does the item has modal feedbacks ?
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
