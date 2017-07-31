@@ -56,6 +56,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 {
     const ADAPTIVE_INFO_MAP_FILENAME = 'adaptive-info-map.json';
     
+    const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
+    
     const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
     
     /**
@@ -764,7 +766,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileAdaptive(AssessmentTest $test)
     {
         $phpDocument = new PhpDocument('2.1');
-        $catInfoMap = [];
+        $catService = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+        $catSectionMap = [];
 
         $trail = [];
         foreach ($test->getTestParts() as $testPart) {
@@ -794,7 +797,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $sectionParts = $current->getSectionParts();
                 $sectionIdentifier = $current->getIdentifier();
                 
-                $catInfo = $this->getServiceLocator()->get(CatService::SERVICE_ID)->getAdaptiveAssessmentSectionInfo(
+                $catInfo = $catService->getAdaptiveAssessmentSectionInfo(
                     $test,
                     $this->getPrivateDirectory(),
                     $this->getExtraPath(),
@@ -805,9 +808,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     
                     // QTI Adaptive Section detected.
                     \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
-                    
-                    // Register information in main adaptive information map.
-                    $catInfoMap[$catInfo['qtiSectionIdentifier']] = $catInfo;
                     
                     foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
                         $sectionPart =  $sectionParts[$sectionPartIdentifier];
@@ -835,13 +835,17 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                         $sectionParts[] = $placeholder;
                         
                         \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
+                        
+                        // Ask for section setup to the CAT Engine.
+                        $section = $catService->getEngine()->setupSection($catInfo['adaptiveSectionIdentifier']);
+                        $catSectionMap[$catInfo['qtiSectionIdentifier']] = $section;
                     }
                 }
             }
         }
         
-        // Write Adaptive Information Map for runtime usage.
-        $this->getPrivateDirectory()->write(self::ADAPTIVE_INFO_MAP_FILENAME, json_encode($catInfoMap));
+        // Write Adaptive Section Map for runtime usage.
+        $this->getPrivateDirectory()->write(self::ADAPTIVE_SECTION_MAP_FILENAME, json_encode($catSectionMap));
     }
     
     /**

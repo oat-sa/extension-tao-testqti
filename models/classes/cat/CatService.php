@@ -31,6 +31,8 @@ class CatService extends ConfigurableService
     
     private $infoMapCache = [];
     
+    private $sectionMapCache = [];
+    
     /**
      * Returns the Adaptive Engine
      * 
@@ -102,33 +104,15 @@ class CatService extends ConfigurableService
         return (!isset($info[$qtiAssessmentSectionIdentifier]['adaptiveEngineRef']) || !isset($info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef'])) ? false : $adaptiveInfo;
     }
     
-    /**
-     * Get Adaptive Information Map
-     * 
-     * Returns a compiled information map giving information about "adaptivity" of Assessment Section for a TAO Delivery.
-     * 
-     * Below, an example of returned map for a test containing a single adaptive section with a QTI identifier have the "S01" value.
-     * 
-     * [
-     *      'S01' =>
-     *      [
-     *          'adaptiveEngineRef' => 'http://somewhere.com/api',
-     *          'adaptiveSettingsRef' => 'file.xml'
-     *      ]
-     * ]
-     * 
-     * @params \tao_models_classes_service_StorageDirectory $privateCompilationDirectory The private compilation directory corresponding to the TAO Delivery you would like to get information about.
-     * @return array
-     */
-    public function getAdaptiveInfoMap(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory)
+    public function getAdaptiveSectionMap(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory)
     {
         $dirId = $privateCompilationDirectory->getId();
         
-        if (!isset($this->infoMapCache[$dirId])) {
-            $infoMap = json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_INFO_MAP_FILENAME), true);
-            $this->infoMapCache[$dirId] = $infoMap;
+        if (!isset($this->sectionMapCache[$dirId])) {
+            $sectionMap = json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_SECTION_MAP_FILENAME), true);
+            $this->sectionMapCache[$dirId] = $sectionMap;
         }
         
-        return $this->infoMapCache[$dirId];
+        return $this->sectionMapCache[$dirId];
     }
 }
