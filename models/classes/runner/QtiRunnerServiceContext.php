@@ -507,7 +507,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->lastCatItemId = (is_null($id)) ? false : $id;
         }
         
-        return $this->lastCatItemId;
+        return $this->lastCatItemId[0];
     }
     
     /**
@@ -517,7 +517,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * @param string $lastCatItemId
      */
-    public function persistLastCatItemId($lastCatItemId)
+    public function persistLastCatItemId(array $lastCatItemId)
     {
         $this->lastCatItemId = $lastCatItemId;
         
@@ -627,7 +627,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             
             return null;
         } else {
-            $this->persistLastCatItemId($selection[0]);
+            $this->persistLastCatItemId($selection);
             $this->persistCatSession(json_encode($catSession));
             return $selection[0];
         }
