@@ -21,15 +21,15 @@ class CatService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/CatService';
     
+    const OPTION_ENGINE_ENDPOINTS = 'endpoints';
+    
     const OPTION_ENGINE_CLASS = 'class';
     
     const OPTION_ENGINE_ARGS = 'args';
     
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
     
-    private $engine = null;
-    
-    private $infoMapCache = [];
+    private $engines = [];
     
     private $sectionMapCache = [];
     
@@ -38,15 +38,21 @@ class CatService extends ConfigurableService
      * 
      * Returns an CatEngine implementation object.
      * 
+     * @param string $endpoint
      * @return oat\libCat\CatEngine
      */
-    public function getEngine() {
-        if (is_null($this->engine)) {
-            $class = $this->getOption(self::OPTION_ENGINE_CLASS);
-            $args = $this->getOption(self::OPTION_ENGINE_ARGS);
-            $this->engine = new $class(...$args);
+    public function getEngine($endpoint) {
+        if (!isset($this->engine[$endpoint])) {
+            $engineOptions = $this->getOption(self::OPTION_ENGINE_ENDPOINTS)[$endpoint];
+            
+            $class = $engineOptions[self::OPTION_ENGINE_CLASS];
+            $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+            array_unshift($args, $endpoint);
+            
+            $this->engine[$endpoint] = new $class(...$args);
         }
-        return $this->engine;
+        
+        return $this->engine[$endpoint];
     }
     
     /**

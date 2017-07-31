@@ -837,8 +837,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                         \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
                         
                         // Ask for section setup to the CAT Engine.
-                        $section = $catService->getEngine()->setupSection($catInfo['adaptiveSectionIdentifier']);
-                        $catSectionMap[$catInfo['qtiSectionIdentifier']] = $section;
+                        $section = $catService->getEngine($catInfo['adaptiveEngineRef'])->setupSection($catInfo['adaptiveSectionIdentifier']);
+                        $catSectionMap[$catInfo['qtiSectionIdentifier']] = ['section' => $section, 'endpoint' => $catInfo['adaptiveEngineRef']];
                     }
                 }
             }

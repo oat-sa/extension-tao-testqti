@@ -354,7 +354,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCatEngine()
     {
-        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine();
+        $compiledDirectory = $this->getCompilationDirectory()['private'];
+        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
+        $sectionId = $this->getTestSession()->getCurrentAssessmentSection()->getIdentifier();
+        $catEngine = false;
+        
+        if ($sectionId && isset($adaptiveSectionMap[$sectionId])) {
+            $catEngine = $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
+        }
+        
+        return $catEngine;
     }
     
     /**
@@ -539,7 +548,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         $identifier = $section->getIdentifier();
         
-        return (isset($adaptiveSectionMap[$identifier])) ? $adaptiveSectionMap[$identifier] : false;
+        return (isset($adaptiveSectionMap[$identifier])) ? $adaptiveSectionMap[$identifier]['section'] : false;
     }
     
     /**

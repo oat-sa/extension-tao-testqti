@@ -1434,10 +1434,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         if ($this->isVersion('10.14.0')) {
             
-            // Default is now EchoAdapt. This might be changed in the futre.
-            $catService = new CatService([
-                CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
-                CatService::OPTION_ENGINE_ARGS => ['http://URL_SERVER/cat/api/']
+            // Default is now EchoAdapt. This should change in the futre.
+            $catService = return new CatService([
+                CatService::OPTION_ENGINE_ENDPOINTS => [
+                    'http://URL_SERVER/cat/api/' => [
+                        CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                        CatService::OPTION_ENGINE_ARGS => []
+                    ]
+                ]
             ]);
             
             $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
