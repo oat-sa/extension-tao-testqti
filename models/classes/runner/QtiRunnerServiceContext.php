@@ -503,7 +503,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         if (!isset($this->lastCatItemId)) {
             $sessionId = $this->getTestSession()->getSessionId();
-            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-id');
+            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCustomValue($sessionId, 'cat-last-item-ids');
             $this->lastCatItemId = (is_null($id)) ? false : $id;
         }
         
@@ -513,16 +513,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Persist the CAT Item ID.
      * 
-     * Persists the last CAT Item Identifier provided by the CAT Engine.
+     * Persists the last CAT Item Identifiers provided by the CAT Engine.
      * 
      * @param string $lastCatItemId
      */
-    public function persistLastCatItemId(array $lastCatItemId)
+    public function persistLastCatItemIds(array $lastCatItemIds)
     {
-        $this->lastCatItemId = $lastCatItemId;
+        $this->lastCatItemId = $lastCatItemIds;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-id', $lastCatItemId);
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCustomValue($sessionId, 'cat-last-item-ids', $lastCatItemIds);
     }
     
     /**
@@ -535,7 +535,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->lastCatItemId = false;
         
         $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-id');
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCustomValue($sessionId, 'cat-last-item-ids');
     }
     
     /**
@@ -627,7 +627,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             
             return null;
         } else {
-            $this->persistLastCatItemId($selection);
+            $this->persistLastCatItemIds($selection);
             $this->persistCatSession(json_encode($catSession));
             return $selection[0];
         }
