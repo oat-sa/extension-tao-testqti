@@ -1430,9 +1430,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.11.1');
         }
 
-        $this->skip('10.11.1', '10.14.0');
+        $this->skip('10.11.1', '10.14.1');
         
-        if ($this->isVersion('10.14.0')) {
+        if ($this->isVersion('10.14.1')) {
             
             // Default is now EchoAdapt. This should change in the futre.
             $catService = new CatService([

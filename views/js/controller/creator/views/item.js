@@ -43,13 +43,14 @@ define([
         var $itemBox   = $('.item-box', $panel);
 
         var getItems = function getItems(pattern){
+
             return loadItems(pattern).then(function(items){
                 if(!items || !items.length){
                     return update();
                 }
                 return getCategories(_.pluck(items, 'uri')).then(function(categories){
                     update(_.map(items, function(item){
-                        item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
+                        item.categories = categories[item.uri] ? _.values(categories[item.uri]) : [];
                         return item;
                     }));
                 });
@@ -64,21 +65,28 @@ define([
          * @private
          */
         function setUpLiveSearch (){
-            var timeout;
+            var running = false;
 
             var liveSearch = function(){
                 var pattern = $search.val();
                 if(pattern.length > 1 || pattern.length === 0){
-                    clearTimeout(timeout);
-                    timeout = setTimeout(function(){
-                        getItems(pattern);
-                    }, 300);
+                    if(!running){
+                        running = true;
+                        _.delay(function(){
+                            getItems($search.val())
+                                .then(function(){
+                                    running = false;
+                                })
+                                .catch(function(){
+                                    running = false;
+                                });
+                        }, 300);
+                    }
                 }
             };
 
             //trigger the search on keyp and on the magnifer button click
-            $search.keyup(liveSearch)
-                     .siblings('.ctrl').click(liveSearch);
+            $search.keyup(liveSearch).siblings('.ctrl').click(liveSearch);
         }
 
         /**
