@@ -389,7 +389,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function closeCatSession()
     {
         $this->clearCatSession();
-        $this->clearLastCatItemId();
+        $this->clearLastCatItemIds();
     }
     
     /**
@@ -476,7 +476,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * Remove the last CAT Item Identifier provided by the CAT Engine from persistent storage.
      */
-    public function clearLastCatItemId()
+    public function clearLastCatItemIds()
     {
         $this->lastCatItemId = false;
         
