@@ -49,6 +49,8 @@ class QtiTimer implements Timer, ExtraTime
      */
     const STORAGE_KEY_EXTRA_TIME = 'extraTime';
 
+    const STORAGE_KEY_EXTENDED_TIME = 'extendedTime';
+
     /**
      * The name of the storage key for the consumed extra time
      */
@@ -82,6 +84,12 @@ class QtiTimer implements Timer, ExtraTime
      * @var float
      */
     protected $extraTime = 0.0;
+
+    /**
+     * The extended time
+     * @var float
+     */
+    protected $extendedTime = 0.0;
 
     /**
      * The already consumed extra time
@@ -119,7 +127,7 @@ class QtiTimer implements Timer, ExtraTime
         if ($this->isRangeOpen($range)) {
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
-            \common_Logger::i('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
+            \common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
             $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
             $this->timeLine->add($point);
             $range[] = $point;
@@ -159,7 +167,7 @@ class QtiTimer implements Timer, ExtraTime
             $this->timeLine->add($point);    
         } else {
             // already closed range found, just log the info
-            \common_Logger::i('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
+            \common_Logger::t('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
         }
 
         return $this;
@@ -239,22 +247,22 @@ class QtiTimer implements Timer, ExtraTime
             try {
                 $clientDuration = $clientTimeLine->compute();
             } catch(TimeException $e) {
-                \common_Logger::i('Handled client range error');
+                \common_Logger::t('Handled client range error');
             }
 
             if (is_null($duration)) {
                 if ($clientDuration) {
                     $duration = $clientDuration;
-                    \common_Logger::i("No client duration provided to adjust the timer, but a range already exist: ${duration}");
+                    \common_Logger::t("No client duration provided to adjust the timer, but a range already exist: ${duration}");
                 } else {
                     $duration = $serverDuration;
-                    \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+                    \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
                 }
             }
 
             $removed = $this->timeLine->remove($tags, TimePoint::TARGET_CLIENT);
             if ($removed == $clientRangeLength) {
-                \common_Logger::i("Replace client duration in timer: ${clientDuration} to ${duration}");
+                \common_Logger::t("Replace client duration in timer: ${clientDuration} to ${duration}");
             } else {
                 \common_Logger::w("Unable to replace client duration in timer: ${clientDuration} to ${duration}");
             }
@@ -263,7 +271,7 @@ class QtiTimer implements Timer, ExtraTime
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
-            \common_Logger::i("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+            \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
         } else if ($duration > $serverDuration) {
             \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
             $duration = $serverDuration;
@@ -351,14 +359,31 @@ class QtiTimer implements Timer, ExtraTime
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(serialize([
+        $this->storage->store(json_encode([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
             self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
             self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
         ]));
         
         return $this;
+    }
+
+    /**
+     * @param mixed $data
+     * @return QtiTimeLine
+     */
+    protected function unserializeTimeLine($data)
+    {
+        if (is_array($data)) {
+            $timeLine = new QtiTimeLine();
+            $timeLine->fromArray($data);
+        } else {
+            $timeLine = $data;
+        }
+        
+        return $timeLine;
     }
 
     /**
@@ -377,33 +402,45 @@ class QtiTimer implements Timer, ExtraTime
         $data = $this->storage->load();
         
         if (isset($data)) {
-            $refined = unserialize($data);
+            $refined = json_decode($data, true);
+            if (is_null($refined) && $data) {
+                $refined = unserialize($data);
 
-            $this->extraTime = 0;
-            $this->consumedExtraTime = 0;
+                if (!is_array($refined)) {
+                    $refined = [
+                        self::STORAGE_KEY_TIME_LINE => $refined,
+                    ];
+                }
+            }
 
-            if (is_array($refined)) {
-                if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
-                    $this->timeLine = $refined[self::STORAGE_KEY_TIME_LINE];
-                } else {
-                    $this->timeLine = new QtiTimeLine();
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
-                    $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
-                    $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
-                }
-                
-                if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
-                    $this->extraTimeLine = $refined[self::STORAGE_KEY_EXTRA_TIME_LINE];
-                } else {
-                    $this->extraTimeLine = new QtiTimeLine();
-                }
+            if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
+                $this->timeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_TIME_LINE]);
             } else {
-                $this->timeLine = $refined;
+                $this->timeLine = new QtiTimeLine();
+            }
+
+            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
+                $this->extraTimeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_EXTRA_TIME_LINE]);
+            } else {
+                $this->extraTimeLine = new QtiTimeLine();
+            }
+            
+            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
+                $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
+            } else {
+                $this->extraTime = 0;
+            }
+
+            if (isset($refined[self::STORAGE_KEY_EXTENDED_TIME])) {
+                $this->extendedTime = $refined[self::STORAGE_KEY_EXTENDED_TIME];
+            } else {
+                $this->extendedTime = 0;
+            }
+            
+            if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+            } else {
+                $this->consumedExtraTime = 0;
             }
 
             if (!$this->timeLine instanceof TimeLine || !$this->extraTimeLine instanceof TimeLine) {
@@ -416,17 +453,42 @@ class QtiTimer implements Timer, ExtraTime
 
     /**
      * Gets the added extra time
+     * @param int $maxTime
      * @return float
      */
-    public function getExtraTime()
+    public function getExtraTime($maxTime = 0)
     {
+        if ($maxTime && $this->getExtendedTime()) {
+            $secondsNew = $maxTime * $this->getExtendedTime();
+            $extraTime = floor(($secondsNew - $maxTime) / 60) * 60;
+            $this->setExtraTime($extraTime);
+            return $extraTime;
+        }
         return $this->extraTime;
+    }
+
+    /**
+     * @return float
+     */
+    public function getExtendedTime()
+    {
+        return $this->extendedTime;
+    }
+
+    /**
+     * @param $extendedTime
+     * @return $this
+     */
+    public function setExtendedTime($extendedTime)
+    {
+        $this->extendedTime = $extendedTime;
+        return $this;
     }
 
     /**
      * Sets the added extra time
      * @param float $time
-     * @return ExtraTime
+     * @return $this
      */
     public function setExtraTime($time)
     {

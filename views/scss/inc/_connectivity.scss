@@ -1,0 +1,23 @@
+.connectivity-box {
+    display: none;
+    width: 40px;
+    margin-left: 40px;
+    .icon-connect, .icon-disconnect {
+        display: none;
+        line-height: 1.6;
+        @include font-size(23);
+    }
+    &.connected, &.disconnected {
+        display: inline-block;
+    }
+    &.connected {
+        .icon-connect {
+            display: inline-block;
+        }
+    }
+    &.disconnected {
+        .icon-disconnect {
+            display: inline-block;
+        }
+    }
+}

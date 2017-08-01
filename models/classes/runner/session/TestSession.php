@@ -187,39 +187,53 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
     /**
      * Initializes the timer for the current item in the TestSession
+     *
+     * @param $timestamp
      * @throws \oat\taoTests\models\runner\time\InvalidDataException
      */
-    public function initItemTimer()
+    public function initItemTimer($timestamp = null)
     {
+        if (is_null($timestamp)) {
+            $timestamp = microtime(true);
+        }
+
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
         // if the range is already closed, a message will be added to the log
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->end($tags, microtime(true))->save();
+        $this->getTimer()->end($tags, $timestamp)->save();
     }
 
     /**
      * Starts the timer for the current item in the TestSession
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     *
+     * @param $timestamp
      */
-    public function startItemTimer()
+    public function startItemTimer($timestamp = null)
     {
+        if (is_null($timestamp)) {
+            $timestamp = microtime(true);
+        }
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->start($tags, microtime(true))->save();
+        $this->getTimer()->start($tags, $timestamp)->save();
     }
 
     /**
      * Ends the timer for the current item in the TestSession.
      * Sets the client duration for the current item in the TestSession.
+     *
      * @param float $duration The client duration, or null to force server duration to be used as client duration
      * @param float $consumedExtraTime The extra time consumed by the client
-     * @throws \oat\taoTests\models\runner\time\InconsistentRangeException
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     * @param $timestamp
      */
-    public function endItemTimer($duration = null, $consumedExtraTime = null)
+    public function endItemTimer($duration = null, $consumedExtraTime = null, $timestamp = null)
     {
+        if (is_null($timestamp)) {
+            $timestamp = microtime(true);
+        }
         $timer = $this->getTimer();
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $timer->end($tags, microtime(true));
+
+        $timer->end($tags, $timestamp);
 
         if (is_numeric($duration) || is_null($duration)) {
             if (!is_null($duration)) {
@@ -449,7 +463,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
         $itemDurationVar = $itemSession->getVariable('duration');
         $sessionDuration = $itemDurationVar->getValue();
-        \common_Logger::i("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
+        \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
         $itemSession->getVariable('duration')->setValue($duration);
 
         parent::submitItemResults($itemSession, $occurrence);

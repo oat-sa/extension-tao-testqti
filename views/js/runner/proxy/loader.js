@@ -30,7 +30,7 @@ define([
     'lodash',
     'module',
     'core/promise',
-    'taoTests/runner/proxy',
+    'taoTests/runner/proxy'
 ], function(_, module, Promise, proxy){
     'use strict';
 

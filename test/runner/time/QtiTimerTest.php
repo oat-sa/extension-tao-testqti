@@ -24,7 +24,11 @@ use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\TimePoint;
 use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\taoTests\models\runner\time\Timer;
+use oat\taoTests\models\runner\time\TimeStorage;
+use Prophecy\Argument;
 use ReflectionClass;
+use Prophecy\Prophet;
 
 /**
  * Test the {@link \oat\taoQtiTest\models\runner\time\QtiTimer}
@@ -47,9 +51,9 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testConstructor()
     {
         $timer = new QtiTimer();
-        $this->assertInstanceOf('oat\taoTests\models\runner\time\Timer', $timer);
+        $this->assertInstanceOf(Timer::class, $timer);
         $timeLine = $this->getTimeLine($timer);
-        $this->assertInstanceOf('oat\taoQtiTest\models\runner\time\QtiTimeLine', $timeLine);
+        $this->assertInstanceOf(QtiTimeLine::class, $timeLine);
     }
 
     /**
@@ -428,7 +432,9 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testSetStorage()
     {
-        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
+        $dataStorage = null;
+        $storage = $this->getTimeStorage($dataStorage);
+
         $timer = new QtiTimer();
         $this->assertEquals(null, $timer->getStorage());
         $timer->setStorage($storage);
@@ -440,7 +446,9 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     public function testGetStorage()
     {
-        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
+        $dataStorage = null;
+        $storage = $this->getTimeStorage($dataStorage);
+        
         $timer = new QtiTimer();
         $this->assertEquals(null, $timer->getStorage());
         $timer->setStorage($storage);
@@ -464,7 +472,10 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         ];
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335020.0000);
-        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
+
+        $dataStorage = null;
+        $storage = $this->getTimeStorage($dataStorage);
+
         $timer->setStorage($storage);
         $result = $timer->save();
         $this->assertEquals($timer, $result);
@@ -515,18 +526,19 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $consumedTime = 4;
         $timer->setExtraTime($extraTime);
         $timer->consumeExtraTime($consumedTime, $tags);
-        
-        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
+
+        $dataStorage = null;
+        $storage = $this->getTimeStorage($dataStorage);
         $timer->setStorage($storage);
         $timer->save();
 
         $newTimer = new QtiTimer();
-        $newStorage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
         $timeLine = $this->getTimeLine($newTimer);
         $this->assertEquals([], $timeLine->getPoints());
         $this->assertEquals(0, $newTimer->getExtraTime());
         $this->assertEquals(0, $newTimer->getConsumedExtraTime());
 
+        $newStorage = $this->getTimeStorage($dataStorage);
         $newTimer->setStorage($newStorage);
         $newTimer = $newTimer->load();
         $timeLine = $this->getTimeLine($newTimer);
@@ -545,6 +557,36 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     }
 
     /**
+     * Test the QtiTimer::load() when stored data has been serialized using PHP serialize()
+     * @dataProvider linearTestPointsProvider
+     */
+    public function testLoadPhpSerialized($regularPoints, $extraPoints)
+    {
+        $timer = new QtiTimer();
+        
+        $extraTime = 10;
+        $consumedTime = 5;
+        $timeLine = new QtiTimeLine($regularPoints);
+        $extraTimeLine = new QtiTimeLine($extraPoints);
+        
+        $dataStorage = serialize([
+            QtiTimer::STORAGE_KEY_TIME_LINE => $timeLine,
+            QtiTimer::STORAGE_KEY_EXTRA_TIME => $extraTime,
+            QtiTimer::STORAGE_KEY_EXTRA_TIME_LINE => $extraTimeLine,
+            QtiTimer::STORAGE_KEY_CONSUMED_EXTRA_TIME => $consumedTime,
+        ]);
+        $storage = $this->getTimeStorage($dataStorage);
+        $timer->setStorage($storage);
+        $timer->load();
+
+        $this->assertEquals($extraTime, $timer->getExtraTime());
+        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
+        
+        $this->assertEquals($timeLine->getPoints(), $this->getTimeLine($timer)->getPoints());
+        $this->assertEquals($extraTimeLine->getPoints(), $this->getExtraTimeLine($timer)->getPoints());
+    }
+
+    /**
      * @expectedException \oat\taoTests\models\runner\time\InvalidStorageException
      */
     public function testLoadInvalidStorageException()
@@ -559,10 +601,12 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     public function testLoadInvalidDataException()
     {
         $timer = new QtiTimer();
-        $storage = new QtiTimeStorage('fake_session_id', 'fake_user_id');
+        $dataStorage = serialize([
+            QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass(),
+            QtiTimer::STORAGE_KEY_EXTRA_TIME_LINE => new \stdClass(),
+        ]);
+        $storage = $this->getTimeStorage($dataStorage);
         $timer->setStorage($storage);
-        $this->setTimeLine($timer, new \stdClass());
-        $timer->save();
         $timer->load();
     }
 
@@ -829,8 +873,60 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function linearTestPointsProvider()
+    {
+        return [
+            [
+                'regular' => [
+                    //item-a
+                    new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                    //item-b
+                    new TimePoint(['test-a', 'item-b'], 1459519600.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-b'], 1459519602.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-b'], 1459519610.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-b'], 1459519612.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                    //item-b
+                    new TimePoint(['test-a', 'item-c'], 1459519700.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-c'], 1459519702.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-c'], 1459519710.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-c'], 1459519712.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                ],
+                'extra' => [
+                    //item-b
+                    new TimePoint(['test-a', 'item-c'], 1459519700.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+                    new TimePoint(['test-a', 'item-c'], 1459519702.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-c'], 1459519710.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
+                    new TimePoint(['test-a', 'item-c'], 1459519712.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+                ],
+            ],
+        ];
+    }
+
 
     //MOCKS
+
+    /**
+     * @param $buffer
+     * @return QtiTimeStorage
+     */
+    private function getTimeStorage(&$buffer)
+    {
+        $prophet = new Prophet();
+        $prophecy = $prophet->prophesize(TimeStorage::class);
+        $prophecy->load()->will(function () use (&$buffer) {
+            return $buffer;
+        });
+        $prophecy->store(Argument::type('string'))->will(function ($args) use (&$buffer) {
+            $buffer = $args[0];
+        });
+        return $prophecy->reveal();
+    }
 
     /**
      * @param QtiTimer $timer
@@ -838,23 +934,22 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
      */
     private function getTimeLine(QtiTimer $timer)
     {
-        $reflectionClass = new ReflectionClass('oat\taoQtiTest\models\runner\time\QtiTimer');
+        $reflectionClass = new ReflectionClass(QtiTimer::class);
         $reflectionProperty = $reflectionClass->getProperty('timeLine');
         $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($timer);
     }
-
+    
     /**
      * @param QtiTimer $timer
-     * @param mixed $timeLine
      * @return QtiTimeLine
      */
-    private function setTimeLine(QtiTimer $timer, $timeLine)
+    private function getExtraTimeLine(QtiTimer $timer)
     {
-        $reflectionClass = new ReflectionClass('oat\taoQtiTest\models\runner\time\QtiTimer');
-        $reflectionProperty = $reflectionClass->getProperty('timeLine');
+        $reflectionClass = new ReflectionClass(QtiTimer::class);
+        $reflectionProperty = $reflectionClass->getProperty('extraTimeLine');
         $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($timer, $timeLine);
+        return $reflectionProperty->getValue($timer);
     }
 
 }
