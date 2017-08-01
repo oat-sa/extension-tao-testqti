@@ -22,14 +22,12 @@
 define([
     'jquery',
     'lodash',
-    'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
 
-], function($, _, templates, testItemProviderFactory, resourceSelectorFactory){
+], function($, _, testItemProviderFactory, resourceSelectorFactory){
     'use strict';
 
-    var itemTemplate = templates.item;
 
     var testItemProvider = testItemProviderFactory();
 
@@ -41,10 +39,9 @@ define([
      */
     var itemView =  function(){
 
-        var $panel     = $('.test-creator-items .item-selection');
+        var $panel  = $('.test-creator-items .item-selection');
 
         testItemProvider.getItemClasses().then(function(classes){
-
             resourceSelectorFactory($panel, {
                 type : 'items',
                 classUri : 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
@@ -52,7 +49,6 @@ define([
             })
             .on('render', function(){
                 var self = this;
-                console.log('catch render');
                 $panel.on('itemselected.creator', function(){
                     self.clearSelection();
                 });
@@ -64,6 +60,8 @@ define([
                     self.update(items, params);
                 })
                 .catch(function(err){
+
+                    //FIXME use logger instead
                     console.error(err);
                 });
 
@@ -80,93 +78,6 @@ define([
         });
 
     };
-
-        //var getItems = function getItems(pattern){
-            //return loadItems(pattern).then(function(items){
-                //if(!items || !items.length){
-                    //return update();
-                //}
-                //return getCategories(_.pluck(items, 'uri')).then(function(categories){
-                    //update(_.map(items, function(item){
-                        //item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
-                        //return item;
-                    //}));
-                //});
-            //});
-        //};
-
-        //getItems().then(setUpLiveSearch);
-
-        /**
-         * Set up the search behavior: once 3 chars are enters into the field,
-         * we load the items that matches the given search pattern.
-         * @private
-         */
-        //function setUpLiveSearch (){
-            //var timeout;
-
-            //var liveSearch = function(){
-                //var pattern = $search.val();
-                //if(pattern.length > 1 || pattern.length === 0){
-                    //clearTimeout(timeout);
-                    //timeout = setTimeout(function(){
-                        //getItems(pattern);
-                    //}, 300);
-                //}
-            //};
-
-            //trigger the search on keyp and on the magnifer button click
-            //$search.keyup(liveSearch)
-                     //.siblings('.ctrl').click(liveSearch);
-        //}
-
-        /**
-         * Update the items list
-         * @private
-         * @param {Array} items - the new items
-         */
-        //function update (items){
-            ////disableSelection();
-            ////$itemBox.empty().append(itemTemplate(items));
-            ////enableSelection();
-        //}
-
-        /**
-         * Disable the selectable component
-         * @private
-         * @param {Array} items - the new items
-         */
-        //function disableSelection (){
-            //if($panel.data('selectable')){
-                //$panel.selectable('disable');
-            //}
-        //}
-
-        /**
-         * Enable to select items to be added to sections
-         * using the jquery-ui selectable.
-         * @private
-         */
-        //function enableSelection (){
-
-            //if($panel.data('selectable')){
-                //$panel.selectable('enable');
-            //} else {
-                //$panel.selectable({
-                    //filter: 'li',
-                    //selected: function( event, ui ) {
-                        //$(ui.selected).addClass('selected');
-                    //},
-                    //unselected: function( event, ui ) {
-                        //$(ui.unselected).removeClass('selected');
-                    //},
-                    //stop: function(){
-                        //$(this).trigger('itemselect.creator', $('.selected'));
-                    //}
-                //});
-            //}
-        //}
-    //};
 
     return itemView;
 });

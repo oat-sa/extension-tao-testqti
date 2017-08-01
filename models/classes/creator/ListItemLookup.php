@@ -37,22 +37,31 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
 
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
-        $items = $itemClass->searchInstances($propertyFilters, [
+        $options = [
             'recursive' => true,
-            'like' => true,
-            'limit' => $limit,
-            'offset' => $offset
-        ]);
+            'like'      => true,
+            'limit'     => $limit,
+            'offset'    => $offset
+        ];
 
-        $data = [];
+        $count =  $itemClass->countInstances($propertyFilters, $options);
+        $items = $itemClass->searchInstances($propertyFilters, $options);
+
+        $nodes = [];
         foreach($items as $item){
-            $data[] = [
+            $nodes[] = [
                 'uri'        => $item->getUri(),
                 'label'      => $item->getLabel(),
                 'categories' => $this->getCategoryService()->getItemCategories($item)
             ];
         }
 
-        return $data;
+        return [
+            'total'  => $count,
+            'offset' => $offset,
+            'limit'  => $limit,
+            'nodes'  => $nodes
+        ];
+
     }
 }

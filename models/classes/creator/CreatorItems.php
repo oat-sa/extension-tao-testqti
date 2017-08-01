@@ -83,7 +83,7 @@ class CreatorItems extends ConfigurableService
         if(in_array($format, self::$formats)){
             $itemLookup = $this->getServiceManager()->get('taoQtiTest/Creator/' . $format);
             if(!is_null($itemLookup) && $itemLookup instanceof ItemLookup){
-                $result = $itemLookup->getItems($itemClass, $propertyFilters, $limit, $offset);
+                $result = $itemLookup->getItems($itemClass, $propertyFilters, $offset, $limit);
             }
         }
         return $result;
