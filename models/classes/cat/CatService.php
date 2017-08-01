@@ -129,29 +129,33 @@ class CatService extends ConfigurableService
     }
     
     /**
-     * Import XML data to QTI test RDF properties
+     * Import XML data to QTI test RDF properties.
      * 
      * This method will import the information found in the CAT specific information of adaptive sections
-     * of a QTI test into the ontology for a given $test.
+     * of a QTI test into the ontology for a given $test. This method is designed to be called at QTI Test Import time.
      *
-     * @param \core_kernel_classes_Resource $test
-     * @param XmlDocument $xml
+     * @param \core_kernel_classes_Resource $testResource
+     * @param \qtism\data\AssessmentTest $testDefinition
+     * @param string $localTestPath The path to the related QTI Test Definition file (XML) during import.
      * @return bool
-     * @throws \common_Exception
+     * @throws \common_Exception In case of error.
      */
-    public function importCatSectionIdsToRdfTest(\core_kernel_classes_Resource $testResource, AssessmentTest $testDefinition, $localImportPath)
+    public function importCatSectionIdsToRdfTest(\core_kernel_classes_Resource $testResource, AssessmentTest $testDefinition, $localTestPath)
     {
         $testUri = $testResource->getUri();
         $catProperties = [];
         $assessmentSections = $testDefinition->getComponentsByClassName('assessmentSection', true);
         $catInfo = CatUtils::getCatInfo($testDefinition);
+        $testBasePath = pathinfo($localTestPath, PATHINFO_DIRNAME);
 
         /** @var AssessmentSection $assessmentSection */
         foreach ($assessmentSections as $assessmentSection) {
             $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
             
             if (isset($catInfo[$assessmentSectionIdentifier])) {
-                $catProperties[$assessmentSectionIdentifier] = $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+                $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+                $settingsContent = trim(file_get_contents($settingsPath));
+                $catProperties[$assessmentSectionIdentifier] = $settingsContent;
             }
         }
 
