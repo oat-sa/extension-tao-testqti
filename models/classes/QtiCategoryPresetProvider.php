@@ -165,6 +165,14 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow the test-taker to use a movable magnifier tool.'),
                     'order'         => 700,
                     'pluginId'      => 'magnifier'
+                ]),                
+                TestCategoryPreset::fromArray([
+                    'id'            => 'zoom',
+                    'label'         => __('Zoom'),
+                    'qtiCategory'   => 'x-tao-option-zoom',
+                    'description'   => __('Allows Test-taker to zoom in and out the item content.'),
+                    'order'         => 700,
+                    'pluginId'      => 'zoom'
                 ])
             ]
         );

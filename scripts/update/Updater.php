@@ -25,6 +25,7 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
@@ -62,6 +63,8 @@ use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\libCat\custom\EchoAdaptEngine;
 
 /**
  *
@@ -1333,14 +1336,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.1.0', '10.3.0');
-      
+
         if ($this->isVersion('10.3.0')) {
             $registry = DeliveryContainerRegistry::getRegistry();
             $registry->setServiceLocator($this->getServiceManager());
             $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
             $this->setVersion('10.4.0');
         }
-      
+
         $this->skip('10.4.0', '10.5.1');
 
         if ($this->isVersion('10.5.1')) {
@@ -1400,7 +1403,56 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('10.7.0');
         }
-        
+
         $this->skip('10.7.0', '10.10.0');
+
+        if ($this->isVersion('10.10.0')) {
+            $qtiListenerService = $this->getServiceManager()->get(QtiTestListenerService::SERVICE_ID);
+            $qtiListenerService->setOption(QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE, []);
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, $qtiListenerService);
+
+            $this->setVersion('10.11.0');
+        }
+
+        if ($this->isVersion('10.11.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'zoom',
+                'name' => 'Zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows Test-taker to zoom in and out the item content',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $this->setVersion('10.11.1');
+        }
+
+        $this->skip('10.11.1', '10.14.1');
+        
+        if ($this->isVersion('10.14.1')) {
+            
+            // Default is now EchoAdapt. This should change in the futre.
+            $catService = new CatService([
+                CatService::OPTION_ENGINE_ENDPOINTS => [
+                    'http://URL_SERVER/cat/api/' => [
+                        CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                        CatService::OPTION_ENGINE_ARGS => []
+                    ]
+                ]
+            ]);
+            
+            $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            
+            $this->setVersion('10.15.0');
+        }
+
+        if ($this->isVersion('10.15.0')) {
+            $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
+            $this->setVersion('10.16.0');
+        }
     }
 }

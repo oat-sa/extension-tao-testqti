@@ -20,9 +20,11 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'jquery',
     'i18n',
-    'taoTests/runner/plugin'
-], function (__, pluginFactory) {
+    'taoTests/runner/plugin',
+    'tpl!taoQtiTest/runner/plugins/controls/connectivity/connectivity'
+], function ($, __, pluginFactory, connectivityTpl) {
     'use strict';
 
     /**
@@ -44,21 +46,29 @@ define([
          * Installs the plugin (called when the runner bind the plugin)
          */
         install: function install() {
+            var self = this;
 
             var testRunner = this.getTestRunner();
             var proxy      = testRunner.getProxy();
+
+            //create the indicator
+            this.$element = $(connectivityTpl({
+                state: proxy.isOnline() ? 'connected' : 'disconnected'
+            }));
 
             //the Proxy is the only one to know something about connectivity
             proxy.on('disconnect', function disconnect(source) {
                 if (!testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', true);
                     testRunner.trigger('disconnect', source);
+                    self.$element.removeClass('connected').addClass('disconnected');
                 }
             })
             .on('reconnect', function reconnect() {
                 if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
                     testRunner.trigger('reconnect');
+                    self.$element.removeClass('disconnected').addClass('connected');
                 }
             });
 
@@ -84,6 +94,15 @@ define([
                     return false;
                 }
             });
+        },
+
+
+        /**
+         * Called during the runner's render phase
+         */
+        render : function render(){
+            var $container = this.getAreaBroker().getControlArea();
+            $container.append(this.$element);
         }
     });
 });
