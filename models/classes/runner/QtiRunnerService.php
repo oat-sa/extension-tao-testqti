@@ -340,6 +340,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $route = $session->getRoute();
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
+                $itemSessionControl = $itemSession->getItemSessionControl();
                 $itemRef = $session->getCurrentAssessmentItemRef();
 
                 $reviewConfig = $config->getConfigValue('review');
@@ -443,7 +444,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 }
 
                 //preven the user to submit empty responses
-                $response['allowSkipping'] = $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
+                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
+                $response['allowSkipping'] = $itemSessionControl->doesAllowSkipping();
+
+                //prevent the user from submitting an invalid response
+                $response['validateResponses'] = $itemSessionControl->mustValidateResponses();
 
                 //does the item has modal feedbacks ?
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());

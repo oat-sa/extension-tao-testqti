@@ -91,6 +91,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
+                'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,
                 'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
                 'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
                 'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),

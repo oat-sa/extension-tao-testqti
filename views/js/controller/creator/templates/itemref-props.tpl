@@ -241,7 +241,7 @@
             </div>
         </div>
 
-{{!-- Property not yet available in delivery
+{{!-- Property not yet available in delivery --}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -256,11 +256,11 @@
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
-                {{__ "The candidate is not allowed to submit wrong responses."}}
+                {{__ "The candidate is not allowed to submit invalid responses."}}
                 </div>
             </div>
         </div>
---}}
+{{!-- --}}
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .itemref-time-limits">{{__ 'Time Limits'}}</h4>
