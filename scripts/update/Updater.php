@@ -49,7 +49,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoQtiTest\scripts\install\RegisterCatService;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
@@ -1403,11 +1402,5 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('10.7.0', '10.10.0');
-
-        if ($this->isVersion('10.10.0')) {
-            OntologyUpdater::syncModels();
-            $this->runExtensionScript(RegisterCatService::class);
-            $this->setVersion('10.11.0');
-        }
     }
 }
