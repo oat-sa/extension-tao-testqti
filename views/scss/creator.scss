@@ -172,6 +172,7 @@
 
         .props {
             height: calc(100% - 65px);
+            overflow-y: scroll;
         }
 
         .help {
