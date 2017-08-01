@@ -27,6 +27,8 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
+use qtism\data\ExtendedAssessmentSection;
+use qtism\data\ExtendedAssessmentItemRef;
 use qtism\data\AssessmentItemRef;
 use qtism\data\content\RubricBlock;
 use qtism\data\content\StylesheetCollection;
@@ -37,6 +39,7 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiItem\model\ItemModel;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
@@ -51,6 +54,11 @@ use oat\taoDelivery\model\container\delivery\ContainerProvider;
  */
 class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
+    const ADAPTIVE_INFO_MAP_FILENAME = 'adaptive-info-map.json';
+    
+    const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
+    
+    const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
     
     /**
      * The list of mime types of files that are accepted to be put
@@ -323,19 +331,22 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
             // 7. Copy the needed files into the public directory.
             $this->copyPublicResources();
+            
+            // 8. Compile adaptive components of the test.
+            $this->compileAdaptive($assessmentTest);
 
-            // 8. Compile the test definition into PHP source code and put it
+            // 9. Compile the test definition into PHP source code and put it
             // into the private directory.
             $this->compileTest($assessmentTest);
             
-            // 9. Compile the test meta data into PHP array source code and put it
+            // 10. Compile the test meta data into PHP array source code and put it
             // into the private directory.
             $this->compileMeta($assessmentTest);
             
-            // 10. Compile the test index in JSON content and put it into the private directory.
+            // 11. Compile the test index in JSON content and put it into the private directory.
             $this->compileIndex();
 
-            // 11. Build the service call.
+            // 12. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
             common_Logger::t("QTI Test successfully compiled.");
@@ -743,6 +754,98 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $data = $phpCompiledDoc->saveToString();
         $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $data);
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
+    }
+    
+    /**
+     * Compile Adaptive Test Information.
+     * 
+     * This method compiles all information required at runtime in terms of Adaptive Testing.
+     * 
+     * @param \qtism\data\AssessmentTest $test
+     */
+    protected function compileAdaptive(AssessmentTest $test)
+    {
+        $phpDocument = new PhpDocument('2.1');
+        $catService = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+        $catSectionMap = [];
+
+        $trail = [];
+        foreach ($test->getTestParts() as $testPart) {
+            foreach ($testPart->getAssessmentSections() as $assessmentSection) {
+                array_push($trail, $assessmentSection);
+            }
+        }
+
+        $traversed = [];
+
+        while (count($trail) > 0) {
+            $current = array_pop($trail);
+            
+            if (in_array($current, $traversed, true) === false) {
+                // 1st pass.
+                array_push($trail, $current);
+                
+                foreach ($current->getSectionParts() as $sectionPart) {
+                    if ($sectionPart instanceof ExtendedAssessmentSection) {
+                        array_push($trail, $sectionPart);
+                    }
+                }
+                
+                array_push($traversed, $current);
+            } else {
+                // 2nd pass.
+                $sectionParts = $current->getSectionParts();
+                $sectionIdentifier = $current->getIdentifier();
+                
+                $catInfo = $catService->getAdaptiveAssessmentSectionInfo(
+                    $test,
+                    $this->getPrivateDirectory(),
+                    $this->getExtraPath(),
+                    $sectionIdentifier
+                );
+                
+                if ($catInfo !== false) {
+                    
+                    // QTI Adaptive Section detected.
+                    \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
+                    
+                    foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
+                        $sectionPart =  $sectionParts[$sectionPartIdentifier];
+                        
+                        if ($sectionPart instanceof ExtendedAssessmentItemRef) {
+                            $sectionPartHref = $sectionPart->getHref();
+                            
+                            // Deal with AssessmentItemRef Compiling.
+                            $phpDocument->setDocumentComponent($sectionPart);
+                            $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", $phpDocument->saveToString());
+                            
+                            unset($sectionParts[$sectionPartIdentifier]);
+                        }
+                    }
+                    
+                    if (count($sectionParts) === 0) {
+                        $placeholderIdentifier = "adaptive-placeholder-${sectionIdentifier}";
+                        // Make the placeholder's href something predictable for later use...
+                        $placeholderHref = "x-tao-qti-adaptive://section/${sectionIdentifier}";
+                        
+                        $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
+                        
+                        // Tag the item ref in order to make it recognizable as an adaptive placeholder.
+                        $placeholder->getCategories()[] = self::ADAPTIVE_PLACEHOLDER_CATEGORY;
+                        $sectionParts[] = $placeholder;
+                        
+                        \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
+                        
+                        // Ask for section setup to the CAT Engine.
+                        $section = $catService->getEngine($catInfo['adaptiveEngineRef'])->setupSection($catInfo['adaptiveSectionIdentifier']);
+                        $catSectionMap[$catInfo['qtiSectionIdentifier']] = ['section' => $section, 'endpoint' => $catInfo['adaptiveEngineRef']];
+                    }
+                }
+            }
+        }
+        
+        // Write Adaptive Section Map for runtime usage.
+        $this->getPrivateDirectory()->write(self::ADAPTIVE_SECTION_MAP_FILENAME, json_encode($catSectionMap));
     }
     
     /**
