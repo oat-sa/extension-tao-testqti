@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -36,6 +36,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\cat\CatService;
 
 /**
  * the QTI TestModel service.
@@ -57,6 +58,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
 
     const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
+    
+    const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -311,7 +314,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                 // Delete all imported items.
                 foreach ($data->items as $item) {
-                    common_Logger::i("Rollbacking item '" . $item->getLabel() . "'...");
+                    common_Logger::t("Rollbacking item '" . $item->getLabel() . "'...");
                     @$itemService->deleteItem($item);
                 }
                 
@@ -321,11 +324,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 }
 
                 // Delete the target Item RDFS class.
-                common_Logger::i("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
+                common_Logger::t("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
                 @$data->itemClass->delete();
 
                 // Delete test definition.
-                common_Logger::i("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
+                common_Logger::t("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
                 @$this->deleteTest($data->rdfsResource);
 
                 if (count($data->items) > 0) {
@@ -382,6 +385,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
         // Extract metadata
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+        
+        // Note: without this fix, metadata guardians do not work.
+        $this->getMetadataImporter()->setMetadataValues($metadataValues);
 
         // Set up $report with useful information for client code (especially for rollback).
         $reportCtx = new stdClass();
@@ -423,6 +429,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
 
+                try {
+                    /** @var CatService $service */
+                    $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+                    $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
+                } catch (common_Exception $e) {
+                    common_Logger::w($e->getMessage());
+                }
+
                 if (count($dependencies['items']) > 0) {
 
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
@@ -435,10 +449,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 $this->getMetadataImporter()->setMetadataValues($metadataValues);
 
                                 // Check if the item is already stored in the bank.
-                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier);
+                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
                                 if ($guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
-                                    \common_Logger::i($message);
+                                    \common_Logger::d($message);
                                     $report->add(common_report_Report::createInfo($message, $guardian));
                                     $reportCtx->items[$assessmentItemRefId] = $guardian;
                                     // Simply do not import again.
@@ -982,7 +996,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
 
-            common_Logger::i("Created QTI Test content for test '" . $test->getUri() . "'.");
+            common_Logger::t("Created QTI Test content for test '" . $test->getUri() . "'.");
         } else if ($file->exists()) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($file->read());

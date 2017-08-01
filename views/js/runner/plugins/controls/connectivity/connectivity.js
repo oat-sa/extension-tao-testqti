@@ -15,15 +15,16 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
     'jquery',
-    'lodash',
     'i18n',
-    'taoTests/runner/plugin'
-], function ($, _, __, pluginFactory) {
+    'taoTests/runner/plugin',
+    'tpl!taoQtiTest/runner/plugins/controls/connectivity/connectivity'
+], function ($, __, pluginFactory, connectivityTpl) {
     'use strict';
 
     /**
@@ -45,61 +46,63 @@ define([
          * Installs the plugin (called when the runner bind the plugin)
          */
         install: function install() {
+            var self = this;
 
             var testRunner = this.getTestRunner();
+            var proxy      = testRunner.getProxy();
 
-            function disconnect() {
+            //create the indicator
+            this.$element = $(connectivityTpl({
+                state: proxy.isOnline() ? 'connected' : 'disconnected'
+            }));
+
+            //the Proxy is the only one to know something about connectivity
+            proxy.on('disconnect', function disconnect(source) {
                 if (!testRunner.getState('disconnected')) {
-                    testRunner.trigger('disconnect');
-                }
-            }
-
-            function reconnect() {
-                if (testRunner.getState('disconnected')) {
-                    testRunner.trigger('reconnect');
-                }
-            }
-
-            // immediate detection of connectivity loss using Offline API
-            $(window).on('offline.connectivity', function() {
-                disconnect();
-            });
-
-            // immediate detection of connectivity back using Offline API
-            $(window).on('online.connectivity', function() {
-                reconnect();
-            });
-
-            testRunner
-                .on('disconnect', function() {
                     testRunner.setState('disconnected', true);
-                })
-                .on('reconnect', function() {
+                    testRunner.trigger('disconnect', source);
+                    self.$element.removeClass('connected').addClass('disconnected');
+                }
+            })
+            .on('reconnect', function reconnect() {
+                if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
-                })
-                .before('error', function(e, error) {
-                    // detect connectivity errors as network error without error code
-                    if (_.isObject(error) && error.source === 'network' && !error.code) {
-                        disconnect();
+                    testRunner.trigger('reconnect');
+                    self.$element.removeClass('disconnected').addClass('connected');
+                }
+            });
 
-                        // prevent default error handling
-                        return false;
-                    }
-                });
+            testRunner.before('error', function(e, err) {
 
-            testRunner.getProxy()
-                .on('receive', function() {
-                    // any message received, state the runner is connected
-                    reconnect();
-                });
+                // detect and prevent connectivity errors
+                if (proxy.isConnectivityError(err)){
+                    return false;
+                }
+
+                //offline navigation error, we pause the test
+                if(err.source === 'navigator' && err.purpose === 'proxy' && err.code === 404){
+                    testRunner
+                        .trigger('disconnectpause')
+                        .trigger('pause', {
+                            reasons : {
+                                category : __('technical'),
+                                subCategory : __('network')
+                            },
+                            message : err.message
+                        });
+
+                    return false;
+                }
+            });
         },
 
+
         /**
-         * Called during the runner's destroy phase
+         * Called during the runner's render phase
          */
-        destroy : function destroy (){
-            $(window).off('offline.connectivity');
-            $(window).off('online.connectivity');
+        render : function render(){
+            var $container = this.getAreaBroker().getControlArea();
+            $container.append(this.$element);
         }
     });
 });

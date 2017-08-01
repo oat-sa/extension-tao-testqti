@@ -23,11 +23,16 @@
  */
 define([
     'lodash',
+    'i18n',
     'core/promise',
+    'taoQtiTest/runner/navigator/navigator',
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
-    'taoQtiTest/runner/proxy/cache/assetLoader',
-], function(_, Promise, qtiServiceProxy, itemStoreFactory, assetLoader) {
+    'taoQtiTest/runner/proxy/cache/actionStore',
+    'taoQtiTest/runner/proxy/cache/assetLoader'
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -46,8 +51,209 @@ define([
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
+     * @extends taoQtiTest/runner/proxy/qtiServiceProxy
      */
     var cacheProxy = _.defaults({
+
+        /**
+         * Installs the proxy
+         */
+        install : function install(){
+            var self = this;
+
+            //install the parent proxy
+            qtiServiceProxy.install.call(this);
+
+            //we keep items here
+            this.itemStore = itemStoreFactory(cacheSize);
+
+            //where we keep actions
+            this.actiontStore = null;
+
+            //can we load the next item from the cache/store ?
+            this.getItemFromStore = false;
+
+            //configuration params, that comes on every request/params
+            this.requestConfig = {};
+
+            //preload at least this number of items
+            this.cacheAmount = 1;
+
+            //keep reference on the test map as we don't have access to the test runner
+            this.testMap     = null;
+            this.testData    = null;
+            this.testContext = null;
+
+            /**
+             * Update the item state in the store
+             * @param {String} itemIdentifier - the item identifier
+             * @param {Object} state - the state of the item
+             * @returns {Boolean}
+             */
+            this.updateState = function updateState(itemIdentifier, state) {
+                var itemData;
+                if (this.itemStore.has(itemIdentifier)) {
+                    itemData = this.itemStore.get(itemIdentifier);
+                    itemData.itemState = state;
+                    this.itemStore.set(itemIdentifier, itemData);
+                }
+            };
+
+            /**
+             * Check whether we have the item in the store
+             * @param {String} itemIdentifier - the item identifier
+             * @returns {Boolean}
+             */
+            this.hasItem = function hasItem(itemIdentifier) {
+                return itemIdentifier && self.itemStore.has(itemIdentifier);
+            };
+
+            /**
+             * Check whether we have the next item in the store
+             * @param {String} itemIdentifier - the CURRENT item identifier
+             * @returns {Boolean}
+             */
+            this.hasNextItem = function hasNextItem(itemIdentifier) {
+                var sibling = navigationHelper.getNextItem(self.testMap, itemIdentifier);
+                return sibling && self.hasItem(sibling.id);
+            };
+
+            /**
+             * Check whether we have the previous item in the store
+             * @param {String} itemIdentifier - the CURRENT item identifier
+             * @returns {Boolean}
+             */
+            this.hasPreviousItem = function hasPreviousItem(itemIdentifier) {
+                var sibling = navigationHelper.getPreviousItem(self.testMap, itemIdentifier);
+                return sibling && self.hasItem(sibling.id);
+            };
+
+            /**
+             * Offline ? We try to do the action anyway :
+             *  1. Save the data to the actionStore
+             *  2. Try to navigate offline, or just say 'ok'
+             *
+             * @param {String} action - the action name (ie. move, skip, timeout)
+             * @param {Object} actionParams - the parameters sent along the action
+             * @returns {Promise} resolves with the action result
+             */
+            this.offlineAction = function offlineAction(action, actionParams){
+
+                return this.actiontStore.push(
+                    action,
+                    this.prepareParams(_.defaults(actionParams || {}, this.requestConfig))
+                )
+                .then(function(){
+                    var testNavigator;
+                    var testContext;
+                    var offlineNavError;
+
+                    // try the navigation if the actionParams context meaningful data
+                    if( actionParams.direction && actionParams.scope){
+                        testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
+                        testContext = testNavigator.navigate(
+                                actionParams.direction,
+                                actionParams.scope,
+                                actionParams.ref
+                            );
+
+                        //we are really not able to navigate
+                        if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
+                            offlineNavError = new Error(__('Unable to select the next item due to connectivity issues'));
+                            _.assign(offlineNavError, {
+                                success : false,
+                                source: 'navigator',
+                                purpose: 'proxy',
+                                type: 'Item not found',
+                                code : 404
+                            });
+                            throw offlineNavError;
+                        }
+                        return {
+                            success : true,
+                            testContext : testContext
+                        };
+                    }
+
+                    //at worst, we have saved the action and just want to continue
+                    return {
+                        success: true
+                    };
+                });
+            };
+
+            /**
+             * Request/Offline strategy :
+             *
+             * ├─ Online
+             * │  └─ run the request
+             * │    ├─ request ok
+             * │    └─ request fails
+             * │       └─ run the offline action
+             * └── Offline
+             *    └─ send a telemetry request (connection could be back)
+             *      ├─ request ok
+             *      │  └─ sync data
+             *      │     └─  run the request (back to the tree root)
+             *      └─ request fails
+             *         └─ run the offline action
+             *
+             * @param {String} action - the action name (ie. move, skip, timeout)
+             * @param {Object} actionParams - the parameters sent along the action
+             * @returns {Promise} resolves with the action result
+             */
+            this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams){
+
+                //perform the request, but fallback on offline if the request itself fails
+                var runRequestThenOffline = function runRequestThenOffline(){
+                    return self.request(url, actionParams).then(function(result){
+                        //if the request fails, we should be offline
+                        if(self.isOffline()){
+                            return self.offlineAction(action, actionParams);
+                        }
+                        return result;
+                    });
+                };
+
+                if(this.isOffline()){
+                    //try the telemetry action, just in case
+                    return this
+                        .telemetry(this.testContext.itemIdentifier, 'up')
+                        .then(function(){
+                            //if the up request succeed,
+                            // we ask for action sync, and we run the request
+                            if(self.isOnline()){
+                                self.syncOfflineData();
+                                return runRequestThenOffline();
+                            }
+                            return self.offlineAction(action, actionParams);
+                        })
+                        .catch(function(){
+                            return self.offlineAction(action, actionParams);
+                        });
+                }
+
+                //by default we try to run the request first
+                return runRequestThenOffline();
+            };
+
+            /**
+             * Flush and synchronize actions collected while offline
+             * @returns {Promise} resolves with the action result
+             */
+            this.syncOfflineData = function syncOfflineData(){
+                return this.queue.serie(function(){
+                    return self.actiontStore.flush().then(function(data){
+                        if(data && data.length){
+                            return self.send('sync', data);
+                        }
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
+                });
+            };
+        },
 
         /**
          * Initializes the proxy
@@ -62,41 +268,37 @@ define([
         init: function init(config, params) {
             var self = this;
 
-            //we keep items here
-            this.itemStore    = itemStoreFactory(cacheSize);
+            //those needs to be in each request params.
+            this.requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
 
-            //keep track of the calls to prevent doing it again on navigating back and forward
-            this.nextCalledBy = {};
+            //set up the action store for the current service call
+            this.actiontStore  = actionStoreFactory(config.serviceCallId);
 
-            //can we load the next item from the cache/store ?
-            this.getItemFromStore  = false;
+            //proxy some received data
+            this.on('receive', function (data) {
+                if (data) {
+                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
+                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
+                    }
+                    if(data.testData){
+                        self.testData = data.testData;
+                    }
+                    if (data.testMap) {
+                        self.testMap = data.testMap;
+                    }
+                    if(data.testContext){
+                        self.testContext = data.testContext;
+                    }
+                }
+            });
 
-            //check whether we're on the last item
-            this.isLastItem   = false;
+            //we resync as soon as the connection is back
+            this.on('reconnect', function(){
+                this.syncOfflineData();
+            });
 
-            //keep a ref to the promise of the loadNextItem in case the call is not done when moving
-            this.loadNextPromise = Promise.resolve();
-
-            /**
-             * Check whether we have the next item in the store
-             * @param {String} uri - the CURRENT item identifier
-             * @returns {Boolean}
-             */
-            this.hasNextItem = function hasNextItem (uri){
-                return self.nextCalledBy[uri] && self.itemStore.has(self.nextCalledBy[uri]);
-            };
-
-            /**
-             * Check whether we have the previous item in the store
-             * @param {String} uri - the CURRENT item identifier
-             * @returns {Boolean}
-             */
-            this.hasPreviousItem = function hasPreviousItem(uri){
-                var key = _.findKey(self.nextCalledBy, function(itemUri){
-                    return itemUri === uri;
-                });
-                return key && self.itemStore.has(key);
-            };
+            //if some actions remains unsynced
+            this.syncOfflineData();
 
             //run the init
             return qtiServiceProxy.init.call(this, config, params);
@@ -111,123 +313,161 @@ define([
 
             this.itemStore.clear();
 
-            this.nextCalledBy     = {};
+            this.testMap          = null;
             this.getItemFromStore = false;
-            this.isLastItem       = false;
 
             return qtiServiceProxy.destroy.call(this);
         },
 
-
         /**
-         * Gets an item definition by its URI, also gets its current state
-         * @param {String} uri - The URI of the item to get
+         * Gets an item definition by its identifier, also gets its current state
+         * @param {String} itemIdentifier - The identifier of the item to get
+         * @param {Object} [params] - additional parameters
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(uri) {
+        getItem: function getItem(itemIdentifier, params) {
             var self = this;
 
             /**
-             * try to load the next item
+             * try to load the next items
              * @returns {Promise} that always resolves
              */
             var loadNextItem = function loadNextItem(){
-                return new Promise(function(resolve){
-                    //don't run a request if not needed
-                    if(!self.isLastItem && !self.hasNextItem(uri)){
-
-                        _.delay(function(){
-                            self.request(self.configStorage.getItemActionUrl(uri, 'getNextItemData'))
-                                .then(function(response){
-                                    if(response && response.itemDefinition){
-
-                                        //store the response and start caching assets
-                                        self.itemStore.set(response.itemDefinition, response);
-                                        self.nextCalledBy[uri] = response.itemDefinition;
-
-                                        if(response.baseUrl && response.itemData && response.itemData.assets){
-                                            assetLoader(response.baseUrl, response.itemData.assets);
-                                        }
-                                    }
-                                    resolve();
-                                })
-                                .catch(resolve);
-                        }, loadNextDelay);
-                    } else {
-                        resolve();
+                var siblings = navigationHelper.getSiblingItems(self.testMap, itemIdentifier, 'both', self.cacheAmount);
+                var missing = _.reduce(siblings, function (list, sibling) {
+                    if (!self.hasItem(sibling.id)) {
+                        list.push(sibling.id);
                     }
-                });
+                    return list;
+                }, []);
+
+                //don't run a request if not needed
+                if (self.isOnline() && missing.length) {
+                    _.delay(function(){
+                        self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
+                            .then(function(response){
+                                if (response && response.items) {
+                                    _.forEach(response.items, function (item) {
+                                        if (item && item.itemIdentifier) {
+
+                                            //store the response and start caching assets
+                                            self.itemStore.set(item.itemIdentifier, item);
+
+                                            if (item.baseUrl && item.itemData && item.itemData.assets) {
+                                                assetLoader(item.baseUrl, item.itemData.assets);
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                            .catch(_.noop);
+                    }, loadNextDelay);
+                }
             };
 
             //resolve from the store
-            if(this.getItemFromStore && this.itemStore.has(uri)){
-                self.loadNextPromise = loadNextItem();
+            if (this.getItemFromStore && this.itemStore.has(itemIdentifier)) {
+                loadNextItem();
 
-                return Promise.resolve(this.itemStore.get(uri));
+                return Promise.resolve(this.itemStore.get(itemIdentifier));
             }
 
-            return this.request(this.configStorage.getItemActionUrl(uri, 'getItem'))
+            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
                     .then(function(response){
                         if(response && response.success){
-                            self.itemStore.set(uri, response);
+                            self.itemStore.set(itemIdentifier, response);
                         }
 
-                        self.loadNextPromise = loadNextItem();
+                        loadNextItem();
 
                         return response;
                     });
         },
 
-        submitItem: function submitItem(uri, state, response, params) {
-            var itemData;
-            if (this.itemStore.has(uri)) {
-                itemData = this.itemStore.get(uri);
-                itemData.itemState = state;
-                this.itemStore.set(uri, itemData);
-            }
-            return qtiServiceProxy.submitItem.call(this, uri, state, response, params);
+        /**
+         * Submits the state and the response of a particular item
+         * @param {String} itemIdentifier - The identifier of the item to update
+         * @param {Object} state - The state to submit
+         * @param {Object} response - The response object to submit
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        submitItem: function submitItem(itemIdentifier, state, response, params) {
+            this.updateState(itemIdentifier, state);
+            return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
+        },
+
+
+        /**
+         * Sends the test variables
+         * @param {Object} variables
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         * @fires sendVariables
+         */
+        sendVariables: function sendVariables(variables) {
+            var action = 'storeTraceData';
+            var actionParams = {
+                traceData: JSON.stringify(variables)
+            };
+
+            return this.requestNetworkThenOffline(
+                this.configStorage.getTestActionUrl(action),
+                action,
+                actionParams
+            );
         },
 
         /**
-         * Calls an action related to a particular item
-         * @param {String} uri - The URI of the item for which call the action
+         * Calls an action related to the test
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callItemAction: function callItemAction(uri, action, params) {
+        callTestAction: function callTestAction(action, params) {
+            return this.requestNetworkThenOffline(
+                this.configStorage.getTestActionUrl(action),
+                action,
+                params
+            );
+        },
+
+        /**
+         * Calls an action related to a particular item
+         * @param {String} itemIdentifier - The identifier of the item for which call the action
+         * @param {String} action - The name of the action to call
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this;
 
-            return this.loadNextPromise
-                .then(function(){
+            //update the item state
+            if(params.itemState){
+                self.updateState(itemIdentifier, params.itemState);
+            }
 
-                    self.getItemFromStore = false;
+            //check if we have already the item for the action we are going to perform
+            self.getItemFromStore = (
+                (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
+                (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
+                (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
+            );
 
-                    //check if we have already the item for the action we are going to perform
+            //as we will pick the next item from the store ensure the next request will start the timer
+            if (self.getItemFromStore) {
+                params.start = true;
+            }
 
-                    if( (action === 'timeout' || action === 'skip' ||
-                        (action === 'move' && params.direction === 'next' && params.scope === 'item') ) &&
-                        self.hasNextItem(uri) ){
-
-                        self.getItemFromStore = true;
-                        params.start = true;
-
-                    } else if( action === 'move' && params.direction === 'previous' && params.scope === 'item' && self.hasPreviousItem(uri)){
-
-                        self.getItemFromStore = true;
-                        params.start = true;
-                    }
-                })
-                .then(function(){
-                    return self.request(self.configStorage.getItemActionUrl(uri, action), params);
-                })
-                .then(function(response){
-
-                    self.isLast = response && response.testContext && response.testContext.isLast;
-                    return response;
-                });
+            return this.requestNetworkThenOffline(
+                this.configStorage.getItemActionUrl(itemIdentifier, action),
+                action,
+                _.merge({ itemDefinition : itemIdentifier }, params)
+            );
         }
     }, qtiServiceProxy);
 

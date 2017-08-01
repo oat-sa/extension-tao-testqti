@@ -58,11 +58,11 @@ define([
     function getConfig(config) {
         var storage = {};
         _.forEach(_entries, function(value, name) {
-           if ('undefined' !== typeof config[name]) {
-               storage[name] = config[name];
-           } else if (value) {
-               throw new Error('The config entry "' + name + '" is required!');
-           }
+            if ('undefined' !== typeof config[name]) {
+                storage[name] = config[name];
+            } else if (value) {
+                throw new Error('The config entry "' + name + '" is required!');
+            }
         });
         return _.defaults(storage, _defaults);
     }
@@ -80,12 +80,13 @@ define([
     function configFactory(config) {
         // protected storage
         var storage = getConfig(config);
+        var noop;
 
         // convert some values from seconds to milliseconds
         if (storage.timeout) {
             storage.timeout *= 1000;
         } else {
-            storage.timeout = undefined;
+            storage.timeout = noop;
         }
 
         // returns only a proxy storage object : no direct access to data is provided

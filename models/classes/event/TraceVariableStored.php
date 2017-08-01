@@ -23,6 +23,8 @@ namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\execution\ServiceProxy;
+
 /**
 * Event should be triggered after storing test trace variable
 *
@@ -51,7 +53,7 @@ class TraceVariableStored implements Event
     public function getDeliveryExecution()
     {
         if(is_null($this->deliveryExecution)){
-            $this->deliveryExecution = \taoDelivery_models_classes_execution_ServiceProxy::singleton()->getDeliveryExecution($this->deliveryExecutionId);
+            $this->deliveryExecution = ServiceProxy::singleton()->getDeliveryExecution($this->deliveryExecutionId);
         }
         return $this->deliveryExecution;
     }
