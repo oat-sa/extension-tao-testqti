@@ -342,12 +342,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Import a QTI Test and its dependent Items into the TAO Platform.
      *
      * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
-     * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
+     * @param Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
      * @return common_report_Report A report about how the importation behaved.
+     * @throws ErrorException
+     * @throws \common_Exception
+     * @throws \common_exception_Error
+     * @throws \oat\oatbox\service\ServiceNotFoundException
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder)
+    {
 
         $itemImportService = ImportService::singleton();
         $testClass = $targetClass;
@@ -375,6 +380,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $domManifest = new DOMDocument('1.0', 'UTF-8');
         $domManifest->load($folder . 'imsmanifest.xml');
 
+        // Extract metadata
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
 
         // Set up $report with useful information for client code (especially for rollback).
@@ -416,16 +422,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 // Build a DOM version of the fully resolved AssessmentTest for later usage.
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
-                
+
                 if (count($dependencies['items']) > 0) {
 
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
 
                         if ($qtiDependency !== false) {
-
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
-
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
+
+                                // Add the metadata to the importer class.
+                                $this->getMetadataImporter()->setMetadataValues($metadataValues);
 
                                 // Check if the item is already stored in the bank.
                                 $guardian = $this->getMetadataImporter()->guard($resourceIdentifier);
@@ -444,7 +451,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 foreach ($this->getMetadataImporter()->getExtractors() as $extractor) {
                                     if ($extractor instanceof MetadataTestContextAware) {
                                         $metadataValues = array_merge(
-                                            $metadataValues, 
+                                            $metadataValues,
                                             $extractor->contextualizeWithTest(
                                                 $qtiTestResource->getIdentifier(),
                                                 $transitionalDoc,
@@ -461,9 +468,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                     $createdClasses = array();
 
                                     $itemReport = $itemImportService->importQtiItem(
-                                        $folder, 
-                                        $qtiDependency, 
-                                        $targetClass, 
+                                        $folder,
+                                        $qtiDependency,
+                                        $targetClass,
                                         $dependencies['dependencies'],
                                         $metadataValues,
                                         array(),
@@ -474,7 +481,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                     );
 
                                     $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
-                                    
+
                                     $rdfItem = $itemReport->getData();
 
                                     if ($rdfItem) {
@@ -509,6 +516,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     // If items did not produce errors, we import the test definition.
                     if ($itemError === false) {
                         common_Logger::i("Importing test with manifest identifier '${qtiTestResourceIdentifier}'...");
+
+                        // Add the metadata to the importer class.
+                        $this->getMetadataImporter()->setMetadataValues($metadataValues);
+
+                        // Check if the item is already stored in the bank.
+                        $guardian = $this->getMetadataImporter()->guard($qtiTestResourceIdentifier);
+
+                        if ($guardian !== false) {
+                            $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $qtiTestResourceIdentifier);
+                            $reportCtx->items[$qtiTestResourceIdentifier] = $guardian;
+                            // Simply do not import again.
+                            throw new common_exception_ValidationFailed($message);
+                        }
 
                         // Second step is to take care of the test definition and the related media (auxiliary files).
 
@@ -579,6 +599,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
+            }
+            catch (common_exception_ValidationFailed $e) {
+                \common_Logger::i($message);
+                $report->add(common_report_Report::createFailure($message));
             }
         }
 
