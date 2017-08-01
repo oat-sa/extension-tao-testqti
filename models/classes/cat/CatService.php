@@ -33,7 +33,7 @@ class CatService extends ConfigurableService
     
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
     
-    const CAT_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSection';
+    const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
     
     private $engines = [];
     
@@ -164,7 +164,7 @@ class CatService extends ConfigurableService
             return true;
         }
 
-        if ($testResource->setPropertyValue($this->getProperty(self::CAT_PROPERTY), json_encode($catProperties))) {
+        if ($testResource->setPropertyValue($this->getProperty(self::CAT_ADAPTIVE_IDS_PROPERTY), json_encode($catProperties))) {
             return true;
         } else {
             throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
