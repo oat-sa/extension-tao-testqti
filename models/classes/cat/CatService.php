@@ -3,8 +3,10 @@
 namespace oat\taoQtiTest\models\cat;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
+use qtism\data\AssessmentSection;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -19,6 +21,8 @@ use qtism\data\storage\php\PhpDocument;
  */
 class CatService extends ConfigurableService
 {
+    use OntologyAwareTrait;
+    
     const SERVICE_ID = 'taoQtiTest/CatService';
     
     const OPTION_ENGINE_ENDPOINTS = 'endpoints';
@@ -28,6 +32,8 @@ class CatService extends ConfigurableService
     const OPTION_ENGINE_ARGS = 'args';
     
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
+    
+    const CAT_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSection';
     
     private $engines = [];
     
@@ -120,5 +126,48 @@ class CatService extends ConfigurableService
         }
         
         return $this->sectionMapCache[$dirId];
+    }
+    
+    /**
+     * Import XML data to QTI test RDF properties.
+     * 
+     * This method will import the information found in the CAT specific information of adaptive sections
+     * of a QTI test into the ontology for a given $test. This method is designed to be called at QTI Test Import time.
+     *
+     * @param \core_kernel_classes_Resource $testResource
+     * @param \qtism\data\AssessmentTest $testDefinition
+     * @param string $localTestPath The path to the related QTI Test Definition file (XML) during import.
+     * @return bool
+     * @throws \common_Exception In case of error.
+     */
+    public function importCatSectionIdsToRdfTest(\core_kernel_classes_Resource $testResource, AssessmentTest $testDefinition, $localTestPath)
+    {
+        $testUri = $testResource->getUri();
+        $catProperties = [];
+        $assessmentSections = $testDefinition->getComponentsByClassName('assessmentSection', true);
+        $catInfo = CatUtils::getCatInfo($testDefinition);
+        $testBasePath = pathinfo($localTestPath, PATHINFO_DIRNAME);
+
+        /** @var AssessmentSection $assessmentSection */
+        foreach ($assessmentSections as $assessmentSection) {
+            $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
+            
+            if (isset($catInfo[$assessmentSectionIdentifier])) {
+                $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+                $settingsContent = trim(file_get_contents($settingsPath));
+                $catProperties[$assessmentSectionIdentifier] = $settingsContent;
+            }
+        }
+
+        if (empty($catProperties)) {
+            \common_Logger::t("No QTI CAT property value to store for test '${testUri}'.");
+            return true;
+        }
+
+        if ($testResource->setPropertyValue($this->getProperty(self::CAT_PROPERTY), json_encode($catProperties))) {
+            return true;
+        } else {
+            throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
+        }
     }
 }

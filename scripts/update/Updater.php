@@ -1454,5 +1454,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
+        
+        if ($this->isVersion('10.16.0')) {
+            OntologyUpdater::syncModels();
+            $this->setVersion('10.17.0');
+        }
     }
 }
