@@ -79,15 +79,15 @@ define([
                             return resolve();
                         }
 
-                        if (!testRunner.getState('alerted.itemSessionControl')) { // Only show one alert for itemSessionControl
-                            testRunner.setState('alerted.itemSessionControl', true);
+                        if (!testRunner.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                            testRunner.setState('alerted.notallowed', true);
                             testRunner.trigger(
                                 'alert.notallowed',
                                 __('A response to this item is required.'),
                                 function () {
                                     testRunner.trigger('resumeitem');
                                     reject();
-                                    testRunner.setState('alerted.itemSessionControl', false);
+                                    testRunner.setState('alerted.notallowed', false);
                                 }
                             );
                         }
