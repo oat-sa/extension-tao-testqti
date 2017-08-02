@@ -24,17 +24,32 @@ use oat\tao\model\GenerisTreeFactory;
 use oat\taoItems\model\CategoryService;
 
 /**
- * Service to manage the assignment of users to deliveries
+ * Look up items and format them as a tree hierarchy
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 class TreeItemLookup extends ConfigurableService implements ItemLookup
 {
-    const SERVICE_ID = 'taoQtiTest/Creator/tree';
+    const SERVICE_ID = 'taoQtiTest/CreatorItems/tree';
 
+    /**
+     * Get the CategoryService
+     * @return CategoryService the service
+     */
     public function getCategoryService()
     {
         return $this->getServiceManager()->get(CategoryService::SERVICE_ID);
     }
 
+    /**
+     * Retrieve QTI Items in their hierarchy, for the given parameters as format them as tree.
+     * @param \core_kernel_classes_Class $itemClass the item class
+     * @param string $format the lookup format
+     * @param string $pattern to filter by label
+     * @param int    $offset for paging
+     * @param int    $limit  for paging
+     * @return array the items 
+     */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
         $factory = new GenerisTreeFactory(true, [$itemClass->getUri()], $limit, $offset, [], $propertyFilters);
@@ -43,6 +58,13 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         return $this->formatTreeData([$treeData]);
     }
 
+
+    /**
+     * Reformat the the tree : state and count
+     * Add the item's categories
+     * @param array $treeData
+     * @return array the formated data
+     */
     private function formatTreeData(array $treeData)
     {
         return array_map(function($data){

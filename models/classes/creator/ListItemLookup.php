@@ -23,18 +23,33 @@ use oat\oatbox\service\ConfigurableService;
 use oat\taoItems\model\CategoryService;
 
 /**
- * Service to manage the assignment of users to deliveries
+ * Look up items and format them as a flat list
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 class ListItemLookup extends ConfigurableService implements ItemLookup
 {
 
-    const SERVICE_ID = 'taoQtiTest/Creator/list';
+    const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
 
+    /**
+     * Get the CategoryService
+     * @return CategoryService the service
+     */
     public function getCategoryService()
     {
         return $this->getServiceManager()->get(CategoryService::SERVICE_ID);
     }
 
+    /**
+     * Retrieve QTI Items for the given parameters.
+     * @param \core_kernel_classes_Class $itemClass the item class
+     * @param string $format the lookup format
+     * @param string $pattern to filter by label
+     * @param int    $offset for paging
+     * @param int    $limit  for paging
+     * @return array the items
+     */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
         $options = [
@@ -44,7 +59,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             'offset'    => $offset
         ];
 
-        $count =  $itemClass->countInstances($propertyFilters, $options);
+        $count = $itemClass->countInstances($propertyFilters, $options);
         $items = $itemClass->searchInstances($propertyFilters, $options);
 
         $nodes = [];

@@ -22,10 +22,13 @@ namespace oat\taoQtiTest\models\creator;
 use oat\oatbox\service\ConfigurableService;
 
 /**
+ * This service let's you access the test creator's items
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 class CreatorItems extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerService';
+    const SERVICE_ID = 'taoQtiTest/CreatorItems';
 
     const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
     const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
@@ -33,8 +36,15 @@ class CreatorItems extends ConfigurableService
     const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
     const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
 
+    /**
+     * The different lookup formats
+     */
     private static $formats = ['list', 'tree'];
-   
+
+    /**
+     * Get the list of items classes
+     * @return array the classes hierarchy
+     */
     public function getItemClasses()
     {
         $itemClass = new \core_kernel_classes_Class(self::ITEM_ROOT_CLASS_URI);
@@ -48,6 +58,10 @@ class CreatorItems extends ConfigurableService
         return $result;
     }
 
+    /**
+     * Get the class subclasses
+     * @return array the classes hierarchy
+     */
     private function getSubClasses($subClasses)
     {
         $result = [];
@@ -67,6 +81,15 @@ class CreatorItems extends ConfigurableService
         return $result;
     }
 
+    /**
+     * Retrieve QTI Items for the given parameters
+     * @param \core_kernel_classes_Class $itemClass the item class
+     * @param string $format the lookup format
+     * @param string $pattern to filter by label
+     * @param int    $offset for paging
+     * @param int    $limit  for paging
+     * @return array the items 
+     */
     public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $pattern, $offset = 0, $limit = 30)
     {
         $propertyFilters = [
@@ -80,8 +103,11 @@ class CreatorItems extends ConfigurableService
 
         $result = [];
 
+        //whitelisting's mandatory to prevent hijacking the dependency injection
         if(in_array($format, self::$formats)){
-            $itemLookup = $this->getServiceManager()->get('taoQtiTest/Creator/' . $format);
+
+            //load the lookup dynamically using the format
+            $itemLookup = $this->getServiceManager()->get(self::SERVICE_ID . '/' . $format);
             if(!is_null($itemLookup) && $itemLookup instanceof ItemLookup){
                 $result = $itemLookup->getItems($itemClass, $propertyFilters, $offset, $limit);
             }
