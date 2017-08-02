@@ -37,6 +37,8 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      * A 'notempty' ('1', 'true', 'on' and 'yes' values available) request parameter is allowed to filter empty items.
      *
      * This method will be refactored (limit, filtering, etc.) with the resource widget.
+     *
+     * @deprecated use getItems instead
      */
     public function get()
     {
@@ -120,6 +122,8 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      * The response is encoded in JSON and contains the list of items and its categories.
      * parameter uris is required in order to get categories for one or more items
      * @throws common_exception_MissingParameter
+     *
+     * @deprecated the categories are retrieved with the items in getItems instead
      */
     public function getCategories()
     {
