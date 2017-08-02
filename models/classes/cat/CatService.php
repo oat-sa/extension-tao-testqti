@@ -7,6 +7,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
+use qtism\data\AssessmentItemRef;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -75,6 +76,24 @@ class CatService extends ConfigurableService
         $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
         
         return $doc->getDocumentComponent();
+    }
+    
+    /**
+     * Get AssessmentItemRefs corresponding to a given Adaptive Placeholder.
+     * 
+     * This method will return an array of AssessmentItemRef objects corresponding to an Adaptive Placeholder.
+     * 
+     * @return array
+     */
+    public function getAssessmentItemRefsByPlaceholder(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, AssessmentItemRef $placeholder)
+    {
+        $urlinfo = parse_url($placeholder->getHref());
+        $adaptiveSectionId = ltrim($urlinfo['path'], '/');
+        
+        $doc = new PhpDocument();
+        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        
+        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
