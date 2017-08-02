@@ -57,6 +57,7 @@ return array(
             RegisterQtiFlysystemManager::class,
             \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
             \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
+            \oat\taoQtiTest\scripts\install\RegisterCreatorServices::class,
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
             \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,

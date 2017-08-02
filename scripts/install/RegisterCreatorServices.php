@@ -20,20 +20,24 @@
 
 namespace oat\taoQtiTest\scripts\install;
 
+use common_report_Report as Report;
 use oat\oatbox\extension\AbstractAction;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\creator\ListItemLookup;
 use oat\taoQtiTest\models\creator\TreeItemLookup;
 
 /**
+ * Registers the Test Creators services
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 class RegisterCreatorServices extends AbstractAction
 {
-
     public function __invoke($params)
     {
         $this->getServiceManager()->register(CreatorItems::SERVICE_ID, new CreatorItems());
         $this->getServiceManager()->register(ListItemLookup::SERVICE_ID, new ListItemLookup());
         $this->getServiceManager()->register(TreeItemLookup::SERVICE_ID, new TreeItemLookup());
+        return new Report(Report::TYPE_SUCCESS, 'Creator services resgistered');
     }
 }
