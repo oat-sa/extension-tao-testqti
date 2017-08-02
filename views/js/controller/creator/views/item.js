@@ -21,14 +21,32 @@
  */
 define([
     'jquery',
-    'lodash',
+    'i18n',
+    'core/logger',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
-], function($, _, testItemProviderFactory, resourceSelectorFactory){
+    'ui/feedback'
+], function($, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback){
     'use strict';
 
+   /**
+    * Create a dedicated logger
+    */
+    var logger = loggerFactory('taoQtiTest/creator/views/item');
 
+    /**
+     * Let's you access the data
+     */
     var testItemProvider = testItemProviderFactory();
+
+    /**
+     * Handles errors
+     * @param {Error} err
+     */
+    var onError = function onError(err){
+        logger.error(err);
+        feedback.error(err.message || __('An error occured while retrieving items'));
+    };
 
    /**
      * The ItemView setup items related components
@@ -42,8 +60,8 @@ define([
 
         testItemProvider.getItemClasses().then(function(classes){
             resourceSelectorFactory($panel, {
-                type : 'items',
-                classUri : 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
+                type : __('items'),
+                classUri : classes[0].uri,
                 classes : classes
             })
             .on('render', function(){
@@ -58,24 +76,13 @@ define([
                 testItemProvider.getItems(params).then(function(items){
                     self.update(items, params);
                 })
-                .catch(function(err){
-
-                    //FIXME use logger instead
-                    console.error(err);
-                });
-
+                .catch(onError);
             })
             .on('change', function(values){
-
                 $panel.trigger('itemselect.creator', [values]);
-
             });
-
-
-        }).catch(function(err){
-            console.error(err);
-        });
-
+        })
+        .catch(onError);
     };
 
     return itemView;
