@@ -1351,6 +1351,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
+        $maxTimeSeconds = $this->getTimeLimitsFromSession($session);
+
         foreach ($session->getRegularTimeConstraints() as $tc) {
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
@@ -1361,7 +1363,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
                     'source' => $identifier,
                     'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($seconds),
+                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $source->getQtiClassName()
                 );
@@ -1573,5 +1575,51 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             return $context->getTestSession();
         }
+    }
+
+    /**
+     * @param TestSession $session
+     * @return null|string
+     */
+    public function getTimeLimitsFromSession(TestSession $session)
+    {
+        $maxTimeSeconds = null;
+
+        // From Test
+        if ($timeLimits = $session->getAssessmentTest()->getTimeLimits()) {
+            $timeLimits = $session->getAssessmentTest()->getTimeLimits();
+            $maxTimeSeconds = $timeLimits->hasMaxTime()
+                ? $timeLimits->getMaxTime()->getSeconds(true)
+                : null;
+        }
+
+        // From TestPart
+        if ($testPart = $session->getCurrentTestPart()) {
+            if ($testSessionLimits = $testPart->getTimeLimits()) {
+                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
+                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
+                    : $maxTimeSeconds;
+            }
+        }
+
+        // From AssessmentSection
+        if ($section = $session->getCurrentAssessmentSection()) {
+            if ($testSessionLimits = $section->getTimeLimits()) {
+                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
+                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
+                    : $maxTimeSeconds;
+            }
+        }
+
+        // From AssessmentItem
+        if ($test = $session->getCurrentAssessmentItemSession()) {
+            if ($testSessionLimits = $test->getTimeLimits()) {
+                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
+                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
+                    : $maxTimeSeconds;
+            }
+        }
+
+        return $maxTimeSeconds;
     }
 }
