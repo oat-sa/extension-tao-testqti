@@ -189,4 +189,31 @@ class CatService extends ConfigurableService
             throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
         }
     }
+    
+    /**
+     * Is an AssessmentSection Adaptive?
+     * 
+     * This method returns whether or not a given $section is adaptive.
+     * 
+     * @param \qtism\data\AssessmentSection $section
+     * @return boolean
+     */
+    public function isAssessmentSectionAdaptive(AssessmentSection $section)
+    {
+        $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
+        return count($assessmentItemRefs) === 1 && $this->isAdaptivePlaceholder($assessmentItemRefs[0]);
+    }
+    
+    /**
+     * Is an AssessmentItemRef an Adaptive Placeholder?
+     * 
+     * This method returns whether or not a given $assessmentItemRef is a runtime adaptive placeholder.
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
+     * @return boolean
+     */
+    public function isAdaptivePlaceholder(AssessmentItemRef $assessmentItemRef)
+    {
+        return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
+    }
 }
