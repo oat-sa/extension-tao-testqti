@@ -389,6 +389,12 @@ return array(
     'enable-allow-skipping' => false,
 
     /*
+     * Enable Allow/Disallow Validate Responses feature.
+     * @type boolean
+     */
+    'enable-validate-responses' => false,
+
+    /*
      * Force branch rules to be executed even if the current navigation mode is non-linear.
      * @type boolean
      */
