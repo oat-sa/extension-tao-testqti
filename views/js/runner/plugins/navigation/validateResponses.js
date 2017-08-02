@@ -76,15 +76,15 @@ define([
                         if (currentItemHelper.isAnswered(testRunner, false)) {
                             return resolve();
                         }
-                        if (!testRunner.getState('alerted.allowSkipping')) { // Only show one alert for allowSkipping or validateResponses
-                            testRunner.setState('alerted.validateResponses', true);
+                        if (!testRunner.getState('alerted.itemSessionControl')) { // Only show one alert for itemSessionControl
+                            testRunner.setState('alerted.itemSessionControl', true);
                             testRunner.trigger(
                                 'alert.notallowed',
                                 __('A valid response to this item is required.'),
                                 function () {
                                     testRunner.trigger('resumeitem');
                                     reject();
-                                    testRunner.setState('alerted.validateResponses', false);
+                                    testRunner.setState('alerted.itemSessionControl', false);
                                 }
                             );
                         }

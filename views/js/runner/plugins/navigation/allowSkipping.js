@@ -79,15 +79,15 @@ define([
                             return resolve();
                         }
 
-                        if (!testRunner.getState('alerted.validateResponses')) { // Only show one alert for allowSkipping or validateResponses
-                            testRunner.setState('alerted.allowSkipping', true);
+                        if (!testRunner.getState('alerted.itemSessionControl')) { // Only show one alert for itemSessionControl
+                            testRunner.setState('alerted.itemSessionControl', true);
                             testRunner.trigger(
                                 'alert.notallowed',
                                 __('A response to this item is required.'),
                                 function () {
                                     testRunner.trigger('resumeitem');
                                     reject();
-                                    testRunner.setState('alerted.allowSkipping', false);
+                                    testRunner.setState('alerted.itemSessionControl', false);
                                 }
                             );
                         }
