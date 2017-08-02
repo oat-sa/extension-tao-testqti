@@ -443,8 +443,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $response['rubrics'] = $this->getRubrics($context, $itemRef);
                 }
 
-                //preven the user to submit empty responses
-                $response['preventEmptyResponses'] = $config->getConfigValue('enableAllowSkipping') && !$testOptions['allowSkipping'];
+                //prevent the user from submitting empty (i.e. default or null) responses
                 $response['allowSkipping'] = $config->getConfigValue('enableAllowSkipping') && $itemSessionControl->doesAllowSkipping();
 
                 //prevent the user from submitting an invalid response
