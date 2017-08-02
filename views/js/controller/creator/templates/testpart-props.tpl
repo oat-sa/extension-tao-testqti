@@ -198,15 +198,15 @@
                 </div>
                 <div class="col-6">
                     <label>
-                        <input type="checkbox" name="testpart-validate-responses" value="true"  data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean"  />
+                        <input type="checkbox" name="testpart-validate-responses" value="false"  data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean"  />
                         <span class="icon-checkbox" />
                     </label>
                 </div>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "The candidate is not allowed to submit wrong responses."}}
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "The candidate is not allowed to submit invalid responses."}}
+                    </div>
                 </div>
             </div>
 --}}

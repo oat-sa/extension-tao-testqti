@@ -249,7 +249,7 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input type="checkbox" name="itemref-validate-responses" value="true" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
+                    <input type="checkbox" name="itemref-validate-responses" value="false" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
                     <span class="icon-checkbox"></span>
                 </label>
             </div>
