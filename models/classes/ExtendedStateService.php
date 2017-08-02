@@ -35,6 +35,7 @@ class ExtendedStateService extends ConfigurableService
     const VAR_REVIEW = 'review';
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
+    const VAR_CAT = 'cat';
     const VAR_HREF_INDEX = 'item_href_index';
 
     private static $cache = null;
@@ -281,5 +282,52 @@ class ExtendedStateService extends ConfigurableService
     public static function getStorageKeyFromTestSessionId($testSessionId)
     {
         return self::STORAGE_PREFIX . $testSessionId;
+    }
+    
+    /**
+     * Set a CAT Value
+     * 
+     * Set a CAT value in the Extended State.
+     * 
+     * @param string $testSessionId
+     * @param string $assessmentSectionId
+     * @param string $key
+     * @param string $value
+     */
+    public function setCatValue($testSessionId, $assessmentSectionId, $key, $value)
+    {
+        $extra = $this->getExtra($testSessionId);
+        $extra[self::VAR_CAT][$assessmentSectionId][$key] = $value;
+        $this->saveExtra($testSessionId, $extra);
+    }
+    
+    /**
+     * Get a CAT Value
+     * 
+     * Get a CAT value from the Extended State.
+     * 
+     * @return string
+     */
+    public function getCatValue($testSessionId, $assessmentSectionId, $key)
+    {
+        $extra = $this->getExtra($testSessionId);
+        return (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$assessmentSectionId]) && isset($extra[self::VAR_CAT][$assessmentSectionId][$key])) ? $extra[self::VAR_CAT][$assessmentSectionId][$key] : null;
+    }
+    
+    /**
+     * Remove a CAT value from the ExtendedState.
+     * 
+     * @param string $testSessionId
+     * @param string $assessmentSectionId
+     * @param string $key
+     */
+    public function removeCatValue($testSessionId, $assessmentSectionId, $key)
+    {
+        $extra = $this->getExtra($testSessionId);
+        if (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$assessmentSectionId]) && isset($extra[self::VAR_CAT][$assessmentSectionId][$key])) {
+            unset($extra[self::VAR_CAT][$assessmentSectionId][$key]); 
+        }
+        
+        $this->saveExtra($testSessionId, $extra);
     }
 }

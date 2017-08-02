@@ -172,7 +172,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $itemId = $itemRef->getIdentifier();
                 $itemDefinition = $itemRef->getHref();
                 $itemUri = strstr($itemDefinition, '|', true);
-                $item = new \core_kernel_classes_Resource($itemUri);
+                
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
                     $lastPart = $partId;
@@ -185,18 +185,28 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 if ($forceTitles) {
                     $label = __($uniqueTitle, $offsetSection + 1);
                 } else {
-                    if ($useTitle) {
-                        $label = $context->getItemIndexValue($itemUri, 'title');
+                    if ($itemUri) {
+                        if ($useTitle) {
+                            $label = $context->getItemIndexValue($itemUri, 'title');
+                        } else {
+                            $label = '';
+                        }
+                        
+                        if (!$label) {
+                            $label = $context->getItemIndexValue($itemUri, 'label');
+                        }
+                        
+                        if (!$label) {
+                            $item = new \core_kernel_classes_Resource($itemUri);
+                            $label = $item->getLabel();
+                        }
                     } else {
-                        $label = '';
-                    }
-                    
-                    if (!$label) {
-                        $label = $context->getItemIndexValue($itemUri, 'label');
-                    }
-                    
-                    if (!$label) {
-                        $label = $item->getLabel();
+                        // The item URI could not be parsed as expected. Maybe it's an adaptive placeholder?
+                        $adaptivePlaceholderCategory = \taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY;
+                        if (in_array($adaptivePlaceholderCategory, $itemRef->getCategories()->getArrayCopy())) {
+                            // Use the section label as the label of this "position" in the test.
+                            $label = $section->getTitle();
+                        }
                     }
                 }
 

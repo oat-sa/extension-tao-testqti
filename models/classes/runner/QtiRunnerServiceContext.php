@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
@@ -25,9 +25,12 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\ExtendedStateService;
 use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use oat\libCat\result\ItemResult;
 
 
 /**
@@ -44,6 +47,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var AbstractQtiBinaryStorage
      */
     protected $storage;
+    
+    protected $sessionManager;
 
     /**
      * The assessment test definition
@@ -89,6 +94,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var string
      */
     protected $testExecutionUri;
+    
+    private $catSection = null;
+    
+    private $catSession = null;
+    
+    private $lastCatItemId = null;
+    
+    private $lastCatItemOutput;
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -165,6 +178,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
         $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
+        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -248,6 +262,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         return $this->storage;
     }
+    
+    public function getSessionManager()
+    {
+        return $this->sessionManager;
+    }
 
     /**
      * Gets the assessment test definition
@@ -324,5 +343,263 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getItemIndexValue($id, $name) 
     {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
+    }
+    
+    /**
+     * Get Cat Engine Implementation
+     * 
+     * Get the currently configured Cat Engine implementation.
+     * 
+     * @return \oat\libCat\CatEngine
+     */
+    public function getCatEngine()
+    {
+        $compiledDirectory = $this->getCompilationDirectory()['private'];
+        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
+        $sectionId = $this->getTestSession()->getCurrentAssessmentSection()->getIdentifier();
+        $catEngine = false;
+        
+        if ($sectionId && isset($adaptiveSectionMap[$sectionId])) {
+            $catEngine = $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
+        }
+        
+        return $catEngine;
+    }
+    
+    /**
+     * Initialize the CAT Session.
+     * 
+     * This method has to be invoked whenever a new adaptive Assessment Section is encountered
+     * during an Assessment Test Session.
+     */
+    public function initCatSession()
+    {
+        $catEngine = $this->getCatEngine();
+        $catSession = $this->getCatSession();
+        
+        // Deal with the CAT Section.
+        $catSection = $this->getCatEngine()->restoreSection($this->getCurrentCatSection());
+        
+        // Deal with the CAT Session.
+        if(!empty($catSession)){
+            $catSession = $catSection->restoreSession($catSession);
+        } else {
+            $catSession = $catSection->initSession();
+        }
+        
+        $this->persistCatSession(json_encode($catSession));
+    }
+    
+    /**
+     * Get the current CAT Session Data.
+     * 
+     * Get the current CAT Session Data (data is cached).
+     * 
+     * @return string JSON encoded CAT Session data.
+     */
+    public function getCatSession()
+    {
+        if (!isset($this->catSession)) {
+            $sessionId = $this->getTestSession()->getSessionId();
+            $catSession = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                $sessionId, 
+                $this->getCurrentCatSection(), 
+                'cat-session'
+            );
+            $this->catSession = (is_null($catSession)) ? false : $catSession; 
+        }
+        
+        return $this->catSession;
+    }
+    
+    /**
+     * Persist the CAT Session Data.
+     * 
+     * Persist the current CAT Session Data in storage.
+     * 
+     * @param string $catSession JSON encoded CAT Session data.
+     */
+    public function persistCatSession($catSession)
+    {
+        $this->catSession = $catSession;
+        
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $this->getCurrentCatSection(),
+            'cat-session', 
+            $catSession
+        );
+    }
+    
+    /**
+     * Clear CAT Session Data.
+     * 
+     * Remove the CAT Session Data from persistent storage.
+     */
+    public function clearCatSession()
+    {
+        $this->catSession = false;
+        
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue(
+            $sessionId,
+            $this->getCurrentCatSection(),
+            'cat-session'
+        );
+    }
+    
+    /**
+     * Get the CAT Item ID.
+     * 
+     * Returns the last CAT Item Identifier provided by the CAT Engine.
+     * 
+     * @return string
+     */
+    public function getLastCatItemId()
+    {
+        if (!isset($this->lastCatItemId)) {
+            $sessionId = $this->getTestSession()->getSessionId();
+            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                $sessionId, 
+                $this->getCurrentCatSection(),
+                'cat-last-item-ids'
+            );
+            $this->lastCatItemId = (is_null($id)) ? false : $id;
+        }
+        
+        return $this->lastCatItemId[0];
+    }
+    
+    /**
+     * Persist the CAT Item ID.
+     * 
+     * Persists the last CAT Item Identifiers provided by the CAT Engine.
+     * 
+     * @param string $lastCatItemId
+     */
+    public function persistLastCatItemIds(array $lastCatItemIds)
+    {
+        $this->lastCatItemId = $lastCatItemIds;
+        
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId, 
+            $this->getCurrentCatSection(),
+            'cat-last-item-ids', 
+            $lastCatItemIds
+        );
+    }
+    
+    /**
+     * Clear the CAT Item ID.
+     * 
+     * Remove the last CAT Item Identifier provided by the CAT Engine from persistent storage.
+     */
+    public function clearLastCatItemIds()
+    {
+        $this->lastCatItemId = false;
+        
+        $sessionId = $this->getTestSession()->getSessionId();
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue(
+            $sessionId,
+            $this->getCurrentCatSection(),
+            'cat-last-item-ids'
+        );
+    }
+    
+    /**
+     * Get Last CAT Item Output.
+     * 
+     * Get the last CAT Item Result from memory.
+     */
+    public function getLastCatItemOutput()
+    {
+        return $this->lastCatItemOutput;
+    }
+    
+    /**
+     * Persist CAT Item Output.
+     * 
+     * Persist the last CAT Item Result in memory.
+     */
+    public function persistLastCatItemOutput($lastCatItemOutput)
+    {
+        $this->lastCatItemOutput = $lastCatItemOutput;
+    }
+    
+    /**
+     * Get Current CAT Section ID.
+     * 
+     * Returns the current CAT Section Identifier. In case of the current Assessment Section is not adaptive, the method
+     * returns the boolean false value.
+     * 
+     * @return string|boolean
+     */
+    public function getCurrentCatSection()
+    {
+        $compiledDirectory = $this->getCompilationDirectory()['private'];
+        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
+        $section = $this->getTestSession()->getCurrentAssessmentSection();
+        
+        if (!$section) {
+            return false;
+        }
+        
+        $identifier = $section->getIdentifier();
+        
+        return (isset($adaptiveSectionMap[$identifier])) ? $adaptiveSectionMap[$identifier]['section'] : false;
+    }
+    
+    /**
+     * Is the Assessment Test Session Context Adaptive.
+     * 
+     * Determines whether or not the current Assessment Test Session is in an adaptive context.
+     * 
+     * @return boolean
+     */
+    public function isAdaptive()
+    {
+        $currentAssessmentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
+        if ($currentAssessmentItemRef) {
+            $categories = $currentAssessmentItemRef->getCategories()->getArrayCopy();
+            return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $categories);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Select the next Adaptive Item.
+     * 
+     * Ask the CAT Engine for the Next Item to be presented to the candidate, depending on the last
+     * CAT Item ID and last CAT Item Output currently stored.
+     * 
+     * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
+     * null meaning that there is no CAT Item to be presented.
+     * 
+     * @return string|null
+     */
+    public function selectAdaptiveNextItem()
+    {
+        $lastItemId = $this->getLastCatItemId();
+        $lastOutput = $this->getLastCatItemOutput();
+        $catSection = $this->getCatEngine()->restoreSection($this->getCurrentCatSection());
+        $catSession = $catSection->restoreSession($this->getCatSession());
+        
+        if (!empty($lastItemId)) {
+            $selection = $catSession->getTestMap([$lastOutput]);
+        } else {
+            $selection = $catSession->getTestMap([]);
+        }
+        
+        if (is_array($selection) && count($selection) == 0) {
+            
+            return null;
+        } else {
+            $this->persistLastCatItemIds($selection);
+            $this->persistCatSession(json_encode($catSession));
+            return $selection[0];
+        }
     }
 }
