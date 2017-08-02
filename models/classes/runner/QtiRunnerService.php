@@ -44,6 +44,7 @@ use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
@@ -1351,9 +1352,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        $maxTimeSeconds = $this->getTimeLimitsFromSession($session);
-
         foreach ($session->getRegularTimeConstraints() as $tc) {
+            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
+
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
                 $source = $tc->getSource();
@@ -1579,45 +1580,36 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * @param TestSession $session
+     * @param string $qtiClassName
      * @return null|string
      */
-    public function getTimeLimitsFromSession(TestSession $session)
+    public function getTimeLimitsFromSession(TestSession $session, $qtiClassName = null)
     {
+
         $maxTimeSeconds = null;
+        $item = null;
+        switch ($qtiClassName) {
+            case 'assessmentTest' :
+                $item = $session->getAssessmentTest();
+                break;
+            case 'testPart':
+                $item = $session->getCurrentTestPart();
+                break;
+            case 'assessmentSection':
+                $item = $session->getCurrentAssessmentSection();
+                break;
+            case 'assessmentItemRef':
+                $item = $session->getCurrentAssessmentItemSession();
+                break;
+            default:
 
-        // From Test
-        if ($timeLimits = $session->getAssessmentTest()->getTimeLimits()) {
-            $timeLimits = $session->getAssessmentTest()->getTimeLimits();
-            $maxTimeSeconds = $timeLimits->hasMaxTime()
-                ? $timeLimits->getMaxTime()->getSeconds(true)
-                : null;
+                break;
         }
 
-        // From TestPart
-        if ($testPart = $session->getCurrentTestPart()) {
-            if ($testSessionLimits = $testPart->getTimeLimits()) {
-                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
-                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
-                    : $maxTimeSeconds;
-            }
-        }
-
-        // From AssessmentSection
-        if ($section = $session->getCurrentAssessmentSection()) {
-            if ($testSessionLimits = $section->getTimeLimits()) {
-                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
-                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
-                    : $maxTimeSeconds;
-            }
-        }
-
-        // From AssessmentItem
-        if ($test = $session->getCurrentAssessmentItemSession()) {
-            if ($testSessionLimits = $test->getTimeLimits()) {
-                $maxTimeSeconds = $testSessionLimits->hasMaxTime()
-                    ? $testSessionLimits->getMaxTime()->getSeconds(true)
-                    : $maxTimeSeconds;
-            }
+        if ($item && $limits = $item->getTimeLimits()) {
+            $maxTimeSeconds = $limits->hasMaxTime()
+                ? $limits->getMaxTime()->getSeconds(true)
+                : $maxTimeSeconds;
         }
 
         return $maxTimeSeconds;
