@@ -29,12 +29,12 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '10.11.0',
+    'version'     => '10.19.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.4.0',
         'taoQtiItem' => '>=9.4.0',
-        'tao'        => '>=12.3.0',
+        'tao'        => '>=12.6.0',
         'generis'    => '>=3.36.0',
         'taoDelivery' => '>=7.0.0'
     ),
@@ -44,7 +44,8 @@ return array(
 	'install' => array(
 		'rdf' => array(
 			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf'
+		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
+			dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
 		),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
