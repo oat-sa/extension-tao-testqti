@@ -185,26 +185,21 @@ function(
 
                         //the itemRef should also "inherit" the categories set at the item level
                         categories = sectionCategory.getCategories(sectionModel);
-                        defaultItemData.categories = _.clone(categories.propagated);
+                        defaultItemData.categories = _.clone(categories.propagated) || [];
 
                         _.forEach(selection, function(item){
-                            //var $item = $(item);
-                            var itemCategories = item.categories;
                             var itemData = _.defaults({
                                 href        : item.uri,
                                 label       : item.label,
                                 'qti-type'  : 'assessmentItemRef'
                             }, defaultItemData);
-                            if(!_.isEmpty(itemCategories)){
-                                itemData.categories = _.merge( itemData.categories, itemCategories.trim().split(',') );
+
+                            if(_.isArray(item.categories)){
+                                itemData.categories = item.categories.concat(itemData.categories);
                             }
 
                             addItemRef($('.itemrefs', $section), null, itemData);
                         });
-
-                        //reset the current selection
-                        //$('.ui-selected', $items).removeClass('ui-selected').removeClass('selected');
-                        console.log('trigger', 'itemselected.creator', $itemsPanel);
 
                         $itemsPanel.trigger('itemselected.creator');
 

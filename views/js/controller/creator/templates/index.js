@@ -17,7 +17,6 @@ function(
     section,
     rubricBlock,
     itemRef,
-    item,
     outcomes,
     testProps,
     testPartProps,
