@@ -24,7 +24,6 @@ define([
     'lodash',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
-
 ], function($, _, testItemProviderFactory, resourceSelectorFactory){
     'use strict';
 
