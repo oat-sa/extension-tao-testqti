@@ -32,7 +32,7 @@ use oat\tao\model\ClientLibConfigRegistry;
  * a caching proxy in order to cache the next N items in item flow
  * of a given assessment test session.
  */
-class SetPrecachingConfig extends \common_ext_action_InstallAction
+class SetPreCachingConfig extends \common_ext_action_InstallAction
 {
     /**
      * @param $params
