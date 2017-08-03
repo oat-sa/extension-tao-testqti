@@ -58,9 +58,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     abstract public function process();
 
     /**
-     * Main method to process the action
+     * Method to set a trace variable telling that the item was offline
      *
-     * @return mixed
+     * @return bool
      */
     protected function setOffline()
     {
@@ -70,7 +70,12 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
             : null;
 
-        $this->getRunnerService()->storeTraceVariable($serviceContext, $itemRef, self::OFFLINE_VARIABLE, null);
+        if(!is_null($itemRef)){
+            $hrefParts = explode('|', $itemRef);
+            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, null);
+        }
+
+        return false;
 
     }
 
