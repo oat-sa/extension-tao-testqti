@@ -70,7 +70,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
             : null;
 
-        $this->getRunnerService()->storeTraceVariable($serviceContext, $itemRef, self::OFFLINE_VARIABLE);
+        $this->getRunnerService()->storeTraceVariable($serviceContext, $itemRef, self::OFFLINE_VARIABLE, null);
 
     }
 
