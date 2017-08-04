@@ -1470,5 +1470,4 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.20.0');
         }
     }
-    }
 }
