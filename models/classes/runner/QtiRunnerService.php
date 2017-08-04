@@ -44,6 +44,7 @@ use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
@@ -1352,6 +1353,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         foreach ($session->getRegularTimeConstraints() as $tc) {
+            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
+
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
                 $source = $tc->getSource();
@@ -1361,7 +1364,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
                     'source' => $identifier,
                     'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($seconds),
+                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $source->getQtiClassName()
                 );
@@ -1573,5 +1576,38 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             return $context->getTestSession();
         }
+    }
+
+    /**
+     * @param TestSession $session
+     * @param string $qtiClassName
+     * @return null|string
+     */
+    public function getTimeLimitsFromSession(TestSession $session, $qtiClassName)
+    {
+        $maxTimeSeconds = null;
+        $item = null;
+        switch ($qtiClassName) {
+            case 'assessmentTest' :
+                $item = $session->getAssessmentTest();
+                break;
+            case 'testPart':
+                $item = $session->getCurrentTestPart();
+                break;
+            case 'assessmentSection':
+                $item = $session->getCurrentAssessmentSection();
+                break;
+            case 'assessmentItemRef':
+                $item = $session->getCurrentAssessmentItemSession();
+                break;
+        }
+
+        if ($item && $limits = $item->getTimeLimits()) {
+            $maxTimeSeconds = $limits->hasMaxTime()
+                ? $limits->getMaxTime()->getSeconds(true)
+                : $maxTimeSeconds;
+        }
+
+        return $maxTimeSeconds;
     }
 }
