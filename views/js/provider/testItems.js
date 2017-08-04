@@ -39,6 +39,9 @@ define([
         getItems : {
             url : urlUtil.route('getItems', 'Items', 'taoQtiTest')
         },
+        getItemClassProperties : {
+            url : urlUtil.route('create', 'RestFormItem', 'taoItems')
+        }
     };
 
     /**
@@ -71,6 +74,15 @@ define([
              */
             getItems : function getItems(params){
                 return request(config.getItems.url, params);
+            },
+
+            /**
+             * Get the properties of a the given item class
+             * @param {String} classUri - the item class URI
+             * @returns {Promise} that resolves with the classes
+             */
+            getItemClassProperties: function getItemClassProperties(classUri) {
+                return request(config.getItemClassProperties.url, classUri);
             }
         };
     };

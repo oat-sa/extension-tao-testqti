@@ -85,20 +85,26 @@ class CreatorItems extends ConfigurableService
      * Retrieve QTI Items for the given parameters
      * @param \core_kernel_classes_Class $itemClass the item class
      * @param string $format the lookup format
-     * @param string $pattern to filter by label
-     * @param int    $offset for paging
-     * @param int    $limit  for paging
+     * @param string|array  $search to filter by label if a string or provides the search filters
+     * @param int $offset for paging
+     * @param int $limit  for paging
      * @return array the items 
      */
-    public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $pattern, $offset = 0, $limit = 30)
+    public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
     {
         $propertyFilters = [
             self::PROPERTY_ITEM_MODEL_URI => self::ITEM_MODEL_QTI_URI,
             self::PROPERTY_ITEM_CONTENT_URI => '*'
         ];
-
-        if(!is_null($pattern) && strlen(trim($pattern)) > 0){
-            $propertyFilters[self::LABEL_URI] = $pattern;
+        if(is_string($search) && strlen(trim($search)) > 0){
+            $propertyFilters[self::LABEL_URI] = $search;
+        }
+        if(is_array($search)){
+            foreach($search as $uri => $value){
+                if(is_string($uri) && is_string($value) && strlen(trim($value)) > 0){
+                    $propertyFilters[$uri] = $value;
+                }
+            }
         }
 
         $result = [];

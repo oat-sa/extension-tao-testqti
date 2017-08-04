@@ -45,7 +45,6 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
      * Retrieve QTI Items for the given parameters.
      * @param \core_kernel_classes_Class $itemClass the item class
      * @param string $format the lookup format
-     * @param string $pattern to filter by label
      * @param int    $offset for paging
      * @param int    $limit  for paging
      * @return array the items
@@ -77,6 +76,5 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             'limit'  => $limit,
             'nodes'  => $nodes
         ];
-
     }
 }

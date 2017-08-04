@@ -51,39 +51,74 @@ define([
    /**
      * The ItemView setup items related components
      * @exports taoQtiTest/controller/creator/views/item
-     * @param {Function} loadItems - the function used to get items from the server
-     * @param {Function} getCategories - the function used to get items' categories
+     * @param {jQueryElement} $container - where to append the view
      */
-    var itemView =  function(){
+    return function itemView($container){
 
-        var $panel  = $('.test-creator-items .item-selection');
+        var selectorConfig = {
+            type : __('items'),
+            multiple : true
+        };
 
-        testItemProvider.getItemClasses().then(function(classes){
-            resourceSelectorFactory($panel, {
-                type : __('items'),
-                classUri : classes[0].uri,
-                classes : classes
+        //load the classes hierarchy
+        testItemProvider.getItemClasses()
+            .then(function(classes){
+                selectorConfig.classes = classes;
+                selectorConfig.classUri = classes[0].uri;
             })
-            .on('render', function(){
-                var self = this;
-                $panel.on('itemselected.creator', function(){
-                    self.clearSelection();
-                });
+            .then(function(){
+                //load the class properties
+                return testItemProvider.getItemClassProperties(selectorConfig.classUri);
             })
-            .on('query', function(params){
-                var self = this;
+            .then(function(filters){
+                //set the filters from the properties
+                selectorConfig.filters = filters;
+            })
+            .then(function(){
+                //set up the resource selector
+                resourceSelectorFactory($container, selectorConfig)
+                    .on('render', function(){
+                        var self = this;
+                        $container.on('itemselected.creator', function(){
+                            self.clearSelection();
+                        });
+                    })
+                    .on('query', function(params){
+                        var self = this;
 
-                testItemProvider.getItems(params).then(function(items){
-                    self.update(items, params);
-                })
-                .catch(onError);
+                        //ask the server the item from the component query
+                        testItemProvider.getItems(params)
+                            .then(function(items){
+                                //and update the item list
+                                self.update(items, params);
+                            })
+                            .catch(onError);
+                    })
+                    .on('classchange', function(classUri){
+                        var self = this;
+
+                        //by changing the class we need to change the
+                        //properties filters
+                        testItemProvider
+                            .getItemClassProperties(classUri)
+                            .then(function(filters){
+                                self.updateFilters(filters);
+                            })
+                            .catch(onError);
+                    })
+                    .on('change', function(values){
+
+                        /**
+                         * We've got a selection, triggered on the view container
+                         *
+                         * TODO replace jquery events by the eventifier
+                         *
+                         * @event jQuery#itemselect.creator
+                         * @param {Object[]} values - the selection
+                         */
+                        $container.trigger('itemselect.creator', [values]);
+                    });
             })
-            .on('change', function(values){
-                $panel.trigger('itemselect.creator', [values]);
-            });
-        })
-        .catch(onError);
+            .catch(onError);
     };
-
-    return itemView;
 });
