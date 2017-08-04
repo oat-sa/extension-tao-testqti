@@ -593,6 +593,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $selection = $catSession->getTestMap([]);
         }
         
+        \common_Logger::d('Current CAT item selection: ' . implode(', ', $selection));
+        
         if (is_array($selection) && count($selection) == 0) {
             
             return null;
