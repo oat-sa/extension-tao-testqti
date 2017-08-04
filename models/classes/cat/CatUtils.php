@@ -80,12 +80,12 @@ class CatUtils
         
         $isAdaptive = false;
         
-        if (($selection = $assessmentSection->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null)
+        if (($selection = $section->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null)
         {
             $xpath = new \DOMXPath($xmlExtension);
             $xpath->registerNamespace('ais', $namespace);
             
-            if ($xpath->query('.//ais:adaptiveItemSelection/', $xmlExtension)->length > 0) {
+            if ($xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0) {
                 $isAdaptive = true;
             }
         }
