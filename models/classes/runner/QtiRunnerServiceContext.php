@@ -562,8 +562,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         $currentAssessmentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
         if ($currentAssessmentItemRef) {
-            $categories = $currentAssessmentItemRef->getCategories()->getArrayCopy();
-            return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $categories);
+            return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptivePlaceholder($currentAssessmentItemRef);
         } else {
             return false;
         }
@@ -592,6 +591,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             $selection = $catSession->getTestMap([]);
         }
+        
+        \common_Logger::d('Current CAT item selection: ' . implode(', ', $selection));
         
         if (is_array($selection) && count($selection) == 0) {
             
