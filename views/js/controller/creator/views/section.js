@@ -230,12 +230,6 @@ function(
                         modelOverseer.trigger('item-add', itemRefModel);
                     }
                 });
-
-            //on set up, if there is a selection ongoing, we trigger the event
-            //$selected = $('.selected', $items);
-            //if($selected.length > 0){
-                //$items.trigger('itemselect.creator', $selected);
-            //}
         }
 
         /**

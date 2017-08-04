@@ -1337,14 +1337,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.1.0', '10.3.0');
-      
+
         if ($this->isVersion('10.3.0')) {
             $registry = DeliveryContainerRegistry::getRegistry();
             $registry->setServiceLocator($this->getServiceManager());
             $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
             $this->setVersion('10.4.0');
         }
-      
+
         $this->skip('10.4.0', '10.5.1');
 
         if ($this->isVersion('10.5.1')) {
@@ -1404,7 +1404,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('10.7.0');
         }
-        
+
         $this->skip('10.7.0', '10.10.0');
 
         if ($this->isVersion('10.10.0')) {
@@ -1460,14 +1460,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             OntologyUpdater::syncModels();
             $this->setVersion('10.17.0');
         }
-        
-        $this->skip('10.17.0', '10.18.1');
 
-        if ($this->isVersion('10.18.1')) {
+        $this->skip('10.17.0', '11.0.0');
+
+        if ($this->isVersion('11.0.0')) {
             $registerCreatorService = new RegisterCreatorServices();
             $registerCreatorService->setServiceLocator($this->getServiceManager());
             $registerCreatorService([]);
-            $this->setVersion('10.19.0');
+            $this->setVersion('11.1.0');
         }
     }
 }
