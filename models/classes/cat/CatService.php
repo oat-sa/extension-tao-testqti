@@ -7,6 +7,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
+use qtism\data\SectionPartCollection;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -156,6 +157,12 @@ class CatService extends ConfigurableService
                 $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
                 $settingsContent = trim(file_get_contents($settingsPath));
                 $catProperties[$assessmentSectionIdentifier] = $settingsContent;
+
+                $this->validateAdaptiveAssessmentSection(
+                    $assessmentSection->getSectionParts(),
+                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
+                    $settingsContent
+                );
             }
         }
 
@@ -168,6 +175,29 @@ class CatService extends ConfigurableService
             return true;
         } else {
             throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
+        }
+    }
+
+    /**
+     * Validation for adaptive section
+     * @param SectionPartCollection $sectionsParts
+     * @param string $ref
+     * @param string $testAdminId
+     * @throws AdaptiveSectionInjectionException
+     */
+    public function validateAdaptiveAssessmentSection(SectionPartCollection $sectionsParts, $ref, $testAdminId)
+    {
+        $engine = $this->getEngine($ref);
+        $adaptSection = $engine->setupSection($testAdminId);
+        $itemReferences = $adaptSection->getItemReferences();
+        $dependencies = $sectionsParts->getKeys();
+
+        if ($catDiff = array_diff($itemReferences, $dependencies)) {
+            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff));
+        }
+
+        if ($packageDiff = array_diff($dependencies, $itemReferences)) {
+            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff));
         }
     }
 }
