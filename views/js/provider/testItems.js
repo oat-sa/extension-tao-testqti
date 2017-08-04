@@ -82,7 +82,7 @@ define([
              * @returns {Promise} that resolves with the classes
              */
             getItemClassProperties: function getItemClassProperties(classUri) {
-                return request(config.getItemClassProperties.url, classUri);
+                return request(config.getItemClassProperties.url, { classUri : classUri });
             }
         };
     };
