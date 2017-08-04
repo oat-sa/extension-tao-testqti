@@ -72,7 +72,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
         if(!is_null($itemRef)){
             $hrefParts = explode('|', $itemRef);
-            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, null);
+            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, true);
         }
 
         return false;
