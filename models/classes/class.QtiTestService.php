@@ -37,6 +37,7 @@ use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 
 /**
  * the QTI TestModel service.
@@ -429,6 +430,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
                 } catch (common_Exception $e) {
                     common_Logger::w($e->getMessage());
+                } catch (AdaptiveSectionInjectionException $e) {
+                    $report->add(common_report_Report::createFailure($e->getMessage()));
+                    $report->setType(common_report_Report::TYPE_ERROR);
+                    $msg = __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $qtiTestResource->getIdentifier());
+                    $report->setMessage($msg);
+                    return $report;
                 }
 
                 if (count($dependencies['items']) > 0) {
