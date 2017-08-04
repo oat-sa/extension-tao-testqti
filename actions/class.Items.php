@@ -102,12 +102,12 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
             $classUri = $this->getRequestParameter('classUri');
             $format   = $this->getRequestParameter('format');
-            $pattern  = $this->hasRequestParameter('pattern') ? $this->getRequestParameter('pattern') : null;
+            $search   = $this->hasRequestParameter('search') ? json_decode($this->getRawParameter('search'), true) : '';
             $limit    = $this->hasRequestParameter('limit') ? $this->getRequestParameter('limit') : 30;
             $offset   = $this->hasRequestParameter('offset') ? $this->getRequestParameter('offset') : 0;
 
             $itemClass = new \core_kernel_classes_Class($classUri);
-            $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $pattern, $offset, $limit);
+            $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
         } catch(\Exception $e){
             return $this->returnFailure($e);
         }

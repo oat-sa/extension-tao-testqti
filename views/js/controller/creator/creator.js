@@ -107,7 +107,7 @@ define([
             });
 
             //set up the ItemView, give it a configured loadItems ref
-            itemView();
+            itemView($('.test-creator-items .item-selection', $container));
 
             // forwards some binder events to the model overseer
             $container.on('change.binder delete.binder', function (e, model) {

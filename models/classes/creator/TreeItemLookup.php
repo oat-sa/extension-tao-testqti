@@ -44,11 +44,10 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
     /**
      * Retrieve QTI Items in their hierarchy, for the given parameters as format them as tree.
      * @param \core_kernel_classes_Class $itemClass the item class
-     * @param string $format the lookup format
-     * @param string $pattern to filter by label
+     * @param array $propertyFilters propUri/propValue to search items
      * @param int    $offset for paging
      * @param int    $limit  for paging
-     * @return array the items 
+     * @return array the items
      */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
