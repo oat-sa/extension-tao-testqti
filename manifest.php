@@ -29,12 +29,12 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '11.0.0',
+    'version'     => '11.1.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.4.0',
         'taoQtiItem' => '>=9.4.0',
-        'tao'        => '>=12.5.0',
+        'tao'        => '>=12.6.0',
         'generis'    => '>=3.36.0',
         'taoDelivery' => '>=7.0.0'
     ),
@@ -57,6 +57,7 @@ return array(
             RegisterQtiFlysystemManager::class,
             \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
             \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
+            \oat\taoQtiTest\scripts\install\RegisterCreatorServices::class,
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
             \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
