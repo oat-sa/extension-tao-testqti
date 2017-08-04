@@ -36,6 +36,8 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 
 /**
  * the QTI TestModel service.
@@ -421,7 +423,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 // Build a DOM version of the fully resolved AssessmentTest for later usage.
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
-                
+
+                try {
+                    /** @var CatService $service */
+                    $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+                    $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
+                } catch (common_Exception $e) {
+                    common_Logger::w($e->getMessage());
+                } catch (AdaptiveSectionInjectionException $e) {
+                    $report->add(common_report_Report::createFailure($e->getMessage()));
+                    $report->setType(common_report_Report::TYPE_ERROR);
+                    $msg = __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $qtiTestResource->getIdentifier());
+                    $report->setMessage($msg);
+                    return $report;
+                }
+
                 if (count($dependencies['items']) > 0) {
 
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {

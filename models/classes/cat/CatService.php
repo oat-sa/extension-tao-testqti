@@ -3,8 +3,12 @@
 namespace oat\taoQtiTest\models\cat;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
+use qtism\data\AssessmentSection;
+use qtism\data\SectionPartCollection;
+use qtism\data\AssessmentItemRef;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -19,6 +23,8 @@ use qtism\data\storage\php\PhpDocument;
  */
 class CatService extends ConfigurableService
 {
+    use OntologyAwareTrait;
+    
     const SERVICE_ID = 'taoQtiTest/CatService';
     
     const OPTION_ENGINE_ENDPOINTS = 'endpoints';
@@ -28,6 +34,8 @@ class CatService extends ConfigurableService
     const OPTION_ENGINE_ARGS = 'args';
     
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
+    
+    const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
     
     private $engines = [];
     
@@ -69,6 +77,24 @@ class CatService extends ConfigurableService
         $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
         
         return $doc->getDocumentComponent();
+    }
+    
+    /**
+     * Get AssessmentItemRefs corresponding to a given Adaptive Placeholder.
+     * 
+     * This method will return an array of AssessmentItemRef objects corresponding to an Adaptive Placeholder.
+     * 
+     * @return array
+     */
+    public function getAssessmentItemRefsByPlaceholder(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, AssessmentItemRef $placeholder)
+    {
+        $urlinfo = parse_url($placeholder->getHref());
+        $adaptiveSectionId = ltrim($urlinfo['path'], '/');
+        
+        $doc = new PhpDocument();
+        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        
+        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
@@ -120,5 +146,105 @@ class CatService extends ConfigurableService
         }
         
         return $this->sectionMapCache[$dirId];
+    }
+    
+    /**
+     * Import XML data to QTI test RDF properties.
+     * 
+     * This method will import the information found in the CAT specific information of adaptive sections
+     * of a QTI test into the ontology for a given $test. This method is designed to be called at QTI Test Import time.
+     *
+     * @param \core_kernel_classes_Resource $testResource
+     * @param \qtism\data\AssessmentTest $testDefinition
+     * @param string $localTestPath The path to the related QTI Test Definition file (XML) during import.
+     * @return bool
+     * @throws \common_Exception In case of error.
+     */
+    public function importCatSectionIdsToRdfTest(\core_kernel_classes_Resource $testResource, AssessmentTest $testDefinition, $localTestPath)
+    {
+        $testUri = $testResource->getUri();
+        $catProperties = [];
+        $assessmentSections = $testDefinition->getComponentsByClassName('assessmentSection', true);
+        $catInfo = CatUtils::getCatInfo($testDefinition);
+        $testBasePath = pathinfo($localTestPath, PATHINFO_DIRNAME);
+
+        /** @var AssessmentSection $assessmentSection */
+        foreach ($assessmentSections as $assessmentSection) {
+            $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
+            
+            if (isset($catInfo[$assessmentSectionIdentifier])) {
+                $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+                $settingsContent = trim(file_get_contents($settingsPath));
+                $catProperties[$assessmentSectionIdentifier] = $settingsContent;
+
+                $this->validateAdaptiveAssessmentSection(
+                    $assessmentSection->getSectionParts(),
+                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
+                    $settingsContent
+                );
+            }
+        }
+
+        if (empty($catProperties)) {
+            \common_Logger::t("No QTI CAT property value to store for test '${testUri}'.");
+            return true;
+        }
+
+        if ($testResource->setPropertyValue($this->getProperty(self::CAT_ADAPTIVE_IDS_PROPERTY), json_encode($catProperties))) {
+            return true;
+        } else {
+            throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
+        }
+    }
+
+
+    /**
+     * Validation for adaptive section
+     * @param SectionPartCollection $sectionsParts
+     * @param string $ref
+     * @param string $testAdminId
+     * @throws AdaptiveSectionInjectionException
+     */
+    public function validateAdaptiveAssessmentSection(SectionPartCollection $sectionsParts, $ref, $testAdminId)
+    {
+        $engine = $this->getEngine($ref);
+        $adaptSection = $engine->setupSection($testAdminId);
+        $itemReferences = $adaptSection->getItemReferences();
+        $dependencies = $sectionsParts->getKeys();
+
+        if ($catDiff = array_diff($itemReferences, $dependencies)) {
+            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff));
+        }
+
+        if ($packageDiff = array_diff($dependencies, $itemReferences)) {
+            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff));
+        }
+    }
+    
+    /**
+     * Is an AssessmentSection Adaptive?
+     * 
+     * This method returns whether or not a given $section is adaptive.
+     * 
+     * @param \qtism\data\AssessmentSection $section
+     * @return boolean
+     */
+    public function isAssessmentSectionAdaptive(AssessmentSection $section)
+    {
+        $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
+        return count($assessmentItemRefs) === 1 && $this->isAdaptivePlaceholder($assessmentItemRefs[0]);
+    }
+    
+    /**
+     * Is an AssessmentItemRef an Adaptive Placeholder?
+     * 
+     * This method returns whether or not a given $assessmentItemRef is a runtime adaptive placeholder.
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
+     * @return boolean
+     */
+    public function isAdaptivePlaceholder(AssessmentItemRef $assessmentItemRef)
+    {
+        return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 }
