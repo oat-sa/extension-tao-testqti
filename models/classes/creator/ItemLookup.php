@@ -20,9 +20,20 @@
 namespace oat\taoQtiTest\models\creator;
 
 /**
- * Service to manage the assignment of users to deliveries
+ * How to lookup items
+ *
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 interface ItemLookup
 {
+    /**
+     * Retrieve Items for the given parameters
+     *
+     * @param \core_kernel_classes_Class $itemClass the item class
+     * @param array $propertyFilters propUri/propValue to search items
+     * @param int    $offset for paging
+     * @param int    $limit  for paging
+     * @return array the items
+     */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30);
 }
