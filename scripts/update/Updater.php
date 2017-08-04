@@ -1460,14 +1460,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             OntologyUpdater::syncModels();
             $this->setVersion('10.17.0');
         }
-        
-        $this->skip('10.17.0', '10.19.1');
 
-        if ($this->isVersion('10.19.1')) {
+        $this->skip('10.17.0', '11.0.0');
+
+        if ($this->isVersion('11.0.0')) {
             $registerCreatorService = new RegisterCreatorServices();
             $registerCreatorService->setServiceLocator($this->getServiceManager());
             $registerCreatorService([]);
-            $this->setVersion('10.20.0');
+            $this->setVersion('11.1.0');
         }
     }
 }

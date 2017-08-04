@@ -7,6 +7,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
+use qtism\data\AssessmentItemRef;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -75,6 +76,24 @@ class CatService extends ConfigurableService
         $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
         
         return $doc->getDocumentComponent();
+    }
+    
+    /**
+     * Get AssessmentItemRefs corresponding to a given Adaptive Placeholder.
+     * 
+     * This method will return an array of AssessmentItemRef objects corresponding to an Adaptive Placeholder.
+     * 
+     * @return array
+     */
+    public function getAssessmentItemRefsByPlaceholder(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, AssessmentItemRef $placeholder)
+    {
+        $urlinfo = parse_url($placeholder->getHref());
+        $adaptiveSectionId = ltrim($urlinfo['path'], '/');
+        
+        $doc = new PhpDocument();
+        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        
+        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
@@ -169,5 +188,32 @@ class CatService extends ConfigurableService
         } else {
             throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
         }
+    }
+    
+    /**
+     * Is an AssessmentSection Adaptive?
+     * 
+     * This method returns whether or not a given $section is adaptive.
+     * 
+     * @param \qtism\data\AssessmentSection $section
+     * @return boolean
+     */
+    public function isAssessmentSectionAdaptive(AssessmentSection $section)
+    {
+        $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
+        return count($assessmentItemRefs) === 1 && $this->isAdaptivePlaceholder($assessmentItemRefs[0]);
+    }
+    
+    /**
+     * Is an AssessmentItemRef an Adaptive Placeholder?
+     * 
+     * This method returns whether or not a given $assessmentItemRef is a runtime adaptive placeholder.
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
+     * @return boolean
+     */
+    public function isAdaptivePlaceholder(AssessmentItemRef $assessmentItemRef)
+    {
+        return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 }
