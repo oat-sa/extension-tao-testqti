@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
+use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
@@ -77,7 +78,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
-    const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
 
     /**
      * The test runner config
@@ -1269,14 +1269,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         if ($session->isRunning() === true && $session->isTimeout() === false) {
-            $isCat = false;
-            if($context->isAdaptive()){
-                $isCat = true;
-            }
 
-            $itemIdentifier = $this->getCurrentAssessmentItemRef($context)->getIdentifier();
-            $hrefParts = explode('|', $this->getItemHref($context, $itemIdentifier));
-            $this->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
+            $event = new QtiContinueInteractionEvent($context, $this);
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
         } else {
