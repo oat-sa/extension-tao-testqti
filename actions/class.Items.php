@@ -100,11 +100,19 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
                 throw new \InvalidArgumentException('Missing parameter format');
             }
 
+
             $classUri = $this->getRequestParameter('classUri');
             $format   = $this->getRequestParameter('format');
-            $search   = $this->hasRequestParameter('search') ? json_decode($this->getRawParameter('search'), true) : '';
+            $search   = $this->hasRequestParameter('search') ? $this->getRawParameter('search') : '';
             $limit    = $this->hasRequestParameter('limit') ? $this->getRequestParameter('limit') : 30;
             $offset   = $this->hasRequestParameter('offset') ? $this->getRequestParameter('offset') : 0;
+
+            if(! empty($search) ){
+                $decodedSearch = json_decode($search, true);
+                if(is_array($decodedSearch) && count($decodedSearch) > 0){
+                    $search = $decodedSearch;
+                }
+            }
 
             $itemClass = new \core_kernel_classes_Class($classUri);
             $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
