@@ -55,6 +55,8 @@ class Skip extends TestRunnerAction
             $serviceContext = $this->getServiceContext();
             $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getStart());
 
+            $this->setOffline();
+
             $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
 
             $response = [
