@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
+use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
@@ -76,6 +77,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @deprecated use SERVICE_ID
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
+
 
     /**
      * The test runner config
@@ -783,7 +785,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}";
+                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
                     
                     foreach ($session->getAllVariables() as $var) {
                         $variables[] = $var;
@@ -1267,6 +1269,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         if ($session->isRunning() === true && $session->isTimeout() === false) {
+
+            $event = new QtiContinueInteractionEvent($context, $this);
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
         } else {
@@ -1427,7 +1433,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $context->getTestSession()->getSessionId();
 
             if (!is_null($itemUri)) {
-                $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+                $currentItem = $this->getCurrentAssessmentItemRef($context);
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";

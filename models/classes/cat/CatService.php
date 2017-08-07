@@ -5,6 +5,7 @@ namespace oat\taoQtiTest\models\cat;
 use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
+use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
 use qtism\data\SectionPartCollection;
@@ -36,7 +37,9 @@ class CatService extends ConfigurableService
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
     
     const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
-    
+
+    const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
+
     private $engines = [];
     
     private $sectionMapCache = [];
@@ -246,5 +249,21 @@ class CatService extends ConfigurableService
     public function isAdaptivePlaceholder(AssessmentItemRef $assessmentItemRef)
     {
         return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
+    }
+
+    public function onQtiContinueInteraction($event)
+    {
+        if($event instanceof QtiContinueInteractionEvent){
+            $isCat = false;
+            $context = $event->getContext();
+            if($context->isAdaptive()){
+                $isCat = true;
+            }
+
+            $itemIdentifier = $event->getRunnerService()->getCurrentAssessmentItemRef($context)->getIdentifier();
+            $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
+            $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
+
+        }
     }
 }
