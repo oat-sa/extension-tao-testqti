@@ -77,6 +77,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
+    const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
+
     /**
      * The test runner config
      * @var RunnerConfig
@@ -783,7 +785,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}";
+                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
                     
                     foreach ($session->getAllVariables() as $var) {
                         $variables[] = $var;
@@ -1267,6 +1269,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         if ($session->isRunning() === true && $session->isTimeout() === false) {
+            $isCat = false;
+            if($context->isAdaptive()){
+                $isCat = true;
+            }
+
+            $itemIdentifier = $this->getCurrentAssessmentItemRef($context)->getIdentifier();
+            $hrefParts = explode('|', $this->getItemHref($context, $itemIdentifier));
+            $this->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
         } else {
@@ -1427,7 +1437,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $context->getTestSession()->getSessionId();
 
             if (!is_null($itemUri)) {
-                $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+                $currentItem = $this->getCurrentAssessmentItemRef($context);
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
