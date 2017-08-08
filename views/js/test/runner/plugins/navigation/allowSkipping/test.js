@@ -16,18 +16,19 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-/**
- * Test the test runner plugin preventSkipping
- *
- * @author Bertrand Chevrier <bertrand@taotesting.com>
- */
 define([
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/navigation/allowSkipping',
     'taoQtiTest/runner/helpers/currentItem'
-], function($, runnerFactory, providerMock, pluginFactory, currentItemHelper) {
+], function(
+    $,
+    runnerFactory,
+    providerMock,
+    pluginFactory,
+    currentItemHelper
+) {
     'use strict';
 
     var pluginApi;
