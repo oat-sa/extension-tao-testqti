@@ -65,7 +65,6 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var toggle = toggleAllowSkipping.bind(this);
 
             toggle();
 
@@ -98,28 +97,27 @@ define([
                 toggle();
             });
 
+            /**
+             * Enables/disables plugin
+             * @returns {this}
+             */
+            function toggle() {
+                var itemContext, testContext;
+
+                testContext = testRunner.getTestContext();
+
+                // TODO: Get itemSessionControl qti variables from the current item -
+                // which is where an individual item is determined to allow skipping.
+                itemContext = { allowSkipping: true };
+
+                if (testContext.allowSkipping && itemContext.allowSkipping) {
+                    return self.enable();
+                }
+
+                return self.disable();
+            }
+
             return this;
         }
     });
-
-    /**
-     * Enables/disables plugin
-     * @returns {this}
-     */
-    function toggleAllowSkipping() {
-        var itemContext, testContext, testRunner;
-
-        testRunner = this.getTestRunner();
-        testContext = testRunner.getTestContext();
-
-        // TODO: Get itemSessionControl qti variables from the current item -
-        // which is where an individual item is determined to allow skipping.
-        itemContext = { allowSkipping: true };
-
-        if (testContext.allowSkipping && itemContext.allowSkipping) {
-            return this.enable();
-        }
-
-        return this.disable();
-    }
 });

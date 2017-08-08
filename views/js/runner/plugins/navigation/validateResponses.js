@@ -58,12 +58,11 @@ define([
 
         /**
          * Initialize plugin (called during runner's initialization)
-         * @returns {undefined}
+         * @returns {this}
          */
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var toggle = toggleValidateResponses.bind(this);
 
             toggle();
 
@@ -95,28 +94,30 @@ define([
             .after('move skip', function () {
                 toggle();
             });
+
+            /**
+             * Enables/disables plugin
+             * @returns {this}
+             */
+            function toggle() {
+                var itemContext, testContext;
+
+                testContext = testRunner.getTestContext();
+
+                // TODO: Get itemSessionControl qti variables from the current item -
+                // which is where an individual item is determined to validate a
+                // response.
+                itemContext = { validateResponses: true };
+
+                if (testContext.validateResponses && itemContext.validateResponses) {
+                    return self.enable();
+                }
+
+                return self.disable();
+            }
+
+            return this;
         }
     });
 
-    /**
-     * Enables/disables plugin
-     * @returns {this}
-     */
-    function toggleValidateResponses() {
-        var itemContext, testContext, testRunner;
-
-        testRunner = this.getTestRunner();
-        testContext = testRunner.getTestContext();
-
-        // TODO: Get itemSessionControl qti variables from the current item -
-        // which is where an individual item is determined to validate a
-        // response.
-        itemContext = { validateResponses: true };
-
-        if (testContext.validateResponses && itemContext.validateResponses) {
-            return this.enable();
-        }
-
-        return this.disable();
-    }
 });
