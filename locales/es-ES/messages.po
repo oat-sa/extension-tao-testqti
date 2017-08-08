@@ -374,7 +374,7 @@ msgid "Hide Timed Section Warning"
 msgstr ""
 
 msgid "Hide timers"
-msgstr ""
+msgstr "Temporizador oculto"
 
 msgid "Highlight"
 msgstr "Resaltar"
@@ -1129,3 +1129,27 @@ msgstr "Acercar"
 msgid "Zoom out"
 msgstr "Alejar"
 
+# Scheme names
+msgid "Black on white"
+msgstr "Negro sobre blanco"
+
+msgid "Black on white"
+msgstr "Negro sobre blanco"
+
+msgid "Black on cream"
+msgstr "Negro sobre crema"
+
+msgid "Black on light blue"
+msgstr "Negro sobre azul celeste"
+
+msgid "Black on magenta"
+msgstr "Negro sobre magenta"
+
+msgid "White on black"
+msgstr "Blanco sobre negro"
+
+msgid "Light yellow on royal blue"
+msgstr "Amarillo claro sobre azul real"
+
+msgid "Gray on green (low contrast option)"
+msgstr "Gris sobre verde (opcion de bajo contraste)"
