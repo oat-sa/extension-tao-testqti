@@ -277,7 +277,27 @@ class taoQtiTest_helpers_TestRunnerUtils {
          
         return $doesAllowSkipping && $submissionMode === SubmissionMode::INDIVIDUAL;
     }
-    
+
+    /**
+     * Whether or not the candidate's response is validated
+     *
+     * @param AssessmentTestSession $session A given AssessmentTestSession object.
+     * @return boolean
+     */
+    static public function doesValidateResponses(AssessmentTestSession $session) {
+        $doesValidateResponses = true;
+        $submissionMode = $session->getCurrentSubmissionMode();
+
+        $routeItem = $session->getRoute()->current();
+        $routeControl = $routeItem->getItemSessionControl();
+
+        if (empty($routeControl) === false) {
+            $doesValidateResonses = $routeControl->getItemSessionControl()->mustValidateResponses();
+        }
+
+        return $doesValidateResponses && $submissionMode === SubmissionMode::INDIVIDUAL;
+    }
+
     /**
      * Whether or not the candidate taking the given $session is allowed to make
      * a comment on the presented Assessment Item.
