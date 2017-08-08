@@ -1287,5 +1287,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(SectionPauseService::SERVICE_ID, new SectionPauseService());
             $this->setVersion('9.18.0');
         }
+
+        $this->skip('9.18.0', '9.18.1');
     }
 }
