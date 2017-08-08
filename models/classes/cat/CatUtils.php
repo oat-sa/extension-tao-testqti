@@ -45,16 +45,21 @@ class CatUtils
                 
                 // Reference QTI assessmentSection identifier.
                 $sectionIdentifier = $assessmentSection->getIdentifier();
-                $info[$sectionIdentifier] = [];
+                $sectionInfo = [];
+                
                 
                 // Get the adaptiveEngineRef.
                 foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveEngineRef', $xmlExtension) as $adaptiveEngineRef) {
-                    $info[$sectionIdentifier]['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
+                    $sectionInfo['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
                 }
                 
                 // Get the adaptiveSettingsRef.
                 foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
-                    $info[$sectionIdentifier]['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
+                    $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
+                }
+                
+                if (!empty($sectionInfo)) {
+                    $info[$sectionIdentifier] = $sectionInfo;
                 }
             }
         }
@@ -80,12 +85,12 @@ class CatUtils
         
         $isAdaptive = false;
         
-        if (($selection = $assessmentSection->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null)
+        if (($selection = $section->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null)
         {
             $xpath = new \DOMXPath($xmlExtension);
             $xpath->registerNamespace('ais', $namespace);
             
-            if ($xpath->query('.//ais:adaptiveItemSelection/', $xmlExtension)->length > 0) {
+            if ($xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0) {
                 $isAdaptive = true;
             }
         }

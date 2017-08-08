@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
+use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
@@ -44,6 +45,7 @@ use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
@@ -75,6 +77,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @deprecated use SERVICE_ID
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
+
 
     /**
      * The test runner config
@@ -786,7 +789,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}";
+                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
                     
                     foreach ($session->getAllVariables() as $var) {
                         $variables[] = $var;
@@ -1270,6 +1273,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         if ($session->isRunning() === true && $session->isTimeout() === false) {
+
+            $event = new QtiContinueInteractionEvent($context, $this);
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
         } else {
@@ -1356,6 +1363,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         foreach ($session->getRegularTimeConstraints() as $tc) {
+            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
+
             $timeRemaining = $tc->getMaximumRemainingTime();
             if ($timeRemaining !== false) {
                 $source = $tc->getSource();
@@ -1365,7 +1374,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
                     'source' => $identifier,
                     'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($seconds),
+                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
                     'qtiClassName' => $source->getQtiClassName()
                 );
@@ -1428,7 +1437,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $context->getTestSession()->getSessionId();
 
             if (!is_null($itemUri)) {
-                $currentItem = $context->getTestSession()->getCurrentAssessmentItemRef();
+                $currentItem = $this->getCurrentAssessmentItemRef($context);
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
@@ -1577,5 +1586,38 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             return $context->getTestSession();
         }
+    }
+
+    /**
+     * @param TestSession $session
+     * @param string $qtiClassName
+     * @return null|string
+     */
+    public function getTimeLimitsFromSession(TestSession $session, $qtiClassName)
+    {
+        $maxTimeSeconds = null;
+        $item = null;
+        switch ($qtiClassName) {
+            case 'assessmentTest' :
+                $item = $session->getAssessmentTest();
+                break;
+            case 'testPart':
+                $item = $session->getCurrentTestPart();
+                break;
+            case 'assessmentSection':
+                $item = $session->getCurrentAssessmentSection();
+                break;
+            case 'assessmentItemRef':
+                $item = $session->getCurrentAssessmentItemSession();
+                break;
+        }
+
+        if ($item && $limits = $item->getTimeLimits()) {
+            $maxTimeSeconds = $limits->hasMaxTime()
+                ? $limits->getMaxTime()->getSeconds(true)
+                : $maxTimeSeconds;
+        }
+
+        return $maxTimeSeconds;
     }
 }
