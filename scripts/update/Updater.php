@@ -1478,6 +1478,31 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['enable-validate-responses'] = false;
             $extension->setConfig('testRunner', $config);
 
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('preventSkipping');
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'allowSkipping',
+                'name'        => 'Allow Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/allowSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow submission of null/default responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'validateResponses',
+                'name'        => 'Validate Responses',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/validateResponses',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent submission of invalid responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
             $this->setVersion('11.6.0');
         }
     }
