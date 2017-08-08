@@ -1471,5 +1471,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('11.1.0', '11.5.1');
+
+        if ($this->isVersion('11.5.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-validate-responses'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('11.6.0');
+        }
     }
 }
