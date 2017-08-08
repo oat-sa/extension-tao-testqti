@@ -100,16 +100,9 @@ define([
              * @returns {this}
              */
             function toggle() {
-                var itemContext, testContext;
+                var testContext = testRunner.getTestContext();
 
-                testContext = testRunner.getTestContext();
-
-                // TODO: Get itemSessionControl qti variables from the current item -
-                // which is where an individual item is determined to validate a
-                // response.
-                itemContext = { validateResponses: true };
-
-                if (testContext.validateResponses && itemContext.validateResponses) {
+                if (testContext.validateResponses) {
                     return self.enable();
                 }
 

@@ -102,15 +102,9 @@ define([
              * @returns {this}
              */
             function toggle() {
-                var itemContext, testContext;
+                var testContext = testRunner.getTestContext();
 
-                testContext = testRunner.getTestContext();
-
-                // TODO: Get itemSessionControl qti variables from the current item -
-                // which is where an individual item is determined to allow skipping.
-                itemContext = { allowSkipping: true };
-
-                if (testContext.allowSkipping && itemContext.allowSkipping) {
+                if (testContext.allowSkipping) {
                     return self.enable();
                 }
 
