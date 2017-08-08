@@ -54,8 +54,6 @@ use oat\taoDelivery\model\container\delivery\ContainerProvider;
  */
 class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
-    const ADAPTIVE_INFO_MAP_FILENAME = 'adaptive-info-map.json';
-    
     const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
     
     const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
@@ -808,6 +806,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     
                     // QTI Adaptive Section detected.
                     \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
+                    
+                    // Deal with AssessmentSection Compiling.
+                    $phpDocument->setDocumentComponent($current);
+                    $this->getPrivateDirectory()->write("adaptive-assessment-section-${sectionIdentifier}.php", $phpDocument->saveToString());
                     
                     foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
                         $sectionPart =  $sectionParts[$sectionPartIdentifier];
