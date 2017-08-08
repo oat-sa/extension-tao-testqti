@@ -43,20 +43,26 @@ define([
             messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
         if (messageEnabled) {
-            if (flaggedCount && unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                    unansweredCount.toString(),
-                    flaggedCount.toString()
+            if (unansweredCount === 0) {
+                itemsCountMessage += __('You answered all %s question(s) in this section',
+                    stats.questions.toString()
                 );
-
-            } else if (flaggedCount) {
-                itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
-
-            } else if (unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+            } else {
+                itemsCountMessage = __('You answered only %s of the %s question(s) in this section',
+                    stats.answered.toString(),
+                    stats.questions.toString()
+                );
             }
+
+            if (flaggedCount !== 0) {
+                itemsCountMessage += ', ';
+                itemsCountMessage +=  __('and flagged %s of them.', flaggedCount.toString());
+            } else {
+                itemsCountMessage += '.';
+            }
+
         }
-        return (itemsCountMessage + ' ' + message).trim();
+        return (itemsCountMessage + " " + message).trim();
     }
 
     return {
