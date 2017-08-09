@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\event;
 use oat\oatbox\event\Event;
 use oat\libCat\CatSession;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\data\AssessmentSection;
 
 /**
  * Class InitializeAdaptiveSessionEvent
