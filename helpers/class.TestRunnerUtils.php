@@ -292,7 +292,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $routeControl = $routeItem->getItemSessionControl();
 
         if (empty($routeControl) === false) {
-            $doesValidateResonses = $routeControl->getItemSessionControl()->mustValidateResponses();
+            $doesValidateResponses = $routeControl->getItemSessionControl()->mustValidateResponses();
         }
 
         return $doesValidateResponses && $submissionMode === SubmissionMode::INDIVIDUAL;
