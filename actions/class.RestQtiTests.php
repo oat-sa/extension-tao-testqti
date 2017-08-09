@@ -115,7 +115,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-            $task = ImportQtiTest::createTask($file, $this->getTestClass());
+            $task = ImportQtiTest::createTask($file, $this->getTestClass(), $this->isMetadataGuardiansEnabled());
             $result = [
                 'reference_id' => $task->getId()
             ];
