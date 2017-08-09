@@ -241,7 +241,6 @@
             </div>
         </div>
 
-{{!-- Property not yet available in delivery --}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -260,7 +259,7 @@
                 </div>
             </div>
         </div>
-{{!-- --}}
+
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .itemref-time-limits">{{__ 'Time Limits'}}</h4>
