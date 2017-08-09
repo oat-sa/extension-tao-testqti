@@ -52,7 +52,7 @@ define([
     /**
      * The message to display when exiting
      */
-    var exitMessage = __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?');
+    var exitMessage = __('Once you close this section, you cannot return to it or change your answers.');
 
 
     var timerTypes = {
@@ -488,7 +488,27 @@ define([
                                     resolve();
                                     // display a message if we exit a timed section
                                 } else if (leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
-                                    testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
+                                    testRunner.trigger(
+                                        'confirm.exittimed',
+                                        messages.getExitMessage(exitMessage, 'section', testRunner),
+                                        resolve,
+                                        reject,
+                                        {
+                                            buttons: {
+                                                ok: {
+                                                    id : 'ok',
+                                                    type : 'info',
+                                                    label : __('Close this Section'),
+                                                    close: true
+                                                },
+                                                cancel: {
+                                                    id : 'cancel',
+                                                    type : 'regular',
+                                                    label : __('Review my Answers'),
+                                                    close: true
+                                                }
+                                            }
+                                        });
                                 } else {
                                     resolve();
                                 }
