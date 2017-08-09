@@ -32,6 +32,7 @@ use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
+use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
 
 /**
  * Class QtiRunnerServiceContext
@@ -374,17 +375,28 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function initCatSession()
     {
+        $testSession = $this->getTestSession();
         $catEngine = $this->getCatEngine();
         $catSession = $this->getCatSession();
+        $catSectionId = $this->getCurrentCatSection();
         
         // Deal with the CAT Section.
-        $catSection = $this->getCatEngine()->restoreSection($this->getCurrentCatSection());
+        $catSection = $this->getCatEngine()->restoreSection($catSectionId);
         
         // Deal with the CAT Session.
         if(!empty($catSession)){
             $catSession = $catSection->restoreSession($catSession);
+            \common_Logger::d("CAT Session '" . $catSession->getTestTakerSessionId() . "' restored.");
         } else {
             $catSession = $catSection->initSession();
+            $event = new InitializeAdaptiveSessionEvent(
+                $testSession,
+                $testSession->getCurrentAssessmentSection(),
+                $catSession
+            );
+            
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+            \common_Logger::d("CAT Session '" . $catSession->getTestTakerSessionId() . "' initialized.");
         }
         
         $this->persistCatSession(json_encode($catSession));
