@@ -83,38 +83,38 @@ define([
 
     QUnit.module('allow skipping');
 
-    QUnit.cases([{
-        title: 'enabled',
-        context : {
-            allowSkipping : true
-        },
-        enabled : true
-    }, {
-        title: 'disabled',
-        context : {
-            allowSkipping : false
-        },
-        enabled : false
-    }])
-    .asyncTest('toggle ', function(data, assert) {
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
+    // QUnit.cases([{
+    //     title: 'enabled',
+    //     context : {
+    //         allowSkipping : true
+    //     },
+    //     enabled : true
+    // }, {
+    //     title: 'disabled',
+    //     context : {
+    //         allowSkipping : false
+    //     },
+    //     enabled : false
+    // }])
+    // .asyncTest('toggle ', function(data, assert) {
+    //     var runner        = runnerFactory(providerName);
+    //     var plugin        = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(1);
+    //     QUnit.expect(1);
 
-        runner.setTestContext(data.context);
+    //     runner.setTestContext(data.context);
 
-        plugin
-            .init()
-            .then(function() {
-                assert.equal(plugin.getState('enabled'), data.enabled, 'The state is correct');
-                QUnit.start();
-            })
-            .catch(function(err){
-                assert.ok(false, err.message);
-                QUnit.start();
-            });
-    });
+    //     plugin
+    //         .init()
+    //         .then(function() {
+    //             assert.equal(plugin.getState('enabled'), data.enabled, 'The state is correct');
+    //             QUnit.start();
+    //         })
+    //         .catch(function(err){
+    //             assert.ok(false, err.message);
+    //             QUnit.start();
+    //         });
+    // });
 
     QUnit.asyncTest('allow moving', function(assert) {
 
