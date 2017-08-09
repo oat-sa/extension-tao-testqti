@@ -1470,6 +1470,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('11.1.0');
         }
 
-        $this->skip('11.1.0', '11.5.1');
+        $this->skip('11.1.0', '11.6.0');
     }
 }
