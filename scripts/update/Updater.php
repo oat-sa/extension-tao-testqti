@@ -1505,10 +1505,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('11.6.0');
         }
+        
+        $this->skip('11.6.0', '11.8.0');
 
-        $this->skip('11.6.0', '11.7.0');
-
-        if($this->isVersion('11.7.0')){
+        if($this->isVersion('11.8.0')){
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
@@ -1521,7 +1521,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active' => false, //registered by but activated
                 'tags' => [ ]
             ]));
-            $this->setVersion('11.8.0');
+            $this->setVersion('11.9.0');
         }
     }
 }
