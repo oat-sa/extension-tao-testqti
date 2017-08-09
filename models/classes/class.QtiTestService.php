@@ -68,6 +68,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     protected $metadataImporter;
 
     /**
+     * @var bool If true, it will guard and check metadata that comes from package.
+     */
+    protected $useMetadataGuardians = true;
+
+    public function enableMetadataGuardians() {
+        $this->useMetadataGuardians = true;
+    }
+
+    public function disableMetadataGuardians() {
+        $this->useMetadataGuardians = false;
+    }
+
+    /**
      * Get the QTI Test document formated in JSON.
      *
      * @param core_kernel_classes_Resource $test
@@ -231,7 +244,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     /**
      * Import a QTI Test Package containing one or more QTI Test definitions.
-     *
      * @param core_kernel_classes_Class $targetClass The Target RDFS class where you want the Test Resources to be created.
      * @param string $file The path to the IMS archive you want to import tests from.
      * @return common_report_Report An import report.
@@ -450,7 +462,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                                 // Check if the item is already stored in the bank.
                                 $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
-                                if ($guardian !== false) {
+                                if ($this->useMetadataGuardians && $guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
                                     \common_Logger::d($message);
                                     $report->add(common_report_Report::createInfo($message, $guardian));

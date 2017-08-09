@@ -33,6 +33,8 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
 
     const TASK_ID_PARAM = 'id';
 
+    const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
+
     private static $accepted_types = array(
         'application/zip',
         'application/x-zip-compressed',
@@ -71,7 +73,7 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
             if (!in_array($mimeType, self::$accepted_types)) {
                 throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass());
+            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass(), $this->isMetadataGuardiansEnabled());
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
                 $data = array();
                 foreach ($report as $r) {
@@ -266,5 +268,25 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     private function getTestClass()
     {
         return $this->getClassFromRequest(new \core_kernel_classes_Class(TAO_TEST_CLASS));
+    }
+
+    /**
+     * @return bool
+     * @throws common_exception_RestApi
+     */
+    private function isMetadataGuardiansEnabled()
+    {
+        $enableMetadataGuardians = $this->getRequestParameter(self::ENABLE_METADATA_GUARDIANS);
+        if (empty($enableMetadataGuardians)) {
+            return true; // default value
+        }
+
+        if (!is_bool($enableMetadataGuardians)) {
+            throw new \common_exception_RestApi(
+                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean.'
+            );
+        }
+
+        return boolval($enableMetadataGuardians);
     }
 }
