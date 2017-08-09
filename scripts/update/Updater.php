@@ -1471,5 +1471,41 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('11.1.0', '11.5.1');
+
+        if ($this->isVersion('11.5.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-validate-responses'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/navigation/preventSkipping');
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'allowSkipping',
+                'name'        => 'Allow Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/allowSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow submission of null/default responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'validateResponses',
+                'name'        => 'Validate Responses',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/validateResponses',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent submission of invalid responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('11.6.0');
+        }
+        
+        $this->skip('11.6.0', '11.8.1');
     }
 }
