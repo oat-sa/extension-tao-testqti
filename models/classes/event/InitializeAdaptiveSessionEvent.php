@@ -36,20 +36,20 @@ class InitializeAdaptiveSessionEvent implements Event
     
     protected $catSession;
     
-    protected $assessmentSectionId;
+    protected $assessmentSection;
 
     /**
      * Create a new InitializeAdaptiveSessionEvent object.
      * 
      * @param \qtism\runtime\tests\AssessmentTestSession $testSession
      * @param \oat\libCat\CatSession $catSession
-     * @param string $assessmentSectionId The original QTI identifier of the section.
+     * @param \qtism\data\AssessmentSection $assessmentSection The original QTI section the $catSession belongs to.
      */
-    public function __construct(AssessmentTestSession $testSession, CatSession $catSession, $assessmentSectionId)
+    public function __construct(AssessmentTestSession $testSession, AssessmentSection $assessmentSection, CatSession $catSession)
     {
         $this->testSession = $testSession;
         $this->catSession = $catSession;
-        $this->assessmentSectionId = $assessmentSectionId;
+        $this->assessmentSection = $assessmentSection;
     }
 
     /**
@@ -77,8 +77,8 @@ class InitializeAdaptiveSessionEvent implements Event
         return $this->catSession;
     }
     
-    public function getAssessmentSectionId()
+    public function getAssessmentSection()
     {
-        return $this->assessmentSectionId;
+        return $this->assessmentSection;
     }
 }

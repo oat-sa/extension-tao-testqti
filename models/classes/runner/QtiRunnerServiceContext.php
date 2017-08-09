@@ -375,6 +375,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function initCatSession()
     {
+        $testSession = $this->getTestSession();
         $catEngine = $this->getCatEngine();
         $catSession = $this->getCatSession();
         $catSectionId = $this->getCurrentCatSection();
@@ -384,10 +385,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         // Deal with the CAT Session.
         if(!empty($catSession)){
+            \common_Logger::d('Restoring CAT Session.');
             $catSession = $catSection->restoreSession($catSession);
         } else {
+            \common_Logger::d('Initializating CAT Session.');
             $catSession = $catSection->initSession();
-            $event = new InitializeAdaptiveSessionEvent($this->getTestSession(), $catSession, $this->getTestSession()->getCurrentAssessmentSection()->getIdentifier());
+            $event = new InitializeAdaptiveSessionEvent(
+                $testSession,
+                $catSession,
+                $testSession->getCurrentAssessmentSection()
+            );
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
         }
         
