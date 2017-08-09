@@ -61,14 +61,13 @@ define([
          * @returns {this}
          */
         init: function init() {
-            var self = this;
             var testRunner = this.getTestRunner();
-
-            toggle();
 
             testRunner
             .before('move', function () {
-                if (self.getState('enabled')) {
+                var testContext = testRunner.getTestContext();
+
+                if (testContext.validateResponses) {
                     this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
@@ -90,24 +89,7 @@ define([
                     });
                 }
 
-            })
-            .after('move skip', function () {
-                toggle();
             });
-
-            /**
-             * Enables/disables plugin
-             * @returns {this}
-             */
-            function toggle() {
-                var testContext = testRunner.getTestContext();
-
-                if (testContext.validateResponses) {
-                    return self.enable();
-                }
-
-                return self.disable();
-            }
 
             return this;
         }
