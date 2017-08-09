@@ -1480,7 +1480,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $registry = PluginRegistry::getRegistry();
 
-            $registry->remove('preventSkipping');
+            $registry->remove('taoQtiTest/runner/plugins/navigation/preventSkipping');
             $registry->register(TestPlugin::fromArray([
                 'id'          => 'allowSkipping',
                 'name'        => 'Allow Skipping',
