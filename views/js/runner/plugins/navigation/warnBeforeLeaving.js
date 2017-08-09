@@ -27,8 +27,18 @@ define([
 ], function (__, pluginFactory) {
     'use strict';
 
-    var warnMessage = __('Yo Mama');
+    /**
+     * There's only a few chance to have this message displayed.
+     * Most browsers doesn't support custom message anymore.
+     * See https://www.chromestatus.com/feature/5349061406228480
+     */
+    var warnMessage = __('Please confirm you want to leave the test.');
 
+    /**
+     * The beforeunload listener
+     * @param {Event} e
+     * @returns {String} the custom message (for some browser, just need to be a string)
+     */
     var warnListener = function warnListener(e){
         e.returnValue = warnMessage;
         return warnMessage;
@@ -48,20 +58,28 @@ define([
 
         /**
          * Initialize plugin (called during runner's initialization)
-         * @returns {this}
          */
         init: function init() {
             this.enable();
         },
 
+        /**
+         * Destroy plugin (called during runner's destruction)
+         */
         destroy : function destroy(){
             this.disable();
         },
 
+        /**
+         * Enables the warning
+         */
         enable : function enable(){
             window.addEventListener('beforeunload', warnListener);
         },
 
+        /**
+         * Disables the warning
+         */
         disable : function disable(){
             window.removeEventListener('beforeunload', warnListener);
         }
