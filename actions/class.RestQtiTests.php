@@ -17,30 +17,17 @@
  */
 
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
-use oat\oatbox\task\Task;
-use oat\tao\model\TaskQueueActionTrait;
+use oat\taoQtiItem\controller\AbstractRestQti;
 
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
+class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
-    use TaskQueueActionTrait {
-        getTask as parentGetTask;
-        getTaskData as traitGetTaskData;
-    }
-
-    const TASK_ID_PARAM = 'id';
+    const IMPORT_TASK_CLASS = 'oat\taoQtiTest\models\tasks\ImportQtiTest';
 
     const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
-
-    private static $accepted_types = array(
-        'application/zip',
-        'application/x-zip-compressed',
-        'multipart/x-zip',
-        'application/x-compressed'
-    );
 
     public function index()
     {
@@ -135,22 +122,6 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     }
 
     /**
-     * Action to retrieve test import status from queue
-     */
-    public function getStatus()
-    {
-        try {
-            if (!$this->hasRequestParameter(self::TASK_ID_PARAM)) {
-                throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
-            }
-            $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
-            $this->returnSuccess($data);
-        } catch (\Exception $e) {
-            $this->returnFailure($e);
-        }
-    }
-
-    /**
      * Create a Test Class
      *
      * Label parameter is mandatory
@@ -200,64 +171,6 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
         }
 
         return $data;
-    }
-
-    /**
-     * @param Task $taskId
-     * @return Task
-     * @throws common_exception_BadRequest
-     */
-    protected function getTask($taskId)
-    {
-        $task = $this->parentGetTask($taskId);
-        if ($task->getInvocable() !== 'oat\taoQtiTest\models\tasks\ImportQtiTest') {
-            throw new \common_exception_BadRequest("Wrong task type");
-        }
-        return $task;
-    }
-
-    /**
-     * @param Task $task
-     * @return string
-     */
-    protected function getTaskStatus(Task $task)
-    {
-        $report = $task->getReport();
-        if (in_array(
-            $task->getStatus(),
-            [Task::STATUS_CREATED, Task::STATUS_RUNNING, Task::STATUS_STARTED])
-        ) {
-            $result = 'In Progress';
-        } else if ($report) {
-            $report = \common_report_Report::jsonUnserialize($report);
-            $plainReport = $this->getPlainReport($report);
-            $success = true;
-            foreach ($plainReport as $r) {
-                $success = $success && $r->getType() != \common_report_Report::TYPE_ERROR;
-            }
-            $result = $success ? 'Success' : 'Failed';
-        }
-        return $result;
-    }
-
-    /**
-     * @param Task $task
-     * @return array
-     */
-    protected function getTaskReport(Task $task)
-    {
-        $report = \common_report_Report::jsonUnserialize($task->getReport());
-        $result = [];
-        if ($report) {
-            $plainReport = $this->getPlainReport($report);
-            foreach ($plainReport as $r) {
-                $result[] = [
-                    'type' => $r->getType(),
-                    'message' => $r->getMessage(),
-                ];
-            }
-        }
-        return $result;
     }
 
     /**

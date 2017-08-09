@@ -107,7 +107,7 @@ define([
                     control: theme.id,
                     title: theme.label,
                     icon: 'preview',
-                    text: theme.label
+                    text: __(theme.label)
                 });
 
                 themeEntry.setMenuId('color-contrast');
