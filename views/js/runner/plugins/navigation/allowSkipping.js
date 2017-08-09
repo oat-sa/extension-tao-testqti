@@ -69,10 +69,13 @@ define([
             .before('move', function () {
                 var testContext = testRunner.getTestContext();
 
-                if (!testContext.allowSkipping) {
+                if (testContext.enableAllowSkipping && !testContext.allowSkipping) {
                     this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
+                        if(_.size(currentItemHelper.getDeclarations(testRunner)) === 0){
+                            return resolve();
+                        }
                         if (currentItemHelper.isAnswered(testRunner, true)) {
                             return resolve();
                         }

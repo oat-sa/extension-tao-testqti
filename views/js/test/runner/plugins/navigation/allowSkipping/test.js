@@ -36,9 +36,16 @@ define([
     runnerFactory.registerProvider(providerName, providerMock());
 
     //mock the isAnswered helper, using testRunner property
-    currentItemHelper.isAnswered = function(testRunner){
-        return !testRunner.prevent;
+    currentItemHelper.isAnswered = function(testRunner) {
+        return testRunner.answered;
     };
+
+    //mock the getDeclarations helper, using testRunner property
+    currentItemHelper.getDeclarations = function(testRunner) {
+        return testRunner.responses;
+    };
+
+
 
     /**
      * The following tests applies to all plugins
@@ -54,23 +61,52 @@ define([
     });
 
 
-    pluginApi = [
-        { name : 'init', title : 'init' },
-        { name : 'render', title : 'render' },
-        { name : 'finish', title : 'finish' },
-        { name : 'destroy', title : 'destroy' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'getTestRunner', title : 'getTestRunner' },
-        { name : 'getAreaBroker', title : 'getAreaBroker' },
-        { name : 'getConfig', title : 'getConfig' },
-        { name : 'setConfig', title : 'setConfig' },
-        { name : 'getState', title : 'getState' },
-        { name : 'setState', title : 'setState' },
-        { name : 'show', title : 'show' },
-        { name : 'hide', title : 'hide' },
-        { name : 'enable', title : 'enable' },
-        { name : 'disable', title : 'disable' }
-    ];
+    pluginApi = [{
+        name: 'init',
+        title: 'init'
+    }, {
+        name: 'render',
+        title: 'render'
+    }, {
+        name: 'finish',
+        title: 'finish'
+    }, {
+        name: 'destroy',
+        title: 'destroy'
+    }, {
+        name: 'trigger',
+        title: 'trigger'
+    }, {
+        name: 'getTestRunner',
+        title: 'getTestRunner'
+    }, {
+        name: 'getAreaBroker',
+        title: 'getAreaBroker'
+    }, {
+        name: 'getConfig',
+        title: 'getConfig'
+    }, {
+        name: 'setConfig',
+        title: 'setConfig'
+    }, {
+        name: 'getState',
+        title: 'getState'
+    }, {
+        name: 'setState',
+        title: 'setState'
+    }, {
+        name: 'show',
+        title: 'show'
+    }, {
+        name: 'hide',
+        title: 'hide'
+    }, {
+        name: 'enable',
+        title: 'enable'
+    }, {
+        name: 'disable',
+        title: 'disable'
+    }];
 
     QUnit
         .cases(pluginApi)
@@ -81,102 +117,108 @@ define([
         });
 
 
-    QUnit.module('allow skipping');
+    QUnit.module('Behavior');
 
-    // QUnit.cases([{
-    //     title: 'enabled',
-    //     context : {
-    //         allowSkipping : true
-    //     },
-    //     enabled : true
-    // }, {
-    //     title: 'disabled',
-    //     context : {
-    //         allowSkipping : false
-    //     },
-    //     enabled : false
-    // }])
-    // .asyncTest('toggle ', function(data, assert) {
-    //     var runner        = runnerFactory(providerName);
-    //     var plugin        = pluginFactory(runner, runner.getAreaBroker());
-
-    //     QUnit.expect(1);
-
-    //     runner.setTestContext(data.context);
-
-    //     plugin
-    //         .init()
-    //         .then(function() {
-    //             assert.equal(plugin.getState('enabled'), data.enabled, 'The state is correct');
-    //             QUnit.start();
-    //         })
-    //         .catch(function(err){
-    //             assert.ok(false, err.message);
-    //             QUnit.start();
-    //         });
-    // });
-
-    QUnit.asyncTest('allow moving', function(assert) {
-
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
+    QUnit.cases([{
+        title: 'when the option is not enabled',
+        context: {
+            enableAllowSkipping: false,
+            allowSkipping: false
+        },
+        answered: false,
+        responses: ['foo']
+    }, {
+        title: 'when the item has no interactions',
+        context: {
+            enableAllowSkipping: true,
+            allowSkipping: false
+        },
+        answered: false,
+        responses: []
+    }, {
+        title: 'when the item is allowed to be skipped',
+        context: {
+            enableAllowSkipping: true,
+            allowSkipping: true
+        },
+        answered: false,
+        responses: ['foo']
+    }, {
+        title: 'when the item is answered',
+        context: {
+            enableAllowSkipping: true,
+            allowSkipping: false
+        },
+        answered: true,
+        responses: ['foo']
+    }])
+    .asyncTest('Moving is allowed ', function(data, assert) {
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(1);
-
-        runner.setTestContext({
-            allowSkipping : true
-        });
 
         plugin
             .init()
             .then(function() {
 
-                runner.prevent = false;
-                runner.on('move', function(){
+                runner.setTestContext(data.context);
+                runner.answered = data.answered;
+                runner.responses = data.responses;
+
+                runner.on('move', function() {
                     assert.ok(true, 'Move is allowed');
                     QUnit.start();
                 });
                 runner.trigger('move');
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
                 QUnit.start();
             });
     });
 
-    QUnit.asyncTest('prevent moving', function(assert) {
+    QUnit.cases([{
+        title: 'when the item not answered',
+        context: {
+            enableAllowSkipping: true,
+            allowSkipping: false
+        },
+        answered: false,
+        responses: ['foo']
+    }])
+    .asyncTest('Moving is prevented ', function(data, assert) {
 
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(2);
-
-        runner.setTestContext({
-            allowSkipping : false
-        });
 
         plugin
             .init()
             .then(function() {
 
-                runner.prevent = true;
-                runner.on('move', function(){
+                runner.setTestContext(data.context);
+                runner.answered = data.answered;
+                runner.responses = data.responses;
+
+                runner.on('move', function() {
                     assert.ok(false, 'Move is denied');
                     QUnit.start();
                 });
                 runner.off('alert.notallowed')
-                      .on('alert.notallowed', function(message, cb){
-                          assert.equal(message, 'A response to this item is required.', 'The user receive the correct message');
-                          cb();
-                      });
-                runner.on('resumeitem', function(){
+                    .on('alert.notallowed', function(message, cb) {
+                        assert.equal(message, 'A response to this item is required.', 'The user receive the correct message');
+                        cb();
+                    });
+                runner.on('resumeitem', function() {
                     assert.ok(true, 'Move has been prevented');
                     QUnit.start();
                 });
                 runner.trigger('move');
 
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
                 QUnit.start();
             });

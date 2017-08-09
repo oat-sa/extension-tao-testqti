@@ -67,10 +67,13 @@ define([
             .before('move', function () {
                 var testContext = testRunner.getTestContext();
 
-                if (testContext.validateResponses) {
+                if (testContext.enableValidateResponses &&  testContext.validateResponses) {
                     this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
+                        if(_.size(currentItemHelper.getDeclarations(testRunner)) === 0){
+                            return resolve();
+                        }
                         if (currentItemHelper.isAnswered(testRunner, false)) {
                             return resolve();
                         }
