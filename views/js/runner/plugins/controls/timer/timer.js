@@ -473,7 +473,7 @@ define([
                             return updateTimers(true);
                         })
                         .on('enableitem', doEnable)
-                        .on('disableitem disconnect', doDisable)
+                        .on('disableitem', doDisable)
                         .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
