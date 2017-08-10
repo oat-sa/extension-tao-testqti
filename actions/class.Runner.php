@@ -602,6 +602,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());

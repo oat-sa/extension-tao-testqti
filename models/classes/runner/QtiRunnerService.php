@@ -438,6 +438,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['sectionId'] = $currentSection->getIdentifier();
                 $response['sectionTitle'] = $currentSection->getTitle();
                 $response['sectionPause'] = $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->isPausable($session);
+                $response['sectionAdaptive'] = $context->isAdaptive();
 
                 // Number of items composing the test session.
                 $response['numberItems'] = $route->count();
@@ -482,6 +483,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // append dynamic options
                 $response['options'] = $testOptions;
+
+                // append cat (adaptive) session details
+                $response['catSession'] = $context->getCatSession();
             }
 
         } else {
