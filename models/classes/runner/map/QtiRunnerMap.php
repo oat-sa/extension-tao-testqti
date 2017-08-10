@@ -138,7 +138,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         if ($session->isRunning() !== false) {
             $route = $session->getRoute();
             $store = $session->getAssessmentItemSessionStore();
-            $routeItems = $this->getRouteItems($context);
+            $routeItems = $route->getAllRouteItems();
             $offset = $route->getRouteItemPosition($routeItems[0]);
             $offsetPart = 0;
             $offsetSection = 0;
@@ -305,30 +305,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
         
         return $map;
-    }
-
-    /**
-     * @param RunnerServiceContext $context
-     * @return mixed
-     */
-    private function getRouteItems(RunnerServiceContext $context)
-    {
-        $session = $context->getTestSession();
-        $route = $session->getRoute();
-        $section = $session->getCurrentAssessmentSection();
-        $result = $route->getAllRouteItems();
-        /** @var CatService $catService */
-        $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
-        if ($catService->isAssessmentSectionAdaptive($section)) {
-            $catSection = $context->getCatEngine()->restoreSection($context->getCurrentCatSection());
-            $catSession = $catSection->restoreSession($context->getCatSession());
-            $catSession->getSessionState()->getShadowTest();
-            $assessmentItemsRef = $catService->getAssessmentItemRefsByPlaceholder(
-                $context->getCompilationDirectory()['private'],
-                $section->getComponentsByClassName('assessmentItemRef')[0]
-            );
-        }
-        return $result;
     }
 
     /**
