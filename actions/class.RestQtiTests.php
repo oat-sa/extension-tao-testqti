@@ -277,16 +277,17 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     private function isMetadataGuardiansEnabled()
     {
         $enableMetadataGuardians = $this->getRequestParameter(self::ENABLE_METADATA_GUARDIANS);
-        if (empty($enableMetadataGuardians)) {
-            return true; // default value
+
+        if (is_null($enableMetadataGuardians)) {
+            return true; // default value if parameter not passed
         }
 
-        if (!is_bool($enableMetadataGuardians)) {
+        if (!in_array($enableMetadataGuardians, ['true', 'false'])) {
             throw new \common_exception_RestApi(
-                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean.'
+                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean (true or false).'
             );
         }
 
-        return boolval($enableMetadataGuardians);
+        return filter_var($enableMetadataGuardians, FILTER_VALIDATE_BOOLEAN);
     }
 }
