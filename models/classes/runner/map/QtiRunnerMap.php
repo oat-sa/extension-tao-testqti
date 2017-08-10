@@ -166,14 +166,17 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $isAdaptiveSection = $catService->isAssessmentSectionAdaptive($section);
                 if ($isAdaptiveSection) {
                     $itemRefs = [];
-                    $catSection = $context->getCatEngine()->restoreSection($context->getCurrentCatSection());
-                    $catSession = $catSection->restoreSession($context->getCatSession());
-                    $shadowTest = $catSession->getSessionState()->getShadowTest();
-                    foreach ($shadowTest as $itemId) {
-                        $itemRefs[] = $catService->getAssessmentItemRefByIdentifier(
-                            $context->getCompilationDirectory()['private'],
-                            $itemId
-                        );
+                    $catEngine = $context->getCatEngine();
+                    if ($catEngine) {
+                        $catSection = $context->getCatEngine()->restoreSection($context->getCurrentCatSection());
+                        $catSession = $catSection->restoreSession($context->getCatSession());
+                        $shadowTest = $catSession->getSessionState()->getShadowTest();
+                        foreach ($shadowTest as $itemId) {
+                            $itemRefs[] = $catService->getAssessmentItemRefByIdentifier(
+                                $context->getCompilationDirectory()['private'],
+                                $itemId
+                            );
+                        }
                     }
                 } else {
                     $itemRefs = [$routeItem->getAssessmentItemRef()];
