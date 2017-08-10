@@ -25,8 +25,9 @@ use oat\taoQtiItem\controller\AbstractRestQti;
  */
 class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
-
     const IMPORT_TASK_CLASS = 'oat\taoQtiTest\models\tasks\ImportQtiTest';
+
+    const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
 
     public function index()
     {
@@ -59,7 +60,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             if (!in_array($mimeType, self::$accepted_types)) {
                 throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass());
+            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass(), $this->isMetadataGuardiansEnabled());
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
                 $data = array();
                 foreach ($report as $r) {
@@ -101,7 +102,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             if (!in_array($mimeType, self::$accepted_types)) {
                 throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-            $task = ImportQtiTest::createTask($file, $this->getTestClass());
+            $task = ImportQtiTest::createTask($file, $this->getTestClass(), $this->isMetadataGuardiansEnabled());
             $result = [
                 'reference_id' => $task->getId()
             ];
@@ -180,5 +181,26 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private function getTestClass()
     {
         return $this->getClassFromRequest(new \core_kernel_classes_Class(TAO_TEST_CLASS));
+    }
+
+    /**
+     * @return bool
+     * @throws common_exception_RestApi
+     */
+    private function isMetadataGuardiansEnabled()
+    {
+        $enableMetadataGuardians = $this->getRequestParameter(self::ENABLE_METADATA_GUARDIANS);
+
+        if (is_null($enableMetadataGuardians)) {
+            return true; // default value if parameter not passed
+        }
+
+        if (!in_array($enableMetadataGuardians, ['true', 'false'])) {
+            throw new \common_exception_RestApi(
+                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean (true or false).'
+            );
+        }
+
+        return filter_var($enableMetadataGuardians, FILTER_VALIDATE_BOOLEAN);
     }
 }
