@@ -239,6 +239,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'navigation',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
+            ], [
+                'id' => 'warnBeforeLeaving',
+                'name' => 'Warn before leaving',
+                'module' => 'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Warn the test taker when closing the browser',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'tools' => [
