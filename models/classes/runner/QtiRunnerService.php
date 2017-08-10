@@ -1583,9 +1583,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $qtiClassName
      * @return null|string
      */
-    public function getTimeLimitsFromSession(TestSession $session, $qtiClassName = null)
+    public function getTimeLimitsFromSession(TestSession $session, $qtiClassName)
     {
-
         $maxTimeSeconds = null;
         $item = null;
         switch ($qtiClassName) {
@@ -1600,9 +1599,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 break;
             case 'assessmentItemRef':
                 $item = $session->getCurrentAssessmentItemSession();
-                break;
-            default:
-
                 break;
         }
 
