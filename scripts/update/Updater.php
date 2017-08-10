@@ -1506,6 +1506,24 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('11.6.0');
         }
         
-        $this->skip('11.6.0', '11.7.0');
+        $this->skip('11.6.0', '11.8.1');
+
+        if($this->isVersion('11.8.1')){
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'warnBeforeLeaving',
+                'name' => 'Warn before leaving',
+                'module' => 'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Warn the test taker when closing the browser',
+                'category' => 'navigation',
+                'active' => false, //registered by but activated
+                'tags' => [ ]
+            ]));
+            $this->setVersion('11.9.0');
+        }
+        
+        $this->skip('11.9.0', '11.10.0');
     }
 }
