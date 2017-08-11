@@ -260,7 +260,7 @@ class CatService extends ConfigurableService
                 $isCat = true;
             }
 
-            $itemIdentifier = $event->getRunnerService()->getCurrentAssessmentItemRef($context)->getIdentifier();
+            $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
 
