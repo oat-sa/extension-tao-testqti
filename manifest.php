@@ -19,6 +19,7 @@
  */
 
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -28,13 +29,15 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '10.2.2',
+    'version'     => '11.10.2',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoTests'   => '>=6.3.0',
-        'taoQtiItem' => '>=8.5.0',
-        'tao'        => '>=10.26.0',
+        'taoTests'   => '>=6.4.0',
+        'taoQtiItem' => '>=9.7.0',
+        'tao'        => '>=12.8.0',
         'generis'    => '>=3.36.0',
+        'taoDelivery' => '>=7.0.0',
+        'taoItems'   => '>=5.1.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -42,7 +45,8 @@ return array(
 	'install' => array(
 		'rdf' => array(
 			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf'
+		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
+			dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
 		),
 		'php'	=> array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
@@ -54,9 +58,13 @@ return array(
             RegisterQtiFlysystemManager::class,
             \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
             \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
+            \oat\taoQtiTest\scripts\install\RegisterCreatorServices::class,
             \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
             \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
+            \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
+            \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
+		    RegisterTestContainer::class
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

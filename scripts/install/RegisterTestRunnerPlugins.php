@@ -222,14 +222,32 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
             ], [
-                'id' => 'preventSkipping',
-                'name' => 'Prevent Skipping',
-                'module' => 'taoQtiTest/runner/plugins/navigation/preventSkipping',
+                'id' => 'allowSkipping',
+                'name' => 'Allow Skipping',
+                'module' => 'taoQtiTest/runner/plugins/navigation/allowSkipping',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Prevent to submit empty responses',
+                'description' => 'Prevent submission of default/null responses',
                 'category' => 'navigation',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
+            ], [
+                'id' => 'validateResponses',
+                'name' => 'Validate Responses',
+                'module' => 'taoQtiTest/runner/plugins/navigation/validateResponses',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent submission of invalid responses',
+                'category' => 'navigation',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ], [
+                'id' => 'warnBeforeLeaving',
+                'name' => 'Warn before leaving',
+                'module' => 'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Warn the test taker when closing the browser',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'tools' => [
@@ -258,7 +276,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Zoom in and out the item content',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [ 'core' ]
             ], [
                 'id' => 'itemThemeSwitcher',
@@ -285,7 +303,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allows the test taker to highlight text',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [ ]
             ], [
                 'id' => 'magnifier',
@@ -294,7 +312,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives student access to a magnification tool',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [  ]
             ], [
                 'id' => 'lineReader',
@@ -314,6 +332,24 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'tools',
                 'active' => true,
                 'tags' => [  ]
+            ], [
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ], [
+                'id'          => 'area-masking',
+                'name'        => 'Area Masking',
+                'module'      => 'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Mask areas of the item',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
             ]
         ],
         'security' => [

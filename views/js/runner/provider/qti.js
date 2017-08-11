@@ -251,8 +251,6 @@ define([
                     }
                 });
 
-
-
                 feedbackPromise.then(function(){
 
                     updateStats();
@@ -589,10 +587,12 @@ define([
                     reject(err);
                 })
                 .on('init', function(){
+                    var options = {};
                     if(itemData.state){
                         this.setState(itemData.state);
+                        options.state = itemData.state;//official ims portable element requires state information during rendering
                     }
-                    this.render(self.getAreaBroker().getContentArea());
+                    this.render(self.getAreaBroker().getContentArea(), options);
                 })
                 .on('render', function(){
 

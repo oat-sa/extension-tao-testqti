@@ -22,7 +22,15 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
+use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -42,8 +50,11 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\tao\scripts\update\OntologyUpdater;
@@ -51,6 +62,10 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\libCat\custom\EchoAdaptEngine;
 
 /**
  *
@@ -1321,6 +1336,196 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.1.0');
         }
 
-        $this->skip('10.1.0', '10.2.2');
+        $this->skip('10.1.0', '10.3.0');
+
+        if ($this->isVersion('10.3.0')) {
+            $registry = DeliveryContainerRegistry::getRegistry();
+            $registry->setServiceLocator($this->getServiceManager());
+            $registry->registerContainerType('qtiTest', new QtiTestDeliveryContainer());
+            $this->setVersion('10.4.0');
+        }
+
+        $this->skip('10.4.0', '10.5.1');
+
+        if ($this->isVersion('10.5.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/highlighter/plugin');
+            $registry->remove('taoQtiTest/runner/plugins/tools/magnifier/magnifier');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'highlighter',
+                'name' => 'Text Highlighter',
+                'module' => 'taoQtiTest/runner/plugins/tools/highlighter/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows the test taker to highlight text',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'magnifier',
+                'name' => 'Magnifier',
+                'module' => 'taoQtiTest/runner/plugins/tools/magnifier/magnifier',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Gives student access to a magnification tool',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'eliminator',
+                'name' => 'Eliminate choices',
+                'module' => 'taoQtiTest/runner/plugins/tools/answerElimination/eliminator',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows student to eliminate choices',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [  ]
+            ]));
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'area-masking',
+                'name'        => 'Area Masking',
+                'module'      => 'taoQtiTest/runner/plugins/tools/areaMasking/areaMasking',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Mask areas of the item',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
+            ]));
+            $this->setVersion('10.6.0');
+        }
+
+        if ($this->isVersion('10.6.0')) {
+            // Install the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            // Install the Sync Channel
+            $this->runExtensionScript(SyncChannelInstaller::class);
+
+            $this->setVersion('10.7.0');
+        }
+
+        $this->skip('10.7.0', '10.10.0');
+
+        if ($this->isVersion('10.10.0')) {
+            $qtiListenerService = $this->getServiceManager()->get(QtiTestListenerService::SERVICE_ID);
+            $qtiListenerService->setOption(QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE, []);
+            $this->getServiceManager()->register(QtiTestListenerService::SERVICE_ID, $qtiListenerService);
+
+            $this->setVersion('10.11.0');
+        }
+
+        if ($this->isVersion('10.11.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'zoom',
+                'name' => 'Zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allows Test-taker to zoom in and out the item content',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+            $this->setVersion('10.11.1');
+        }
+
+        $this->skip('10.11.1', '10.14.1');
+        
+        if ($this->isVersion('10.14.1')) {
+            
+            // Default is now EchoAdapt. This should change in the futre.
+            $catService = new CatService([
+                CatService::OPTION_ENGINE_ENDPOINTS => [
+                    'http://URL_SERVER/cat/api/' => [
+                        CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                        CatService::OPTION_ENGINE_ARGS => []
+                    ]
+                ]
+            ]);
+            
+            $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            
+            $this->setVersion('10.15.0');
+        }
+
+        $this->skip('10.15.0', '10.15.1');
+
+        if ($this->isVersion('10.15.1')) {
+            $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
+            $this->setVersion('10.16.0');
+        }
+        
+        if ($this->isVersion('10.16.0')) {
+            OntologyUpdater::syncModels();
+            $this->setVersion('10.17.0');
+        }
+
+        $this->skip('10.17.0', '11.0.0');
+
+        if ($this->isVersion('11.0.0')) {
+            $registerCreatorService = new RegisterCreatorServices();
+            $registerCreatorService->setServiceLocator($this->getServiceManager());
+            $registerCreatorService([]);
+            $this->setVersion('11.1.0');
+        }
+
+        $this->skip('11.1.0', '11.5.1');
+
+        if ($this->isVersion('11.5.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-validate-responses'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/navigation/preventSkipping');
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'allowSkipping',
+                'name'        => 'Allow Skipping',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/allowSkipping',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow submission of null/default responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'validateResponses',
+                'name'        => 'Validate Responses',
+                'module'      => 'taoQtiTest/runner/plugins/navigation/validateResponses',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Prevent submission of invalid responses',
+                'category'    => 'navigation',
+                'active'      => true,
+                'tags'        => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('11.6.0');
+        }
+        
+        $this->skip('11.6.0', '11.8.1');
+
+        if($this->isVersion('11.8.1')){
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'warnBeforeLeaving',
+                'name' => 'Warn before leaving',
+                'module' => 'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Warn the test taker when closing the browser',
+                'category' => 'navigation',
+                'active' => false, //registered by but activated
+                'tags' => [ ]
+            ]));
+            $this->setVersion('11.9.0');
+        }
+        
+        $this->skip('11.9.0', '11.10.2');
     }
 }

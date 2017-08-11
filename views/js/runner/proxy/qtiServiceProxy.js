@@ -38,28 +38,37 @@ define([
     var qtiServiceProxy = {
 
         /**
-         * Initializes the proxy
-         * @param {Object} config - The config provided to the proxy factory
-         * @param {String} config.testDefinition - The URI of the test
-         * @param {String} config.testCompilation - The URI of the compiled delivery
-         * @param {String} config.serviceCallId - The URI of the service call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
-         *                      Any error will be provided if rejected.
+         * Installs the proxy
          */
-        init: function init(config, params) {
-
+        install : function install(){
             var self = this;
 
-            var initConfig = config || {};
-
-            // store config in a dedicated configStorage
-            this.configStorage = configFactory(initConfig);
-
             /**
-             * A promise queue to ensure requests run in serie
+             * A promise queue to ensure requests run sequentially
              */
             this.queue = promiseQueue();
+
+            /**
+             * Some parameters needs special handling...
+             * @param {Object} actionParams - the input parameters
+             * @returns {Object} output parameters
+             */
+            this.prepareParams = function prepareParams(actionParams){
+
+                //some parameters need to be JSON.stringified
+                var stringifyParams = ['itemState', 'itemResponse'];
+
+                if(_.isPlainObject(actionParams)){
+                    return _.mapValues(actionParams, function(value, key){
+                        if(_.contains(stringifyParams, key)){
+                            return JSON.stringify(value);
+                        }
+                        return value;
+                    });
+                }
+
+                return actionParams;
+            };
 
             /**
              * Proxy request function. Returns a promise
@@ -72,17 +81,15 @@ define([
              */
             this.request = function request(url, reqParams, contentType, noToken) {
 
-                //some parameters need to be JSON.stringified, we do it at the lowest level
-                var stringifyParams = ['itemState', 'itemResponse'];
-
                 //run the request, just a function wrapper
                 var runRequest = function runRequest() {
                     return new Promise(function(resolve, reject) {
-
-                        var headers = {};
-                        var tokenHandler = self.getTokenHandler();
                         var token;
                         var noop;
+                        var headers        = {};
+                        var action         = reqParams ? 'POST' : 'GET';
+                        var preparedParams = self.prepareParams(reqParams);
+                        var tokenHandler   = self.getTokenHandler();
 
                         if (!noToken) {
                             token = tokenHandler.getToken();
@@ -90,30 +97,25 @@ define([
                                 headers['X-Auth-Token'] = token;
                             }
                         }
-                        if(_.isPlainObject(reqParams)){
-                            reqParams = _.mapValues(reqParams, function(value, key){
-                                if(_.contains(stringifyParams, key)){
-                                    return JSON.stringify(value);
-                                }
-                                return value;
-                            });
-                        }
 
                         $.ajax({
-                            url: url,
-                            type: reqParams ? 'POST' : 'GET',
-                            cache: false,
-                            data: reqParams,
-                            headers: headers,
-                            async: true,
-                            dataType: 'json',
-                            contentType: contentType || noop,
-                            timeout: self.configStorage.getTimeout()
+                            url : url,
+                            type : action,
+                            cache : false,
+                            data : preparedParams,
+                            headers : headers,
+                            async : true,
+                            dataType : 'json',
+                            contentType : contentType || noop,
+                            timeout : self.configStorage.getTimeout()
                         })
                         .done(function(data) {
+
                             if (data && data.token) {
                                 tokenHandler.setToken(data.token);
                             }
+
+                            self.setOnline();
 
                             if (data && data.success) {
                                 resolve(data);
@@ -123,6 +125,7 @@ define([
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
                             var data;
+
                             try {
                                 data = JSON.parse(jqXHR.responseText);
                             } catch(err) {
@@ -136,6 +139,7 @@ define([
                                 purpose: 'proxy',
                                 context: this,
                                 code: jqXHR.status,
+                                sent: jqXHR.readyState > 0,
                                 type: textStatus || 'error',
                                 message: errorThrown || __('An error occurred!')
                             });
@@ -143,6 +147,11 @@ define([
                                 tokenHandler.setToken(data.token);
                             } else if (!noToken) {
                                 tokenHandler.setToken(token);
+                            }
+
+                            if(self.isConnectivityError(data)){
+                                self.setOffline('request');
+                                return resolve(data);
                             }
 
                             reject(data);
@@ -157,6 +166,21 @@ define([
 
                 return this.queue.serie(runRequest);
             };
+        },
+
+        /**
+         * Initializes the proxy
+         * @param {Object} config - The config provided to the proxy factory
+         * @param {String} config.testDefinition - The URI of the test
+         * @param {String} config.testCompilation - The URI of the compiled delivery
+         * @param {String} config.serviceCallId - The URI of the service call
+         * @param {Object} [params] - Some optional parameters to join to the call
+         * @returns {Promise} - Returns a promise. The proxy will be fully initialized on resolve.
+         *                      Any error will be provided if rejected.
+         */
+        init: function init(config, params) {
+            // store config in a dedicated configStorage
+            this.configStorage = configFactory(config || {});
 
             // request for initialization
             return this.request(this.configStorage.getTestActionUrl('init'), params);
