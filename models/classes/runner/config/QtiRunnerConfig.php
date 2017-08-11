@@ -159,7 +159,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         ];
 
         // get the options from the categories owned by the current item
-        $categories = \taoQtiTest_helpers_TestRunnerUtils::getCategories($session);
+        $categories = \taoQtiTest_helpers_TestRunnerUtils::getCategoriesByContext($context);
         $prefixCategory = 'x-tao-option-';
         $prefixCategoryLen = strlen($prefixCategory);
         foreach ($categories as $category) {
