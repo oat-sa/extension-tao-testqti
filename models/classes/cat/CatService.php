@@ -1,4 +1,22 @@
 <?php
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *
+ */
 
 namespace oat\taoQtiTest\models\cat;
 
@@ -53,17 +71,26 @@ class CatService extends ConfigurableService
      * @return oat\libCat\CatEngine
      */
     public function getEngine($endpoint) {
-        if (!isset($this->engine[$endpoint])) {
-            $engineOptions = $this->getOption(self::OPTION_ENGINE_ENDPOINTS)[$endpoint];
+        if (!isset($this->engines[$endpoint])) {
+            $endPoints = $this->getOption(self::OPTION_ENGINE_ENDPOINTS);
             
-            $class = $engineOptions[self::OPTION_ENGINE_CLASS];
-            $args = $engineOptions[self::OPTION_ENGINE_ARGS];
-            array_unshift($args, $endpoint);
+            if (!empty($endPoints[$endpoint])) {
+                $engineOptions = $endPoints[$endpoint];
             
-            $this->engine[$endpoint] = new $class(...$args);
+                $class = $engineOptions[self::OPTION_ENGINE_CLASS];
+                $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+                array_unshift($args, $endpoint);
+                
+                $this->engines[$endpoint] = new $class(...$args);
+            }
         }
         
-        return $this->engine[$endpoint];
+        if (empty($this->engines[$endpoint])) {
+            // No configured endpoint found.
+            throw new CatEngineNotFoundException("CAT Engine for endpoint '${endpoint}' is not configured.", $endpoint);
+        }
+        
+        return $this->engines[$endpoint];
     }
     
     /**
@@ -216,11 +243,11 @@ class CatService extends ConfigurableService
         $dependencies = $sectionsParts->getKeys();
 
         if ($catDiff = array_diff($itemReferences, $dependencies)) {
-            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff));
+            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
         }
 
         if ($packageDiff = array_diff($dependencies, $itemReferences)) {
-            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff));
+            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
         }
     }
     
