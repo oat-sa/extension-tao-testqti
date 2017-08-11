@@ -495,17 +495,9 @@ define([
                                         reject,
                                         {
                                             buttons: {
-                                                ok: {
-                                                    id : 'ok',
-                                                    type : 'info',
-                                                    label : __('Close this Section'),
-                                                    close: true
-                                                },
-                                                cancel: {
-                                                    id : 'cancel',
-                                                    type : 'regular',
-                                                    label : __('Review my Answers'),
-                                                    close: true
+                                                labels: {
+                                                    ok : __('Close this Section'),
+                                                    cancel : __('Review my Answers')
                                                 }
                                             }
                                         });

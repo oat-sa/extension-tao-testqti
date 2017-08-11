@@ -19,10 +19,11 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'lodash',
     'i18n',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/stats'
-], function (__, mapHelper, statsHelper) {
+], function (_, __, mapHelper, statsHelper) {
     'use strict';
 
     /**
@@ -47,24 +48,21 @@ define([
     }
 
     /**
-     * The verbiage states how many questions were unanswered in the current test section AND beyond
-     * and how many were flagged in the current test section AND beyond:
-     * “You have X unanswered questions and you flagged Y items that you can review now.
-     * If you quit the test now, you cannot return to it.” So for example if a test battery has four sections
-     * and the user has completed all items in the first section, are currently in the second section and click
-     * Exit Test, the 'X' amount should be the total amount of the remaining in section two and items in 3 thru 4.
-     * The 'Y' amount would only be for that second test section (as they hadn't gotten to further test sections to flag).
+     * Build message if not all items have answers
+     * @param {String} scope - scope to consider for calculating the stats
+     * @param {Object} runner - testRunner instance
+     * @returns {String} Returns the message text
      */
     function getUnansweredItemsWarning(scope, runner) {
-        var stats = statsHelper.getInstantStats(scope, runner),
-            unansweredCount = stats && (stats.questions - stats.answered),
-            flaggedCount = stats && stats.flagged,
-            itemsCountMessage = '',
-            map = runner.getTestMap(),
-            jump = mapHelper.getJump(map, runner.getTestContext().itemPosition),
-            belowSections;
+        var stats = statsHelper.getInstantStats(scope, runner);
+        var unansweredCount = stats && (stats.questions - stats.answered);
+        var flaggedCount = stats && stats.flagged;
+        var itemsCountMessage = '';
+        var map = runner.getTestMap();
+        var jump = mapHelper.getJump(map, runner.getTestContext().itemPosition);
+        var belowSections;
 
-        if (scope === 'section') {
+        if (scope === 'section' || scope === 'testSection'){
             if (unansweredCount === 0) {
                 itemsCountMessage += __('You answered all %s question(s) in this section',
                     stats.questions.toString()
@@ -81,7 +79,7 @@ define([
             }
         } else if(scope === 'test') {
             //collect statistics from current section and below
-            belowSections = getBelowSections(map, jump.section);
+            belowSections = getNextSections(map, jump.section);
             stats = _.clone(mapHelper.getSectionStats(runner.getTestMap(), jump.section));
 
             _.forEach(belowSections, function (section) {
@@ -116,7 +114,7 @@ define([
      * @param currentSectionId
      * @return {Object}
      */
-    function getBelowSections(map, currentSectionId) {
+    function getNextSections(map, currentSectionId) {
         var sections = mapHelper.getSections(map),
             result = {},
             below = false;

@@ -61,8 +61,8 @@ define([
 
         /**
          * Get sections table
-         * @param map
-         * @return {object}
+         * @param {Object} map - The assessment test map
+         * @returns {Object} the sections
          */
         getSections: function getSections(map) {
             var parts = this.getParts(map),
