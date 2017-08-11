@@ -88,7 +88,7 @@ class CreatorItems extends ConfigurableService
      * @param string|array  $search to filter by label if a string or provides the search filters
      * @param int $offset for paging
      * @param int $limit  for paging
-     * @return array the items 
+     * @return array the items
      */
     public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
     {
@@ -101,7 +101,9 @@ class CreatorItems extends ConfigurableService
         }
         if(is_array($search)){
             foreach($search as $uri => $value){
-                if(is_string($uri) && is_string($value) && strlen(trim($value)) > 0){
+                if( is_string($uri) &&
+                    (is_string($value) && strlen(trim($value)) > 0) ||
+                    (is_array($value) && count($value) > 0) ) {
                     $propertyFilters[$uri] = $value;
                 }
             }

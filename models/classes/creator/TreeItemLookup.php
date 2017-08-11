@@ -72,7 +72,7 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
                 'label' => $data['data'],
                 'type'  => $data['type'],
                 'uri'   => $data['attributes']['data-uri'],
-                'state' => isset($data['state']) ? $data['state'] : 'empty', 
+                'state' => isset($data['state']) ? $data['state'] : false, 
                 'count' => isset($data['count']) ? $data['count'] : 0,
                 'categories' => $this->getCategoryService()->getItemCategories(new \core_kernel_classes_Resource($data['attributes']['data-uri']))
             ];
