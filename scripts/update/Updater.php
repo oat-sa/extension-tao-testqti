@@ -1451,7 +1451,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.15.0');
         }
 
-        if ($this->isVersion('10.15.0')) {
+        $this->skip('10.15.0', '10.15.1');
+
+        if ($this->isVersion('10.15.1')) {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
@@ -1505,7 +1507,25 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('11.6.0');
         }
+        
+        $this->skip('11.6.0', '11.8.1');
 
-        $this->skip('11.6.0', '11.8.0');
+        if($this->isVersion('11.8.1')){
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'warnBeforeLeaving',
+                'name' => 'Warn before leaving',
+                'module' => 'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Warn the test taker when closing the browser',
+                'category' => 'navigation',
+                'active' => false, //registered by but activated
+                'tags' => [ ]
+            ]));
+            $this->setVersion('11.9.0');
+        }
+
+        $this->skip('11.9.0', '11.11.0');
     }
 }
