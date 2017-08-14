@@ -159,7 +159,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         ];
 
         // get the options from the categories owned by the current item
-        $categories = $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+        $categories = $this->getCategories($context);
         $prefixCategory = 'x-tao-option-';
         $prefixCategoryLen = strlen($prefixCategory);
         foreach ($categories as $category) {
@@ -187,5 +187,18 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             $this->options = $this->buildOptions($context);
         }
         return $this->options;
+    }
+    
+    /**
+     * Get Categories.
+     * 
+     * Get the categories of the current AssessmentItemRef in the route depending on a given $context.
+     * 
+     * @param RunnerServiceContext $context
+     * @return array An array of strings.
+     */
+    protected function getCategories(RunnerServiceContext $context)
+    {
+        return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
 }
