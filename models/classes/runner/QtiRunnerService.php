@@ -57,7 +57,6 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
-use oat\taoQtiTest\models\cat\CatService;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
@@ -410,10 +409,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-
-                // Whether the test map must be updated.
-                // TODO: detect if the map need to be updated and set the flag
-                $response['needMapUpdate'] = false;
 
                 // Whether the current item is the very last one of the test.
                 $response['isLast'] = (!$context->isAdaptive()) ? $route->isLast() : false;

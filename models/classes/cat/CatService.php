@@ -83,6 +83,25 @@ class CatService extends ConfigurableService
     }
     
     /**
+     * Get AssessmentItemRef by Identifiers
+     * 
+     * This method enables you to access to a collection of pre-compiled versions of stand alone AssessmentItemRef objects, that can be run
+     * with stand alone AssessmentItemSessions.
+     * 
+     * @return array An array of AssessmentItemRef objects.
+     */
+    public function getAssessmentItemRefByIdentifiers(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, array $identifiers)
+    {
+        $assessmentItemRefs = [];
+        
+        foreach ($identifiers as $identifier) {
+            $assessmentItemRefs[] = $this->getAssessmentItemRefByIdentifier($privateCompilationDirectory, $identifier);
+        }
+        
+        return $assessmentItemRefs;
+    }
+    
+    /**
      * Get AssessmentItemRefs corresponding to a given Adaptive Placeholder.
      * 
      * This method will return an array of AssessmentItemRef objects corresponding to an Adaptive Placeholder.
