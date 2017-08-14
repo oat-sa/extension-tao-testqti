@@ -616,4 +616,23 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return $selection[0];
         }
     }
+    
+    /**
+     * Get Current AssessmentItemRef object.
+     * 
+     * This method returns the current AssessmentItemRef object depending on the test $context.
+     * 
+     * @return \qtism\data\ExtendedAssessmentItemRef
+     */
+    public function getCurrentAssessmentItemRef()
+    {
+        if ($this->isAdaptive()) {
+            return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
+                $this->getCompilationDirectory()['private'],
+                $this->getLastCatItemId()
+            );
+        } else {
+            return $this->getTestSession()->getCurrentAssessmentItemRef();
+        }
+    }
 }
