@@ -363,7 +363,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $route = $session->getRoute();
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
-                $itemRef = $this->getCurrentAssessmentItemRef($context);
+                $itemRef = $context->getCurrentAssessmentItemRef();
 
                 $reviewConfig = $config->getConfigValue('review');
                 $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
@@ -666,7 +666,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             /** @var TestSession $session */
             $session = $context->getTestSession();
-            $currentItem  = $this->getCurrentAssessmentItemRef($context);
+            $currentItem  = $context->getCurrentAssessmentItemRef();
             $responses = new State();
 
             if ($currentItem === false) {
@@ -1442,7 +1442,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $context->getTestSession()->getSessionId();
 
             if (!is_null($itemUri)) {
-                $currentItem = $this->getCurrentAssessmentItemRef($context);
+                $currentItem = $context->getCurrentAssessmentItemRef();
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
@@ -1554,25 +1554,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
     
     /**
-     * Get Current AssessmentItemRef object.
-     * 
-     * This method returns the current AssessmentItemRef object depending on the test $context.
-     * 
-     * @return \qtism\data\ExtendedAssessmentItemRef
-     */
-    public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
-    {
-        if ($context->isAdaptive()) {
-            return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
-                $context->getCompilationDirectory()['private'],
-                $context->getLastCatItemId()
-            );
-        } else {
-            return $context->getTestSession()->getCurrentAssessmentItemRef();
-        }
-    }
-    
-    /**
      * Get Current Assessment Session.
      * 
      * Depending on the context (adaptive or not), it will return an appropriate Assessment Object to deal with.
@@ -1587,7 +1568,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getCurrentAssessmentSession(RunnerServiceContext $context)
     {
         if ($context->isAdaptive()) {
-            return new AssessmentItemSession($this->getCurrentAssessmentItemRef($context), new SessionManager());
+            return new AssessmentItemSession($context->getCurrentAssessmentItemRef(), new SessionManager());
         } else {
             return $context->getTestSession();
         }
