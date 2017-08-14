@@ -22,8 +22,9 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/helpers/stats'
-], function (_, __, mapHelper, statsHelper) {
+    'taoQtiTest/runner/helpers/stats',
+    'taoQtiTest/runner/helpers/currentItem'
+], function (_, __, mapHelper, statsHelper, currentItemHelper) {
     'use strict';
 
     /**
@@ -89,16 +90,32 @@ define([
             });
 
             unansweredCount = stats && (stats.questions - stats.answered);
-            flaggedCount = stats && stats.flagged,
+            flaggedCount = stats && stats.flagged;
 
-            itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
-
-            if (flaggedCount) {
-                itemsCountMessage += ' ' + __('and you flagged %s item(s)', flaggedCount.toString());
+            if (currentItemHelper.isAnswered(runner)) {
+                unansweredCount--;
             }
 
-            if (itemsCountMessage) {
-                itemsCountMessage += ' ' + __('that you can review now');
+            if (unansweredCount === 0) {
+                itemsCountMessage = __('You answered all %s question(s) in this test',
+                    stats.questions.toString()
+                );
+            } else {
+                itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
+            }
+            if (flaggedCount) {
+                itemsCountMessage += ' ' + __('and you flagged %s item(s) that you can review now', flaggedCount.toString());
+            }
+        } else if(scope === 'part') {
+            if (unansweredCount === 0) {
+                itemsCountMessage = __('You answered all %s question(s)',
+                    stats.questions.toString()
+                );
+            } else {
+                itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
+            }
+            if (flaggedCount) {
+                itemsCountMessage += ' ' + __('and you flagged %s item(s) that you can review now', flaggedCount.toString());
             }
         }
 
