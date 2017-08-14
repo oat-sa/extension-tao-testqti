@@ -1613,7 +1613,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $item = $session->getCurrentAssessmentSection();
                 break;
             case 'assessmentItemRef':
-                $item = $session->getCurrentAssessmentItemSession();
+                $item = $session->getCurrentAssessmentItemRef();
                 break;
         }
 
