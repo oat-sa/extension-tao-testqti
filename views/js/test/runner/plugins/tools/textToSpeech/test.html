@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Text to Speech - Test Runner Plugin</title>
+    <base href="../../../../../../../../tao/views/" />
+    <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
+    <script type="text/javascript" src="js/lib/require.js"></script>
+    <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
+    <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
+    <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="js/runner/plugins/tools/textToSpeech/textToSpeech.js"></script>
+    <script  type="text/javascript">
+        QUnit.config.autostart = false;
+        require(['/tao/ClientConfig/config'], function () {
+            require(['taoQtiTest/test/runner/plugins/tools/textToSpeech/test'], function () {
+                QUnit.start();
+            });
+        });
+    </script>
+    <style>
+        #display-and-play {
+            border: 1px solid blue;
+            margin: 5px;
+            padding: 30px;
+        }
+
+        #display-and-play > .test-container {
+            border: 1px solid black;
+            margin: auto;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <div id="display-and-play">
+        <div class="test-container"></div>
+    </div>
+</body>
+</html>

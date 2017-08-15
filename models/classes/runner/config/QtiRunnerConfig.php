@@ -100,6 +100,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'enabled' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
                     'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
                 ],
+                'enableTextToSpeech' => isset($rawConfig['enable-text-to-speech']) ? $rawConfig['enable-text-to-speech'] : false,
             ];
         }
         return $config;

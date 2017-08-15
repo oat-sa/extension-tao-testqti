@@ -394,6 +394,12 @@ return array(
      */
     'enable-validate-responses' => false,
 
+    /**
+     * Enable text to speech feature
+     * @type boolean
+     */
+    'enable-text-to-speech' => true,
+
     /*
      * Force branch rules to be executed even if the current navigation mode is non-linear.
      * @type boolean
