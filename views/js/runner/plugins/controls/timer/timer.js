@@ -473,12 +473,12 @@ define([
                             return updateTimers(true);
                         })
                         .on('enableitem', doEnable)
-                        .on('disableitem disconnect', doDisable)
+                        .on('disableitem', doDisable)
                         .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
-                            var testData = testRunner.getTestData();
-                            var config = testData && testData.config;
+                            var testDataBeforeMove = testRunner.getTestData();
+                            var config = testDataBeforeMove && testDataBeforeMove.config;
                             var timerConfig = config && config.timer || {};
                             var options = context && context.options || {};
 
