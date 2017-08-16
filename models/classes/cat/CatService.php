@@ -115,7 +115,8 @@ class CatService extends ConfigurableService
         $dirId = $privateCompilationDirectory->getId();
         
         if (!isset($this->sectionMapCache[$dirId])) {
-            $sectionMap = json_decode($privateCompilationDirectory->read(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_SECTION_MAP_FILENAME), true);
+            $file = $privateCompilationDirectory->getFile(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_SECTION_MAP_FILENAME);
+            $sectionMap = $file->exists() ? json_decode($file->read(), true) : [];
             $this->sectionMapCache[$dirId] = $sectionMap;
         }
         
