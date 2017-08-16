@@ -38,6 +38,7 @@ use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 
 /**
  * the QTI TestModel service.
@@ -436,19 +437,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
 
-                try {
-                    /** @var CatService $service */
-                    $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
-                    $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
-                } catch (common_Exception $e) {
-                    common_Logger::w($e->getMessage());
-                } catch (AdaptiveSectionInjectionException $e) {
-                    $report->add(common_report_Report::createFailure($e->getMessage()));
-                    $report->setType(common_report_Report::TYPE_ERROR);
-                    $msg = __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $qtiTestResource->getIdentifier());
-                    $report->setMessage($msg);
-                    return $report;
-                }
+                /** @var CatService $service */
+                $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+                $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
 
                 if (count($dependencies['items']) > 0) {
 
@@ -612,6 +603,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
+            } catch (CatEngineNotFoundException $e) {
+                $report->add(
+                    new common_report_Report(
+                        common_report_Report::TYPE_ERROR,
+                        __('No CAT Engine configured for CAT Endpoint "%s".', $e->getRequestedEndpoint())
+                    )
+                );
+            } catch (AdaptiveSectionInjectionException $e) {
+                $report->add(
+                    new common_report_Report(
+                        common_report_Report::TYPE_ERROR,
+                        __("Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint.", implode(', ', $e->getInvalidItemIdentifiers()))
+                    )
+                );
             }
         }
 
