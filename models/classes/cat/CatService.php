@@ -66,11 +66,13 @@ class CatService extends ConfigurableService
      * Returns the Adaptive Engine
      * 
      * Returns an CatEngine implementation object.
-     * 
+     *
      * @param string $endpoint
-     * @return oat\libCat\CatEngine
+     * @return CatEngine
+     * @throws CatEngineNotFoundException
      */
-    public function getEngine($endpoint) {
+    public function getEngine($endpoint)
+    {
         if (!isset($this->engines[$endpoint])) {
             $endPoints = $this->getOption(self::OPTION_ENGINE_ENDPOINTS);
             
