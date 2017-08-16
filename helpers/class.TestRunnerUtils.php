@@ -34,6 +34,8 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\common\datatypes\QtiString;
 use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -301,7 +303,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
     /**
      * Whether or not the candidate taking the given $session is allowed to make
      * a comment on the presented Assessment Item.
-     * 
+     *
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
      * @return boolean
      */
@@ -1186,7 +1188,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function getCategories(AssessmentTestSession $session){
         return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
-
 
     /**
      * Get the array of available categories for the test
