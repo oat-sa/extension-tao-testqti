@@ -142,51 +142,51 @@ define([
         QUnit.expect(18);
 
         // all answered, no flagged
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test"');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part"');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section"');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You answered all 3 question(s) in this test. ' + message, 'The messages helper return the right message when the scope is "test"');
+        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You answered all 3 question(s). ' + message, 'The messages helper return the right message when the scope is "part"');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered all 3 question(s) in this section. ' + message, 'The messages helper return the right message when the scope is "section"');
 
         // some answered, no flagged
-        map.stats.answered = 0;
-        map.parts.part1.stats.answered = 1;
+        map.stats.answered = 2;
+        map.parts.part1.stats.answered = 2;
         map.parts.part1.sections.section1.stats.answered = 2;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 3 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 2 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
 
         // some answered, some flagged
-        map.stats.flagged = 3;
-        map.parts.part1.stats.flagged = 2;
+        map.stats.flagged = 1;
+        map.parts.part1.stats.flagged = 1;
         map.parts.part1.sections.section1.stats.flagged = 1;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 3 unanswered question(s) and have 3 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 2 unanswered question(s) and have 2 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You have 1 unanswered question(s) and have 1 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered and flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered and flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered and flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered and flagged items');
 
 
-        // no answered, some flagged
+        // all answered, some flagged
         map.stats.answered = 3;
         map.parts.part1.stats.answered = 3;
         map.parts.part1.sections.section1.stats.answered = 3;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 3 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "test" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 2 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "part" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You have 1 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "section" and there are flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You answered all 3 question(s) in this test and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You answered all 3 question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are flagged items');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered all 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are flagged items');
 
         // some answered, some flagged, current item answered
-        map.stats.answered = 0;
+        map.stats.answered = 1;
         map.parts.part1.stats.answered = 1;
-        map.parts.part1.sections.section1.stats.answered = 2;
+        map.parts.part1.sections.section1.stats.answered = 1;
         responses.RESPONSE.base = {string: 'test'};
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 2 unanswered question(s) and have 3 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and have 2 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You have 1 item(s) marked for review. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
 
         // some answered, no flagged, current item answered
         map.stats.flagged = 0;
         map.parts.part1.stats.flagged = 0;
         map.parts.part1.sections.section1.stats.flagged = 0;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 2 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
         assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
+        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section. This is a test.', 'The messages helper return the right message when the scope is "section" and there are unanswered items');
     });
 
     QUnit.test('helpers/messages.getExitMessage (disabled)', function (assert) {
