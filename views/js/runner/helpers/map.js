@@ -60,6 +60,26 @@ define([
         },
 
         /**
+         * Get sections table
+         * @param {Object} map - The assessment test map
+         * @returns {Object} the sections
+         */
+        getSections: function getSections(map) {
+            var parts = this.getParts(map),
+                result = {};
+
+            _.forEach(parts, function (part) {
+                var sections = part.sections;
+                if (sections) {
+                    _.forEach(sections, function (section) {
+                        result[section.id] = section;
+                    });
+                }
+            });
+            return result;
+        },
+
+        /**
          * Gets the jump at a particular position
          * @param {Object} map - The assessment test map
          * @param {Number} position - The position of the item
@@ -151,7 +171,6 @@ define([
          */
         getScopeStats: function getScopeStats(map, position, scope) {
             var jump = this.getJump(map, position);
-
             switch (scope) {
                 case 'section':
                 case 'testSection':
