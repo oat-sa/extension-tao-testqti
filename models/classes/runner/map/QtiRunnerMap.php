@@ -29,7 +29,9 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use oat\taoQtiTest\models\cat\CatService;
 
 /**
  * Class QtiRunnerMap
@@ -151,41 +153,43 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
-                // access the item reference
-                $itemRef = $routeItem->getAssessmentItemRef();
-                $occurrence = $routeItem->getOccurence();
-
-                // get the jump definition
-                $itemSession = $store->getAssessmentItemSession($itemRef, $occurrence);
-
-                // load item infos
-                $testPart = $routeItem->getTestPart();
-                $partId = $testPart->getIdentifier();
-
-                if ($displaySubsectionTitle) {
-                    $section = $routeItem->getAssessmentSection();
-                } else {
-                    $sections = $routeItem->getAssessmentSections()->getArrayCopy();
-                    $section = $sections[0];
-                }
-                $sectionId = $section->getIdentifier();
-                $itemId = $itemRef->getIdentifier();
-                $itemDefinition = $itemRef->getHref();
-                $itemUri = strstr($itemDefinition, '|', true);
                 
-                if ($lastPart != $partId) {
-                    $offsetPart = 0;
-                    $lastPart = $partId;
-                }
-                if ($lastSection != $sectionId) {
-                    $offsetSection = 0;
-                    $lastSection = $sectionId;
-                }
+                $isRouteItemAdaptive = false;
+                $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $isRouteItemAdaptive);
+                
+                foreach ($itemRefs as $itemRef) {
+                    $occurrence = ($isRouteItemAdaptive) ? 0 : $routeItem->getOccurence();
 
-                if ($forceTitles) {
-                    $label = __($uniqueTitle, $offsetSection + 1);
-                } else {
-                    if ($itemUri) {
+                    // get the jump definition
+                    $itemSession = ($isRouteItemAdaptive) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
+
+                    // load item infos
+                    $testPart = $routeItem->getTestPart();
+                    $partId = $testPart->getIdentifier();
+
+                    if ($displaySubsectionTitle) {
+                        $section = $routeItem->getAssessmentSection();
+                    } else {
+                        $sections = $routeItem->getAssessmentSections()->getArrayCopy();
+                        $section = $sections[0];
+                    }
+                    $sectionId = $section->getIdentifier();
+                    $itemId = $itemRef->getIdentifier();
+                    $itemDefinition = $itemRef->getHref();
+                    $itemUri = strstr($itemDefinition, '|', true);
+                    
+                    if ($lastPart != $partId) {
+                        $offsetPart = 0;
+                        $lastPart = $partId;
+                    }
+                    if ($lastSection != $sectionId) {
+                        $offsetSection = 0;
+                        $lastSection = $sectionId;
+                    }
+
+                    if ($forceTitles) {
+                        $label = __($uniqueTitle, $offsetSection + 1);
+                    } else {
                         if ($useTitle) {
                             $label = $context->getItemIndexValue($itemUri, 'title');
                         } else {
@@ -200,78 +204,74 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                             $item = new \core_kernel_classes_Resource($itemUri);
                             $label = $item->getLabel();
                         }
-                    } else {
-                        // The item URI could not be parsed as expected. Maybe it's an adaptive placeholder?
-                        $adaptivePlaceholderCategory = \taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY;
-                        if (in_array($adaptivePlaceholderCategory, $itemRef->getCategories()->getArrayCopy())) {
-                            // Use the section label as the label of this "position" in the test.
-                            $label = $section->getTitle();
-                        }
                     }
-                }
 
+                    // fallback in case of the delivery was compiled without the index of item href
+                    if ($shouldBuildItemHrefIndex) {
+                        $this->itemHrefIndex[$itemId] = $itemRef->getHref();
+                    }
+
+                    $itemInfos = [
+                        'id' => $itemId,
+                        'uri' => $itemUri,
+                        'definition' => $itemDefinition,
+                        'label' => $label,
+                        'position' => $offset,
+                        'positionInPart' => $offsetPart,
+                        'positionInSection' => $offsetSection,
+                        'index' => $offsetSection + 1,
+                        'occurrence' => $occurrence,
+                        'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : 1,
+                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : false,
+                        'flagged' => ($itemSession) ? TestRunnerUtils::getItemFlag($session, $routeItem) : false,
+                        'viewed' => ($itemSession) ? $itemSession->isPresented() : false,
+                    ];
+                    
+                    if ($checkInformational) {
+                        $itemInfos['informational'] = ($itemSession) ? TestRunnerUtils::isItemInformational($routeItem, $itemSession) : false;
+                    }
+                    
+                    // update the map
+                    $map['jumps'][] = [
+                        'identifier' => $itemId,
+                        'section' => $sectionId,
+                        'part' => $partId,
+                        'position' => $offset,
+                        'uri' => $itemUri,
+                    ];
+                    
+                    if (!isset($map['parts'][$partId])) {
+                        $map['parts'][$partId]['id'] = $partId;
+                        $map['parts'][$partId]['label'] = $partId;
+                        $map['parts'][$partId]['position'] = $offset;
+                        $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
+                    }
+                    
+                    if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
+                        $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
+                        $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                        $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
+                    }
+                    
+                    $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
+                    
+                    // update the stats
+                    $this->updateStats($map, $itemInfos);
+                    $this->updateStats($map['parts'][$partId], $itemInfos);
+                    $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    
+                    $offset ++;
+                    $offsetPart ++;
+                    $offsetSection ++;
+                }
+                
                 // fallback in case of the delivery was compiled without the index of item href
                 if ($shouldBuildItemHrefIndex) {
-                    $this->itemHrefIndex[$itemId] = $itemRef->getHref();
+                    \common_Logger::t('Store index of item href into the test state storage');
+                    $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                    $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
                 }
-
-                $itemInfos = [
-                    'id' => $itemId,
-                    'uri' => $itemUri,
-                    'definition' => $itemDefinition,
-                    'label' => $label,
-                    'position' => $offset,
-                    'positionInPart' => $offsetPart,
-                    'positionInSection' => $offsetSection,
-                    'index' => $offsetSection + 1,
-                    'occurrence' => $occurrence,
-                    'remainingAttempts' => $itemSession->getRemainingAttempts(),
-                    'answered' => TestRunnerUtils::isItemCompleted($routeItem, $itemSession),
-                    'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
-                    'viewed' => $itemSession->isPresented(),
-                ];
-                
-                if ($checkInformational) {
-                    $itemInfos['informational'] = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
                 }
-                
-                // update the map
-                $map['jumps'][] = [
-                    'identifier' => $itemId,
-                    'section' => $sectionId,
-                    'part' => $partId,
-                    'position' => $offset,
-                    'uri' => $itemUri,
-                ];
-                if (!isset($map['parts'][$partId])) {
-                    $map['parts'][$partId]['id'] = $partId;
-                    $map['parts'][$partId]['label'] = $partId;
-                    $map['parts'][$partId]['position'] = $offset;
-                    $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
-                }
-                if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
-                    $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
-                    $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
-                    $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
-                }
-                $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
-                
-                // update the stats
-                $this->updateStats($map, $itemInfos);
-                $this->updateStats($map['parts'][$partId], $itemInfos);
-                $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
-                
-                $offset ++;
-                $offsetPart ++;
-                $offsetSection ++;
-            }
-            
-            // fallback in case of the delivery was compiled without the index of item href
-            if ($shouldBuildItemHrefIndex) {
-                \common_Logger::t('Store index of item href into the test state storage');
-                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-                $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
-            }
         }
         
         return $map;
@@ -311,5 +311,33 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
         
         $target['stats']['total'] ++;
+    }
+    
+    /**
+     * Get AssessmentItemRef objects.
+     * 
+     * Get the AssessmentItemRef objects bound to a RouteItem object. In most of cases, an array of a single
+     * AssessmentItemRef object will be returned. But in case of the given $routeItem is a CAT Adaptive Placeholder,
+     * multiple AssessmentItemRef objects might be returned.
+     * 
+     * @param RunnerServiceContext $context
+     * @param RouteItem $routeItem
+     * @param boolean $isRouteItemAdaptive A reference to a boolean variable that will be set with true in case of $routeItem is a CAT Adaptive Placeholder. Otherwise, it will ge set with false.
+     * @return array An array of AssessmentItemRef objects.
+     */
+    protected function getRouteItemAssessmentItemRefs(RunnerServiceContext $context, RouteItem $routeItem, &$isRouteItemAdaptive)
+    {
+        /* @var CatService */
+        $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+        $compilationDirectory = $context->getCompilationDirectory()['private'];
+        
+        if ($isRouteItemAdaptive = $context->isAdaptive($routeItem->getAssessmentItemRef())) {
+            $lastCatItemIds = $context->getLastCatItemIds();
+            $itemRefs = ($lastCatItemIds === false) ? [] : $catService->getAssessmentItemRefByIdentifiers($compilationDirectory, $lastCatItemIds);
+        } else {
+            $itemRefs = [$routeItem->getAssessmentItemRef()];
+        }
+        
+        return $itemRefs;
     }
 }
