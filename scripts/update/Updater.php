@@ -1451,9 +1451,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('10.15.0');
         }
 
-        $this->skip('10.15.0', '10.15.1');
+        $this->skip('10.15.0', '10.15.2');
 
-        if ($this->isVersion('10.15.1')) {
+        if ($this->isVersion('10.15.2')) {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
