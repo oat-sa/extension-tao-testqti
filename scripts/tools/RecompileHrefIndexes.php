@@ -55,16 +55,19 @@ class RecompileHrefIndexes extends AbstractAction
                 $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
                 
                 $compact = $directory->getFile('compact-test.php');
-                $phpDocument->loadFromString($compact->read());
-
                 $count = 0;
-                foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
-                    $assessmentItemRefIdentifier = $assessmentItemRef->getIdentifier();
-                    $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRefIdentifier);
-                    $newFile = $directory->getFile($indexPath);
-                    if (!$newFile->exists()) {
-                        $newFile->put($assessmentItemRef->getHref());
-                        $count++;
+                
+                if ($compact->exists()) {
+                    $phpDocument->loadFromString($compact->read());
+
+                    foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
+                        $assessmentItemRefIdentifier = $assessmentItemRef->getIdentifier();
+                        $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRefIdentifier);
+                        $newFile = $directory->getFile($indexPath);
+                        if (!$newFile->exists()) {
+                            $newFile->put($assessmentItemRef->getHref());
+                            $count++;
+                        }
                     }
                 }
                 $report->add(new Report(Report::TYPE_SUCCESS, $count." HrefIndexs for delivery '".$delivery->getLabel()."' compiled."));
