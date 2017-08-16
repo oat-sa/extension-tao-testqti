@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\scripts\tools;
 use oat\oatbox\extension\AbstractAction;
 use \common_report_Report as Report;
 use qtism\data\storage\php\PhpDocument;
+use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
+use oat\taoDelivery\model\RuntimeService;
 
 /**
  * Class RecompileHrefIndexes
@@ -42,40 +44,30 @@ class RecompileHrefIndexes extends AbstractAction
         if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
             
             $extManager->getExtensionById('taoDeliveryRdf');
-            
-            $compiledDeliveryClass = new \core_kernel_classes_Class(CLASS_COMPILEDDELIVERY);
+            $runtimeService = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
             $phpDocument = new PhpDocument();
             
-            if ($compiledDeliveryClass->exists() === true) {
-                $compiledDirectoryProperty = new \core_kernel_classes_Property(PROPERTY_COMPILEDDELIVERY_DIRECTORY);
+            $iterator = new \core_kernel_classes_ResourceIterator([DeliveryAssemblyService::singleton()->getRootClass()]);
+            foreach ($iterator as $delivery) {
+                $runtime = $runtimeService->getRuntime($delivery->getUri());
+                $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+                list($privateId, $publicId) = explode('|', $inputParameters['QtiTestCompilation'], 2);
+                $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
                 
-                foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
-                    $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);
-                    
-                    foreach ($directories as $directoryId) {
-                        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryId);
-                        
-                        foreach ($directory->getIterator() as $filePrefix) {
-                            $file = $directory->getFile($filePrefix);
-                            $fileBasename = $file->getBasename();
-                            
-                            if ($fileBasename === 'compact-test.php') {
-                                $phpDocument->loadFromString($file->read());
-                                
-                                foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
-                                    $assessmentItemRefIdentifier = $assessmentItemRef->getIdentifier();
-                                    $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRefIdentifier);
-                                    $newFile = $directory->getFile($indexPath);
-                                    $newFile->put($assessmentItemRef->getHref());
-                                    
-                                    $report->add(new Report(Report::TYPE_SUCCESS, "HrefIndex for assessmentItemRef identifier '${assessmentItemRefIdentifier}' compiled."));
-                                }
-                                
-                                break 2;
-                            }
-                        }
+                $compact = $directory->getFile('compact-test.php');
+                $phpDocument->loadFromString($compact->read());
+
+                $count = 0;
+                foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
+                    $assessmentItemRefIdentifier = $assessmentItemRef->getIdentifier();
+                    $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRefIdentifier);
+                    $newFile = $directory->getFile($indexPath);
+                    if (!$newFile->exists()) {
+                        $newFile->put($assessmentItemRef->getHref());
+                        $count++;
                     }
                 }
+                $report->add(new Report(Report::TYPE_SUCCESS, $count." HrefIndexs for delivery '".$delivery->getLabel()."' compiled."));
             }
         } else {
             $report->add(
