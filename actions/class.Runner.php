@@ -327,6 +327,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
+    
+    /**
+     * Provides the map of the test items
+     */
+    public function getTestMap()
+    {
+        $code = 200;
+
+        try {
+            $this->checkSecurityToken();
+            $serviceContext = $this->runnerService->initServiceContext($this->getServiceContext());
+
+            $response = [
+                'testMap' => $this->runnerService->getTestMap($serviceContext),
+                'success' => true,
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
 
     /**
      * Provides the definition data and the state for a particular item
