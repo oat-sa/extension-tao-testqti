@@ -1190,29 +1190,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
-     * Get the array of available categories for the current itemRef
-     *
-     * @param RunnerServiceContext $context
-     * @return array
-     */
-    static public function getCategoriesByContext(RunnerServiceContext $context){
-        /** @var CatService $catService */
-        $catService = self::getServiceManager()->get(CatService::SERVICE_ID);
-        $session = $context->getTestSession();
-        $section = $session->getCurrentAssessmentSection();
-        if ($catService->isAssessmentSectionAdaptive($section)) {
-            $itemRef = $catService->getAssessmentItemRefByIdentifier(
-                $context->getCompilationDirectory()['private'],
-                $context->getLastCatItemId()
-            );
-            return $itemRef->getCategories()->getArrayCopy();
-        } else {
-            return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
-        }
-    }
-
-
-    /**
      * Get the array of available categories for the test
      *
      * @param \qtism\runtime\tests\AssessmentTestSession $session
