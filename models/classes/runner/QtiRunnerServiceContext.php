@@ -28,6 +28,7 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use qtism\data\AssessmentTest;
+use qtism\data\AssessmentItemRef;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use oat\oatbox\event\EventManager;
@@ -445,30 +446,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
     
     /**
-     * Clear CAT Session Data.
-     * 
-     * Remove the CAT Session Data from persistent storage.
-     */
-    public function clearCatSession()
-    {
-        $this->catSession = false;
-        
-        $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue(
-            $sessionId,
-            $this->getCurrentCatSection(),
-            'cat-session'
-        );
-    }
-    
-    /**
      * Get the CAT Item ID.
      * 
      * Returns the last CAT Item Identifier provided by the CAT Engine.
      * 
-     * @return string
+     * @return string|boolean
      */
     public function getLastCatItemId()
+    {
+        $lastCatItemIds = $this->getLastCatItemIds();
+        
+        return (is_array($lastCatItemIds)) ? $this->lastCatItemId[0] : $lastCatItemIds;
+    }
+    
+    /**
+     * Get the CAT Item IDs.
+     * 
+     * Return the last CAT Item Identifiers provided by the CAT Engine as a shadow.
+     * 
+     * @return array|boolean
+     */
+    public function getLastCatItemIds()
     {
         if (!isset($this->lastCatItemId)) {
             $sessionId = $this->getTestSession()->getSessionId();
@@ -480,7 +478,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->lastCatItemId = (is_null($id)) ? false : $id;
         }
         
-        return $this->lastCatItemId[0];
+        return $this->lastCatItemId;
     }
     
     /**
@@ -500,23 +498,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->getCurrentCatSection(),
             'cat-last-item-ids', 
             $lastCatItemIds
-        );
-    }
-    
-    /**
-     * Clear the CAT Item ID.
-     * 
-     * Remove the last CAT Item Identifier provided by the CAT Engine from persistent storage.
-     */
-    public function clearLastCatItemIds()
-    {
-        $this->lastCatItemId = false;
-        
-        $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->removeCatValue(
-            $sessionId,
-            $this->getCurrentCatSection(),
-            'cat-last-item-ids'
         );
     }
     
@@ -568,16 +549,32 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * Determines whether or not the current Assessment Test Session is in an adaptive context.
      * 
+     * @param AssessmentItemRef $currentAssessmentItemRef (optional) An AssessmentItemRef object to be considered as the current assessmentItemRef.
      * @return boolean
      */
-    public function isAdaptive()
+    public function isAdaptive(AssessmentItemRef $currentAssessmentItemRef = null)
     {
-        $currentAssessmentItemRef = $this->getTestSession()->getCurrentAssessmentItemRef();
+        $currentAssessmentItemRef = (is_null($currentAssessmentItemRef)) ? $this->getTestSession()->getCurrentAssessmentItemRef() : $currentAssessmentItemRef;
+        
         if ($currentAssessmentItemRef) {
             return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptivePlaceholder($currentAssessmentItemRef);
         } else {
             return false;
         }
+    }
+    
+    /**
+     * Contains Adaptive Content.
+     * 
+     * Whether or not the current Assessment Test Session has some adaptive contents.
+     * 
+     * @return boolean
+     */
+    public function containsAdaptive()
+    {
+        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($this->getCompilationDirectory()['private']);
+        
+        return !empty($adaptiveSectionMap);
     }
     
     /**
@@ -614,6 +611,25 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->persistLastCatItemIds($selection);
             $this->persistCatSession(json_encode($catSession));
             return $selection[0];
+        }
+    }
+    
+    /**
+     * Get Current AssessmentItemRef object.
+     * 
+     * This method returns the current AssessmentItemRef object depending on the test $context.
+     * 
+     * @return \qtism\data\ExtendedAssessmentItemRef
+     */
+    public function getCurrentAssessmentItemRef()
+    {
+        if ($this->isAdaptive()) {
+            return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
+                $this->getCompilationDirectory()['private'],
+                $this->getLastCatItemId()
+            );
+        } else {
+            return $this->getTestSession()->getCurrentAssessmentItemRef();
         }
     }
 }

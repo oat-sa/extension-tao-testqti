@@ -57,7 +57,6 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
-use oat\taoQtiTest\models\cat\CatService;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
@@ -363,7 +362,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $route = $session->getRoute();
                 $currentItem = $route->current();
                 $itemSession = $session->getCurrentAssessmentItemSession();
-                $itemRef = $this->getCurrentAssessmentItemRef($context);
+                $itemRef = $context->getCurrentAssessmentItemRef();
 
                 $reviewConfig = $config->getConfigValue('review');
                 $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
@@ -410,7 +409,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-
+                
                 // Whether the test map must be updated.
                 // TODO: detect if the map need to be updated and set the flag
                 $response['needMapUpdate'] = false;
@@ -666,7 +665,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             /** @var TestSession $session */
             $session = $context->getTestSession();
-            $currentItem  = $this->getCurrentAssessmentItemRef($context);
+            $currentItem  = $context->getCurrentAssessmentItemRef();
             $responses = new State();
 
             if ($currentItem === false) {
@@ -1442,7 +1441,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $sessionId = $context->getTestSession()->getSessionId();
 
             if (!is_null($itemUri)) {
-                $currentItem = $this->getCurrentAssessmentItemRef($context);
+                $currentItem = $context->getCurrentAssessmentItemRef();
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
@@ -1554,25 +1553,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
     
     /**
-     * Get Current AssessmentItemRef object.
-     * 
-     * This method returns the current AssessmentItemRef object depending on the test $context.
-     * 
-     * @return \qtism\data\ExtendedAssessmentItemRef
-     */
-    public function getCurrentAssessmentItemRef(RunnerServiceContext $context)
-    {
-        if ($context->isAdaptive()) {
-            return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
-                $context->getCompilationDirectory()['private'],
-                $context->getLastCatItemId()
-            );
-        } else {
-            return $context->getTestSession()->getCurrentAssessmentItemRef();
-        }
-    }
-    
-    /**
      * Get Current Assessment Session.
      * 
      * Depending on the context (adaptive or not), it will return an appropriate Assessment Object to deal with.
@@ -1587,7 +1567,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getCurrentAssessmentSession(RunnerServiceContext $context)
     {
         if ($context->isAdaptive()) {
-            return new AssessmentItemSession($this->getCurrentAssessmentItemRef($context), new SessionManager());
+            return new AssessmentItemSession($context->getCurrentAssessmentItemRef(), new SessionManager());
         } else {
             return $context->getTestSession();
         }
@@ -1613,7 +1593,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $item = $session->getCurrentAssessmentSection();
                 break;
             case 'assessmentItemRef':
-                $item = $session->getCurrentAssessmentItemSession();
+                $item = $session->getCurrentAssessmentItemRef();
                 break;
         }
 
