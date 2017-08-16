@@ -110,11 +110,12 @@ define([
              * @param {String} message - The message to display
              * @param {Function} accept - The callback for accept
              * @param {Function} reject - The callback for reject
+             * @param {Object} options - Dialog options
              */
-            function addHandle(namespace, stack, dialog, message, accept, reject) {
+            function addHandle(namespace, stack, dialog, message, accept, reject, options) {
                 var handle = {
                     context: namespace,
-                    dialog: dialog(message, doAccept, doReject)
+                    dialog: dialog(message, doAccept, doReject, options)
                 };
 
                 function doAccept(e, reason) {
@@ -206,8 +207,8 @@ define([
                 .before('alert.*', function(e, msg, accept) {
                     addHandle(e.namespace, alerts, dialogAlert, msg, accept, accept);
                 })
-                .before('confirm.*', function(e, msg, accept, reject) {
-                    addHandle(e.namespace, confirms, dialogConfirm, msg, accept, reject);
+                .before('confirm.*', function(e, msg, accept, reject, options) {
+                    addHandle(e.namespace, confirms, dialogConfirm, msg, accept, reject, options);
                 })
                 .before('closedialog.*', function(e, accept) {
                     closeDialogs(e.namespace, accept);

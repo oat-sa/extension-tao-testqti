@@ -19,10 +19,12 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'lodash',
     'i18n',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/helpers/stats'
-], function (__, mapHelper, statsHelper) {
+    'taoQtiTest/runner/helpers/stats',
+    'taoQtiTest/runner/helpers/currentItem'
+], function (_, __, mapHelper, statsHelper, currentItemHelper) {
     'use strict';
 
     /**
@@ -33,30 +35,117 @@ define([
      * @returns {String} Returns the message text
      */
     function getExitMessage(message, scope, runner) {
-        var stats = statsHelper.getInstantStats(scope, runner),
-            unansweredCount = stats && (stats.questions - stats.answered),
-            flaggedCount = stats && stats.flagged,
-            itemsCountMessage = '';
+        var itemsCountMessage = '';
 
         var testData = runner.getTestData(),
             testConfig = testData && testData.config,
             messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
 
         if (messageEnabled) {
-            if (flaggedCount && unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s) and have %s item(s) marked for review.',
-                    unansweredCount.toString(),
-                    flaggedCount.toString()
+            itemsCountMessage = getUnansweredItemsWarning(scope, runner);
+        }
+
+        return (itemsCountMessage + " " + message).trim();
+    }
+
+    /**
+     * Build message if not all items have answers
+     * @param {String} scope - scope to consider for calculating the stats
+     * @param {Object} runner - testRunner instance
+     * @returns {String} Returns the message text
+     */
+    function getUnansweredItemsWarning(scope, runner) {
+        var stats = statsHelper.getInstantStats(scope, runner);
+        var unansweredCount = stats && (stats.questions - stats.answered);
+        var flaggedCount = stats && stats.flagged;
+        var itemsCountMessage = '';
+        var map = runner.getTestMap();
+        var jump = mapHelper.getJump(map, runner.getTestContext().itemPosition);
+        var belowSections;
+
+        if (scope === 'section' || scope === 'testSection'){
+            if (unansweredCount === 0) {
+                itemsCountMessage += __('You answered all %s question(s) in this section',
+                    stats.questions.toString()
                 );
+            } else {
+                itemsCountMessage = __('You answered only %s of the %s question(s) in this section',
+                    stats.answered.toString(),
+                    stats.questions.toString()
+                );
+            }
+            if (flaggedCount) {
+                itemsCountMessage += ', ';
+                itemsCountMessage +=  __('and flagged %s of them', flaggedCount.toString());
+            }
+        } else if(scope === 'test') {
+            //collect statistics from current section and below
+            belowSections = getNextSections(map, jump.section);
+            stats = _.clone(mapHelper.getSectionStats(runner.getTestMap(), jump.section));
 
-            } else if (flaggedCount) {
-                itemsCountMessage = __('You have %s item(s) marked for review.', flaggedCount.toString());
+            _.forEach(belowSections, function (section) {
+                _.forEach(mapHelper.getSectionStats(runner.getTestMap(), section.id), function (sectionStats, statsKey){
+                    stats[statsKey] += sectionStats;
+                });
+            });
 
-            } else if (unansweredCount) {
-                itemsCountMessage = __('You have %s unanswered question(s).', unansweredCount.toString());
+            unansweredCount = stats && (stats.questions - stats.answered);
+            flaggedCount = stats && stats.flagged;
+
+            if (currentItemHelper.isAnswered(runner)) {
+                unansweredCount--;
+            }
+
+            if (unansweredCount === 0) {
+                itemsCountMessage = __('You answered all %s question(s) in this test',
+                    stats.questions.toString()
+                );
+            } else {
+                itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
+            }
+            if (flaggedCount) {
+                itemsCountMessage += ' ' + __('and you flagged %s item(s) that you can review now', flaggedCount.toString());
+            }
+        } else if(scope === 'part') {
+            if (unansweredCount === 0) {
+                itemsCountMessage = __('You answered all %s question(s)',
+                    stats.questions.toString()
+                );
+            } else {
+                itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
+            }
+            if (flaggedCount) {
+                itemsCountMessage += ' ' + __('and you flagged %s item(s) that you can review now', flaggedCount.toString());
             }
         }
-        return (itemsCountMessage + ' ' + message).trim();
+
+        if (itemsCountMessage) {
+            itemsCountMessage += '.';
+        }
+        return itemsCountMessage;
+    }
+
+    /**
+     * Return sections below current.
+     * @param map
+     * @param currentSectionId
+     * @return {Object}
+     */
+    function getNextSections(map, currentSectionId) {
+        var sections = mapHelper.getSections(map),
+            result = {},
+            below = false;
+
+        _.forEach(sections, function (section) {
+            if (below) {
+                result[section.id] = section;
+            }
+            if (section.id === currentSectionId) {
+                below = true;
+            }
+        });
+
+        return result;
     }
 
     return {
