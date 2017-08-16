@@ -70,10 +70,18 @@ define([
                         testRunner.trigger(
                             'confirm.nextsection',
                             messages.getExitMessage(
-                                __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?'),
+                                __('Once you close this section, you cannot return to it or change your answers.'),
                                 'section', testRunner),
                             nextSection, // if the test taker accept
-                            enable       // if the test taker refuse
+                            enable,      // if the test taker refuse
+                            {
+                                buttons: {
+                                    labels: {
+                                        ok: __('Close this Section'),
+                                        cancel:  __('Review my Answers')
+                                    }
+                                }
+                            }
                         );
                     } else {
                         nextSection();

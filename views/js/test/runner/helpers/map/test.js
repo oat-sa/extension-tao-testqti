@@ -41,6 +41,7 @@ define([
         { title : 'getJump' },
         { title : 'getPart' },
         { title : 'getSection' },
+        { title : 'getSections' },
         { title : 'getItem' },
         { title : 'getTestStats' },
         { title : 'getPartStats' },
@@ -125,6 +126,13 @@ define([
         assert.equal(mapHelper.getSection(mapSample, 'assessmentSection-0'), undefined, 'The map helper getSection does not provide any section when the section does not exist');
         assert.equal(mapHelper.getSection({}), undefined, 'The map helper getSection does not provide any section when the map is wrong');
         assert.equal(mapHelper.getSection(), undefined, 'The map helper getSection does not provide any section when the map does not exist');
+    });
+
+    QUnit.test('helpers/map.getSections', function(assert) {
+        //QUnit.expect(3);
+        assert.deepEqual(mapHelper.getSections(mapSample), _.extend({}, mapSample.parts['testPart-1'].sections, mapSample.parts['testPart-2'].sections), 'The map helper getSection provides the right section');
+        assert.deepEqual(mapHelper.getSections({}), {}, 'The map helper getSection does not provide any section when the map is wrong');
+        assert.deepEqual(mapHelper.getSections(), {}, 'The map helper getSection does not provide any section when the map does not exist');
     });
 
 

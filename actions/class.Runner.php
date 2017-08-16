@@ -327,7 +327,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-
+    
     /**
      * Provides the map of the test items
      */
@@ -602,7 +602,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
+                
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
@@ -648,6 +653,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
@@ -698,6 +708,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
@@ -794,6 +809,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
