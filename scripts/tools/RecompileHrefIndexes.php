@@ -69,6 +69,14 @@ class RecompileHrefIndexes extends AbstractAction
                             $count++;
                         }
                     }
+                    
+                    $adaptiveSectionMap = $directory->getFile('adaptive-section-map.json');
+                    
+                    if (!$adaptiveSectionMap->exists()) {
+                        $adaptiveSectionMap->put('[]');
+                        
+                        $report->add(new Report(Report::TYPE_SUCCESS, 'adaptive-section-map.json file compiled.'));
+                    }
                 }
                 $report->add(new Report(Report::TYPE_SUCCESS, $count." HrefIndexs for delivery '".$delivery->getLabel()."' compiled."));
             }
