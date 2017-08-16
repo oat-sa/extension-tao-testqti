@@ -91,6 +91,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
+                'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,
                 'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
                 'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
                 'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
@@ -150,14 +151,15 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
         // Comment allowed? Skipping allowed? Logout or Exit allowed ?
         $options = [
-            'allowComment' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session),
-            'allowSkipping' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session),
-            'exitButton' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session),
-            'logoutButton' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
+            'allowComment'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session),
+            'allowSkipping'     => \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session),
+            'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session),
+            'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
+            'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
         ];
 
         // get the options from the categories owned by the current item
-        $categories = \taoQtiTest_helpers_TestRunnerUtils::getCategories($session);
+        $categories = $this->getCategories($context);
         $prefixCategory = 'x-tao-option-';
         $prefixCategoryLen = strlen($prefixCategory);
         foreach ($categories as $category) {
@@ -185,5 +187,18 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             $this->options = $this->buildOptions($context);
         }
         return $this->options;
+    }
+    
+    /**
+     * Get Categories.
+     * 
+     * Get the categories of the current AssessmentItemRef in the route depending on a given $context.
+     * 
+     * @param RunnerServiceContext $context
+     * @return array An array of strings.
+     */
+    protected function getCategories(RunnerServiceContext $context)
+    {
+        return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
 }
