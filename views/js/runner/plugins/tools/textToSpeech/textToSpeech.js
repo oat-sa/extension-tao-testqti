@@ -21,12 +21,15 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
-    '//taotoolbar.speechstream.net/oat/speechstreamtoolbar.js'
+    'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
+    // '//taotoolbar.speechstream.net/oat/speechstreamtoolbar.js'
+    '//taotoolbar.speechstream.net/tao/configQA.js'
 ], function (
     $,
     _,
     __,
-    pluginFactory
+    pluginFactory,
+    tpl
 ) {
     'use strict';
 
@@ -51,11 +54,19 @@ define([
 
             testRunner
             .on('ready', function () {
+                var areaBroker = testRunner.getAreaBroker();
+                var container;
                 var testContext = testRunner.getTestContext();
                 var tss = window.TexthelpSpeechStream;
 
                 if (testContext.enableTextToSpeech && testContext.textToSpeech) {
+                    container = areaBroker.getContainer();
+
+                    container.append(tpl());
+                    console.log(container);
+
                     tss.addToolbar('bookId', 'pageId');
+                    //play, pause, stop, speed control, volume control (if available), click-to-pronounce
                 }
             })
             .render('#display-and-play > .test-container');
