@@ -1526,6 +1526,37 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('11.9.0');
         }
         
-        $this->skip('11.9.0', '11.15.0');
+        $this->skip('11.9.0', '11.14.0');
+
+        if ($this->isVersion('1.14.0')) {
+            /** @var CatService $catService */
+            $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+            $engines = $catService->getOption(CatService::OPTION_ENGINE_ENDPOINTS);
+
+            if (!isset($engines['http://YOUR_URL_OAUTH/cat/api/'])) {
+                $oauthOptions = [
+                    'class'  => '\oat\libCat\custom\EchoAdaptEngine',
+                    'args' => [
+                        'client_id' => 'YOUR_ID',
+                        'consumer_secret' => 'YOU_SECRET',
+                        'resource_owner_details_url' => false,
+                        'authorize_url' => false,
+                        'http_client_options' => array(),
+                        'token_url' => 'GET_TOKEN_URL',
+                        'token_key' => 'YOUR_STORAGE_TOKEN_KEY',
+                        'tokenParameters' => array(
+                            'audience' => 'YOUR_AUDIENCE'
+                        ),
+                        'token_storage' => 'cache',
+                    ]
+                ];
+
+                $engines['http://YOUR_URL_OAUTH/cat/api/']  = $oauthOptions;
+                $catService->setOption(CatService::OPTION_ENGINE_ENDPOINTS, $engines);
+                $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            }
+
+            $this->setVersion('11.15.0');
+        }
     }
 }
