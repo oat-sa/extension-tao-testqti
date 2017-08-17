@@ -500,7 +500,34 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $lastCatItemIds
         );
     }
-    
+
+    /**
+     * Persist seen CAT Item identifiers.
+     *
+     * @param string $seenCatItemId
+     */
+    public function persistSeenCatItemIds($seenCatItemId)
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $this->getCurrentCatSection(),
+            'cat-seen-item-ids'
+        );
+        if (!$items) {
+            $items = [];
+        } else {
+            $items = json_decode($items);
+        }
+        $items[] = $seenCatItemId;
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $this->getCurrentCatSection(),
+            'cat-seen-item-ids',
+            json_encode($items)
+        );
+    }
+
     /**
      * Get Last CAT Item Output.
      * 
@@ -609,6 +636,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return null;
         } else {
             $this->persistLastCatItemIds($selection);
+            $this->persistSeenCatItemIds($selection[0]);
             $this->persistCatSession(json_encode($catSession));
             return $selection[0];
         }

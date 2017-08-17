@@ -210,7 +210,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-
+                    $previouslySeenItems = $this->getPreviouslySeenCatItems($context);
                     $itemInfos = [
                         'id' => $itemId,
                         'uri' => $itemUri,
@@ -222,9 +222,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'index' => $offsetSection + 1,
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
-                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $catSession->getSessionState()->getPreviouslySeenItems()),
+                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
                         'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
-                        'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $catSession->getSessionState()->getPreviouslySeenItems()),
+                        'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
                     
                     if ($checkInformational) {
@@ -275,6 +275,38 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
         
         return $map;
+    }
+
+    protected function getPreviouslySeenCatItems(RunnerServiceContext $context)
+    {
+        $session = $context->getTestSession();
+        $catEngine = $context->getCatEngine();
+        $result = [];
+        if ($catEngine) {
+            $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                $session->getSessionId(),
+                $context->getCurrentCatSection(),
+                'cat-seen-item-ids'
+            );
+            if (!$items) {
+                $result = [];
+            } else {
+                $result = json_decode($items);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $catSession
+     * @return array
+     */
+    protected function getShadowTest(RunnerServiceContext $context, $catSession)
+    {
+        $previous = $this->getPreviouslySeenCatItems($context);
+        $next = $catSession->getTestMap();
+        return array_unique(array_merge($previous, $next));
     }
 
     /**
@@ -342,7 +374,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 
                 $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
                     $compilationDirectory, 
-                    $catSession->getSessionState()->getShadowTest()
+                    $this->getShadowTest($context, $catSession)
                 );
             }
             // else ... no CAT Session already initialized for that adaptive placeholder.
