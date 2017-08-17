@@ -83,7 +83,7 @@ class CatService extends ConfigurableService
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
                 array_unshift($args, $endpoint);
                 
-                $this->engines[$endpoint] = new $class(...$args);
+                $this->engines[$endpoint] = new $class($endpoint, $args);
             }
         }
         
