@@ -460,7 +460,7 @@ class QtiTimer implements Timer, ExtraTime
     {
         if ($maxTime && $this->getExtendedTime()) {
             $secondsNew = $maxTime * $this->getExtendedTime();
-            $extraTime = floor(($secondsNew - $maxTime) / 60) * 60;
+            $extraTime = $secondsNew - $maxTime;
             $this->setExtraTime($extraTime);
             return $extraTime;
         }
