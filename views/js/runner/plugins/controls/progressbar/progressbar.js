@@ -124,7 +124,7 @@ define([
                         },
                         position : function(){
                             var testSection = getTestSection();
-                            if(testSection){
+                            if(testSection && testSection.items[testContext.itemIdentifier]){
                                 return testSection.items[testContext.itemIdentifier].positionInSection + 1;
                             }
                             return 0;
