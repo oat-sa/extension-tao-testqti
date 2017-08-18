@@ -1,25 +1,44 @@
 <?php
 use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
-use \oat\taoOauth\model\provider\ProviderFactory;
-use \oat\taoOauth\model\connector\implementation\OAuthConnector;
+use oat\tao\model\api\ApiClientConnector;
 
 return new CatService([
     CatService::OPTION_ENGINE_ENDPOINTS => [
+
         'http://YOUR_URL_OAUTH/cat/api/' => [
-            'class'  => '\oat\libCat\custom\EchoAdaptEngine',
-            'args' => [
-                'client_id' => 'YOUR_ID',
-                'consumer_secret' => 'YOU_SECRET',
-                'resource_owner_details_url' => false,
-                'authorize_url' => false,
-                'http_client_options' => array(),
-                'token_url' => 'GET_TOKEN_URL',
-                'token_key' => 'YOUR_STORAGE_TOKEN_KEY',
-                'tokenParameters' => array(
-                    'audience' => 'YOUR_AUDIENCE'
-                ),
-                'token_storage' => 'cache',
+            CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+            CatService::OPTION_ENGINE_ARGS => [
+                EchoAdaptEngine::OPTION_VERSION => 'v1.1',
+                EchoAdaptEngine::OPTION_CLIENT => [
+                    'class' => 'oat\taoOauth\model\OAuthClient',
+                    'options' => [
+                        'client_id' => '',
+                        'client_secret' => '',
+                        'resource_owner_details_url' => false,
+                        'authorize_url' => false,
+                        'http_client_options' => array(),
+                        'token_url' => array(),
+                        'token_key' => '',
+                        'tokenParameters' => array(
+                            'audience' => ''
+                        ),
+                        'token_storage' => 'cache'
+                    ]
+                ],
+            ]
+        ],
+
+        'http://YOUR_URL/cat/api/' => [
+            CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+            CatService::OPTION_ENGINE_ARGS => [
+                EchoAdaptEngine::OPTION_VERSION => 'v1',
+                EchoAdaptEngine::OPTION_CLIENT => [
+                    'class' => ApiClientConnector::class,
+                    'options' => [
+                        ApiClientConnector::OPTION_BASE_URI => 'YOUR_BASE_URI'
+                    ]
+                ],
             ]
         ]
     ]
