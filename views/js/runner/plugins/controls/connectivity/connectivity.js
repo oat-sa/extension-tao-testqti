@@ -107,7 +107,7 @@ define([
                                 .off('reconnect.waiting')
                                 .on('reconnect.waiting', function(){
                                     waiting = false;
-                                    dialog.proceed();
+                                    dialog.endWait();
                                 });
                         });
                     }
