@@ -159,7 +159,7 @@ define([
 
                         //we are really not able to navigate
                         if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
-                            offlineNavError = new Error(__('Unable to select the next item due to connectivity issues'));
+                            offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
                             _.assign(offlineNavError, {
                                 success : false,
                                 source: 'navigator',
