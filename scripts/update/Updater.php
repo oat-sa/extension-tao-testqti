@@ -1528,7 +1528,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         
         $this->skip('11.9.0', '11.16.0');
 
-        if ($this->isVersion('11.14.0')) {
+        if ($this->isVersion('11.16.0')) {
             /** @var CatService $catService */
             $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
             $engines = $catService->getOption(CatService::OPTION_ENGINE_ENDPOINTS);
