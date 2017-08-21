@@ -9,8 +9,8 @@ return new CatService([
         'http://YOUR_URL_OAUTH/cat/api/' => [
             CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
             CatService::OPTION_ENGINE_ARGS => [
-                EchoAdaptEngine::OPTION_VERSION => 'v1.1',
-                EchoAdaptEngine::OPTION_CLIENT => [
+                CatService::OPTION_ENGINE_VERSION => 'v1.1',
+                CatService::OPTION_ENGINE_CLIENT => [
                     'class' => 'oat\taoOauth\model\OAuthClient',
                     'options' => [
                         'client_id' => '',
@@ -32,8 +32,8 @@ return new CatService([
         'http://YOUR_URL/cat/api/' => [
             CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
             CatService::OPTION_ENGINE_ARGS => [
-                EchoAdaptEngine::OPTION_VERSION => 'v1',
-                EchoAdaptEngine::OPTION_CLIENT => [
+                CatService::OPTION_ENGINE_VERSION => 'v1',
+                CatService::OPTION_ENGINE_CLIENT => [
                     'class' => ApiClientConnector::class,
                     'options' => [
                         ApiClientConnector::OPTION_BASE_URI => 'YOUR_BASE_URI'
