@@ -54,7 +54,6 @@ class QtiRunnerNavigationNextItem implements RunnerNavigation
             // In case of we are now in an adaptive context, let's initialize the CAT session
             // and ask for a new item dynamically.
             if ($context->isAdaptive()) {
-                $context->initCatSession();
                 $context->selectAdaptiveNextItem();
             }
         }

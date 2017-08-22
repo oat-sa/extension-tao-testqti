@@ -367,19 +367,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
     
     /**
-     * Initialize the CAT Session.
-     * 
-     * This method has to be invoked whenever a new adaptive Assessment Section is encountered
-     * during an Assessment Test Session.
-     */
-    public function initCatSession()
-    {
-        if ($catSession = $this->getCatSession()) {
-            $this->persistCatSession($catSession);
-        }
-    }
-    
-    /**
      * Get the current CAT Session Object.
      * 
      * @return \oat\libCat\CatSession|false
@@ -406,15 +393,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 } else {
                     // First time the session is required, let's initialize it.
                     $this->catSession = $catSection->initSession();
+                    $assessmentSection = $testSession->getCurrentAssessmentSection();
 
                     $event = new InitializeAdaptiveSessionEvent(
                         $testSession,
-                        $testSession->getCurrentAssessmentSection(),
+                        $assessmentSection,
                         $this->catSession
                     );
                     
                     $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
-                    \common_Logger::d("CAT Session '" . $this->catSession->getTestTakerSessionId() . "' initialized.");
+                    \common_Logger::d("CAT Session '" . $this->catSession->getTestTakerSessionId() . "' initialized and persisted.");
                 }
             }
         }
