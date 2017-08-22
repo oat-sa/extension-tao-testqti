@@ -31,6 +31,7 @@ use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
@@ -352,14 +353,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * @return \oat\libCat\CatEngine
      */
-    public function getCatEngine()
+    public function getCatEngine(RouteItem $routeItem = null)
     {
         $compiledDirectory = $this->getCompilationDirectory()['private'];
         $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
-        $sectionId = $this->getTestSession()->getCurrentAssessmentSection()->getIdentifier();
+        $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
+        
+        $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         $catEngine = false;
         
-        if ($sectionId && isset($adaptiveSectionMap[$sectionId])) {
+        if (isset($adaptiveSectionMap[$sectionId])) {
             $catEngine = $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
         }
         
@@ -371,13 +374,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * @return \oat\libCat\CatSession|false
      */
-    public function getCatSession()
+    public function getCatSession(RouteItem $routeItem = null)
     {
         if (empty($this->catSession)) {
             // No retrieval trial yet in the current execution context.
             $this->catSession = false;
             
-            if ($catSection = $this->getCatSection()) {
+            if ($catSection = $this->getCatSection($routeItem)) {
                 // A CAT Section exists for the current position in the flow.
                 $testSession = $this->getTestSession();
                 
@@ -393,7 +396,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 } else {
                     // First time the session is required, let's initialize it.
                     $this->catSession = $catSection->initSession();
-                    $assessmentSection = $testSession->getCurrentAssessmentSection();
+                    $assessmentSection = $routeItem ? $routeItem->getAssessmentSection() : $testSession->getCurrentAssessmentSection();
 
                     $event = new InitializeAdaptiveSessionEvent(
                         $testSession,
@@ -541,16 +544,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * @return \oat\libCat\CatSection|boolean
      */
-    public function getCatSection()
+    public function getCatSection(RouteItem $routeItem = null)
     {
         $catSection = false;
         
         $compiledDirectory = $this->getCompilationDirectory()['private'];
         $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
-        $section = $this->getTestSession()->getCurrentAssessmentSection();
+        $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
         
-        if ($section && ($identifier = $section->getIdentifier()) && isset($adaptiveSectionMap[$identifier])) {
-            $catSection = $this->getCatEngine()->restoreSection($adaptiveSectionMap[$identifier]['section']);
+        if (($identifier = $routeItem->getAssessmentSection()->getIdentifier()) && isset($adaptiveSectionMap[$identifier])) {
+            $catSection = $this->getCatEngine($routeItem)->restoreSection($adaptiveSectionMap[$identifier]['section']);
         }
         
         return $catSection;

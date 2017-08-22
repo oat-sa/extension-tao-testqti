@@ -366,17 +366,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $catSession = false;
         
         if ($context->isAdaptive($routeItem->getAssessmentItemRef())) {
-            $catEngine = $context->getCatEngine();
+            $catSession = $context->getCatSession($routeItem);
             
-            if ($catEngine !== false) {
-                $catSession = $context->getCatSession();
-                
-                $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
-                    $compilationDirectory, 
-                    $this->getShadowTest($context)
-                );
-            }
-            // else ... no CAT Session already initialized for that adaptive placeholder.
+            $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
+                $compilationDirectory, 
+                $this->getShadowTest($context)
+            );
         } else {
             $itemRefs[] = $routeItem->getAssessmentItemRef();
         }
