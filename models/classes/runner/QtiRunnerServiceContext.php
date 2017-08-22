@@ -609,11 +609,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $lastOutput = $this->getLastCatItemOutput();
         $catSession = $this->getCatSession();
         
-        if (!empty($lastItemId)) {
-            $selection = $catSession->getTestMap([$lastOutput]);
-        } else {
-            $selection = $catSession->getTestMap([]);
-        }
+        $lastOutput = !empty($lastItemId) ? [$lastOutput] : [];
+        $selection = $catSession->getTestMap($lastOutput);
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
@@ -625,6 +622,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->persistLastCatItemIds($selection);
             $this->persistSeenCatItemIds($selection[0]);
             $this->persistCatSession($catSession);
+            
             return $selection[0];
         }
     }
