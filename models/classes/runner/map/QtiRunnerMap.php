@@ -302,10 +302,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * @param $catSession
      * @return array
      */
-    protected function getShadowTest(RunnerServiceContext $context, $catSession)
+    protected function getShadowTest(RunnerServiceContext $context)
     {
         $previous = $this->getPreviouslySeenCatItems($context);
-        $next = $catSession->getTestMap();
+        $next = $context->getCatSession()->getTestMap();
         return array_unique(array_merge($previous, $next));
     }
 
@@ -369,12 +369,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $catEngine = $context->getCatEngine();
             
             if ($catEngine !== false) {
-                $catSection = $context->getCatSection();
-                $catSession = $catSection->restoreSession($context->getCatSession());
+                $catSession = $context->getCatSession();
                 
                 $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
                     $compilationDirectory, 
-                    $this->getShadowTest($context, $catSession)
+                    $this->getShadowTest($context)
                 );
             }
             // else ... no CAT Session already initialized for that adaptive placeholder.
