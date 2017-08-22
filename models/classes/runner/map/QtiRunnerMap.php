@@ -285,7 +285,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         if ($catEngine) {
             $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
                 $session->getSessionId(),
-                $context->getCurrentCatSection(),
+                $context->getCurrentCatSection()->getSectionId(),
                 'cat-seen-item-ids'
             );
             if (!$items) {
@@ -369,7 +369,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $catEngine = $context->getCatEngine();
             
             if ($catEngine !== false) {
-                $catSection = $context->getCatEngine()->restoreSection($context->getCurrentCatSection());
+                $catSection = $context->getCurrentCatSection();
                 $catSession = $catSection->restoreSession($context->getCatSession());
                 
                 $itemRefs = $catService->getAssessmentItemRefByIdentifiers(

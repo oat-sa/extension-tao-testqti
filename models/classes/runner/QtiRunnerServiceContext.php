@@ -379,10 +379,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $testSession = $this->getTestSession();
         $catEngine = $this->getCatEngine();
         $catSession = $this->getCatSession();
-        $catSectionId = $this->getCurrentCatSection();
-        
+    
         // Deal with the CAT Section.
-        $catSection = $this->getCatEngine()->restoreSection($catSectionId);
+        $catSection = $this->getCurrentCatSection();
         
         // Deal with the CAT Session.
         if(!empty($catSession)){
@@ -416,7 +415,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $sessionId = $this->getTestSession()->getSessionId();
             $catSession = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
                 $sessionId, 
-                $this->getCurrentCatSection(), 
+                $this->getCurrentCatSection()->getSectionId(), 
                 'cat-session'
             );
             $this->catSession = (is_null($catSession)) ? false : $catSession; 
@@ -439,7 +438,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionId = $this->getTestSession()->getSessionId();
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
-            $this->getCurrentCatSection(),
+            $this->getCurrentCatSection()->getSectionId(),
             'cat-session', 
             $catSession
         );
@@ -472,7 +471,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $sessionId = $this->getTestSession()->getSessionId();
             $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
                 $sessionId, 
-                $this->getCurrentCatSection(),
+                $this->getCurrentCatSection()->getSectionId(),
                 'cat-last-item-ids'
             );
             $this->lastCatItemId = (is_null($id)) ? false : $id;
@@ -495,7 +494,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionId = $this->getTestSession()->getSessionId();
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId, 
-            $this->getCurrentCatSection(),
+            $this->getCurrentCatSection()->getSectionId(),
             'cat-last-item-ids', 
             $lastCatItemIds
         );
@@ -511,7 +510,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionId = $this->getTestSession()->getSessionId();
         $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
             $sessionId,
-            $this->getCurrentCatSection(),
+            $this->getCurrentCatSection()->getSectionId(),
             'cat-seen-item-ids'
         );
         if (!$items) {
@@ -522,7 +521,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $items[] = $seenCatItemId;
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
-            $this->getCurrentCatSection(),
+            $this->getCurrentCatSection()->getSectionId(),
             'cat-seen-item-ids',
             json_encode($items)
         );
@@ -549,26 +548,26 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
     
     /**
-     * Get Current CAT Section ID.
+     * Get Current CAT Section.
      * 
-     * Returns the current CAT Section Identifier. In case of the current Assessment Section is not adaptive, the method
+     * Returns the current CatSection object. In case of the current Assessment Section is not adaptive, the method
      * returns the boolean false value.
      * 
-     * @return string|boolean
+     * @return \oat\libCat\CatSection|boolean
      */
     public function getCurrentCatSection()
     {
+        $catSection = false;
+        
         $compiledDirectory = $this->getCompilationDirectory()['private'];
         $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
         $section = $this->getTestSession()->getCurrentAssessmentSection();
         
-        if (!$section) {
-            return false;
+        if ($section && isset($adaptiveSectionMap[$identifier])) {
+            $catSection = $this->getCatEngine()->restoreSection($adaptiveSectionMap[$identifier]['section']);
         }
         
-        $identifier = $section->getIdentifier();
-        
-        return (isset($adaptiveSectionMap[$identifier])) ? $adaptiveSectionMap[$identifier]['section'] : false;
+        return $catSection;
     }
     
     /**
@@ -619,7 +618,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         $lastItemId = $this->getLastCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
-        $catSection = $this->getCatEngine()->restoreSection($this->getCurrentCatSection());
+        $catSection = $this->getCurrentCatSection();
         $catSession = $catSection->restoreSession($this->getCatSession());
         
         if (!empty($lastItemId)) {
