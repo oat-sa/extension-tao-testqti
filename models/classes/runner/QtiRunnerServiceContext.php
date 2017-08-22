@@ -646,11 +646,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
     }
     
-    public function getPreviouslySeenCatItemIds()
+    public function getPreviouslySeenCatItemIds(RouteItem $routeItem = null)
     {
         $result = [];
         
-        if ($catSection = $this->getCatSection()) {        
+        if ($catSection = $this->getCatSection($routeItem)) {        
             $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
                 $this->getTestSession()->getSessionId(),
                 $catSection->getSectionId(),
@@ -663,12 +663,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $result;
     }
 
-    public function getShadowTest()
+    public function getShadowTest(RouteItem $routeItem = null)
     {
         $shadow = array_unique(
             array_merge(
-                $this->getPreviouslySeenCatItemIds(),
-                $this->getCatSession()->getTestMap()
+                $this->getPreviouslySeenCatItemIds($routeItem),
+                $this->getCatSession($routeItem)->getTestMap()
             )
         );
 

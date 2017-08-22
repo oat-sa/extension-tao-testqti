@@ -340,7 +340,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             
             $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
                 $compilationDirectory, 
-                $context->getShadowTest()
+                $context->getShadowTest($routeItem)
             );
         } else {
             $itemRefs[] = $routeItem->getAssessmentItemRef();
