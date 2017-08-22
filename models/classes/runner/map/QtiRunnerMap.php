@@ -211,7 +211,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
                     
-                    $previouslySeenItems = $context->getPreviouslySeenCatItemIds();
+                    $previouslySeenItems = $context->getPreviouslySeenCatItemIds($routeItem);
                     
                     $itemInfos = [
                         'id' => $itemId,
