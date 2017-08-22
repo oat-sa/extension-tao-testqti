@@ -210,7 +210,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-                    $previouslySeenItems = $this->getPreviouslySeenCatItems($context);
+                    
+                    $previouslySeenItems = $context->getPreviouslySeenCatItemIds();
+                    
                     $itemInfos = [
                         'id' => $itemId,
                         'uri' => $itemUri,
@@ -277,38 +279,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         return $map;
     }
 
-    protected function getPreviouslySeenCatItems(RunnerServiceContext $context)
-    {
-        $session = $context->getTestSession();
-        $catEngine = $context->getCatEngine();
-        $result = [];
-        if ($catEngine) {
-            $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-                $session->getSessionId(),
-                $context->getCatSection()->getSectionId(),
-                'cat-seen-item-ids'
-            );
-            if (!$items) {
-                $result = [];
-            } else {
-                $result = json_decode($items);
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param RunnerServiceContext $context
-     * @param $catSession
-     * @return array
-     */
-    protected function getShadowTest(RunnerServiceContext $context)
-    {
-        $previous = $this->getPreviouslySeenCatItems($context);
-        $next = $context->getCatSession()->getTestMap();
-        return array_unique(array_merge($previous, $next));
-    }
-
     /**
      * Update the stats inside the target
      * @param array $target
@@ -370,7 +340,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             
             $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
                 $compilationDirectory, 
-                $this->getShadowTest($context)
+                $context->getShadowTest()
             );
         } else {
             $itemRefs[] = $routeItem->getAssessmentItemRef();

@@ -645,4 +645,33 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return $this->getTestSession()->getCurrentAssessmentItemRef();
         }
     }
+    
+    public function getPreviouslySeenCatItemIds()
+    {
+        $result = [];
+        
+        if ($catSection = $this->getCatSection()) {        
+            $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                $this->getTestSession()->getSessionId(),
+                $catSection->getSectionId(),
+                'cat-seen-item-ids'
+            );
+            
+            $result = !$items ? [] : json_decode($items);
+        }
+        
+        return $result;
+    }
+
+    public function getShadowTest()
+    {
+        $shadow = array_unique(
+            array_merge(
+                $this->getPreviouslySeenCatItemIds(),
+                $this->getCatSession()->getTestMap()
+            )
+        );
+
+        return $shadow;
+    }
 }
