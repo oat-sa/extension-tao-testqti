@@ -410,6 +410,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     );
                     
                     $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+                    $this->persistCatSession($this->catSession[$catSectionId], $routeItem);
                     \common_Logger::d("CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId() . "' for CAT Section '${catSectionId}' initialized and persisted.");
                 }
             }
@@ -428,9 +429,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * @param string $catSession JSON encoded CAT Session data.
      */
-    public function persistCatSession($catSession)
+    public function persistCatSession($catSession, RouteItem $routeItem = null)
     {
-        if ($catSection = $this->getCatSection()) {
+        if ($catSection = $this->getCatSection($routeItem)) {
             $catSectionId = $catSection->getSectionId();
             $this->catSession[$catSectionId] = $catSession;
         
@@ -633,12 +634,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         if (is_array($selection) && count($selection) == 0) {
-            
+            \common_Logger::d('No new CAT item selection.');
             return null;
         } else {
             $this->persistLastCatItemIds($selection);
             $this->persistSeenCatItemIds($selection[0]);
             $this->persistCatSession($catSession);
+            
+            \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
             
             return $selection[0];
         }
