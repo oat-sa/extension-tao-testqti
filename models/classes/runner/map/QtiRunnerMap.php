@@ -156,6 +156,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
+                $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
                 
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
@@ -210,8 +211,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-                    
-                    $previouslySeenItems = $context->getPreviouslySeenCatItemIds($routeItem);
                     
                     $itemInfos = [
                         'id' => $itemId,
