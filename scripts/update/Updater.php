@@ -1546,7 +1546,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                                 'resource_owner_details_url' => false,
                                 'authorize_url' => false,
                                 'http_client_options' => array(),
-                                'token_url' => array(),
+                                'token_url' => '',
                                 'token_key' => '',
                                 'tokenParameters' => array(
                                     'audience' => ''
@@ -1564,6 +1564,8 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('12.0.0');
         }
+        
+        $this->skip('12.0.0', '13.0.0');
         
     }
 }
