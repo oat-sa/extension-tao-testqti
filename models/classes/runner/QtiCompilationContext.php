@@ -14,25 +14,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 /**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jérôme Bogaerts <jerome@taotesting.com>
  */
 
 namespace oat\taoQtiTest\models\runner;
 
-class QtiCompilationContext
+class QtiCompilationContext implements CompilationContext
 {
     private $testCompilationUri;
+    
+    private $testExecutionUri;
     
     private $publicDirectory;
     
     private $privateDirectory;
     
-    public function __construct($testCompilationUri)
+    public function __construct($testCompilationUri, $testExecutionUri)
     {
         $this->testCompilationUri = $testCompilationUri;
+        $this->testExecutionUri = $testExecutionUri;
         
         $fileStorage = \tao_models_classes_service_FileStorage::singleton();
         $directoryIds = explode('|', $testCompilationUri);
@@ -54,5 +57,18 @@ class QtiCompilationContext
     public function getPrivateDirectory()
     {
         return $this->privateDirectory;
+    }
+    
+    public function getCompilationDirectory()
+    {
+        return [
+            'private' => $this->getPrivateDirectory(),
+            'public' => $this->getPublicDirectory()
+        ];
+    }
+    
+    public function getTestExecutionUri()
+    {
+        return $this->testExecutionUri;
     }
 }

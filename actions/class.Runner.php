@@ -361,10 +361,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemIdentifier = $this->getRequestParameter('itemDefinition');
+        $testCompilation = $this->getRequestParameter('testCompilation');
+        $testExecution = $this->getSessionId();
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
 
             //load item data
             $response = $this->getItemData($itemIdentifier);
@@ -425,7 +426,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected function getItemData($itemIdentifier)
     {
-        $serviceContext = $this->getServiceContext();
+        $testCompilation = $this->getRequestParameter('testCompilation');
+        $testExecution = $this->getSessionId();
+        
+        $serviceContext = new oat\taoQtiTest\models\runner\QtiCompilationContext($testCompilation, $testExecution);
         $itemRef        = $this->runnerService->getItemHref($serviceContext, $itemIdentifier);
         $itemData       = $this->runnerService->getItemData($serviceContext, $itemRef);
         $baseUrl        = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
