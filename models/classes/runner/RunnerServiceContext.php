@@ -34,7 +34,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  *
  * @package oat\taoQtiTest\models
  */
-class RunnerServiceContext implements ServiceLocatorAwareInterface
+abstract class RunnerServiceContext implements ServiceLocatorAwareInterface, CompilationContext
 {
     use ServiceLocatorAwareTrait;
 

@@ -27,6 +27,7 @@ use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\CompilationContext;
 use qtism\data\NavigationMode;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
@@ -49,11 +50,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
     /**
      * Gets the file that contains the href for the AssessmentItemRef Identifier
-     * @param QtiRunnerServiceContext $context
+     * @param CompilationContext $context
      * @param string $itemIdentifier
      * @return \oat\oatbox\filesystem\File
      */
-    protected function getItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
+    protected function getItemHrefIndexFile(CompilationContext $context, $itemIdentifier)
     {
         $compilationDirectory = $context->getCompilationDirectory()['private'];
         return $compilationDirectory->getFile(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($itemIdentifier));
@@ -62,11 +63,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
     /**
      * Checks if the AssessmentItemRef Identifier is in the index.
      *
-     * @param QtiRunnerServiceContext $context
+     * @param CompilationContext $context
      * @param string $itemIdentifier
      * @return boolean
      */
-    protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
+    protected function hasItemHrefIndexFile(CompilationContext $context, $itemIdentifier)
     {
         $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
         return $indexFile->exists();
@@ -77,11 +78,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * 
      * Returns the AssessmentItemRef href attribute value from a given $identifier.
      * 
-     * @param QtiRunnerServiceContext $context
+     * @param CompilationContext $context
      * @param string $itemIdentifier
      * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
      */
-    public function getItemHref(QtiRunnerServiceContext $context, $itemIdentifier)
+    public function getItemHref(CompilationContext $context, $itemIdentifier)
     {
         $href = false;
 
