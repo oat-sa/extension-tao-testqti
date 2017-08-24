@@ -224,7 +224,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 
                 if ($context->isAdaptive()) {
                     \common_Logger::i("First item is adaptive.");
-                    $context->initCatSession();
                     $context->selectAdaptiveNextItem();
                 }
             }

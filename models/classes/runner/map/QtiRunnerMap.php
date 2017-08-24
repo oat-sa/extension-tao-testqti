@@ -156,6 +156,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
+                $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
                 
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
@@ -210,7 +211,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-                    $previouslySeenItems = $this->getPreviouslySeenCatItems($context);
+                    
                     $itemInfos = [
                         'id' => $itemId,
                         'uri' => $itemUri,
@@ -277,38 +278,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         return $map;
     }
 
-    protected function getPreviouslySeenCatItems(RunnerServiceContext $context)
-    {
-        $session = $context->getTestSession();
-        $catEngine = $context->getCatEngine();
-        $result = [];
-        if ($catEngine) {
-            $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-                $session->getSessionId(),
-                $context->getCurrentCatSection(),
-                'cat-seen-item-ids'
-            );
-            if (!$items) {
-                $result = [];
-            } else {
-                $result = json_decode($items);
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param RunnerServiceContext $context
-     * @param $catSession
-     * @return array
-     */
-    protected function getShadowTest(RunnerServiceContext $context, $catSession)
-    {
-        $previous = $this->getPreviouslySeenCatItems($context);
-        $next = $catSession->getTestMap();
-        return array_unique(array_merge($previous, $next));
-    }
-
     /**
      * Update the stats inside the target
      * @param array $target
@@ -366,18 +335,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $catSession = false;
         
         if ($context->isAdaptive($routeItem->getAssessmentItemRef())) {
-            $catEngine = $context->getCatEngine();
+            $catSession = $context->getCatSession($routeItem);
             
-            if ($catEngine !== false) {
-                $catSection = $context->getCatEngine()->restoreSection($context->getCurrentCatSection());
-                $catSession = $catSection->restoreSession($context->getCatSession());
-                
-                $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
-                    $compilationDirectory, 
-                    $this->getShadowTest($context, $catSession)
-                );
-            }
-            // else ... no CAT Session already initialized for that adaptive placeholder.
+            $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
+                $compilationDirectory, 
+                $context->getShadowTest($routeItem)
+            );
         } else {
             $itemRefs[] = $routeItem->getAssessmentItemRef();
         }
