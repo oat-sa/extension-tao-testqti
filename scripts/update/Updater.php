@@ -1537,8 +1537,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $oauthOptions = [
                     CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
                     CatService::OPTION_ENGINE_ARGS => [
-                        EchoAdaptEngine::OPTION_VERSION => 'v1.1',
-                        EchoAdaptEngine::OPTION_CLIENT => [
+                        CatService::OPTION_ENGINE_VERSION => 'v1.1',
+                        CatService::OPTION_ENGINE_CLIENT => [
                             'class' => 'oat\taoOauth\model\OAuthClient',
                             'options' => [
                                 'client_id' => '',
@@ -1565,7 +1565,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('12.0.0');
         }
         
-        $this->skip('12.0.0', '13.0.0');
-        
+        $this->skip('12.0.0', '13.1.0');
     }
 }
