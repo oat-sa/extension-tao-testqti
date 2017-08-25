@@ -470,6 +470,14 @@ define([
                         self.trigger('warning', warning);
                     }
                 })
+                .on('log', function(message){
+                    var log = self.getProxy().callTestAction('log', {
+                        message: message
+                    });
+                    log.then(function() {
+                        self.trigger('warning', message);
+                    })
+                })
                 .on('resumeitem', function(){
                     this.trigger('enableitem enablenav');
                 })

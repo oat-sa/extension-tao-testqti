@@ -1237,6 +1237,33 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Logging the test
+     * @param RunnerServiceContext $context
+     * @param string $message
+     * @return bool
+     */
+    public function log(RunnerServiceContext $context, $message)
+    {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultServer);
+
+        // prepare transmission Id for result server.
+        $testSession = $context->getTestSession();
+        $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
+        $occurrence = $testSession->getCurrentAssessmentItemRefOccurence();
+        $sessionId = $testSession->getSessionId();
+        $transmissionId = "${sessionId}.${item}.${occurrence}";
+
+        // build variable and send it.
+        $itemUri = TestRunnerUtils::getCurrentItemUri($testSession);
+        $testUri = $testSession->getTest()->getUri();
+        $variable = new ResponseVariable('Log message', Cardinality::SINGLE, BaseType::STRING, new QtismString($message));
+        $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
+
+        return true;
+    }
+
+    /**
      * Comment the test
      * @param RunnerServiceContext $context
      * @param string $comment
