@@ -774,8 +774,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $score = $session->getVariable('SCORE');
                     $assessmentItem = $session->getAssessmentItem();
                     $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $output = $context->getLastCatItemOutput();
                     
-                    $output = new ItemResult(
+                    $output[$assessmentItemIdentifier] = new ItemResult(
                         $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
@@ -784,7 +785,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                             )
                         );
                         
-                    $context->persistLastCatItemOutput($output, $assessmentItemIdentifier);
+                    $context->persistLastCatItemOutput($output);
                     
                     // Send results to TAO Results.
                     $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter($context->getSessionManager()->getResultServer());

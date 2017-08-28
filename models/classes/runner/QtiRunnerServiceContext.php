@@ -35,6 +35,8 @@ use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\libCat\result\ItemResult;
+use oat\libCat\result\ResultVariable;
 
 /**
  * Class QtiRunnerServiceContext
@@ -103,8 +105,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $catSection = [];
     
     private $lastCatItemId = null;
-    
-    private $lastCatItemOutput = [];
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -535,7 +535,31 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getLastCatItemOutput()
     {
-        return $this->lastCatItemOutput;
+        $sessionId = $this->getTestSession()->getSessionId();
+        
+        $itemOutput = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $this->getCatSection()->getSectionId(),
+            'cat-item-output'
+        );
+        
+        if (!$itemOutput) {
+            $output = [];
+        } else {
+            $rawData = json_decode($itemOutput, true);
+
+            foreach ($rawData as $result) {
+                $itemIdentifier = $result['identifier'];
+                $variables= [];
+                foreach ($result['outcomeVariables'] as $outcomeVariable) {
+                    $variables[] = ResultVariable::restore($outcomeVariable);
+                }
+                
+                $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
+            }
+        }
+        
+        return $output;
     }
     
     /**
@@ -543,9 +567,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * Persist the last CAT Item Result in memory.
      */
-    public function persistLastCatItemOutput($lastCatItemOutput, $itemIdentifier)
+    public function persistLastCatItemOutput(array $lastCatItemOutput)
     {
-        $this->lastCatItemOutput[$itemIdentifier] = $lastCatItemOutput;
+        $sessionId = $this->getTestSession()->getSessionId();
+        
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $this->getCatSection()->getSectionId(),
+            'cat-item-output',
+            json_encode($lastCatItemOutput)
+        );
     }
     
     /**
@@ -626,9 +657,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $lastItemId = $this->getLastCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
         $catSession = $this->getCatSession();
-        
-        $lastOutput = !empty($lastItemId) ? array_values($lastOutput) : [];
-        $selection = $catSession->getTestMap($lastOutput);
+        $selection = $catSession->getTestMap(array_values($lastOutput));
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
