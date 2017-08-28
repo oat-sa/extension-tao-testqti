@@ -670,13 +670,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $shadow;
     }
     
-    public function getCurrentCatItemId()
+    public function getCurrentCatItemId(RouteItem $routeItem = null)
     {
         $sessionId = $this->getTestSession()->getSessionId();
         
         $catItemId = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
             $sessionId,
-            $this->getCatSection()->getSectionId(),
+            $this->getCatSection($routeItem)->getSectionId(),
             'current-cat-item-id'
         );
         
@@ -693,5 +693,42 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             'current-cat-item-id',
             $catItemId
         );
+    }
+    
+    public function getItemPositionInRoute($refId, &$catItemId)
+    {
+        $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+        $route = $this->getTestSession()->getRoute();
+        $routeCount = $route->count();
+        
+        $i = 0;
+        $j = 0;
+        
+        while ($i < $routeCount) {
+            $routeItem = $route->getRouteItemAt($i);
+            
+            if ($catService->isAdaptivePlaceholder($routeItem->getAssessmentItemRef())) {
+                $shadow = $this->getShadowTest($routeItem);
+                
+                for ($k = 0; $k < count($shadow); $k++) {
+                    if ($j == $refId) {
+                        $catItemId = $shadow[$k];
+                        break 2;
+                    }
+                    
+                    $j++;
+                }
+            } else {
+                if ($j == $refId) {
+                    break;
+                }
+                
+                $j++;
+            }
+            
+            $i++;
+        }
+        
+        return $i;
     }
 }
