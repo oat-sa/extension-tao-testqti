@@ -444,62 +444,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             );
         }
     }
-    
-    /**
-     * Get the CAT Item ID.
-     * 
-     * Returns the last CAT Item Identifier provided by the CAT Engine.
-     * 
-     * @return string|boolean
-     */
-    public function getLastCatItemId()
-    {
-        $lastCatItemIds = $this->getLastCatItemIds();
-        
-        return (is_array($lastCatItemIds)) ? $this->lastCatItemId[0] : $lastCatItemIds;
-    }
-    
-    /**
-     * Get the CAT Item IDs.
-     * 
-     * Return the last CAT Item Identifiers provided by the CAT Engine as a shadow.
-     * 
-     * @return array|boolean
-     */
-    public function getLastCatItemIds()
-    {
-        if (!isset($this->lastCatItemId)) {
-            $sessionId = $this->getTestSession()->getSessionId();
-            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-                $sessionId, 
-                $this->getCatSection()->getSectionId(),
-                'cat-last-item-ids'
-            );
-            $this->lastCatItemId = (is_null($id)) ? false : $id;
-        }
-        
-        return $this->lastCatItemId;
-    }
-    
-    /**
-     * Persist the CAT Item ID.
-     * 
-     * Persists the last CAT Item Identifiers provided by the CAT Engine.
-     * 
-     * @param string $lastCatItemId
-     */
-    public function persistLastCatItemIds(array $lastCatItemIds)
-    {
-        $this->lastCatItemId = $lastCatItemIds;
-        
-        $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
-            $sessionId, 
-            $this->getCatSection()->getSectionId(),
-            'cat-last-item-ids', 
-            $lastCatItemIds
-        );
-    }
 
     /**
      * Persist seen CAT Item identifiers.
@@ -670,7 +614,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d('No new CAT item selection.');
             return null;
         } else {
-            $this->persistLastCatItemIds($selection);
             $this->persistCatSession($catSession);
             
             \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
