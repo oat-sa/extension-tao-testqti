@@ -20,7 +20,6 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'module',
     'jquery',
     'lodash',
     'i18n',
@@ -31,7 +30,6 @@ define([
     'taoQtiTest/controller/creator/templates/index'
 ],
 function(
-    module,
     $,
     _,
     __,
