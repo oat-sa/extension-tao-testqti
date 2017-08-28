@@ -104,7 +104,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     private $lastCatItemId = null;
     
-    private $lastCatItemOutput;
+    private $lastCatItemOutput = [];
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -543,9 +543,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * Persist the last CAT Item Result in memory.
      */
-    public function persistLastCatItemOutput($lastCatItemOutput)
+    public function persistLastCatItemOutput($lastCatItemOutput, $itemIdentifier)
     {
-        $this->lastCatItemOutput = $lastCatItemOutput;
+        $this->lastCatItemOutput[$itemIdentifier] = $lastCatItemOutput;
     }
     
     /**
@@ -627,7 +627,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $lastOutput = $this->getLastCatItemOutput();
         $catSession = $this->getCatSession();
         
-        $lastOutput = !empty($lastItemId) ? [$lastOutput] : [];
+        $lastOutput = !empty($lastItemId) ? array_values($lastOutput) : [];
         $selection = $catSession->getTestMap($lastOutput);
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
