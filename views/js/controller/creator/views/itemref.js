@@ -20,6 +20,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'module',
     'jquery',
     'lodash',
     'i18n',
@@ -30,6 +31,7 @@ define([
     'taoQtiTest/controller/creator/templates/index'
 ],
 function(
+    module,
     $,
     _,
     __,
@@ -61,6 +63,10 @@ function(
     function setUp (modelOverseer, refModel, $itemRef){
 
         var $actionContainer = $('.actions', $itemRef);
+        var config = modelOverseer.getConfig();
+
+        refModel.enableAllowSkipping = config.enableAllowSkipping || false;
+        refModel.enableValidateResponses = config.enableValidateResponses || false;
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');

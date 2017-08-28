@@ -64,6 +64,10 @@ function(
         if(!_.isEmpty(config.routes.blueprintsById)){
             sectionModel.hasBlueprint = true;
         }
+
+        sectionModel.enableAllowSkipping = config.enableAllowSkipping || false;
+        sectionModel.enableValidateResponses = config.enableValidateResponses || false;
+
         actions.properties($actionContainer, 'section', sectionModel, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         itemRefs();

@@ -333,6 +333,7 @@
         </div>
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowSkipping -->
+        {{#if enableAllowSkipping}}
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
                 <label for="section-allow-skipping">{{__ 'Allow Skipping'}}</label>
@@ -350,8 +351,10 @@
                 </div>
             </div>
         </div>
+        {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/validateResponses -->
+        {{#if enableValidateResponses}}
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
                 <label for="section-validate-responses">{{__ 'Validate Responses'}}</label>
@@ -369,6 +372,7 @@
                 </div>
             </div>
         </div>
+        {{/if}}
 
     </div>
 
