@@ -56,6 +56,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             }
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
 
+            $this->setData('enableAllowSkipping', true);
+            $this->setData('enableValidateResponses', true);
+
             $this->setView('creator.tpl');
 	}
 

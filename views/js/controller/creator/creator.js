@@ -161,7 +161,9 @@ define([
                         uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels,
-                        routes : options.routes
+                        routes : options.routes,
+                        enableAllowSkipping: options.enableAllowSkipping,
+                        enableValidateResponses: options.enableValidateResponses
                     });
 
                     //detect the scoring mode
