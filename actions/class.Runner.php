@@ -896,6 +896,37 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * Logging the test
+     */
+    public function log()
+    {
+        $code = 200;
+
+        $logData = $this->getRequestParameter('logData');
+
+        try {
+            $this->checkSecurityToken();
+            $serviceContext = $this->getServiceContext();
+            if ($this->hasRequestParameter('itemDefinition')) {
+                $itemRef = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
+            } else {
+                $itemRef = null;
+            }
+
+            $this->runnerService->storeTraceVariable($serviceContext, $itemRef, $logData['type'], $logData['message']);
+
+            $response = [
+                'success' => true
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
+    /**
      * allow client to store information about the test, the section or the item
      */
     public function storeTraceData(){
