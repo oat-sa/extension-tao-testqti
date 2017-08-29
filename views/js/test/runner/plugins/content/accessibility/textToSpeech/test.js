@@ -20,7 +20,7 @@ define([
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech'
+    'taoQtiTest/runner/plugins/content/accessibility/textToSpeech/textToSpeech'
 ], function(
     $,
     runnerFactory,

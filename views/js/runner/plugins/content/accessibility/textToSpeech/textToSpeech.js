@@ -21,9 +21,9 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
-    'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
-    // '//taotoolbar.speechstream.net/oat/speechstreamtoolbar.js'
-    '//taotoolbar.speechstream.net/tao/configQA.js'
+    'tpl!taoQtiTest/runner/plugins/content/accessibility/textToSpeech/textToSpeech',
+    '//taotoolbar.speechstream.net/oat/speechstreamtoolbar.js'
+    // '//taotoolbar.speechstream.net/tao/configQA.js'
 ], function (
     $,
     _,
@@ -63,7 +63,6 @@ define([
                     container = areaBroker.getContainer();
 
                     container.append(tpl());
-                    console.log(container);
 
                     tss.addToolbar('bookId', 'pageId');
                     //play, pause, stop, speed control, volume control (if available), click-to-pronounce
