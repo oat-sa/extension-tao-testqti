@@ -1566,5 +1566,13 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         
         $this->skip('12.0.0', '13.1.0');
+        
+        if ($this->isVersion('13.1.0')) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+            $config['enable-rubric-block-stylesheet-scoping'] = true;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', $config);
+            
+            $this->setVersion('13.2.0');
+        }
     }
 }
