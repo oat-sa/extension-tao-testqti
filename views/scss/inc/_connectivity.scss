@@ -5,8 +5,8 @@
     .icon-connect, .icon-disconnect {
         display: none;
         line-height: 2;
-        @include font-size(18);
-        text-shadow: none;
+        @include font-size(16);
+        text-shadow: 0 1px 0 black(.9);
     }
     &.connected, &.disconnected {
         display: inline-block;
