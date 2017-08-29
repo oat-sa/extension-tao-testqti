@@ -29,8 +29,10 @@ define([
 ) {
     'use strict';
 
+
     var providerName = 'mock';
-    runnerFactory.registerProvider(providerName, providerMock());
+        $brokerContainer: $('#display-and-play > .test-container')
+    runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
 
 
     QUnit.module('Display and Play');
@@ -45,7 +47,7 @@ define([
             textToSpeech: true
         });
 
-        pluginFactory(runner, runner.getAreaBroker())
+        pluginFactory(runner, areaBroker)
         .init();
 
         assert.ok(true);

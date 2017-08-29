@@ -22,8 +22,8 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/content/accessibility/textToSpeech/textToSpeech',
-    '//taotoolbar.speechstream.net/oat/speechstreamtoolbar.js'
-    // '//taotoolbar.speechstream.net/tao/configQA.js'
+    'css!taoQtiTest/runner/plugins/content/accessibility/textToSpeech/textToSpeech',
+    '//taotoolbar.speechstream.net/tao/configQA.js'
 ], function (
     $,
     _,
@@ -62,6 +62,7 @@ define([
                 if (testContext.enableTextToSpeech && testContext.textToSpeech) {
                     container = areaBroker.getContainer();
 
+                    console.log(container);
                     container.append(tpl());
 
                     tss.addToolbar('bookId', 'pageId');
