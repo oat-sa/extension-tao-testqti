@@ -1526,6 +1526,45 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('11.9.0');
         }
         
-        $this->skip('11.9.0', '11.14.1');
+        $this->skip('11.9.0', '11.16.0');
+
+        if ($this->isVersion('11.16.0')) {
+            /** @var CatService $catService */
+            $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+            $engines = $catService->getOption(CatService::OPTION_ENGINE_ENDPOINTS);
+
+            if (!isset($engines['http://YOUR_URL_OAUTH/cat/api/'])) {
+                $oauthOptions = [
+                    CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                    CatService::OPTION_ENGINE_ARGS => [
+                        CatService::OPTION_ENGINE_VERSION => 'v1.1',
+                        CatService::OPTION_ENGINE_CLIENT => [
+                            'class' => 'oat\taoOauth\model\OAuthClient',
+                            'options' => [
+                                'client_id' => '',
+                                'client_secret' => '',
+                                'resource_owner_details_url' => false,
+                                'authorize_url' => false,
+                                'http_client_options' => array(),
+                                'token_url' => '',
+                                'token_key' => '',
+                                'tokenParameters' => array(
+                                    'audience' => ''
+                                ),
+                                'token_storage' => 'cache'
+                            ]
+                        ],
+                    ]
+                ];
+
+                $engines['http://YOUR_URL_OAUTH/cat/api/']  = $oauthOptions;
+                $catService->setOption(CatService::OPTION_ENGINE_ENDPOINTS, $engines);
+                $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
+            }
+
+            $this->setVersion('12.0.0');
+        }
+        
+        $this->skip('12.0.0', '13.1.0');
     }
 }

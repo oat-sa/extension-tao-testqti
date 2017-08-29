@@ -154,14 +154,15 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 
-                $isRouteItemAdaptive = false;
-                $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $isRouteItemAdaptive);
+                $catSession = false;
+                $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
+                $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
                 
                 foreach ($itemRefs as $itemRef) {
-                    $occurrence = ($isRouteItemAdaptive) ? 0 : $routeItem->getOccurence();
+                    $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
                     // get the jump definition
-                    $itemSession = ($isRouteItemAdaptive) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
+                    $itemSession = ($catSession !== false) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
 
                     // load item infos
                     $testPart = $routeItem->getTestPart();
@@ -210,7 +211,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-
+                    
                     $itemInfos = [
                         'id' => $itemId,
                         'uri' => $itemUri,
@@ -221,10 +222,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'positionInSection' => $offsetSection,
                         'index' => $offsetSection + 1,
                         'occurrence' => $occurrence,
-                        'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : 1,
-                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : false,
-                        'flagged' => ($itemSession) ? TestRunnerUtils::getItemFlag($session, $routeItem) : false,
-                        'viewed' => ($itemSession) ? $itemSession->isPresented() : false,
+                        'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
+                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
+                        'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
+                        'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
                     
                     if ($checkInformational) {
@@ -322,20 +323,26 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * 
      * @param RunnerServiceContext $context
      * @param RouteItem $routeItem
-     * @param boolean $isRouteItemAdaptive A reference to a boolean variable that will be set with true in case of $routeItem is a CAT Adaptive Placeholder. Otherwise, it will ge set with false.
+     * @param mixed $catSession A reference to a variable that will be fed with the CatSession object related to the $routeItem. In case the $routeItem is not bound to a CatSession object, $catSession will be set with false.
      * @return array An array of AssessmentItemRef objects.
      */
-    protected function getRouteItemAssessmentItemRefs(RunnerServiceContext $context, RouteItem $routeItem, &$isRouteItemAdaptive)
+    protected function getRouteItemAssessmentItemRefs(RunnerServiceContext $context, RouteItem $routeItem, &$catSession)
     {
         /* @var CatService */
         $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
         $compilationDirectory = $context->getCompilationDirectory()['private'];
+        $itemRefs = [];
+        $catSession = false;
         
-        if ($isRouteItemAdaptive = $context->isAdaptive($routeItem->getAssessmentItemRef())) {
-            $lastCatItemIds = $context->getLastCatItemIds();
-            $itemRefs = ($lastCatItemIds === false) ? [] : $catService->getAssessmentItemRefByIdentifiers($compilationDirectory, $lastCatItemIds);
+        if ($context->isAdaptive($routeItem->getAssessmentItemRef())) {
+            $catSession = $context->getCatSession($routeItem);
+            
+            $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
+                $compilationDirectory, 
+                $context->getShadowTest($routeItem)
+            );
         } else {
-            $itemRefs = [$routeItem->getAssessmentItemRef()];
+            $itemRefs[] = $routeItem->getAssessmentItemRef();
         }
         
         return $itemRefs;

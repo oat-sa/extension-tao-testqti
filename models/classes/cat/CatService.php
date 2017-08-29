@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models\cat;
 
+use GuzzleHttp\ClientInterface;
 use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\OntologyAwareTrait;
 use oat\libCat\CatEngine;
@@ -51,7 +52,11 @@ class CatService extends ConfigurableService
     const OPTION_ENGINE_CLASS = 'class';
     
     const OPTION_ENGINE_ARGS = 'args';
-    
+
+    const OPTION_ENGINE_VERSION = 'version';
+
+    const OPTION_ENGINE_CLIENT = 'client';
+
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
     
     const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
@@ -82,8 +87,14 @@ class CatService extends ConfigurableService
                 $class = $engineOptions[self::OPTION_ENGINE_CLASS];
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
                 array_unshift($args, $endpoint);
-                
-                $this->engines[$endpoint] = new $class(...$args);
+
+                try {
+                    $this->engines[$endpoint] = new $class($endpoint, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
+                } catch (\Exception $e) {
+                    \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
+                    throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
+                }
+
             }
         }
         
@@ -314,5 +325,44 @@ class CatService extends ConfigurableService
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
 
         }
+    }
+
+    /**
+     * Create the client and version, based on the entry $options.
+     *
+     * @param array $options
+     * @throws \common_exception_InconsistentData
+     */
+    protected function getCatEngineClient(array $options = [])
+    {
+        if (!isset($options[self::OPTION_ENGINE_CLIENT])) {
+            throw new \InvalidArgumentException('No API client provided. Cannot connect to endpoint.');
+        }
+
+        $client = $options[self::OPTION_ENGINE_CLIENT];
+        if (is_array($client)) {
+            $clientClass = isset($client['class']) ? $client['class'] : null;
+            $clientOptions = isset($client['options']) ? $client['options'] : array();
+            if (!is_a($clientClass, ClientInterface::class, true)) {
+                throw new \InvalidArgumentException('Client has to implement ClientInterface interface.');
+            }
+            $client = new $clientClass($clientOptions);
+        } elseif (is_object($client)) {
+            if (!is_a($client, ClientInterface::class)) {
+                throw new \InvalidArgumentException('Client has to implement ClientInterface interface.');
+            }
+        } else {
+            throw new \InvalidArgumentException('Client is misconfigured.');
+        }
+        return $client;
+    }
+
+    protected function getCatEngineVersion(array $options = [])
+    {
+        if (isset($options[self::OPTION_ENGINE_VERSION])) {
+            return $options[self::OPTION_ENGINE_VERSION];
+        }
+
+        throw new \InvalidArgumentException('No API version provided. Cannot connect to endpoint.');
     }
 }
