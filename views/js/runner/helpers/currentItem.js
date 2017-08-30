@@ -114,9 +114,15 @@ define([
          */
         isQtiValueNull: function isQtiValueNull(value, baseType, cardinality) {
             var mappedCardinality = responseCardinalities[cardinality];
+
+            if (_.isObject(value) && value[mappedCardinality] === null) {
+                value = null;
+            }
+
             if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
                 value = value[mappedCardinality][baseType];
             }
+
             return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
         },
 
