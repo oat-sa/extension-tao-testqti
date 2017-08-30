@@ -276,7 +276,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Zoom in and out the item content',
                 'category' => 'tools',
-                'active' => false,
+                'active' => true,
                 'tags' => [ 'core' ]
             ], [
                 'id' => 'itemThemeSwitcher',
