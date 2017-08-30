@@ -157,18 +157,26 @@ define([
 
 
     QUnit.test('helpers/currentItem.isQuestionAnswered', function (assert) {
-        QUnit.expect(9);
+        QUnit.expect(11);
 
+        // null
         assert.equal(currentItemHelper.isQuestionAnswered(null, 'string', 'single'), false, 'The question should not be answered');
+        assert.equal(currentItemHelper.isQuestionAnswered({base: null}, 'string', 'single'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: null}}, 'string', 'single'), false, 'The question should not be answered');
+
+        // default
+        assert.equal(currentItemHelper.isQuestionAnswered({base: {string: 'foo'}}, 'string', 'single', 'foo'), false, 'The question should not be answered');
+        assert.equal(currentItemHelper.isQuestionAnswered({list: {string: ['foo']}}, 'string', 'multiple', ['foo']), false, 'The question should not be answered');
+
+        // null and not default
+        assert.equal(currentItemHelper.isQuestionAnswered(null, 'string', 'single', 'foo'), false, 'The question should not be answered');
+        assert.equal(currentItemHelper.isQuestionAnswered({base: null}, 'string', 'single', 'foo'), false, 'The question should not be answered');
+        assert.equal(currentItemHelper.isQuestionAnswered({base: {string: null}}, 'string', 'single', 'foo'), false, 'The question should not be answered');
+
+        // not null or default
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: 'foo'}}, 'string', 'single'), true, 'The question should be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({list: {string: ['foo']}}, 'string', 'multiple'), true, 'The question should be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({list: {string: []}}, 'string', 'multiple'), false, 'The question should not be answered');
-
-        assert.equal(currentItemHelper.isQuestionAnswered(null, 'string', 'single', 'foo'), true, 'The question should be answered');
-        assert.equal(currentItemHelper.isQuestionAnswered({base: {string: null}}, 'string', 'single', 'foo'), true, 'The question should be answered');
-        assert.equal(currentItemHelper.isQuestionAnswered({base: {string: 'foo'}}, 'string', 'single', 'foo'), false, 'The question should not be answered');
-        assert.equal(currentItemHelper.isQuestionAnswered({list: {string: []}}, 'string', 'multiple', ['foo']), true, 'The question should be answered');
     });
 
 
