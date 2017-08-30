@@ -138,7 +138,7 @@ define([
             var answered;
             defaultValue = defaultValue || null;
             if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
-                answered = !currentItemHelper.isQtiValueNull(defaultValue, baseType, cardinality);
+                answered = false;
             } else {
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
             }
