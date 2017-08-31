@@ -93,8 +93,8 @@ class CreatorItems extends ConfigurableService
     public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
     {
         $propertyFilters = [
-            self::PROPERTY_ITEM_MODEL_URI => self::ITEM_MODEL_QTI_URI,
-            self::PROPERTY_ITEM_CONTENT_URI => '*'
+//            self::PROPERTY_ITEM_MODEL_URI => self::ITEM_MODEL_QTI_URI,
+//            self::PROPERTY_ITEM_CONTENT_URI => '*'
         ];
         if(is_string($search) && strlen(trim($search)) > 0){
             $propertyFilters[self::LABEL_URI] = $search;
