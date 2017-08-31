@@ -153,7 +153,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         $options = [
             'allowComment'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session),
             'allowSkipping'     => \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session),
-            'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session),
+            'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
             'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
             'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
         ];
