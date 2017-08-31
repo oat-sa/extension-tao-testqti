@@ -25,6 +25,7 @@ use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
 
@@ -124,14 +125,36 @@ class TestSessionService extends ConfigurableService
      *
      * @param TestSession $session
      * @param \taoQtiTest_helpers_TestSessionStorage $storage
+     * @param RunnerServiceContext $context (optional)
      */
-    public function registerTestSession($session, $storage)
+    public function registerTestSession(AssessmentTestSession $session, \taoQtiTest_helpers_TestSessionStorage $storage, RunnerServiceContext $context = null)
     {
         $sessionId = $session->getSessionId();
         self::$cache[$sessionId] = [
             'session' => $session,
-            'storage' => $storage
+            'storage' => $storage,
+            'context' => $context
         ];
+    }
+    
+    /**
+     * Get a test session data by identifier.
+     * 
+     * Get a session by $sessionId. In case it was previously registered using the TestSessionService::registerTestSession method,
+     * an array with the following keys will be returned:
+     * 
+     * * 'session': A qtism AssessmentTestSession object.
+     * * 'storage': A taoQtiTest_helpers_TestSessionStorage.
+     * * 'context': A RunnerServiceContext object (if not provided at TestSessionService::registerTestSession call time, it contains null).
+     * 
+     * In case of no such session is found for $sessionId, false is returned.
+     * 
+     * @param string $sessionId
+     * @return false|array
+     */
+    public function getTestSessionDataById($sessionId)
+    {
+        return $this->hasTestSession($sessionId) ? self::$cache[$sessionId] : false;
     }
 
     /**

@@ -34,6 +34,7 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\common\datatypes\QtiString;
 use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -1154,15 +1155,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
     }
 
     /**
-     * Checks if the current session can be exited
+     * Checks if the current session can be exited. If a context is pass we use it over the session
      *
      * @param AssessmentTestSession $session
+     * @param RunnerServiceContext $context
      * @return bool
      */
-    static public function doesAllowExit(AssessmentTestSession $session){
+    static public function doesAllowExit(AssessmentTestSession $session, RunnerServiceContext $context = null){
         $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $exitButton = (isset($config['exitButton']) && $config['exitButton']);
-        $categories = self::getCategories($session);
+        $categories = self::getCategories($session, $context);
         return ($exitButton && in_array('x-tao-option-exit', $categories));
     }
 
@@ -1179,11 +1181,16 @@ class taoQtiTest_helpers_TestRunnerUtils {
 
     /**
      * Get the array of available categories for the current itemRef
-     * 
+     * If we have a non null context we use it over the session
+     *
      * @param \qtism\runtime\tests\AssessmentTestSession $session
+     * @param RunnerServiceContext $context
      * @return array
      */
-    static public function getCategories(AssessmentTestSession $session){
+    static public function getCategories(AssessmentTestSession $session, RunnerServiceContext $context = null){
+        if(!is_null($context)){
+            return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+        }
         return $session->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
 
