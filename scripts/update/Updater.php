@@ -1434,9 +1434,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.11.1', '10.14.1');
-        
+
         if ($this->isVersion('10.14.1')) {
-            
+
             // Default is now EchoAdapt. This should change in the futre.
             $catService = new CatService([
                 CatService::OPTION_ENGINE_ENDPOINTS => [
@@ -1446,9 +1446,9 @@ class Updater extends \common_ext_ExtensionUpdater {
                     ]
                 ]
             ]);
-            
+
             $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
-            
+
             $this->setVersion('10.15.0');
         }
 
@@ -1458,7 +1458,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
-        
+
         if ($this->isVersion('10.16.0')) {
             OntologyUpdater::syncModels();
             $this->setVersion('10.17.0');
@@ -1508,7 +1508,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('11.6.0');
         }
-        
+
         $this->skip('11.6.0', '11.8.1');
 
         if($this->isVersion('11.8.1')){
@@ -1526,7 +1526,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('11.9.0');
         }
-        
+
         $this->skip('11.9.0', '11.16.0');
 
         if ($this->isVersion('11.16.0')) {
@@ -1538,8 +1538,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $oauthOptions = [
                     CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
                     CatService::OPTION_ENGINE_ARGS => [
-                        EchoAdaptEngine::OPTION_VERSION => 'v1.1',
-                        EchoAdaptEngine::OPTION_CLIENT => [
+                        CatService::OPTION_ENGINE_VERSION => 'v1.1',
+                        CatService::OPTION_ENGINE_CLIENT => [
                             'class' => 'oat\taoOauth\model\OAuthClient',
                             'options' => [
                                 'client_id' => '',
@@ -1547,7 +1547,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                                 'resource_owner_details_url' => false,
                                 'authorize_url' => false,
                                 'http_client_options' => array(),
-                                'token_url' => array(),
+                                'token_url' => '',
                                 'token_key' => '',
                                 'tokenParameters' => array(
                                     'audience' => ''
@@ -1566,7 +1566,19 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('12.0.0');
         }
 
-        if($this->isVersion('12.0.0')){
+        $this->skip('12.0.0', '13.1.0');
+
+        if ($this->isVersion('13.1.0')) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+            $config['enable-rubric-block-stylesheet-scoping'] = true;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', $config);
+
+            $this->setVersion('13.2.0');
+        }
+
+        $this->skip('13.2.0', '14.1.4');
+
+        if($this->isVersion('14.1.4')){
             /** @var CreatorItems $creatorItemsService */
             $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
             $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
@@ -1574,8 +1586,8 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->getServiceManager()->register(CreatorItems::SERVICE_ID, $creatorItemsService);
 
-            $this->setVersion('12.0.1');
+            $this->setVersion('14.1.5');
         }
-        
+
     }
 }

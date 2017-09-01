@@ -555,6 +555,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         common_Logger::t("Compiling QTI rubricBlocks...");
         
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+        $cssScoping = isset($config['enable-rubric-block-stylesheet-scoping']) && $config['enable-rubric-block-stylesheet-scoping'] === true;
+        
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $sourceDir = $testService->getQtiTestDir($this->getResource());
@@ -608,25 +611,27 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $styleRendering = $renderingEngine->getStylesheets();
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
 
-            foreach ($stylesheets as $rubricStylesheet) {
-                $relPath = trim($this->getExtraPath(), '/');
-                $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
-                    . $rubricStylesheet->getHref();
-                $sourceFile = $sourceDir->getFile($relPath);
-                
-                if (!$publicCompiledDocDir->has($relPath)) {
-                    try {
-                        $data = $sourceFile->read();
-                        $tmpDir = \tao_helpers_File::createTempDir();
-                        $tmpFile = $tmpDir.'tmp.css';
-                        file_put_contents($tmpFile, $data);
-                        $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
-                        unlink($tmpFile);
-                        rmdir($tmpDir);
-                        $publicCompiledDocDir->write($relPath, $scopedCss);
-                        
-                    } catch (\InvalidArgumentException $e) {
-                        common_Logger::e('Unable to copy file into public directory: ' . $relPath);
+            if ($cssScoping === true) {
+                foreach ($stylesheets as $rubricStylesheet) {
+                    $relPath = trim($this->getExtraPath(), '/');
+                    $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
+                        . $rubricStylesheet->getHref();
+                    $sourceFile = $sourceDir->getFile($relPath);
+                    
+                    if (!$publicCompiledDocDir->has($relPath)) {
+                        try {
+                            $data = $sourceFile->read();
+                            $tmpDir = \tao_helpers_File::createTempDir();
+                            $tmpFile = $tmpDir.'tmp.css';
+                            file_put_contents($tmpFile, $data);
+                            $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
+                            unlink($tmpFile);
+                            rmdir($tmpDir);
+                            $publicCompiledDocDir->write($relPath, $scopedCss);
+                            
+                        } catch (\InvalidArgumentException $e) {
+                            common_Logger::e('Unable to copy file into public directory: ' . $relPath);
+                        }
                     }
                 }
             }

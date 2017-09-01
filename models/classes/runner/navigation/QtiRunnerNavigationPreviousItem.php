@@ -43,7 +43,21 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
         $session = $context->getTestSession();
         $nextPosition = $session->getRoute()->getPosition() - 1;
         QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
-        $session->moveBack();
+        
+        if ($context->isAdaptive()) {
+            $shadowTest = $context->getShadowTest();
+            $currentCatItemId = $context->getCurrentCatItemId();
+            $search = array_search($currentCatItemId, $shadowTest);
+            
+            if ($search === 0) {
+                $session->moveBack();
+            } else {
+                $context->persistCurrentCatItemId($shadowTest[$search - 1]);
+            }
+        } else {
+            $session->moveBack();
+        }
+        
         return true;
     }
 }

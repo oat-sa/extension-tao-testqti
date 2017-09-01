@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
@@ -29,11 +29,11 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '12.0.1',
+    'version'     => '14.1.5',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.4.0',
-        'taoQtiItem' => '>=9.7.0',
+        'taoQtiItem' => '>=9.9.0',
         'tao'        => '>=12.12.0',
         'generis'    => '>=3.36.0',
         'taoDelivery' => '>=7.0.0',

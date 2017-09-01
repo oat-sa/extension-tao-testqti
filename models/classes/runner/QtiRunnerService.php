@@ -155,7 +155,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext->setTestConfig($this->getTestConfig());
 
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
-        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage());
+        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage(), $serviceContext);
 
         return $serviceContext;
     }
@@ -224,7 +224,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 
                 if ($context->isAdaptive()) {
                     \common_Logger::i("First item is adaptive.");
-                    $context->initCatSession();
                     $context->selectAdaptiveNextItem();
                 }
             }
@@ -424,7 +423,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
 
                 // The current item answered state
-                $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
+                $response['itemAnswered'] = ($context->isAdaptive()) ? true : TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
@@ -774,9 +773,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->endAttempt($responses);
                     $score = $session->getVariable('SCORE');
                     $assessmentItem = $session->getAssessmentItem();
+                    $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $output = $context->getLastCatItemOutput();
                     
-                    $output = new ItemResult(
-                        $assessmentItem->getIdentifier(),
+                    $output[$assessmentItemIdentifier] = new ItemResult(
+                        $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
