@@ -614,7 +614,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $selection = $catSession->getTestMap(array_values($lastOutput));
         } catch (CatEngineException $e) {
             \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
-            throw new \common_Exception(__('An internal server has occurred.'), 0, $e);
+            throw new \common_Exception(__('An internal server error has occurred..'), 0, $e);
         }
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
