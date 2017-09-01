@@ -1433,9 +1433,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.11.1', '10.14.1');
-        
+
         if ($this->isVersion('10.14.1')) {
-            
+
             // Default is now EchoAdapt. This should change in the futre.
             $catService = new CatService([
                 CatService::OPTION_ENGINE_ENDPOINTS => [
@@ -1445,9 +1445,9 @@ class Updater extends \common_ext_ExtensionUpdater {
                     ]
                 ]
             ]);
-            
+
             $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
-            
+
             $this->setVersion('10.15.0');
         }
 
@@ -1457,7 +1457,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
-        
+
         if ($this->isVersion('10.16.0')) {
             OntologyUpdater::syncModels();
             $this->setVersion('10.17.0');
@@ -1507,7 +1507,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('11.6.0');
         }
-        
+
         $this->skip('11.6.0', '11.8.1');
 
         if($this->isVersion('11.8.1')){
@@ -1525,7 +1525,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('11.9.0');
         }
-        
+
         $this->skip('11.9.0', '11.16.0');
 
         if ($this->isVersion('11.16.0')) {
@@ -1564,7 +1564,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('12.0.0');
         }
-        
+
         $this->skip('12.0.0', '13.1.0');
 
         if ($this->isVersion('13.1.0')) {
@@ -1575,6 +1575,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('13.2.0');
         }
 
-        $this->skip('13.2.0', '14.1.0');
+        $this->skip('13.2.0', '14.1.1');
     }
 }
