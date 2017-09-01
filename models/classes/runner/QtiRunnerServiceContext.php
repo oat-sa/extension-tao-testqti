@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\libCat\Exception\CatEngineException;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
@@ -541,16 +542,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         
         if (!isset($this->catSection[$sectionId])) {
+
             // No retrieval trial yet.
             $compiledDirectory = $this->getCompilationDirectory()['private'];
             $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
-            
-            
+
+
             if (isset($adaptiveSectionMap[$sectionId])) {
                 $this->catSection[$sectionId] = $this->getCatEngine($routeItem)->restoreSection($adaptiveSectionMap[$sectionId]['section']);
             } else {
                 $this->catSection[$sectionId] = false;
             }
+
         }
         
         return $this->catSection[$sectionId];
@@ -588,24 +591,31 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         return !empty($adaptiveSectionMap);
     }
-    
+
     /**
      * Select the next Adaptive Item.
-     * 
+     *
      * Ask the CAT Engine for the Next Item to be presented to the candidate, depending on the last
      * CAT Item ID and last CAT Item Output currently stored.
-     * 
+     *
      * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
      * null meaning that there is no CAT Item to be presented.
-     * 
-     * @return string|null
+     *
+     * @return mixed|null
+     * @throws \common_Exception
      */
     public function selectAdaptiveNextItem()
     {
         $lastItemId = $this->getCurrentCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
         $catSession = $this->getCatSession();
-        $selection = $catSession->getTestMap(array_values($lastOutput));
+
+        try {
+            $selection = $catSession->getTestMap(array_values($lastOutput));
+        } catch (CatEngineException $e) {
+            \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            throw new \common_Exception(__('An internal server has occurred.'), 0, $e);
+        }
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
