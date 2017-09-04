@@ -103,8 +103,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     private $catSession = [];
     
-    private $catSection = [];
-    
     private $lastCatItemId = null;
 
     /**
@@ -538,25 +536,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCatSection(RouteItem $routeItem = null)
     {
-        $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
-        $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
-        
-        if (!isset($this->catSection[$sectionId])) {
-
-            // No retrieval trial yet.
-            $compiledDirectory = $this->getCompilationDirectory()['private'];
-            $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
-
-
-            if (isset($adaptiveSectionMap[$sectionId])) {
-                $this->catSection[$sectionId] = $this->getCatEngine($routeItem)->restoreSection($adaptiveSectionMap[$sectionId]['section']);
-            } else {
-                $this->catSection[$sectionId] = false;
-            }
-
-        }
-        
-        return $this->catSection[$sectionId];
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCatSection(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $routeItem
+        );
     }
     
     /**
@@ -569,13 +553,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function isAdaptive(AssessmentItemRef $currentAssessmentItemRef = null)
     {
-        $currentAssessmentItemRef = (is_null($currentAssessmentItemRef)) ? $this->getTestSession()->getCurrentAssessmentItemRef() : $currentAssessmentItemRef;
-        
-        if ($currentAssessmentItemRef) {
-            return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptivePlaceholder($currentAssessmentItemRef);
-        } else {
-            return false;
-        }
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptive($this->getTestSession(), $currentAssessmentItemRef);
     }
     
     /**
@@ -682,15 +660,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     public function getCurrentCatItemId(RouteItem $routeItem = null)
     {
-        $sessionId = $this->getTestSession()->getSessionId();
-        
-        $catItemId = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-            $sessionId,
-            $this->getCatSection($routeItem)->getSectionId(),
-            'current-cat-item-id'
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCurrentCatItemId(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $routeItem
         );
-        
-        return $catItemId;
     }
     
     public function persistCurrentCatItemId($catItemId)
