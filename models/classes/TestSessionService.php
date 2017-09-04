@@ -85,8 +85,9 @@ class TestSessionService extends ConfigurableService
         } else {
             $session = null;
         }
-        
-        $fileStorage = \tao_models_classes_service_FileStorage::singleton();
+
+        /** @var \tao_models_classes_service_FileStorage $fileStorage */
+        $fileStorage = $this->getServiceManager()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
         $directoryIds = explode('|', $inputParameters['QtiTestCompilation']);
         $directories = array(
             'private' => $fileStorage->getDirectoryById($directoryIds[0]),
