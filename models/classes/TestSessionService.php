@@ -86,9 +86,18 @@ class TestSessionService extends ConfigurableService
             $session = null;
         }
 
+        /** @var \tao_models_classes_service_FileStorage $fileStorage */
+        $fileStorage = $this->getServiceManager()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
+        $directoryIds = explode('|', $inputParameters['QtiTestCompilation']);
+        $directories = array(
+            'private' => $fileStorage->getDirectoryById($directoryIds[0]),
+            'public' => $fileStorage->getDirectoryById($directoryIds[1])
+        );
+
         self::$cache[$sessionId] = [
             'session' => $session,
-            'storage' => $qtiStorage
+            'storage' => $qtiStorage,
+            'compilation' => $directories
         ];
     }
 
@@ -125,15 +134,15 @@ class TestSessionService extends ConfigurableService
      *
      * @param TestSession $session
      * @param \taoQtiTest_helpers_TestSessionStorage $storage
-     * @param RunnerServiceContext $context (optional)
+     * @param array $compilationDirectories
      */
-    public function registerTestSession(AssessmentTestSession $session, \taoQtiTest_helpers_TestSessionStorage $storage, RunnerServiceContext $context = null)
+    public function registerTestSession(AssessmentTestSession $session, \taoQtiTest_helpers_TestSessionStorage $storage, array $compilationDirectories)
     {
         $sessionId = $session->getSessionId();
         self::$cache[$sessionId] = [
             'session' => $session,
             'storage' => $storage,
-            'context' => $context
+            'compilation' => $compilationDirectories
         ];
     }
     
