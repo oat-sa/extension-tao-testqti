@@ -35,7 +35,13 @@ class RegisterCreatorServices extends AbstractAction
 {
     public function __invoke($params)
     {
-        $this->getServiceManager()->register(CreatorItems::SERVICE_ID, new CreatorItems());
+        $this->getServiceManager()->register(
+            CreatorItems::SERVICE_ID,
+            new CreatorItems([
+                CreatorItems::ITEM_MODEL_SEARCH_OPTION => CreatorItems::ITEM_MODEL_QTI_URI,
+                CreatorItems::ITEM_CONTENT_SEARCH_OPTION => '*'
+            ])
+        );
         $this->getServiceManager()->register(ListItemLookup::SERVICE_ID, new ListItemLookup());
         $this->getServiceManager()->register(TreeItemLookup::SERVICE_ID, new TreeItemLookup());
         return new Report(Report::TYPE_SUCCESS, 'Creator services resgistered');

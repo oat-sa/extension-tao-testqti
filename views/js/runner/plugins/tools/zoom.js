@@ -100,6 +100,30 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
+
+
+            /**
+             * Checks if the plugin is currently available
+             * @returns {Boolean}
+             */
+            function isConfigured() {
+                var context = testRunner.getTestContext() || {},
+                    options = context.options || {};
+                //to be activated with the special category x-tao-option-zoom
+                return !!options.zoom;
+            }
+
+            /**
+             * Is zoom activated ? if not, then we hide the plugin
+             */
+            function togglePlugin() {
+                if (isConfigured()) {//allow zoom
+                    self.show();
+                } else {
+                    self.hide();
+                }
+            }
+
             function zoomAction(dir) {
 
                 var inc = increment * dir;
@@ -189,7 +213,7 @@ define([
             }
 
             //start disabled
-            this.show();
+            togglePlugin();
             this.disable();
 
             //update plugin state based on changes
@@ -197,7 +221,7 @@ define([
                 .on('loaditem', function (){
                     self.zoom = standard;
 
-                    self.show();
+                    togglePlugin();
                     self.disable();
                 })
                 .on('renderitem', function (){
