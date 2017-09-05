@@ -68,8 +68,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
-        $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
-        return $indexFile->exists();
+        // In case the context is adaptive, it means that the delivery was compiled in a version
+        // we are 100% sure it produced Item Href Index Files.
+        if ($context->isAdaptive()) {
+            return true;
+        } else {
+            $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+            return $indexFile->exists();
+        }
     }
 
     /**
