@@ -148,7 +148,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             // fallback index in case of the delivery was compiled without the index of item href
             $this->itemHrefIndex = [];
-            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
+            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getRoute()->getRouteItemAt(0)->getAssessmentItemRef()->getIdentifier());
             \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
             
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
