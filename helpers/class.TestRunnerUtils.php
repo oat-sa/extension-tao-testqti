@@ -656,7 +656,6 @@ class taoQtiTest_helpers_TestRunnerUtils {
     static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag, RunnerServiceContext $context = null) {
         
         $itemRef = self::getItemRef($session, $itemPosition, $context);
-        \common_Logger::i($itemRef);
         $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $itemRef, $flag);
         
         return $result;

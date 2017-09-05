@@ -695,7 +695,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             
             if ($catService->isAdaptivePlaceholder($routeItem->getAssessmentItemRef())) {
                 $shadow = $this->getShadowTest($routeItem);
-                \common_Logger::i(var_export($shadow, true));
                 
                 for ($k = 0; $k < count($shadow); $k++) {
                     if ($j == $refId) {
