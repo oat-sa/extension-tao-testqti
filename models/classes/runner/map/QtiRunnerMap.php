@@ -68,8 +68,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
-        $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
-        return $indexFile->exists();
+        // In case the context is adaptive, it means that the delivery was compiled in a version
+        // we are 100% sure it produced Item Href Index Files.
+        if ($context->isAdaptive()) {
+            return true;
+        } else {
+            $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+            return $indexFile->exists();
+        }
     }
 
     /**
@@ -148,8 +154,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             // fallback index in case of the delivery was compiled without the index of item href
             $this->itemHrefIndex = [];
-            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getRoute()->getRouteItemAt(0)->getAssessmentItemRef()->getIdentifier());
-            \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
+            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
+            \common_Logger::w('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
             
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
