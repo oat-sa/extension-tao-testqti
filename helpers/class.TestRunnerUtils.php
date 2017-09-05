@@ -607,7 +607,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @param string|Jump|RouteItem $itemPosition
      * @return null|string
      */
-    static public function getItemRef(AssessmentTestSession $session, $itemPosition) {
+    static public function getItemRef(AssessmentTestSession $session, $itemPosition, RunnerServiceContext $context = null) {
         $sessionId = $session->getSessionId();
 
         $itemRef = null;
@@ -616,8 +616,17 @@ class taoQtiTest_helpers_TestRunnerUtils {
         if ($itemPosition && is_object($itemPosition)) {
             if ($itemPosition instanceof RouteItem) {
                 $routeItem = $itemPosition;
-            } else if ($itemPosition instanceof Jump) {
-            $routeItem = $itemPosition->getTarget();
+            } elseif ($itemPosition instanceof Jump) {
+                $routeItem = $itemPosition->getTarget();
+            }
+        } elseif ($context) {
+            $itemId = '';
+            $itemPosition = $context->getItemPositionInRoute($itemPosition, $itemId);
+            
+            if ($itemId !== '') {
+                $itemRef = $itemId;
+            } else {
+                $routeItem = $session->getRoute()->getRouteItemAt($itemPosition);
             }
         } else {
             $jumps = $session->getPossibleJumps();
@@ -644,9 +653,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @return bool
      * @throws common_exception_Error
      */
-    static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag) {
+    static public function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag, RunnerServiceContext $context = null) {
         
-        $itemRef = self::getItemRef($session, $itemPosition);
+        $itemRef = self::getItemRef($session, $itemPosition, $context);
+        \common_Logger::i($itemRef);
         $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $itemRef, $flag);
         
         return $result;
@@ -659,10 +669,10 @@ class taoQtiTest_helpers_TestRunnerUtils {
      * @return bool
      * @throws common_exception_Error
      */
-    static public function getItemFlag(AssessmentTestSession $session, $itemPosition) {
+    static public function getItemFlag(AssessmentTestSession $session, $itemPosition, RunnerServiceContext $context = null) {
         $result = false;
 
-        $itemRef = self::getItemRef($session, $itemPosition);
+        $itemRef = self::getItemRef($session, $itemPosition, $context);
         if ($itemRef) {
             $result = self::getExtendedStateService()->getItemFlag($session->getSessionId(), $itemRef);
         }
