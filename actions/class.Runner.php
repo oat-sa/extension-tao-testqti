@@ -904,6 +904,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $logData = $this->getRequestParameter('logData');
 
+        $type = isset($logData['type']) ? $logData['type'] : '';
+        $message = isset($logData['message']) ? $logData['message'] : '';
+
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->getServiceContext();
@@ -913,7 +916,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $itemRef = null;
             }
 
-            $this->runnerService->storeTraceVariable($serviceContext, $itemRef, $logData['type'], $logData['message']);
+            if ($type && $message) {
+                $this->runnerService->storeTraceVariable(
+                    $serviceContext,
+                    $itemRef,
+                    $type,
+                    $message
+                );
+            }
 
             $response = [
                 'success' => true
