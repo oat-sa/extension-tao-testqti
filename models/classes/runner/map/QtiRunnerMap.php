@@ -230,7 +230,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
-                        'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
+                        'flagged' => TestRunnerUtils::getItemFlag($session, $offset, $context),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
                     
