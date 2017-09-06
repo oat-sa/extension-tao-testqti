@@ -723,7 +723,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $position = $this->getTestSession()->getRoute()->getPosition();
         
         if ($this->isAdaptive() === false) {
-            return $this->getTestSession()->getRoute()->getPosition();
+            return $position;
         } else {
             return $position + array_search($this->getCurrentCatItemId(), $this->getShadowTest());
         }
