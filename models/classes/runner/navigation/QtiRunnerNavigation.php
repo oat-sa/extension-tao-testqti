@@ -98,7 +98,10 @@ class QtiRunnerNavigation
     {
         $timerConfig = $context->getTestConfig()->getConfigValue('timer');
         
-        if (empty($timerConfig['keepUpToTimeout'])) {
+        // Closing the item sessions is only done in case of non adaptive context.
+        // Indeed, as we have a placeholder item to represent the adaptive section, we do not
+        // want to close the placeholder item session.
+        if ($context->isAdaptive() === false && empty($timerConfig['keepUpToTimeout'])) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
             $route = $session->getRoute();
