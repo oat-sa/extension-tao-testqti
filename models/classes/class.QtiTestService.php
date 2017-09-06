@@ -36,6 +36,9 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 
 /**
  * the QTI TestModel service.
@@ -64,6 +67,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @var MetadataImporter Service to manage Lom metadata during package import
      */
     protected $metadataImporter;
+
+    /**
+     * @var bool If true, it will guard and check metadata that comes from package.
+     */
+    protected $useMetadataGuardians = true;
+
+    public function enableMetadataGuardians() {
+        $this->useMetadataGuardians = true;
+    }
+
+    public function disableMetadataGuardians() {
+        $this->useMetadataGuardians = false;
+    }
 
     /**
      * Get the QTI Test document formated in JSON.
@@ -229,7 +245,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     /**
      * Import a QTI Test Package containing one or more QTI Test definitions.
-     *
      * @param core_kernel_classes_Class $targetClass The Target RDFS class where you want the Test Resources to be created.
      * @param string $file The path to the IMS archive you want to import tests from.
      * @return common_report_Report An import report.
@@ -421,7 +436,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 // Build a DOM version of the fully resolved AssessmentTest for later usage.
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
-                
+
+                /** @var CatService $service */
+                $service = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+                $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
+
                 if (count($dependencies['items']) > 0) {
 
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
@@ -434,7 +453,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                                 // Check if the item is already stored in the bank.
                                 $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
-                                if ($guardian !== false) {
+                                if ($this->useMetadataGuardians && $guardian !== false) {
                                     $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
                                     \common_Logger::d($message);
                                     $report->add(common_report_Report::createInfo($message, $guardian));
@@ -584,6 +603,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
+            } catch (CatEngineNotFoundException $e) {
+                $report->add(
+                    new common_report_Report(
+                        common_report_Report::TYPE_ERROR,
+                        __('No CAT Engine configured for CAT Endpoint "%s".', $e->getRequestedEndpoint())
+                    )
+                );
+            } catch (AdaptiveSectionInjectionException $e) {
+                $report->add(
+                    new common_report_Report(
+                        common_report_Report::TYPE_ERROR,
+                        __("Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint.", implode(', ', $e->getInvalidItemIdentifiers()))
+                    )
+                );
             }
         }
 

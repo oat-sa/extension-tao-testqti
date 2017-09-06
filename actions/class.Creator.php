@@ -49,8 +49,6 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
 
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
-            $this->setData('itemsUrl', _url('get', 'Items'));
-            $this->setData('categoriesUrl', _url('getCategories', 'Items'));
 
             if(common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')){
                 $this->setData('blueprintsByIdUrl', _url('getBlueprintsByIdentifier', 'Blueprints', 'taoBlueprints'));

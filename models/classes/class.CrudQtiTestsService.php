@@ -48,25 +48,26 @@ class taoQtiTest_models_classes_CrudQtiTestsService
     }
 
     /**
-     * 
      * @author Rashid Mumtaz & Absar - PCG Team - {absar.gilani6@gmail.com & rashid.mumtaz372@gmail.com}
      * @param string $uploadedFile
      * @param \core_kernel_classes_Class $class
+     * @param bool $enableMetadataGuardians
      * @return common_report_Report
      */
-	public function importQtiTest($uploadedFile, $class = null)
+	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true)
 	{
-
-		//test versioning
-		try {
-		      //The zip extraction is a long process that can exceed the 30s timeout
-                helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
-                $class = is_null($class) ? new core_kernel_classes_Class(TAO_TEST_CLASS) : $class;
-                $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);               
-                helpers_TimeOutHelper::reset();
-                return $report;
-        }
-        catch (common_exception_UserReadableException $e) {
+        try {
+            //The zip extraction is a long process that can exceed the 30s timeout
+            helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
+            $class = is_null($class) ? new core_kernel_classes_Class(TAO_TEST_CLASS) : $class;
+            $importer = taoQtiTest_models_classes_QtiTestService::singleton();
+            if ($enableMetadataGuardians === false) {
+                $importer->disableMetadataGuardians();
+            }
+            $report = $importer->importMultipleTests($class, $uploadedFile);
+            helpers_TimeOutHelper::reset();
+            return $report;
+        } catch (common_exception_UserReadableException $e) {
             return new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
         }
 	}

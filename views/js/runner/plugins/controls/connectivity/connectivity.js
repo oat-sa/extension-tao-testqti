@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -22,9 +22,10 @@
 define([
     'jquery',
     'i18n',
+    'ui/waitingDialog/waitingDialog',
     'taoTests/runner/plugin',
     'tpl!taoQtiTest/runner/plugins/controls/connectivity/connectivity'
-], function ($, __, pluginFactory, connectivityTpl) {
+], function ($, __, waitingDialog, pluginFactory, connectivityTpl) {
     'use strict';
 
     /**
@@ -47,6 +48,8 @@ define([
          */
         install: function install() {
             var self = this;
+
+            var waiting    = false;
 
             var testRunner = this.getTestRunner();
             var proxy      = testRunner.getProxy();
@@ -73,6 +76,7 @@ define([
             });
 
             testRunner.before('error', function(e, err) {
+                var dialog;
 
                 // detect and prevent connectivity errors
                 if (proxy.isConnectivityError(err)){
@@ -80,22 +84,38 @@ define([
                 }
 
                 //offline navigation error, we pause the test
-                if(err.source === 'navigator' && err.purpose === 'proxy' && err.code === 404){
-                    testRunner
-                        .trigger('disconnectpause')
-                        .trigger('pause', {
-                            reasons : {
-                                category : __('technical'),
-                                subCategory : __('network')
-                            },
-                            message : err.message
+                if (proxy.isOffline()) {
+                    if(!waiting){
+                        waiting = true;
+
+                        dialog = waitingDialog({
+                            message : __('You are encountering a prolonged connectivity loss'),
+                            waitContent : __('Please wait while we try to restore the connection.'),
+                            proceedContent : __('The connection seems to be back, please proceed')
+                        })
+                        .on('proceed', function(){
+                            testRunner
+                                .trigger('pause', {
+                                    reasons : {
+                                        category : __('technical'),
+                                        subCategory : __('network')
+                                    }
+                                });
+                        })
+                        .on('render', function(){
+                            proxy
+                                .off('reconnect.waiting')
+                                .on('reconnect.waiting', function(){
+                                    waiting = false;
+                                    dialog.endWait();
+                                });
                         });
+                    }
 
                     return false;
                 }
             });
         },
-
 
         /**
          * Called during the runner's render phase

@@ -327,7 +327,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-
+    
     /**
      * Provides the map of the test items
      */
@@ -602,6 +602,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
+                
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
@@ -647,6 +653,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
@@ -697,6 +708,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
@@ -793,6 +809,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
+                
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                }
             }
 
             $this->runnerService->persist($serviceContext);
@@ -834,7 +855,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $flag = true;
             }
 
-            TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+            TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag, $serviceContext);
 
             $response = [
                 'success' => true,
@@ -874,6 +895,47 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
+    /**
+     * Logging the test
+     */
+    public function log()
+    {
+        $code = 200;
+
+        $logData = $this->getRequestParameter('logData');
+
+        $type = isset($logData['type']) ? $logData['type'] : '';
+        $message = isset($logData['message']) ? $logData['message'] : '';
+
+        try {
+            $this->checkSecurityToken();
+            $serviceContext = $this->getServiceContext();
+            if ($this->hasRequestParameter('itemDefinition')) {
+                $itemRef = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
+            } else {
+                $itemRef = null;
+            }
+
+            if ($type && $message) {
+                $this->runnerService->storeTraceVariable(
+                    $serviceContext,
+                    $itemRef,
+                    $type,
+                    $message
+                );
+            }
+
+            $response = [
+                'success' => true
+            ];
+
+        } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        }
+
+        $this->returnJson($response, $code);
+    }
     /**
      * allow client to store information about the test, the section or the item
      */

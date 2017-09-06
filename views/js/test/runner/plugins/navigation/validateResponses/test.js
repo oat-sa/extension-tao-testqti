@@ -16,18 +16,19 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-/**
- * Test the test runner plugin preventSkipping
- *
- * @author Bertrand Chevrier <bertrand@taotesting.com>
- */
 define([
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/navigation/preventSkipping',
+    'taoQtiTest/runner/plugins/navigation/validateResponses',
     'taoQtiTest/runner/helpers/currentItem'
-], function($, runnerFactory, providerMock, pluginFactory, currentItemHelper) {
+], function(
+    $,
+    runnerFactory,
+    providerMock,
+    pluginFactory,
+    currentItemHelper
+) {
     'use strict';
 
     var pluginApi;
@@ -36,7 +37,12 @@ define([
 
     //mock the isAnswered helper, using testRunner property
     currentItemHelper.isAnswered = function(testRunner){
-        return !testRunner.prevent;
+        return testRunner.answered;
+    };
+
+    //mock the getDeclarations helper, using testRunner property
+    currentItemHelper.getDeclarations = function(testRunner){
+        return testRunner.responses;
     };
 
     /**
@@ -79,103 +85,108 @@ define([
             assert.equal(typeof timer[data.name], 'function', 'The pluginFactory instances expose a "' + data.name + '" function');
         });
 
-
-    QUnit.module('prevent skipping');
+    QUnit.module('Behavior');
 
     QUnit.cases([{
-        title: 'enabled',
-        context : {
-            preventEmptyResponses : true
+        title: 'when the option is not enabled',
+        context: {
+            enableValidateResponses: false,
+            validateResponses: true
         },
-        enabled : true
+        answered: false,
+        responses: ['foo']
     }, {
-        title: 'disabled',
-        context : {
-            preventEmptyResponses : false
+        title: 'when the item has no interactions',
+        context: {
+            enableValidateResponses: true,
+            validateResponses: true
         },
-        enabled : false
+        answered: false,
+        responses: []
+    }, {
+        title: 'when the item is configured without the validation',
+        context: {
+            enableValidateResponses: true,
+            validateResponses: false
+        },
+        answered: false,
+        responses: ['foo']
+    }, {
+        title: 'when the item is answered',
+        context: {
+            enableValidateResponses: true,
+            validateResponses: true
+        },
+        answered: true,
+        responses: ['foo']
     }])
-    .asyncTest('toggle ', function(data, assert) {
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
+    .asyncTest('Moving is allowed ', function(data, assert) {
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(1);
-
-        runner.setTestContext(data.context);
-
-        plugin
-            .init()
-            .then(function() {
-                assert.equal(plugin.getState('enabled'), data.enabled, 'The state is correct');
-                QUnit.start();
-            })
-            .catch(function(err){
-                assert.ok(false, err.message);
-                QUnit.start();
-            });
-    });
-
-    QUnit.asyncTest('allow moving', function(assert) {
-
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
-
-        QUnit.expect(1);
-
-        runner.setTestContext({
-            preventEmptyResponses : true
-        });
 
         plugin
             .init()
             .then(function() {
 
-                runner.prevent = false;
-                runner.on('move', function(){
+                runner.setTestContext(data.context);
+                runner.answered = data.answered;
+                runner.responses = data.responses;
+
+                runner.on('move', function() {
                     assert.ok(true, 'Move is allowed');
                     QUnit.start();
                 });
                 runner.trigger('move');
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
                 QUnit.start();
             });
     });
 
-    QUnit.asyncTest('prevent moving', function(assert) {
+    QUnit.cases([{
+        title: 'when the item not answered',
+        context: {
+            enableValidateResponses: true,
+            validateResponses: true
+        },
+        answered: false,
+        responses: ['foo']
+    }])
+    .asyncTest('Moving is prevented ', function(data, assert) {
 
-        var runner        = runnerFactory(providerName);
-        var plugin        = pluginFactory(runner, runner.getAreaBroker());
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         QUnit.expect(2);
-
-        runner.setTestContext({
-            preventEmptyResponses : true
-        });
 
         plugin
             .init()
             .then(function() {
 
-                runner.prevent = true;
-                runner.on('move', function(){
+                runner.setTestContext(data.context);
+                runner.answered = data.answered;
+                runner.responses = data.responses;
+
+                runner.on('move', function() {
                     assert.ok(false, 'Move is denied');
                     QUnit.start();
                 });
                 runner.off('alert.notallowed')
-                      .on('alert.notallowed', function(message, cb){
-                          assert.equal(message, 'A response to this item is required.', 'The user receive the correct message');
-                          cb();
-                      });
-                runner.on('resumeitem', function(){
+                    .on('alert.notallowed', function(message, cb) {
+                        assert.equal(message, 'A valid response to this item is required.', 'The user receive the correct message');
+                        cb();
+                    });
+                runner.on('resumeitem', function() {
                     assert.ok(true, 'Move has been prevented');
                     QUnit.start();
                 });
                 runner.trigger('move');
 
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
                 QUnit.start();
             });

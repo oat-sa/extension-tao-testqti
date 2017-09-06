@@ -37,6 +37,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     const FILE_DIR = 'ImportQtiTestTask';
     const PARAM_CLASS_URI = 'class_uri';
     const PARAM_FILE = 'file';
+    const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
 
     protected $service;
 
@@ -57,7 +58,12 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
-        return $importer->import($file, $this->getClass($params));
+
+        return $importer->import(
+            $file,
+            $this->getClass($params),
+            isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true
+        );
     }
 
     /**
@@ -72,9 +78,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * Create task in queue
      * @param array $packageFile uploaded file
      * @param \core_kernel_classes_Class $class uploaded file
+     * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
      * @return Task created task id
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -82,7 +89,11 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        return $queue->createTask($action, [self::PARAM_FILE => $fileUri, self::PARAM_CLASS_URI => $class->getUri()]);
+        return $queue->createTask($action, [
+            self::PARAM_FILE => $fileUri,
+            self::PARAM_CLASS_URI => $class->getUri(),
+            self::PARAM_ENABLE_GUARDIANS => $enableGuardians
+        ]);
     }
 
     /**

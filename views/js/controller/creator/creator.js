@@ -38,8 +38,7 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'core/validator/validators',
-    'core/promise'
+    'core/validator/validators'
 ], function(
     module,
     $,
@@ -59,45 +58,10 @@ define([
     qtiTestHelper,
     scoringHelper,
     categorySelector,
-    validators,
-    Promise
+    validators
     ){
 
     'use strict';
-
-    /**
-     * Call the server to get the list of items
-     * @param {string} url
-     * @param {string} search - a posix pattern to filter items
-     * @returns {Promise}
-     */
-    var loadItems = function loadItems(url, search){
-        return new Promise( function(resolve, reject){
-            $.getJSON(url, {pattern : search, notempty : 'true'})
-                .done(resolve)
-                .fail(function(xhr){
-                    return reject(new Error(xhr.status + ' : ' + xhr.statusText));
-                });
-        });
-    };
-
-    /**
-     * Call the server to get the items categories
-     * @param {String} url - the endpoint
-     * @param {String[]} items - the list of items URIs
-     * @returns {Promise}
-     */
-    var getCategories = function getCategories(url, items){
-        return new Promise( function(resolve, reject){
-            if(items && items.length){
-                $.getJSON(url, { uris : items })
-                    .done(resolve)
-                    .fail(function(xhr){
-                        return reject(new Error(xhr.status + ' : ' + xhr.statusText));
-                    });
-            }
-        });
-    };
 
     /**
      * The test creator controller is the main entry point
@@ -143,10 +107,7 @@ define([
             });
 
             //set up the ItemView, give it a configured loadItems ref
-            itemView(
-                _.partial(loadItems, options.routes.items),
-                _.partial(getCategories, options.routes.categories)
-            );
+            itemView($('.test-creator-items .item-selection', $container));
 
             // forwards some binder events to the model overseer
             $container.on('change.binder delete.binder', function (e, model) {

@@ -36,6 +36,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     use ServiceLocatorAwareTrait;
     use RunnerParamParserTrait;
 
+
+    const OFFLINE_VARIABLE = 'offline';
+
     protected $start;
 
     /** @var integer The timestamp of action */
@@ -53,6 +56,28 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
      * @return mixed
      */
     abstract public function process();
+
+    /**
+     * Method to set a trace variable telling that the item was offline
+     *
+     * @return bool
+     */
+    protected function setOffline()
+    {
+
+        $serviceContext = $this->getServiceContext();
+        $itemRef = ($this->hasRequestParameter('itemDefinition'))
+            ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
+            : null;
+
+        if(!is_null($itemRef)){
+            $hrefParts = explode('|', $itemRef);
+            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, true);
+        }
+
+        return false;
+
+    }
 
     /**
      * TestRunnerAction constructor.

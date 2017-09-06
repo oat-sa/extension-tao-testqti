@@ -13,12 +13,7 @@
             </ul>
         </div>
         <h1><?=__('Select Items')?></h1>
-        <div class='item-selection'>
-            <input id="item-filter" type="search" placeholder='<?=__('Filter')?>' />
-            <br />
-            <small><?=__("Use Ctrl/Meta key or Lasso for multiple selection")?></small>
-            <ul class='item-box plain'></ul>
-        </div>
+        <div class='item-selection'></div>
     </section>
 
 <!-- test editor  -->
@@ -75,8 +70,6 @@ requirejs.config({
             routes : {
                 get  : '<?=get_data('loadUrl')?>',
                 save  : '<?=get_data('saveUrl')?>',
-                items : '<?=get_data('itemsUrl')?>',
-                categories : '<?=get_data('categoriesUrl')?>',
                 blueprintsById : '<?=get_data('blueprintsByIdUrl')?>',
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'

@@ -405,6 +405,11 @@ define([
                         self.trigger('endsession');
                     }
                 })
+                .on('log', function(data){
+                    self.getProxy().callTestAction('log', {
+                        logData: data
+                    });
+                })
                 .on('pause', function(data){
                     var pause;
 
@@ -579,6 +584,8 @@ define([
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);
 
+                itemData.content = itemData.content || {};
+
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
@@ -587,10 +594,12 @@ define([
                     reject(err);
                 })
                 .on('init', function(){
+                    var options = {};
                     if(itemData.state){
                         this.setState(itemData.state);
+                        options.state = itemData.state;//official ims portable element requires state information during rendering
                     }
-                    this.render(self.getAreaBroker().getContentArea());
+                    this.render(self.getAreaBroker().getContentArea(), options);
                 })
                 .on('render', function(){
 

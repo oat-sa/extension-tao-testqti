@@ -113,16 +113,14 @@ class QtiRunnerNavigation
             }
 
             if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
-                $components = $section->getComponents();
+                $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
 
-                foreach ($components as $object) {
-                    if ($object instanceof ExtendedAssessmentItemRef) {
-                        $items = $session->getAssessmentItemSessions($object->getIdentifier());
+                foreach ($assessmentItemRefs as $assessmentItemRef) {
+                    $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-                        foreach ($items as $item) {
-                            if ($item instanceof AssessmentItemSession) {
-                                $item->endItemSession();
-                            }
+                    if($itemSessions !== false){
+                        foreach ($itemSessions as $itemSession) {
+                            $itemSession->endItemSession();
                         }
                     }
                 }
