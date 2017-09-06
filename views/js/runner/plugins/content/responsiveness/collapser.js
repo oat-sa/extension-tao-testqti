@@ -74,7 +74,7 @@ define([
          * ];
          * @type {String[]}
          */
-        collaspeOrder: []
+        collapseOrder: []
     };
 
     var $window = $(window);
