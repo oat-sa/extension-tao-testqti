@@ -223,8 +223,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
                 
                 if ($context->isAdaptive()) {
-                    \common_Logger::i("First item is adaptive.");
-                    $context->selectAdaptiveNextItem();
+                    \common_Logger::t("Very first item is adaptive.");
+                    $nextCatItemId = $context->selectAdaptiveNextItem();
+                    $context->persistCurrentCatItemId($nextCatItemId);
+                    $context->persistSeenCatItemIds($nextCatItemId);
                 }
             }
 
