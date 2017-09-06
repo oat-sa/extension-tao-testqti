@@ -405,9 +405,6 @@ define([
                         self.trigger('endsession');
                     }
                 })
-                .on('traceLog', function(traceData){
-                    self.getProxy().sendVariables(traceData);
-                })
                 .on('pause', function(data){
                     var pause;
 
