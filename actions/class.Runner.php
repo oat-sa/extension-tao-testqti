@@ -855,7 +855,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $flag = true;
             }
 
-            TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag);
+            TestRunnerUtils::setItemFlag($testSession, $itemPosition, $flag, $serviceContext);
 
             $response = [
                 'success' => true,
