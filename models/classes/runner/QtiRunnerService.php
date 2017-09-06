@@ -223,8 +223,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
                 
                 if ($context->isAdaptive()) {
-                    \common_Logger::i("First item is adaptive.");
-                    $context->selectAdaptiveNextItem();
+                    \common_Logger::t("Very first item is adaptive.");
+                    $nextCatItemId = $context->selectAdaptiveNextItem();
+                    $context->persistCurrentCatItemId($nextCatItemId);
+                    $context->persistSeenCatItemIds($nextCatItemId);
                 }
             }
 
@@ -417,10 +419,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['isLast'] = (!$context->isAdaptive()) ? $route->isLast() : false;
 
                 // The current position in the route.
-                $response['itemPosition'] = $route->getPosition();
+                $response['itemPosition'] = $context->getCurrentPosition();
 
                 // The current item flagged state
-                $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
+                $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
                 $response['itemAnswered'] = ($context->isAdaptive()) ? true : TestRunnerUtils::isItemCompleted($currentItem, $itemSession);

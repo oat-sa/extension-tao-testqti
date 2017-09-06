@@ -648,10 +648,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     public function getShadowTest(RouteItem $routeItem = null)
     {
-        $shadow = array_unique(
-            array_merge(
-                $this->getPreviouslySeenCatItemIds($routeItem),
-                $this->getCatSession($routeItem)->getTestMap()
+        $shadow = array_values(
+            array_unique(
+                array_merge(
+                    $this->getPreviouslySeenCatItemIds($routeItem),
+                    $this->getCatSession($routeItem)->getTestMap()
+                )
             )
         );
 
@@ -714,5 +716,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
         
         return $i;
+    }
+    
+    public function getCurrentPosition()
+    {
+        $position = $this->getTestSession()->getRoute()->getPosition();
+        
+        if ($this->isAdaptive() === false) {
+            return $position;
+        } else {
+            return $position + array_search($this->getCurrentCatItemId(), $this->getShadowTest());
+        }
     }
 }
