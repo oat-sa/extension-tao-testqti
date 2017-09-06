@@ -52,6 +52,8 @@ class CatService extends ConfigurableService
     
     const OPTION_ENGINE_ENDPOINTS = 'endpoints';
     
+    const OPTION_ENGINE_URL = 'url';
+
     const OPTION_ENGINE_CLASS = 'class';
     
     const OPTION_ENGINE_ARGS = 'args';
@@ -91,10 +93,13 @@ class CatService extends ConfigurableService
             
                 $class = $engineOptions[self::OPTION_ENGINE_CLASS];
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+                $url = isset($engineOptions[self::OPTION_ENGINE_URL])
+                    ? $engineOptions[self::OPTION_ENGINE_URL]
+                    : $endpoint;
                 array_unshift($args, $endpoint);
 
                 try {
-                    $this->engines[$endpoint] = new $class($endpoint, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
+                    $this->engines[$endpoint] = new $class($url, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
                 } catch (\Exception $e) {
                     \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
                     throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
