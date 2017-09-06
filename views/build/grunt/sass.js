@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 
     sass.texttospeech = {};
     sass.texttospeech.files = {};
-    sass.texttospeech.files[root + 'js/runner/plugins/content/accessibility/textToSpeech/textToSpeech.css'] = root + 'js/runner/plugins/content/accessibility/textToSpeech/textToSpeech.scss';
+    sass.texttospeech.files[root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.css'] = root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss';
 
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     };
 
     watch.texttospeechsass = {
-        files: [root + 'js/runner/plugins/content/accessibility/textToSpeech/textToSpeech.scss'],
+        files: [root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss'],
         tasks: ['sass:texttospeech', 'notify:taoqtitestsass'],
         options: {
             debounceDelay: 1000

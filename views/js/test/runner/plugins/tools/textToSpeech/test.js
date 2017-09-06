@@ -18,37 +18,20 @@
 
 define([
     'jquery',
-    'taoTests/runner/runner',
-    'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/content/accessibility/textToSpeech/textToSpeech'
+    'taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech'
 ], function(
     $,
-    runnerFactory,
-    providerMock,
-    pluginFactory
+    textToSpeechFactory
 ) {
     'use strict';
 
 
-    var providerName = 'mock';
-        $brokerContainer: $('#display-and-play > .test-container')
-    runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
-
-
     QUnit.module('Display and Play');
 
-    QUnit.test('Visual', function (assert) {
-        var runner = runnerFactory(providerName);
-
+    QUnit.asyncTest('Visual', function (assert) {
         QUnit.expect(1);
 
-        runner.setTestContext({
-            enableTextToSpeech: true,
-            textToSpeech: true
-        });
-
-        pluginFactory(runner, areaBroker)
-        .init();
+        textToSpeechFactory();
 
         assert.ok(true);
     });

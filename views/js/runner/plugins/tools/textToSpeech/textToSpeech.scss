@@ -1,0 +1,23 @@
+@import 'inc/bootstrap';
+
+.text-to-speech {
+    background-color: #f3f1ef;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    bottom: 33px;
+    box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
+    color: black;
+    left: 8px;
+    padding: 5px;
+    position: absolute;
+    width: 290px;
+
+    > div {
+        display: inline-block;
+        margin: 8px;
+
+        > span {
+            font-size: 18px !important;
+        }
+    }
+}

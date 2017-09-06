@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Text to Speech - Test Runner Plugin</title>
-    <base href="../../../../../../../../../tao/views/" />
+    <base href="../../../../../../../../tao/views/" />
     <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
     <script type="text/javascript" src="js/lib/require.js"></script>
     <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
@@ -12,7 +12,7 @@
     <script  type="text/javascript">
         QUnit.config.autostart = false;
         require(['/tao/ClientConfig/config'], function () {
-            require(['taoQtiTest/test/runner/plugins/content/accessibility/textToSpeech/test'], function () {
+            require(['taoQtiTest/test/runner/plugins/tools/textToSpeech/test'], function () {
                 QUnit.start();
             });
         });
