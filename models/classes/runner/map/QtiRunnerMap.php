@@ -24,19 +24,18 @@ namespace oat\taoQtiTest\models\runner\map;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use qtism\data\NavigationMode;
+use qtism\data\QtiComponent;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\cat\CatService;
-use oat\taoQtiTest\models\runner\session\TestSession;
-use qtism\data\QtiComponent;
 use oat\taoQtiTest\models\cat\CatUtils;
-
 
 /**
  * Class QtiRunnerMap
@@ -170,7 +169,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
-
+                
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
@@ -180,6 +179,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     // load item infos
                     $testPart = $routeItem->getTestPart();
                     $partId = $testPart->getIdentifier();
+                    $navigationMode = $testPart->getNavigationMode();
 
                     if ($displaySubsectionTitle) {
                         $section = $routeItem->getAssessmentSection();
@@ -246,7 +246,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
 
                     if($itemRef->hasTimeLimits()){
-                        $itemInfos['timeLimits'] = TestRunnerUtils::getDurationWithMicroseconds($itemRef->getTimeLimits()->getMaxTime());
+                        $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
                     
                     // update the map
@@ -262,10 +262,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['id'] = $partId;
                         $map['parts'][$partId]['label'] = $partId;
                         $map['parts'][$partId]['position'] = $offset;
-                        $map['parts'][$partId]['isLinear'] = $testPart->getNavigationMode() == NavigationMode::LINEAR;
+                        $map['parts'][$partId]['isLinear'] = $navigationMode == NavigationMode::LINEAR;
 
                         if($testPart->hasTimeLimits()){
-                            $map['parts'][$partId]['timeLimits'] = TestRunnerUtils::getDurationWithMicroseconds($testPart->getTimeLimits()->getMaxTime());
+                            $map['parts'][$partId]['timeConstraint'] =  $this->getTimeConstraint($session, $testPart, $navigationMode);
                         }
                     }
                     
@@ -275,9 +275,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
+
                         if($section->hasTimeLimits()){
-                            $maxTime = $section->getTimeLimits()->getMaxTime()->getSeconds(true);
-                            $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraints($session, $section, $testPart->getNavigationMode(), $maxTime);
+                            $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint($session, $section, $navigationMode);
                         }
                     }
                     
@@ -292,14 +292,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $offsetPart ++;
                     $offsetSection ++;
                 }
-
+                
             }
-            // fallback in case of the delivery was compiled without the index of item href
-            if ($shouldBuildItemHrefIndex) {
-                \common_Logger::t('Store index of item href into the test state storage');
-                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-                $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
-            }
+                // fallback in case of the delivery was compiled without the index of item href
+                if ($shouldBuildItemHrefIndex) {
+                    \common_Logger::t('Store index of item href into the test state storage');
+                    $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                    $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
+                }
         }
         
         return $map;
@@ -375,29 +375,23 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         return $itemRefs;
     }
 
-    
-    protected function getTimeConstraints(TestSession $session, QtiComponent $source, $navigationMode)
+    /**
+     * Get the time constraint for the given component
+     * @param TestSession  $session the running test session
+     * @param QtiComponent $source the component with the time limits (testPart, section, itemRef)
+     * @param int          $navigationMode the testPart navigation mode
+     * @return QtiTimeConstraint the constraint
+     */
+    private function getTimeConstraint(TestSession $session, QtiComponent $source, $navigationMode)
     {
-        $maxTimeSeconds = null;
-        $identifier = $source->getIdentifier();
-        $constraint = new QtiTimeConstraint($source, $session->getTimerDuration($identifier), $navigationMode);
+        $constraint = new QtiTimeConstraint(
+            $source,
+            $session->getTimerDuration($source->getIdentifier()),
+            $navigationMode,
+            true,
+            true
+        );
         $constraint->setTimer($session->getTimer());
-        $timeRemaining = $constraint->getMaximumRemainingTime();
-        if ($timeRemaining !== false) {
-
-            $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-            if($source->getTimeLimits()->hasMaxTime()){
-                $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
-            }
-
-            return [
-                'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
-                'source' => $identifier,
-                'seconds' => $seconds,
-                'extraTime' => $constraint->getTimer()->getExtraTime($maxTimeSeconds),
-                'allowLateSubmission' => $constraint->allowLateSubmission(),
-                'qtiClassName' => $source->getQtiClassName()
-            ];
-        }
+        return $constraint;
     }
 }
