@@ -411,6 +411,11 @@ define([
                         self.trigger('endsession');
                     }
                 })
+                .on('log', function(data){
+                    self.getProxy().callTestAction('log', {
+                        logData: data
+                    });
+                })
                 .on('pause', function(data){
                     var pause;
 
