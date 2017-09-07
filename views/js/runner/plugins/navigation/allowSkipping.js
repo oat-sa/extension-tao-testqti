@@ -70,7 +70,6 @@ define([
                 var testContext = testRunner.getTestContext();
 
                 if (testContext.enableAllowSkipping && !testContext.allowSkipping) {
-                    this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
                         if(_.size(currentItemHelper.getDeclarations(testRunner)) === 0){

@@ -68,7 +68,6 @@ define([
                 var testContext = testRunner.getTestContext();
 
                 if (testContext.enableValidateResponses &&  testContext.validateResponses) {
-                    this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
                         if(_.size(currentItemHelper.getDeclarations(testRunner)) === 0){

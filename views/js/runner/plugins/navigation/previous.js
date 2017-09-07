@@ -87,9 +87,8 @@ define([
                 }
 
                 if(self.getState('enabled') !== false){
-                    testRunner.trigger('disablenav disabletools');
-
                     if (previousItemWarning && context.remainingAttempts !== -1) {
+                        testRunner.trigger('disablenav disabletools');
                         testRunner.trigger(
                             'confirm.previous',
                             __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
