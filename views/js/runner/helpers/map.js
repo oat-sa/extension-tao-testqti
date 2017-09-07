@@ -189,24 +189,29 @@ define([
         /**
          * Gets the map of a particular scope from a particular position
          * @param {Object} map - The assessment test map
-         * @param {Number} position - The current position
+         * @param {Щиоусе} context - The current session context
          * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
          * @returns {object} The scoped map
          */
-        getScopeMap: function getScopeMap(map, position, scope) {
+        getScopeMap: function getScopeMap(map, context, scope) {
             // need a clone of the map as we will change some properties
             var scopeMap = _.cloneDeep(map || {});
+            var part;
+            var section;
 
             // gets the current part and section
-            var jump = this.getJump(map, position);
-            var part = this.getPart(scopeMap, jump && jump.part);
-            var section = this.getSection(scopeMap, jump && jump.section);
+            if (context && context.testPartId) {
+                part = this.getPart(scopeMap, context.testPartId);
+            }
+            if (context && context.sectionId) {
+                section = this.getSection(scopeMap, context.sectionId);
+            }
 
             // reduce the map to the scope part
             if (scope && scope !== 'test') {
                 scopeMap.parts = {};
                 if (part) {
-                    scopeMap.parts[jump.part] = part;
+                    scopeMap.parts[context.testPartId] = part;
                 }
             }
 
@@ -214,7 +219,7 @@ define([
             if (part && (scope === 'section' || scope === 'testSection')) {
                 part.sections = {};
                 if (section) {
-                    part.sections[jump.section] = section;
+                    part.sections[context.sectionId] = section;
                 }
             }
 

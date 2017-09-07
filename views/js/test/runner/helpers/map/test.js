@@ -242,10 +242,15 @@ define([
 
         QUnit.expect(9);
 
-        assert.deepEqual(mapHelper.getScopeMap(mapSample, 6), mapHelper.getScopeMap(mapSample, 6, 'test'), 'The map helper getScopeMap use the "test" scope by default');
-        assert.deepEqual(mapHelper.getScopeMap(mapSample, 6, 'test'), expectedTestMap, 'The map helper getScopeMap provides the right content when the scope is "test"');
-        assert.deepEqual(mapHelper.getScopeMap(mapSample, 6, 'part'), expectedPartMap, 'The map helper getScopeMap provides the right content when the scope is "part"');
-        assert.deepEqual(mapHelper.getScopeMap(mapSample, 6, 'section'), expectedSectionMap, 'The map helper getScopeMap provides the right content when the scope is "section');
+        var sectinon3context = {
+            "sectionId": "assessmentSection-3",
+            "testPartId": "testPart-2"
+        };
+
+        assert.deepEqual(mapHelper.getScopeMap(mapSample, sectinon3context), mapHelper.getScopeMap(mapSample, 6, 'test'), 'The map helper getScopeMap use the "test" scope by default');
+        assert.deepEqual(mapHelper.getScopeMap(mapSample, sectinon3context, 'test'), expectedTestMap, 'The map helper getScopeMap provides the right content when the scope is "test"');
+        assert.deepEqual(mapHelper.getScopeMap(mapSample, sectinon3context, 'part'), expectedPartMap, 'The map helper getScopeMap provides the right content when the scope is "part"');
+        assert.deepEqual(mapHelper.getScopeMap(mapSample, sectinon3context, 'section'), expectedSectionMap, 'The map helper getScopeMap provides the right content when the scope is "section');
         assert.deepEqual(mapHelper.getScopeMap(mapSample, 100, 'test'), expectedTestMap, 'The map helper getScopeMap still provide any map when the position does not exist but the scope is "test"');
         assert.deepEqual(mapHelper.getScopeMap(mapSample, 100, 'part'), expectedNotFound, 'The map helper getScopeMap does not provide any map when the position does not exist and the scope is "part"');
         assert.deepEqual(mapHelper.getScopeMap(mapSample, 100, 'section'), expectedNotFound, 'The map helper getScopeMap does not provide any map when the section does not exist and the scope is "section"');
