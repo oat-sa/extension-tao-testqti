@@ -344,9 +344,12 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
+                    //get item result + state before disabling tools to allow plugin state recovery
+                    var itemResults = getItemResults();
+
                     this.trigger('disablenav disabletools');
 
-                    computeNext('move', _.merge(getItemResults(), {
+                    computeNext('move', _.merge(itemResults, {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
@@ -359,11 +362,14 @@ define([
                 })
                 .on('skip', function(scope){
 
+                    //get item result + state before disabling tools to allow plugin state recovery
+                    var itemResults = getItemResults();
+
                     this.trigger('disablenav disabletools');
 
-                    computeNext('skip', {
+                    computeNext('skip', _.merge(itemResults, {
                         scope     : scope || 'item'
-                    });
+                    }));
                 })
                 .on('exit', function(reason){
                     var context = self.getTestContext();

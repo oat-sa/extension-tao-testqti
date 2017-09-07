@@ -495,6 +495,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function saveItemResponses($emptyAllowed = true)
     {
         if($this->hasRequestParameter('itemDefinition') && $this->hasRequestParameter('itemResponse')){
+            common_Logger::w(__LINE__);
 
             $serviceContext = $this->getServiceContext();
             $itemDefinition = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
@@ -505,6 +506,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
 
+                common_Logger::w(__LINE__);
                 $responses = $this->runnerService->parsesItemResponse($serviceContext, $itemDefinition, json_decode($itemResponse, true));
 
                 //still verify allowSkipping & empty responses
@@ -642,6 +644,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->runnerService->initServiceContext($this->getServiceContext());
+
+            $this->saveItemState();
 
             $this->endItemTimer();
 
