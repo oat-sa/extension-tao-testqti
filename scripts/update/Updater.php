@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
@@ -1433,9 +1434,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('10.11.1', '10.14.1');
-        
+
         if ($this->isVersion('10.14.1')) {
-            
+
             // Default is now EchoAdapt. This should change in the futre.
             $catService = new CatService([
                 CatService::OPTION_ENGINE_ENDPOINTS => [
@@ -1445,9 +1446,9 @@ class Updater extends \common_ext_ExtensionUpdater {
                     ]
                 ]
             ]);
-            
+
             $this->getServiceManager()->register(CatService::SERVICE_ID, $catService);
-            
+
             $this->setVersion('10.15.0');
         }
 
@@ -1457,7 +1458,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(QtiRunnerRubric::SERVICE_ID, new QtiRunnerRubric());
             $this->setVersion('10.16.0');
         }
-        
+
         if ($this->isVersion('10.16.0')) {
             OntologyUpdater::syncModels();
             $this->setVersion('10.17.0');
@@ -1507,7 +1508,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('11.6.0');
         }
-        
+
         $this->skip('11.6.0', '11.8.1');
 
         if($this->isVersion('11.8.1')){
@@ -1525,7 +1526,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('11.9.0');
         }
-        
+
         $this->skip('11.9.0', '11.16.0');
 
         if ($this->isVersion('11.16.0')) {
@@ -1564,7 +1565,30 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('12.0.0');
         }
-        
-        $this->skip('12.0.0', '13.1.1');
+
+        $this->skip('12.0.0', '13.1.0');
+
+        if ($this->isVersion('13.1.0')) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+            $config['enable-rubric-block-stylesheet-scoping'] = true;
+            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', $config);
+
+            $this->setVersion('13.2.0');
+        }
+
+        $this->skip('13.2.0', '14.1.4');
+
+        if($this->isVersion('14.1.4')){
+            /** @var CreatorItems $creatorItemsService */
+            $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
+            $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
+            $creatorItemsService->setOption(CreatorItems::ITEM_CONTENT_SEARCH_OPTION, '*');
+
+            $this->getServiceManager()->register(CreatorItems::SERVICE_ID, $creatorItemsService);
+
+            $this->setVersion('14.1.5');
+        }
+
+        $this->skip('14.1.5', '15.4.1');
     }
 }

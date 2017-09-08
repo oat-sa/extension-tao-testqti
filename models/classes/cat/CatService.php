@@ -30,6 +30,9 @@ use qtism\data\AssessmentSection;
 use qtism\data\SectionPartCollection;
 use qtism\data\AssessmentItemRef;
 use qtism\data\storage\php\PhpDocument;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\RouteItem;
+use oat\taoQtiTest\models\ExtendedStateService;
 
 /**
  * Computerized Adaptive Testing Service
@@ -49,6 +52,8 @@ class CatService extends ConfigurableService
     
     const OPTION_ENGINE_ENDPOINTS = 'endpoints';
     
+    const OPTION_ENGINE_URL = 'url';
+
     const OPTION_ENGINE_CLASS = 'class';
     
     const OPTION_ENGINE_ARGS = 'args';
@@ -66,6 +71,8 @@ class CatService extends ConfigurableService
     private $engines = [];
     
     private $sectionMapCache = [];
+    
+    private $catSection = [];
     
     /**
      * Returns the Adaptive Engine
@@ -86,10 +93,13 @@ class CatService extends ConfigurableService
             
                 $class = $engineOptions[self::OPTION_ENGINE_CLASS];
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+                $url = isset($engineOptions[self::OPTION_ENGINE_URL])
+                    ? $engineOptions[self::OPTION_ENGINE_URL]
+                    : $endpoint;
                 array_unshift($args, $endpoint);
 
                 try {
-                    $this->engines[$endpoint] = new $class($endpoint, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
+                    $this->engines[$endpoint] = new $class($url, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
                 } catch (\Exception $e) {
                     \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
                     throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
@@ -364,5 +374,66 @@ class CatService extends ConfigurableService
         }
 
         throw new \InvalidArgumentException('No API version provided. Cannot connect to endpoint.');
+    }
+    
+    public function isAdaptive(AssessmentTestSession $testSession, AssessmentItemRef $currentAssessmentItemRef = null)
+    {
+        $currentAssessmentItemRef = (is_null($currentAssessmentItemRef)) ? $testSession->getCurrentAssessmentItemRef() : $currentAssessmentItemRef;
+        
+        if ($currentAssessmentItemRef) {
+            return $this->isAdaptivePlaceholder($currentAssessmentItemRef);
+        } else {
+            return false;
+        }
+    }
+    
+    public function getCatSection(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        $routeItem = $routeItem ? $routeItem : $testSession->getRoute()->current();
+        $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
+        
+        if (!isset($this->catSection[$sectionId])) {
+
+            // No retrieval trial yet.
+            $adaptiveSectionMap = $this->getAdaptiveSectionMap($compilationDirectory);
+
+
+            if (isset($adaptiveSectionMap[$sectionId])) {
+                $this->catSection[$sectionId] = $this->getCatEngine($testSession, $compilationDirectory, $routeItem)->restoreSection($adaptiveSectionMap[$sectionId]['section']);
+            } else {
+                $this->catSection[$sectionId] = false;
+            }
+
+        }
+        
+        return $this->catSection[$sectionId];
+    }
+    
+    public function getCatEngine(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        $adaptiveSectionMap = $this->getAdaptiveSectionMap($compilationDirectory);
+        $routeItem = $routeItem ? $routeItem : $testSession->getRoute()->current();
+        
+        $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
+        $catEngine = false;
+        
+        if (isset($adaptiveSectionMap[$sectionId])) {
+            $catEngine = $this->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
+        }
+        
+        return $catEngine;
+    }
+    
+    public function getCurrentCatItemId(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        $sessionId = $testSession->getSessionId();
+        
+        $catItemId = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $this->getCatSection($testSession, $compilationDirectory, $routeItem)->getSectionId(),
+            'current-cat-item-id'
+        );
+        
+        return $catItemId;
     }
 }

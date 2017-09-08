@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\libCat\Exception\CatEngineException;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
@@ -35,6 +36,8 @@ use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\libCat\result\ItemResult;
+use oat\libCat\result\ResultVariable;
 
 /**
  * Class QtiRunnerServiceContext
@@ -100,11 +103,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     private $catSession = [];
     
-    private $catSection = [];
-    
     private $lastCatItemId = null;
-    
-    private $lastCatItemOutput;
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -444,62 +443,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             );
         }
     }
-    
-    /**
-     * Get the CAT Item ID.
-     * 
-     * Returns the last CAT Item Identifier provided by the CAT Engine.
-     * 
-     * @return string|boolean
-     */
-    public function getLastCatItemId()
-    {
-        $lastCatItemIds = $this->getLastCatItemIds();
-        
-        return (is_array($lastCatItemIds)) ? $this->lastCatItemId[0] : $lastCatItemIds;
-    }
-    
-    /**
-     * Get the CAT Item IDs.
-     * 
-     * Return the last CAT Item Identifiers provided by the CAT Engine as a shadow.
-     * 
-     * @return array|boolean
-     */
-    public function getLastCatItemIds()
-    {
-        if (!isset($this->lastCatItemId)) {
-            $sessionId = $this->getTestSession()->getSessionId();
-            $id = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-                $sessionId, 
-                $this->getCatSection()->getSectionId(),
-                'cat-last-item-ids'
-            );
-            $this->lastCatItemId = (is_null($id)) ? false : $id;
-        }
-        
-        return $this->lastCatItemId;
-    }
-    
-    /**
-     * Persist the CAT Item ID.
-     * 
-     * Persists the last CAT Item Identifiers provided by the CAT Engine.
-     * 
-     * @param string $lastCatItemId
-     */
-    public function persistLastCatItemIds(array $lastCatItemIds)
-    {
-        $this->lastCatItemId = $lastCatItemIds;
-        
-        $sessionId = $this->getTestSession()->getSessionId();
-        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
-            $sessionId, 
-            $this->getCatSection()->getSectionId(),
-            'cat-last-item-ids', 
-            $lastCatItemIds
-        );
-    }
 
     /**
      * Persist seen CAT Item identifiers.
@@ -519,7 +462,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             $items = json_decode($items);
         }
-        $items[] = $seenCatItemId;
+        
+        if (!in_array($seenCatItemId, $items)) {
+            $items[] = $seenCatItemId;
+        }
+        
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
             $this->getCatSection()->getSectionId(),
@@ -535,7 +482,31 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getLastCatItemOutput()
     {
-        return $this->lastCatItemOutput;
+        $sessionId = $this->getTestSession()->getSessionId();
+        
+        $itemOutput = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $this->getCatSection()->getSectionId(),
+            'cat-item-output'
+        );
+        
+        if (!$itemOutput) {
+            $output = [];
+        } else {
+            $rawData = json_decode($itemOutput, true);
+
+            foreach ($rawData as $result) {
+                $itemIdentifier = $result['identifier'];
+                $variables= [];
+                foreach ($result['outcomeVariables'] as $outcomeVariable) {
+                    $variables[] = ResultVariable::restore($outcomeVariable);
+                }
+                
+                $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
+            }
+        }
+        
+        return $output;
     }
     
     /**
@@ -543,9 +514,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * 
      * Persist the last CAT Item Result in memory.
      */
-    public function persistLastCatItemOutput($lastCatItemOutput)
+    public function persistLastCatItemOutput(array $lastCatItemOutput)
     {
-        $this->lastCatItemOutput = $lastCatItemOutput;
+        $sessionId = $this->getTestSession()->getSessionId();
+        
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $this->getCatSection()->getSectionId(),
+            'cat-item-output',
+            json_encode($lastCatItemOutput)
+        );
     }
     
     /**
@@ -558,23 +536,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCatSection(RouteItem $routeItem = null)
     {
-        $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
-        $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
-        
-        if (!isset($this->catSection[$sectionId])) {
-            // No retrieval trial yet.
-            $compiledDirectory = $this->getCompilationDirectory()['private'];
-            $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
-            
-            
-            if (isset($adaptiveSectionMap[$sectionId])) {
-                $this->catSection[$sectionId] = $this->getCatEngine($routeItem)->restoreSection($adaptiveSectionMap[$sectionId]['section']);
-            } else {
-                $this->catSection[$sectionId] = false;
-            }
-        }
-        
-        return $this->catSection[$sectionId];
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCatSection(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $routeItem
+        );
     }
     
     /**
@@ -587,13 +553,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function isAdaptive(AssessmentItemRef $currentAssessmentItemRef = null)
     {
-        $currentAssessmentItemRef = (is_null($currentAssessmentItemRef)) ? $this->getTestSession()->getCurrentAssessmentItemRef() : $currentAssessmentItemRef;
-        
-        if ($currentAssessmentItemRef) {
-            return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptivePlaceholder($currentAssessmentItemRef);
-        } else {
-            return false;
-        }
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptive($this->getTestSession(), $currentAssessmentItemRef);
     }
     
     /**
@@ -609,26 +569,31 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         return !empty($adaptiveSectionMap);
     }
-    
+
     /**
      * Select the next Adaptive Item.
-     * 
+     *
      * Ask the CAT Engine for the Next Item to be presented to the candidate, depending on the last
      * CAT Item ID and last CAT Item Output currently stored.
-     * 
+     *
      * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
      * null meaning that there is no CAT Item to be presented.
-     * 
-     * @return string|null
+     *
+     * @return mixed|null
+     * @throws \common_Exception
      */
     public function selectAdaptiveNextItem()
     {
-        $lastItemId = $this->getLastCatItemId();
+        $lastItemId = $this->getCurrentCatItemId();
         $lastOutput = $this->getLastCatItemOutput();
         $catSession = $this->getCatSession();
-        
-        $lastOutput = !empty($lastItemId) ? [$lastOutput] : [];
-        $selection = $catSession->getTestMap($lastOutput);
+
+        try {
+            $selection = $catSession->getTestMap(array_values($lastOutput));
+        } catch (CatEngineException $e) {
+            \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            throw new \common_Exception(__('An internal server error has occurred..'), 0, $e);
+        }
 
         $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
@@ -637,8 +602,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d('No new CAT item selection.');
             return null;
         } else {
-            $this->persistLastCatItemIds($selection);
-            $this->persistSeenCatItemIds($selection[0]);
             $this->persistCatSession($catSession);
             
             \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
@@ -659,7 +622,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         if ($this->isAdaptive()) {
             return $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
                 $this->getCompilationDirectory()['private'],
-                $this->getLastCatItemId()
+                $this->getCurrentCatItemId()
             );
         } else {
             return $this->getTestSession()->getCurrentAssessmentItemRef();
@@ -685,13 +648,84 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     public function getShadowTest(RouteItem $routeItem = null)
     {
-        $shadow = array_unique(
-            array_merge(
-                $this->getPreviouslySeenCatItemIds($routeItem),
-                $this->getCatSession($routeItem)->getTestMap()
+        $shadow = array_values(
+            array_unique(
+                array_merge(
+                    $this->getPreviouslySeenCatItemIds($routeItem),
+                    $this->getCatSession($routeItem)->getTestMap()
+                )
             )
         );
 
         return $shadow;
+    }
+    
+    public function getCurrentCatItemId(RouteItem $routeItem = null)
+    {
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCurrentCatItemId(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $routeItem
+        );
+    }
+    
+    public function persistCurrentCatItemId($catItemId)
+    {
+        $sessionId = $this->getTestSession()->getSessionId();
+        
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $this->getCatSection()->getSectionId(),
+            'current-cat-item-id',
+            $catItemId
+        );
+    }
+    
+    public function getItemPositionInRoute($refId, &$catItemId)
+    {
+        $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+        $route = $this->getTestSession()->getRoute();
+        $routeCount = $route->count();
+        
+        $i = 0;
+        $j = 0;
+        
+        while ($i < $routeCount) {
+            $routeItem = $route->getRouteItemAt($i);
+            
+            if ($catService->isAdaptivePlaceholder($routeItem->getAssessmentItemRef())) {
+                $shadow = $this->getShadowTest($routeItem);
+                
+                for ($k = 0; $k < count($shadow); $k++) {
+                    if ($j == $refId) {
+                        $catItemId = $shadow[$k];
+                        break 2;
+                    }
+                    
+                    $j++;
+                }
+            } else {
+                if ($j == $refId) {
+                    break;
+                }
+                
+                $j++;
+            }
+            
+            $i++;
+        }
+        
+        return $i;
+    }
+    
+    public function getCurrentPosition()
+    {
+        $position = $this->getTestSession()->getRoute()->getPosition();
+        
+        if ($this->isAdaptive() === false) {
+            return $position;
+        } else {
+            return $position + array_search($this->getCurrentCatItemId(), $this->getShadowTest());
+        }
     }
 }
