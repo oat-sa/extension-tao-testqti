@@ -334,9 +334,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('2.23.0');
         }
 
-        $this->skip('2.23.0','2.24.0');
+        $this->skip('2.23.0','2.24.2');
 
-        if ($this->isVersion('2.24.0')) {
+        if ($this->isVersion('2.24.2')) {
             $className = \taoQtiTest_helpers_SessionManager::DEFAULT_TEST_SESSION;
             try {
                 $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('deliveryServer');
@@ -1589,6 +1589,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.3.0');
+        $this->skip('14.1.5', '15.3.1');
     }
 }
