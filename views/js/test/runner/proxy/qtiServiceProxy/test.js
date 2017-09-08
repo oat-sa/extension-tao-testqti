@@ -873,7 +873,7 @@ define([
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemIdentifier : caseData.uri
             });
 
             QUnit.expect('object' !== typeof caseData.response ? 7 : 8);
@@ -988,7 +988,7 @@ define([
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemIdentifier : caseData.uri
             });
 
             QUnit.expect('object' !== typeof caseData.response ? 9 : 10);
@@ -1111,7 +1111,7 @@ define([
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemIdentifier : caseData.uri
             });
 
             QUnit.expect('object' !== typeof caseData.response ? 9 : 10);
@@ -1232,7 +1232,7 @@ define([
                 testDefinition : initConfig.testDefinition,
                 testCompilation : initConfig.testCompilation,
                 testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemIdentifier : caseData.uri
             });
 
             QUnit.expect(11);

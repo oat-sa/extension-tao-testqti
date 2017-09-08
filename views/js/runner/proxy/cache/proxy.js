@@ -345,7 +345,7 @@ define([
                 //don't run a request if not needed
                 if (self.isOnline() && missing.length) {
                     _.delay(function(){
-                        self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
+                        self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemIdentifier: missing})
                             .then(function(response){
                                 if (response && response.items) {
                                     _.forEach(response.items, function (item) {
@@ -466,7 +466,7 @@ define([
             return this.requestNetworkThenOffline(
                 this.configStorage.getItemActionUrl(itemIdentifier, action),
                 action,
-                _.merge({ itemDefinition : itemIdentifier }, params)
+                _.merge({ itemIdentifier : itemIdentifier }, params)
             );
         }
     }, qtiServiceProxy);

@@ -273,7 +273,6 @@
     "attemptDuration": 16,
     "isTimeout": false,
     "itemIdentifier": "item-1",
-    "itemUri": "http://bertaoact/tao.rdf#i1486479622628292|http://bertaoact/tao.rdf#i14864806816446383+|http://bertaoact/tao.rdf#i14864806816272384-",
     "itemSessionState": 1,
     "needMapUpdate": false,
     "isLast": false,
