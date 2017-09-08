@@ -143,7 +143,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-
+        $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         if ($session->isRunning() !== false) {
             $route = $session->getRoute();
             $store = $session->getAssessmentItemSessionStore();
@@ -158,14 +158,13 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $this->itemHrefIndex = [];
             $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
             \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
-            
+
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
-                
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
@@ -232,7 +231,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
-                        'flagged' => TestRunnerUtils::getItemFlag($session, $offset, $context),
+                        'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
                     
