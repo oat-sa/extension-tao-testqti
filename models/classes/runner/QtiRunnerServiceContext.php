@@ -681,9 +681,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         );
     }
     
-    public function getItemPositionInRoute($refId, &$catItemId)
+    public function getItemPositionInRoute($refId, &$catItemId = '')
     {
-        $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
         $route = $this->getTestSession()->getRoute();
         $routeCount = $route->count();
         
@@ -693,7 +692,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         while ($i < $routeCount) {
             $routeItem = $route->getRouteItemAt($i);
             
-            if ($catService->isAdaptivePlaceholder($routeItem->getAssessmentItemRef())) {
+            if ($this->isAdaptive($routeItem->getAssessmentItemRef())) {
                 $shadow = $this->getShadowTest($routeItem);
                 
                 for ($k = 0; $k < count($shadow); $k++) {
@@ -718,14 +717,46 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $i;
     }
     
+    /**
+     * Get Real Current Position.
+     * 
+     * This method returns the real position of the test taker within
+     * the item flow, by considering CAT sections.
+     * 
+     * @return integer A zero-based index.
+     */
     public function getCurrentPosition()
     {
-        $position = $this->getTestSession()->getRoute()->getPosition();
+        $route = $this->getTestSession()->getRoute();
+        $routeCount = $route->count();
+        $routeItemPosition = $route->getPosition();
+        $currentRouteItem = $route->getRouteItemAt($routeItemPosition);
         
-        if ($this->isAdaptive() === false) {
-            return $position;
-        } else {
-            return $position + array_search($this->getCurrentCatItemId(), $this->getShadowTest());
+        $finalPosition = 0;
+        
+        for ($i = 0; $i < $routeCount; $i++) {
+            $routeItem = $route->getRouteItemAt($i);
+            
+            if ($routeItem !== $currentRouteItem) {
+                if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
+                    $finalPosition++;
+                } else {
+                    $finalPosition += count($this->getShadowTest($routeItem)) - 1;
+                }
+            } else {
+                if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
+                    $finalPosition++;
+                } else {
+                    $finalPosition += array_search(
+                        $this->getCurrentCatItemId($routeItem),
+                        $this->getShadowTest($routeItem)
+                    );
+                }
+                
+                break;
+            }
         }
+        
+        return $finalPosition;
     }
 }
