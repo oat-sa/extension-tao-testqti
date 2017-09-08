@@ -216,7 +216,7 @@ define([
     QUnit.test('qtiServiceConfig.getItemActionUrl', function(assert) {
         QUnit.expect(1);
 
-        var itemUri = 'http://tao.dev/mockItem#123';
+        var itemIdentifier = 'http://tao.dev/mockItem#123';
         var config = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -231,18 +231,18 @@ define([
             testDefinition : config.testDefinition,
             testCompilation : config.testCompilation,
             testServiceCallId : config.serviceCallId,
-            itemDefinition : itemUri
+            itemIdentifier : itemIdentifier
         });
         var instance = qtiServiceConfig(config);
 
-        assert.equal(instance.getItemActionUrl(itemUri, actionName), expectedUrl, 'The qtiServiceConfig.getItemActionUrl() method has returned the expected value');
+        assert.equal(instance.getItemActionUrl(itemIdentifier, actionName), expectedUrl, 'The qtiServiceConfig.getItemActionUrl() method has returned the expected value');
     });
-    
-    
+
+
     QUnit.test('qtiServiceConfig.getTelemetryUrl', function(assert) {
         QUnit.expect(1);
 
-        var itemUri = 'http://tao.dev/mockItem#123';
+        var itemIdentifier = 'http://tao.dev/mockItem#123';
         var config = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -257,10 +257,10 @@ define([
             testDefinition : config.testDefinition,
             testCompilation : config.testCompilation,
             testServiceCallId : config.serviceCallId,
-            itemDefinition : itemUri
+            itemIdentifier : itemIdentifier
         });
         var instance = qtiServiceConfig(config);
 
-        assert.equal(instance.getTelemetryUrl(itemUri, signalName), expectedUrl, 'The qtiServiceConfig.getTelemetryUrl() method has returned the expected value');
+        assert.equal(instance.getTelemetryUrl(itemIdentifier, signalName), expectedUrl, 'The qtiServiceConfig.getTelemetryUrl() method has returned the expected value');
     });
 });

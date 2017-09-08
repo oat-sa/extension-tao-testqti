@@ -371,7 +371,7 @@ define([
 
                     self.getProxy()
                         .callTestAction('exitTest', _.merge(getItemResults(), {
-                            itemDefinition : context.itemIdentifier,
+                            itemIdentifier : context.itemIdentifier,
                             reason: reason
                         }))
                         .then(function(){
