@@ -330,7 +330,7 @@ define([
          * @returns {object} The scoped map
          */
         getScopedMap: function getScopedMap(map, context) {
-            var scopedMap = mapHelper.getScopeMap(map, context, this.config.scope);
+            var scopedMap = mapHelper.getScopeMapFromContext(map, context, this.config.scope);
             var testPart = mapHelper.getPart(scopedMap, context.testPartId) || {};
             var section = mapHelper.getSection(scopedMap, context.sectionId) || {};
             var item = mapHelper.getItem(scopedMap, context.itemIdentifier) || {};

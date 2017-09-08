@@ -189,11 +189,55 @@ define([
         /**
          * Gets the map of a particular scope from a particular position
          * @param {Object} map - The assessment test map
-         * @param {Щиоусе} context - The current session context
+         * @param {Number} position - The current position
          * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
          * @returns {object} The scoped map
          */
-        getScopeMap: function getScopeMap(map, context, scope) {
+        getScopeMap: function getScopeMap(map, position, scope) {
+            // need a clone of the map as we will change some properties
+            var scopeMap = _.cloneDeep(map || {});
+
+            // gets the current part and section
+            var jump = this.getJump(map, position);
+            var part = this.getPart(scopeMap, jump && jump.part);
+            var section = this.getSection(scopeMap, jump && jump.section);
+
+            // reduce the map to the scope part
+            if (scope && scope !== 'test') {
+                scopeMap.parts = {};
+                if (part) {
+                    scopeMap.parts[jump.part] = part;
+                }
+            }
+
+            // reduce the map to the scope section
+            if (part && (scope === 'section' || scope === 'testSection')) {
+                part.sections = {};
+                if (section) {
+                    part.sections[jump.section] = section;
+                }
+            }
+
+            // update the stats to reflect the scope
+            if (section) {
+                section.stats = this.computeItemStats(section.items);
+            }
+            if (part) {
+                part.stats = this.computeStats(part.sections);
+            }
+            scopeMap.stats = this.computeStats(scopeMap.parts);
+
+            return scopeMap;
+        },
+
+        /**
+         * Gets the map of a particular scope from a current context
+         * @param {Object} map - The assessment test map
+         * @param {Object} context - The current session context
+         * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
+         * @returns {object} The scoped map
+         */
+        getScopeMapFromContext: function getScopeMapFromContext(map, context, scope) {
             // need a clone of the map as we will change some properties
             var scopeMap = _.cloneDeep(map || {});
             var part;
