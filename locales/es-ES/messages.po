@@ -29,7 +29,7 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Un recurso remoto referencia en prueba '%s' QTI no se pudo recuperar."
 
 msgid "A response to this item is required."
-msgstr "Se requiere una respuesta a este articulo."
+msgstr "Se requiere una respuesta a este artículo."
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sección visible es una que es identificable por el candidato."
@@ -1156,28 +1156,28 @@ msgstr "Gris sobre verde (opcion de bajo contraste)"
 
 # They're in js.
 msgid "You answered all %s question(s) in this section"
-msgstr "Usted respondio a las %s preguntas en esta seccion"
+msgstr "Usted respondio a las %s preguntas en esta sección"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "Usted respondio solo %s de las preguntas %s en esta seccion"
+msgstr "Usted respondió sólo %s de las preguntas %s en esta sección"
 
 msgid "and flagged %s of them"
-msgstr "y marco x de ellas"
+msgstr "y marcó %s de ellas"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr "Una vez que cierre esta seccion, no podra volver a ella ni cambiar sus respuestas."
+msgstr "Una vez que cierre esta  sección, no podrá volver a ella ni cambiar sus respuestas."
 
 msgid "Review my Answers"
 msgstr "Revisar mis respuestas"
 
 msgid "Close this Section"
-msgstr "Cerrar esta seccion"
+msgstr "Cerrar esta sección"
 
 msgid "You have %s unanswered question(s)"
 msgstr "Tienes %s preguntas sin respuesta"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "y marcaste x articulos que puedes revisar ahora"
+msgstr "y marcaste x artículos que puedes revisar ahora"
 
 msgid "Connected to server"
 msgstr "Conectado al servidor"
