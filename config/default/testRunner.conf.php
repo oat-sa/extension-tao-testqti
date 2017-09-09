@@ -503,10 +503,5 @@ return array(
      * @type integer
      */
     'item-cache-size' => 3,
-
-    /**
-     * Keep timer for not allowed answer
-     */
-    'keep-timer-notallowed' => false
-
+    
 );

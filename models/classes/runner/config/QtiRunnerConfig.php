@@ -89,7 +89,6 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
                     'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
-                    'keepTimerNotAllowed' => !empty($rawConfig['keep-timer-notallowed']),
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
                 'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,
