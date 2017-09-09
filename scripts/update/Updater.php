@@ -1589,17 +1589,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.5.1');
-
-        if($this->isVersion('15.5.1')){
-            /** @var CreatorItems $creatorItemsService */
-            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-
-            if (!array_key_exists('keep-timer-notallowed', $testRunnerConfig)) {
-                $testRunnerConfig['keep-timer-notallowed'] = false;
-                \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $testRunnerConfig);
-            }
-            $this->setVersion('15.6.0');
-        }
+        $this->skip('14.1.5', '15.5.2');
     }
 }
