@@ -77,12 +77,12 @@ define([
                             return resolve();
                         }
                         if (!testRunner.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
-                            testRunner.trigger('resumeitem');
                             testRunner.setState('alerted.notallowed', true);
                             testRunner.trigger(
                                 'alert.notallowed',
                                 __('A valid response to this item is required.'),
                                 function () {
+                                    testRunner.trigger('resumeitem');
                                     reject();
                                     testRunner.setState('alerted.notallowed', false);
                                 }

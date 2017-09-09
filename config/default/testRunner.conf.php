@@ -502,6 +502,5 @@ return array(
      * This is required for caching scenarios
      * @type integer
      */
-    'item-cache-size' => 3,
-    
+    'item-cache-size' => 3
 );

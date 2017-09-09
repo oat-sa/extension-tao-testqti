@@ -506,21 +506,21 @@ define([
                                 }
                             });
 
-                            movePromise
-                                .then(function doMove() {
-                                    //pause the timers when moving
-                                    doDisable();
-                                    removeTimer(timerTypes.item);
-                                })
-                                .catch(function cancelMove() {
-                                    // Use `defer` to be sure the timer resume will occur after the move event is
-                                    // finished to be handled. Otherwise, the duration plugin will be frozen and
-                                    // the additional time will not be taken into account!
-                                    _.defer(function() {
-                                        testRunner.trigger('enableitem enablenav');
-                                    });
+                            return movePromise;
+                        })
+                        .on('move', function () {
+                            var movePromise;
+                            movePromise = new Promise(function() {
+                                doDisable();
+                                removeTimer(timerTypes.item);
+                            }).catch(function cancelMove() {
+                                // Use `defer` to be sure the timer resume will occur after the move event is
+                                // finished to be handled. Otherwise, the duration plugin will be frozen and
+                                // the additional time will not be taken into account!
+                                _.defer(function() {
+                                    testRunner.trigger('enableitem enablenav');
                                 });
-
+                            });
                             return movePromise;
                         })
                         .before('move skip exit timeout', function() {
