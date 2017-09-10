@@ -332,7 +332,7 @@ class CatService extends ConfigurableService
 
             $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
-            $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
+            //$event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
 
         }
     }
@@ -435,5 +435,18 @@ class CatService extends ConfigurableService
         );
         
         return $catItemId;
+    }
+    
+    public function getCatAttempts(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, $identifier, RouteItem $routeItem = null)
+    {
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $testSession->getSessionId(),
+            $this->getCatSection($testSession, $compilationDirectory, $routeItem)->getSectionId(),
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        
+        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 1;
     }
 }
