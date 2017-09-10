@@ -799,10 +799,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     
                     // Deal with attempts.
                     $attempt = $context->getCatAttempts($itemIdentifier);
-                    \common_Logger::i("CAT attempt #${'attempt'} for item '${itemIdentifier}'.");
-                    
                     $transmissionId = "${sessionId}.${itemIdentifier}." . ($attempt - 1);
-                    \common_Logger::i("Transmission ID is '$transmissionId'.");
                     
                     foreach ($session->getAllVariables() as $var) {
                         if ($var->getIdentifier() === 'numAttempts') {
