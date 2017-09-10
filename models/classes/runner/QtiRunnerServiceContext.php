@@ -741,12 +741,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
                     $finalPosition++;
                 } else {
-                    $finalPosition += count($this->getShadowTest($routeItem)) - 1;
+                    $finalPosition += count($this->getShadowTest($routeItem));
                 }
             } else {
-                if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
-                    $finalPosition++;
-                } else {
+                if ($this->isAdaptive($routeItem->getAssessmentItemRef())) {
                     $finalPosition += array_search(
                         $this->getCurrentCatItemId($routeItem),
                         $this->getShadowTest($routeItem)
