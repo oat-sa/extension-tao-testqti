@@ -811,8 +811,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         $variables[] = $var;
                     }
                     
-                    \common_Logger::i($transmissionId);
-                    
                     $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
                     $context->persistCatAttempts($itemIdentifier, $attempt);
                     
