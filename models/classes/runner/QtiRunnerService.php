@@ -397,7 +397,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
                 
                 // The number of current attempt (1 for the first time ...)
-                $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) : $itemSession['numAttempts']->getValue();
+                $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
 
                 // The definition of the current item (HREF)
                 $response['itemDefinition'] = $itemRef->getHref();
@@ -799,7 +799,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     
                     // Deal with attempts.
                     $attempt = $context->getCatAttempts($itemIdentifier);
-                    $transmissionId = "${sessionId}.${itemIdentifier}." . ($attempt - 1);
+                    $transmissionId = "${sessionId}.${itemIdentifier}.${attempt}";
+                    
+                    $attempt++;
                     
                     foreach ($session->getAllVariables() as $var) {
                         if ($var->getIdentifier() === 'numAttempts') {
@@ -809,9 +811,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         $variables[] = $var;
                     }
                     
-                    $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    \common_Logger::i($transmissionId);
                     
-                    $context->persistCatAttempts($itemIdentifier, $attempt + 1);
+                    $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    $context->persistCatAttempts($itemIdentifier, $attempt);
                     
                 } else {
                     $session->endAttempt($responses, true);

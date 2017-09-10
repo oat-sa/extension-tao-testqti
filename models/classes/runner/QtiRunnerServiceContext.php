@@ -769,19 +769,21 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
     
     public function persistCatAttempts($identifier, $attempts) {
-        $catAttempts = $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
-            $this->getTestSession()->getSessionId(),
-            $this->getCatSection()->getSectionId(),
+        $sessionId = $this->getTestSession()->getSessionId();
+        $sectionId = $this->getCatSection()->getSectionId();
+        
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $sectionId,
             'cat-attempts'
         );
         
         $catAttempts = ($catAttempts) ? $catAttempts : [];
-        
         $catAttempts[$identifier] = $attempts;
         
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
-            $this->getTestSession()->getSessionId(),
-            $this->getCatSection()->getSectionId(),
+            $sessionId,
+            $sectionId,
             'cat-attempts',
             $catAttempts
         );

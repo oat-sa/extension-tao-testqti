@@ -447,6 +447,6 @@ class CatService extends ConfigurableService
         
         $catAttempts = ($catAttempts) ? $catAttempts : [];
         
-        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 1;
+        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 0;
     }
 }
