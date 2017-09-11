@@ -105,7 +105,7 @@ define([
              * Speed down
              */
             speedDown: function speedDown() {
-                if (speed - 1 <= 0) {
+                if (SPEEDS[speed - 1]) {
                     speed -= 1;
                 }
                 this._exec('setSpeed', SPEEDS[speed]);
@@ -115,7 +115,7 @@ define([
              * Speed up
              */
             speedUp: function speedUp() {
-                if (speed + 1 <= 100) {
+                if (SPEEDS[speed + 1]) {
                     speed += 1;
                 }
                 this._exec('setSpeed', SPEEDS[speed]);
@@ -134,7 +134,7 @@ define([
         .on('init', function () {
             var self = this;
 
-            speed = SPEEDS[2]; // getSpeed()
+            speed = 2; // getSpeed()
 
             // we have to mark some blocks as ignored to prevent TTS accessing it
             $(options.ignoreEls.join(','))
@@ -149,7 +149,7 @@ define([
                     window.$rw_barDynamicStart();
                     window.$rw_barInit();
 
-                    self._exec('setSpeed', speed);
+                    self._exec('setSpeed', SPEEDS[speed]);
                 });
             });
         })
