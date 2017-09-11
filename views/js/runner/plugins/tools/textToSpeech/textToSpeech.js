@@ -22,8 +22,7 @@ define([
     'i18n',
     'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
-    'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
-    '//taotoolbar.speechstream.net/tao/configQA.js'
+    'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech'
 ], function (
     $,
     _,
@@ -35,62 +34,124 @@ define([
 
     /**
      * The factory
-     * @param {Object} options.tenantId
-     * @param {Object} options.deliveryId
+     * @param {String} options.deliveryId
+     * @param {Array} [options.ignoreEls = ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container']]
+     * @param {String} [options.toolbarUrl = '//taotoolbar.speechstream.net/tao/configQA.js']
+     * @param {String} options.tenantId
      * @param {Object} [config]
      * @returns {ui/component}
      */
     return function factory(options, config) {
         var component;
+        var mapping = {
+            play:           '$rw_event_play',
+            playBeginning:  '$rw_speakFirstSentence',
+            pause:          '$rw_event_pause',
+            stop:           '$rw_stopSpeech',
+            isTextSelected: '$rw_isTextSelectedForPlay',
+            setVolume:      '$rw_setVolumeValue',
+            setSpeed:       '$rw_setSpeedValue',
+            getSpeed:       '$rw_getSpeed',
+            clickToSpeak:   'TexthelpSpeechStream.clickToSpeak'
+        };
+        var speed;
+        var SPEEDS = [0, 20, 40, 60, 80, 100];
+
+        _.assign(options || {}, {
+            ignoreEls: ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container'],
+            toolbarUrl: '//taotoolbar.speechstream.net/tao/configQA.js'
+        });
 
         component = componentFactory({
+            /**
+             * Execute action
+             * @param {String} action
+             * @param {...} arguments
+             */
+            _exec: function _exec(action) {
+                var fn = window[mapping[action]];
+
+                if (fn && _.isFunction(fn)) {
+                    return fn.apply(this, [].slice.call(arguments, 1));
+                }
+            },
+
             /**
              * Play
              */
             play: function play() {
-                console.log('play');
+                if (this._exec('isTextSelected')) {
+                    this._exec('play');
+                } else {
+                    this._exec('playBeginning');
+                }
             },
 
             /**
              * Pause
              */
             pause: function pause() {
-                console.log('pause');
+                this._exec('pause');
             },
 
             /**
              * Stop
              */
             stop: function stop() {
-                console.log('stop');
+                this._exec('stop');
             },
 
             /**
              * Speed down
              */
             speedDown: function speedDown() {
-                console.log('speedDown');
+                if (speed - 1 <= 0) {
+                    speed -= 1;
+                }
+                this._exec('setSpeed', SPEEDS[speed]);
             },
 
             /**
              * Speed up
              */
             speedUp: function speedUp() {
-                console.log('speedUp');
+                if (speed + 1 <= 100) {
+                    speed += 1;
+                }
+                this._exec('setSpeed', SPEEDS[speed]);
             },
 
             /**
              * Click to pronounce
              */
             clickToPronounce: function clickToPronounce() {
-                console.log('click to pronounce');
+                this._exec('clickToSpeak');
             }
         }, {
             // defaults
         })
         .setTemplate(tpl)
         .on('init', function () {
-            window.TexthelpSpeechStream.addToolbar(options.tenantId, options.deliveryId);
+            var self = this;
+
+            speed = SPEEDS[2]; // getSpeed()
+
+            // we have to mark some blocks as ignored to prevent TTS accessing it
+            $(options.ignoreEls.join(','))
+            .each(function () {
+                $(this).attr('ignore', true);
+            });
+
+            require([options.toolbarUrl], function () {
+                var tss = window.TexthelpSpeechStream;
+
+                require(["//" + tss.g_strServer + "/SpeechStream/v" + tss.g_strBuild + "/texthelpMain.js"], function () {
+                    window.$rw_barDynamicStart();
+                    window.$rw_barInit();
+
+                    self._exec('setSpeed', speed);
+                });
+            });
         })
         .init(config)
         .on('render', function () {
