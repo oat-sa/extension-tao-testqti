@@ -39,17 +39,23 @@ class SelectAdaptiveNextItemEvent implements Event
     /** @var AssessmentTestSession */
     protected $testSession;
 
+    /** @var bool A parameter to store if item is adaptive or retrieve from shadow */
+    protected $isShadowItem = false;
+
     /**
      * SelectAdaptiveNextItemEvent constructor.
-     * @param string AssessmentTestSession $testSession
-     * @param string $currentItemId
+     *
+     * @param AssessmentTestSession $testSession
+     * @param $currentItemId
      * @param array|null $catItemIds
+     * @param bool $isShadowItem
      */
-    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null)
+    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null, $isShadowItem = false)
     {
         $this->currentItemId = $currentItemId;
         $this->catItemIds = $catItemIds;
         $this->testSession = $testSession;
+        $this->isShadowItem = $isShadowItem;
     }
 
     /**
@@ -97,4 +103,13 @@ class SelectAdaptiveNextItemEvent implements Event
     {
         return $this->catItemIds;
     }
+
+    /**
+     * @return bool
+     */
+    public function isShadowItem()
+    {
+        return (bool) $this->isShadowItem;
+    }
+
 }

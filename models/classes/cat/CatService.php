@@ -70,6 +70,8 @@ class CatService extends ConfigurableService
 
     const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
 
+    const IS_SHADOW_ITEM = 'is-shadow-item';
+
     private $engines = [];
     
     private $sectionMapCache = [];
