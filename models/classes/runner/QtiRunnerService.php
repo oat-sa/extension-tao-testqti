@@ -410,7 +410,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-                
+
+                // Whether the current section is adaptive.
+                $response['isCatAdaptive'] = $context->isAdaptive();
+
                 // Whether the test map must be updated.
                 // TODO: detect if the map need to be updated and set the flag
                 $response['needMapUpdate'] = false;

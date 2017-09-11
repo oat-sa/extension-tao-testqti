@@ -29,8 +29,9 @@ define([
     'taoTests/runner/plugin',
     'util/shortcut',
     'util/namespace',
+    'taoQtiTest/runner/helpers/navigation',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, navigationHelper, buttonTpl){
     'use strict';
 
     /**
@@ -55,8 +56,16 @@ define([
              * Check if the "Previous" functionality should be available or not
              */
             var canDoPrevious = function canDoPrevious() {
+                var testMap = testRunner.getTestMap();
                 var context = testRunner.getTestContext();
-                return context.isLinear === false && context.canMoveBackward === true;
+                var canMove = !navigationHelper.isFirst(testMap, context.itemIdentifier);
+
+                //when entering an adaptive section,
+                //you can't leave the section from the beginning
+                if (canMove && context.isCatAdaptive) {
+                    canMove = !navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section');
+                }
+                return canMove && context.isLinear === false && context.canMoveBackward === true;
             };
 
             /**
