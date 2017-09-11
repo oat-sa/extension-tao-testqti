@@ -387,9 +387,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
-                // The number of current attempt (1 for the first time ...)
-                $response['attempt'] = $itemSession['numAttempts']->getValue();
-
                 // Duration of the current item attempt
                 $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
 
@@ -398,6 +395,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
+                
+                // The number of current attempt (1 for the first time ...)
+                $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
 
                 // The definition of the current item (HREF)
                 $response['itemDefinition'] = $itemRef->getHref();
@@ -799,13 +799,23 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
+                    
+                    // Deal with attempts.
+                    $attempt = $context->getCatAttempts($itemIdentifier);
+                    $transmissionId = "${sessionId}.${itemIdentifier}.${attempt}";
+                    
+                    $attempt++;
                     
                     foreach ($session->getAllVariables() as $var) {
+                        if ($var->getIdentifier() === 'numAttempts') {
+                            $var->setValue(new \qtism\common\datatypes\QtiInteger($attempt));
+                        }
+                        
                         $variables[] = $var;
                     }
                     
                     $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    $context->persistCatAttempts($itemIdentifier, $attempt);
                     
                 } else {
                     $session->endAttempt($responses, true);

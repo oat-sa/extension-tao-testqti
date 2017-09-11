@@ -757,4 +757,35 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         return $finalPosition;
     }
+    
+    public function getCatAttempts($identifier, RouteItem $routeItem = null)
+    {
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCatAttempts(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $identifier,
+            $routeItem
+        );
+    }
+    
+    public function persistCatAttempts($identifier, $attempts) {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $sectionId = $this->getCatSection()->getSectionId();
+        
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $sectionId,
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        $catAttempts[$identifier] = $attempts;
+        
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $sectionId,
+            'cat-attempts',
+            $catAttempts
+        );
+    }
 }
