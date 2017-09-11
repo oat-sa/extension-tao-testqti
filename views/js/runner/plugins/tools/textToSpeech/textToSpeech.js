@@ -20,9 +20,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'taoTests/runner/plugin',
-    'ui/hider',
-    'ui/stacker',
+    'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
     'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
     '//taotoolbar.speechstream.net/tao/configQA.js'
@@ -30,107 +28,82 @@ define([
     $,
     _,
     __,
-    pluginFactory,
-    hider,
-    stackerFactory,
+    componentFactory,
     tpl
 ) {
     'use strict';
 
     /**
-     * Returns the configured plugin
-     * @returns {Object}
+     * The factory
+     * @param {Object} options.tenantId
+     * @param {Object} options.deliveryId
+     * @param {Object} [config]
+     * @returns {ui/component}
      */
-    return pluginFactory({
+    return function factory(options, config) {
+        var component;
 
-        /**
-         * Plugin name
-         * @type {String}
-         */
-        name: 'textToSpeech',
-
-        /**
-         * Initialize plugin
-         * @returns {this}
-         */
-        init: function init() {
-            var testRunner = this.getTestRunner();
-            var self = this;
-            var stacker = stackerFactory('test-runner');
-
-            var testConfig = testRunner.getConfig();
-
-            // todo: set tenant id
-            // todo: check if delivery id is acceptable replacement for item id
-            window.TexthelpSpeechStream.addToolbar('tenantId', testConfig.serviceCallId);
+        component = componentFactory({
+            /**
+             * Play
+             */
+            play: function play() {
+                console.log('play');
+            },
 
             /**
-             * Show/hide tts panel
+             * Pause
              */
-            function toggleTts() {
-                if (self.getState('enabled')) {
-                    hider.toggle(self.$tts);
-                }
+            pause: function pause() {
+                console.log('pause');
+            },
+
+            /**
+             * Stop
+             */
+            stop: function stop() {
+                console.log('stop');
+            },
+
+            /**
+             * Speed down
+             */
+            speedDown: function speedDown() {
+                console.log('speedDown');
+            },
+
+            /**
+             * Speed up
+             */
+            speedUp: function speedUp() {
+                console.log('speedUp');
+            },
+
+            /**
+             * Click to pronounce
+             */
+            clickToPronounce: function clickToPronounce() {
+                console.log('click to pronounce');
             }
+        }, {
+            // defaults
+        })
+        .setTemplate(tpl)
+        .on('init', function () {
+            window.TexthelpSpeechStream.addToolbar(options.tenantId, options.deliveryId);
+        })
+        .init(config)
+        .on('render', function () {
+            var $this = this.getElement();
 
-            this.ttsButton = this.getAreaBroker().getToolbox().createEntry({
-                control: 'tts',
-                icon: 'audio',
-                text: __('Text to Speech'),
-                title: __('Text to Speech')
-            })
-            .on('render', function () {
-                self.$tts = $(tpl()).appendTo(self.ttsButton.getElement());
+            $this.find('.play')              .on('click', this.play);
+            $this.find('.pause')             .on('click', this.pause);
+            $this.find('.stop')              .on('click', this.stop);
+            $this.find('.speed-down')        .on('click', this.speedDown);
+            $this.find('.speed-up')          .on('click', this.speedUp);
+            $this.find('.click-to-pronounce').on('click', this.clickToPronounce);
+        });
 
-                //play, pause, stop, speed control, volume control (if available), click-to-pronounce
-
-                stacker.autoBringToFront(self.$tts);
-            })
-            .on('click', function () {
-                toggleTts();
-            });
-
-            testRunner
-            .on('loaditem', function () {
-                self.show();
-                self.disable();
-            })
-            .on('renderitem enabletools', function () {
-                self.enable();
-            })
-            .on('disabletools unloaditem', function () {
-                self.disable();
-            });
-
-            return this;
-        },
-
-        /**
-         * Enable tts button
-         */
-        enable: function enable() {
-            this.ttsButton.enable();
-        },
-
-        /**
-         * Disable tts button
-         */
-        disable: function disable() {
-            this.ttsButton.disable();
-        },
-
-        /**
-         * Show tts button
-         */
-        show: function show() {
-            this.ttsButton.show();
-        },
-
-        /**
-         * Hide tts button
-         */
-        hide: function hide() {
-            this.ttsButton.hide();
-        }
-    });
+        return component;
+    };
 });
