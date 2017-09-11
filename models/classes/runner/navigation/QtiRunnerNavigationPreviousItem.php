@@ -48,6 +48,7 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
             $currentCatItemId = $context->getCurrentCatItemId();
             $search = array_search($currentCatItemId, $shadowTest);
             
+            // Consider potential changes in the selected items.
             $context->selectAdaptiveNextItem();
             
             if ($search === 0) {

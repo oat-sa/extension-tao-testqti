@@ -54,6 +54,7 @@ class QtiRunnerNavigationJumpItem implements RunnerNavigation
         }
         
         if ($context->isAdaptive()) {
+            // Consider potential changes in the selected items.
             $context->selectAdaptiveNextItem();
         }
         
