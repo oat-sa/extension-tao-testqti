@@ -26,8 +26,7 @@ use qtism\runtime\tests\AssessmentTestSession;
  * Event exit from test (by pressing exit button by test taker).
  * Note that exit is not the same as finishing.
  *
- * @see \oat\taoQtiTest\models\runner\QtiRunnerService::exitTest()
- * @author Aleh Hutnikau <hutnikau@1pt.com>
+ * @author Antoine Robin <antoine@taotesting.com>
  */
 class ItemOfflineEvent extends AbstractTestEvent
 {
