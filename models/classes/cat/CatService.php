@@ -33,6 +33,8 @@ use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
+use oat\oatbox\event\EventManager;
 
 /**
  * Computerized Adaptive Testing Service
@@ -323,10 +325,12 @@ class CatService extends ConfigurableService
 
     public function onQtiContinueInteraction($event)
     {
-        if($event instanceof QtiContinueInteractionEvent){
-            $isCat = false;
+        if ($event instanceof QtiContinueInteractionEvent) {
             $context = $event->getContext();
-            if($context->isAdaptive()){
+            $isAdaptive = $context->isAdaptive();
+            $isCat = false;
+            
+            if ($isAdaptive) {
                 $isCat = true;
             }
 
@@ -334,6 +338,21 @@ class CatService extends ConfigurableService
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
 
+            if ($isAdaptive) {
+                // Notify current item selection.
+                $currentCatItemId = $context->getCurrentCatItemId();
+                
+                $event = new SelectAdaptiveNextItemEvent(
+                    $context->getTestSession(),
+                    $currentCatItemId,
+                    $context->getCatSession()->getTestMap(),
+                    $context->getCatAttempts($currentCatItemId)
+                );
+                
+                $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+                
+                \common_Logger::i(implode(', ', $context->getCatSession()->getTestMap()));
+            }
         }
     }
 
