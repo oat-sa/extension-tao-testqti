@@ -428,7 +428,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
-                $response['itemAnswered'] = ($context->isAdaptive()) ? true : TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
+                $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
