@@ -323,6 +323,9 @@ class CatService extends ConfigurableService
         return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 
+    /**
+     * @deprecated set on SelectNextAdaptiveItemEvent
+     */
     public function onQtiContinueInteraction($event)
     {
         if($event instanceof QtiContinueInteractionEvent){
