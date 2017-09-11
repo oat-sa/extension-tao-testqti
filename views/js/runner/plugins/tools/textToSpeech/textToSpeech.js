@@ -51,8 +51,7 @@ define([
             isTextSelected: '$rw_isTextSelectedForPlay',
             setVolume:      '$rw_setVolumeValue',
             setSpeed:       '$rw_setSpeedValue',
-            getSpeed:       '$rw_getSpeed',
-            clickToSpeak:   'TexthelpSpeechStream.clickToSpeak'
+            getSpeed:       '$rw_getSpeed'
         };
         var speed;
         var SPEEDS = [0, 20, 40, 60, 80, 100];
@@ -125,7 +124,9 @@ define([
              * Click to pronounce
              */
             clickToPronounce: function clickToPronounce() {
-                this._exec('clickToSpeak');
+                if (window.TexthelpSpeechStream) {
+                    window.TexthelpSpeechStream.clickToSpeak();
+                }
             }
         }, {
             // defaults
