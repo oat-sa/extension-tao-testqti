@@ -436,4 +436,17 @@ class CatService extends ConfigurableService
         
         return $catItemId;
     }
+    
+    public function getCatAttempts(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, $identifier, RouteItem $routeItem = null)
+    {
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $testSession->getSessionId(),
+            $this->getCatSection($testSession, $compilationDirectory, $routeItem)->getSectionId(),
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        
+        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 0;
+    }
 }
