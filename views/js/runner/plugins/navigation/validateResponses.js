@@ -66,7 +66,6 @@ define([
             testRunner
             .before('move', function () {
                 var testContext = testRunner.getTestContext();
-
                 if (testContext.enableValidateResponses &&  testContext.validateResponses) {
                     this.trigger('disablenav disabletools');
 
