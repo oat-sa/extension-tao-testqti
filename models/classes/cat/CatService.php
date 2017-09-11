@@ -33,8 +33,6 @@ use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
-use oat\oatbox\event\EventManager;
 
 /**
  * Computerized Adaptive Testing Service
