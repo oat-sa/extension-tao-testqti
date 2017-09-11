@@ -62,7 +62,7 @@ define([
 
                 //when entering an adaptive section,
                 //you can't leave the section from the beginning
-                if (canMove && context.isAdaptive) {
+                if (canMove && context.isCatAdaptive) {
                     canMove = !navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section');
                 }
                 return canMove && context.isLinear === false && context.canMoveBackward === true;
