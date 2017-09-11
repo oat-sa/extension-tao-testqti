@@ -58,6 +58,12 @@ define([
             var self = this;
             var stacker = stackerFactory('test-runner');
 
+            var testConfig = testRunner.getConfig();
+
+            // todo: set tenant id
+            // todo: check if delivery id is acceptable replacement for item id
+            window.TexthelpSpeechStream.addToolbar('tenantId', testConfig.serviceCallId);
+
             /**
              * Show/hide tts panel
              */
@@ -76,11 +82,12 @@ define([
             .on('render', function () {
                 self.$tts = $(tpl()).appendTo(self.ttsButton.getElement());
 
+                //play, pause, stop, speed control, volume control (if available), click-to-pronounce
+
                 stacker.autoBringToFront(self.$tts);
             })
             .on('click', function () {
                 toggleTts();
-                console.log('here');
             });
 
             testRunner
@@ -94,24 +101,6 @@ define([
             .on('disabletools unloaditem', function () {
                 self.disable();
             });
-
-            // testRunner
-            // .on('ready', function () {
-            //     var areaBroker = testRunner.getAreaBroker();
-            //     var container;
-            //     var testContext = testRunner.getTestContext();
-            //     var tss = window.TexthelpSpeechStream;
-
-            //     if (testContext.enableTextToSpeech && testContext.textToSpeech) {
-            //         container = areaBroker.getContainer();
-
-            //         console.log(container);
-            //         container.append(tpl());
-
-            //         tss.addToolbar('bookId', 'pageId');
-            //         //play, pause, stop, speed control, volume control (if available), click-to-pronounce
-            //     }
-            // });
 
             return this;
         },
