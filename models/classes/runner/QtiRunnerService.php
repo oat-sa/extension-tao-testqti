@@ -475,7 +475,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['enableValidateResponses'] = $config->getConfigValue('enableValidateResponses');
 
                 //contextual value
-                $response['validateResponses'] = $tesOptions['validateResponses'];
+                $response['validateResponses'] = $testOptions['validateResponses'];
 
                 //does the item has modal feedbacks ?
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
