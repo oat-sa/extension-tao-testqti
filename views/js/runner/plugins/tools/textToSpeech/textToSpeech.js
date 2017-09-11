@@ -68,10 +68,12 @@ define([
              * @param {...} arguments
              */
             _exec: function _exec(action) {
+                var args = [].slice.call(arguments, 1);
                 var fn = window[mapping[action]];
 
                 if (fn && _.isFunction(fn)) {
-                    return fn.apply(this, [].slice.call(arguments, 1));
+                    this.trigger(action, args);
+                    return fn.apply(this, args);
                 }
             },
 
@@ -123,7 +125,7 @@ define([
             /**
              * Click to pronounce
              */
-            clickToPronounce: function clickToPronounce() {
+            clickToSpeak: function clickToSpeak() {
                 if (window.TexthelpSpeechStream) {
                     window.TexthelpSpeechStream.clickToSpeak();
                 }
@@ -158,12 +160,27 @@ define([
         .on('render', function () {
             var $this = this.getElement();
 
-            $this.find('.play')              .on('click', this.play);
-            $this.find('.pause')             .on('click', this.pause);
-            $this.find('.stop')              .on('click', this.stop);
-            $this.find('.speed-down')        .on('click', this.speedDown);
-            $this.find('.speed-up')          .on('click', this.speedUp);
-            $this.find('.click-to-pronounce').on('click', this.clickToPronounce);
+            $this.find('.play')          .on('click', this.play);
+            $this.find('.pause')         .on('click', this.pause);
+            $this.find('.stop')          .on('click', this.stop);
+            $this.find('.speed-down')    .on('click', this.speedDown);
+            $this.find('.speed-up')      .on('click', this.speedUp);
+            $this.find('.click-to-speak').on('click', this.clickToSpeak);
+        })
+        .on('clickToSpeak', function (args) {
+            console.log('clickToSpeak', args);
+        })
+        .on('play playBeginning', function (args) {
+            console.log('play', args);
+        })
+        .on('pause', function (args) {
+            console.log('pause', args);
+        })
+        .on('stop', function (args) {
+            console.log('stop', args);
+        })
+        .on('setSpeed', function (args) {
+            console.log('setSpeed', args);
         });
 
         return component;
