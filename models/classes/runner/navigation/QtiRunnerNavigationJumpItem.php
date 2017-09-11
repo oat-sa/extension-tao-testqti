@@ -53,6 +53,10 @@ class QtiRunnerNavigationJumpItem implements RunnerNavigation
             $context->persistCurrentCatItemId($catItemId);
         }
         
+        if ($context->isAdaptive()) {
+            $context->selectAdaptiveNextItem();
+        }
+        
         return true;
     }
 }

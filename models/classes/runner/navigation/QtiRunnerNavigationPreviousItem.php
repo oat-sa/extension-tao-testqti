@@ -48,6 +48,8 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
             $currentCatItemId = $context->getCurrentCatItemId();
             $search = array_search($currentCatItemId, $shadowTest);
             
+            $context->selectAdaptiveNextItem();
+            
             if ($search === 0) {
                 QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
                 $session->moveBack();
