@@ -34,6 +34,7 @@ use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
@@ -593,6 +594,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
             throw new \common_Exception(__('An internal server error has occurred..'), 0, $e);
         }
+
+        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
+        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         if (is_array($selection) && count($selection) == 0) {
             \common_Logger::d('No new CAT item selection.');

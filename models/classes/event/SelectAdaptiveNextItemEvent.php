@@ -38,9 +38,6 @@ class SelectAdaptiveNextItemEvent implements Event
 
     /** @var AssessmentTestSession */
     protected $testSession;
-    
-    /** @var integer Curent item attempt */
-    protected $catItemAttempt;
 
     /**
      * SelectAdaptiveNextItemEvent constructor.
@@ -48,12 +45,11 @@ class SelectAdaptiveNextItemEvent implements Event
      * @param string $currentItemId
      * @param array|null $catItemIds
      */
-    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null, $catItemAttempt = 0)
+    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null)
     {
         $this->currentItemId = $currentItemId;
         $this->catItemIds = $catItemIds;
         $this->testSession = $testSession;
-        $this->catItemAttempt = $catItemAttempt;
     }
 
     /**
@@ -100,15 +96,5 @@ class SelectAdaptiveNextItemEvent implements Event
     public function getCatItemIds()
     {
         return $this->catItemIds;
-    }
-    
-    /**
-     * Returns the item attempt.
-     * 
-     * @return integer
-     */
-    public function getCatItemAttempt()
-    {
-        return $this->catItemAttempt;
     }
 }

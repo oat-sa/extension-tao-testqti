@@ -337,22 +337,6 @@ class CatService extends ConfigurableService
             $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
-
-            if ($isAdaptive) {
-                // Notify current item selection.
-                $currentCatItemId = $context->getCurrentCatItemId();
-                
-                $event = new SelectAdaptiveNextItemEvent(
-                    $context->getTestSession(),
-                    $currentCatItemId,
-                    $context->getCatSession()->getTestMap(),
-                    $context->getCatAttempts($currentCatItemId)
-                );
-                
-                $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
-                
-                \common_Logger::i(implode(', ', $context->getCatSession()->getTestMap()));
-            }
         }
     }
 
