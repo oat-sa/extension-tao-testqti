@@ -6,8 +6,11 @@
 
     <div class="action stop" title="{{__ 'Stop'}}"><span class="icon-stop"></span></div>
 
-    <div class="action speed-down" title="{{__ 'Slow down'}}"><span class="icon-fast-backward"></span></div>
-    <div class="action speed-up" title="{{__ 'Speed up'}}"><span class="icon-fast-forward"></span></div>
-
-    <!-- <div class="volume" title="{{__ 'Volume'}}><span class="icon-volume"></span></div> -->
+    <div class="action settings" title="{{__ 'Settings'}}">
+        <span class="icon-settings"></span>
+        <div class="settings-menu">
+            <div class="option volume" title="{{__ 'Volume'}}"><span class="icon-volume"></span></div>
+            <div class="option speed" title="{{__ 'Speech speed'}}"><span class="icon-speed"></span></div>
+        </div>
+    </div>
 </div>

@@ -82,7 +82,7 @@ define([
             stopSpeech:                         '$rw_stopSpeech',
         };
         var speed;
-        var SPEEDS = [0, 20, 40, 60, 80, 100];
+        var volume;
 
         _.assign(options || {}, {
             enableClickToSpeak: false,
@@ -148,25 +148,23 @@ define([
             },
 
             /**
-             * Speed down
+             * Speech speed
              */
-            speedDown: function speedDown() {
-                if (SPEEDS[speed - 1]) {
-                    speed -= 1;
-                }
-                this._exec('setSpeed', speed);
+            setSpeed: function setSpeed() {
+                speed = 40;
+
+                this._exec('setSpeedValue', speed);
                 this.trigger('setSpeed', speed);
             },
 
             /**
-             * Speed up
+             * Volume
              */
-            speedUp: function speedUp() {
-                if (SPEEDS[speed + 1]) {
-                    speed += 1;
-                }
-                this._exec('setSpeed', SPEEDS[speed]);
-                this.trigger('setSpeed', speed);
+            setVolume: function setVolume() {
+                volume = 40;
+
+                this._exec('setVolumeValue', volume);
+                this.trigger('setVolume', volume);
             },
 
             /**
@@ -201,7 +199,8 @@ define([
                     window.$rw_barInit();
 
                     self._exec('enableClickToSpeak', options.enableClickToSpeak);
-                    self._exec('setSpeed', SPEEDS[speed]);
+                    self._exec('setSpeedValue', speed);
+                    self._exec('setVolumeValue', volume);
                 });
             });
         })
@@ -222,7 +221,27 @@ define([
                 }
             });
 
+            // Show/hide settings menu
+            $this.find('.settings-menu').hide();
+            $this.find('.settings').on('click', function () {
+                $this.find('.settings-menu').toggle();
+            });
+
+            // Set texthelp callbacks
+            window.eba_speech_started_callback = function () {
+                console.log('speech started');
+                self.trigger('play');
+            };
+            window.eba_speech_stopped_callback = function () {
+                console.log('speech stopped');
+                self.trigger('stop');
+            };
             window.eba_speech_complete_callback = function () {
+                console.log('speech complete', arguments);
+                self.trigger('stop');
+            };
+            window.eba_page_complete_callback = function () {
+                console.log('page complete');
                 self.trigger('stop');
             };
 
@@ -230,8 +249,8 @@ define([
             $this.find('.play')          .on('click', this.play);
             $this.find('.pause')         .on('click', this.pause)       .hide();
             $this.find('.stop')          .on('click', this.stop);
-            $this.find('.speed-down')    .on('click', this.speedDown);
-            $this.find('.speed-up')      .on('click', this.speedUp);
+            $this.find('.speed')         .on('click', this.setSpeed);
+            $this.find('.volume')        .on('click', this.setVolume);
         })
         .on('clickToSpeak', function () {
             var $el = this.getElement();
@@ -267,7 +286,16 @@ define([
         .on('setSpeed', function (args) {
             var $el = this.getElement();
 
-            console.log('here', args, SPEEDS);
+            $('.speed-down', $el).removeClass('disabled');
+            $('.speed-up', $el).removeClass('disabled');
+
+            if (args  === 0) {
+                $('.speed-down', $el).addClass('disabled');
+            }
+
+            if (args + 1 === SPEEDS.length) {
+                $('.speed-up', $el).addClass('disabled');
+            }
         });
 
         return component;

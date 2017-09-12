@@ -5,16 +5,17 @@
     background-color: $uiClickableDefaultBg;
     bottom: 33px;
     box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
-    color: black;
+    color: $textColor;
     left: 8px;
     padding: 2px;
     position: absolute;
-    width: 218px;
+    width: 180px;
 
     > .action {
         background-color: $uiClickableDefaultBg;
         display: inline-block;
         height: 28px;
+        position: relative;
         width: 40px;
 
         > span {
@@ -22,6 +23,30 @@
             font-size: 24px !important;
             padding: 0 !important;
             vertical-align: middle;
+        }
+
+        > .settings-menu {
+            @include simple-border($uiGeneralContentBorder);
+            background-color: $uiClickableDefaultBg;
+            bottom: 33px;
+            box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
+            left: 8px;
+            padding: 2px;
+            position: absolute;
+
+            > .option {
+                background-color: $uiClickableDefaultBg;
+                height: 30px;
+                position: relative;
+                width: 30px;
+
+                > span {
+                    color: whiten($textColor);
+                    font-size: 18px;
+                    padding: 0;
+                    vertical-align: middle;
+                }
+            }
         }
 
         &:hover {
