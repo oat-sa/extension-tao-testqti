@@ -1608,7 +1608,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 )
             );
 
-            $this->setVersion('15.8.0');
+            $this->setVersion('15.7.2');
         }
     }
 }
