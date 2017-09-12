@@ -19,6 +19,8 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
@@ -72,11 +74,12 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
         if(!is_null($itemRef)){
             $hrefParts = explode('|', $itemRef);
-            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, true);
+            $event = new ItemOfflineEvent($serviceContext->getTestSession(), $hrefParts[0]);
+            $this->getServiceLocator()->get(EventManager::SERVICE_ID)->trigger($event);
+            return true;
         }
 
         return false;
-
     }
 
     /**
