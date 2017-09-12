@@ -68,6 +68,8 @@ class CatService extends ConfigurableService
 
     const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
 
+    const IS_SHADOW_ITEM = 'is-shadow-item';
+
     private $engines = [];
     
     private $sectionMapCache = [];
@@ -321,6 +323,9 @@ class CatService extends ConfigurableService
         return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 
+    /**
+     * @deprecated set on SelectNextAdaptiveItemEvent
+     */
     public function onQtiContinueInteraction($event)
     {
         if($event instanceof QtiContinueInteractionEvent){
