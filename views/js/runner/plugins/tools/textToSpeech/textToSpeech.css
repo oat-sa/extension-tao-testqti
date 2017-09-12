@@ -1,3 +1,3 @@
-.text-to-speech{background-color:#f3f1ef;border:1px solid #ddd;border-radius:2px;bottom:33px;box-shadow:0 0 15px 1px rgba(0,0,0,0.2);color:black;left:8px;padding:5px;position:absolute;width:290px}.text-to-speech>div{display:inline-block;margin:8px}.text-to-speech>div>span{font-size:18px !important}
+.text-to-speech{border:1px solid #ddd;border-radius:2px;-webkit-border-radius:2px;background-color:#f3f1ef;bottom:33px;box-shadow:0 0 15px 1px rgba(0,0,0,0.2);color:black;left:8px;padding:2px;position:absolute;width:218px}.text-to-speech>.action{background-color:#f3f1ef;display:inline-block;height:28px;width:40px}.text-to-speech>.action>span{color:#646464;font-size:24px !important;padding:0 !important;vertical-align:middle}.text-to-speech>.action:hover{background-color:#3e7da7}.text-to-speech>.action.active{background-color:#a4a9b1}.text-to-speech>.action.disabled{background-color:#bfc3c8}
 
 /*# sourceMappingURL=textToSpeech.css.map */

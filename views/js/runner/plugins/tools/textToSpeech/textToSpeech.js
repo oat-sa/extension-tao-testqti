@@ -78,7 +78,8 @@ define([
             speakPreviousSentenceHighlightOnly: '$rw_speakPreviousSentenceHighlightOnly',
             speakSentenceAtNode:                '$rw_speakSentenceAtNode',
             speakText:                          '$rw_speakText',
-            stopSpeech:                         '$rw_stopSpeech'
+            speechCompleteCallback:             '$rw_speechCompleteCallback',
+            stopSpeech:                         '$rw_stopSpeech',
         };
         var speed;
         var SPEEDS = [0, 20, 40, 60, 80, 100];
@@ -134,7 +135,7 @@ define([
             pause: function pause() {
                 if (this._exec('isSpeaking')) {
                     this._exec('event_pause');
-                    this._exec('pause');
+                    this.trigger('pause');
                 }
             },
 
@@ -153,7 +154,8 @@ define([
                 if (SPEEDS[speed - 1]) {
                     speed -= 1;
                 }
-                this._exec('setSpeed', SPEEDS[speed]);
+                this._exec('setSpeed', speed);
+                this.trigger('setSpeed', speed);
             },
 
             /**
@@ -164,6 +166,7 @@ define([
                     speed += 1;
                 }
                 this._exec('setSpeed', SPEEDS[speed]);
+                this.trigger('setSpeed', speed);
             },
 
             /**
@@ -172,6 +175,7 @@ define([
             clickToSpeak: function clickToSpeak() {
                 options.enableClickToSpeak = !options.enableClickToSpeak;
                 this._exec('enableClickToSpeak', options.enableClickToSpeak);
+                this._exec('enableContinuousReading', !options.enableClickToSpeak); // continuous reading is off when click to speak is on
                 this.trigger('clickToSpeak');
             }
         }, {
@@ -204,6 +208,7 @@ define([
         .init(config)
         .on('render', function () {
             var $this = this.getElement();
+            var self = this;
 
             // prevents clicks from removing highlighted text
             $this.on('mousedown', function (e) {
@@ -211,38 +216,58 @@ define([
                 return false;
             });
 
+            $this.find('.action').on('click', function (e) {
+                if ($(this).hasClass('disabled')) {
+                    e.stopImmediatePropagation();
+                }
+            });
+
+            window.eba_speech_complete_callback = function () {
+                self.trigger('stop');
+            };
+
             $this.find('.click-to-speak').on('click', this.clickToSpeak);
             $this.find('.play')          .on('click', this.play);
-            $this.find('.pause')         .on('click', this.pause);
+            $this.find('.pause')         .on('click', this.pause)       .hide();
             $this.find('.stop')          .on('click', this.stop);
             $this.find('.speed-down')    .on('click', this.speedDown);
             $this.find('.speed-up')      .on('click', this.speedUp);
         })
-        .on('clickToSpeak', function (args) {
-            // begins in clickToSpeak
-            // sets state clickToSpeak to true
-            // disables play/pause
-            // hides clickToSpeak (shows resumeClickToSpeak)
-            // $('.play', this.getElement()).hide();
-            // $('.pause', this.getElement()).show();
+        .on('clickToSpeak', function () {
+            var $el = this.getElement();
+
+            if (options.enableClickToSpeak) {
+                $('.click-to-speak', $el).addClass('active');
+                $('.play', $el).addClass('disabled').show();
+                $('.pause', $el).addClass('disabled').hide();
+            } else {
+                $('.click-to-speak', $el).removeClass('active');
+                $('.play', $el).removeClass('disabled').show();
+                $('.pause', $el).removeClass('disabled').hide();
+            }
         })
-        .on('play playBeginning', function (args) {
-            // sets state playing to true
-            // hides play (shows pause)
-            // $('.play', this.getElement()).hide();
-            // $('.pause', this.getElement()).show();
+        .on('play', function () {
+            var $el = this.getElement();
+
+            $('.play', $el).hide();
+            $('.pause', $el).show();
         })
-        .on('pause', function (args) {
-            // $('.play', this.getElement()).show();
-            // $('.pause', this.getElement()).hide();
+        .on('pause', function () {
+            var $el = this.getElement();
+
+            $('.play', $el).show();
+            $('.pause', $el).hide();
         })
-        .on('stop', function (args) {
-            // sets state playing to false
-            // shows play (hides pause)
-            // $('.play', this.getElement()).show();
-            // $('.pause', this.getElement()).hide();
+        .on('stop', function () {
+            var $el = this.getElement();
+
+            $('.play', $el).show();
+            $('.pause', $el).hide();
         })
         .on('setSpeed', function (args) {
+            var $el = this.getElement();
+
+            console.log('here', args, SPEEDS);
         });
 
         return component;

@@ -1,23 +1,39 @@
 @import 'inc/bootstrap';
 
 .text-to-speech {
-    background-color: #f3f1ef;
-    border: 1px solid #ddd;
-    border-radius: 2px;
+    @include simple-border($uiGeneralContentBorder);
+    background-color: $uiClickableDefaultBg;
     bottom: 33px;
     box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
     color: black;
     left: 8px;
-    padding: 5px;
+    padding: 2px;
     position: absolute;
-    width: 290px;
+    width: 218px;
 
-    > div {
+    > .action {
+        background-color: $uiClickableDefaultBg;
         display: inline-block;
-        margin: 8px;
+        height: 28px;
+        width: 40px;
 
         > span {
-            font-size: 18px !important;
+            color: whiten($textColor);
+            font-size: 24px !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+
+        &:hover {
+            background-color: $uiClickableHoverBg;
+        }
+
+        &.active {
+            background-color: $uiClickableActiveBg;
+        }
+
+        &.disabled {
+            background-color: whiten($uiClickableActiveBg);
         }
     }
 }
