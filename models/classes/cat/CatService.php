@@ -68,6 +68,8 @@ class CatService extends ConfigurableService
 
     const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
 
+    const IS_SHADOW_ITEM = 'is-shadow-item';
+
     private $engines = [];
     
     private $sectionMapCache = [];
@@ -321,19 +323,23 @@ class CatService extends ConfigurableService
         return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 
+    /**
+     * @deprecated set on SelectNextAdaptiveItemEvent
+     */
     public function onQtiContinueInteraction($event)
     {
-        if($event instanceof QtiContinueInteractionEvent){
-            $isCat = false;
+        if ($event instanceof QtiContinueInteractionEvent) {
             $context = $event->getContext();
-            if($context->isAdaptive()){
+            $isAdaptive = $context->isAdaptive();
+            $isCat = false;
+            
+            if ($isAdaptive) {
                 $isCat = true;
             }
 
             $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
-
         }
     }
 
@@ -435,5 +441,18 @@ class CatService extends ConfigurableService
         );
         
         return $catItemId;
+    }
+    
+    public function getCatAttempts(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, $identifier, RouteItem $routeItem = null)
+    {
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $testSession->getSessionId(),
+            $this->getCatSection($testSession, $compilationDirectory, $routeItem)->getSectionId(),
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        
+        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 0;
     }
 }
