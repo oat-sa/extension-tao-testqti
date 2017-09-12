@@ -503,23 +503,4 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
         parent::endTestSession();
     }
-    
-    /**
-	 * Get an assessment item session.
-	 * 
-	 * @param AssessmentItemRef $assessmentItemRef
-	 * @param integer $occurence
-	 * @return AssessmentItemSession|false
-	 */
-	protected function getItemSession(AssessmentItemRef $assessmentItemRef, $occurence = 0) {
-	    
-        $session = false;
-        
-	    $store = $this->getAssessmentItemSessionStore();
-	    if ($store->hasAssessmentItemSession($assessmentItemRef, $occurence) === true) {
-	        $session = $store->getAssessmentItemSession($assessmentItemRef, $occurence);
-	    }
-        
-        return $session;
-	}
 }
