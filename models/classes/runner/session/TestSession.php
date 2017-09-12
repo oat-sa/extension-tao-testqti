@@ -20,13 +20,17 @@
 
 namespace oat\taoQtiTest\models\runner\session;
 
+use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentItemRef;
+use qtism\data\ItemSessionControl;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -458,15 +462,20 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
     {
         $itemRef = $itemSession->getAssessmentItem();
-        $identifier = $itemRef->getIdentifier();
-        $duration = $this->getTimerDuration($identifier);
+        
+        // Ensure that specific results from adaptive placeholders are not recorded.
+        $catService = ServiceManager::getServiceManager()->get(CatService::SERVICE_ID);
+        if (!$catService->isAdaptivePlaceholder($itemRef)) {
+            $identifier = $itemRef->getIdentifier();
+            $duration = $this->getTimerDuration($identifier);
 
-        $itemDurationVar = $itemSession->getVariable('duration');
-        $sessionDuration = $itemDurationVar->getValue();
-        \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
-        $itemSession->getVariable('duration')->setValue($duration);
+            $itemDurationVar = $itemSession->getVariable('duration');
+            $sessionDuration = $itemDurationVar->getValue();
+            \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
+            $itemSession->getVariable('duration')->setValue($duration);
 
-        parent::submitItemResults($itemSession, $occurrence);
+            parent::submitItemResults($itemSession, $occurrence);
+        }
     }
 
     /**
@@ -494,4 +503,23 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 
         parent::endTestSession();
     }
+    
+    /**
+	 * Get an assessment item session.
+	 * 
+	 * @param AssessmentItemRef $assessmentItemRef
+	 * @param integer $occurence
+	 * @return AssessmentItemSession|false
+	 */
+	protected function getItemSession(AssessmentItemRef $assessmentItemRef, $occurence = 0) {
+	    
+        $session = false;
+        
+	    $store = $this->getAssessmentItemSessionStore();
+	    if ($store->hasAssessmentItemSession($assessmentItemRef, $occurence) === true) {
+	        $session = $store->getAssessmentItemSession($assessmentItemRef, $occurence);
+	    }
+        
+        return $session;
+	}
 }
