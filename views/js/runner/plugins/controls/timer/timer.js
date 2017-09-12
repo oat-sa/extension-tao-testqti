@@ -269,24 +269,27 @@ define([
                     timerUpdatePromises.push(
                         new Promise(function(resolve) {
                             var timerConfig = getTimerConfig(type);
+                            var timerExists = typeof displayedTimers[type] !== 'undefined';
 
-                            if (displayedTimers[type]) {
-                                if (!timerConfig) {
+                            //no new time for this type
+                            if (!timerConfig) {
+                                if (timerExists) {
                                     removeTimer(type);
-                                } else if (displayedTimers[type].id() !== timerConfig.id) {
-                                    removeTimer(type);
-                                    addTimer(type, timerConfig);
-                                } else {
-                                    setRemainingTime(timerConfig, timers[type]);
-                                    displayedTimers[type].val(timerConfig.remaining);
                                 }
                                 return resolve();
-                            } else if (timerConfig) {
+                            }
 
-                                if (checkStorage) {
-                                    //check for the last value in the storage
+                            //timer exists
+                            if(timerExists && displayedTimers[type].id() === timerConfig.id){
+                                setRemainingTime(timerConfig, timers[type]);
+                                return resolve();
+                            } else {
+                                removeTimer(type);
+
+                                if (checkStorage){
                                     self.storage.getItem(timerConfig.id).then(function(savedTime) {
                                         if (_.isNumber(savedTime) && savedTime >= 0) {
+                                            console.log('load timer from storage');
                                             setRemainingTime(timerConfig, savedTime);
                                         }
                                         addTimer(type, timerConfig);
@@ -296,12 +299,11 @@ define([
                                         addTimer(type, timerConfig);
                                         return resolve();
                                     });
+
                                 } else {
                                     addTimer(type, timerConfig);
                                     return resolve();
                                 }
-                            } else {
-                                return resolve();
                             }
                         })
                     );
