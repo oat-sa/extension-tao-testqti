@@ -74,23 +74,34 @@ define([
                 stacker.autoBringToFront(self.tts.getElement());
             })
             .on('click', function (e) {
+                var ttsEl = self.tts.getElement();
+
                 // prevent action if the click is made inside the tts controls which is a sub part of the button
-                if ($(e.target).closest(self.tts.getElement()).length) {
+                if ($(e.target).closest(ttsEl).length) {
                     return;
                 }
 
-                hider.toggle(self.tts.getElement());
+                hider.toggle(ttsEl);
+
+                if (ttsEl.hasClass('hidden')) {
+                    self.tts.disable();
+                } else {
+                    self.tts.enable();
+                }
             });
 
             testRunner
             .on('loaditem', function () {
                 self.ttsButton.show();
+                self.tts.disable();
                 self.ttsButton.disable();
             })
             .on('renderitem enabletools', function () {
+                self.tts.enable();
                 self.ttsButton.enable();
             })
             .on('disabletools unloaditem', function () {
+                self.tts.disable();
                 self.ttsButton.disable();
             });
 

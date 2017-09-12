@@ -35,6 +35,7 @@ define([
     /**
      * The factory
      * @param {String} options.deliveryId
+     * @param {Boolean} [options.enableClickToSpeak = false]
      * @param {Array} [options.ignoreEls = ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container']]
      * @param {String} [options.toolbarUrl = '//taotoolbar.speechstream.net/tao/configQA.js']
      * @param {String} options.tenantId
@@ -44,19 +45,46 @@ define([
     return function factory(options, config) {
         var component;
         var mapping = {
-            play:           '$rw_event_play',
-            playBeginning:  '$rw_speakFirstSentence',
-            pause:          '$rw_event_pause',
-            stop:           '$rw_stopSpeech',
-            isTextSelected: '$rw_isTextSelectedForPlay',
-            setVolume:      '$rw_setVolumeValue',
-            setSpeed:       '$rw_setSpeedValue',
-            getSpeed:       '$rw_getSpeed'
+            enableClickToSpeak:                 '$rw_enableClickToSpeak',
+            enableContinuousReading:            '$rw_enableContinuousReading',
+            enableSpeech:                       '$rw_enableSpeech',
+            event_pause:                        '$rw_event_pause',
+            event_play:                         '$rw_event_play',
+            event_stop_limited:                 '$rw_event_stop_limited',
+            disableSpeech:                      '$rw_disableSpeech',
+            getCurrentTarget:                   '$rw_getCurrentTarget',
+            getSpeed:                           '$rw_getSpeed',
+            hasReachedEnd:                      '$rw_hasReachedEnd',
+            isPaused:                           '$rw_isPaused',
+            isSpeaking:                         '$rw_isSpeaking',
+            isTextSelectedForPlay:              '$rw_isTextSelectedForPlay',
+            isUsingMathjax:                     '$rw_isUsingMathjax',
+            readNextTarget:                     '$rw_readNextTarget',
+            setCurrentTarget:                   '$rw_setCurrentTarget',
+            setSpeechModeClick:                 '$rw_setSpeechModeClick',
+            setSpeedValue:                      '$rw_setSpeedValue',
+            setStartPoint:                      '$rw_setStartPoint',
+            setUsingMath:                       '$rw_setUsingMath',
+            setUsingMaths:                      '$rw_setUsingMaths',
+            setUsingMathjax:                    '$rw_setUsingMathjax',
+            setVolumeValue:                     '$rw_setVolumeValue',
+            speak:                              '$rw_speak',
+            speakCurrentSentence:               '$rw_speakCurrentSentence',
+            speakCurrentSentenceHighlightOnly:  '$rw_speackCurrentSentenceHighlightOnly',
+            speakFirstSentence:                 '$rw_speakFirstSentence',
+            speakNextSentence:                  '$rw_speakNextSentence',
+            speakNextSentenceHighlightOnly:     '$rw_speakNextSentenceHighlightOnly',
+            speakPreviousSentence:              '$rw_speakPreviousSentence',
+            speakPreviousSentenceHighlightOnly: '$rw_speakPreviousSentenceHighlightOnly',
+            speakSentenceAtNode:                '$rw_speakSentenceAtNode',
+            speakText:                          '$rw_speakText',
+            stopSpeech:                         '$rw_stopSpeech'
         };
         var speed;
         var SPEEDS = [0, 20, 40, 60, 80, 100];
 
         _.assign(options || {}, {
+            enableClickToSpeak: false,
             ignoreEls: ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container'],
             toolbarUrl: '//taotoolbar.speechstream.net/tao/configQA.js'
         });
@@ -72,19 +100,31 @@ define([
                 var fn = window[mapping[action]];
 
                 if (fn && _.isFunction(fn)) {
-                    this.trigger(action, args);
                     return fn.apply(this, args);
                 }
+            },
+
+            /**
+             * Enable texthelp
+             */
+            enable: function enable() {
+                this._exec('enableSpeech');
+            },
+
+            /**
+             * Disable texthelp
+             */
+            disable: function disable() {
+                this._exec('disableSpeech');
             },
 
             /**
              * Play
              */
             play: function play() {
-                if (this._exec('isTextSelected')) {
-                    this._exec('play');
-                } else {
-                    this._exec('playBeginning');
+                if (!this._exec('isSpeaking') || this._exec('isPaused')) {
+                    this._exec('event_play');
+                    this.trigger('play');
                 }
             },
 
@@ -92,14 +132,18 @@ define([
              * Pause
              */
             pause: function pause() {
-                this._exec('pause');
+                if (this._exec('isSpeaking')) {
+                    this._exec('event_pause');
+                    this._exec('pause');
+                }
             },
 
             /**
              * Stop
              */
             stop: function stop() {
-                this._exec('stop');
+                this._exec('stopSpeech');
+                this.trigger('stop');
             },
 
             /**
@@ -126,9 +170,9 @@ define([
              * Click to pronounce
              */
             clickToSpeak: function clickToSpeak() {
-                if (window.TexthelpSpeechStream) {
-                    window.TexthelpSpeechStream.clickToSpeak();
-                }
+                options.enableClickToSpeak = !options.enableClickToSpeak;
+                this._exec('enableClickToSpeak', options.enableClickToSpeak);
+                this.trigger('clickToSpeak');
             }
         }, {
             // defaults
@@ -152,6 +196,7 @@ define([
                     window.$rw_barDynamicStart();
                     window.$rw_barInit();
 
+                    self._exec('enableClickToSpeak', options.enableClickToSpeak);
                     self._exec('setSpeed', SPEEDS[speed]);
                 });
             });
@@ -160,27 +205,44 @@ define([
         .on('render', function () {
             var $this = this.getElement();
 
+            // prevents clicks from removing highlighted text
+            $this.on('mousedown', function (e) {
+                e.preventDefault();
+                return false;
+            });
+
+            $this.find('.click-to-speak').on('click', this.clickToSpeak);
             $this.find('.play')          .on('click', this.play);
             $this.find('.pause')         .on('click', this.pause);
             $this.find('.stop')          .on('click', this.stop);
             $this.find('.speed-down')    .on('click', this.speedDown);
             $this.find('.speed-up')      .on('click', this.speedUp);
-            $this.find('.click-to-speak').on('click', this.clickToSpeak);
         })
         .on('clickToSpeak', function (args) {
-            console.log('clickToSpeak', args);
+            // begins in clickToSpeak
+            // sets state clickToSpeak to true
+            // disables play/pause
+            // hides clickToSpeak (shows resumeClickToSpeak)
+            // $('.play', this.getElement()).hide();
+            // $('.pause', this.getElement()).show();
         })
         .on('play playBeginning', function (args) {
-            console.log('play', args);
+            // sets state playing to true
+            // hides play (shows pause)
+            // $('.play', this.getElement()).hide();
+            // $('.pause', this.getElement()).show();
         })
         .on('pause', function (args) {
-            console.log('pause', args);
+            // $('.play', this.getElement()).show();
+            // $('.pause', this.getElement()).hide();
         })
         .on('stop', function (args) {
-            console.log('stop', args);
+            // sets state playing to false
+            // shows play (hides pause)
+            // $('.play', this.getElement()).show();
+            // $('.pause', this.getElement()).hide();
         })
         .on('setSpeed', function (args) {
-            console.log('setSpeed', args);
         });
 
         return component;
