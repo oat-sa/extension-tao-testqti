@@ -352,11 +352,6 @@ define([
                         ref       : position
                     }));
                 })
-                .after('move', function (direction, scope, position) {
-                    if (navigationHelper.isLeavingSection(this.getTestContext(), this.getTestMap(), direction, scope, position)) {
-                        this.trigger('endsession');
-                    }
-                })
                 .on('skip', function(scope){
 
                     this.trigger('disablenav disabletools');
@@ -367,9 +362,10 @@ define([
                 })
                 .on('exit', function(reason){
                     var context = self.getTestContext();
-                    self.disableItem(context.itemIdentifier);
 
-                    self.getProxy()
+                    this.disableItem(context.itemIdentifier);
+
+                    this.getProxy()
                         .callTestAction('exitTest', _.merge(getItemResults(), {
                             itemDefinition : context.itemIdentifier,
                             reason: reason
@@ -387,7 +383,7 @@ define([
 
                     context.isTimeout = true;
 
-                    self.disableItem(context.itemIdentifier);
+                    this.disableItem(context.itemIdentifier);
 
                     computeNext(
                         'timeout',
@@ -400,17 +396,12 @@ define([
                         })
                     );
                 })
-                .after('timeout', function (scope) {
-                    if (scope === 'assessmentSection' || scope === 'testPart') {
-                        self.trigger('endsession');
-                    }
-                })
                 .on('pause', function(data){
                     var pause;
 
                     this.setState('closedOrSuspended', true);
 
-                    if (!self.getState('disconnected')) {
+                    if (!this.getState('disconnected')) {
                         // will notify the server that the test was auto paused
                         pause = self.getProxy().callTestAction('pause', {
                             reason: {
@@ -483,9 +474,11 @@ define([
                     this.trigger('disabletools enablenav');
                 })
                 .on('finish', function () {
+                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('leave', function () {
+                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('flush', function () {
