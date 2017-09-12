@@ -76,6 +76,7 @@ class SelectAdaptiveNextItemEvent implements Event
 
     /**
      * Returns current item identifier.
+     * 
      * @return string
      */
     public function getCurrentItemId()
@@ -85,6 +86,7 @@ class SelectAdaptiveNextItemEvent implements Event
 
     /**
      * Returns next item identifier.
+     * 
      * @return string|null
      */
     public function getNextItem()
@@ -94,6 +96,7 @@ class SelectAdaptiveNextItemEvent implements Event
 
     /**
      * Returns the item ids of the next items.
+     * 
      * @return array|null
      */
     public function getCatItemIds()

@@ -328,17 +328,18 @@ class CatService extends ConfigurableService
      */
     public function onQtiContinueInteraction($event)
     {
-        if($event instanceof QtiContinueInteractionEvent){
-            $isCat = false;
+        if ($event instanceof QtiContinueInteractionEvent) {
             $context = $event->getContext();
-            if($context->isAdaptive()){
+            $isAdaptive = $context->isAdaptive();
+            $isCat = false;
+            
+            if ($isAdaptive) {
                 $isCat = true;
             }
 
             $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
-
         }
     }
 
