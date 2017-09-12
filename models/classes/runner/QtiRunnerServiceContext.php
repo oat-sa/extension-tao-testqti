@@ -590,12 +590,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
         try {
             $selection = $catSession->getTestMap(array_values($lastOutput));
+            $isShadowItem = false;
         } catch (CatEngineException $e) {
             \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
-            throw new \common_Exception(__('An internal server error has occurred..'), 0, $e);
+            $selection = $catSession->getTestMap();
+            $isShadowItem = true;
         }
 
-        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection);
+        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $isShadowItem);
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         if (is_array($selection) && count($selection) == 0) {
@@ -603,9 +605,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return null;
         } else {
             $this->persistCatSession($catSession);
-            
             \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
-            
             return $selection[0];
         }
     }
@@ -741,12 +741,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
                     $finalPosition++;
                 } else {
-                    $finalPosition += count($this->getShadowTest($routeItem)) - 1;
+                    $finalPosition += count($this->getShadowTest($routeItem));
                 }
             } else {
-                if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
-                    $finalPosition++;
-                } else {
+                if ($this->isAdaptive($routeItem->getAssessmentItemRef())) {
                     $finalPosition += array_search(
                         $this->getCurrentCatItemId($routeItem),
                         $this->getShadowTest($routeItem)
@@ -758,5 +756,36 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
         
         return $finalPosition;
+    }
+    
+    public function getCatAttempts($identifier, RouteItem $routeItem = null)
+    {
+        return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCatAttempts(
+            $this->getTestSession(),
+            $this->getCompilationDirectory()['private'],
+            $identifier,
+            $routeItem
+        );
+    }
+    
+    public function persistCatAttempts($identifier, $attempts) {
+        $sessionId = $this->getTestSession()->getSessionId();
+        $sectionId = $this->getCatSection()->getSectionId();
+        
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $sessionId,
+            $sectionId,
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        $catAttempts[$identifier] = $attempts;
+        
+        $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+            $sessionId,
+            $sectionId,
+            'cat-attempts',
+            $catAttempts
+        );
     }
 }

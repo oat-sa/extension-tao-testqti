@@ -117,19 +117,7 @@ define([
          * @returns {Boolean} true if the item is the last one
          */
         isLast : function isLast(testMap, itemIdentifier){
-            var item;
-            var stats;
-            if( ! _.isPlainObject(testMap) ){
-                throw new TypeError('Invalid test map');
-            }
-            if(_.isEmpty(itemIdentifier)){
-                throw new TypeError('Invalid item identifier');
-            }
-
-            item  = mapHelper.getItem(testMap, itemIdentifier);
-            stats = mapHelper.getTestStats(testMap);
-
-            return item.position + 1 === stats.total;
+            return this.isLastOf(testMap, itemIdentifier, 'test');
         },
 
         /**
@@ -139,20 +127,73 @@ define([
          * @returns {Boolean} true if the item is the first one
          */
         isFirst : function isFirst(testMap, itemIdentifier){
-            var item;
-            if( ! _.isPlainObject(testMap) ){
-                throw new TypeError('Invalid test map');
-            }
-            if(_.isEmpty(itemIdentifier)){
-                throw new TypeError('Invalid item identifier');
-            }
-
-            item  = mapHelper.getItem(testMap, itemIdentifier);
-
-            return item.position  === 0;
-
+            return this.isFirstOf(testMap, itemIdentifier, 'test');
         },
 
+        /**
+         * Check if the given  item is the last of a the given scope
+         * @param {Object} testMap - the test map
+         * @param {String} itemIdentifier - the identifier of the item
+         * @param {String} [scope = 'test'] - the target scope
+         * @returns {Boolean} true if the item is the last one
+         */
+        isLastOf : function isLastOf(testMap, itemIdentifier, scope){
+            var item;
+            var stats;
+            if ( ! _.isPlainObject(testMap) ) {
+                throw new TypeError('Invalid test map');
+            }
+            if (_.isEmpty(itemIdentifier)) {
+                throw new TypeError('Invalid item identifier');
+            }
+            scope = scope || 'test';
+            item  = mapHelper.getItem(testMap, itemIdentifier);
+            stats = mapHelper.getScopeStats(testMap, item.position, scope);
+            if (stats && _.isNumber(stats.total)) {
+                if (scope === 'test') {
+                    return item.position + 1  === stats.total;
+                }
+                if (scope === 'section' || scope === 'assessmentSection' || scope === 'testSection') {
+                    return item.positionInSection + 1 === stats.total;
+                }
+                if (scope === 'part' || scope === 'testPart') {
+                    return item.positionInPart + 1 === stats.total;
+                }
+            }
+
+            return false;
+        },
+
+        /**
+         * Check if the given  item is the first of a the given scope
+         * @param {Object} testMap - the test map
+         * @param {String} itemIdentifier - the identifier of the item
+         * @param {String} [scope = 'test'] - the target scope
+         * @returns {Boolean} true if the item is the first one
+         */
+        isFirstOf : function isFirstOf(testMap, itemIdentifier, scope){
+            var item;
+            if (! _.isPlainObject(testMap)) {
+                throw new TypeError('Invalid test map');
+            }
+            if (_.isEmpty(itemIdentifier)) {
+                throw new TypeError('Invalid item identifier');
+            }
+            scope = scope || 'test';
+            item  = mapHelper.getItem(testMap, itemIdentifier);
+
+            if (scope === 'test') {
+                return item.position  === 0;
+            }
+            if (scope === 'section' || scope === 'assessmentSection' || scope === 'testSection') {
+                return item.positionInSection === 0;
+            }
+            if (scope === 'part' || scope === 'testPart') {
+                return item.positionInPart === 0;
+            }
+
+            return false;
+        },
 
         /**
          * Gets the map descriptors of the sibling items
