@@ -816,7 +816,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     return $this->getTestSession()->getPreviousRouteItem()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
                 }
             } else {
-                return true;
+                return $this->getTestSession()->getRoute()->current()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
             }
         } else {
             return $this->getTestSession()->canMoveBackward();
