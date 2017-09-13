@@ -151,8 +151,8 @@ define([
             /**
              * Speech speed
              */
-            setSpeed: function setSpeed() {
-                speed = 40;
+            setSpeed: function setSpeed(e, value) {
+                speed = +value;
 
                 this._exec('setSpeedValue', speed);
                 this.trigger('setSpeed', speed);
@@ -161,8 +161,8 @@ define([
             /**
              * Volume
              */
-            setVolume: function setVolume() {
-                volume = 40;
+            setVolume: function setVolume(e, value) {
+                volume = +value;
 
                 this._exec('setVolumeValue', volume);
                 this.trigger('setVolume', volume);
@@ -258,32 +258,6 @@ define([
             // Hide slider to begin
             $this.find('.settings > .settings-menu > .option > .slider-container').hide();
 
-            // Settings menu's volume slider
-            $this.find('.settings > .settings-menu > .volume .slider')
-            .noUiSlider({
-                animate: true,
-                connected: true,
-                range: {
-                    min: 0,
-                    max: 100
-                },
-                start: volume,
-                step: 10
-            });
-
-            // Settings menu's speed slider
-            $this.find('.settings > .settings-menu > .speed .slider')
-            .noUiSlider({
-                animate: true,
-                connected: true,
-                range: {
-                    min: 0,
-                    max: 100
-                },
-                start: speed,
-                step: 10
-            });
-
             // Set texthelp callbacks
             window.eba_speech_started_callback = function () {
                 console.log('speech started');
@@ -307,8 +281,34 @@ define([
             $this.find('.play')          .on('click', this.play);
             $this.find('.pause')         .on('click', this.pause)       .hide();
             $this.find('.stop')          .on('click', this.stop);
-            $this.find('.speed')         .on('click', this.setSpeed);
-            $this.find('.volume')        .on('click', this.setVolume);
+
+            // Settings menu's volume slider action
+            $this.find('.settings > .settings-menu > .volume .slider')
+            .noUiSlider({
+                animate: true,
+                connected: true,
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                start: volume,
+                step: 10
+            })
+            .on('change', this.setVolume);
+
+            // Settings menu's speed slider
+            $this.find('.settings > .settings-menu > .speed .slider')
+            .noUiSlider({
+                animate: true,
+                connected: true,
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                start: speed,
+                step: 10
+            })
+            .on('change', this.setSpeed);
         })
         .on('clickToSpeak', function () {
             var $el = this.getElement();
@@ -340,20 +340,6 @@ define([
 
             $('.play', $el).show();
             $('.pause', $el).hide();
-        })
-        .on('setSpeed', function (args) {
-            var $el = this.getElement();
-
-            $('.speed-down', $el).removeClass('disabled');
-            $('.speed-up', $el).removeClass('disabled');
-
-            if (args  === 0) {
-                $('.speed-down', $el).addClass('disabled');
-            }
-
-            if (args + 1 === SPEEDS.length) {
-                $('.speed-up', $el).addClass('disabled');
-            }
         });
 
         return component;
