@@ -29,8 +29,6 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
-use qtism\data\AssessmentItemRef;
-use qtism\data\ItemSessionControl;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -150,13 +148,16 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getItemTags(RouteItem $routeItem)
     {
-        $itemRef = $routeItem->getAssessmentItemRef();
-        $itemId = $itemRef->getIdentifier();
+        $itemId = $routeItem->getAssessmentItemRef()->getIdentifier();
         $occurrence = $routeItem->getOccurence();
 
-        return [
+        $tags = [
             $itemId . '#' . $occurrence,
         ];
+
+        if ($this->isRunning() === true) {
+            $tags[] = $this->getItemAttemptTag($routeItem);
+        }
 
         return $tags;
     }
