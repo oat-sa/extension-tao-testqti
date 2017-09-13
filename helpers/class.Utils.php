@@ -223,7 +223,7 @@ class taoQtiTest_helpers_Utils {
 
         $data = \tao_models_classes_service_FileStorage::singleton()
             ->getDirectoryById($directoryIds[0])
-            ->read(TAOQTITEST_COMPILED_FILENAME);
+            ->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME);
             
         // Store a copy to get it in opcache...
         $expectedCacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';

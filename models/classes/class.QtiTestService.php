@@ -63,6 +63,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     
     const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
+    const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
+    const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
+
+    const TEST_COMPILED_FILENAME = 'compact-test.php';
+    const TEST_COMPILED_META_FILENAME = 'test-meta.php';
+    const TEST_COMPILED_INDEX = 'test-index.json';
+    const TEST_COMPILED_HREF_INDEX_FILE_PREFIX = 'assessment-item-ref-href-index-';
+    const TEST_COMPILED_HREF_INDEX_FILE_EXTENSION = '.idx';
+
+    const TEST_REMOTE_FOLDER = 'tao-qtitest-remote';
+    const TEST_RENDERING_STATE_NAME = 'taoQtiTestState';
+    const TEST_BASE_PATH_NAME = 'taoQtiBasePath';
+    const TEST_PLACEHOLDER_BASE_URI = 'tao://qti-directory';
+    const TEST_VIEWS_NAME = 'taoQtiViews';
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
      */

@@ -39,6 +39,7 @@ use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
+use taoQtiTest_models_classes_QtiTestService;
 
 /**
  * Class QtiRunnerServiceContext
@@ -214,7 +215,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     protected function retrieveTestMeta() 
     {
         $directories = $this->getCompilationDirectory();
-        $data = $directories['private']->read(TAOQTITEST_COMPILED_META_FILENAME);
+        $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
         $data = str_replace('<?php', '', $data);
         $data = str_replace('?>', '', $data);
         $this->testMeta = eval($data);
@@ -228,7 +229,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->itemIndex = new QtiTestCompilerIndex();
         try {
             $directories = $this->getCompilationDirectory();
-            $data = $directories['private']->read(TAOQTITEST_COMPILED_INDEX);
+            $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_INDEX);
             if ($data) {
                 $this->itemIndex->unserialize($data);
             }

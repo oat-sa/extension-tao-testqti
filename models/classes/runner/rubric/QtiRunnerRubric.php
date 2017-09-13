@@ -30,6 +30,7 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\View;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
+use taoQtiTest_models_classes_QtiTestService;
 
 /**
  * Class QtiRunnerRubric
@@ -89,15 +90,15 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
 
                 // -- variables used in the included rubric block templates.
                 // base path (base URI to be used for resource inclusion).
-                $basePathVarName = TAOQTITEST_BASE_PATH_NAME;
+                $basePathVarName = taoQtiTest_models_classes_QtiTestService::TEST_BASE_PATH_NAME;
                 $$basePathVarName = $compilationDirs['public']->getPublicAccessUrl();
 
                 // state name (the variable to access to get the state of the assessmentTestSession).
-                $stateName = TAOQTITEST_RENDERING_STATE_NAME;
+                $stateName = taoQtiTest_models_classes_QtiTestService::TEST_RENDERING_STATE_NAME;
                 $$stateName = $session;
 
                 // views name (the variable to be accessed for the visibility of rubric blocks).
-                $viewsName = TAOQTITEST_VIEWS_NAME;
+                $viewsName = taoQtiTest_models_classes_QtiTestService::TEST_VIEWS_NAME;
                 $$viewsName = array(View::CANDIDATE);
 
                 $tmpDir = \tao_helpers_File::createTempDir();
