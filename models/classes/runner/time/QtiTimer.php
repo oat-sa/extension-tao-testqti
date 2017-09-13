@@ -219,7 +219,7 @@ class QtiTimer implements Timer, ExtraTime
      * @return Timer
      * @throws TimeException
      */
-    public function adjust($tags, $duration, $timestamp = null, $end = false)
+    public function adjust($tags, $duration, $end = false)
     {
         // check the provided arguments
         if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
