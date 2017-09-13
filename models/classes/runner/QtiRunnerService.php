@@ -811,7 +811,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
                     $context->persistCatAttempts($itemIdentifier, $attempt);
                     
+                    $context->getTestSession()->endAttempt(new State(), true);
                 } else {
+                    // Non adaptive case.
                     $session->endAttempt($responses, true);
                 }
                 
