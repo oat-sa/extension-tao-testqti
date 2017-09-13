@@ -53,7 +53,12 @@ define([
          */
         init: function init() {
             var self = this;
+            var itemId;
+            var tenantId;
             var testRunner = this.getTestRunner();
+
+            itemId = 'item-id';
+            tenantId = 'tenant-id';
 
             this.ttsButton = this.getAreaBroker().getToolbox().createEntry({
                 control: 'tts',
@@ -63,12 +68,11 @@ define([
             })
             .on('render', function () {
                 var stacker = stackerFactory('test-runner');
-                var testConfig = testRunner.getConfig();
 
                 self.tts = ttsFactory({
                     $contentArea: testRunner.getAreaBroker().getContentArea(),
-                    deliveryId: testConfig.serviceCallId, // TODO: verify delivery id will work
-                    tenantId: 'tenant-id' // TODO: set tenant id
+                    itemId: itemId,
+                    tenantId: tenantId
                 })
                 .render(self.ttsButton.getElement());
 
@@ -100,6 +104,10 @@ define([
             .on('renderitem enabletools', function () {
                 self.tts.enable();
                 self.ttsButton.enable();
+            })
+            .on('renderitem', function () {
+                itemId = this.itemRunner._item.attributes.identifier;
+                self.tts.updateTexthelpCache(tenantId, itemId);
             })
             .on('disabletools unloaditem', function () {
                 self.tts.disable();

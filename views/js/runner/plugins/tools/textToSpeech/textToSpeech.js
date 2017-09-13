@@ -36,9 +36,9 @@ define([
     /**
      * The factory
      * @param {jQuery} [options.$contentArea = '$(body)']
-     * @param {String} options.deliveryId
      * @param {Boolean} [options.enableClickToSpeak = false]
      * @param {Array} [options.ignoreEls = ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container']]
+     * @param {String} options.itemId
      * @param {String} [options.toolbarUrl = '//taotoolbar.speechstream.net/tao/configQA.js']
      * @param {String} options.tenantId
      * @param {Object} [config]
@@ -46,26 +46,39 @@ define([
      */
     return function factory(options, config) {
         var component;
-        var mapping = {
-            hasReachedEnd:                      '$rw_hasReachedEnd',
-            isSpeaking:                         '$rw_isSpeaking',
-            isTextSelectedForPlay:              '$rw_isTextSelectedForPlay',
-
-            isUsingMathjax:                     '$rw_isUsingMathjax',
-            setUsingMath:                       '$rw_setUsingMath',
-            setUsingMaths:                      '$rw_setUsingMaths',
-            setUsingMathjax:                    '$rw_setUsingMathjax',
-
-            enableClickToSpeak:                 '$rw_enableClickToSpeak',
-            enableContinuousReading:            '$rw_enableContinuousReading',
-            enableSpeech:                       '$rw_enableSpeech',
-            event_pause:                        '$rw_event_pause',
-            event_play:                         '$rw_event_play',
-            disableSpeech:                      '$rw_disableSpeech',
-            isPaused:                           '$rw_isPaused',
-            setSpeedValue:                      '$rw_setSpeedValue',
-            setVolumeValue:                     '$rw_setVolumeValue',
-            stopSpeech:                         '$rw_stopSpeech',
+        var texthelpMapping = {
+            properties: {
+                pageCompleteCallback:    'eba_page_complete_callback',
+                texthelpSpeechStream:    'TexthelpSpeechStream',
+                volumeValue:             'eba_volume_value'
+            },
+            functions: {
+                barDynamicStart:         '$rw_barDynamicStart',
+                barCacheInit:            '$rw_barCacheInit',
+                barInit:                 '$rw_barInit',
+                cachePage:               '$rw_cachePage',
+                disableSpeech:           '$rw_disableSpeech',
+                enableClickToSpeak:      '$rw_enableClickToSpeak',
+                enableContinuousReading: '$rw_enableContinuousReading',
+                enableSpeech:            '$rw_enableSpeech',
+                event_pause:             '$rw_event_pause',
+                event_play:              '$rw_event_play',
+                getSpeed:                '$rw_getSpeed',
+                getVoice:                '$rw_getVoice',
+                hasReachedEnd:           '$rw_hasReachedEnd',
+                isPaused:                '$rw_isPaused',
+                isSpeaking:              '$rw_isSpeaking',
+                isTextSelectedForPlay:   '$rw_isTextSelectedForPlay',
+                isUsingMathjax:          '$rw_isUsingMathjax',
+                setSpeedValue:           '$rw_setSpeedValue',
+                setUsingMath:            '$rw_setUsingMath',
+                setUsingMathjax:         '$rw_setUsingMathjax',
+                setUsingMaths:           '$rw_setUsingMaths',
+                setVolumeValue:          '$rw_setVolumeValue',
+                stopSpeech:              '$rw_stopSpeech',
+                tagSentences:            '$rw_tagSentences',
+                userParameters:          '$rw_userParameters'
+            }
         };
         var speed;
         var volume;
@@ -79,17 +92,78 @@ define([
 
         component = componentFactory({
             /**
-             * Execute action
+             * Execute texthelp function
              * @param {String} action
              * @param {...} arguments
              */
             _exec: function _exec(action) {
                 var args = [].slice.call(arguments, 1);
-                var fn = window[mapping[action]];
+                var fn = window[texthelpMapping.functions[action]];
 
                 if (fn && _.isFunction(fn)) {
                     return fn.apply(this, args);
                 }
+            },
+
+            /**
+             * Get texthelp property
+             * @param {String} property
+             */
+            _get: function _get(property) {
+                return window[texthelpMapping.properties[property]];
+            },
+
+            /**
+             * Set texthelp property
+             * @param {String} property
+             * @param {*} value
+             */
+            _set: function _set(property, value) {
+                var prop = texthelpMapping.properties[property];
+
+                if (prop) {
+                    return window[prop] = value;
+                }
+            },
+
+            /**
+             * Initialize texthelp
+             */
+            _init: function _init() {
+                var self = this;
+                var tss = this._get('texthelpSpeechStream');
+
+                tss.g_strBookId = options.tenantId;
+                tss.g_strPageId = options.itemId;
+
+                // Initialize texthelp
+                this._exec('userParameters');
+                this._exec('barDynamicStart');
+                this._exec('barCacheInit');
+                this._exec('barInit');
+
+                // Set some default texthelp options
+                this._exec('enableClickToSpeak', options.enableClickToSpeak);
+                this._exec('setSpeedValue', speed);
+                this._exec('setVolumeValue', volume);
+
+                // Set texthelp callbacks
+                this._set('pageCompleteCallback', function () {
+                    self.trigger('stop');
+                });
+            },
+
+            /**
+             * Re-initialize texthelp
+             */
+            updateTexthelpCache: function updateTexthelpCache(tenantId, itemId) {
+                var tss = this._get('texthelpSpeechStream');
+
+                tss.g_strBookId = tenantId;
+                tss.g_strPageId = itemId;
+
+                this._exec('cachePage', null, null, tenantId);
+                this._exec('tagSentences', options.$contentArea.selector);
             },
 
             /**
@@ -179,23 +253,16 @@ define([
             });
 
             require([options.toolbarUrl], function () {
-                var tss = window.TexthelpSpeechStream;
+                var tss = self._get('texthelpSpeechStream');
 
                 require(["//" + tss.g_strServer + "/SpeechStream/v" + tss.g_strBuild + "/texthelpMain.js"], function () {
-                    window.$rw_barDynamicStart();
-                    window.$rw_barInit();
-
-                    // Set some default texthelp options
-                    self._exec('enableClickToSpeak', options.enableClickToSpeak);
-                    self._exec('setSpeedValue', speed);
-                    self._exec('setVolumeValue', volume);
+                    self._init();
                 });
             });
         })
         .init(config)
         .on('render', function () {
             var $this = this.getElement();
-            var self = this;
 
             // prevents clicks from removing highlighted text
             $this.on('mousedown', function (e) {
@@ -243,14 +310,6 @@ define([
 
             // Hide slider to begin
             $this.find('.settings > .settings-menu > .option > .slider-container').hide();
-
-            // Set texthelp callbacks
-            window.eba_speech_started_callback = function () {
-                self.trigger('play');
-            };
-            window.eba_speech_complete_callback = function () {
-                self.trigger('stop');
-            };
 
             // Text to speech actions
             $this.find('.click-to-speak').on('click', this.clickToSpeak);
