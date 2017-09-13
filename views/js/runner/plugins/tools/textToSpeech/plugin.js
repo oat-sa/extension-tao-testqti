@@ -66,8 +66,9 @@ define([
                 var testConfig = testRunner.getConfig();
 
                 self.tts = ttsFactory({
-                    tenantId: 'tenant-id', // TODO: set tenant id
-                    deliveryId: testConfig.serviceCallId // TODO: verify delivery id will work
+                    $contentArea: testRunner.getAreaBroker().getContentArea(),
+                    deliveryId: testConfig.serviceCallId, // TODO: verify delivery id will work
+                    tenantId: 'tenant-id' // TODO: set tenant id
                 })
                 .render(self.ttsButton.getElement());
 

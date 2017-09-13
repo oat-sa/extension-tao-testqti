@@ -35,6 +35,7 @@ define([
 
     /**
      * The factory
+     * @param {jQuery} [options.$contentArea = '$(body)']
      * @param {String} options.deliveryId
      * @param {Boolean} [options.enableClickToSpeak = false]
      * @param {Array} [options.ignoreEls = ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container']]
@@ -46,46 +47,31 @@ define([
     return function factory(options, config) {
         var component;
         var mapping = {
+            hasReachedEnd:                      '$rw_hasReachedEnd',
+            isSpeaking:                         '$rw_isSpeaking',
+            isTextSelectedForPlay:              '$rw_isTextSelectedForPlay',
+
+            isUsingMathjax:                     '$rw_isUsingMathjax',
+            setUsingMath:                       '$rw_setUsingMath',
+            setUsingMaths:                      '$rw_setUsingMaths',
+            setUsingMathjax:                    '$rw_setUsingMathjax',
+
             enableClickToSpeak:                 '$rw_enableClickToSpeak',
             enableContinuousReading:            '$rw_enableContinuousReading',
             enableSpeech:                       '$rw_enableSpeech',
             event_pause:                        '$rw_event_pause',
             event_play:                         '$rw_event_play',
-            event_stop_limited:                 '$rw_event_stop_limited',
             disableSpeech:                      '$rw_disableSpeech',
-            getCurrentTarget:                   '$rw_getCurrentTarget',
-            getSpeed:                           '$rw_getSpeed',
-            hasReachedEnd:                      '$rw_hasReachedEnd',
             isPaused:                           '$rw_isPaused',
-            isSpeaking:                         '$rw_isSpeaking',
-            isTextSelectedForPlay:              '$rw_isTextSelectedForPlay',
-            isUsingMathjax:                     '$rw_isUsingMathjax',
-            readNextTarget:                     '$rw_readNextTarget',
-            setCurrentTarget:                   '$rw_setCurrentTarget',
-            setSpeechModeClick:                 '$rw_setSpeechModeClick',
             setSpeedValue:                      '$rw_setSpeedValue',
-            setStartPoint:                      '$rw_setStartPoint',
-            setUsingMath:                       '$rw_setUsingMath',
-            setUsingMaths:                      '$rw_setUsingMaths',
-            setUsingMathjax:                    '$rw_setUsingMathjax',
             setVolumeValue:                     '$rw_setVolumeValue',
-            speak:                              '$rw_speak',
-            speakCurrentSentence:               '$rw_speakCurrentSentence',
-            speakCurrentSentenceHighlightOnly:  '$rw_speackCurrentSentenceHighlightOnly',
-            speakFirstSentence:                 '$rw_speakFirstSentence',
-            speakNextSentence:                  '$rw_speakNextSentence',
-            speakNextSentenceHighlightOnly:     '$rw_speakNextSentenceHighlightOnly',
-            speakPreviousSentence:              '$rw_speakPreviousSentence',
-            speakPreviousSentenceHighlightOnly: '$rw_speakPreviousSentenceHighlightOnly',
-            speakSentenceAtNode:                '$rw_speakSentenceAtNode',
-            speakText:                          '$rw_speakText',
-            speechCompleteCallback:             '$rw_speechCompleteCallback',
             stopSpeech:                         '$rw_stopSpeech',
         };
         var speed;
         var volume;
 
         _.assign(options || {}, {
+            contentArea: $('body'),
             enableClickToSpeak: false,
             ignoreEls: ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container'],
             toolbarUrl: '//taotoolbar.speechstream.net/tao/configQA.js'
@@ -260,19 +246,9 @@ define([
 
             // Set texthelp callbacks
             window.eba_speech_started_callback = function () {
-                console.log('speech started');
                 self.trigger('play');
             };
-            window.eba_speech_stopped_callback = function () {
-                console.log('speech stopped');
-                self.trigger('stop');
-            };
             window.eba_speech_complete_callback = function () {
-                console.log('speech complete', arguments);
-                self.trigger('stop');
-            };
-            window.eba_page_complete_callback = function () {
-                console.log('page complete');
                 self.trigger('stop');
             };
 
@@ -317,10 +293,12 @@ define([
                 $('.click-to-speak', $el).addClass('active');
                 $('.play', $el).addClass('disabled').show();
                 $('.pause', $el).addClass('disabled').hide();
+                options.$contentArea.css('cursor', 'pointer');
             } else {
                 $('.click-to-speak', $el).removeClass('active');
                 $('.play', $el).removeClass('disabled').show();
                 $('.pause', $el).removeClass('disabled').hide();
+                options.$contentArea.css('cursor', 'default');
             }
         })
         .on('play', function () {
