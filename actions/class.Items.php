@@ -43,7 +43,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function get()
     {
         $items = array();
-        $propertyFilters = array(TAO_ITEM_MODEL_PROPERTY => TAO_ITEM_MODEL_QTI);
+        $propertyFilters = array(taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL => taoItems_models_classes_itemModel::PROPERTY_QTI);
         $options = array('recursive' => true, 'like' => true, 'limit' => 50);
         $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 

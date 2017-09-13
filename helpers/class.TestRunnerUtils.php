@@ -81,15 +81,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
         $definition =  new core_kernel_classes_Resource(INSTANCE_QTITEST_ITEMRUNNERSERVICE);
         $serviceCall = new tao_models_classes_service_ServiceCall($definition);
          
-        $uriResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMURI);
+        $uriResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_URI);
         $uriParam = new tao_models_classes_service_ConstantParameter($uriResource, $parts[0]);
         $serviceCall->addInParameter($uriParam);
          
-        $pathResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMPATH);
+        $pathResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_PATH);
         $pathParam = new tao_models_classes_service_ConstantParameter($pathResource, $parts[1]);
         $serviceCall->addInParameter($pathParam);
         
-        $dataPathResource = new core_kernel_classes_Resource(INSTANCE_FORMALPARAM_ITEMDATAPATH);
+        $dataPathResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_DATA_PATH);
         $dataPathParam = new tao_models_classes_service_ConstantParameter($dataPathResource, $parts[2]);
         $serviceCall->addInParameter($dataPathParam);
          
