@@ -56,16 +56,19 @@ class Move extends TestRunnerAction
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getStart());
+                $this->endItemTimer($this->getStart() +1);
                 $this->saveItemState();
             }
+
+
+            \common_Logger::i(' ################### ');
             $this->initServiceContext();
 
             $this->saveItemResponses(false);
 
             $this->setOffline();
 
-            $serviceContext->getTestSession()->initItemTimer($this->getStart());
+            $serviceContext->getTestSession()->initItemTimer($this->getStart()+50);
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
 
             $response = [
@@ -82,7 +85,7 @@ class Move extends TestRunnerAction
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getStart()+2);
             }
 
         } catch (\Exception $e) {

@@ -136,7 +136,7 @@ class SynchronisationService extends ConfigurableService
     /**
      * Set the action start timers:
      *
-     * $start = snow - sitemDuration
+     * $start = $now - $itemDuration
      * Start by the last action to have a consistent QtiTimeLine
      * Add 1 ms to start to avoid collision
      *
@@ -145,13 +145,22 @@ class SynchronisationService extends ConfigurableService
     protected function initTimers(array &$actions)
     {
         $last = microtime(true);
+        \common_Logger::i(str_pad('$now', 15) . ' : ' . (new \DateTime())->setTimestamp($last)->format('U = i:s'));
+
         /** @var TestRunnerAction $action */
         foreach (array_reverse($actions) as &$action) {
 
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
+            if ($action->hasRequestParameter('itemDuration')) {
+                $kickstart =  (new \DateTime())
+                    ->setTimestamp($last)
+                    ->modify('-' . floor($action->getRequestParameter('itemDuration')) . ' second')
+                    ;
+                \common_Logger::i(str_pad('$kickstart', 15) . ' : ' . $kickstart->format('U = Y-m-d H:i:s'));
+
+                $action->setStart($kickstart->format('U'));
+
+                $start = $last - $action->getRequestParameter('itemDuration');
                 $last = $start;
-                $action->setStart($start+1);
             }
 
         }
