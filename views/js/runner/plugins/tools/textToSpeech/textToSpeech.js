@@ -215,15 +215,29 @@ define([
                 return false;
             });
 
+            // prevents disabled actions from being triggered
             $this.find('.action').on('click', function (e) {
                 if ($(this).hasClass('disabled')) {
                     e.stopImmediatePropagation();
                 }
             });
 
+            // Settings menu
+            $this.find('.settings-menu')
+
+            // prevent child elements triggering a click on settings menu
+            .on('click', function (e) {
+                if ($(this).closest('.settings-menu').length) {
+                    e.stopPropagation();
+                }
+            })
+
+            // Hide settings menu to begin
+            .hide();
+
             // Show/hide settings menu
-            $this.find('.settings-menu').hide();
             $this.find('.settings').on('click', function () {
+                $(this).toggleClass('active');
                 $this.find('.settings-menu').toggle();
             });
 
