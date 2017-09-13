@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
+use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\RouteItem;
@@ -787,5 +788,38 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             'cat-attempts',
             $catAttempts
         );
+    }
+    
+    /**
+     * Can Move Backward
+     * 
+     * Whether or not the Test Taker is able to navigate backward.
+     * This implementation takes the CAT sections into consideration.
+     * 
+     * @return boolean
+     */
+    public function canMoveBackward()
+    {
+        if ($this->isAdaptive()) {
+            $positionInCatSession = array_search(
+                $this->getCurrentCatItemId(),
+                $this->getShadowTest()
+            );
+            
+            if ($positionInCatSession === 0) {
+                // First item in cat section.
+                if ($this->getTestSession()->getRoute()->getPosition() === 0) {
+                    
+                    return false;
+                } else {
+                    
+                    return $this->getTestSession()->getPreviousRouteItem()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return $this->getTestSession()->canMoveBackward();
+        }
     }
 }
