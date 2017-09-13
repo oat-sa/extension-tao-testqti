@@ -620,9 +620,27 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
         $start             = $this->hasRequestParameter('start');
 
+        //to read JSON encoded params
+        $params = $this->getRequest()->getRawParameters();
+        $itemState  = isset($params['itemState']) ? $params['itemState'] : [];
+
+
+
         try {
             $serviceContext = $this->getServiceContext();
             $this->runnerService->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
+
+            $stateId = $this->getStateId();
+            $oldItemState = $this->runnerService->getItemState($serviceContext, $stateId);
+            if (empty($oldItemState)) {
+                $oldItemState = [];
+            }
+            $newItemState = array_replace_recursive($itemState, $oldItemState);
+
+            common_Logger::w(print_r($oldItemState, true));
+            common_Logger::w(print_r($itemState, true));
+            common_Logger::w(print_r($newItemState, true));
+            $this->runnerService->setItemState($serviceContext, $stateId, $newItemState);
 
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);
 

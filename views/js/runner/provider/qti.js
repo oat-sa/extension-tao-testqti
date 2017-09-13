@@ -396,9 +396,14 @@ define([
                 })
                 .on('skip', function(scope){
 
+                    var stateWithoutResponse = {};
                     this.trigger('disablenav disabletools');
 
+                    _.forEach(this.itemRunner.getState(), function(state, id){
+                        stateWithoutResponse[id] = _.omit(state, 'response');
+                    });
                     computeNext('skip', {
+                        itemState : stateWithoutResponse,
                         scope     : scope || 'item'
                     });
 
