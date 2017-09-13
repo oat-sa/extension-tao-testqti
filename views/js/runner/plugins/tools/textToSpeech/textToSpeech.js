@@ -22,7 +22,8 @@ define([
     'i18n',
     'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
-    'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech'
+    'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
+    'nouislider'
 ], function (
     $,
     _,
@@ -183,7 +184,8 @@ define([
         .on('init', function () {
             var self = this;
 
-            speed = 40; // default/normal speed
+            speed = 40; // default speed
+            volume = 40; // default volume
 
             // we have to mark some blocks as ignored to prevent TTS accessing it
             $(options.ignoreEls.join(',')).each(function () {
@@ -215,30 +217,71 @@ define([
                 return false;
             });
 
-            // prevents disabled actions from being triggered
+            // Action clicks
             $this.find('.action').on('click', function (e) {
+                // prevents disabled actions from being triggered
                 if ($(this).hasClass('disabled')) {
                     e.stopImmediatePropagation();
                 }
-            });
 
-            // Settings menu
-            $this.find('.settings-menu')
-
-            // prevent child elements triggering a click on settings menu
-            .on('click', function (e) {
-                if ($(this).closest('.settings-menu').length) {
-                    e.stopPropagation();
+                // hides settings menu when another action clicked
+                if (!$(this).closest('.settings').length) {
+                    $this.find('.settings').removeClass('active');
+                    $this.find('.settings > .settings-menu').hide();
                 }
-            })
-
-            // Hide settings menu to begin
-            .hide();
+            });
 
             // Show/hide settings menu
             $this.find('.settings').on('click', function () {
                 $(this).toggleClass('active');
                 $this.find('.settings-menu').toggle();
+            });
+
+            // Settings menu
+            $this.find('.settings > .settings-menu')
+            .on('click', function (e) { // prevent child elements triggering a click on settings menu
+                if ($(this).closest('.settings-menu').length) {
+                    e.stopPropagation();
+                }
+            })
+            .hide(); // Hide settings menu to begin
+
+            // Hide/show volume and speed sliders
+            $this.find('.settings > .settings-menu > .option')
+            .on('hover', function () {
+                $(this).find('.slider-container').show();
+            })
+            .on('mouseleave', function () {
+                $(this).find('.slider-container').hide();
+            });
+
+            // Hide slider to begin
+            $this.find('.settings > .settings-menu > .option > .slider-container').hide();
+
+            // Settings menu's volume slider
+            $this.find('.settings > .settings-menu > .volume .slider')
+            .noUiSlider({
+                animate: true,
+                connected: true,
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                start: volume,
+                step: 10
+            });
+
+            // Settings menu's speed slider
+            $this.find('.settings > .settings-menu > .speed .slider')
+            .noUiSlider({
+                animate: true,
+                connected: true,
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                start: speed,
+                step: 10
             });
 
             // Set texthelp callbacks

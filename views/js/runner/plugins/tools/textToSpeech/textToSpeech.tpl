@@ -9,8 +9,20 @@
     <div class="action settings" title="{{__ 'Settings'}}">
         <span class="icon-settings"></span>
         <div class="settings-menu">
-            <div class="option volume" title="{{__ 'Volume'}}"><span class="icon-volume"></span></div>
-            <div class="option speed" title="{{__ 'Speech speed'}}"><span class="icon-speed"></span></div>
+            <div class="option volume" title="{{__ 'Volume'}}">
+                <span class="icon-volume"></span>
+                <div class="slider-container">
+                    <div class="slider"></div>
+                </div>
+                <div class="hover-container"></div>
+            </div>
+            <div class="option speed" title="{{__ 'Speech speed'}}">
+                <span class="icon-speed"></span>
+                <div class="slider-container">
+                    <div class="slider"></div>
+                </div>
+                <div class="hover-container"></div>
+            </div>
         </div>
     </div>
 </div>

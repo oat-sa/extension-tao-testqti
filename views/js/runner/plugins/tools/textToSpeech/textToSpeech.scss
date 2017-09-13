@@ -46,6 +46,31 @@
                     padding: 0;
                     vertical-align: middle;
                 }
+
+                > .slider-container {
+                    @include simple-border($uiGeneralContentBorder);
+                    background-color: $uiClickableDefaultBg;
+                    height: 17px;
+                    left: 26px;
+                    margin: 8px;
+                    padding: 2px;
+                    position: relative;
+                    top: -24px;
+                    width: 80px;
+                }
+
+                > .hover-container { // assists in hover so as not to easily lose state
+                    height: 44px;
+                    left: 20px;
+                    position: absolute;
+                    top: -8px;
+                    width: 106px;
+                    z-index: -1;
+                }
+
+                &:hover {
+                    background-color: $uiClickableHoverBg;
+                }
             }
         }
 
