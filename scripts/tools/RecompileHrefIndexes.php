@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\scripts\tools;
 
 use oat\oatbox\extension\AbstractAction;
 use \common_report_Report as Report;
+use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use qtism\data\storage\php\PhpDocument;
 
 /**
@@ -43,11 +44,11 @@ class RecompileHrefIndexes extends AbstractAction
             
             $extManager->getExtensionById('taoDeliveryRdf');
             
-            $compiledDeliveryClass = new \core_kernel_classes_Class(CLASS_COMPILEDDELIVERY);
+            $compiledDeliveryClass = new \core_kernel_classes_Class(DeliveryAssemblyService::CLASS_ID);
             $phpDocument = new PhpDocument();
             
             if ($compiledDeliveryClass->exists() === true) {
-                $compiledDirectoryProperty = new \core_kernel_classes_Property(PROPERTY_COMPILEDDELIVERY_DIRECTORY);
+                $compiledDirectoryProperty = new \core_kernel_classes_Property(DeliveryAssemblyService::DELIVERY_DIRECTORY);
                 
                 foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
                     $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);
