@@ -150,27 +150,13 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function getItemTags(RouteItem $routeItem)
     {
-        $test = $routeItem->getAssessmentTest();
-        $testPart = $routeItem->getTestPart();
-        $sections = $routeItem->getAssessmentSections();
-        $sections->rewind();
-        $sectionId = key(current($sections));
         $itemRef = $routeItem->getAssessmentItemRef();
         $itemId = $itemRef->getIdentifier();
         $occurrence = $routeItem->getOccurence();
 
-        $tags = [
-            $itemId,
+        return [
             $itemId . '#' . $occurrence,
-            $sectionId,
-            $testPart->getIdentifier(),
-            $test->getIdentifier(),
-            $itemRef->getHref(),
         ];
-
-        if ($this->isRunning() === true) {
-            $tags[] = $this->getItemAttemptTag($routeItem);
-        }
 
         return $tags;
     }
