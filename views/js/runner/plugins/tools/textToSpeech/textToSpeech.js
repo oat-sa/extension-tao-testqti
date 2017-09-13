@@ -183,11 +183,10 @@ define([
         .on('init', function () {
             var self = this;
 
-            speed = 2; // getSpeed()
+            speed = 40; // default/normal speed
 
             // we have to mark some blocks as ignored to prevent TTS accessing it
-            $(options.ignoreEls.join(','))
-            .each(function () {
+            $(options.ignoreEls.join(',')).each(function () {
                 $(this).attr('ignore', true);
             });
 
@@ -198,6 +197,7 @@ define([
                     window.$rw_barDynamicStart();
                     window.$rw_barInit();
 
+                    // Set some default texthelp options
                     self._exec('enableClickToSpeak', options.enableClickToSpeak);
                     self._exec('setSpeedValue', speed);
                     self._exec('setVolumeValue', volume);
@@ -259,6 +259,7 @@ define([
                 self.trigger('stop');
             };
 
+            // Text to speech actions
             $this.find('.click-to-speak').on('click', this.clickToSpeak);
             $this.find('.play')          .on('click', this.play);
             $this.find('.pause')         .on('click', this.pause)       .hide();
