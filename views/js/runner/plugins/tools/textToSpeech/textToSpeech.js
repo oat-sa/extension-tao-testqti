@@ -137,9 +137,7 @@ define([
                 tss.g_strPageId = options.itemId;
 
                 // Initialize texthelp
-                this._exec('userParameters');
                 this._exec('barDynamicStart');
-                this._exec('barCacheInit');
                 this._exec('barInit');
 
                 // Set some default texthelp options
@@ -148,6 +146,7 @@ define([
                 this._exec('setVolumeValue', volume);
 
                 // Set texthelp callbacks
+                // todo: page complete isn't fired by texthelp (something to do with caching)
                 this._set('pageCompleteCallback', function () {
                     self.trigger('stop');
                 });
@@ -162,7 +161,6 @@ define([
                 tss.g_strBookId = tenantId;
                 tss.g_strPageId = itemId;
 
-                this._exec('cachePage', null, null, tenantId);
                 this._exec('tagSentences', options.$contentArea.selector);
             },
 
@@ -194,10 +192,8 @@ define([
              * Pause
              */
             pause: function pause() {
-                if (this._exec('isSpeaking')) {
-                    this._exec('event_pause');
-                    this.trigger('pause');
-                }
+                this._exec('event_pause');
+                this.trigger('pause');
             },
 
             /**

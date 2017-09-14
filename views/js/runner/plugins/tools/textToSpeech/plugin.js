@@ -57,8 +57,8 @@ define([
             var tenantId;
             var testRunner = this.getTestRunner();
 
-            itemId = 'item-id';
-            tenantId = 'tenant-id';
+            itemId = null;
+            tenantId = 'tao';
 
             this.ttsButton = this.getAreaBroker().getToolbox().createEntry({
                 control: 'tts',
