@@ -458,7 +458,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['isDeepestSectionVisible'] = $currentSection->isVisible();
 
                 // If the candidate is allowed to move backward e.g. first item of the test.
-                $response['canMoveBackward'] = $session->canMoveBackward();
+                $response['canMoveBackward'] = $context->canMoveBackward();
 
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
