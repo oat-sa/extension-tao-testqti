@@ -4,8 +4,9 @@
     margin-left: 40px;
     .icon-connect, .icon-disconnect {
         display: none;
-        line-height: 1.6;
-        @include font-size(23);
+        line-height: 2;
+        @include font-size(16);
+        text-shadow: 0 1px 0 black(.9);
     }
     &.connected, &.disconnected {
         display: inline-block;

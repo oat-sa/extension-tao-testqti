@@ -192,7 +192,8 @@ define([
             function getItemResults() {
                 var results = {};
                 var context = self.getTestContext();
-                if(context && self.itemRunner){
+                var states = self.getTestData().states;
+                if(context && self.itemRunner && context.itemSessionState <= states.interacting){
                     results = {
                         itemResponse   : self.itemRunner.getResponses(),
                         itemState      : self.itemRunner.getState()
@@ -259,7 +260,6 @@ define([
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
 
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
@@ -352,11 +352,6 @@ define([
                         ref       : position
                     }));
                 })
-                .after('move', function (direction, scope, position) {
-                    if (navigationHelper.isLeavingSection(this.getTestContext(), this.getTestMap(), direction, scope, position)) {
-                        this.trigger('endsession');
-                    }
-                })
                 .on('skip', function(scope){
 
                     this.trigger('disablenav disabletools');
@@ -367,9 +362,10 @@ define([
                 })
                 .on('exit', function(reason){
                     var context = self.getTestContext();
-                    self.disableItem(context.itemIdentifier);
 
-                    self.getProxy()
+                    this.disableItem(context.itemIdentifier);
+
+                    this.getProxy()
                         .callTestAction('exitTest', _.merge(getItemResults(), {
                             itemDefinition : context.itemIdentifier,
                             reason: reason
@@ -387,7 +383,7 @@ define([
 
                     context.isTimeout = true;
 
-                    self.disableItem(context.itemIdentifier);
+                    this.disableItem(context.itemIdentifier);
 
                     computeNext(
                         'timeout',
@@ -400,17 +396,12 @@ define([
                         })
                     );
                 })
-                .after('timeout', function (scope) {
-                    if (scope === 'assessmentSection' || scope === 'testPart') {
-                        self.trigger('endsession');
-                    }
-                })
                 .on('pause', function(data){
                     var pause;
 
                     this.setState('closedOrSuspended', true);
 
-                    if (!self.getState('disconnected')) {
+                    if (!this.getState('disconnected')) {
                         // will notify the server that the test was auto paused
                         pause = self.getProxy().callTestAction('pause', {
                             reason: {
@@ -433,8 +424,7 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .on('renderitem', function(){
-
+                .on('loaditem', function(){
                     var context = this.getTestContext();
                     var states = this.getTestData().itemStates;
                     var warning = false;
@@ -447,9 +437,6 @@ define([
                         var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
                         return item && item.label ? item.label : context.itemIdentifier;
                     };
-
-                    this.trigger('enablenav enabletools');
-
 
                     //The item is rendered but in a state that prevents us from interacting
                     if (context.isTimeout) {
@@ -469,6 +456,15 @@ define([
                         self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
+
+                })
+                .on('renderitem', function(){
+                    var context = this.getTestContext();
+
+                    if(!this.getItemState(context.itemIdentifier, 'disabled')){
+                        this.trigger('enabletools');
+                    }
+                    this.trigger('enablenav');
                 })
                 .on('resumeitem', function(){
                     this.trigger('enableitem enablenav');
@@ -483,9 +479,11 @@ define([
                     this.trigger('disabletools enablenav');
                 })
                 .on('finish', function () {
+                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('leave', function () {
+                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('flush', function () {
@@ -578,6 +576,8 @@ define([
 
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);
+
+                itemData.content = itemData.content || {};
 
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager

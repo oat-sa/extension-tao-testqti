@@ -39,8 +39,25 @@ class QtiRunnerNavigationJumpItem implements RunnerNavigation
      */
     public function move(RunnerServiceContext $context, $ref)
     {
-        QtiRunnerNavigation::checkTimedSectionExit($context, $ref);
-        $context->getTestSession()->jumpTo(intval($ref));
+        QtiRunnerNavigation::checkTimedSectionExit(
+            $context, 
+            $context->getItemPositionInRoute($ref)
+        );
+        
+        $catItemId = '';
+        $pos = $context->getItemPositionInRoute(intval($ref), $catItemId);
+        
+        $context->getTestSession()->jumpTo($pos);
+        
+        if ($catItemId !== '') {
+            $context->persistCurrentCatItemId($catItemId);
+        }
+        
+        if ($context->isAdaptive()) {
+            // Consider potential changes in the selected items.
+            $context->selectAdaptiveNextItem();
+        }
+        
         return true;
     }
 }

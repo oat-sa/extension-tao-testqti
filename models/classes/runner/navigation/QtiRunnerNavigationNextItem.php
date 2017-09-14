@@ -42,19 +42,36 @@ class QtiRunnerNavigationNextItem implements RunnerNavigation
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
         $nextPosition = $session->getRoute()->getPosition() + 1;
-        QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
         
         if ($context->isAdaptive()) {
-            if ($context->selectAdaptiveNextItem() === null) {
+            $context->selectAdaptiveNextItem();
+            
+            $currentCatItemId = $context->getCurrentCatItemId();
+            $shadowTest = $context->getShadowTest();
+            
+            $search = array_search($currentCatItemId, $shadowTest);
+            
+            if ($search === count($shadowTest) - 1) {
+                QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
                 $session->moveNext();
+            } else {
+                $nextCatItemId = $shadowTest[$search + 1];
+                $context->persistCurrentCatItemId($nextCatItemId);
+                $context->persistSeenCatItemIds($nextCatItemId);
             }
         } else {
+            QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
             $session->moveNext();
             
             // In case of we are now in an adaptive context, let's initialize the CAT session
             // and ask for a new item dynamically.
             if ($context->isAdaptive()) {
                 $context->selectAdaptiveNextItem();
+                
+                $firstItemId = $context->getShadowTest()[0];
+                
+                $context->persistCurrentCatItemId($firstItemId);
+                $context->persistSeenCatItemIds($firstItemId);
             }
         }
         

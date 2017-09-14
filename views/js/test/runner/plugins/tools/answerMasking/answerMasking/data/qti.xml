@@ -23,7 +23,7 @@
           <prompt>
             <p>Choice interaction #2</p>
           </prompt>
-          <simpleChoice identifier="choice_4" fixed="false" showHide="show">choice #2.1</simpleChoice>
+          <simpleChoice identifier="choice_4" fixed="false" showHide="show">choice #2.1<br />choice #2.1</simpleChoice>
           <simpleChoice identifier="choice_5" fixed="false" showHide="show">choice #2.2<br />choice #2.2<br />choice #2.2</simpleChoice>
           <simpleChoice identifier="choice_6" fixed="false" showHide="show">choice #2.3</simpleChoice>
         </choiceInteraction>
@@ -35,9 +35,9 @@
           <prompt>
             <p>Choice interaction #3</p>
           </prompt>
-          <simpleChoice identifier="choice_7" fixed="false" showHide="show">choice #3.1<br />choice #3.1</simpleChoice>
-          <simpleChoice identifier="choice_8" fixed="false" showHide="show">choice #3.2</simpleChoice>
-          <simpleChoice identifier="choice_9" fixed="false" showHide="show">choice #3.3</simpleChoice>
+          <simpleChoice identifier="choice_7" fixed="false" showHide="show">Le terme « taoïsme » recouvre des textes, des auteurs, des croyances et pratiques, et même des phénomènes historiques qui ont pu se réclamer les uns des autres, répartis sur 2 500 ans d’histoire ; il est difficile d’en offrir un portrait unifié de l’extérieur.</simpleChoice>
+          <simpleChoice identifier="choice_8" fixed="false" showHide="show">La catégorie « tao » est née sous la dynastie Han (-206~220), bien après la rédaction des premiers textes, du besoin de classer les fonds des bibliothèques princières et impériales. Dào jiā 道家 ou dào jiào 道教, « école taoïste », distingue à l’époque une des écoles philosophiques de la période des Royaumes combattants (-500~-220). École est ici à entendre dans son sens grec, voire pythagoricien, d’une communauté de pensée s’adonnant aussi à une vie philosophique ; n’y voir qu’un courant intellectuel est un anachronisme moderne.</simpleChoice>
+          <simpleChoice identifier="choice_9" fixed="false" showHide="show">Mais cette école ne fut sans doute que virtuelle, car ses auteurs, dans la mesure où ils ont vraiment existé, ne se connaissaient pas forcément, et certains textes sont attribués à différentes écoles selon les catalogues. De plus, les auteurs réunis a posteriori sous la même rubrique « Taoïsme » peuvent avoir sur leurs orientations fondamentales des vues tout à fait opposées : le Laozi contient les principes d'une recherche de l'immortalité alors que le Zhuangzi la critique comme une vanité ; le Laozi est en partie fait de conseils à l'usage du Prince alors que le Zhuangzi est très critique à l'égard de l'action politique, etc. Le Taoïsme est donc essentiellement pluriel.</simpleChoice>
         </choiceInteraction>
       </div>
     </div>

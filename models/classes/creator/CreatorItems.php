@@ -36,6 +36,9 @@ class CreatorItems extends ConfigurableService
     const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
     const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
 
+    const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
+    const ITEM_CONTENT_SEARCH_OPTION= 'itemContent';
+
     /**
      * The different lookup formats
      */
@@ -92,10 +95,16 @@ class CreatorItems extends ConfigurableService
      */
     public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
     {
-        $propertyFilters = [
-            self::PROPERTY_ITEM_MODEL_URI => self::ITEM_MODEL_QTI_URI,
-            self::PROPERTY_ITEM_CONTENT_URI => '*'
-        ];
+        $propertyFilters = [];
+
+        if($this->hasOption(self::ITEM_MODEL_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+            $propertyFilters[self::PROPERTY_ITEM_MODEL_URI] = $this->getOption(self::ITEM_MODEL_SEARCH_OPTION);
+        }
+
+        if($this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+            $propertyFilters[self::PROPERTY_ITEM_CONTENT_URI] = '*';
+        }
+
         if(is_string($search) && strlen(trim($search)) > 0){
             $propertyFilters[self::LABEL_URI] = $search;
         }

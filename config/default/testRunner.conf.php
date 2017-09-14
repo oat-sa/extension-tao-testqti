@@ -386,13 +386,13 @@ return array(
      * Enable Allow/Disallow Skipping feature.
      * @type boolean
      */
-    'enable-allow-skipping' => false,
+    'enable-allow-skipping' => true,
 
     /*
      * Enable Allow/Disallow Validate Responses feature.
      * @type boolean
      */
-    'enable-validate-responses' => false,
+    'enable-validate-responses' => true,
 
     /*
      * Force branch rules to be executed even if the current navigation mode is non-linear.
@@ -503,5 +503,4 @@ return array(
      * @type integer
      */
     'item-cache-size' => 3
-
 );

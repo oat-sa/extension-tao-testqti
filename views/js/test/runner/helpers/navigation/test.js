@@ -39,6 +39,8 @@ define([
         { title: 'isLeavingTestPart' },
         { title: 'isLast' },
         { title: 'isFirst' },
+        { title: 'isLastOf' },
+        { title: 'isFirstOf' },
         { title: 'getSiblingItems' },
         { title: 'getNextItem' },
         { title: 'getPreviousItem' },
@@ -357,6 +359,79 @@ define([
         assert.equal(result, data.expectResult, 'The helper gives the correct result');
     });
 
+    QUnit.module('navigation.isLastOf');
+
+    QUnit.test('Bad paramerters', function(assert){
+        var result;
+
+        QUnit.expect(4);
+
+        assert.throws(function(){
+            navigationHelper.isLastOf();
+        }, TypeError, 'The test map is required');
+
+        assert.throws(function(){
+            navigationHelper.isLastOf('foo');
+        }, TypeError, 'The test map needs to be an object');
+
+        assert.throws(function(){
+            navigationHelper.isLastOf(testMap);
+        }, TypeError, 'An itemIdentifier is required');
+
+        result = navigationHelper.isLastOf(testMap, 'item-17');
+        assert.equal(typeof result, 'boolean', 'The helper does not throw with correct parameters');
+    });
+
+    QUnit.cases([{
+        title: 'test, 3rd item',
+        scope : 'test',
+        expectResult : false,
+        itemIdentifier : 'item-3'
+    }, {
+        title: 'section, 3rd item',
+        scope : 'section',
+        expectResult : true,
+        itemIdentifier : 'item-3'
+    }, {
+        title: 'testPart, 3rd item',
+        scope : 'testPart',
+        expectResult : false,
+        itemIdentifier : 'item-3'
+    }, {
+        title: 'test, 14th item',
+        scope : 'test',
+        expectResult : false,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'section, 14th item',
+        scope : 'section',
+        expectResult : true,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'testPart, 14th item',
+        scope : 'testPart',
+        expectResult : true,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'wrong scope',
+        scope : 'foo',
+        expectResult : false,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'test (default value), item 17',
+        expectResult : true,
+        itemIdentifier : 'item-17'
+
+    }])
+    .test('is the last of ', function (data, assert) {
+        var result;
+
+        QUnit.expect(1);
+
+        result = navigationHelper.isLastOf(testMap, data.itemIdentifier, data.scope);
+
+        assert.equal(result, data.expectResult, 'The helper gives the correct result');
+    });
 
     QUnit.module('navigation.isFirst');
 
@@ -411,6 +486,96 @@ define([
 
         assert.equal(result, data.expectResult, 'The helper gives the correct result');
     });
+
+    QUnit.module('navigation.isFirstOf');
+
+    QUnit.test('Bad paramerters', function(assert){
+        var result;
+
+        QUnit.expect(4);
+
+        assert.throws(function(){
+            navigationHelper.isFirstOf();
+        }, TypeError, 'The test map is required');
+
+        assert.throws(function(){
+            navigationHelper.isFirstOf('foo');
+        }, TypeError, 'The test map needs to be an object');
+
+        assert.throws(function(){
+            navigationHelper.isFirstOf(testMap);
+        }, TypeError, 'An itemIdentifier is required');
+
+        result = navigationHelper.isFirstOf(testMap, 'item-17');
+        assert.equal(typeof result, 'boolean', 'The helper does not throw with correct parameters');
+    });
+
+    QUnit.cases([{
+        title: 'test, 1st item',
+        scope : 'test',
+        expectResult : true,
+        itemIdentifier : 'item-1'
+    }, {
+        title: 'section, 1st item',
+        scope : 'section',
+        expectResult : true,
+        itemIdentifier : 'item-1'
+    }, {
+        title: 'testPart, 1st item',
+        scope : 'testPart',
+        expectResult : true,
+        itemIdentifier : 'item-1'
+    }, {
+        title: 'test, 7th item',
+        scope : 'test',
+        expectResult : false,
+        itemIdentifier : 'item-7'
+    }, {
+        title: 'section, 7th item',
+        scope : 'section',
+        expectResult : true,
+        itemIdentifier : 'item-7'
+    }, {
+        title: 'testPart, 7th item',
+        scope : 'testPart',
+        expectResult : false,
+        itemIdentifier : 'item-7'
+    }, {
+        title: 'test, 15th item',
+        scope : 'test',
+        expectResult : false,
+        itemIdentifier : 'item-15'
+    }, {
+        title: 'section, 15th item',
+        scope : 'section',
+        expectResult : true,
+        itemIdentifier : 'item-15'
+    }, {
+        title: 'testPart, 15th item',
+        scope : 'testPart',
+        expectResult : true,
+        itemIdentifier : 'item-15'
+    }, {
+        title: 'wrong scope',
+        scope : 'foo',
+        expectResult : false,
+        itemIdentifier : 'item-14'
+    }, {
+        title: 'test (default value), item 1',
+        expectResult : true,
+        itemIdentifier : 'item-1'
+
+    }])
+    .test('is the last of ', function (data, assert) {
+        var result;
+
+        QUnit.expect(1);
+
+        result = navigationHelper.isFirstOf(testMap, data.itemIdentifier, data.scope);
+
+        assert.equal(result, data.expectResult, 'The helper gives the correct result');
+    });
+
 
     QUnit.module('Sibling Items');
 

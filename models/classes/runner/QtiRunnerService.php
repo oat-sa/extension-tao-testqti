@@ -155,7 +155,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext->setTestConfig($this->getTestConfig());
 
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
-        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage());
+        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage(), $serviceContext->getCompilationDirectory());
 
         return $serviceContext;
     }
@@ -223,8 +223,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 \common_Logger::i("Assessment Test Session begun.");
                 
                 if ($context->isAdaptive()) {
-                    \common_Logger::i("First item is adaptive.");
-                    $context->selectAdaptiveNextItem();
+                    \common_Logger::t("Very first item is adaptive.");
+                    $nextCatItemId = $context->selectAdaptiveNextItem();
+                    $context->persistCurrentCatItemId($nextCatItemId);
+                    $context->persistSeenCatItemIds($nextCatItemId);
                 }
             }
 
@@ -385,9 +387,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
-                // The number of current attempt (1 for the first time ...)
-                $response['attempt'] = $itemSession['numAttempts']->getValue();
-
                 // Duration of the current item attempt
                 $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
 
@@ -396,6 +395,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
+                
+                // The number of current attempt (1 for the first time ...)
+                $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
 
                 // The definition of the current item (HREF)
                 $response['itemDefinition'] = $itemRef->getHref();
@@ -408,7 +410,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-                
+
+                // Whether the current section is adaptive.
+                $response['isCatAdaptive'] = $context->isAdaptive();
+
                 // Whether the test map must be updated.
                 // TODO: detect if the map need to be updated and set the flag
                 $response['needMapUpdate'] = false;
@@ -417,10 +422,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['isLast'] = (!$context->isAdaptive()) ? $route->isLast() : false;
 
                 // The current position in the route.
-                $response['itemPosition'] = $route->getPosition();
+                $response['itemPosition'] = $context->getCurrentPosition();
 
                 // The current item flagged state
-                $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition']);
+                $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
                 $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
@@ -453,7 +458,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['isDeepestSectionVisible'] = $currentSection->isVisible();
 
                 // If the candidate is allowed to move backward e.g. first item of the test.
-                $response['canMoveBackward'] = $session->canMoveBackward();
+                $response['canMoveBackward'] = $context->canMoveBackward();
 
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
@@ -773,9 +778,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->endAttempt($responses);
                     $score = $session->getVariable('SCORE');
                     $assessmentItem = $session->getAssessmentItem();
+                    $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $output = $context->getLastCatItemOutput();
                     
-                    $output = new ItemResult(
-                        $assessmentItem->getIdentifier(),
+                    $output[$assessmentItemIdentifier] = new ItemResult(
+                        $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
@@ -792,15 +799,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
+                    
+                    // Deal with attempts.
+                    $attempt = $context->getCatAttempts($itemIdentifier);
+                    $transmissionId = "${sessionId}.${itemIdentifier}.${attempt}";
+                    
+                    $attempt++;
                     
                     foreach ($session->getAllVariables() as $var) {
+                        if ($var->getIdentifier() === 'numAttempts') {
+                            $var->setValue(new \qtism\common\datatypes\QtiInteger($attempt));
+                        }
+                        
                         $variables[] = $var;
                     }
                     
                     $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    $context->persistCatAttempts($itemIdentifier, $attempt);
                     
+                    $context->getTestSession()->endAttempt(new State(), true);
                 } else {
+                    // Non adaptive case.
                     $session->endAttempt($responses, true);
                 }
                 

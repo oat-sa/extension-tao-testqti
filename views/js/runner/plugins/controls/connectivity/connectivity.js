@@ -84,7 +84,7 @@ define([
                 }
 
                 //offline navigation error, we pause the test
-                if(err.source === 'navigator' && err.purpose === 'proxy' && err.code === 404){
+                if (proxy.isOffline()) {
                     if(!waiting){
                         waiting = true;
 

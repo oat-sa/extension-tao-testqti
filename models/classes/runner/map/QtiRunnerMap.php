@@ -68,8 +68,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function hasItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
-        $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
-        return $indexFile->exists();
+        // In case the context is adaptive, it means that the delivery was compiled in a version
+        // we are 100% sure it produced Item Href Index Files.
+        if ($context->isAdaptive()) {
+            return true;
+        } else {
+            $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+            return $indexFile->exists();
+        }
     }
 
     /**
@@ -86,16 +92,18 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $href = false;
 
         $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
+
         if ($indexFile->exists()) {
             $href = $indexFile->read();
         } else {
             if (!isset($this->itemHrefIndex)) {
-            $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
                 $this->itemHrefIndex = $storage->loadItemHrefIndex($context->getTestExecutionUri());
-        }
+            }
+
             if (isset($this->itemHrefIndex[$itemIdentifier])) {
                 $href = $this->itemHrefIndex[$itemIdentifier];
-        }
+            }
         }
         
         return $href;
@@ -135,7 +143,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
-
+        $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         if ($session->isRunning() !== false) {
             $route = $session->getRoute();
             $store = $session->getAssessmentItemSessionStore();
@@ -150,14 +158,13 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $this->itemHrefIndex = [];
             $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
             \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
-            
+
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
-                
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
@@ -224,7 +231,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
-                        'flagged' => TestRunnerUtils::getItemFlag($session, $routeItem),
+                        'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
                     
@@ -266,13 +273,13 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $offsetSection ++;
                 }
                 
-                // fallback in case of the delivery was compiled without the index of item href
-                if ($shouldBuildItemHrefIndex) {
-                    \common_Logger::t('Store index of item href into the test state storage');
-                    $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-                    $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
-                }
-                }
+            }
+            // fallback in case of the delivery was compiled without the index of item href
+            if ($shouldBuildItemHrefIndex) {
+                \common_Logger::t('Store index of item href into the test state storage');
+                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
+            }
         }
         
         return $map;
