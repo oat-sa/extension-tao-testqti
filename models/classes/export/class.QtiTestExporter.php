@@ -209,8 +209,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
         $extraPath = str_replace('\\', '/', dirname($rootDir->getRelPath($file)));
         $extraPath = trim($extraPath, '/');
-
-        $extraReversePath = '';
+        $extraReversePath = '../../';
         if (empty($extraPath) === false) {
             $n = count(explode('/', $extraPath));
             $parts = array();
@@ -230,7 +229,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             }
 
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = $extraReversePath . 'items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
@@ -260,10 +259,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()).'/';
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
-        $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        // revert backslashes introduced by dirname on windows
-        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
-        $testHref = $newTestDir . (empty($relPath) ? '' : $relPath.'/') . 'test.xml';
+
+        $testHref = $newTestDir . 'test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
@@ -271,12 +268,22 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
         $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
+        /**
+         * @var oat\oatbox\filesystem\File $f
+         */
+        $file = $this->getTestService()->getQtiTestFile($this->getItem());
+        // revert backslashes introduced by dirname on windows
+        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
+        $basePath = $testRootDir->getPrefix();
+
         foreach ($iterator as $f) {
+
             // Only add dependency files...
             if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
 
+                $data = $f->getMetadata();
                 // Add the file to the archive.
-                $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
+                $fileHref = $newTestDir . ltrim(str_replace($basePath , '' , $data['path']), '/');
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFromString($fileHref, $f->read());
                 $this->referenceAuxiliaryFile($fileHref);
