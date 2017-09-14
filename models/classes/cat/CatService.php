@@ -164,10 +164,24 @@ class CatService extends ConfigurableService
     {
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
-        
+
+        // Store a copy to get it in opcache...
+        $expectedCacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'taocatservicephpcache';
+        $expectedCacheFile = $expectedCacheDir . DIRECTORY_SEPARATOR . md5($privateCompilationDirectory->getPrefix() . $adaptiveSectionId);
+
+        if (!is_dir($expectedCacheDir)) {
+            mkdir($expectedCacheDir);
+        }
+
+        if (!is_file($expectedCacheFile)) {
+            $data = $privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php");
+            file_put_contents($expectedCacheFile, $data);
+        }
+
+        \common_Logger::d("Loading adaptive section file from '${expectedCacheFile}'.");
         $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
-        
+        $doc->load($expectedCacheFile);
+
         return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
