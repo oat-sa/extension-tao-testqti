@@ -162,13 +162,30 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefsByPlaceholder(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, AssessmentItemRef $placeholder)
     {
+        $time = microtime(true);
+
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
-        
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
-        
-        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+
+        // Store a copy to get it in opcache...
+        $expectedCacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'taocatservicephpcache';
+        $expectedCacheFile = $expectedCacheDir . DIRECTORY_SEPARATOR . md5($privateCompilationDirectory->getPrefix() . '_' . $adaptiveSectionId);
+
+        if (!is_dir($expectedCacheDir)) {
+            mkdir($expectedCacheDir);
+        }
+
+        if (is_file($expectedCacheFile)) {
+            $result = unserialize(file_get_contents($expectedCacheFile));
+        } else {
+            $doc = new PhpDocument();
+            $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+            $result = $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+            file_put_contents($expectedCacheFile, serialize($result));
+        }
+
+        \common_Logger::w("getAssessmentItemRefsByPlaceholder: " . (microtime(true) - $time));
+        return $result;
     }
     
     /**
