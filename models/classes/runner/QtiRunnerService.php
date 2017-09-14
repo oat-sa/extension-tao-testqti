@@ -475,12 +475,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 //contextual value
                 $response['validateResponses'] = $testOptions['validateResponses'];
 
-                //allow text to speech feature
-                $response['enableTextToSpeech'] = $config->getConfigValue('enableTextToSpeech');
-
-                //include in test
-                $response['textToSpeech'] = $testOptions['textToSpeech'];
-
                 //does the item has modal feedbacks ?
                 $response['hasFeedbacks'] = $this->hasFeedbacks($context, $itemRef->getHref());
 
