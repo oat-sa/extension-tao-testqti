@@ -97,17 +97,25 @@ define([
 
             testRunner
             .on('loaditem', function () {
-                self.ttsButton.show();
                 self.tts.disable();
                 self.ttsButton.disable();
+                self.ttsButton.hide();
             })
-            .on('renderitem enabletools', function () {
+            .on('enabletools', function () {
                 self.tts.enable();
                 self.ttsButton.enable();
             })
             .on('renderitem', function () {
-                itemId = this.itemRunner._item.attributes.identifier;
-                self.tts.updateTexthelpCache(tenantId, itemId);
+                var context = testRunner.getTestContext();
+
+                if (context.options.textToSpeech) {
+                    self.tts.enable();
+                    self.ttsButton.enable();
+                    self.ttsButton.show();
+
+                    itemId = this.itemRunner._item.attributes.identifier;
+                    self.tts.updateTexthelpCache(tenantId, itemId);
+                }
             })
             .on('disabletools unloaditem', function () {
                 self.tts.disable();
