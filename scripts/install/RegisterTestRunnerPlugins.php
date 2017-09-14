@@ -350,6 +350,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category'    => 'tools',
                 'active'      => true,
                 'tags'        => [  ]
+            ], [
+                'id' => 'textToSpeech',
+                'name' => 'Text to Speech',
+                'module' => 'taoQtiTest/runner/plugins/tools/textToSpeech/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Enables text-to-speech via Texthelp',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => []
             ]
         ],
         'security' => [
