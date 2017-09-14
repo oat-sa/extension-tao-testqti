@@ -62,7 +62,7 @@ define([
 
             this.ttsButton = this.getAreaBroker().getToolbox().createEntry({
                 control: 'tts',
-                icon: 'audio',
+                icon: 'headphones',
                 text: __('Text to Speech'),
                 title: __('Text to Speech')
             })
