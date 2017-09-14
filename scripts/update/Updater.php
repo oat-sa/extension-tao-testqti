@@ -1589,9 +1589,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.7.1');
+        $this->skip('14.1.5', '15.7.5');
 
-        if ($this->isVersion('15.7.1')) {
+        if ($this->isVersion('15.7.5')) {
 
             $registry = PluginRegistry::getRegistry();
             $registry->register(
@@ -1608,7 +1608,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 )
             );
 
-            $this->setVersion('15.7.2');
+            $this->setVersion('15.7.6');
         }
     }
 }

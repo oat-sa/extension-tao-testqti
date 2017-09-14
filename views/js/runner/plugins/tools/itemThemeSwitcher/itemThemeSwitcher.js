@@ -25,12 +25,13 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'core/store',
     'taoTests/runner/plugin',
     'ui/hider',
     'ui/themes',
     'util/shortcut',
     'util/namespace'
-], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper) {
+], function ($, _, __, storeFactory, pluginFactory, hider, themeHandler, shortcut, namespaceHelper) {
     'use strict';
 
     /**
@@ -39,6 +40,19 @@ define([
     return pluginFactory({
 
         name: 'itemThemeSwitcher',
+
+        /**
+         * Installation of the plugin (called before init)
+         */
+        install: function install() {
+            var self = this;
+            //the storechange event is fired early (before runner's init is done)
+            //so we attach the handler early
+            var testRunner = this.getTestRunner();
+            testRunner.on('storechange', function handleStoreChange() {
+                self.shouldClearStorage = true;
+            });
+        },
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -55,6 +69,7 @@ define([
                 defaultTheme: '',
                 selectedTheme: ''
             };
+            var allMenuEntries = [];
 
             /**
              * Load the selected theme
@@ -68,6 +83,9 @@ define([
                     _.defer(function(){
                         $qtiItem.trigger('themechange', [state.selectedTheme]);
                     });
+                }
+                if (self.storage) {
+                    self.storage.setItem('itemThemeId', themeId);
                 }
             }
 
@@ -127,6 +145,7 @@ define([
                         this.turnOn();
                     });
                 }
+                allMenuEntries.push(themeEntry);
             });
 
             if (testConfig.allowShortcuts) {
@@ -161,6 +180,44 @@ define([
                     if (self.getState('enabled') !== false) {
                         self.menuButton.toggleMenu();
                     }
+                });
+
+            return storeFactory('itemThemeSwitcher-' + testRunner.getConfig().serviceCallId)
+                .then(function (itemThemesStore) {
+                    if (self.shouldClearStorage) {
+                        return itemThemesStore.clear().then(function () {
+                            return itemThemesStore;
+                        });
+                    }
+                    return itemThemesStore;
+                }).then(function (itemThemesStore) {
+                    testRunner
+                        .after('renderitem enableitem', function () {
+                            self.storage = itemThemesStore;
+
+                            self.storage.getItem('itemThemeId')
+                                .then(function (itemThemeId) {
+                                    if (itemThemeId && state.selectedTheme !== itemThemeId) {
+                                        changeTheme(itemThemeId);
+
+                                        allMenuEntries.forEach(function (menuEntry) {
+                                            if (menuEntry.getId() === itemThemeId) {
+                                                menuEntry.turnOn();
+                                            } else {
+                                                menuEntry.turnOff();
+                                            }
+                                        });
+                                    }
+                                });
+                        })
+
+                        .before('finish', function() {
+                            return new Promise(function(resolve) {
+                                self.storage.removeStore()
+                                    .then(resolve)
+                                    .catch(resolve);
+                            });
+                        });
                 });
         },
 
