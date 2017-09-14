@@ -40,6 +40,12 @@ class ExtendedStateService extends ConfigurableService
 
     private static $cache = null;
     private static $deliveryExecutions = null;
+    private $storageService;
+
+    public function __construct($options = array()) {
+        parent::__construct($options);
+        $this->storageService = \tao_models_classes_service_StateStorage::singleton();
+    }
 
     /**
      * @param string $testSessionId
@@ -93,11 +99,6 @@ class ExtendedStateService extends ConfigurableService
     {
 
         self::$cache[$testSessionId] = $extra;
-
-        $storageService = \tao_models_classes_service_StateStorage::singleton();
-        $userUri = $this->getSessionUserUri($testSessionId);
-
-        $storageService->set($userUri, self::getStorageKeyFromTestSessionId($testSessionId), json_encode($extra));
     }
 
     /**
@@ -329,5 +330,14 @@ class ExtendedStateService extends ConfigurableService
         }
         
         $this->saveExtra($testSessionId, $extra);
+    }
+    
+    public function __destruct()
+    {
+        foreach (self::$cache as $key => $data) {
+            $userUri = $this->getSessionUserUri($key);
+            $this->storageService->set($userUri, self::getStorageKeyFromTestSessionId($key), json_encode($data));
+        }
+        
     }
 }
