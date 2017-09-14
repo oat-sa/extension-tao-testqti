@@ -71,8 +71,6 @@ define([
             //guess the new testContext data
             newContext = {
                 itemIdentifier : newItem.id,
-                itemUri        : newItem.definition,
-                itemDefinition : newItem.definition,
                 itemPosition   : position,
 
                 //FIXME numberPresented can be late
