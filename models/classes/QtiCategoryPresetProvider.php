@@ -165,7 +165,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow the test-taker to use a movable magnifier tool.'),
                     'order'         => 700,
                     'pluginId'      => 'magnifier'
-                ]),                
+                ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'zoom',
                     'label'         => __('Zoom'),
@@ -173,7 +173,15 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allows Test-taker to zoom in and out the item content.'),
                     'order'         => 700,
                     'pluginId'      => 'zoom'
-                ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'textToSpeech',
+                    'label'         => __('Text to Speech'),
+                    'qtiCategory'   => 'x-tao-option-textToSpeech',
+                    'description'   => __('Enable text-to-speech via Texthelp'),
+                    'order'         => 800,
+                    'pluginId'      => 'textToSpeech'
+                ]),
             ]
         );
     }
