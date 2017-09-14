@@ -1590,5 +1590,25 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('14.1.5', '15.7.5');
+
+        if ($this->isVersion('15.7.5')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(
+                TestPlugin::fromArray(
+                    [
+                        'id' => 'collapser',
+                        'name' => 'Collapser',
+                        'module' => 'taoQtiTest/runner/plugins/content/responsiveness/collapser',
+                        'description' => 'Reduce the size of the tools when the available space is not enough',
+                        'category' => 'content',
+                        'active' => true,
+                        'tags' => []
+                    ]
+                )
+            );
+
+            $this->setVersion('15.7.6');
+        }
     }
 }

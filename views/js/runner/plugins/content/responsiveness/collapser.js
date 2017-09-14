@@ -74,10 +74,18 @@ define([
          * ];
          * @type {String[]}
          */
-        collaspeOrder: []
+        collapseOrder: []
     };
 
     var $window = $(window);
+
+    /**
+     * .after('renderitem loaditem' is triggered multiple times which leads to
+     * multiple, eventually conflicting calls of toggleCollapsibles()
+     * This switch avoids this behavior
+     * @type {boolean}
+     */
+    var renderingComplete = false;
 
     /**
      * Creates the responsiveness collapser plugin.
@@ -265,10 +273,15 @@ define([
 
             testRunner
                 .after('renderitem loaditem', function() {
+                    if(renderingComplete) {
+                        return;
+                    }
                     previousAvailableWidth = Infinity;
 
                     buildCollapsiblesList();
+
                     testRunner.trigger('collapseTools');
+                    renderingComplete = true;
                 })
                 .on('collapseTools' + ns, function() {
                     toggleCollapsibles();
