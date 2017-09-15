@@ -700,7 +700,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->saveItemResponses();
 
-            $result = $this->runnerService->timeout($serviceContext, $scope, $ref);
+            $result = $this->runnerService->timeout($serviceContext, $scope, $ref, true);
 
             $response = [
                 'success' => $result,

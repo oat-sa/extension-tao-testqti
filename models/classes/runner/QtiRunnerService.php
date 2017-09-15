@@ -1033,7 +1033,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return boolean
      * @throws \common_Exception
      */
-    public function timeout(RunnerServiceContext $context, $scope, $ref)
+    public function timeout(RunnerServiceContext $context, $scope, $ref, $force = false)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
@@ -1041,6 +1041,24 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             try {
                 $session->closeTimer($ref, $scope);
                 $session->checkTimeLimits(false, true, false);
+
+                if($force){
+                    switch ($scope) {
+                        case 'assessmentTest' :
+                            $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW));
+                            break;
+                        case 'testPart':
+                            $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW));
+                            break;
+                        case 'assessmentSection':
+                            $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW));
+                            break;
+                        case 'assessmentItemRef':
+                            $this->onTimeout($contex, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW));
+                            break;
+                    }
+                    $this->onTimeout($context, $e);
+                }
             } catch (AssessmentTestSessionException $e) {
                 $this->onTimeout($context, $e);
             }
