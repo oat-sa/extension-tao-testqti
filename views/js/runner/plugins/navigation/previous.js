@@ -30,8 +30,9 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/helpers/navigation',
+    'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, navigationHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, navigationHelper, mapHelper, buttonTpl){
     'use strict';
 
     /**
@@ -58,14 +59,29 @@ define([
             var canDoPrevious = function canDoPrevious() {
                 var testMap = testRunner.getTestMap();
                 var context = testRunner.getTestContext();
-                var canMove = !navigationHelper.isFirst(testMap, context.itemIdentifier);
+                var previousSection;
 
-                //when entering an adaptive section,
-                //you can't leave the section from the beginning
-                if (canMove && context.isCatAdaptive) {
-                    canMove = !navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section');
+                //first item of the test
+                if (navigationHelper.isFirst(testMap, context.itemIdentifier)) {
+                    return false;
                 }
-                return canMove && context.isLinear === false && context.canMoveBackward === true;
+
+                //first item of a section
+                if (navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section')) {
+
+                    //when entering an adaptive section,
+                    //you can't leave the section from the beginning
+                    if(context.isCatAdaptive){
+                        return false;
+                    }
+
+                    //if the previous section is adaptive we can't go back
+                    previousSection = mapHelper.getItemSection(testMap, context.itemPosition - 1);
+                    if(previousSection.isCatAdaptive){
+                        return false;
+                    }
+                }
+                return context.isLinear === false && context.canMoveBackward === true;
             };
 
             /**

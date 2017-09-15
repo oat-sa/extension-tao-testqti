@@ -32,6 +32,8 @@ use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\CatUtils;
+
 
 /**
  * Class QtiRunnerMap
@@ -258,6 +260,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
                         $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
                         $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                        $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
                     }
                     
