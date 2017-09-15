@@ -547,11 +547,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
-     * @param RunnerServiceContext $context
+     * @param CompilationContext $context
      * @param string $itemRef
      * @return string
      */
-    public function getItemHref(RunnerServiceContext $context, $itemRef)
+    public function getItemHref(CompilationContext $context, $itemRef)
     {
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
         return $mapService->getItemHref($context, $itemRef);
@@ -559,14 +559,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     
     /**
      * Gets definition data of a particular item
-     * @param RunnerServiceContext $context
+     * @param CompilationContext $context
      * @param $itemRef
      * @return mixed
      * @throws \common_Exception
      */
-    public function getItemData(RunnerServiceContext $context, $itemRef)
+    public function getItemData(CompilationContext $context, $itemRef)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
+        if ($context instanceof QtiCompilationContext) {
 
             return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
 
@@ -583,25 +583,25 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Gets the state identifier for a particular item
-     * @param QtiRunnerServiceContext $context
+     * @param QtiCompilationContext $context
      * @param string $itemRef The item identifier
      * @return string The state identifier
      */
-    protected function getStateId(QtiRunnerServiceContext $context, $itemRef)
+    protected function getStateId(CompilationContext $context, $itemRef)
     {
         return  $context->getTestExecutionUri() . $itemRef;
     }
 
     /**
      * Gets the state of a particular item
-     * @param RunnerServiceContext $context
+     * @param CompilationContext $context
      * @param $itemRef
      * @return array
      * @throws \common_Exception
      */
-    public function getItemState(RunnerServiceContext $context, $itemRef)
+    public function getItemState(CompilationContext $context, $itemRef)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
+        if ($context instanceof QtiCompilationContext) {
             $serviceService = $this->getServiceManager()->get('tao/stateStorage');
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
             $stateId = $this->getStateId($context, $itemRef);
@@ -1225,15 +1225,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Get the base url to the item public directory
-     * @param RunnerServiceContext $context
+     * @param CompilationContext $context
      * @param $itemRef
      * @return string
      * @throws \common_Exception
      * @throws \common_exception_Error
      * @throws \common_exception_InvalidArgumentType
      */
-    public function getItemPublicUrl(RunnerServiceContext $context, $itemRef){
-        if ($context instanceof QtiRunnerServiceContext) {
+    public function getItemPublicUrl(CompilationContext $context, $itemRef){
+        if ($context instanceof QtiCompilationContext) {
             $directoryIds = explode('|', $itemRef);
 
             $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();

@@ -88,16 +88,25 @@ interface RunnerService
      * @return mixed
      * @throws \common_Exception
      */
-    public function getItemData(RunnerServiceContext $context, $itemRef);
+    public function getItemData(CompilationContext $context, $itemRef);
+    
+    /**
+     * Gets the public URL of a particular item
+     * @param CompilationContext $context
+     * @param $itemRef
+     * @return mixed
+     * @throws \common_Exception
+     */
+    public function getItemPublicUrl(CompilationContext $context, $itemRef);
 
     /**
      * Gets the state of a particular item
-     * @param RunnerServiceContext $context
+     * @param CompilationContext $context
      * @param $itemRef
      * @return array
      * @throws \common_Exception
      */
-    public function getItemState(RunnerServiceContext $context, $itemRef);
+    public function getItemState(CompilationContext $context, $itemRef);
 
     /**
      * Sets the state of a particular item

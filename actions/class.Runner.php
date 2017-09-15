@@ -271,6 +271,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $this->runnerService->persist($serviceContext);
+            $this->runnerService->startTimer($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -360,10 +361,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         $itemIdentifier = $this->getRequestParameter('itemDefinition');
+        $testCompilation = $this->getRequestParameter('testCompilation');
+        $testExecution = $this->getSessionId();
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
 
             //load item data
             $response = $this->getItemData($itemIdentifier);
@@ -371,8 +373,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if (is_array($response)) {
                 $response['success'] = true;
             }
-
-            $this->runnerService->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -426,7 +426,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected function getItemData($itemIdentifier)
     {
-        $serviceContext = $this->getServiceContext();
+        $testCompilation = $this->getRequestParameter('testCompilation');
+        $testExecution = $this->getSessionId();
+        
+        $serviceContext = new oat\taoQtiTest\models\runner\QtiCompilationContext($testCompilation, $testExecution);
         $itemRef        = $this->runnerService->getItemHref($serviceContext, $itemIdentifier);
         $itemData       = $this->runnerService->getItemData($serviceContext, $itemRef);
         $baseUrl        = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
@@ -614,12 +617,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
 
-            if($start == true){
-
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->runnerService->startTimer($serviceContext);
+            if ($start == true) {
+                \common_Logger::w('EXPLICIT START TIMER CALL');
             }
+            
+            $this->runnerService->startTimer($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -662,12 +664,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
 
-            if($start == true){
-
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->runnerService->startTimer($serviceContext);
+            if ($start == true) {
+                \common_Logger::w('EXPLICIT START TIMER CALL');
             }
+            
+            $this->runnerService->startTimer($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
@@ -717,12 +718,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
 
-            if($start == true){
-
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->runnerService->startTimer($serviceContext);
+            if ($start == true) {
+                \common_Logger::w('EXPLICIT START TIMER CALL');
             }
+            
+            $this->runnerService->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
