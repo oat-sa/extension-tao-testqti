@@ -34,6 +34,7 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
@@ -842,11 +843,26 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return true;
         }
 
-        /** @var QtiRunnerService $resultStorage */
-        $resultStorage = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        /** @var QtiRunnerService $runnerService */
+        $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
         foreach ($resultVariables as $resultVariable) {
             try {
-                $resultStorage->storeTraceVariable($this, null, $resultVariable->getId(), $resultVariable->getValue());
+                $sectionId = $this
+                    ->getTestSession()
+                    ->getRoute()
+                    ->current()
+                    ->getAssessmentSection()
+                    ->getIdentifier();
+                $runnerService->storeOutcomeVariable(
+                    $this,
+                    null,
+                    $sectionId . '-' . $resultVariable->getId(),
+                    $resultVariable->getValue()
+                );
+                \common_Logger::i('Cat service results stored as outcome variable. ' .
+                    $sectionId . '-' . $resultVariable->getId() . ' : ' . $resultVariable->getValue()
+                );
+
             } catch (\common_Exception $e) {
                 \common_Logger::e($e->getMessage());
                 return false;
