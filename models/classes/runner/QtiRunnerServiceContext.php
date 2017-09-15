@@ -859,15 +859,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     $sectionId . '-' . $resultVariable->getId(),
                     $resultVariable->getValue()
                 );
-                \common_Logger::i('Cat service results stored as outcome variable. ' .
-                    $sectionId . '-' . $resultVariable->getId() . ' : ' . $resultVariable->getValue()
-                );
-
             } catch (\common_Exception $e) {
                 \common_Logger::e($e->getMessage());
                 return false;
             }
         }
+        \common_Logger::i('Cat service results stored as outcome variable.');
 
         return true;
     }
