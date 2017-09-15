@@ -94,18 +94,14 @@ define([
                             proceedContent : __('The connection seems to be back, please proceed')
                         })
                         .on('proceed', function(){
-                            testRunner
-                                .trigger('pause', {
-                                    reasons : {
-                                        category : __('technical'),
-                                        subCategory : __('network')
-                                    }
-                                });
+                            var testContext = testRunner.getTestContext();
+
+                            testRunner.loadItem(testContext.itemIdentifier);
                         })
                         .on('render', function(){
                             proxy
                                 .off('reconnect.waiting')
-                                .on('reconnect.waiting', function(){
+                                .after('reconnect.waiting', function(){
                                     waiting = false;
                                     dialog.endWait();
                                 });
