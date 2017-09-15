@@ -83,7 +83,7 @@ define([
                     }
                 }
 
-                if (namespaceHelper.isFirstOf(testMap, context.itemIdentifier, 'part')) {
+                if (navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'part')) {
 
                     //if the previous part is linear, we don't enter it too
                     previousPart = mapHelper.getItemPart(testMap, context.itemPosition - 1);
