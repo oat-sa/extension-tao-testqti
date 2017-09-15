@@ -1466,6 +1466,56 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * Stores outcome variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param $itemUri
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeOutcomeVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            if (!is_string($variableValue) && !is_numeric($variableValue)) {
+                $variableValue = json_encode($variableValue);
+            }
+
+            $metaVariable = new \taoResultServer_models_classes_OutcomeVariable();
+            $metaVariable->setIdentifier($variableIdentifier);
+            $metaVariable->setBaseType('string');
+            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+            $metaVariable->setValue($variableValue);
+
+            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $testUri = $context->getTestDefinitionUri();
+            $sessionId = $context->getTestSession()->getSessionId();
+
+            if (!is_null($itemUri)) {
+                $currentItem = $context->getCurrentAssessmentItemRef();
+                $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+                $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
+                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+            } else {
+                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+            }
+
+            return true;
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'storeOutcomeVariable',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
+    }
+
+    /**
      * Starts the timer for the current item in the TestSession
      *
      * @param RunnerServiceContext $context
