@@ -38,7 +38,9 @@ define([
      * @param {jQuery} [options.$contentArea = '$(body)']
      * @param {Boolean} [options.enableClickToSpeak = false]
      * @param {Array} [options.ignoreEls = ['header', '.left-bar', '.right-bar', '.modal', 'footer', '.action-bar', '.sts-scope', '.media-container']]
+     * @param {String} options.itemId
      * @param {String} [options.toolbarUrl = '//taotoolbar.speechstream.net/tao/configQA.js']
+     * @param {String} options.tenantId
      * @param {Object} [config]
      * @returns {ui/component}
      */
@@ -129,6 +131,10 @@ define([
              */
             _init: function _init() {
                 var self = this;
+                var tss = this._get('texthelpSpeechStream');
+
+                tss.g_strBookId = options.tenantId;
+                tss.g_strPageId = options.itemId;
 
                 // Initialize texthelp
                 this._exec('barDynamicStart');
@@ -149,10 +155,10 @@ define([
             /**
              * Re-initialize texthelp
              */
-            updateTexthelpCache: function updateTexthelpCache(deliveryId, itemId) {
+            updateTexthelpCache: function updateTexthelpCache(tenantId, itemId) {
                 var tss = this._get('texthelpSpeechStream');
 
-                tss.g_strBookId = deliveryId;
+                tss.g_strBookId = tenantId;
                 tss.g_strPageId = itemId;
 
                 this._exec('tagSentences', options.$contentArea.selector);
