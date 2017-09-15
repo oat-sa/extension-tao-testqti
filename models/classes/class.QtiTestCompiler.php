@@ -64,7 +64,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @var array
      */
-    private static $publicMimeTypes = array('text/css',
+    protected static $publicMimeTypes = array('text/css',
                                                'image/png', 
                                                'image/jpeg', 
                                                'image/gif', 
@@ -90,42 +90,42 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * 
      * @var tao_models_classes_service_StorageDirectory
      */
-    private $publicDirectory = null;
+    protected $publicDirectory = null;
     
     /**
      * The private compilation directory.
      * 
      * @var tao_models_classes_service_StorageDirectory
      */
-    private $privateDirectory = null;
+    protected $privateDirectory = null;
     
     /**
      * The rendering engine that will be used to create rubric block templates.
      * 
      * @var XhtmlRenderingEngine
      */
-    private $renderingEngine = null;
+    protected $renderingEngine = null;
     
     /**
      * The Post renderer to be used in template oriented rendering.
      * 
      * @var MarkupPostRenderer
      */
-    private $markupPostRenderer = null;
+    protected $markupPostRenderer = null;
     
     /**
      * The CSS Scoper will scope CSS files to their related rubric block.
      * 
      * @var CssScoper
      */
-    private $cssScoper = null;
+    protected $cssScoper = null;
     
     /**
      * An additional path to be used when test definitions are located in sub-directories.
      *
      * @var string
      */
-    private $extraPath;
+    protected $extraPath;
     
     /**
      * Get the public compilation directory.
@@ -885,8 +885,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $compiledDocDir->write(TAOQTITEST_COMPILED_INDEX, $index->serialize());
         }
     }
-    
-    private function getServiceLocator()
+
+    protected function getServiceLocator()
     {
         return ServiceManager::getServiceManager();
     }
