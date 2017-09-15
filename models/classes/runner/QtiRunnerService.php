@@ -1054,10 +1054,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                             $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW));
                             break;
                         case 'assessmentItemRef':
-                            $this->onTimeout($contex, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW));
+                            $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW));
                             break;
                     }
-                    $this->onTimeout($context, $e);
                 }
             } catch (AssessmentTestSessionException $e) {
                 $this->onTimeout($context, $e);
