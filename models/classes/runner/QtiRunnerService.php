@@ -1379,27 +1379,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function buildTimeConstraints(RunnerServiceContext $context)
     {
-        $constraints = array();
+        $constraints = [];
 
-        /* @var TestSession $session */
         $session = $context->getTestSession();
-
-        foreach ($session->getRegularTimeConstraints() as $tc) {
-            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
-
-            $timeRemaining = $tc->getMaximumRemainingTime();
-            if ($timeRemaining !== false) {
-                $source = $tc->getSource();
-                $identifier = $source->getIdentifier();
-                $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-                $constraints[] = array(
-                    'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
-                    'source' => $identifier,
-                    'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
-                    'allowLateSubmission' => $tc->allowLateSubmission(),
-                    'qtiClassName' => $source->getQtiClassName()
-                );
+        foreach ($session->getRegularTimeConstraints() as $constraint) {
+            if ($constraint->getMaximumRemainingTime() != false) {
+                $constraints[] = $constraint;
             }
         }
 
