@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
@@ -104,8 +105,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     private $catSession = [];
     
-    private $lastCatItemId = null;
-
     /**
      * QtiRunnerServiceContext constructor.
      * 
@@ -591,6 +590,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
         try {
             $selection = $catSession->getTestMap(array_values($lastOutput));
+            if (!$this->saveAdaptiveResults($catSession)) {
+                \common_Logger::w('Problem to save CatService results.');
+            }
             $isShadowItem = false;
         } catch (CatEngineException $e) {
             \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
@@ -821,5 +823,36 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             return $this->getTestSession()->canMoveBackward();
         }
+    }
+
+    /**
+     * Save the Cat service result.
+     * If there is no result, skip
+     * Otherwise tergister the values as Test outcome variables
+     *
+     * @param CatSession $catSession
+     * @return bool
+     */
+    protected function saveAdaptiveResults(CatSession $catSession)
+    {
+        /** @var ResultVariable[] $resultVariables */
+        $resultVariables = $catSession->getResults();
+        if (empty($resultVariables)) {
+            \common_Logger::t('No Cat results to store.');
+            return true;
+        }
+
+        /** @var QtiRunnerService $resultStorage */
+        $resultStorage = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        foreach ($resultVariables as $resultVariable) {
+            try {
+                $resultStorage->storeTraceVariable($this, null, $resultVariable->getId(), $resultVariable->getValue());
+            } catch (\common_Exception $e) {
+                \common_Logger::e($e->getMessage());
+                return false;
+            }
+        }
+
+        return true;
     }
 }
