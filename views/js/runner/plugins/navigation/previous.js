@@ -60,6 +60,7 @@ define([
                 var testMap = testRunner.getTestMap();
                 var context = testRunner.getTestContext();
                 var previousSection;
+                var previousPart;
 
                 //first item of the test
                 if (navigationHelper.isFirst(testMap, context.itemIdentifier)) {
@@ -80,6 +81,16 @@ define([
                     if(previousSection.isCatAdaptive || previousSection.timeConstraint){
                         return false;
                     }
+                }
+
+                if (namespaceHelper.isFirstOf(testMap, context.itemIdentifier, 'part')) {
+
+                    //if the previous part is linear, we don't enter it too
+                    previousPart = mapHelper.getItemPart(testMap, context.itemPosition - 1);
+                    if(previousPart.isLinear){
+                        return false;
+                    }
+
                 }
                 return context.isLinear === false && context.canMoveBackward === true;
             };
