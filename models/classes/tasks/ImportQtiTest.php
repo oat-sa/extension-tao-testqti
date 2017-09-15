@@ -26,6 +26,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
 use oat\oatbox\task\Task;
 use oat\tao\model\import\ImportersService;
+use oat\tao\model\TaoOntology;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 /**
  * Class ImportQtiTest
@@ -107,7 +108,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $class = new \core_kernel_classes_Class($taskParams[self::PARAM_CLASS_URI]);
         }
         if ($class === null || !$class->exists()) {
-            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+            $class = new \core_kernel_classes_Class(TaoOntology::TEST_CLASS);
         }
         return $class;
     }

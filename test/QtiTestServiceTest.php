@@ -19,6 +19,7 @@
  */
 namespace oat\taoQtiTest\test;
 
+use oat\tao\model\TaoOntology;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
@@ -69,7 +70,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
         $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
         
-        $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TAO_TEST_CLASS)));
+        $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS)));
         return $qtiTest;
     }
 

@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test;
 
+use oat\tao\model\TaoOntology;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use taoQtiTest_models_classes_import_TestImport;
 use \common_report_Report;
@@ -147,7 +148,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
      */
     public function testImportFormSubmit($testImport, $form)
     {
-        $class = new core_kernel_classes_Class(TAO_TEST_CLASS);
+        $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS);
         
         $report = $testImport->import($class, $form);
         $this->assertInstanceOf('common_report_Report', $report);
