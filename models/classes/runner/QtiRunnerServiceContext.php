@@ -592,7 +592,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         try {
             $selection = $catSession->getTestMap(array_values($lastOutput));
             if (!$this->saveAdaptiveResults($catSession)) {
-                \common_Logger::w('Problem to save CatService results.');
+                \common_Logger::w('Unable to save CatService results.');
             }
             $isShadowItem = false;
         } catch (CatEngineException $e) {
@@ -860,7 +860,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     $resultVariable->getValue()
                 );
             } catch (\common_Exception $e) {
-                \common_Logger::e($e->getMessage());
                 return false;
             }
         }
