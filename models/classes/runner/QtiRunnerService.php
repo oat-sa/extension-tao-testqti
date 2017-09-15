@@ -1043,6 +1043,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $session->checkTimeLimits(false, true, false);
 
                 if($force){
+                    \common_Logger::w('Forced timeout for ' . $scope . ' ' . $ref);
                     switch ($scope) {
                         case 'assessmentTest' :
                             $this->onTimeout($context, new AssessmentTestSessionException('timeout',  AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW));
