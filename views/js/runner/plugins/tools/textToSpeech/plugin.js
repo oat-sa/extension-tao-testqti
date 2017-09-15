@@ -53,12 +53,7 @@ define([
          */
         init: function init() {
             var self = this;
-            var itemId;
-            var tenantId;
             var testRunner = this.getTestRunner();
-
-            itemId = null;
-            tenantId = 'tao';
 
             this.ttsButton = this.getAreaBroker().getToolbox().createEntry({
                 control: 'tts',
@@ -70,9 +65,7 @@ define([
                 var stacker = stackerFactory('test-runner');
 
                 self.tts = ttsFactory({
-                    $contentArea: testRunner.getAreaBroker().getContentArea(),
-                    itemId: itemId,
-                    tenantId: tenantId
+                    $contentArea: testRunner.getAreaBroker().getContentArea()
                 })
                 .render(self.ttsButton.getElement());
 
@@ -107,14 +100,17 @@ define([
             })
             .on('renderitem', function () {
                 var context = testRunner.getTestContext();
+                var config = testRunner.getConfig();
 
                 if (context.options.textToSpeech) {
                     self.tts.enable();
                     self.ttsButton.enable();
                     self.ttsButton.show();
 
-                    itemId = this.itemRunner._item.attributes.identifier;
-                    self.tts.updateTexthelpCache(tenantId, itemId);
+                    self.tts.updateTexthelpCache(
+                        config.serviceCallId,
+                        this.itemRunner._item.attributes.identifier
+                    );
                 }
             })
             .on('disabletools unloaditem', function () {
