@@ -75,7 +75,7 @@ class SynchronisationService extends ConfigurableService
 
         $this->getRunnerService()->persist($serviceContext);
 
-        return json_encode($response, JSON_PRETTY_PRINT);
+        return $response;
     }
 
     /**
