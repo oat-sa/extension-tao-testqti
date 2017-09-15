@@ -34,7 +34,7 @@ class SynchronisationService extends ConfigurableService
      *
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
-     * @return string
+     * @return array
      * @throws \common_exception_InconsistentData
      */
     public function process($data, $serviceContext)
@@ -48,12 +48,10 @@ class SynchronisationService extends ConfigurableService
             $actions[] = $this->resolve($entry);
         }
 
-        //$actions = $this->initTimers($actions);
-
         $response = [];
 
         /** @var TestRunnerAction $action */
-        foreach($actions as $action) {
+        foreach ($actions as $action) {
 
             try {
                 $action->setServiceContext($serviceContext);
@@ -131,47 +129,6 @@ class SynchronisationService extends ConfigurableService
         }
 
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
-    }
-
-    /**
-     * Set the action start timers:
-     *
-     * $start = $now - $itemDuration
-     * Start by the last action to have a consistent QtiTimeLine
-     * Add 1 ms to start to avoid collision
-     *
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array $actions)
-    {
-        $last = microtime(true);
-        \common_Logger::i(str_pad('$now', 15) . ' : ' . (new \DateTime())->setTimestamp($last)->format('U = i:s'));
-
-        /** @var TestRunnerAction $action */
-        foreach ($actions as $action) {
-
-            if ($action->hasRequestParameter('itemDuration')) {
-                $kickstart =  (new \DateTime())
-                    ->setTimestamp($last)
-                    ->modify('-' . floor($action->getRequestParameter('itemDuration')) . ' second')
-                    ;
-
-                \common_Logger::i(str_pad('$action', 15) . ' : ' .
-                    (new \DateTime())->setTimestamp($action->getTimestamp()/1000)->format('U = Y-m-d H:i:s')
-                );
-                \common_Logger::i(str_pad('$itemDuration', 15) . ' : ' .
-                    (new \DateTime())->setTimestamp($action->getRequestParameter('itemDuration'))->format('U = i:s')
-                );
-
-                \common_Logger::i(str_pad('$kickstart', 15) . ' : ' . $kickstart->format('U = Y-m-d H:i:s'));
-
-                $action->setStart($kickstart->format('U'));
-
-                $start = $last - $action->getRequestParameter('itemDuration');
-                $last = $start;
-            }
-
-        }
     }
 
     /**

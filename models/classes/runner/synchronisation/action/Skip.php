@@ -53,7 +53,7 @@ class Skip extends TestRunnerAction
 
         try {
             $serviceContext = $this->getServiceContext();
-            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getStart());
+            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getTime());
 
             $this->setOffline();
 
@@ -70,7 +70,7 @@ class Skip extends TestRunnerAction
             if ($start == true) {
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);

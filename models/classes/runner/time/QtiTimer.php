@@ -131,6 +131,9 @@ class QtiTimer implements Timer, ExtraTime
             $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
             $this->timeLine->add($point);
             $range[] = $point;
+
+                (new \DateTime())->setTimestamp($timestamp - (1 / TimePoint::PRECISION))->format('U = Y-m-d H:i:s')
+            );
         }
         $this->checkTimestampCoherence($range, $timestamp);
 
@@ -219,7 +222,7 @@ class QtiTimer implements Timer, ExtraTime
      * @return Timer
      * @throws TimeException
      */
-    public function adjust($tags, $duration, $end = false)
+    public function adjust($tags, $duration)
     {
         // check the provided arguments
         if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
@@ -236,7 +239,7 @@ class QtiTimer implements Timer, ExtraTime
             throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
         }
 
-        $serverDuration = $itemTimeLine->compute(null, TimePoint::TARGET_ALL, 0, $end);
+        $serverDuration = $itemTimeLine->compute();
 
         // take care of existing client range
         $clientTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_CLIENT);
@@ -245,7 +248,6 @@ class QtiTimer implements Timer, ExtraTime
         if ($clientRangeLength) {
             $clientDuration = 0;
             try {
-                \common_Logger::w('$clientDuration');
                 $clientDuration = $clientTimeLine->compute();
             } catch(TimeException $e) {
                 \common_Logger::t('Handled client range error');
@@ -268,9 +270,6 @@ class QtiTimer implements Timer, ExtraTime
                 \common_Logger::w("Unable to replace client duration in timer: ${clientDuration} to ${duration}");
             }
         }
-
-        \common_Logger::i(str_pad('$serverDuration', 15) . ' : ' . (new \DateTime())->setTimestamp($serverDuration)->format('U = i:s'));
-        \common_Logger::i(str_pad('$duration', 15) . ' : ' . (new \DateTime())->setTimestamp($duration)->format('U = i:s'));
 
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
@@ -362,7 +361,14 @@ class QtiTimer implements Timer, ExtraTime
         if (!$this->storage) {
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
-        
+
+        /** @var TimePoint $point */
+        foreach ($this->timeLine->getPoints() as $point) {
+            if ($point->getTarget() == TimePoint::TARGET_CLIENT) {
+                continue;
+            }
+        }
+
         $this->storage->store(json_encode([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
@@ -553,11 +559,7 @@ class QtiTimer implements Timer, ExtraTime
      */
     protected function checkTimestampCoherence($points, $timestamp)
     {
-        \common_Logger::i(str_pad('$hour', 15) . ' : ' . (new \DateTime())->setTimestamp($timestamp)->format('U = Y-m-d H:i:s'));
-
         foreach($points as $point) {
-            \common_Logger::i(str_pad('**$point', 15) . ' : ' . (new \DateTime())->setTimestamp($point->getTimestamp())->format('U = Y-m-d H:i:s'));
-
             if ($point->getTimestamp() > $timestamp) {
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }

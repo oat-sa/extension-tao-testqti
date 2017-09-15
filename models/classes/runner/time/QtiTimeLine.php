@@ -239,7 +239,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
      * @return float Returns the total computed duration
      * @throws TimeException
      */
-    public function compute($tag = null, $target = TimePoint::TARGET_ALL, $lastTimestamp = 0, $end = false)
+    public function compute($tag = null, $target = TimePoint::TARGET_ALL, $lastTimestamp = 0)
     {
         // default value for the last timestamp
         if (!$lastTimestamp) {
@@ -274,15 +274,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             // possible errors are (but should be avoided by the `fixRange()` method):
             // - unclosed range: should be autoclosed by fixRange
             // - unsorted points or nested/blended ranges: should be corrected by fixRange
-            $duration += $this->computeRange($range, $end);
-            if ($end) {
-                \common_Logger::i(str_pad('+++duration', 15) . ' : ' . (new \DateTime())->setTimestamp($this->computeRange($range))->format('U = i:s'));
-            }
-
-        }
-
-        if ($end) {
-            \common_Logger::i(str_pad('$$$duration', 15) . ' : ' . (new \DateTime())->setTimestamp($duration)->format('U = i:s'));
+            $duration += $this->computeRange($range);
         }
 
         return $duration;
@@ -296,7 +288,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
      * @throws InconsistentRangeException
      * @throws MalformedRangeException
      */
-    protected function computeRange($range, $isend = false)
+    protected function computeRange($range)
     {
         // a range must be built from pairs of TimePoint
         if (count($range) % 2) {
@@ -327,10 +319,6 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
 
             // when we have got START and END TimePoint, compute the duration
             if ($start && $end) {
-                if ($isend) {
-                    \common_Logger::i(str_pad('+duration-start', 15) . ' : ' . (new \DateTime())->setTimestamp($start->getTimestamp())->format('U = i:s'));
-                    \common_Logger::i(str_pad('+duration-end', 15) . ' : ' . (new \DateTime())->setTimestamp($end->getTimestamp())->format('U = i:s'));
-                }
                 $duration += $this->getRangeDuration($start, $end);
                 $start = null;
                 $end = null;
@@ -430,7 +418,6 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             throw new InconsistentRangeException('A time range must be defined by two TimePoint with the same target');
         }
 
-        \common_Logger::i(str_pad('$end' , 15) . ' : ' . (new \DateTime())->setTimestamp($end->getTimestamp())->format('U = H:i:s'));
         // the two TimePoint must be correctly ordered
         $rangeDuration = $end->getTimestamp() - $start->getTimestamp();
 
