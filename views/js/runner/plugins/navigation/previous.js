@@ -75,9 +75,9 @@ define([
                         return false;
                     }
 
-                    //if the previous section is adaptive we can't go back
+                    //if the previous section is adaptive or a timed section
                     previousSection = mapHelper.getItemSection(testMap, context.itemPosition - 1);
-                    if(previousSection.isCatAdaptive){
+                    if(previousSection.isCatAdaptive || previousSection.timeConstraint){
                         return false;
                     }
                 }
