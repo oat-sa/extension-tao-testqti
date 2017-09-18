@@ -44,11 +44,11 @@ class RecompileHrefIndexes extends AbstractAction
             
             $extManager->getExtensionById('taoDeliveryRdf');
             
-            $compiledDeliveryClass = new \core_kernel_classes_Class(DeliveryAssemblyService::CLASS_ID);
+            $compiledDeliveryClass = new \core_kernel_classes_Class(DeliveryAssemblyService::CLASS_URI);
             $phpDocument = new PhpDocument();
             
             if ($compiledDeliveryClass->exists() === true) {
-                $compiledDirectoryProperty = new \core_kernel_classes_Property(DeliveryAssemblyService::DELIVERY_DIRECTORY);
+                $compiledDirectoryProperty = new \core_kernel_classes_Property(DeliveryAssemblyService::PROPERTY_DELIVERY_DIRECTORY);
                 
                 foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
                     $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);

@@ -64,7 +64,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
     const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
-    const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
+    const PROPERTY_INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
 
     const TEST_COMPILED_FILENAME = 'compact-test.php';
     const TEST_COMPILED_META_FILENAME = 'test-meta.php';
@@ -752,7 +752,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
+        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($file)) {
             return $this->getFileReferenceSerializer()->unserializeFile($file->getUri());
@@ -892,7 +892,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
+        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
         
         if (!is_null($dir)) {
             return $this->getFileReferenceSerializer()->unserialize($dir);
@@ -1025,7 +1025,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         }
 
         $directory = $this->getFileReferenceSerializer()->serialize($dir);
-        $test->editPropertyValues($this->getProperty(TestService::TEST_TESTCONTENT_PROP), $directory);
+        $test->editPropertyValues($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $directory);
         return $dir;
     }
 
@@ -1036,13 +1036,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function deleteContent(core_kernel_classes_Resource $test)
     {
-        $content = $test->getOnePropertyValue($this->getProperty(TestService::TEST_TESTCONTENT_PROP));
+        $content = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($content)) {
             $dir = $this->getFileReferenceSerializer()->unserialize($content);
             $dir->deleteSelf();
             $this->getFileReferenceSerializer()->cleanUp($content);
-            $test->removePropertyValue($this->getProperty(TestService::TEST_TESTCONTENT_PROP), $content);
+            $test->removePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $content);
         }
     }
 
