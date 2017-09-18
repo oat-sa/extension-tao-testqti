@@ -74,7 +74,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
 
         $type = current($qtiTest->getTypes());
-        $this->assertEquals(TaoOntology::TEST_CLASS, $type->getUri());
+        $this->assertEquals(TaoOntology::TEST_CLASS_URI, $type->getUri());
 
         return $qtiTest;
     }

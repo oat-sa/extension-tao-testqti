@@ -61,7 +61,7 @@ class taoQtiTest_models_classes_CrudQtiTestsService
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
-            $class = is_null($class) ? new core_kernel_classes_Class(TaoOntology::TEST_CLASS) : $class;
+            $class = is_null($class) ? new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI) : $class;
             $importer = taoQtiTest_models_classes_QtiTestService::singleton();
             if ($enableMetadataGuardians === false) {
                 $importer->disableMetadataGuardians();

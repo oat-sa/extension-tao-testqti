@@ -70,7 +70,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
         $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
         
-        $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS)));
+        $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI)));
         return $qtiTest;
     }
 

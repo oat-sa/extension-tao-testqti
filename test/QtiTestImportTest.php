@@ -148,7 +148,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
      */
     public function testImportFormSubmit($testImport, $form)
     {
-        $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS);
+        $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
         
         $report = $testImport->import($class, $form);
         $this->assertInstanceOf('common_report_Report', $report);

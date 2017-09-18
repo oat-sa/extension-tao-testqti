@@ -108,7 +108,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $class = new \core_kernel_classes_Class($taskParams[self::PARAM_CLASS_URI]);
         }
         if ($class === null || !$class->exists()) {
-            $class = new \core_kernel_classes_Class(TaoOntology::TEST_CLASS);
+            $class = new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
         }
         return $class;
     }

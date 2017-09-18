@@ -135,6 +135,6 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
      */
     protected function getDestinationClass()
     {
-        return $this->getClass(TaoOntology::TEST_CLASS);
+        return $this->getClass(TaoOntology::TEST_CLASS_URI);
     }
 }

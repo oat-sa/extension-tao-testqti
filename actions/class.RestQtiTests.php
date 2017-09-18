@@ -135,7 +135,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public function createClass()
     {
         try {
-            $class = $this->createSubClass(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS));
+            $class = $this->createSubClass(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI));
 
             $result = [
                 'message' => __('Class successfully created.'),
@@ -181,7 +181,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private function getTestClass()
     {
-        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS));
+        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI));
     }
 
     /**
