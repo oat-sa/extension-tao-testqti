@@ -79,9 +79,8 @@ define([
                 itemsCountMessage +=  __('and flagged %s of them', flaggedCount.toString());
             }
         } else if(scope === 'test') {
-            //collect statistics from current section and below
+            //collect statistics from below sections
             belowSections = getNextSections(map, jump.section);
-            stats = _.clone(mapHelper.getSectionStats(runner.getTestMap(), jump.section));
 
             _.forEach(belowSections, function (section) {
                 _.forEach(mapHelper.getSectionStats(runner.getTestMap(), section.id), function (sectionStats, statsKey){
@@ -91,10 +90,6 @@ define([
 
             unansweredCount = stats && (stats.questions - stats.answered);
             flaggedCount = stats && stats.flagged;
-
-            if (currentItemHelper.isAnswered(runner)) {
-                unansweredCount--;
-            }
 
             if (unansweredCount === 0) {
                 itemsCountMessage = __('You answered all %s question(s) in this test',
