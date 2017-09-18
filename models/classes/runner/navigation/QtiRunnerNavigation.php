@@ -29,6 +29,7 @@ use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentItemSession;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
+use qtism\runtime\tests\AssessmentTestSession;
 
 /**
  * Class QtiRunnerNavigation
@@ -97,7 +98,6 @@ class QtiRunnerNavigation
     public static function checkTimedSectionExit(RunnerServiceContext $context, $nextPosition)
     {
         $timerConfig = $context->getTestConfig()->getConfigValue('timer');
-        
         if (empty($timerConfig['keepUpToTimeout'])) {
             /* @var AssessmentTestSession $session */
             $session = $context->getTestSession();
@@ -105,25 +105,28 @@ class QtiRunnerNavigation
             $section = $session->getCurrentAssessmentSection();
             $limits = $section->getTimeLimits();
 
-            $isJumpOutOfSection = false;
-            if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
-                $nextSection = $route->getRouteItemAt($nextPosition);
+            // As we have only one identifier for the whole adaptive section it will consider a jump of section on the first item
+            if(!($context instanceof QtiRunnerServiceContext) || !$context->isAdaptive() ){
+                $isJumpOutOfSection = false;
+                if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+                    $nextSection = $route->getRouteItemAt($nextPosition);
 
-                $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
-            }
+                    $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+                }
 
-            if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
-                $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
+                if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
+                    $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
+                    foreach ($assessmentItemRefs as $assessmentItemRef) {
+                        $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-                foreach ($assessmentItemRefs as $assessmentItemRef) {
-                    $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
-
-                    if($itemSessions !== false){
-                        foreach ($itemSessions as $itemSession) {
-                            $itemSession->endItemSession();
+                        if($itemSessions !== false){
+                            foreach ($itemSessions as $itemSession) {
+                                $itemSession->endItemSession();
+                            }
                         }
                     }
                 }
+
             }
         }
     }

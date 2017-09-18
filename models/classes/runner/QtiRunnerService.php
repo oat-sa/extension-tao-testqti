@@ -1379,27 +1379,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function buildTimeConstraints(RunnerServiceContext $context)
     {
-        $constraints = array();
+        $constraints = [];
 
-        /* @var TestSession $session */
         $session = $context->getTestSession();
-
-        foreach ($session->getRegularTimeConstraints() as $tc) {
-            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
-
-            $timeRemaining = $tc->getMaximumRemainingTime();
-            if ($timeRemaining !== false) {
-                $source = $tc->getSource();
-                $identifier = $source->getIdentifier();
-                $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-                $constraints[] = array(
-                    'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
-                    'source' => $identifier,
-                    'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
-                    'allowLateSubmission' => $tc->allowLateSubmission(),
-                    'qtiClassName' => $source->getQtiClassName()
-                );
+        foreach ($session->getRegularTimeConstraints() as $constraint) {
+            if ($constraint->getMaximumRemainingTime() != false) {
+                $constraints[] = $constraint;
             }
         }
 
@@ -1473,6 +1458,56 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
                 'storeTraceVariable',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
+    }
+
+    /**
+     * Stores outcome variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param $itemUri
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeOutcomeVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            if (!is_string($variableValue) && !is_numeric($variableValue)) {
+                $variableValue = json_encode($variableValue);
+            }
+
+            $metaVariable = new \taoResultServer_models_classes_OutcomeVariable();
+            $metaVariable->setIdentifier($variableIdentifier);
+            $metaVariable->setBaseType('string');
+            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+            $metaVariable->setValue($variableValue);
+
+            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $testUri = $context->getTestDefinitionUri();
+            $sessionId = $context->getTestSession()->getSessionId();
+
+            if (!is_null($itemUri)) {
+                $currentItem = $context->getCurrentAssessmentItemRef();
+                $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+                $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
+                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+            } else {
+                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+            }
+
+            return true;
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'storeOutcomeVariable',
                 0,
                 'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
                 $context
