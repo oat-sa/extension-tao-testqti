@@ -24,32 +24,22 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
-use oat\taoOutcomeRds\model\RdsResultStorage;
-use oat\taoQtiItem\model\qti\datatype\BaseType;
-use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
-use qtism\runtime\common\OutcomeVariable;
-use qtism\runtime\common\State;
-use qtism\runtime\common\Variable;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
-use qtism\runtime\tests\AssessmentItemSession;
-use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
-use qtism\runtime\tests\SessionManager;
 
 /**
  * Class QtiRunnerServiceContext
