@@ -82,7 +82,7 @@ class Move extends TestRunnerAction
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getTime()+1);
             }
 
         } catch (\Exception $e) {

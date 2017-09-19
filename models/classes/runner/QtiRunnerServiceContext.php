@@ -22,23 +22,33 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
+use oat\taoOutcomeRds\model\RdsResultStorage;
+use oat\taoQtiItem\model\qti\datatype\BaseType;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
+use qtism\runtime\common\OutcomeVariable;
+use qtism\runtime\common\State;
+use qtism\runtime\common\Variable;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
+use qtism\runtime\tests\SessionManager;
 
 /**
  * Class QtiRunnerServiceContext
@@ -506,7 +516,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
             }
         }
-        
+
         return $output;
     }
     
@@ -580,6 +590,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
      * null meaning that there is no CAT Item to be presented.
      *
+     * Try to register the Cat service result as test variables
+     * 
      * @return mixed|null
      * @throws \common_Exception
      */
@@ -591,6 +603,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
         try {
             $selection = $catSession->getTestMap(array_values($lastOutput));
+            if (!$this->saveAdaptiveResults($catSession)) {
+                \common_Logger::w('Problem to save CatService results.');
+            }
             $isShadowItem = false;
         } catch (CatEngineException $e) {
             \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
@@ -822,4 +837,36 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return $this->getTestSession()->canMoveBackward();
         }
     }
+
+    /**
+     * Save the Cat service result.
+     * If there is no result, skip
+     * Otherwise tergister the values as Test outcome variables
+     *
+     * @param CatSession $catSession
+     * @return bool
+     */
+    protected function saveAdaptiveResults(CatSession $catSession)
+    {
+        /** @var ResultVariable[] $resultVariables */
+        $resultVariables = $catSession->getResults();
+        if (empty($resultVariables)) {
+            \common_Logger::t('No Cat results to store.');
+            return true;
+        }
+
+        /** @var QtiRunnerService $resultStorage */
+        $resultStorage = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        foreach ($resultVariables as $resultVariable) {
+            try {
+                $resultStorage->storeTraceVariable($this, null, $resultVariable->getId(), $resultVariable->getValue());
+            } catch (\common_Exception $e) {
+                \common_Logger::w($e->getMessage());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

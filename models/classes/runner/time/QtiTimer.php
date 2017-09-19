@@ -131,9 +131,6 @@ class QtiTimer implements Timer, ExtraTime
             $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
             $this->timeLine->add($point);
             $range[] = $point;
-
-                (new \DateTime())->setTimestamp($timestamp - (1 / TimePoint::PRECISION))->format('U = Y-m-d H:i:s')
-            );
         }
         $this->checkTimestampCoherence($range, $timestamp);
 
@@ -362,13 +359,6 @@ class QtiTimer implements Timer, ExtraTime
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
 
-        /** @var TimePoint $point */
-        foreach ($this->timeLine->getPoints() as $point) {
-            if ($point->getTarget() == TimePoint::TARGET_CLIENT) {
-                continue;
-            }
-        }
-
         $this->storage->store(json_encode([
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
@@ -559,7 +549,15 @@ class QtiTimer implements Timer, ExtraTime
      */
     protected function checkTimestampCoherence($points, $timestamp)
     {
+        \common_Logger::i(
+            str_pad(' - to-check', 15) . ' : ' .
+            (new \DateTime())->setTimestamp($timestamp)->format('H:i:s')
+        );
         foreach($points as $point) {
+            \common_Logger::i(
+                str_pad(' - existing', 15) . ' : ' .
+                (new \DateTime())->setTimestamp($timestamp)->format('H:i:s')
+            );
             if ($point->getTimestamp() > $timestamp) {
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }
